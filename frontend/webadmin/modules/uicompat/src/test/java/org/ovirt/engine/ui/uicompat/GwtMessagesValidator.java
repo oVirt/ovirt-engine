@@ -86,7 +86,7 @@ public class GwtMessagesValidator {
      *         interface
      */
     @SuppressWarnings("unchecked")
-    private static Properties loadDefaultProperties(Class<? extends Messages> leafClass) throws URISyntaxException, IOException {
+    private static Properties loadDefaultProperties(Class<? extends Messages> leafClass) throws IOException {
         Properties hierarchyProps = new Properties();
         ArrayList<Class<? extends Messages>> hierarchy = new ArrayList<>();
 
@@ -220,8 +220,7 @@ public class GwtMessagesValidator {
      * @throws URISyntaxException
      *             If path doesn't exist
      */
-    private static File[] getMessagesLocalePropertiesFiles(final File currentDir, final String fileNamePrefix)
-            throws URISyntaxException {
+    private static File[] getMessagesLocalePropertiesFiles(final File currentDir, final String fileNamePrefix) {
         return currentDir.listFiles((dir, name) -> name.matches("^" + fileNamePrefix + "_[a-zA-Z]{2}.*\\.properties$"));
     }
 

@@ -35,7 +35,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         Network network = getModel(0);
         network.setId(NETWORK_ID.toString());
@@ -59,7 +59,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
     }
 
     @Override
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetNetworksByIscsiBondId,
                     IdQueryParameters.class,
@@ -71,7 +71,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetNetworksByIscsiBondId,
                 IdQueryParameters.class,
                 new String[] { "Id" },

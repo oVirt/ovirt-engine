@@ -43,7 +43,7 @@ public class BackendTagsResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
@@ -57,7 +57,7 @@ public class BackendTagsResourceTest
     }
 
     @Test(expected = WebFaultException.class)
-    public void testListLimitResultsBadFormat() throws Exception {
+    public void testListLimitResultsBadFormat() {
         UriInfo uriInfo = setUpUriExpectationsWithMax(true);
         setUpEntityQueryExpectations(QueryType.GetAllTags,
                                      QueryParametersBase.class,
@@ -71,7 +71,7 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    public void testAddTag() throws Exception {
+    public void testAddTag() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddTag,
                                   TagsOperationParameters.class,
@@ -93,7 +93,7 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    public void testAddTagNamedParent() throws Exception {
+    public void testAddTagNamedParent() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetTagByTagName,
@@ -126,7 +126,7 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    public void testAddTagNoParent() throws Exception {
+    public void testAddTagNoParent() {
         setUriInfo(setUpBasicUriExpectations());
 
         Tags entity = getEntity(0);
@@ -154,7 +154,7 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             collection.add(new Tag());
@@ -165,16 +165,16 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    public void testAddTagCantDo() throws Exception {
+    public void testAddTagCantDo() {
         doTestBadAddTag(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddTagFailure() throws Exception {
+    public void testAddTagFailure() {
         doTestBadAddTag(true, false, FAILURE);
     }
 
-    private void doTestBadAddTag(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddTag(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddTag,
                                            TagsOperationParameters.class,
                                            new String[] { "Tag.TagName", "Tag.ParentId" },
@@ -190,7 +190,7 @@ public class BackendTagsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetAllTags,

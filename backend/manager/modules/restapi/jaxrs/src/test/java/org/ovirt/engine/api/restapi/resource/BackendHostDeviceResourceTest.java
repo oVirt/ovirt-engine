@@ -14,7 +14,7 @@ public class BackendHostDeviceResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetEntityExpectations(
                 QueryType.GetHostDeviceByHostIdAndDeviceName,
                 HostDeviceParameters.class,

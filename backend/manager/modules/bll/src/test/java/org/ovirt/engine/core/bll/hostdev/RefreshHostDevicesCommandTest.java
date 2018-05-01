@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 
 public class RefreshHostDevicesCommandTest {
     @Test
-    public void testFilterOrphanedHostDevices() throws Exception {
+    public void testFilterOrphanedHostDevices() {
         Map<String, HostDevice> fetchedDevices = Entities.entitiesByName(Arrays.asList(
             new HostDevice() {{
                 setDeviceName("computer");

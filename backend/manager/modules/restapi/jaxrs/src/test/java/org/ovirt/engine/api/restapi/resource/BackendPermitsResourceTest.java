@@ -26,11 +26,11 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testAddPermit() throws Exception {
+    public void testAddPermit() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AttachActionGroupsToRole,
                                   ActionGroupsToRoleParameter.class,
@@ -60,7 +60,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetRoleActionGroupsByRoleId,

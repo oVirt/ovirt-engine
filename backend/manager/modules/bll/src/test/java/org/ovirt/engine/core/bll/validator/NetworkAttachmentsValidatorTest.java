@@ -52,7 +52,7 @@ public class NetworkAttachmentsValidatorTest {
     private ArgumentCaptor<List<NetworkType>> networkTypeCaptor;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         nic = new VdsNetworkInterface();
         nic.setId(Guid.newGuid());
         nic.setName("nicName");
@@ -130,7 +130,7 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testValidateNetworkExclusiveOnNicsAllAttachmentsMustHaveNicNameSet() throws Exception {
+    public void testValidateNetworkExclusiveOnNicsAllAttachmentsMustHaveNicNameSet() {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNetworkId(vmNetwork1.getId());
         List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
@@ -141,12 +141,12 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test
-    public void testValidateNetworkExclusiveOnNicsVmNetworkMustBeSoleAttachedInterface() throws Exception {
+    public void testValidateNetworkExclusiveOnNicsVmNetworkMustBeSoleAttachedInterface() {
         checkVmNetworkIsSoleAssignedInterface(false, Collections.singletonList(NetworkType.VM), vmNetwork1);
     }
 
     @Test
-    public void testValidateNetworkExclusiveOnNicsTwoVmNetworksAttachedToInterface() throws Exception {
+    public void testValidateNetworkExclusiveOnNicsTwoVmNetworksAttachedToInterface() {
         checkVmNetworkIsSoleAssignedInterface(
                 false,
                 Arrays.asList(NetworkType.VM, NetworkType.VM),
@@ -154,7 +154,7 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test
-    public void testValidateNetworkExclusiveOnNicsVmAndNonVmAttachedToInterface() throws Exception {
+    public void testValidateNetworkExclusiveOnNicsVmAndNonVmAttachedToInterface() {
         checkVmNetworkIsSoleAssignedInterface(
                 false,
                 Arrays.asList(NetworkType.VM, NetworkType.NON_VM),
@@ -162,7 +162,7 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test
-    public void testValidateNetworkExclusiveOnNicsVmAndVlanAttachedToInterface() throws Exception {
+    public void testValidateNetworkExclusiveOnNicsVmAndVlanAttachedToInterface() {
         checkVmNetworkIsSoleAssignedInterface(
                 true,
                 Arrays.asList(NetworkType.VM, NetworkType.VLAN),
@@ -170,7 +170,7 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test
-    public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetwork() throws Exception {
+    public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetwork() {
         checkVmNetworkIsSoleAssignedInterface(
                 true,
                 Arrays.asList(NetworkType.VLAN, NetworkType.NON_VM),
@@ -178,7 +178,7 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test
-    public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetworkViolated() throws Exception {
+    public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetworkViolated() {
         checkVmNetworkIsSoleAssignedInterface(
                 false,
                 Arrays.asList(NetworkType.NON_VM, NetworkType.NON_VM),
@@ -186,7 +186,7 @@ public class NetworkAttachmentsValidatorTest {
     }
 
     @Test
-    public void testDetermineNetworkType() throws Exception {
+    public void testDetermineNetworkType() {
         NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(null, null,
                 networkExclusivenessValidator);
         assertThat(validator.determineNetworkType(vlanNetwork), is(NetworkType.VLAN));

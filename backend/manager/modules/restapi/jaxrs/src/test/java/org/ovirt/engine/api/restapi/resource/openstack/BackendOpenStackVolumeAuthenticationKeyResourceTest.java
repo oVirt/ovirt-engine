@@ -43,7 +43,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     }
 
     @Test
-    public void testBadId() throws Exception {
+    public void testBadId() {
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
@@ -53,7 +53,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -65,7 +65,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
         verifyModel(resource.get(), 1);
@@ -92,7 +92,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
         return model;
     }
 
-    private void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    private void setUpGetEntityExpectations(boolean notFound) {
         setUpEntityQueryExpectations(
                 QueryType.GetLibvirtSecretById,
                 IdQueryParameters.class,
@@ -109,7 +109,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -121,7 +121,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(
                 ActionType.UpdateLibvirtSecret,
@@ -133,7 +133,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
         verifyModel(resource.update(getModel(1)), 1);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(
                     QueryType.GetLibvirtSecretById,

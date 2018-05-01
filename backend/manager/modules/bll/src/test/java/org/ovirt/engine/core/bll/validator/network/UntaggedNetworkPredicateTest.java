@@ -13,7 +13,7 @@ public class UntaggedNetworkPredicateTest {
     private Predicate<NetworkType> underTest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         underTest = new UntaggedNetworkPredicate();
     }
 

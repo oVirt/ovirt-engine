@@ -53,7 +53,7 @@ public class BrandingCascadingResourceServletTest {
      * Test that serving works when the request is "/favicon".
      */
     @Test
-    public void testDoGetServeFavicon() throws IOException, ServletException, URISyntaxException {
+    public void testDoGetServeFavicon() throws IOException, URISyntaxException, ServletException {
         when(mockBrandingManager.getCascadingResource("favicon")).thenReturn(mockCascadingResource); //$NON-NLS-1$
         when(mockCascadingResource.getFile()).thenReturn(
                 new File(this.getClass().getClassLoader().
@@ -69,7 +69,7 @@ public class BrandingCascadingResourceServletTest {
      * Test that a 404 is served when no resources are available.
      */
     @Test
-    public void testDoGetServeFaviconNotFound() throws IOException, ServletException, URISyntaxException {
+    public void testDoGetServeFaviconNotFound() throws IOException, ServletException {
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }

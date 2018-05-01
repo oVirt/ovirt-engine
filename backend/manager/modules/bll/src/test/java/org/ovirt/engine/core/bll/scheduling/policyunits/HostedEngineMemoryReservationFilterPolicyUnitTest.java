@@ -42,7 +42,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     private VmDao vmDao;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Cluster cluster = new Cluster();
         clusterId = Guid.newGuid();
         cluster.setId(clusterId);
@@ -74,19 +74,19 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     }
 
     @Test
-    public void testNoHosts() throws Exception {
+    public void testNoHosts() {
         List<VDS> result = policyUnit.filter(cluster, new ArrayList<VDS>(), vm, parameters, messages);
         assertEquals(0, result.size());
     }
 
     @Test
-    public void testWithNoRequiredSpares() throws Exception {
+    public void testWithNoRequiredSpares() {
         List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
         assertEquals(5, result.size());
     }
 
     @Test
-    public void testWithEnoughSpares() throws Exception {
+    public void testWithEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
         assertEquals(5, result.size());
@@ -100,7 +100,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * and so all should be available for further evaluation.
      */
     @Test
-    public void testWithoutEnoughSpares() throws Exception {
+    public void testWithoutEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "6");
         List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
         assertEquals(5, result.size());
@@ -114,7 +114,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * a good enough host for another VM.
      */
     @Test
-    public void testWithoutEnoughSparesFullMemory() throws Exception {
+    public void testWithoutEnoughSparesFullMemory() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
         List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
@@ -129,7 +129,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * All hosts should be returned.
      */
     @Test
-    public void testNoHostedEngine() throws Exception {
+    public void testNoHostedEngine() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
         hostedEngine.setOrigin(OriginType.OVIRT);
@@ -147,7 +147,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * All hosts should be returned.
      */
     @Test
-    public void testDifferentCluster() throws Exception {
+    public void testDifferentCluster() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
         hostedEngine.setClusterId(Guid.SYSTEM);
@@ -169,7 +169,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * All hosts should be returned.
      */
     @Test
-    public void testWithEnoughSparesMemory() throws Exception {
+    public void testWithEnoughSparesMemory() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "1");
         hostedEngine.setVmMemSizeMb(7000);
 
@@ -187,7 +187,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * Three hosts (2 + the current host for HE VM) should be returned
      */
     @Test
-    public void testExactSparesMemory() throws Exception {
+    public void testExactSparesMemory() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "2");
         hostedEngine.setVmMemSizeMb(7000);
 
@@ -205,7 +205,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * Three hosts (2 + the current host for HE VM) should be returned
      */
     @Test
-    public void testWithoutEnoughSparesMemory() throws Exception {
+    public void testWithoutEnoughSparesMemory() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(7000);
 
@@ -224,7 +224,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * Four hosts (3 + the current host for HE VM) should be returned
      */
     @Test
-    public void testWithNonHEHost() throws Exception {
+    public void testWithNonHEHost() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(7000);
 
@@ -244,7 +244,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * Four hosts (3 + the current host for HE VM) should be returned
      */
     @Test
-    public void testWith0ScoreHost() throws Exception {
+    public void testWith0ScoreHost() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(7000);
 
@@ -266,7 +266,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * All hosts should be returned
      */
     @Test
-    public void testWith0ScoreHostAndEnoughMemoryForTwo() throws Exception {
+    public void testWith0ScoreHostAndEnoughMemoryForTwo() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(5000);
 
@@ -290,7 +290,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * for the additional VM).
      */
     @Test
-    public void testWith0ScoreHostAndSomeHaveEnoughMemoryForTwo() throws Exception {
+    public void testWith0ScoreHostAndSomeHaveEnoughMemoryForTwo() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(5000);
 
@@ -314,7 +314,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * for the additional VM).
      */
     @Test
-    public void testWithMaintenancedHostAndSomeHaveEnoughMemoryForTwo() throws Exception {
+    public void testWithMaintenancedHostAndSomeHaveEnoughMemoryForTwo() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(5000);
 
@@ -337,7 +337,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * All hosts should be returned.
      */
     @Test
-    public void testStartingTheEngineWithNotEnoughSpares() throws Exception {
+    public void testStartingTheEngineWithNotEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "3");
         hostedEngine.setVmMemSizeMb(5000);
 
@@ -355,7 +355,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
      * arbitrary VMs.
      */
     @Test
-    public void testHostInMaintenance() throws Exception {
+    public void testHostInMaintenance() {
         hosts.get(0).setHighlyAvailableLocalMaintenance(true);
         List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
         assertEquals(5, result.size());

@@ -41,13 +41,13 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testExecuteCommand() throws Exception {
+    public void testExecuteCommand() {
         command.executeCommand();
         assertTrue(command.getSucceeded());
     }
 
     @Test
-    public void testValidateCommand() throws Exception {
+    public void testValidateCommand() {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 

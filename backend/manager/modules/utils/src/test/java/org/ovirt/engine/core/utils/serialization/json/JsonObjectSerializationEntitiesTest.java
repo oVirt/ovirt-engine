@@ -161,7 +161,7 @@ public class JsonObjectSerializationEntitiesTest {
     }
 
     @Test
-    public void serializeAndDesrializeEntity() throws Exception {
+    public void serializeAndDesrializeEntity() {
         String serializedEntity = new JsonObjectSerializer().serialize(entity);
         assertNotNull(serializedEntity);
         Serializable deserializedEntity =

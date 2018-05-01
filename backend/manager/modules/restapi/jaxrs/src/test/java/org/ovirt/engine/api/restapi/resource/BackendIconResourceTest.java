@@ -28,7 +28,7 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetEntityExpectations(0, false);
         setUriInfo(setUpBasicUriExpectations());
 
@@ -37,7 +37,7 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
 
@@ -51,7 +51,7 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
     }
 
     @Test
-     public void testBadGuid() throws Exception {
+     public void testBadGuid() {
         try {
             new BackendIconResource("foo");
             fail("expected WebApplicationException");
@@ -60,7 +60,7 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
         }
     }
 
-    protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int index, boolean notFound) {
         setUpGetEntityExpectations(QueryType.GetVmIcon,
                 IdQueryParameters.class,
                 new String[] {"Id"},

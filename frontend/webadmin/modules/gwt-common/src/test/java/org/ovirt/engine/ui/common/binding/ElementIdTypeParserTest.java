@@ -68,7 +68,7 @@ public class ElementIdTypeParserTest {
 
         tested = new ElementIdTypeParser(logger, interfaceType) {
             @Override
-            JClassType resolveOwnerType(JClassType interfaceToImplement) throws UnableToCompleteException {
+            JClassType resolveOwnerType(JClassType interfaceToImplement) {
                 return ownerType;
             }
         };

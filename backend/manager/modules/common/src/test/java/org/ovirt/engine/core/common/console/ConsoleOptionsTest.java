@@ -7,7 +7,7 @@ import org.junit.Test;
 public class ConsoleOptionsTest {
 
     @Test
-    public void testAdjustLegacySecureChannels() throws Exception {
+    public void testAdjustLegacySecureChannels() {
         String legacyChannels = "smain,sdisplay,sinputs,scursor,splayback,srecord,ssmartcard,susbredir"; //$NON-NLS-1$
         String correctChannels = "main,display,inputs,cursor,playback,record,smartcard,usbredir";//$NON-NLS-1$
 
@@ -15,14 +15,14 @@ public class ConsoleOptionsTest {
     }
 
     @Test
-    public void testAdjustLegacySecureChannelsWithEmptyChannels() throws Exception {
+    public void testAdjustLegacySecureChannelsWithEmptyChannels() {
         String legacyChannels = "";//$NON-NLS-1$
         String correctChannels = "";//$NON-NLS-1$
         assertEquals(correctChannels, ConsoleOptions.adjustLegacySecureChannels(legacyChannels));
     }
 
     @Test
-    public void testAdjustLegacySecureChannelsWithNullChannels() throws Exception {
+    public void testAdjustLegacySecureChannelsWithNullChannels() {
         String legacyChannels = null;
         String correctChannels = null;
         assertEquals(correctChannels, ConsoleOptions.adjustLegacySecureChannels(legacyChannels));

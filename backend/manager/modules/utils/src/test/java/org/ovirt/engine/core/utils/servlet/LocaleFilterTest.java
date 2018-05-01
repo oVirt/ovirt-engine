@@ -37,7 +37,7 @@ public class LocaleFilterTest {
     ServletContext mockServletContext;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(mockRequest.getServletContext()).thenReturn(mockServletContext);
         testFilter = new LocaleFilter();
     }

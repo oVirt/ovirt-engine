@@ -40,7 +40,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendClusterResource("foo", new BackendClustersResource());
             fail("expected WebApplicationException");
@@ -50,7 +50,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -62,7 +62,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpManagementNetworkExpectation();
@@ -74,7 +74,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -86,7 +86,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setUpManagementNetworkExpectation();
 
@@ -115,16 +115,16 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateCluster,
@@ -143,7 +143,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUpGetEntityExpectations(1);
 
         org.ovirt.engine.api.model.Cluster model = getModel(1);
@@ -157,7 +157,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -173,7 +173,7 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(1, true);
         try {
             resource.remove();
@@ -185,18 +185,18 @@ public class BackendClusterResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         setUpGetEntityExpectations(1);
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         setUpGetEntityExpectations(1);
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.RemoveCluster,
@@ -215,11 +215,11 @@ public class BackendClusterResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetClusterById,
                                        IdQueryParameters.class,
@@ -229,7 +229,7 @@ public class BackendClusterResourceTest
         }
     }
 
-    private void setUpManagementNetworkExpectation() throws Exception {
+    private void setUpManagementNetworkExpectation() {
         setUpPopulateExpectation();
         final Network mockNetwork = mock(Network.class);
         when(mockNetwork.getId()).thenReturn(MANAGEMENT_NETWORK_ID);

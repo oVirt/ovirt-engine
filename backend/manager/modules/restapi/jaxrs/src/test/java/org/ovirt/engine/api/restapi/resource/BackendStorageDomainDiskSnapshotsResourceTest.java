@@ -40,7 +40,7 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
     @Override
     @Test
     @Ignore
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
@@ -63,21 +63,21 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
     @Test
     @Override
     @Ignore
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
 
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
 
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
 
     }
 

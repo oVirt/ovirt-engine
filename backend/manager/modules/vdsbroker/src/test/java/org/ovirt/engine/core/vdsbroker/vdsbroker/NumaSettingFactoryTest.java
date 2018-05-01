@@ -24,14 +24,14 @@ public class NumaSettingFactoryTest {
     private static List<VmNumaNode> vmNumaNodes;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         numaTuneMode = NumaTuneMode.INTERLEAVE;
         vdsNumaNodes = createTestVdsNumaNodes();
         vmNumaNodes = createTestVmNumaNodes();
     }
 
     @Test
-    public void testBuildVmNumaNodeSetting() throws Exception {
+    public void testBuildVmNumaNodeSetting() {
         List<Map<String, Object>> vmNumaNodesSetting =
                 NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
         assertEquals(2, vmNumaNodesSetting.size());
@@ -44,7 +44,7 @@ public class NumaSettingFactoryTest {
     }
 
     @Test
-    public void testBuildCpuPinningWithNumaSetting() throws Exception {
+    public void testBuildCpuPinningWithNumaSetting() {
         Map<String, Object> cpuPinning =
                 NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, vdsNumaNodes);
         assertEquals(8, cpuPinning.size());
@@ -68,7 +68,7 @@ public class NumaSettingFactoryTest {
     }
 
     @Test
-    public void testBuildVmNumatuneSetting() throws Exception {
+    public void testBuildVmNumatuneSetting() {
         Map<String, Object> numaTune =
                 NumaSettingFactory.buildVmNumatuneSetting(numaTuneMode, vmNumaNodes);
         assertEquals(2, numaTune.size());

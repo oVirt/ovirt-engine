@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
-import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest {
     @Mock
@@ -46,13 +44,13 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
     }
 
     @Test
-    public void testExecuteGetAllEntitiesCommand() throws OvfReaderException, IOException {
+    public void testExecuteGetAllEntitiesCommand() {
         cmd.executeCommand();
         assertTrue("return value should be true", cmd.getReturnValue().getSucceeded());
     }
 
     @Before
-    public void setUpCommandEntities() throws OvfReaderException {
+    public void setUpCommandEntities() {
         QueryReturnValue vdcRetVal = generateQueryReturnValueForGetDiskImages();
         doReturn(vdcRetVal).when(cmd).getUnregisteredDisksFromHost();
 

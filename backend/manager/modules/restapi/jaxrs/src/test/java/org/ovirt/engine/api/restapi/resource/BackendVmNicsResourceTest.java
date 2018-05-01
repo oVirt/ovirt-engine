@@ -36,20 +36,20 @@ public class BackendVmNicsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmInterfacesByVmId,
@@ -141,7 +141,7 @@ public class BackendVmNicsResourceTest
         assertEquals(ADDRESSES[2], model.getMac().getAddress());
     }
 
-    protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
+    protected void setGetGuestAgentQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetVmGuestAgentInterfacesByVmId,
                     IdQueryParameters.class,
@@ -177,7 +177,7 @@ public class BackendVmNicsResourceTest
     }
 
     @Test
-    public void testAddNic() throws Exception {
+    public void testAddNic() {
         setUriInfo(setUpBasicUriExpectations());
         setGetGuestAgentQueryExpectations(1);
         setUpCreationExpectations(
@@ -203,16 +203,16 @@ public class BackendVmNicsResourceTest
     }
 
     @Test
-    public void testAddNicCantDo() throws Exception {
+    public void testAddNicCantDo() {
         doTestBadAddNic(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddNicFailure() throws Exception {
+    public void testAddNicFailure() {
         doTestBadAddNic(true, false, FAILURE);
     }
 
-    private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddNic(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.AddVmInterface,
@@ -234,7 +234,7 @@ public class BackendVmNicsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         Nic model = new Nic();
         model.setName(null);
 
@@ -248,7 +248,7 @@ public class BackendVmNicsResourceTest
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             collection.getNicResource("foo");
             fail("expected WebApplicationException");

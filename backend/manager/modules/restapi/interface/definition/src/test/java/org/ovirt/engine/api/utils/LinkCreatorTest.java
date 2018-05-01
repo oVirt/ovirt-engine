@@ -22,7 +22,7 @@ import org.junit.Test;
 
 public class LinkCreatorTest {
     @Test
-    public void testCombine() throws Exception {
+    public void testCombine() {
         assertEquals("/foo/bar", LinkCreator.combine("/foo", "bar"));
         assertEquals("/foo/bar", LinkCreator.combine("/foo/", "bar"));
         assertEquals("/foo/bar", LinkCreator.combine("/foo/", "/bar"));

@@ -33,33 +33,33 @@ public class BackendStorageDomainVmsResourceTest
 
     @Test
     @Ignore
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
     @Override
     @Ignore
-    public void testList() throws Exception {
+    public void testList() {
     }
 
     @Test
     @Override
     @Ignore
-    public void testListFailure() throws Exception {
-
-    }
-
-    @Test
-    @Override
-    @Ignore
-    public void testListCrash() throws Exception {
+    public void testListFailure() {
 
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrash() {
+
+    }
+
+    @Test
+    @Override
+    @Ignore
+    public void testListCrashClientLocale() {
 
     }
 
@@ -74,11 +74,11 @@ public class BackendStorageDomainVmsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpQueryExpectations(query, failure, StorageDomainType.Data);
     }
 
-    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetStorageDomainById,

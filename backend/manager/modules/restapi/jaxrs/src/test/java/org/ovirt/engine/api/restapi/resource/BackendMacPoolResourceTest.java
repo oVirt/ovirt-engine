@@ -27,7 +27,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendMacPoolResource("foo");
             fail("expected WebApplicationException");
@@ -37,7 +37,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
         try {
@@ -49,7 +49,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
 
@@ -57,7 +57,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
 
@@ -70,7 +70,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpEntityQueryExpectations(2, 0, false);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateMacPool,
@@ -84,16 +84,16 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(1, 0, false);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateMacPool,
@@ -112,7 +112,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
 
@@ -127,7 +127,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(false);
         setUriInfo(setUpActionExpectations(ActionType.RemoveMacPool,
                 RemoveMacPoolByIdParameters.class,
@@ -139,7 +139,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testRemoveNotFound() {
         setUpEntityQueryExpectations(true);
         try {
             resource.remove();
@@ -150,7 +150,7 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpEntityQueryExpectations(QueryType.GetMacPoolById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -166,16 +166,16 @@ public class BackendMacPoolResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(false);
 
         setUriInfo(setUpActionExpectations(ActionType.RemoveMacPool,
@@ -192,7 +192,7 @@ public class BackendMacPoolResourceTest
         }
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetMacPoolById,
                     IdQueryParameters.class,
@@ -224,7 +224,7 @@ public class BackendMacPoolResourceTest
         return entity;
     }
 
-    protected void setUpEntityQueryExpectations(boolean notFound) throws Exception {
+    protected void setUpEntityQueryExpectations(boolean notFound) {
         setUpEntityQueryExpectations(QueryType.GetMacPoolById,
                 IdQueryParameters.class,
                 new String[] { "Id" },

@@ -39,7 +39,7 @@ public class LabelFilterPolicyUnitTest {
     private List<VDS> hosts;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
 
@@ -59,7 +59,7 @@ public class LabelFilterPolicyUnitTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() {
         Label red = new LabelBuilder()
                 .entities(vm, host1)
                 .build();
@@ -73,7 +73,7 @@ public class LabelFilterPolicyUnitTest {
     }
 
     @Test
-    public void testEmpty() throws Exception {
+    public void testEmpty() {
         Label red = new LabelBuilder()
                 .entities(vm, host1)
                 .build();
@@ -90,7 +90,7 @@ public class LabelFilterPolicyUnitTest {
     }
 
     @Test
-    public void testHostExtra() throws Exception {
+    public void testHostExtra() {
         Label red = new LabelBuilder()
                 .entities(vm, host1)
                 .build();

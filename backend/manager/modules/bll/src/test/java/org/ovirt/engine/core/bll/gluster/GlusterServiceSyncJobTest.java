@@ -221,14 +221,14 @@ public class GlusterServiceSyncJobTest {
     }
 
     @Test
-    public void testRefreshGlusterServicesNoChanges() throws Exception {
+    public void testRefreshGlusterServicesNoChanges() {
         mockNoChanges();
         syncJob.refreshGlusterServices();
         verifyNoChanges();
     }
 
     @Test
-    public void testRefreshGlusterServicesWithChanges() throws Exception {
+    public void testRefreshGlusterServicesWithChanges() {
         mockWithChanges();
         syncJob.refreshGlusterServices();
         verifyWithChanges();

@@ -42,7 +42,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setupParentExpectations();
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
@@ -52,7 +52,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -64,7 +64,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testStart() throws Exception {
+    public void testStart() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.StartGlusterVolume,
@@ -76,7 +76,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testStop() throws Exception {
+    public void testStop() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.StopGlusterVolume,
@@ -88,7 +88,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testRebalance() throws Exception {
+    public void testRebalance() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.StartRebalanceGlusterVolume,
@@ -100,7 +100,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testStopRebalance() throws Exception {
+    public void testStopRebalance() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.StopRebalanceGlusterVolume,
@@ -112,7 +112,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testSetOptionInvalidParams() throws Exception {
+    public void testSetOptionInvalidParams() {
         setUriInfo(setUpBasicUriExpectations());
         resource.setUriInfo(setUpBasicUriExpectations());
 
@@ -127,7 +127,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testSetOption() throws Exception {
+    public void testSetOption() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.SetGlusterVolumeOption,
@@ -143,7 +143,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testResetOptionInvalidParams() throws Exception {
+    public void testResetOptionInvalidParams() {
         setUriInfo(setUpBasicUriExpectations());
         resource.setUriInfo(setUpBasicUriExpectations());
 
@@ -158,7 +158,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testResetOption() throws Exception {
+    public void testResetOption() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.ResetGlusterVolumeOptions,
@@ -173,7 +173,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testResetAllOptions() throws Exception {
+    public void testResetAllOptions() {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(ActionType.ResetGlusterVolumeOptions,
@@ -185,7 +185,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setupParentExpectations();
         setUpGetEntityExpectations(1);
         setUriInfo(
@@ -209,7 +209,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "glustervolumes/" + GUIDS[0], false);
     }
 
@@ -230,11 +230,11 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         verifyLinks(model);
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                     IdQueryParameters.class,

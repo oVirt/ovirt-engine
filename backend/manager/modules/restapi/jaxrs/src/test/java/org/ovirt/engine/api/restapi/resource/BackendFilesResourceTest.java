@@ -33,11 +33,11 @@ public class BackendFilesResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         BackendFileResource resource = new BackendFileResource(NAMES[0], collection);
         collection.setUriInfo(setUpUriExpectations(null));
         setUpQueryExpectations("", null);
@@ -45,7 +45,7 @@ public class BackendFilesResourceTest
     }
 
     @Test
-    public void testBadGet() throws Exception {
+    public void testBadGet() {
         BackendFileResource resource = new BackendFileResource("foo", collection);
         collection.setUriInfo(setUpUriExpectations(null));
         setUpQueryExpectations("", null);
@@ -59,7 +59,7 @@ public class BackendFilesResourceTest
 
     @Override
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
@@ -69,7 +69,7 @@ public class BackendFilesResourceTest
     }
 
     @Test
-    public void testListNonIso() throws Exception {
+    public void testListNonIso() {
         try {
             UriInfo uriInfo = setUpUriExpectations(null);
 
@@ -86,7 +86,7 @@ public class BackendFilesResourceTest
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 
@@ -111,7 +111,7 @@ public class BackendFilesResourceTest
 
     @Test
     @Override
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         UriInfo uriInfo = setUpUriExpectations(null);
 
         Throwable t = new RuntimeException(FAILURE);
@@ -143,7 +143,7 @@ public class BackendFilesResourceTest
 
     @Test
     @Override
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpEntityQueryExpectations(QueryType.GetImagesList,
                 GetImagesListParameters.class,
@@ -178,7 +178,7 @@ public class BackendFilesResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetImagesList,
@@ -219,7 +219,7 @@ public class BackendFilesResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<File> collection) throws Exception {
+    protected void verifyCollection(List<File> collection) {
         assertNotNull(collection);
         assertEquals(NAMES.length, collection.size());
         for (int i = 0; i < NAMES.length; i++) {

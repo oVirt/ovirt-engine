@@ -57,7 +57,7 @@ public class OperationProcessorTest {
     ArgumentCaptor<List<VdcOperation<?, ?>>> operationListCaptor;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testProcessor = new OperationProcessor(mockProvider);
         testProcessor.setScheduler(mockScheduler);
     }

@@ -91,7 +91,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
     }
 
     @Test
-    public void failIfDcNotActive() throws Exception {
+    public void failIfDcNotActive() {
         mockGetExistingDomain(true);
         StoragePool pool = new StoragePool();
         pool.setStatus(StoragePoolStatus.Uninitialized);
@@ -108,7 +108,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
     }
 
     @Test
-    public void failsIfImported() throws Exception {
+    public void failsIfImported() {
         when(hostedEngineHelper.getStorageDomain()).thenReturn(new StorageDomainStatic());
         mockGetExistingDomain(true);
 
@@ -123,7 +123,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
     }
 
     @Test
-    public void failsInNotImportedAndNotExists() throws Exception {
+    public void failsInNotImportedAndNotExists() {
         mockGetExistingDomain(false);
 
         cmd.init();

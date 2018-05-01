@@ -81,12 +81,12 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkSet() throws Exception {
+    public void networkSet() {
         assertThat(validator.networkIsSet(Guid.newGuid()), isValid());
     }
 
     @Test
-    public void networkNull() throws Exception {
+    public void networkNull() {
         validator = new NetworkValidator(null);
         assertThat(validator.networkIsSet(Guid.newGuid()), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
@@ -99,22 +99,22 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void stpWhenVmNetwork() throws Exception {
+    public void stpWhenVmNetwork() {
         stpTest(isValid(), true, true);
     }
 
     @Test
-    public void noStpWhenVmNetwork() throws Exception {
+    public void noStpWhenVmNetwork() {
         stpTest(isValid(), true, false);
     }
 
     @Test
-    public void stpWhenNonVmNetwork() throws Exception {
+    public void stpWhenNonVmNetwork() {
         stpTest(failsWith(EngineMessage.NON_VM_NETWORK_CANNOT_SUPPORT_STP), false, true);
     }
 
     @Test
-    public void noStpWhenNonVmNetwork() throws Exception {
+    public void noStpWhenNonVmNetwork() {
         stpTest(isValid(), false, false);
     }
 
@@ -130,12 +130,12 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkPrefixBond() throws Exception {
+    public void networkPrefixBond() {
         networkPrefixValidTest(failsWith(EngineMessage.NETWORK_CANNOT_CONTAIN_BOND_NAME), "bond0");
     }
 
     @Test
-    public void networkPrefixInnocent() throws Exception {
+    public void networkPrefixInnocent() {
         networkPrefixValidTest(isValid(), DEFAULT_NETWORK_NAME);
     }
 
@@ -171,22 +171,22 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void noIscsiBondsForNetowrkTest() throws Exception {
+    public void noIscsiBondsForNetowrkTest() {
         notIscsiBondNetworkTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void existingIscsiBondsForNetowrkTest() throws Exception {
+    public void existingIscsiBondsForNetowrkTest() {
         notIscsiBondNetworkTest(failsWith(EngineMessage.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK), getIscsiBondList());
     }
 
     @Test
-    public void networkNameNoNetworks() throws Exception {
+    public void networkNameNoNetworks() {
         networkNameAvailableTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void networkNameAvailable() throws Exception {
+    public void networkNameAvailable() {
         networkNameAvailableTest(isValid(), getSingletonNamedNetworkList(OTHER_NETWORK_NAME, OTHER_GUID));
     }
 
@@ -218,19 +218,19 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkNameTakenByDifferentNetwork() throws Exception {
+    public void networkNameTakenByDifferentNetwork() {
         networkNameAvailableTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE),
                 getSingletonNamedNetworkList(DEFAULT_NETWORK_NAME, OTHER_GUID));
     }
 
     @Test
-    public void networkNameTakenCaseSensitivelyByDifferentNetwork() throws Exception {
+    public void networkNameTakenCaseSensitivelyByDifferentNetwork() {
         networkNameAvailableTest(isValid(),
                 getSingletonNamedNetworkList(DEFAULT_NETWORK_NAME.toUpperCase(), OTHER_GUID));
     }
 
     @Test
-    public void networkNameTakenBySameNetwork() throws Exception {
+    public void networkNameTakenBySameNetwork() {
         networkNameAvailableTest(isValid(),
                 getSingletonNamedNetworkList(DEFAULT_NETWORK_NAME, DEFAULT_GUID));
     }
@@ -249,12 +249,12 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkNotInUseByVms() throws Exception {
+    public void networkNotInUseByVms() {
         networkNotUsedByVmsTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void networkInUseByOneVm() throws Exception {
+    public void networkInUseByOneVm() {
         VM vm = mock(VM.class);
         when(vm.getName()).thenReturn(NAMEABLE_NAME);
 
@@ -262,7 +262,7 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkInUseByManyVms() throws Exception {
+    public void networkInUseByManyVms() {
         VM vm1 = mock(VM.class);
         when(vm1.getName()).thenReturn(NAMEABLE_NAME+1);
 
@@ -280,12 +280,12 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkNotInUseByHosts() throws Exception {
+    public void networkNotInUseByHosts() {
         networkNotUsedByHostsTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void networkInUseByOneHost() throws Exception {
+    public void networkInUseByOneHost() {
         VDS host = mock(VDS.class);
         when(host.getName()).thenReturn(NAMEABLE_NAME);
 
@@ -293,7 +293,7 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkInUseByManyHosts() throws Exception {
+    public void networkInUseByManyHosts() {
         VDS host1 = mock(VDS.class);
         when(host1.getName()).thenReturn(NAMEABLE_NAME+1);
 
@@ -311,12 +311,12 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkNotInUseByTemplates() throws Exception {
+    public void networkNotInUseByTemplates() {
         networkNotUsedByTemplatesTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void networkInUseByOneTemplate() throws Exception {
+    public void networkInUseByOneTemplate() {
         VmTemplate template = mock(VmTemplate.class);
         when(template.getName()).thenReturn(NAMEABLE_NAME);
 
@@ -324,7 +324,7 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkInUseByManyTemplates() throws Exception {
+    public void networkInUseByManyTemplates() {
         VmTemplate template1 = mock(VmTemplate.class);
         when(template1.getName()).thenReturn(NAMEABLE_NAME+1);
 
@@ -335,24 +335,24 @@ public class NetworkValidatorTest {
     }
 
     @Test
-    public void networkNotLabeled() throws Exception {
+    public void networkNotLabeled() {
         assertThat(validator.notLabeled(), isValid());
     }
 
     @Test
-    public void networkLabeled() throws Exception {
+    public void networkLabeled() {
         when(network.getLabel()).thenReturn(RandomUtils.instance().nextPropertyString(10));
         assertThat(validator.notLabeled(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED));
     }
 
     @Test
-    public void testNotExternalNetworkFailsForExternalNetwork() throws Exception {
+    public void testNotExternalNetworkFailsForExternalNetwork() {
         when(network.isExternal()).thenReturn(true);
         assertThat(validator.notExternalNetwork(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK));
     }
 
     @Test
-    public void testNotExternalNetworkSucceedsForNonExternalNetwork() throws Exception {
+    public void testNotExternalNetworkSucceedsForNonExternalNetwork() {
         when(network.isExternal()).thenReturn(false);
         assertThat(validator.notExternalNetwork(), isValid());
     }

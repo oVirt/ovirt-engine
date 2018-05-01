@@ -53,7 +53,7 @@ public class BackendDiskResourceTest
     }
 
     @Test
-    public void testExport() throws Exception {
+    public void testExport() {
         setUriInfo(setUpActionExpectations(ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
                 new String[]{"ImageGroupID", "DestinationDomainId"},
@@ -67,7 +67,7 @@ public class BackendDiskResourceTest
     }
 
     @Test
-    public void testMoveById() throws  Exception {
+    public void testMoveById() {
         setUpEntityQueryExpectations(QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
@@ -82,7 +82,7 @@ public class BackendDiskResourceTest
     }
 
     @Test
-    public void testCopyById() throws Exception {
+    public void testCopyById() {
         setUpEntityQueryExpectations(QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
@@ -96,12 +96,12 @@ public class BackendDiskResourceTest
     }
 
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "/disks/" + DISK_ID, false);
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -111,7 +111,7 @@ public class BackendDiskResourceTest
     }
 
     @Test
-    public void testIncompleteExport() throws Exception {
+    public void testIncompleteExport() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             resource.export(new Action());

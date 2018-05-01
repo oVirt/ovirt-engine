@@ -32,7 +32,7 @@ public class VdcOperationManagerTest {
     EventBus mockEventBus;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testManager = new VdcOperationManager(mockEventBus, mockOperationProcessor);
     }
 

@@ -34,7 +34,7 @@ public class RemoveAdGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsOnRemoveLastAdGroupWithSuperUserPrivileges() throws Exception {
+    public void validateFailsOnRemoveLastAdGroupWithSuperUserPrivileges() {
         mockIsLastSuperUserGroup(true);
         assertFalse(command.validate());
         assertTrue(command.getReturnValue().getValidationMessages().contains(
@@ -42,7 +42,7 @@ public class RemoveAdGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsOnRemoveNotLastAdGroupWithSuperUserPrivileges() throws Exception {
+    public void validateSucceedsOnRemoveNotLastAdGroupWithSuperUserPrivileges() {
         mockIsLastSuperUserGroup(false);
         assertTrue(command.validate());
     }

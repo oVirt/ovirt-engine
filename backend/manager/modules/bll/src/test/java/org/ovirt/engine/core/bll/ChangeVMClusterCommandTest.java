@@ -44,7 +44,7 @@ public class ChangeVMClusterCommandTest {
             new ChangeVMClusterCommand<>(parameters, null);
 
     @Test
-    public void canRunForHostedEngine() throws Exception {
+    public void canRunForHostedEngine() {
         // given hosted engine VM
         VM hostedEngine = new VM();
         hostedEngine.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
@@ -56,7 +56,7 @@ public class ChangeVMClusterCommandTest {
     }
 
     @Test
-    public void testNoChangeWhenClustersDidNotChange() throws Exception {
+    public void testNoChangeWhenClustersDidNotChange() {
         Cluster cluster = createCluster();
         initWithSameCluster(cluster);
 
@@ -66,7 +66,7 @@ public class ChangeVMClusterCommandTest {
     }
 
     @Test
-    public void testNoChangeWhenMacPoolsDidNotChange() throws Exception {
+    public void testNoChangeWhenMacPoolsDidNotChange() {
         Cluster newCluster = createCluster();
         Cluster oldCluster = createCluster();
 
@@ -78,7 +78,7 @@ public class ChangeVMClusterCommandTest {
     }
 
     @Test
-    public void testDoChangeWhenMacPoolsChanged() throws Exception {
+    public void testDoChangeWhenMacPoolsChanged() {
         String macToMigrate = "mac";
         Cluster oldCluster = createCluster();
         Cluster newCluster = createCluster();

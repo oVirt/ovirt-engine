@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +58,7 @@ public class LinkFollowerTest {
     }
 
     @Test
-    public void testFollowLinks() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void testFollowLinks() throws SecurityException, IllegalArgumentException {
         LinksTreeNode linksTree = linkFollower.createLinksTree(Vm.class, "nics,disk_attachments.disk");
         Vm vm = createVm();
         linkFollower.followLinks(vm, linksTree);

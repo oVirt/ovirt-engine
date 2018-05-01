@@ -46,7 +46,7 @@ public class BackendVmReportedDeviceResourceTest
         return mock;
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetVmGuestAgentInterfacesByVmId,
                     IdQueryParameters.class,
@@ -65,7 +65,7 @@ public class BackendVmReportedDeviceResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         resource.getParent().setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
 

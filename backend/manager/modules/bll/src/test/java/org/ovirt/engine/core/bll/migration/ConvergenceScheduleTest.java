@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.migration;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,19 +16,19 @@ public class ConvergenceScheduleTest {
     private ConvergenceSchedule schedule = new ConvergenceSchedule();
 
     @Test
-    public void asMapEmpty() throws IOException {
+    public void asMapEmpty() {
         assertEquals(new ExpectedConvergence(), schedule.asMap());
     }
 
     @Test
-    public void asMapOneInit() throws IOException {
+    public void asMapOneInit() {
         schedule.addInitStep(new ConvergenceItem("action", 10));
 
         assertEquals(new ExpectedConvergence().addInit("action", 10), schedule.asMap());
     }
 
     @Test
-    public void asMapTwoInits() throws IOException {
+    public void asMapTwoInits() {
         schedule.addInitStep(new ConvergenceItem("action", 10))
             .addInitStep(new ConvergenceItem("action2", 15));
 
@@ -37,13 +36,13 @@ public class ConvergenceScheduleTest {
     }
 
     @Test
-    public void asMapOneConvItem() throws IOException {
+    public void asMapOneConvItem() {
         schedule.addStallingStep(new ConvergenceItemWithStallingLimit(8, "action", 10));
         assertEquals(new ExpectedConvergence().addStalling(8, "action", 10), schedule.asMap());
     }
 
     @Test
-    public void asMapTwoConvItems() throws IOException {
+    public void asMapTwoConvItems() {
         schedule.addStallingStep(new ConvergenceItemWithStallingLimit(8, "action", 10))
             .addStallingStep(new ConvergenceItemWithStallingLimit(12, "action2", 12));
 
@@ -51,7 +50,7 @@ public class ConvergenceScheduleTest {
     }
 
     @Test
-    public void asMapBoth() throws IOException {
+    public void asMapBoth() {
         schedule.addInitStep(new ConvergenceItem("action", 10))
             .addInitStep(new ConvergenceItem("action2", 15))
             .addStallingStep(new ConvergenceItemWithStallingLimit(8, "action", 10))

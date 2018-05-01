@@ -33,12 +33,12 @@ public class GetDeviceListVDSCommandTest {
     );
 
     @Test
-    public void parseLunReturnsIscsiByDefault() throws Exception {
+    public void parseLunReturnsIscsiByDefault() {
         testParseLunForDevtypeField(StorageType.ISCSI, "");
     }
 
     @Test
-    public void parseLunReturnsFcpForFcp() throws Exception {
+    public void parseLunReturnsFcpForFcp() {
         testParseLunForDevtypeField(StorageType.FCP, GetDeviceListVDSCommand.DEVTYPE_VALUE_FCP);
     }
 
@@ -60,7 +60,7 @@ public class GetDeviceListVDSCommandTest {
     }
 
     @Test
-    public void parseLunReturnsUnknownForNoField() throws Exception {
+    public void parseLunReturnsUnknownForNoField() {
         Map<String, Object> xlun = new HashMap<>();
         LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
 
@@ -68,7 +68,7 @@ public class GetDeviceListVDSCommandTest {
     }
 
     @Test
-    public void parseLunPathStatus() throws Exception {
+    public void parseLunPathStatus() {
         int numActivePaths = 1 + RandomUtils.instance().nextInt(3);
         int numNonActivePaths = 2 + RandomUtils.instance().nextInt(3);
         int numPaths = numActivePaths + numNonActivePaths;

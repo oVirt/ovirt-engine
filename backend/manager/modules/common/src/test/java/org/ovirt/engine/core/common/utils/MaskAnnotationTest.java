@@ -26,7 +26,7 @@ public class MaskAnnotationTest {
     private Validator validator;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         validator = ValidationUtils.getValidator();
     }
 

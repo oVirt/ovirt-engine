@@ -32,7 +32,7 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendClusterNetworkResource("foo", null);
             fail("expected WebApplicationException");
@@ -42,7 +42,7 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                                      IdQueryParameters.class,
@@ -58,7 +58,7 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, false, false, false, false);
 
@@ -66,7 +66,7 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpEntityQueryExpectations(1, false, false, false, false);
         setUpEntityQueryExpectations(1, true, true, true, true);
         setUpClusterExpectations(GUIDS[1]);
@@ -81,7 +81,7 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testRemoveNotFound() {
         setUpEntityQueryExpectations(
             QueryType.GetAllNetworksByClusterId,
             IdQueryParameters.class,
@@ -98,7 +98,7 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpClusterExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
@@ -115,16 +115,16 @@ public class BackendClusterNetworkResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpClusterExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
@@ -176,8 +176,7 @@ public class BackendClusterNetworkResourceTest
    }
 
 
-    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired, boolean isDefaultRoute)
-            throws Exception {
+    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired, boolean isDefaultRoute) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                                          IdQueryParameters.class,

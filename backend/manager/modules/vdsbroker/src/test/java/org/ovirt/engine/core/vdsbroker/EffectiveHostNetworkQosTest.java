@@ -30,12 +30,12 @@ public class EffectiveHostNetworkQosTest {
     private EffectiveHostNetworkQos effectiveHostNetworkQos;
 
     @Test
-    public void testGetQosWithNullNetworkAttachmentAndNetworkWithoutQos() throws Exception {
+    public void testGetQosWithNullNetworkAttachmentAndNetworkWithoutQos() {
         assertThat(effectiveHostNetworkQos.getQos(null, new Network()), nullValue());
     }
 
     @Test
-    public void testGetQosWithNullNetworkAttachmentAndNetworkWithQos() throws Exception {
+    public void testGetQosWithNullNetworkAttachmentAndNetworkWithQos() {
         HostNetworkQos hostNetworkQos = createHostNetworkQos();
         Network network = createNetworkWithQos(hostNetworkQos);
         when(hostNetworkQosDao.get(network.getQosId())).thenReturn(hostNetworkQos);
@@ -44,12 +44,12 @@ public class EffectiveHostNetworkQosTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetQosWithNullNetwork() throws Exception {
+    public void testGetQosWithNullNetwork() {
         effectiveHostNetworkQos.getQos(createNetworkAttachmentWithoutOverriddenQos(), null);
     }
 
     @Test
-    public void testGetQosWhenNetworkAttachmentDoesNotHaveOverriddenQos() throws Exception {
+    public void testGetQosWhenNetworkAttachmentDoesNotHaveOverriddenQos() {
         HostNetworkQos hostNetworkQos = createHostNetworkQos();
         Network network = createNetworkWithQos(hostNetworkQos);
         NetworkAttachment networkAttachment = createNetworkAttachmentWithoutOverriddenQos();
@@ -62,7 +62,7 @@ public class EffectiveHostNetworkQosTest {
     }
 
     @Test
-    public void testGetQosWhenNetworkAttachmentHasOverriddenQos() throws Exception {
+    public void testGetQosWhenNetworkAttachmentHasOverriddenQos() {
         Network network = createNetworkWithQos(createHostNetworkQos());
         NetworkAttachment networkAttachment = createNetworkAttachentWithOverriddenQos();
         HostNetworkQos networkAttachmentHostNetworkQos = HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos());

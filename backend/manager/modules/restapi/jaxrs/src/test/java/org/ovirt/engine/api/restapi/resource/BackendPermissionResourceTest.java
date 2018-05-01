@@ -48,7 +48,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendPermissionResource("foo", null, null, null);
             fail("expected WebApplicationException");
@@ -58,7 +58,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -70,7 +70,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetAllDbUsers,
@@ -85,7 +85,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(2);
         setUpEntityQueryExpectations(
             QueryType.GetAllDbUsers,
@@ -108,7 +108,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         setUpEntityQueryExpectations(
             QueryType.GetAllDbUsers,
             QueryParametersBase.class,
@@ -120,7 +120,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         setUpEntityQueryExpectations(
             QueryType.GetAllDbUsers,
             QueryParametersBase.class,
@@ -132,7 +132,7 @@ public class BackendPermissionResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(1, true);
         try {
             resource.remove();
@@ -143,7 +143,7 @@ public class BackendPermissionResourceTest
         }
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(2);
         setUriInfo(
             setUpActionExpectations(
@@ -163,11 +163,11 @@ public class BackendPermissionResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(
                 QueryType.GetPermissionById,

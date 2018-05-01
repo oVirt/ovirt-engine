@@ -27,19 +27,19 @@ public class DefaultRouteUtilImplTest {
     private DefaultRouteUtilImpl underTest;
 
     @Test
-    public void testIsDefaultRouteWhenNetworkClusterDoesNotExist() throws Exception {
+    public void testIsDefaultRouteWhenNetworkClusterDoesNotExist() {
         when(networkClusterDao.get(new NetworkClusterId(clusterId, networkId))).thenReturn(null);
 
         assertThat(underTest.isDefaultRouteNetwork(networkId, clusterId), is(false));
     }
 
     @Test
-    public void testIsDefaultRouteWhenNetworkClusterExistsAndIsDefaultRoute() throws Exception {
+    public void testIsDefaultRouteWhenNetworkClusterExistsAndIsDefaultRoute() {
         testIsDefaultRouteWhenNetworkClusterExist(true);
     }
 
     @Test
-    public void testIsDefaultRouteWhenNetworkClusterExistsAndIsntDefaultRoute() throws Exception {
+    public void testIsDefaultRouteWhenNetworkClusterExistsAndIsntDefaultRoute() {
         testIsDefaultRouteWhenNetworkClusterExist(false);
     }
 

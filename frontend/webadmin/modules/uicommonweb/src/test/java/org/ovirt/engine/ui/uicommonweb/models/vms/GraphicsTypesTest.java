@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel.GraphicsTypes;
 public class GraphicsTypesTest {
 
     @Test
-    public void testGetBackingGraphicsType() throws Exception {
+    public void testGetBackingGraphicsType() {
         assertEquals(makeSet(), GraphicsTypes.NONE.getBackingGraphicsTypes());
         assertEquals(makeSet(GraphicsType.SPICE), GraphicsTypes.SPICE.getBackingGraphicsTypes());
         assertEquals(makeSet(GraphicsType.VNC), GraphicsTypes.VNC.getBackingGraphicsTypes());
@@ -22,13 +22,13 @@ public class GraphicsTypesTest {
     }
 
     @Test
-    public void testFromGraphicsType() throws Exception {
+    public void testFromGraphicsType() {
         assertEquals(GraphicsTypes.SPICE, GraphicsTypes.fromGraphicsType(GraphicsType.SPICE));
         assertEquals(GraphicsTypes.VNC, GraphicsTypes.fromGraphicsType(GraphicsType.VNC));
     }
 
     @Test
-    public void testFromGraphicsTypes() throws Exception {
+    public void testFromGraphicsTypes() {
         assertEquals(GraphicsTypes.NONE, GraphicsTypes.fromGraphicsTypes(null));
         assertEquals(GraphicsTypes.SPICE, GraphicsTypes.fromGraphicsTypes(makeSet(GraphicsType.SPICE)));
         assertEquals(GraphicsTypes.VNC, GraphicsTypes.fromGraphicsTypes(makeSet(GraphicsType.VNC)));

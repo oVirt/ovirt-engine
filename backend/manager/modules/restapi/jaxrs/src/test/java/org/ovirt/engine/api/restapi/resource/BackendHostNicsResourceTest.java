@@ -48,7 +48,7 @@ public class BackendHostNicsResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
@@ -94,7 +94,7 @@ public class BackendHostNicsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
@@ -223,7 +223,7 @@ public class BackendHostNicsResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<HostNic> collection) throws Exception {
+    protected void verifyCollection(List<HostNic> collection) {
         assertNotNull(collection);
         assertEquals(NAMES.length + 2, collection.size());
         for (int i = 0; i < NAMES.length; i++) {
@@ -238,7 +238,7 @@ public class BackendHostNicsResourceTest
         return collection.list().getHostNics();
     }
 
-    protected void setGetVdsQueryExpectations(int times) throws Exception {
+    protected void setGetVdsQueryExpectations(int times) {
         while (times-- > 0) {
             VDS vds = new VDS();
             vds.setClusterId(GUIDS[0]);
@@ -250,7 +250,7 @@ public class BackendHostNicsResourceTest
         }
     }
 
-    protected void setGetNetworksQueryExpectations(int times) throws Exception {
+    protected void setGetNetworksQueryExpectations(int times) {
         while (times-- > 0) {
             ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
             org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();

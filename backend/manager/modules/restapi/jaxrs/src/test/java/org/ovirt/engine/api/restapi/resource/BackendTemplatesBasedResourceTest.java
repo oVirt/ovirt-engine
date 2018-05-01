@@ -98,7 +98,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         testListAllConsoleAware(false);
     }
 
-    protected void setUpAddExpectations() throws Exception {
+    protected void setUpAddExpectations() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
 
@@ -139,7 +139,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         }
     }
 
-    protected void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
+    protected void setUpGetVirtioScsiExpectations(int ... idxs) {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                     IdQueryParameters.class,
@@ -149,7 +149,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         }
     }
 
-    protected void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
+    protected void setUpGetSoundcardExpectations(int ... idxs) {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(QueryType.GetSoundDevices,
                     IdQueryParameters.class,
@@ -159,7 +159,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         }
     }
 
-    protected void setUpGetEntityExpectations(int index) throws Exception {
+    protected void setUpGetEntityExpectations(int index) {
         setUpGetEntityExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
@@ -167,7 +167,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
                 getEntity(index));
     }
 
-    protected void setUpGetGraphicsExpectations(int times) throws Exception {
+    protected void setUpGetGraphicsExpectations(int times) {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
@@ -181,7 +181,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected abstract R getRestModel(int index);
 
-    protected void setUpGetBallooningExpectations(Integer... idxs) throws Exception {
+    protected void setUpGetBallooningExpectations(Integer... idxs) {
         for (int i : idxs) {
             setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                     IdQueryParameters.class,
@@ -191,7 +191,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         }
     }
 
-    protected void setUpGetBallooningExpectations(int times) throws Exception {
+    protected void setUpGetBallooningExpectations(int times) {
         List<Integer> idxs = new ArrayList<>();
         for (int i = 0; i < times; i++) {
             idxs.add(i);

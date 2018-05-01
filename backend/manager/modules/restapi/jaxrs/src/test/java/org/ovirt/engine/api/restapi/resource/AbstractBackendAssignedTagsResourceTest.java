@@ -40,11 +40,11 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             collection.getTagResource("foo");
             fail("expected WebApplicationException");
@@ -54,7 +54,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddTag() throws Exception {
+    public void testAddTag() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(attachAction,
                                   attachParams,
@@ -79,7 +79,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddTagByName() throws Exception {
+    public void testAddTagByName() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetAllTags,
@@ -111,7 +111,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             collection.add(new Tag());
@@ -122,16 +122,16 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddTagCantDo() throws Exception {
+    public void testAddTagCantDo() {
         doTestBadAddTag(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddTagFailure() throws Exception {
+    public void testAddTagFailure() {
         doTestBadAddTag(true, false, FAILURE);
     }
 
-    private void doTestBadAddTag(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddTag(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(attachAction,
                                            attachParams,
                                            new String[] { "TagId", "EntitiesId" },
@@ -150,7 +150,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(queryType,

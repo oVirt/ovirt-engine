@@ -19,7 +19,7 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
 
     EngineSSHClient mockEngineSSHClient;
 
-    private void setupMock() throws Exception {
+    private void setupMock() {
         mockEngineSSHClient = mock(EngineSSHClient.class);
         doReturn(mockEngineSSHClient).when(getQuery()).getEngineSSHClient();
     }

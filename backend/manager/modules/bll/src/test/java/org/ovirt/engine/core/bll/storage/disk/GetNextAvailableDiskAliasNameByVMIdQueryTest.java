@@ -39,7 +39,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     }
 
     @Test
-    public void testExecuteQueryVmWithNoDisks() throws Exception {
+    public void testExecuteQueryVmWithNoDisks() {
         mockParameters();
         vm = mockVmAndReturnFromDao();
         String diskAliasName = ImagesHandler.getDefaultDiskAlias(vm.getName(), "1");
@@ -50,7 +50,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     }
 
     @Test
-    public void testExecuteQueryWithInValidVmIdOrMissingPermissions() throws Exception {
+    public void testExecuteQueryWithInValidVmIdOrMissingPermissions() {
         mockParameters();
         vm = mockVm();
 
@@ -60,7 +60,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     }
 
     @Test
-    public void testExecuteQueryVmWithMultipleDisks() throws Exception {
+    public void testExecuteQueryVmWithMultipleDisks() {
         mockParameters();
         vm = mockVmAndReturnFromDao();
         populateVmDiskMap(vm, 5);
@@ -75,7 +75,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
      * disk alias of the disk we removed
      */
     @Test
-    public void testExecuteQueryRecycling() throws Exception {
+    public void testExecuteQueryRecycling() {
         mockParameters();
         vm = mockVmAndReturnFromDao();
         populateVmDiskMap(vm, 5);
@@ -106,7 +106,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
         }
     }
 
-    private void mockParameters() throws Exception {
+    private void mockParameters() {
         when(getQueryParameters().getId()).thenReturn(vmId);
     }
 

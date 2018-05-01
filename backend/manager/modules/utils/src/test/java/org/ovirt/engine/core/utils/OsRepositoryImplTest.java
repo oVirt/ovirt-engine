@@ -40,7 +40,7 @@ public class OsRepositoryImplTest {
     public static final String CD_INTERFACE = "ide,q35/sata";
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         preferences = new MapBackedPreferences(preferences, "");
         preferences.node("/os/rhel7/id").put("value", "777");
         preferences.node("/os/rhel7/name").put("value", "RHEL 7");
@@ -90,52 +90,52 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testGetOsIds() throws Exception {
+    public void testGetOsIds() {
         assertTrue(OsRepositoryImpl.INSTANCE.getOsIds().contains(777));
     }
 
     @Test
-    public void testGetOsIdByUniqueName() throws Exception {
+    public void testGetOsIdByUniqueName() {
         assertEquals(777, OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"));
     }
 
     @Test
-    public void testGetOsNames() throws Exception {
+    public void testGetOsNames() {
         assertEquals("RHEL 7", OsRepositoryImpl.INSTANCE.getOsNames().get(777));
     }
 
     @Test
-    public void testGetOsName() throws Exception {
+    public void testGetOsName() {
         assertEquals("RHEL 7", OsRepositoryImpl.INSTANCE.getOsName(777));
     }
 
     @Test
-    public void testGetOsFamily() throws Exception {
+    public void testGetOsFamily() {
         assertEquals("linux", OsRepositoryImpl.INSTANCE.getOsFamily(777));
     }
 
     @Test
-    public void testGetLinuxOSs() throws Exception {
+    public void testGetLinuxOSs() {
         assertTrue(OsRepositoryImpl.INSTANCE.getLinuxOss().contains(777));
     }
 
     @Test
-    public void testGet64bitOss() throws Exception {
+    public void testGet64bitOss() {
         assertEquals(2, OsRepositoryImpl.INSTANCE.get64bitOss().size());
     }
 
     @Test
-    public void testGetWindowsOss() throws Exception {
+    public void testGetWindowsOss() {
         assertEquals(0, OsRepositoryImpl.INSTANCE.getWindowsOss().size());
     }
 
     @Test
-    public void testIsWindows() throws Exception {
+    public void testIsWindows() {
         assertFalse(OsRepositoryImpl.INSTANCE.isWindows(777));
     }
 
     @Test
-    public void testGetNetworkDevices() throws Exception {
+    public void testGetNetworkDevices() {
         List<String> networkDevices = OsRepositoryImpl.INSTANCE.getNetworkDevices(777, null);
         assertEquals(2, networkDevices.size());
         for (String device : NETWORK_DEVICES.split(",")) {
@@ -144,7 +144,7 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testGetDiskHotpluggableInterfaces() throws Exception {
+    public void testGetDiskHotpluggableInterfaces() {
         Set<String> diskHotpluggableInterfaces = OsRepositoryImpl.INSTANCE.getDiskHotpluggableInterfaces(777, null);
         assertEquals(2, diskHotpluggableInterfaces.size());
         for (String diskHotpluggableInterface : DISK_HOTPLUGGABLE_INTERFACES.split(",")) {
@@ -153,7 +153,7 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testGetWatchDogModels() throws Exception {
+    public void testGetWatchDogModels() {
         List<String> watchDogModels = OsRepositoryImpl.INSTANCE.getWatchDogModels(777, null);
         assertEquals(2, watchDogModels.size());
         for (String model : WATCH_DOG_MODELS.split(",")) {
@@ -162,22 +162,22 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testIsLinux() throws Exception {
+    public void testIsLinux() {
         assertTrue(OsRepositoryImpl.INSTANCE.isLinux(777));
     }
 
     @Test
-    public void testGetMinimumRam() throws Exception {
+    public void testGetMinimumRam() {
         assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
     }
 
     @Test
-    public void testGetMaximumRam() throws Exception {
+    public void testGetMaximumRam() {
         assertEquals(2048, OsRepositoryImpl.INSTANCE.getMaximumRam(777, null));
     }
 
     @Test
-    public void testDisplayTypes() throws Exception {
+    public void testDisplayTypes() {
         List<Pair<GraphicsType, DisplayType>> supportedGraphicsAndDisplays = OsRepositoryImpl.INSTANCE.getGraphicsAndDisplays().get(777).get(null);
 
         boolean isSizeCorrect = supportedGraphicsAndDisplays.size() == 2;
@@ -191,63 +191,63 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testFloppySupport() throws Exception {
+    public void testFloppySupport() {
         assertTrue(OsRepositoryImpl.INSTANCE.isFloppySupported(777, null));
     }
 
     @Test
-    public void testIsBalloonEnabled() throws Exception {
+    public void testIsBalloonEnabled() {
         assertTrue(OsRepositoryImpl.INSTANCE.isBalloonEnabled(777, null));
         assertTrue(OsRepositoryImpl.INSTANCE.getBalloonSupportMap().get(777).get(null));
     }
 
     @Test
-    public void testIsSoundDeviceEnabled() throws Exception {
+    public void testIsSoundDeviceEnabled() {
         assertTrue(OsRepositoryImpl.INSTANCE.isSoundDeviceEnabled(777, null));
         assertTrue(OsRepositoryImpl.INSTANCE.getSoundDeviceSupportMap().get(777).get(null));
     }
 
     @Test
-    public void testGetMaxPciDevices() throws Exception {
+    public void testGetMaxPciDevices() {
         assertEquals(26, OsRepositoryImpl.INSTANCE.getMaxPciDevices(777, null));
     }
 
     @Test
-    public void testGetSysprepPath() throws Exception {
+    public void testGetSysprepPath() {
         assertEquals(PATH_TO_SYSPREP, OsRepositoryImpl.INSTANCE.getSysprepPath(777, null));
     }
 
     @Test
-    public void testGetSysprepFileName() throws Exception {
+    public void testGetSysprepFileName() {
         assertEquals(SYSPREP_INF, OsRepositoryImpl.INSTANCE.getSysprepFileName(1, null));
         assertEquals(UNATTEND_XML, OsRepositoryImpl.INSTANCE.getSysprepFileName(11, null));
         assertEquals(UNATTEND_XML, OsRepositoryImpl.INSTANCE.getSysprepFileName(20, null));
     }
 
     @Test
-    public void testGetProductKey() throws Exception {
+    public void testGetProductKey() {
         assertEquals(SOME_PRODUCT_KEY, OsRepositoryImpl.INSTANCE.getProductKey(777, null));
     }
 
     @Test
-    public void testGetSoundDevice() throws Exception {
+    public void testGetSoundDevice() {
         assertEquals("ac97", OsRepositoryImpl.INSTANCE.getSoundDevice(777, null, ChipsetType.I440FX));
     }
 
     @Test
-    public void testGetSoundDeviceQ35() throws Exception {
+    public void testGetSoundDeviceQ35() {
         assertEquals("ich9", OsRepositoryImpl.INSTANCE.getSoundDevice(777, null, ChipsetType.Q35));
     }
 
     @Test
-    public void testGetCdInterface() throws Exception {
+    public void testGetCdInterface() {
         assertEquals("ide", OsRepositoryImpl.INSTANCE.getCdInterface(777, null, null));
         assertEquals("ide", OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.I440FX));
         assertEquals("sata", OsRepositoryImpl.INSTANCE.getCdInterface(777, null, ChipsetType.Q35));
     }
 
     @Test
-    public void testIsTimezoneValueInteger() throws Exception {
+    public void testIsTimezoneValueInteger() {
         assertFalse(OsRepositoryImpl.INSTANCE.isTimezoneValueInteger(777, null));
     }
 
@@ -284,12 +284,12 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testHyperVLinux() throws Exception {
+    public void testHyperVLinux() {
         assertFalse(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"), Version.v3_6));
     }
 
     @Test
-    public void testHyperVWindows() throws Exception {
+    public void testHyperVWindows() {
         assertTrue(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_7"), Version.v3_6));
     }
 

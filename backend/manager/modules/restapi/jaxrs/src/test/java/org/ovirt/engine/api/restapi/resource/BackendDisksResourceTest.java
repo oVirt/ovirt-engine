@@ -63,7 +63,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
@@ -99,7 +99,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     }
 
     @Test
-    public void testAddIdentifyStorageDomainByName() throws Exception {
+    public void testAddIdentifyStorageDomainByName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,

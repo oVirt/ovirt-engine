@@ -21,7 +21,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testRemoveNotFound() {
         setUpEntityQueryExpectations(1, 0, true);
         try {
             resource.remove();
@@ -32,7 +32,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(setUpActionExpectations(ActionType.RemoveVnicProfile,
                 VnicProfileParameters.class,
@@ -44,7 +44,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpEntityQueryExpectations(QueryType.GetVnicProfileById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -60,16 +60,16 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(2, 0, false);
 
         setUriInfo(setUpActionExpectations(ActionType.RemoveVnicProfile,
@@ -86,7 +86,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
         }
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetVnicProfileById,
                     IdQueryParameters.class,

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 public class RngDeviceMapperTest {
 
     @Test
-    public void testMapFromBackendToRest() throws Exception {
+    public void testMapFromBackendToRest() {
         VmRngDevice entity = new VmRngDevice();
         entity.setBytes(11);
         entity.setPeriod(10);
@@ -30,7 +30,7 @@ public class RngDeviceMapperTest {
     }
 
     @Test
-    public void testMapFromRestToBackend() throws Exception {
+    public void testMapFromRestToBackend() {
         RngDevice model = new RngDevice();
         model.setSource(RngSource.HWRNG);
         model.setRate(new Rate());

@@ -27,7 +27,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
     protected BackendQuotaStorageLimitsResource collection;
 
     @Test
-    public void testListGlobalLimit() throws Exception {
+    public void testListGlobalLimit() {
         Quota quota = getQuota();
         quota.setGlobalQuotaStorage(getStorageGlobalCpuLimit());
         setUpGetEntityExpectations(quota);
@@ -38,7 +38,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
     }
 
     @Test
-    public void testListNonGlobalLimit() throws Exception {
+    public void testListNonGlobalLimit() {
         Quota quota = getQuota();
         List<QuotaStorage> storageLimits = new LinkedList<>();
         QuotaStorage storageLimit1 = new QuotaStorage();
@@ -86,7 +86,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
         return quota;
     }
 
-    private void setUpGetEntityExpectations(Quota quota) throws Exception {
+    private void setUpGetEntityExpectations(Quota quota) {
         setUpGetEntityExpectations(QueryType.GetQuotaByQuotaId,
                 IdQueryParameters.class,
                 new String[] { "Id" },

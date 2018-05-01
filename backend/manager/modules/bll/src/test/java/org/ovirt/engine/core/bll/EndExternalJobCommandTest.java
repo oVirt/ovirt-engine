@@ -40,19 +40,19 @@ public class EndExternalJobCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateOkSucceeds() throws Exception {
+    public void validateOkSucceeds() {
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob());
         assertTrue(commandMock.validate());
     }
 
     @Test
-    public void validateNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() {
         when(jobDaoMock.get(jobId)).thenReturn(null);
         assertTrue(! commandMock.validate());
     }
 
     @Test
-    public void validateNonExternalJobFails() throws Exception {
+    public void validateNonExternalJobFails() {
         when(jobDaoMock.get(jobId)).thenReturn(makeNonExternalTestJob());
         assertTrue(! commandMock.validate());
     }

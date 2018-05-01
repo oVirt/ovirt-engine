@@ -12,17 +12,17 @@ public class UpdateMacPoolCommandTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFirstParameterIsNotNull() throws Exception {
+    public void testFirstParameterIsNotNull() {
         UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(null, new MacPool());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSecondParameterIsNotNull() throws Exception {
+    public void testSecondParameterIsNotNull() {
         UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(new MacPool(), null);
     }
 
     @Test
-    public void testValidateDefaultFlagIsNotChangedWhenFlagChanged() throws Exception {
+    public void testValidateDefaultFlagIsNotChangedWhenFlagChanged() {
         final MacPool macPool1 = new MacPool();
         final MacPool macPool2 = new MacPool();
         macPool2.setDefaultPool(!macPool1.isDefaultPool());
@@ -32,7 +32,7 @@ public class UpdateMacPoolCommandTest {
     }
 
     @Test
-    public void testValidateDefaultFlagIsNotChangedWhenFlagNotChanged() throws Exception {
+    public void testValidateDefaultFlagIsNotChangedWhenFlagNotChanged() {
         final MacPool macPool1 = new MacPool();
         final MacPool macPool2 = new MacPool();
         assertThat(UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(macPool1, macPool2), isValid());

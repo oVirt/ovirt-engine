@@ -65,23 +65,23 @@ public class BackendSnapshotsResourceTest
     }
 
     @Test
-    public void testAddAsyncPending() throws Exception {
+    public void testAddAsyncPending() {
         doTestAddAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
-    public void testAddAsyncInProgress() throws Exception {
+    public void testAddAsyncInProgress() {
         doTestAddAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
-    public void testAddAsyncFinished() throws Exception {
+    public void testAddAsyncFinished() {
         doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }
 
     @Test
     @Override
-    public void testList() throws Exception {
+    public void testList() {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpGetEntityExpectations(1);
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[0]);
@@ -91,7 +91,7 @@ public class BackendSnapshotsResourceTest
     }
 
     @Test
-    public void testGetWithPopulate() throws Exception {
+    public void testGetWithPopulate() {
         List<String> populates = new ArrayList<>();
         populates.add("true");
         String ovfData = "data";
@@ -128,28 +128,28 @@ public class BackendSnapshotsResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
     @Ignore
     @Override
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
     }
 
     @Test
     @Ignore
     @Override
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
     }
 
-    private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
+    private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) {
         setUriInfo(setUpBasicUriExpectations());
         String ovfData = "data";
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot();
@@ -188,7 +188,7 @@ public class BackendSnapshotsResourceTest
         assertEquals(creationStatus.value(), created.getCreationStatus());
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetAllVmSnapshotsByVmId,
                     IdQueryParameters.class,
@@ -198,7 +198,7 @@ public class BackendSnapshotsResourceTest
         }
     }
 
-    protected void setUpGetSnapshotVmConfiguration(Guid snpashotId) throws Exception {
+    protected void setUpGetSnapshotVmConfiguration(Guid snpashotId) {
         setUpEntityQueryExpectations(QueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -229,7 +229,7 @@ public class BackendSnapshotsResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<Snapshot> collection) throws Exception {
+    protected void verifyCollection(List<Snapshot> collection) {
         assertNotNull(collection);
         assertEquals(2, collection.size());
         for (int i = 0; i < 2; i++) {

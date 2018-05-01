@@ -54,7 +54,7 @@ public class BackendQuotasResourceTest
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddQuota,
                 QuotaCRUDParameters.class,
@@ -110,20 +110,20 @@ public class BackendQuotasResourceTest
     @Test
     @Ignore
     @Override
-    public void testListFailure() throws Exception {}
+    public void testListFailure() {}
 
     @Test
     @Ignore
     @Override
-    public void testListCrash() throws Exception {}
+    public void testListCrash() {}
 
     @Test
     @Ignore
     @Override
-    public void testListCrashClientLocale() throws Exception {}
+    public void testListCrashClientLocale() {}
 
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {} //queries on quotas not supported by API yet.
+    public void testQuery() {} //queries on quotas not supported by API yet.
 }

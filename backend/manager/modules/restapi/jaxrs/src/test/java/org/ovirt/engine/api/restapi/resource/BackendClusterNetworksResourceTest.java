@@ -27,7 +27,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddNetwork() throws Exception {
+    public void testAddNetwork() {
         setUpClusterExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
@@ -47,16 +47,16 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddNetworkCantDo() throws Exception {
+    public void testAddNetworkCantDo() {
         doTestBadAddNetwork(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddNetworkFailure() throws Exception {
+    public void testAddNetworkFailure() {
         doTestBadAddNetwork(true, false, FAILURE);
     }
 
-    private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddNetwork(boolean valid, boolean success, String detail) {
         setUpClusterExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
@@ -78,7 +78,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddNameSuppliedButNoId() throws Exception {
+    public void testAddNameSuppliedButNoId() {
         setUriInfo(setUpBasicUriExpectations());
         Network model = new Network();
         model.setName("orcus");
@@ -96,7 +96,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddIdSuppliedButNoName() throws Exception {
+    public void testAddIdSuppliedButNoName() {
         setUriInfo(setUpBasicUriExpectations());
         Network model = new Network();
         model.setId("11111111-1111-1111-1111-111111111111");
@@ -113,7 +113,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Test
-    public void testAddIncompleteParametersNoName() throws Exception {
+    public void testAddIncompleteParametersNoName() {
         Network model = new Network();
         model.setDescription(DESCRIPTIONS[0]);
         setUriInfo(setUpBasicUriExpectations());
@@ -126,7 +126,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Override
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                                          IdQueryParameters.class,
@@ -150,7 +150,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         return group;
     }
 
-    protected void setUpGetNetworksByDataCenterExpectations(int times, Object failure) throws Exception {
+    protected void setUpGetNetworksByDataCenterExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetAllNetworks,
                                          IdQueryParameters.class,
@@ -162,12 +162,12 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 }

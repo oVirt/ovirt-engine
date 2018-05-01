@@ -41,7 +41,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testPositiveAffinityViolationScore() throws Exception {
+    public void testPositiveAffinityViolationScore() {
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
         positive_enforcing_group.setVdsEnforcing(false);
@@ -54,7 +54,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testNegativeAffinityViolationScore() throws Exception {
+    public void testNegativeAffinityViolationScore() {
         hosts = Arrays.asList(host_negative_enforcing, host_not_in_affinity_group);
 
         negative_enforcing_group.setVdsEnforcing(false);
@@ -67,7 +67,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testNegativeAndPositiveAffinityViolationScore() throws Exception {
+    public void testNegativeAndPositiveAffinityViolationScore() {
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         positive_enforcing_group.setVdsEnforcing(false);
@@ -82,7 +82,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testNegativeAndPositiveAffinityViolationScoreWithRunningVm() throws Exception {
+    public void testNegativeAndPositiveAffinityViolationScoreWithRunningVm() {
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         positive_enforcing_group.setVdsEnforcing(false);

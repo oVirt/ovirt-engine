@@ -27,7 +27,7 @@ public class BackendGroupAssignedPermissionsResourceTest
     }
 
     @Test
-    public void testAddIncompletePermission() throws Exception {
+    public void testAddIncompletePermission() {
         Permission model = new Permission();
         model.setGroup(new Group());
         model.getGroup().setId(GUIDS[1].toString());

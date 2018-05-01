@@ -19,7 +19,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         Quota model = resource.get();
@@ -27,7 +27,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setUriInfo(setUpActionExpectations(ActionType.UpdateQuota,
                 QuotaCRUDParameters.class,
@@ -40,7 +40,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveQuota,
@@ -53,7 +53,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
 
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(QueryType.GetQuotaByQuotaId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -69,7 +69,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
         return quota;
     }
 
-    private void setUpGetEntityExpectations(int times) throws Exception {
+    private void setUpGetEntityExpectations(int times) {
         while (times-- > 0) {
             setUpGetEntityExpectations();
         }

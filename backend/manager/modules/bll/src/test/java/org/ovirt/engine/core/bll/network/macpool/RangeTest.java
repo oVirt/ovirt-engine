@@ -26,26 +26,26 @@ public class RangeTest {
     }
 
     @Test
-    public void testMacIsContainedInRange() throws Exception {
+    public void testMacIsContainedInRange() {
         assertThat(rangeOf10Macs.contains(MAC_FROM_RANGE), is(true));
     }
     @Test
-    public void testMacIsNotContainedInRange() throws Exception {
+    public void testMacIsNotContainedInRange() {
         assertThat(rangeOf10Macs.contains(MAC_OUTSIDE_OF_RANGE), is(false));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFailWhenUsingMacOutsideOfRange() throws Exception {
+    public void testFailWhenUsingMacOutsideOfRange() {
         rangeOf10Macs.use(MAC_OUTSIDE_OF_RANGE, false);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFailWhenAskingForMacOutsideOfRange() throws Exception {
+    public void testFailWhenAskingForMacOutsideOfRange() {
         rangeOf10Macs.isAllocated(MAC_OUTSIDE_OF_RANGE);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFailWhenReturningMacOutsideOfRange() throws Exception {
+    public void testFailWhenReturningMacOutsideOfRange() {
         rangeOf10Macs.freeMac(MAC_OUTSIDE_OF_RANGE);
     }
 
@@ -55,7 +55,7 @@ public class RangeTest {
     }
 
     @Test
-    public void testAssigningMacWithDisallowedDuplicates() throws Exception {
+    public void testAssigningMacWithDisallowedDuplicates() {
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, false), is(true));
         assertThat(rangeOf10Macs.getAvailableCount(), is(NUMBER_OF_MACS - 1));
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, false), is(false));
@@ -65,7 +65,7 @@ public class RangeTest {
     }
 
     @Test
-    public void testAssigningMacWithAllowedDuplicates() throws Exception {
+    public void testAssigningMacWithAllowedDuplicates() {
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, true), is(true));
         assertThat(rangeOf10Macs.getAvailableCount(), is(NUMBER_OF_MACS - 1));
         assertThat(rangeOf10Macs.containsDuplicates(), is(false));
@@ -76,7 +76,7 @@ public class RangeTest {
     }
 
     @Test
-    public void testFreeMac() throws Exception {
+    public void testFreeMac() {
         final List<Long> allocatedMacs = rangeOf10Macs.allocateMacs(NUMBER_OF_MACS);
         assertThat(allocatedMacs.size(), is(NUMBER_OF_MACS));
         assertThat(rangeOf10Macs.getAvailableCount(), is(0));
@@ -90,7 +90,7 @@ public class RangeTest {
     }
 
     @Test
-    public void testFreeMacDuplicityAllowed() throws Exception {
+    public void testFreeMacDuplicityAllowed() {
         // Allocate one mac twice.
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, true), is(true));
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(true));
@@ -109,7 +109,7 @@ public class RangeTest {
     }
 
     @Test
-    public void testAllocateMac() throws Exception {
+    public void testAllocateMac() {
         assertThat(rangeOf10Macs.allocateMacs(5).size(), is(5));
         assertThat(rangeOf10Macs.getAvailableCount(), is(5));
         assertThat(rangeOf10Macs.allocateMacs(5).size(), is(5));
@@ -118,29 +118,29 @@ public class RangeTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testAllocateMacNoEnoughMacs() throws Exception {
+    public void testAllocateMacNoEnoughMacs() {
         rangeOf10Macs.allocateMacs(NUMBER_OF_MACS + 1);
     }
 
     @Test
-    public void testRangeStartAndRangeStopAreInclusive() throws Exception {
+    public void testRangeStartAndRangeStopAreInclusive() {
         assertThat(new Range(MAC_FROM_RANGE, MAC_FROM_RANGE).getAvailableCount(), is(1));
     }
 
     @Test
-    public void testRangeCanContainOnlyIntSizeNumberOfElements() throws Exception {
+    public void testRangeCanContainOnlyIntSizeNumberOfElements() {
         LongRange longRange = MacAddressRangeUtils.clipRange(new LongRange(0, Long.MAX_VALUE));
         Range range = new Range(longRange.getMinimumLong(), longRange.getMaximumLong());
         assertThat(range.getAvailableCount(), is(Integer.MAX_VALUE));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testTooBigRange() throws Exception {
+    public void testTooBigRange() {
         new Range(0, Integer.MAX_VALUE);
     }
 
     @Test
-    public void testMaxSizeRange() throws Exception {
+    public void testMaxSizeRange() {
         new Range(0, Integer.MAX_VALUE - 1);
     }
 

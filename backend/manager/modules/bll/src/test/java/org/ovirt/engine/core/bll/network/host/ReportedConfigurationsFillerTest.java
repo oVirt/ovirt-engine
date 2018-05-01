@@ -144,13 +144,13 @@ public class ReportedConfigurationsFillerTest {
     }
 
     @Test
-    public void testFillReportedConfigurationOnBaseNic() throws Exception {
+    public void testFillReportedConfigurationOnBaseNic() {
         baseNic.setNetworkName(baseNicNetwork.getName());
         testFillReportedConfiguration(this.baseNicNetwork, baseNic, baseNicNetworkQos);
     }
 
     @Test
-    public void testFillReportedConfigurationOnVlanNic() throws Exception {
+    public void testFillReportedConfigurationOnVlanNic() {
         vlanNic.setNetworkName(vlanNetwork.getName());
         testFillReportedConfiguration(this.vlanNetwork, vlanNic, vlanNetworkQos);
     }

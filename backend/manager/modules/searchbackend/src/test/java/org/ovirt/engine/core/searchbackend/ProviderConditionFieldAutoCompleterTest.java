@@ -11,13 +11,13 @@ public class ProviderConditionFieldAutoCompleterTest {
     private IConditionFieldAutoCompleter comp =  new ProviderConditionFieldAutoCompleter();
 
     @Test
-    public void testExistentType() throws Exception {
+    public void testExistentType() {
         assertTrue(comp.validateFieldValue(ProviderConditionFieldAutoCompleter.TYPE,
                 ProviderType.OPENSTACK_NETWORK.name()));
     }
 
     @Test
-    public void testNonExistentType() throws Exception {
+    public void testNonExistentType() {
         assertFalse(comp.validateFieldValue(ProviderConditionFieldAutoCompleter.TYPE, "foo"));
     }
 

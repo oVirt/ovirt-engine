@@ -45,7 +45,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
@@ -85,7 +85,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetAllStorageServerConnections,
@@ -97,7 +97,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Override
-    protected void verifyCollection(List<StorageConnection> collection) throws Exception {
+    protected void verifyCollection(List<StorageConnection> collection) {
         assertNotNull(collection);
         assertEquals(GUIDS.length, collection.size());
     }
@@ -111,7 +111,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         Host host = new Host();
         host.setId(GUIDS[1].toString());
@@ -138,7 +138,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Test
-    public void testAddLocal() throws Exception {
+    public void testAddLocal() {
         setUriInfo(setUpBasicUriExpectations());
         Host host = new Host();
         host.setId(GUIDS[1].toString());
@@ -165,7 +165,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Test
-    public void testAddFailure() throws Exception {
+    public void testAddFailure() {
         setUriInfo(setUpBasicUriExpectations());
         Host host = new Host();
         host.setId(GUIDS[1].toString());

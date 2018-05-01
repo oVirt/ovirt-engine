@@ -15,7 +15,7 @@ public class BaseDynamicMessagesTest {
     BaseDynamicMessages testMessages;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         testMessages = new BaseDynamicMessages(null);
     }
 

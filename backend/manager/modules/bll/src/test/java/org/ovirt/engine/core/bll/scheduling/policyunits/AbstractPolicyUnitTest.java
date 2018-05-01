@@ -139,7 +139,7 @@ public class AbstractPolicyUnitTest {
     }
 
     <T extends BusinessEntity<Guid>> Map<Guid, T> loadEntities(Class<T> type, String fixtureName, Map<Guid, BusinessEntity<Guid>> cache)
-            throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, InstantiationException,
+            throws NoSuchFieldException, InvocationTargetException, InstantiationException,
             IllegalAccessException, IOException, ParseException {
         Map<Guid, T> entities = new HashMap<>();
         InputStream inputStream = getClass().getResourceAsStream("/scheduling/" + fixtureName);
@@ -171,13 +171,13 @@ public class AbstractPolicyUnitTest {
     }
 
     public Map<Guid, VDS> loadHosts(String fixtureName, Map<Guid, BusinessEntity<Guid>> cache)
-            throws NoSuchMethodException, InstantiationException, IOException, IllegalAccessException,
+            throws InstantiationException, IOException, IllegalAccessException,
             InvocationTargetException, NoSuchFieldException, ParseException {
         return loadEntities(VDS.class, fixtureName, cache);
     }
 
     public Map<Guid, VM> loadVMs(String fixtureName, Map<Guid, BusinessEntity<Guid>> cache)
-            throws NoSuchMethodException, InstantiationException, IOException, IllegalAccessException,
+            throws InstantiationException, IOException, IllegalAccessException,
             InvocationTargetException, NoSuchFieldException, ParseException {
         return loadEntities(VM.class, fixtureName, cache);
     }

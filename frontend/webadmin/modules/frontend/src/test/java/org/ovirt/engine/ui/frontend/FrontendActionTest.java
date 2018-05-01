@@ -107,7 +107,7 @@ public class FrontendActionTest {
     private Object testState = new Object();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
         CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService,
@@ -125,7 +125,7 @@ public class FrontendActionTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         // Make sure that the query start and end have not been called.
         verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, false, true));
         verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, false, false));

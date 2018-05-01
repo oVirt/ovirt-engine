@@ -49,7 +49,7 @@ public class RefreshNetworksParametersFactoryTest {
     private List<Network> networksHavingQos;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         vdsA = createVds();
         vdsB = createVds();

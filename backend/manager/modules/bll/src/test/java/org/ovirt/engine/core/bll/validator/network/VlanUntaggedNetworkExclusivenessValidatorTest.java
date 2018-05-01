@@ -28,7 +28,7 @@ public class VlanUntaggedNetworkExclusivenessValidatorTest {
     private Predicate<NetworkType> mockUntaggedNetworkPredicate;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         underTest = new VlanUntaggedNetworkExclusivenessValidator(mockUntaggedNetworkPredicate);
 
         when(mockUntaggedNetworkPredicate.test(VLAN)).thenReturn(false);

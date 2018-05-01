@@ -95,7 +95,7 @@ public class BackendVmPoolsResourceTest extends
 
 
     @Test
-    public void add() throws Exception {
+    public void add() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetClusterById,
@@ -147,7 +147,7 @@ public class BackendVmPoolsResourceTest extends
     }
 
     @Test
-    public void addWithName() throws Exception {
+    public void addWithName() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetClusterById,
@@ -232,7 +232,7 @@ public class BackendVmPoolsResourceTest extends
         assertEquals(GUIDS[2].toString(), model.getCluster().getId());
     }
 
-    private void addCommonAddExpectations() throws Exception {
+    private void addCommonAddExpectations() {
         setUpGetEntityExpectations(QueryType.GetVmDataByPoolName,
                 NameQueryParameters.class,
                 new String[] { "Name" },

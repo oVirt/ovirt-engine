@@ -157,7 +157,7 @@ public class ReflectionUtilsFindConstructorTest {
      * are passed.
      */
     @Test
-    public void positiveTestFindConstructorForNoParams() throws Exception {
+    public void positiveTestFindConstructorForNoParams() {
         findConstructorAndAssertItWasFound(parametersForEmptyCase);
     }
 
@@ -166,7 +166,7 @@ public class ReflectionUtilsFindConstructorTest {
      * is passed.
      */
     @Test
-    public void positiveTestFindConstructorForExactParam() throws Exception {
+    public void positiveTestFindConstructorForExactParam() {
         findConstructorAndAssertItWasFound(parametersForExactCase);
     }
 
@@ -175,7 +175,7 @@ public class ReflectionUtilsFindConstructorTest {
      * parameter is passed.
      */
     @Test
-    public void positiveTestFindConstructorForSubtypeOfParam() throws Exception {
+    public void positiveTestFindConstructorForSubtypeOfParam() {
         findConstructorAndAssertItWasFound(parametersForSubtypeCase);
     }
 
@@ -186,7 +186,7 @@ public class ReflectionUtilsFindConstructorTest {
      * is used for lookup.
      */
     @Test
-    public void negativeTestFindConstructorForSupertype() throws Exception {
+    public void negativeTestFindConstructorForSupertype() {
         assertNull(createAssertMessage("ctor was found anyway"),
                    ReflectionUtils.findConstructor(typeToTest, parametersForSupertypeCase));
     }
@@ -196,7 +196,7 @@ public class ReflectionUtilsFindConstructorTest {
      * arguments doesn't match anything.
      */
     @Test
-    public void negativeTestFindConstructorForMismatchingArgumentsNumber() throws Exception {
+    public void negativeTestFindConstructorForMismatchingArgumentsNumber() {
         assertNull(createAssertMessage("ctor was found anyway"),
                    ReflectionUtils.findConstructor(typeToTest,
                                                    (Class<?>[]) ArrayUtils.add(parametersForExactCase, Object.class)));

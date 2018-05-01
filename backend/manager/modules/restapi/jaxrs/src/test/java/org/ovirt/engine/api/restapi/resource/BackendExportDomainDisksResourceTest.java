@@ -113,18 +113,18 @@ public class BackendExportDomainDisksResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpQueryExpectations(query, null);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport, null);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, failure);
         setUriInfo(setUpBasicUriExpectations());
     }
 
-    protected void setUpGetStorageDomainExpectations(StorageDomainType domainType, Object failure) throws Exception {
+    protected void setUpGetStorageDomainExpectations(StorageDomainType domainType, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -133,11 +133,11 @@ public class BackendExportDomainDisksResourceTest
                                      failure);
     }
 
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, Object failure) throws Exception {
+    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, Object failure) {
         setUpGetEntityExpectations(domainType, getStoragePoolsByStorageDomainId, false, failure);
     }
 
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound, Object failure) throws Exception {
+    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound, Object failure) {
         switch (domainType) {
         case Data:
             setUpEntityQueryExpectations(QueryType.GetVmTemplate,

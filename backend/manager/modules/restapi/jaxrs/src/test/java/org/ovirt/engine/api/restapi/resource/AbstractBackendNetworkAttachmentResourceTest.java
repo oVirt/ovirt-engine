@@ -29,7 +29,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             createReourceWithBadGuid();
             fail("expected WebApplicationException");
@@ -41,7 +41,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     protected abstract void createReourceWithBadGuid();
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
         try {
@@ -53,7 +53,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
 
@@ -61,7 +61,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
 
@@ -74,7 +74,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpEntityQueryExpectations(2, 0, false);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateNetworkAttachment,
@@ -88,17 +88,17 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
 
@@ -113,7 +113,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(1, 0, false);
         setUriInfo(setUpActionExpectations(ActionType.RemoveNetworkAttachment,
             RemoveNetworkAttachmentParameters.class,
@@ -125,16 +125,16 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(1, 0, false);
 
         setUriInfo(setUpActionExpectations(ActionType.RemoveNetworkAttachment,
@@ -152,7 +152,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testRemoveNotFound() {
         setUpEntityQueryExpectations(1, 0, true);
         try {
             resource.remove();
@@ -163,7 +163,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         QueryReturnValue queryReturnValue = new QueryReturnValue();
         queryReturnValue.setSucceeded(false);
 
@@ -197,7 +197,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     protected void verifyModel(org.ovirt.engine.api.model.NetworkAttachment model) {
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetNetworkAttachmentById,
                     IdQueryParameters.class,
@@ -225,7 +225,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
         return model;
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(1, 0, false);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateNetworkAttachment,

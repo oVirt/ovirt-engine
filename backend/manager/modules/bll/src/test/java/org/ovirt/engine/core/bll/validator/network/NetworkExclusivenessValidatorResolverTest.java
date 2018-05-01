@@ -17,7 +17,7 @@ public class NetworkExclusivenessValidatorResolverTest {
     private NetworkExclusivenessValidator vlanUntaggedNetworkExclusivenessValidator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         underTest = new NetworkExclusivenessValidatorResolver(vlanUntaggedNetworkExclusivenessValidator);
     }
 

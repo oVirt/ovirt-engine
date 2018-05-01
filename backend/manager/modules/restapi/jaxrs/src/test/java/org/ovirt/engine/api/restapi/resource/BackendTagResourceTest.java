@@ -40,7 +40,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendTagResource("foo", null);
             fail("expected WebApplicationException");
@@ -50,7 +50,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
         try {
@@ -62,7 +62,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
 
@@ -70,7 +70,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
         try {
@@ -82,7 +82,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
@@ -98,12 +98,12 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testMove() throws Exception {
+    public void testMove() {
         doTestMove(getModel(0), 0);
     }
 
     @Test
-    public void testMoveNamedParent() throws Exception {
+    public void testMoveNamedParent() {
         setUpEntityQueryExpectations(QueryType.GetTagByTagName,
                                      NameQueryParameters.class,
                                      new String[] { "Name" },
@@ -117,7 +117,7 @@ public class BackendTagResourceTest
         doTestMove(model, 0);
     }
 
-    protected void doTestMove(Tag model, int index) throws Exception {
+    protected void doTestMove(Tag model, int index) {
         model.getParent().setId(NEW_PARENT_ID.toString());
         setUpActionExpectations(ActionType.MoveTag,
                                 MoveTagParameters.class,
@@ -144,16 +144,16 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
@@ -173,7 +173,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
@@ -189,7 +189,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExcpectations();
         setUriInfo(setUpActionExpectations(ActionType.RemoveTag,
                 TagsActionParametersBase.class,
@@ -201,7 +201,7 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(QueryType.GetTagByTagId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -217,16 +217,16 @@ public class BackendTagResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExcpectations();
         setUriInfo(setUpActionExpectations(ActionType.RemoveTag,
                 TagsActionParametersBase.class,
@@ -242,7 +242,7 @@ public class BackendTagResourceTest
         }
     }
 
-    private void setUpGetEntityExcpectations() throws Exception {
+    private void setUpGetEntityExcpectations() {
         setUpGetEntityExpectations(QueryType.GetTagByTagId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -250,11 +250,11 @@ public class BackendTagResourceTest
                 getEntity(0));
     }
 
-    protected void setUpGetEntityExpectations(int index) throws Exception {
+    protected void setUpGetEntityExpectations(int index) {
         setUpGetEntityExpectations(index, false);
     }
 
-    protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int index, boolean notFound) {
         setUpGetEntityExpectations(QueryType.GetTagByTagId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

@@ -28,7 +28,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setUriInfo(setUpActionExpectations(ActionType.UpdateRole,
                                            RolesOperationsParameters.class,
@@ -41,7 +41,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(ActionType.RemoveRole,
                                            RolesParameterBase.class,
@@ -53,7 +53,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(QueryType.GetRoleById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -69,16 +69,16 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(ActionType.RemoveRole,
                                            RolesParameterBase.class,
@@ -101,7 +101,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
         return role;
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         for (int i=0; i<times; i++) {
             setUpGetEntityExpectations(QueryType.GetRoleById,
                                        IdQueryParameters.class,

@@ -16,21 +16,21 @@ import org.ovirt.engine.core.compat.Guid;
 public class LabelActionParametersTest {
 
     @Test
-    public void validateLongNameFails() throws Exception {
+    public void validateLongNameFails() {
         Label label = createLabel("veryveryveryveryverylongnamewhichiswaytoolongforalabel");
 
         validateLabelNameLength(label, false);
     }
 
     @Test
-    public void validateEmptyNameFails() throws Exception {
+    public void validateEmptyNameFails() {
         Label label = createLabel("");
 
         validateLabelNameLength(label, false);
     }
 
     @Test
-    public void validateValidName() throws Exception {
+    public void validateValidName() {
         Label label = createLabel("validLabelName");
 
         validateLabelNameLength(label, true);

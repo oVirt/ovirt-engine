@@ -19,7 +19,7 @@ public abstract class AbstractBackendRoleResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendRoleResource("foo", null);
             fail("expected WebApplicationException");
@@ -29,7 +29,7 @@ public abstract class AbstractBackendRoleResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -41,18 +41,18 @@ public abstract class AbstractBackendRoleResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
 
         verifyModel(resource.get(), 0);
     }
 
-    protected void setUpGetEntityExpectations() throws Exception {
+    protected void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(false);
     }
 
-    protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(boolean notFound) {
         setUpGetEntityExpectations(QueryType.GetRoleById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

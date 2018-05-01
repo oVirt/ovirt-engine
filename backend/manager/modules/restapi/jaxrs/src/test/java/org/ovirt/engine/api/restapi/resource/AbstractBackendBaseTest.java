@@ -244,8 +244,7 @@ public abstract class AbstractBackendBaseTest {
                                                   Class<? extends QueryParametersBase> clz,
                                                   String[] names,
                                                   Object[] values,
-                                                  E entity)
-            throws Exception {
+                                                  E entity) {
         setUpGetEntityExpectations(query, clz, names, values, entity, false);
     }
 
@@ -254,8 +253,7 @@ public abstract class AbstractBackendBaseTest {
             String[] names,
             Object[] values,
             E entity,
-            boolean onceOnly)
-            throws Exception {
+            boolean onceOnly) {
         QueryReturnValue queryResult = new QueryReturnValue();
         OngoingStubbing<QueryReturnValue> stubbing =
                 when(backend.runQuery(eq(query), eqParams(clz, addSession(names), addSession(values))))
@@ -271,7 +269,7 @@ public abstract class AbstractBackendBaseTest {
 
     protected <E> void setUpGetEntityExpectations(String query,
             SearchType type,
-            E entity) throws Exception {
+            E entity) {
         QueryReturnValue queryResult = new QueryReturnValue();
         SearchParameters params = new SearchParameters(query, type);
         when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenReturn(queryResult);
@@ -321,7 +319,7 @@ public abstract class AbstractBackendBaseTest {
         }
     }
 
-    protected void setUpGetConsoleExpectations(int... idxs) throws Exception {
+    protected void setUpGetConsoleExpectations(int... idxs) {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(QueryType.GetConsoleDevices,
                     IdQueryParameters.class,
@@ -332,7 +330,7 @@ public abstract class AbstractBackendBaseTest {
         }
     }
 
-    protected void setUpGetRngDeviceExpectations(int... idxs) throws Exception {
+    protected void setUpGetRngDeviceExpectations(int... idxs) {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(QueryType.GetRngDevice,
                     IdQueryParameters.class,

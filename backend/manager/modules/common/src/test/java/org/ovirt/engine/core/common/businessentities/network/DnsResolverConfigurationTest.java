@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class DnsResolverConfigurationTest {
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         List<NameServer> nameServers =
                 Arrays.asList(new NameServer("192.168.1.1"), new NameServer("192.168.1.2"));
 

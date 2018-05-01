@@ -42,7 +42,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddVnicProfile() throws Exception {
+    public void testAddVnicProfile() {
         setUriInfo(setUpBasicUriExpectations());
         setUpNetworkQueryExpectations();
         setUpCreationExpectations(ActionType.AddVnicProfile,
@@ -68,18 +68,18 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddVnicProfileCantDo() throws Exception {
+    public void testAddVnicProfileCantDo() {
         setUpNetworkQueryExpectations();
         doTestBadAddVnicProfile(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddVnicProfileFailure() throws Exception {
+    public void testAddVnicProfileFailure() {
         setUpNetworkQueryExpectations();
         doTestBadAddVnicProfile(true, false, FAILURE);
     }
 
-    private void doTestBadAddVnicProfile(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddVnicProfile(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddVnicProfile,
                 AddVnicProfileParameters.class,
                 new String[] {},
@@ -99,7 +99,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         VnicProfile model = createIncompleteVnicProfile();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -121,7 +121,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
@@ -135,7 +135,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         setUpVnicProfilesQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -151,7 +151,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         Throwable t = new RuntimeException(FAILURE);
         setUpVnicProfilesQueryExpectations(t);
 
@@ -169,7 +169,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 

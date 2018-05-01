@@ -33,7 +33,7 @@ public class BackendHostNicLabelsResourceTest
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.LabelNic,
                 LabelNicParameters.class,
@@ -54,16 +54,16 @@ public class BackendHostNicLabelsResourceTest
     }
 
     @Test
-    public void testAddCantDo() throws Exception {
+    public void testAddCantDo() {
         doTestBadAdd(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddFailure() throws Exception {
+    public void testAddFailure() {
         doTestBadAdd(true, false, FAILURE);
     }
 
-    private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAdd(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.LabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
@@ -79,7 +79,7 @@ public class BackendHostNicLabelsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         NetworkLabel model = new NetworkLabel();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -99,11 +99,11 @@ public class BackendHostNicLabelsResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetNetworkLabelsByHostNicId,

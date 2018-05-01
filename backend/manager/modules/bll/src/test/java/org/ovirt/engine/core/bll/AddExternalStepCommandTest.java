@@ -45,36 +45,36 @@ public class AddExternalStepCommandTest extends BaseCommandTest {
     }
 
     @Before
-    public void setupMock() throws Exception {
+    public void setupMock() {
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));
     }
 
     @Test
-    public void validateOkSucceeds() throws Exception {
+    public void validateOkSucceeds() {
         assertTrue(command.validate());
     }
 
     @Test
-    public void validateEmptyDescriptionFails() throws Exception {
+    public void validateEmptyDescriptionFails() {
         command.getParameters().setDescription("");
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateBlankDescriptionFails() throws Exception {
+    public void validateBlankDescriptionFails() {
         command.getParameters().setDescription("      ");
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() {
         command.getParameters().setParentId(nonExistingJobId);
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateNonExternalJobFails() throws Exception {
+    public void validateNonExternalJobFails() {
         command.getParameters().setParentId(nonExternalJobId);
         command.getParameters().setStepId(null);
         assertTrue(! command.validate());

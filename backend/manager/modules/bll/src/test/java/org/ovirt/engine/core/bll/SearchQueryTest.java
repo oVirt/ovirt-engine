@@ -355,7 +355,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllMultiDiskImageSearch() throws Exception {
+    public void testGetAllMultiDiskImageSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Disks" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Disk);
         getQuery().executeQueryCommand();
@@ -363,7 +363,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllDiskImageSearch() throws Exception {
+    public void testGetAllDiskImageSearch() {
         // The query Should be used is : "SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY disk_name ASC ) as RowNum
         // FROM (SELECT * FROM vm_images_view WHERE ( image_guid IN (SELECT vm_images_view.image_guid FROM
         // vm_images_view ))) as T1 ) as T2"
@@ -374,7 +374,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllVMSearch() throws Exception {
+    public void testGetAllVMSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("VM" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VM);
         getQuery().executeQueryCommand();
@@ -382,7 +382,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllVMTemplatesSearch() throws Exception {
+    public void testGetAllVMTemplatesSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Template" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VmTemplate);
         getQuery().executeQueryCommand();
@@ -391,7 +391,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
 
 
     @Test
-    public void testGetAllMultiVmSearch() throws Exception {
+    public void testGetAllMultiVmSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("VMs" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VmTemplate);
         getQuery().executeQueryCommand();
@@ -399,7 +399,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllVdsSearch() throws Exception {
+    public void testGetAllVdsSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Host" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VDS);
         getQuery().executeQueryCommand();
@@ -409,7 +409,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllMultiVdsSearch() throws Exception {
+    public void testGetAllMultiVdsSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Hosts" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.VDS);
         getQuery().executeQueryCommand();
@@ -419,7 +419,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllClusterSearch() throws Exception {
+    public void testGetAllClusterSearch() {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
         // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM
         // cluster_storage_domain ))) as T1 ) as T2
@@ -430,7 +430,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllMultiClusterSearch() throws Exception {
+    public void testGetAllMultiClusterSearch() {
         // The original query should be : SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY name ASC ) as RowNum FROM
         // (SELECT * FROM clusters WHERE ( cluster_id IN (SELECT cluster_storage_domain.cluster_id FROM
         // cluster_storage_domain ))) as T1 ) as T2
@@ -441,7 +441,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllStoragePoolSearch() throws Exception {
+    public void testGetAllStoragePoolSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Datacenter" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.StoragePool);
         getQuery().executeQueryCommand();
@@ -451,7 +451,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     // TODO: Search using search text "Datacenters:" is not supported.
     @Ignore
     @Test
-    public void testGetAllMultiStoragePoolSearch() throws Exception {
+    public void testGetAllMultiStoragePoolSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Datacenters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.StoragePool);
         getQuery().executeQueryCommand();
@@ -459,7 +459,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllGlusterVolumesSearch() throws Exception {
+    public void testGetAllGlusterVolumesSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Volumes" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.GlusterVolume);
         getQuery().executeQueryCommand();
@@ -467,7 +467,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllQuotaSearch() throws Exception {
+    public void testGetAllQuotaSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Quota" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Quota);
         getQuery().executeQueryCommand();
@@ -475,7 +475,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     @Test
-    public void testGetAllNetworkSearch() throws Exception {
+    public void testGetAllNetworkSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Network" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);
         when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.Network);
         getQuery().executeQueryCommand();

@@ -31,7 +31,7 @@ public class BackendCreationResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendCreationResource("foo");
             fail("expected WebApplicationException");
@@ -54,7 +54,7 @@ public class BackendCreationResourceTest
         return uriInfo;
     }
 
-    protected void setUpGetEntityExpectations() throws Exception {
+    protected void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(QueryType.GetTasksStatusesByTasksIDs,
                                    GetTasksStatusesByTasksIDsParameters.class,
                                    new String[] {},

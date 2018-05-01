@@ -93,7 +93,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     }
 
     @Test
-    public void testDefaultRouteNetworkCannotBeExternal() throws Exception {
+    public void testDefaultRouteNetworkCannotBeExternal() {
         networkCluster.setDefaultRoute(true);
         setNetworkExternal(network, true);
 
@@ -103,7 +103,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     }
 
     @Test
-    public void testDefaultRouteNetworkCannotBeExternalWhenNotDefaultRoute() throws Exception {
+    public void testDefaultRouteNetworkCannotBeExternalWhenNotDefaultRoute() {
         networkCluster.setDefaultRoute(false);
         setNetworkExternal(network, true);
 
@@ -111,7 +111,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     }
 
     @Test
-    public void testDefaultRouteNetworkCannotBeExternalWhenNotExternalNetwork() throws Exception {
+    public void testDefaultRouteNetworkCannotBeExternalWhenNotExternalNetwork() {
         networkCluster.setDefaultRoute(true);
         setNetworkExternal(network, false);
 
@@ -163,7 +163,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     }
 
     @Test
-    public void networkBelongsToClusterDataCenterValid() throws Exception {
+    public void networkBelongsToClusterDataCenterValid() {
         cluster.setStoragePoolId(TEST_DC_ID1);
         network.setDataCenterId(TEST_DC_ID1);
 
@@ -171,7 +171,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     }
 
     @Test
-    public void networkBelongsToClusterDataCenterNotValid() throws Exception {
+    public void networkBelongsToClusterDataCenterNotValid() {
         cluster.setStoragePoolId(TEST_DC_ID1);
         network.setDataCenterId(TEST_DC_ID2);
 

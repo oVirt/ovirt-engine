@@ -48,7 +48,7 @@ public class NumaValidatorTest {
     private ArrayList<VmNumaNode> vmNumaNodes;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
         vmNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0, vdsNumaNodes), createVmNumaNode(1)));

@@ -29,12 +29,12 @@ import org.ovirt.engine.api.model.Fault;
 public class EnumValidatorTest {
 
     @Test
-    public void testValid() throws Exception {
+    public void testValid() {
         assertEquals(Thread.State.NEW, validateEnum(Thread.State.class, "NEW"));
     }
 
     @Test
-    public void testInvalid() throws Exception {
+    public void testInvalid() {
         try {
             validateEnum(Thread.State.class, "foobar");
             fail("expected WebApplicationException on invalid value");

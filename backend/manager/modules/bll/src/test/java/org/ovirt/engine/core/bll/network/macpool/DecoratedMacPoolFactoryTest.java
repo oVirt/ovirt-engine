@@ -149,7 +149,7 @@ public class DecoratedMacPoolFactoryTest {
     }
 
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         Guid underlyingPoolId = Guid.newGuid();
         MacPoolUsingRanges underlyingPool = new MacPoolUsingRanges(underlyingPoolId,
                 Collections.singletonList(new LongRange(1, 2)),

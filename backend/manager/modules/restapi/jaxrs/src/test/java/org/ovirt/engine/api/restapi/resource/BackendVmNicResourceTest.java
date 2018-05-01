@@ -64,7 +64,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
             QueryType.GetVmInterfacesByVmId,
@@ -82,7 +82,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setAllContentHeaderExpectation();
         setUpEntityQueryExpectations(1);
@@ -94,7 +94,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testGetIncludeStatistics() throws Exception {
+    public void testGetIncludeStatistics() {
         try {
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpBasicUriExpectations());
@@ -112,7 +112,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
             QueryType.GetVmInterfacesByVmId,
@@ -130,7 +130,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setAllContentHeaderExpectation();
         setUriInfo(
@@ -161,7 +161,7 @@ public class BackendVmNicResourceTest
 
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
         setGetGuestAgentQueryExpectations(1);
@@ -179,16 +179,16 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
         setGetGuestAgentQueryExpectations(1);
@@ -210,7 +210,7 @@ public class BackendVmNicResourceTest
         }
     }
 
-    protected VmNetworkInterface setUpStatisticalExpectations() throws Exception {
+    protected VmNetworkInterface setUpStatisticalExpectations() {
         VmNetworkStatistics stats = mock(VmNetworkStatistics.class);
         VmNetworkInterface entity = mock(VmNetworkInterface.class);
         when(entity.getStatistics()).thenReturn(stats);
@@ -299,7 +299,7 @@ public class BackendVmNicResourceTest
 
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmInterfacesByVmId,
@@ -311,11 +311,11 @@ public class BackendVmNicResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, getEntity(1));
     }
 
-    protected void setUpGetEntityExpectations(int times, VmNetworkInterface entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, VmNetworkInterface entity) {
         while (times-- > 0) {
             setUpGetEntityExpectations(
                 QueryType.GetVmInterfacesByVmId,
@@ -328,7 +328,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testActivateNic() throws Exception {
+    public void testActivateNic() {
         BackendVmNicResource backendVmNicResource = resource;
         setUpGetEntityExpectations(3);
         setAllContentHeaderExpectation();
@@ -351,7 +351,7 @@ public class BackendVmNicResourceTest
     }
 
     @Test
-    public void testDeactivateNic() throws Exception {
+    public void testDeactivateNic() {
         BackendVmNicResource backendVmNicResource = resource;
         setAllContentHeaderExpectation();
         setUpGetEntityExpectations(3);
@@ -367,7 +367,7 @@ public class BackendVmNicResourceTest
         verifyActionResponse(backendVmNicResource.deactivate(new Action()));
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "vms/" + VM_ID + "/nics/" + NIC_ID, false);
     }
 
@@ -378,7 +378,7 @@ public class BackendVmNicResourceTest
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
+    protected void setGetGuestAgentQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmGuestAgentInterfacesByVmId,

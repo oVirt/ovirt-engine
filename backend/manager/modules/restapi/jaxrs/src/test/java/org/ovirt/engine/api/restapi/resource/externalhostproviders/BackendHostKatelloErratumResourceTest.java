@@ -22,7 +22,7 @@ public class BackendHostKatelloErratumResourceTest extends AbstractBackendSubRes
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -34,7 +34,7 @@ public class BackendHostKatelloErratumResourceTest extends AbstractBackendSubRes
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
         verifyModel(resource.get(), 0);
@@ -55,7 +55,7 @@ public class BackendHostKatelloErratumResourceTest extends AbstractBackendSubRes
         return erratum;
     }
 
-    private void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    private void setUpGetEntityExpectations(boolean notFound) {
         setUpGetEntityExpectations(
                 QueryType.GetErratumByIdForHost,
                 HostErratumQueryParameters.class,

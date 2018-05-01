@@ -37,7 +37,7 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
 
     @Test
     @Override
-    public void testList() throws Exception {
+    public void testList() {
         int numOfEntitiesInList = 2;
         setUpGetEntityExpectations(QueryType.GetStorageServerConnectionExtensionsByHostId,
                 IdQueryParameters.class,
@@ -54,7 +54,7 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         StorageServerConnectionExtension entity =
                 StorageConnectionExtensionResourceTestHelper.getEntity(extensionID, hostID, pass, user, iqn);
 
@@ -82,25 +82,25 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
     @Ignore
     @Override
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
     }
 
     @Test
     @Ignore
     @Override
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
     }
 
     public List<StorageServerConnectionExtension> getEntityList(int numOfEntities) {

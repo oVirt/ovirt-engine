@@ -70,7 +70,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
@@ -101,7 +101,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     }
 
     @Test
-    public void testAddUnregistered() throws Exception {
+    public void testAddUnregistered() {
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED));
         setUpHttpHeaderExpectations("Expect", "201-created");
         StoragePool storagePool = new StoragePool();
@@ -141,7 +141,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     }
 
     @Test
-    public void testAddIdentifyStorageDomainByName() throws Exception {
+    public void testAddIdentifyStorageDomainByName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
@@ -176,7 +176,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     @Override
     @Test
     @Ignore
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
@@ -223,21 +223,21 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     @Test
     @Override
     @Ignore
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
 
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
 
     }
 
     @Test
     @Override
     @Ignore
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
 
     }
 

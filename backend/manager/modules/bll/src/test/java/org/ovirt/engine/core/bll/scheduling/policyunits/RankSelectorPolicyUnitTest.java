@@ -19,7 +19,7 @@ public class RankSelectorPolicyUnitTest {
     private List<Guid> hosts;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         unit1 = Guid.newGuid();
         unit2 = Guid.newGuid();
 

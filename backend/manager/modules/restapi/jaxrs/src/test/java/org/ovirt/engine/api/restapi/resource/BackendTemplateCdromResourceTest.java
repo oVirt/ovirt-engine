@@ -41,7 +41,7 @@ public class BackendTemplateCdromResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
         try {
@@ -53,7 +53,7 @@ public class BackendTemplateCdromResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getTemplate());
 
@@ -69,7 +69,7 @@ public class BackendTemplateCdromResourceTest
         return template;
     }
 
-    private void setUpEntityQueryExpectations(VmTemplate result) throws Exception {
+    private void setUpEntityQueryExpectations(VmTemplate result) {
         setUpEntityQueryExpectations(
             QueryType.GetVmTemplate,
             GetVmTemplateParameters.class,

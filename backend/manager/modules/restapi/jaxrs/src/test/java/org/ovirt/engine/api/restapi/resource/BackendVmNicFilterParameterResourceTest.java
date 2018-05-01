@@ -55,7 +55,7 @@ public class BackendVmNicFilterParameterResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
             QueryType.GetVmInterfaceFilterParameterById,
@@ -73,7 +73,7 @@ public class BackendVmNicFilterParameterResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
 
@@ -82,7 +82,7 @@ public class BackendVmNicFilterParameterResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
             QueryType.GetVmInterfaceFilterParameterById,
@@ -100,7 +100,7 @@ public class BackendVmNicFilterParameterResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -117,7 +117,7 @@ public class BackendVmNicFilterParameterResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.RemoveVmNicFilterParameter,
@@ -132,16 +132,16 @@ public class BackendVmNicFilterParameterResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUriInfo(
                 setUpActionExpectations(
                         ActionType.RemoveVmNicFilterParameter,
@@ -184,7 +184,7 @@ public class BackendVmNicFilterParameterResourceTest
 
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmInterfaceFilterParameterById,
@@ -196,11 +196,11 @@ public class BackendVmNicFilterParameterResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, getEntity(DEFAULT_INDEX));
     }
 
-    protected void setUpGetEntityExpectations(int times, VmNicFilterParameter entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, VmNicFilterParameter entity) {
         while (times-- > 0) {
             setUpGetEntityExpectations(
                 QueryType.GetVmInterfaceFilterParameterById,

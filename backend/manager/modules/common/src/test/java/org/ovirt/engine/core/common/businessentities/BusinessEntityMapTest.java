@@ -14,14 +14,14 @@ import org.ovirt.engine.core.compat.Guid;
 public class BusinessEntityMapTest {
 
     @Test
-    public void testDontFailWithNullValueEntitiesList() throws Exception {
+    public void testDontFailWithNullValueEntitiesList() {
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(null);
         assertThat(map.get("anyString"), nullValue());
         assertThat(map.get(Guid.newGuid()), nullValue());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCreatingBusinessEntityMapWithDuplicatesAmongIds() throws Exception {
+    public void testCreatingBusinessEntityMapWithDuplicatesAmongIds() {
         Guid itemId = Guid.newGuid();
         TestItem first = new TestItem(itemId, "name");
         TestItem second = new TestItem(itemId, "different name");
@@ -29,21 +29,21 @@ public class BusinessEntityMapTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCreatingBusinessEntityMapWithDuplicatesAmongName() throws Exception {
+    public void testCreatingBusinessEntityMapWithDuplicatesAmongName() {
         TestItem first = new TestItem(Guid.newGuid(), "name");
         TestItem second = new TestItem(Guid.newGuid(), "name");
         new BusinessEntityMap<>(Arrays.asList(first, second));
     }
 
     @Test
-    public void testCreatingBusinessEntityMapWithNullDuplicatesOnly() throws Exception {
+    public void testCreatingBusinessEntityMapWithNullDuplicatesOnly() {
         TestItem first = new TestItem(null, null);
         TestItem second = new TestItem(null, null);
         new BusinessEntityMap<>(Arrays.asList(first, second));
     }
 
     @Test
-    public void testGetByNameReturnsItemOfThatName() throws Exception {
+    public void testGetByNameReturnsItemOfThatName() {
         String itemName = "name";
         TestItem item = new TestItem(Guid.newGuid(), itemName);
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(item));
@@ -52,7 +52,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testGetByIdReturnsItemOfThatId() throws Exception {
+    public void testGetByIdReturnsItemOfThatId() {
         Guid itemId = Guid.newGuid();
         TestItem testItem = new TestItem(itemId, null);
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(testItem));
@@ -61,7 +61,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testGetByNameReturnsNullIfNotExist() throws Exception {
+    public void testGetByNameReturnsNullIfNotExist() {
         TestItem testItem = new TestItem(Guid.newGuid(), "name");
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(testItem));
 
@@ -69,7 +69,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testGetByIdReturnsNullIfNotExist() throws Exception {
+    public void testGetByIdReturnsNullIfNotExist() {
         TestItem testItem = new TestItem(Guid.newGuid(), null);
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(Collections.singletonList(testItem));
 
@@ -77,7 +77,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testContainsKeyReturnsTrueForExistingId() throws Exception {
+    public void testContainsKeyReturnsTrueForExistingId() {
         Guid itemId = Guid.newGuid();
         List<TestItem> testItems = Collections.singletonList(new TestItem(itemId, null));
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(testItems);
@@ -85,14 +85,14 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testContainsKeyReturnsFalseForNotExistingId() throws Exception {
+    public void testContainsKeyReturnsFalseForNotExistingId() {
         List<TestItem> testItems = Collections.singletonList(new TestItem(Guid.newGuid(), null));
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(testItems);
         assertThat(map.containsKey(Guid.newGuid()), is(false));
     }
 
     @Test
-    public void testContainsKeyReturnsTrueForExistingName() throws Exception {
+    public void testContainsKeyReturnsTrueForExistingName() {
         String name = "name";
         List<TestItem> testItems = Collections.singletonList(new TestItem(null, name));
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(testItems);
@@ -100,14 +100,14 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testContainsKeyReturnsFalseForNotExistingName() throws Exception {
+    public void testContainsKeyReturnsFalseForNotExistingName() {
         List<TestItem> testItems = Collections.singletonList(new TestItem(null, "name"));
         BusinessEntityMap<TestItem> map = new BusinessEntityMap<>(testItems);
         assertThat(map.containsKey("different name"), is(false));
     }
 
     @Test
-    public void testGetByIdOrNameWhenIdIsSpecified() throws Exception {
+    public void testGetByIdOrNameWhenIdIsSpecified() {
         Guid itemId = Guid.newGuid();
         TestItem testItem = new TestItem(itemId, "name");
 
@@ -117,7 +117,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testGetByIdOrNameWhenIdIsNotSpecified() throws Exception {
+    public void testGetByIdOrNameWhenIdIsNotSpecified() {
         TestItem testItem = new TestItem(Guid.newGuid(), "name");
 
         List<TestItem> testItems = Collections.singletonList(testItem);
@@ -126,7 +126,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testGetByIdOrNameWhenItemIsNotIdentified() throws Exception {
+    public void testGetByIdOrNameWhenItemIsNotIdentified() {
         TestItem testItem = new TestItem(Guid.newGuid(), "name");
 
         List<TestItem> testItems = Collections.singletonList(testItem);
@@ -135,7 +135,7 @@ public class BusinessEntityMapTest {
     }
 
     @Test
-    public void testGetByIdOrNameWhenItemIsNotIdentified2() throws Exception {
+    public void testGetByIdOrNameWhenItemIsNotIdentified2() {
         TestItem testItem = new TestItem(Guid.newGuid(), "name");
 
         List<TestItem> testItems = Collections.singletonList(testItem);

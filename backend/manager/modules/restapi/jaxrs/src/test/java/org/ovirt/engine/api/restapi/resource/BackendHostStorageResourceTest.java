@@ -32,7 +32,7 @@ public class BackendHostStorageResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
@@ -49,7 +49,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         StorageResource subresource = collection.getStorageResource(GUIDS[SINGLE_STORAGE_IDX].toString());
 
         setUriInfo(setUpBasicUriExpectations());
@@ -59,7 +59,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetDeviceList,
@@ -96,7 +96,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<HostStorage> collection) throws Exception {
+    protected void verifyCollection(List<HostStorage> collection) {
         assertNotNull(collection);
         assertEquals(NAMES.length, collection.size());
         for (int i = 0; i < NAMES.length; i++) {

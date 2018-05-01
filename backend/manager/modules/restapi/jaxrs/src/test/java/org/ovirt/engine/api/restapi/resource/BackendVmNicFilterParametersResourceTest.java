@@ -50,20 +50,20 @@ public class BackendVmNicFilterParametersResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
@@ -123,7 +123,7 @@ public class BackendVmNicFilterParametersResourceTest
     }
 
     @Test
-    public void testAddParameter() throws Exception {
+    public void testAddParameter() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
                 ActionType.AddVmNicFilterParameter,
@@ -149,16 +149,16 @@ public class BackendVmNicFilterParametersResourceTest
 
 
     @Test
-    public void testAddNicCantDo() throws Exception {
+    public void testAddNicCantDo() {
         doTestBadAddNic(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddNicFailure() throws Exception {
+    public void testAddNicFailure() {
         doTestBadAddNic(true, false, FAILURE);
     }
 
-    private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddNic(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.AddVmNicFilterParameter,
@@ -180,7 +180,7 @@ public class BackendVmNicFilterParametersResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         NetworkFilterParameter model = new NetworkFilterParameter();
 
         setUriInfo(setUpBasicUriExpectations());
@@ -193,7 +193,7 @@ public class BackendVmNicFilterParametersResourceTest
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             collection.getParameterResource("foo");
             fail("expected WebApplicationException");

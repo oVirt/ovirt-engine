@@ -27,7 +27,7 @@ public class VmWatchdogValidatorTest {
     private static final Set<VmWatchdogType> WATCHDOG_MODELS = Collections.singleton(VmWatchdogType.i6300esb);
 
     @Test
-    public void i6300esbVmWatchdogTypeWhenIsCompatibleWithOs() throws Exception {
+    public void i6300esbVmWatchdogTypeWhenIsCompatibleWithOs() {
         isModelCompatibleWithOsTest(isValid(), VmWatchdogType.i6300esb);
     }
 

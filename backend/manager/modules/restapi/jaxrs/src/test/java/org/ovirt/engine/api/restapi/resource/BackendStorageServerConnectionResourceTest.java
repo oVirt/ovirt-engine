@@ -49,14 +49,14 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         verifyModel(resource.get(), 3);
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNotExistingEntityExpectations();
         try {
@@ -68,12 +68,12 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         update(true, true, 2);
     }
 
     @Test
-    public void testUpdateNotExistingConnection() throws Exception {
+    public void testUpdateNotExistingConnection() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNotExistingEntityExpectations();
         try {
@@ -87,7 +87,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         try {
             update(false, false, 1);
         } catch (WebApplicationException e) {
@@ -97,7 +97,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         try {
             update(true, false, 1);
         } catch (WebApplicationException e) {
@@ -107,7 +107,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         Host host = new Host();
         host.setId(GUIDS[1].toString());
@@ -133,7 +133,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testRemoveNotExisting() throws Exception {
+    public void testRemoveNotExisting() {
         setUpGetNotExistingEntityExpectations();
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(
@@ -152,7 +152,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     @Test
-    public void testRemoveValidateFail() throws Exception {
+    public void testRemoveValidateFail() {
         setUpGetEntityExpectations();
         Host host = new Host();
         host.setId(GUIDS[1].toString());
@@ -182,7 +182,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         }
     }
 
-    protected void update(boolean valid, boolean executeCommandResult, int getConnectionExecTimes) throws Exception {
+    protected void update(boolean valid, boolean executeCommandResult, int getConnectionExecTimes) {
         // the below method is called several times because
         // the mocked behavior must be recorded twice
         // since the getConnectionById query is executed
@@ -202,7 +202,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         verifyModel(resource.update(getModel(3)), 3);
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations() {
         setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
@@ -210,7 +210,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
                 getEntity(3));
     }
 
-    private void setUpGetNotExistingEntityExpectations() throws Exception {
+    private void setUpGetNotExistingEntityExpectations() {
         setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },

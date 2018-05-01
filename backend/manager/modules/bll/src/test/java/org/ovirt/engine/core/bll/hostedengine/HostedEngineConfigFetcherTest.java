@@ -70,7 +70,7 @@ public class HostedEngineConfigFetcherTest {
     private HostedEngineConfigFetcher configFetcher;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(hostedEngineHelperInstance.get()).thenReturn(hostedEngineHelper);
         when(hostedEngineHelper.getStorageDomainId()).thenReturn(DOMAIN_ID);
         when(hostedEngineHelper.getStoragePoolId()).thenReturn(POOL_ID);

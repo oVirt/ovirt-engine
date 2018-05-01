@@ -46,11 +46,11 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testSubResourceLocator() throws Exception {
+    public void testSubResourceLocator() {
         String id = UUID.nameUUIDFromBytes(STATISTICS[1].getBytes()).toString();
         assertTrue(collection.getStatisticResource(id) instanceof StatisticResource);
     }
@@ -114,7 +114,7 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
     }
 
     @Override
-    protected void verifyCollection(List<Statistic> collection) throws Exception {
+    protected void verifyCollection(List<Statistic> collection) {
         assertNotNull(collection);
         assertEquals(STATISTICS.length, collection.size());
         for (int i = 0; i < STATISTICS.length; i++) {

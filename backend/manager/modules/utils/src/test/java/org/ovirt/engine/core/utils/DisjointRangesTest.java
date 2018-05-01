@@ -48,7 +48,7 @@ public class DisjointRangesTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         Collections.shuffle(inputRanges, RandomUtils.instance());
         doTest(inputRanges);
     }

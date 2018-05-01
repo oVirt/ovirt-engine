@@ -46,7 +46,7 @@ public class DefaultManagementNetworkFinderImplTest {
     }
 
     @Test
-    public void testFindDefaultManagementNetworkDefault() throws Exception {
+    public void testFindDefaultManagementNetworkDefault() {
         when(mockManagementNetworkUtil.getDefaultManagementNetworkName()).thenReturn(DEFAULT_ENGINE_NETWORK_NAME);
         when(mockNetworkDao.getByNameAndDataCenter(DEFAULT_ENGINE_NETWORK_NAME, TEST_DC_ID)).thenReturn(mockDefaultEngineNetwork);
 
@@ -56,7 +56,7 @@ public class DefaultManagementNetworkFinderImplTest {
     }
 
     @Test
-    public void testFindDefaultManagementNetworkNonDefault() throws Exception {
+    public void testFindDefaultManagementNetworkNonDefault() {
         when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Arrays.asList(mockNetwork, mockNetwork));
         when(mockNetworkDao.getManagementNetworks(TEST_DC_ID))
                 .thenReturn(Collections.singletonList(mockNetwork));
@@ -67,7 +67,7 @@ public class DefaultManagementNetworkFinderImplTest {
     }
 
     @Test
-    public void testFindDefaultManagementNetworkMultipleNonDefault() throws Exception {
+    public void testFindDefaultManagementNetworkMultipleNonDefault() {
         when(mockNetworkDao.getAllForDataCenter(TEST_DC_ID)).thenReturn(Arrays.asList(mockNetwork, mockNetwork));
         when(mockNetworkDao.getManagementNetworks(TEST_DC_ID))
                 .thenReturn(Arrays.asList(mockNetwork, mockDefaultEngineNetwork));
@@ -78,7 +78,7 @@ public class DefaultManagementNetworkFinderImplTest {
     }
 
     @Test
-    public void testFindDefaultManagementNetworkNotFound() throws Exception {
+    public void testFindDefaultManagementNetworkNotFound() {
 
         final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);
 

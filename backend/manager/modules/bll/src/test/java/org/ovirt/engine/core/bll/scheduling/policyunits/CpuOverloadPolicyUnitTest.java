@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class CpuOverloadPolicyUnitTest {
     @Test
-    public void testGetHighUtilizationForAllCores() throws Exception {
+    public void testGetHighUtilizationForAllCores() {
         CpuOverloadPolicyUnit policyUnit = new CpuOverloadPolicyUnit(null, null);
 
         assertEquals(90, policyUnit.getHighUtilizationForAllCores(90, 1));

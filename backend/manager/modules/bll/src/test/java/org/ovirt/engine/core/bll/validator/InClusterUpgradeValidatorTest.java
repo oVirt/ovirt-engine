@@ -7,7 +7,6 @@ import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
 import static org.ovirt.engine.core.common.businessentities.MigrationSupport.PINNED_TO_HOST;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -45,7 +44,7 @@ public class InClusterUpgradeValidatorTest {
     InClusterUpgradeValidator validator = new InClusterUpgradeValidator();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         invalidVM = newVM();
         validVM = newVM();
         oldHost = newHost("RHEV Hypervisor - 6.1 - 1.el6");
@@ -130,7 +129,7 @@ public class InClusterUpgradeValidatorTest {
     }
 
     @Test
-    public void shouldCreateNiceValidationResult() throws IOException {
+    public void shouldCreateNiceValidationResult() {
         invalidVM.setCpuPinning("i am pinned");
         invalidVM.setDedicatedVmForVdsList(Guid.newGuid());
         invalidVM.setMigrationSupport(PINNED_TO_HOST);

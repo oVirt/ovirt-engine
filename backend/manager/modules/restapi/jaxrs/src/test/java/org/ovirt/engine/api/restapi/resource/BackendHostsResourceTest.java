@@ -67,7 +67,7 @@ public class BackendHostsResourceTest
     }
 
     @Test
-    public void testAddHost() throws Exception {
+    public void testAddHost() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetClusterByName,
@@ -98,7 +98,7 @@ public class BackendHostsResourceTest
     }
 
     @Test
-    public void testAddHostClusterByName() throws Exception {
+    public void testAddHostClusterByName() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetClusterByName,
@@ -131,7 +131,7 @@ public class BackendHostsResourceTest
     }
 
     @Test
-    public void testAddHostClusterById() throws Exception {
+    public void testAddHostClusterById() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddVds,
                                   AddVdsActionParameters.class,
@@ -157,7 +157,7 @@ public class BackendHostsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         Host model = new Host();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
@@ -170,16 +170,16 @@ public class BackendHostsResourceTest
     }
 
     @Test
-    public void testAddHostCantDo() throws Exception {
+    public void testAddHostCantDo() {
         doTestBadAddHost(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddHostFailure() throws Exception {
+    public void testAddHostFailure() {
         doTestBadAddHost(true, false, FAILURE);
     }
 
-    private void doTestBadAddHost(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddHost(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },

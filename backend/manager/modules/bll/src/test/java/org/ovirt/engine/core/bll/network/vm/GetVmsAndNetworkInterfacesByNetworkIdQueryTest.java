@@ -66,12 +66,12 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     @Test
-    public void onlyVmsThatAreRunning() throws Exception {
+    public void onlyVmsThatAreRunning() {
         expectAndTestForVmsThatAreInAState(true, VMStatus.Up, VMStatus.Down);
     }
 
     @Test
-    public void onlyVmsThatAreNotRunning() throws Exception {
+    public void onlyVmsThatAreNotRunning() {
         expectAndTestForVmsThatAreInAState(false, VMStatus.Down, VMStatus.Up);
     }
 

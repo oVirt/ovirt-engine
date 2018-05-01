@@ -121,7 +121,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
 
     @Test
-    public void validateSucceeds() throws Exception {
+    public void validateSucceeds() {
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
@@ -132,7 +132,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsWhenGlusterHostHasVolumes() throws Exception {
+    public void validateFailsWhenGlusterHostHasVolumes() {
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
@@ -145,7 +145,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
+    public void validateFailsWhenGlusterMultipleHostHasVolumesWithForce() {
         command.getParameters().setForceAction(true);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockHasMultipleClusters(true);
@@ -157,7 +157,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsWithForceOption() throws Exception {
+    public void validateSucceedsWithForceOption() {
         command.getParameters().setForceAction(true);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -169,7 +169,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsWhenVMsPinnedToHost() throws Exception {
+    public void validateFailsWhenVMsPinnedToHost() {
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
 

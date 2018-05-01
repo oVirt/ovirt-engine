@@ -99,7 +99,7 @@ public class FrontendTest {
     ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback> callbackMultipleQueries;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
         CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService,
@@ -119,7 +119,7 @@ public class FrontendTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         // Make sure that the query start has been called at least once.
         // Some of the tests might call it more than once.
         // Make sure that the action start and end have not been called.

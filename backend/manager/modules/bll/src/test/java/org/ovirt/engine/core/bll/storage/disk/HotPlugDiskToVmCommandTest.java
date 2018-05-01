@@ -111,19 +111,19 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailedVMNotFound() throws Exception {
+    public void validateFailedVMNotFound() {
         mockNullVm();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
-    public void validateFailedVMHasNotDisk() throws Exception {
+    public void validateFailedVMHasNotDisk() {
         mockVmStatusUp();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
-    public void validateFailedVirtIODisk() throws Exception {
+    public void validateFailedVirtIODisk() {
         mockVmStatusUp();
         mockInterfaceList();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
@@ -132,7 +132,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailedWrongPlugStatus() throws Exception {
+    public void validateFailedWrongPlugStatus() {
         mockVmStatusUp();
         mockInterfaceList();
         createDiskWrongPlug(true);

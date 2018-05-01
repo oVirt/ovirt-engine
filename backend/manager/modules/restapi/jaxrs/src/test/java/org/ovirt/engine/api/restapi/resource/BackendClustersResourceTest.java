@@ -34,7 +34,7 @@ public class BackendClustersResourceTest extends
 
 
     @Test
-    public void testAddClusterFallbackVersion() throws Exception {
+    public void testAddClusterFallbackVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
@@ -71,7 +71,7 @@ public class BackendClustersResourceTest extends
     }
 
     @Test
-    public void testAddClusterSpecificVersion() throws Exception {
+    public void testAddClusterSpecificVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
@@ -111,17 +111,16 @@ public class BackendClustersResourceTest extends
     }
 
     @Test
-    public void testAddClusterCantDo() throws Exception {
+    public void testAddClusterCantDo() {
         doTestBadAddCluster(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddClusterFailure() throws Exception {
+    public void testAddClusterFailure() {
         doTestBadAddCluster(true, false, FAILURE);
     }
 
-    private void doTestBadAddCluster(boolean valid, boolean success, String detail)
-            throws Exception {
+    private void doTestBadAddCluster(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -146,7 +145,7 @@ public class BackendClustersResourceTest extends
     }
 
     @Test
-    public void testAddClusterNamedDataCenter() throws Exception {
+    public void testAddClusterNamedDataCenter() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetStoragePoolByDatacenterName,
@@ -184,17 +183,16 @@ public class BackendClustersResourceTest extends
     }
 
     @Test
-    public void testAddClusterCantDoNamedDataCenter() throws Exception {
+    public void testAddClusterCantDoNamedDataCenter() {
         doTestBadAddClusterNamedDataCenter(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddClusterFailureNamedDataCenter() throws Exception {
+    public void testAddClusterFailureNamedDataCenter() {
         doTestBadAddClusterNamedDataCenter(true, false, FAILURE);
     }
 
-    private void doTestBadAddClusterNamedDataCenter(boolean valid, boolean success, String detail)
-            throws Exception {
+    private void doTestBadAddClusterNamedDataCenter(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(QueryType.GetStoragePoolByDatacenterName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -219,7 +217,7 @@ public class BackendClustersResourceTest extends
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         org.ovirt.engine.api.model.Cluster model = new org.ovirt.engine.api.model.Cluster();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());

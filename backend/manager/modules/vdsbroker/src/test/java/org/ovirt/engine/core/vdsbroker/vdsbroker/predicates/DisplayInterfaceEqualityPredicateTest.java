@@ -24,14 +24,14 @@ public class DisplayInterfaceEqualityPredicateTest {
     private DisplayInterfaceEqualityPredicate underTest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(mockIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         when(mockIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
         underTest = new DisplayInterfaceEqualityPredicate(mockIface);
     }
 
     @Test
-    public void testEvalPositive() throws Exception {
+    public void testEvalPositive() {
         when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
@@ -39,7 +39,7 @@ public class DisplayInterfaceEqualityPredicateTest {
     }
 
     @Test
-    public void testEvalDifferentName() throws Exception {
+    public void testEvalDifferentName() {
         when(mockOtherIface.getName()).thenReturn("not" + TEST_INTERFACE_NAME);
         when(mockOtherIface.getIpv4Address()).thenReturn(TEST_INTERFACE_ADDRESS);
 
@@ -47,7 +47,7 @@ public class DisplayInterfaceEqualityPredicateTest {
     }
 
     @Test
-    public void testEvalDifferentAddress() throws Exception {
+    public void testEvalDifferentAddress() {
         when(mockOtherIface.getName()).thenReturn(TEST_INTERFACE_NAME);
         when(mockOtherIface.getIpv4Address()).thenReturn("not" + TEST_INTERFACE_ADDRESS);
 

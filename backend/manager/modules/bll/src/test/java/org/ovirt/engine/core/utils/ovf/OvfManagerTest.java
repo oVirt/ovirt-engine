@@ -104,7 +104,7 @@ public class OvfManagerTest {
     private ImagesHandler imagesHandler;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final Map<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
@@ -290,7 +290,7 @@ public class OvfManagerTest {
     //       different obviously given the time passed between the two exports.
     //       for now the export date will just be removed but in the future it's better to inject the date to the
     //       writer.
-    private String deleteExportDateValueFromXml(String xml) throws Exception{
+    private String deleteExportDateValueFromXml(String xml) {
         return xml.replaceFirst("<ExportDate>[\\s\\S]*?<\\/ExportDate>", "");
     }
 

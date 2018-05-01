@@ -33,7 +33,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
     }
 
     @Test
-    public void testAddJob() throws Exception {
+    public void testAddJob() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddExternalJob,
                                   AddExternalJobParameters.class,

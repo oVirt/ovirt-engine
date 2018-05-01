@@ -78,7 +78,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(Guid)} .
      */
     @Test
-    public void testIsManagementNetworkInAClusterPositive() throws Exception {
+    public void testIsManagementNetworkInAClusterPositive() {
         testIsManagementNetworkInAClusterCommon(true);
     }
 
@@ -86,7 +86,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(Guid)} .
      */
     @Test
-    public void testIsManagementNetworkInAClusterNegative() throws Exception {
+    public void testIsManagementNetworkInAClusterNegative() {
         testIsManagementNetworkInAClusterCommon(false);
     }
 
@@ -105,7 +105,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(Guid, Guid)} .
      */
     @Test
-    public void testIsManagementNetworkInGivenClusterPositive() throws Exception {
+    public void testIsManagementNetworkInGivenClusterPositive() {
         testIsManagementNetworkInGivenClusterCommon(true);
     }
 
@@ -113,7 +113,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(Guid, Guid)} .
      */
     @Test
-    public void testIsManagementNetworkInGivenClusterNegative() throws Exception {
+    public void testIsManagementNetworkInGivenClusterNegative() {
         testIsManagementNetworkInGivenClusterCommon(false);
     }
 
@@ -130,7 +130,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(String, Guid)} .
      */
     @Test
-    public void testIsManagementNetworkNameInGivenClusterPositive() throws Exception {
+    public void testIsManagementNetworkNameInGivenClusterPositive() {
         testIsManagementNetworkNameInGivenClusterCommon(TEST_NETWORK_NAME, TEST_CLUSTER_ID, true);
     }
 
@@ -138,7 +138,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(String, Guid)} .
      */
     @Test
-    public void testIsManagementNetworkNameInGivenClusterNegative() throws Exception {
+    public void testIsManagementNetworkNameInGivenClusterNegative() {
         testIsManagementNetworkNameInGivenClusterCommon("not" + TEST_NETWORK_NAME, TEST_CLUSTER_ID, false);
     }
 
@@ -146,7 +146,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(String, Guid)} .
      */
     @Test
-    public void testIsManagementNetworkNameInGivenClusterNull() throws Exception {
+    public void testIsManagementNetworkNameInGivenClusterNull() {
         testIsManagementNetworkNameInGivenClusterCommon(TEST_NETWORK_NAME, null, false);
     }
 
@@ -154,7 +154,7 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#isManagementNetwork(String, Guid)} .
      */
     @Test
-    public void testIsManagementNetworkNameNullInGivenCluster() throws Exception {
+    public void testIsManagementNetworkNameNullInGivenCluster() {
         testIsManagementNetworkNameInGivenClusterCommon(null, TEST_CLUSTER_ID, false);
     }
 
@@ -175,12 +175,12 @@ public class ManagementNetworkUtilImplTest {
      * Test method for {@link ManagementNetworkUtilImpl#getDefaultManagementNetworkName()}.
      */
     @Test
-    public void testGetDefaultManagementNetworkName() throws Exception {
+    public void testGetDefaultManagementNetworkName() {
         assertEquals(TEST_NETWORK_NAME, underTest.getDefaultManagementNetworkName());
     }
 
     @Test
-    public void testGetManagementNetworkWhenInstancesDoesNotContainOne() throws Exception {
+    public void testGetManagementNetworkWhenInstancesDoesNotContainOne() {
         List<Network> networks = Arrays.asList(createNetwork(false, "a"), createNetwork(false, "b"));
         Guid clusterId = Guid.newGuid();
 
@@ -190,7 +190,7 @@ public class ManagementNetworkUtilImplTest {
     }
 
     @Test
-    public void testGetManagementNetworkWhenInstancesContainMultipleOnes() throws Exception {
+    public void testGetManagementNetworkWhenInstancesContainMultipleOnes() {
         List<Network> networks = Arrays.asList(createNetwork(true, "a"), createNetwork(true, "b"));
 
         Guid clusterId = Guid.newGuid();
@@ -200,7 +200,7 @@ public class ManagementNetworkUtilImplTest {
     }
 
     @Test
-    public void testGetManagementNetworkWhenInstancesContainOne() throws Exception {
+    public void testGetManagementNetworkWhenInstancesContainOne() {
         Network network = createNetwork(true, "a");
         List<Network> networks = Arrays.asList(network, createNetwork(false, "b"));
         assertThat(underTest.getManagementNetwork(networks, Guid.newGuid()), is(network));

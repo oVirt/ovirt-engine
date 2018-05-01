@@ -9,7 +9,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
     @Override
     @Test
-    public void validateFailedWrongPlugStatus() throws Exception {
+    public void validateFailedWrongPlugStatus() {
         mockVmStatusUp();
         mockInterfaceList();
         createDiskWrongPlug(false);

@@ -72,7 +72,7 @@ public class HostNetworkAttachmentsPersisterTest {
     private CustomPropertiesForVdsNetworkInterface customPropertiesForNics = new CustomPropertiesForVdsNetworkInterface();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         clusterNetworkA = createNetworkWithName("clusterNetworkA");
 
@@ -157,7 +157,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsDeleteInvalidNetworkAttachments() throws Exception {
+    public void testPersistNetworkAttachmentsDeleteInvalidNetworkAttachments() {
 
         // network attachments.
         NetworkAttachment networkAttachmentForClusterNetworkA = createNetworkAttachment(clusterNetworkA);
@@ -186,7 +186,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsWhenNetworkMovedToDifferentNic() throws Exception {
+    public void testPersistNetworkAttachmentsWhenNetworkMovedToDifferentNic() {
 
         NetworkAttachment networkAttachmentForClusterNetworkA = createNetworkAttachment(clusterNetworkA);
 
@@ -206,7 +206,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsWhenNothingToUpdate() throws Exception {
+    public void testPersistNetworkAttachmentsWhenNothingToUpdate() {
         NetworkAttachment upToDateNetworkAttachment = createNetworkAttachment(clusterNetworkA);
         upToDateNetworkAttachment.setNicId(interfaceWithAttachedClusterNetworkA.getId());
 
@@ -247,7 +247,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithoutNetworkDoNotPersist() throws Exception {
+    public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithoutNetworkDoNotPersist() {
         createPersister(Collections.singletonList(createNetworkAttachment(null)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
 
@@ -258,7 +258,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithNetworkNotAttachedToNicDoNotPersist() throws Exception {
+    public void testPersistNetworkAttachmentsWhenPersistingUserNetworkAttachmentWithNetworkNotAttachedToNicDoNotPersist() {
         // user attachments references network, which is not assigned to NIC.
         createPersister(Collections.singletonList(createNetworkAttachment(clusterNetworkB)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
@@ -270,7 +270,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsWhenCalledWithNewUserAttachments() throws Exception {
+    public void testPersistNetworkAttachmentsWhenCalledWithNewUserAttachments() {
         Guid userNetworkAttachmentNicId = interfaceWithAttachedClusterNetworkA.getId();
         NetworkAttachment userNetworkAttachment = createNetworkAttachment(clusterNetworkA);
         userNetworkAttachment.setNicId(userNetworkAttachmentNicId);
@@ -302,7 +302,7 @@ public class HostNetworkAttachmentsPersisterTest {
     }
 
     @Test
-    public void testPersistNetworkAttachmentsWhenCalledWithAlreadyExistingAttachmentItWillUpdated() throws Exception {
+    public void testPersistNetworkAttachmentsWhenCalledWithAlreadyExistingAttachmentItWillUpdated() {
         NetworkAttachment userNetworkAttachment = createNetworkAttachment(clusterNetworkA);
         userNetworkAttachment.setNicId(interfaceWithAttachedClusterNetworkA.getId());
         userNetworkAttachment.setProperties(createCustomProperties());

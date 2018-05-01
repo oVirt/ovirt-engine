@@ -27,7 +27,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
 
@@ -35,7 +35,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, false);
         try {
@@ -47,7 +47,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2, true);
 
         setUriInfo(setUpActionExpectations(ActionType.EditAffinityGroup,
@@ -61,7 +61,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         setUpActionExpectations(
@@ -76,7 +76,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, false);
         try {
@@ -88,7 +88,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         }
     }
 
-    private void setUpGetEntityExpectations(int times, boolean found) throws Exception {
+    private void setUpGetEntityExpectations(int times, boolean found) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetAffinityGroupById,
                     IdQueryParameters.class,

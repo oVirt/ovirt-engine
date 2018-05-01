@@ -64,7 +64,7 @@ public class GWTRPCCommunicationProviderTest {
     GWTRPCCommunicationProvider testProvider;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockXsrfRpcRequestBuilder = new XsrfRpcRequestBuilder();
         testProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService, mockXsrfRpcRequestBuilder);
         mockXsrfRpcRequestBuilder.setXsrfToken(new XsrfToken("Something")); //$NON-NLS-1$

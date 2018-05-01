@@ -25,7 +25,7 @@ public class UnsupportedLocaleHelperTest {
     List<String> allLocales;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         allLocales = getAllLocales();
         unvalidatedUnsupportedLocales.clear();
     }

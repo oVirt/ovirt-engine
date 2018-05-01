@@ -38,7 +38,7 @@ public class BackendUserResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendUserResource("foo", null);
             fail("expected WebApplicationException");
@@ -48,7 +48,7 @@ public class BackendUserResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -60,7 +60,7 @@ public class BackendUserResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
 
@@ -68,7 +68,7 @@ public class BackendUserResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveUser,
@@ -81,7 +81,7 @@ public class BackendUserResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(
                 QueryType.GetDbUserByUserId,
                 IdQueryParameters.class,
@@ -98,16 +98,16 @@ public class BackendUserResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveUser,
@@ -124,11 +124,11 @@ public class BackendUserResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations() throws Exception {
+    protected void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(false);
     }
 
-    protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(boolean notFound) {
         setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

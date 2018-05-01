@@ -111,7 +111,7 @@ public class HostSetupNetworksValidatorTest {
     private ArgumentCaptor<Collection<String>> collectionArgumentCaptor;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         host = new VDS();
         host.setId(Guid.newGuid());
         final VdsDynamic vdsDynamic = new VdsDynamic();
@@ -124,7 +124,7 @@ public class HostSetupNetworksValidatorTest {
                 .thenReturn(mockNetworkExclusivenessValidator);
     }
 
-    public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
+    public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() {
         Network unlabeledNetwork = new Network();
         unlabeledNetwork.setId(Guid.newGuid());
 
@@ -138,7 +138,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testNotRemovingLabeledNetworksWhenNicNameDoesNotReferenceExistingNicItsOkToRemove() throws Exception {
+    public void testNotRemovingLabeledNetworksWhenNicNameDoesNotReferenceExistingNicItsOkToRemove() {
         Network labeledNetwork = new Network();
         labeledNetwork.setId(Guid.newGuid());
         labeledNetwork.setLabel("label");
@@ -157,7 +157,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testNotRemovingLabeledNetworksWhenRemovingLabeledNetworkUnrelatedToRemovedBond() throws Exception {
+    public void testNotRemovingLabeledNetworksWhenRemovingLabeledNetworkUnrelatedToRemovedBond() {
         String nicName = "nicName";
         String label = "label";
 
@@ -230,7 +230,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testNotMovingLabeledNetworkToDifferentNicWhenRemovingLabeledNetworkUnrelatedToRemovedBond() throws Exception {
+    public void testNotMovingLabeledNetworkToDifferentNicWhenRemovingLabeledNetworkUnrelatedToRemovedBond() {
         String label = "label";
 
         Network labeledNetwork = new Network();
@@ -271,7 +271,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testNotRemovingLabeledNetworksWhenLabelRelatedToRemovedBond() throws Exception {
+    public void testNotRemovingLabeledNetworksWhenLabelRelatedToRemovedBond() {
         String label = "label";
         String nicName = "nicName";
 
@@ -371,7 +371,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidRemovedBondsWhenNotRemovingAnyBond() throws Exception {
+    public void testValidRemovedBondsWhenNotRemovingAnyBond() {
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .addExistingInterfaces((List<VdsNetworkInterface>) null)
             .build();
@@ -380,7 +380,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidRemovedBondsWhenReferencedInterfaceIsNotBond() throws Exception {
+    public void testValidRemovedBondsWhenReferencedInterfaceIsNotBond() {
         VdsNetworkInterface notABond = createNic("nicName");
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
@@ -395,7 +395,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidRemovedBondsWhenReferencedInterfaceBondViaInexistingId() throws Exception {
+    public void testValidRemovedBondsWhenReferencedInterfaceBondViaInexistingId() {
         Guid idOfInexistingInterface = Guid.newGuid();
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
             .setParams(new ParametersBuilder().addRemovedBonds(idOfInexistingInterface))
@@ -410,7 +410,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidRemovedBondsWhenBondIsRequired() throws Exception {
+    public void testValidRemovedBondsWhenBondIsRequired() {
         String nicName = "nicName";
         bond.setName(nicName);
 
@@ -435,7 +435,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidRemovedBondsWhenBondIsNotRequired() throws Exception {
+    public void testValidRemovedBondsWhenBondIsNotRequired() {
         String nicName = "nicName";
         bond.setName(nicName);
 
@@ -449,7 +449,7 @@ public class HostSetupNetworksValidatorTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetAttachmentsToConfigureWhenNoChangesWereSent() throws Exception {
+    public void testGetAttachmentsToConfigureWhenNoChangesWereSent() {
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
@@ -467,7 +467,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testGetAttachmentsToConfigureWhenUpdatingNetworkAttachments() throws Exception {
+    public void testGetAttachmentsToConfigureWhenUpdatingNetworkAttachments() {
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
@@ -486,7 +486,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testGetAttachmentsToConfigureWhenRemovingNetworkAttachments() throws Exception {
+    public void testGetAttachmentsToConfigureWhenRemovingNetworkAttachments() {
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
@@ -509,7 +509,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testGetAttachmentsToConfigureWhenAddingNewNetworkAttachments() throws Exception {
+    public void testGetAttachmentsToConfigureWhenAddingNewNetworkAttachments() {
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
@@ -682,7 +682,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateNotRemovingUsedNetworkByVmsWhenNotUsedByVms() throws Exception {
+    public void testValidateNotRemovingUsedNetworkByVmsWhenNotUsedByVms() {
         HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
             .build());
 
@@ -690,7 +690,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testNetworksUniquelyConfiguredOnHostWhenUniquelyConfigured() throws Exception {
+    public void testNetworksUniquelyConfiguredOnHostWhenUniquelyConfigured() {
         Network networkA = new Network();
         networkA.setId(Guid.newGuid());
 
@@ -709,7 +709,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testNetworksUniquelyConfiguredOnHostWhenNotUniquelyConfigured() throws Exception {
+    public void testNetworksUniquelyConfiguredOnHostWhenNotUniquelyConfigured() {
         Guid id = Guid.newGuid();
         String networkName = "networkName";
 
@@ -733,7 +733,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidModifiedBondsFailsWhenBondNotHaveNameAndId() throws Exception {
+    public void testValidModifiedBondsFailsWhenBondNotHaveNameAndId() {
         CreateOrUpdateBond createOrUpdateBond = new CreateOrUpdateBond();
         doTestValidModifiedBonds(createOrUpdateBond,
                 ValidationResult.VALID,
@@ -742,7 +742,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidModifiedBondsFailsWhenReferencingExistingNonBondInterface() throws Exception {
+    public void testValidModifiedBondsFailsWhenReferencingExistingNonBondInterface() {
         CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBondWithNameAndId();
 
         final EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND;
@@ -756,7 +756,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidModifiedBondsFailsWhenInsufficientNumberOfSlaves() throws Exception {
+    public void testValidModifiedBondsFailsWhenInsufficientNumberOfSlaves() {
         CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBondWithNameAndId();
         doTestValidModifiedBonds(createOrUpdateBond,
                 ValidationResult.VALID,
@@ -768,7 +768,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidModifiedBondsFailsWhenSlavesValidationFails() throws Exception {
+    public void testValidModifiedBondsFailsWhenSlavesValidationFails() {
         EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE;
         ValidationResult slavesValidationResult = new ValidationResult(engineMessage,
             ReplacementUtils.getVariableAssignmentString(engineMessage, "slaveA"),
@@ -785,7 +785,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidModifiedBondsWhenAllOk() throws Exception {
+    public void testValidModifiedBondsWhenAllOk() {
         CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(null, "bond1", "slaveA", "slaveB");
         doTestValidModifiedBonds(
                 createOrUpdateBond,
@@ -837,7 +837,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveInterfaceDoesNotExist() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveInterfaceDoesNotExist() {
         CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(Guid.newGuid(), "bond1", "slaveA", "slaveB");
 
         HostSetupNetworksValidator validator = new HostSetupNetworksValidatorBuilder()
@@ -850,7 +850,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveIsNotValid() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveIsNotValid() {
         CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(Guid.newGuid(), "bond1", "slaveA", "slaveB");
 
         ValidationResult cannotBeSlaveValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
@@ -867,7 +867,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveAlreadySlavesForDifferentBond() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveAlreadySlavesForDifferentBond() {
         Bond bond = createBond("bond1");
         Bond differentBond = createBond("bond2");
 
@@ -890,7 +890,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveAlreadySlavesForDifferentBondWhichGetsRemoved() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveAlreadySlavesForDifferentBondWhichGetsRemoved() {
         Bond bond = createBond("bondName");
         Bond differentBond = createBond("differentBond");
 
@@ -909,7 +909,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveAlreadySlavesForDifferentBondButItsDetachedFromItAsAPartOfRequest() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveAlreadySlavesForDifferentBondButItsDetachedFromItAsAPartOfRequest() {
         Bond bond = createBond("bond1");
         Bond differentBond = createBond("bond2");
 
@@ -948,7 +948,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveHasNetworkAssignedWhichIsNotRemovedAsAPartOfRequest() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveHasNetworkAssignedWhichIsNotRemovedAsAPartOfRequest() {
         Bond bond = createBond();
 
         Network networkBeingRemoved = new Network();
@@ -981,7 +981,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateModifiedBondSlavesWhenSlaveHasNetworkAssignedWhichIsRemovedAsAPartOfRequest() throws Exception {
+    public void testValidateModifiedBondSlavesWhenSlaveHasNetworkAssignedWhichIsRemovedAsAPartOfRequest() {
         Bond bond = createBond();
 
         Network networkBeingRemoved = new Network();
@@ -1028,7 +1028,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateCustomPropertiesWhenAttachmentDoesNotHaveCustomProperties() throws Exception {
+    public void testValidateCustomPropertiesWhenAttachmentDoesNotHaveCustomProperties() {
         Network networkA = createNetworkWithName("networkA");
         Network networkB = createNetworkWithName("networkB");
 
@@ -1049,7 +1049,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateCustomPropertiesWhenCustomPropertyValidationFailed() throws Exception {
+    public void testValidateCustomPropertiesWhenCustomPropertyValidationFailed() {
         Network networkA = createNetworkWithName("networkA");
 
         NetworkAttachment networkAttachment = createNetworkAttachment(networkA);
@@ -1077,7 +1077,7 @@ public class HostSetupNetworksValidatorTest {
     }
 
     @Test
-    public void testValidateCustomProperties() throws Exception {
+    public void testValidateCustomProperties() {
         Network networkA = createNetworkWithName("networkA");
 
         NetworkAttachment networkAttachment = createNetworkAttachment(networkA);

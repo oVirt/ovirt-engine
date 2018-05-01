@@ -21,7 +21,7 @@ public class BackendIscsiBondResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(0, getEntity(0));
         setUriInfo(
             setUpActionExpectations(
@@ -37,7 +37,7 @@ public class BackendIscsiBondResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, null);
         try {
@@ -49,8 +49,7 @@ public class BackendIscsiBondResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations(int index, org.ovirt.engine.core.common.businessentities.IscsiBond result)
-            throws Exception {
+    private void setUpGetEntityExpectations(int index, org.ovirt.engine.core.common.businessentities.IscsiBond result) {
         setUpGetEntityExpectations(
             QueryType.GetIscsiBondById,
             IdQueryParameters.class,

@@ -70,7 +70,7 @@ public class BackendExportDomainDiskResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID);
         setUriInfo(setUpBasicUriExpectations());
@@ -79,7 +79,7 @@ public class BackendExportDomainDiskResourceTest
         assertEquals(disk.getId(), DISK_ID.toString());
     }
 
-    protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) throws Exception {
+    protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) {
         setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -87,11 +87,11 @@ public class BackendExportDomainDiskResourceTest
                                      setUpStorageDomain(domainType));
     }
 
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) throws Exception {
+    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) {
         setUpGetEntityExpectations(domainType, getStoragePoolsByStorageDomainId, false);
     }
 
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound) {
         switch (domainType) {
         case Data:
             setUpEntityQueryExpectations(QueryType.GetVmTemplate,

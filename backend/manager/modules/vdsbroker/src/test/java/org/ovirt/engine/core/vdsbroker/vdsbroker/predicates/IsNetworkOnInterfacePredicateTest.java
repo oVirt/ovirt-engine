@@ -18,7 +18,7 @@ public class IsNetworkOnInterfacePredicateTest {
     private VdsNetworkInterface mockVdsNetworkInterface;
 
     @Test
-    public void testEvalPositive() throws Exception {
+    public void testEvalPositive() {
         when(mockVdsNetworkInterface.getNetworkName()).thenReturn(TEST_NETWORK_NAME);
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);
@@ -27,7 +27,7 @@ public class IsNetworkOnInterfacePredicateTest {
     }
 
     @Test
-    public void testEvalNegaitive() throws Exception {
+    public void testEvalNegaitive() {
         when(mockVdsNetworkInterface.getNetworkName()).thenReturn("not" + TEST_NETWORK_NAME);
 
         final IsNetworkOnInterfacePredicate underTest = new IsNetworkOnInterfacePredicate(TEST_NETWORK_NAME);

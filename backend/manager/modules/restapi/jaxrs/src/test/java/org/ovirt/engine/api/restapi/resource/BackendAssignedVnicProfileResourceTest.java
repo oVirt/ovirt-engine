@@ -20,7 +20,7 @@ public class BackendAssignedVnicProfileResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendVnicProfileResource("foo");
             fail("expected WebApplicationException");
@@ -30,7 +30,7 @@ public class BackendAssignedVnicProfileResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
         try {
@@ -42,14 +42,14 @@ public class BackendAssignedVnicProfileResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
 
         verifyModel(resource.get(), 0);
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetVnicProfileById,
                     IdQueryParameters.class,

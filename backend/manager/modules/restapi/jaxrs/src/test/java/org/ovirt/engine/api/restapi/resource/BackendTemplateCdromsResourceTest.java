@@ -42,19 +42,19 @@ public class BackendTemplateCdromsResourceTest
         super(new BackendTemplateCdromsResource(TEMPLATE_ID), null, null);
     }
 
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    private void setUpEntityQueryExpectations(int times) throws Exception {
+    private void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    private void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    private void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmTemplate,
@@ -79,7 +79,7 @@ public class BackendTemplateCdromsResourceTest
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             collection.getCdromResource("foo");
             fail("expected WebApplicationException");
@@ -89,7 +89,7 @@ public class BackendTemplateCdromsResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<Cdrom> collection) throws Exception {
+    protected void verifyCollection(List<Cdrom> collection) {
         assertNotNull(collection);
         assertEquals(1, collection.size());
         verifyModel(collection.get(0));

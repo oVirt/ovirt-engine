@@ -54,7 +54,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
         try {
@@ -66,7 +66,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getVm());
 
@@ -75,7 +75,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testGetCurrent() throws Exception {
+    public void testGetCurrent() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(uriInfo, "current");
         setUriInfo(uriInfo);
@@ -86,7 +86,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testGetCurrentWithMatrixTrue() throws Exception {
+    public void testGetCurrentWithMatrixTrue() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(uriInfo, "current", "true");
         setUriInfo(uriInfo);
@@ -97,7 +97,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testGetCurrentWithMatrixFalse() throws Exception {
+    public void testGetCurrentWithMatrixFalse() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(uriInfo, "current", "false");
         setUriInfo(uriInfo);
@@ -108,7 +108,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testChangeCdNotFound() throws Exception {
+    public void testChangeCdNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
         try {
@@ -120,7 +120,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testEjectCd() throws Exception {
+    public void testEjectCd() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(uriInfo, "current");
         setUriInfo(uriInfo);
@@ -139,7 +139,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testChangeCdUsingQueryParameter() throws Exception {
+    public void testChangeCdUsingQueryParameter() {
         resource.setUriInfo(setUpChangeCdUriQueryExpectations());
         setUpEntityQueryExpectations(getVm());
         setUpActionExpectations(
@@ -156,7 +156,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testChangeCdUsingMatrixParameter() throws Exception {
+    public void testChangeCdUsingMatrixParameter() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(uriInfo, "current");
         setUriInfo(uriInfo);
@@ -184,7 +184,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
         try {
@@ -197,7 +197,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpEntityQueryExpectations(getVm(A_ISO, A_ISO, VMStatus.Down));
         setUpEntityQueryExpectations(getVm(B_ISO, A_ISO, VMStatus.Down));
         setUriInfo(
@@ -216,7 +216,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testUpdateIncompleteParameters() throws Exception {
+    public void testUpdateIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
         Cdrom cdrom = new Cdrom();
         cdrom.setFile(null);
@@ -229,7 +229,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(
             QueryType.GetVmByVmId,
             IdQueryParameters.class,
@@ -251,7 +251,7 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpEntityQueryExpectations(
             QueryType.GetVmByVmId,
             IdQueryParameters.class,
@@ -270,16 +270,16 @@ public class BackendVmCdromResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(
             QueryType.GetVmByVmId,
             IdQueryParameters.class,
@@ -325,7 +325,7 @@ public class BackendVmCdromResourceTest
         return vm;
     }
 
-    private void setUpEntityQueryExpectations(VM result) throws Exception {
+    private void setUpEntityQueryExpectations(VM result) {
         setUpGetEntityExpectations(
             QueryType.GetVmByVmId,
             IdQueryParameters.class,

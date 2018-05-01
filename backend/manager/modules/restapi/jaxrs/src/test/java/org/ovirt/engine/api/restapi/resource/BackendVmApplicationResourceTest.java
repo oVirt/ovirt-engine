@@ -67,7 +67,7 @@ public class BackendVmApplicationResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         BackendVmApplicationResource resource = getNotFoundResource();
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations();
@@ -80,7 +80,7 @@ public class BackendVmApplicationResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations();
 
@@ -89,7 +89,7 @@ public class BackendVmApplicationResourceTest
         verifyLinks(application);
     }
 
-    protected void setUpEntityQueryExpectations() throws Exception {
+    protected void setUpEntityQueryExpectations() {
         setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},

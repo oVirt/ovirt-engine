@@ -25,7 +25,7 @@ public class ConvergenceConfigProviderTest {
     private ConvergenceConfigProvider provider = new ConvergenceConfigProvider();
 
     @Test
-    public void jsonInvalidJson() throws IOException {
+    public void jsonInvalidJson() {
         provider.initMigrationPolicies("this is not a valid json", VERSION);
         MigrationPolicy policy = provider.getMigrationPolicy(Guid.newGuid(), VERSION);
         assertTrue(policy instanceof NoMigrationPolicy);

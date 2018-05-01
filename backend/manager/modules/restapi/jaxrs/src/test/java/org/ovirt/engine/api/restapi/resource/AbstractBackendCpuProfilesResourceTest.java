@@ -39,7 +39,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testAddCpuProfile() throws Exception {
+    public void testAddCpuProfile() {
         setUriInfo(setUpBasicUriExpectations());
         setUpClusterQueryExpectations();
         setUpCreationExpectations(ActionType.AddCpuProfile,
@@ -65,18 +65,18 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testAddCpuProfileCantDo() throws Exception {
+    public void testAddCpuProfileCantDo() {
         setUpClusterQueryExpectations();
         doTestBadAddCpuProfile(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddCpuProfileFailure() throws Exception {
+    public void testAddCpuProfileFailure() {
         setUpClusterQueryExpectations();
         doTestBadAddCpuProfile(true, false, FAILURE);
     }
 
-    private void doTestBadAddCpuProfile(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddCpuProfile(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddCpuProfile,
                 CpuProfileParameters.class,
                 new String[] {},
@@ -96,7 +96,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         CpuProfile model = createIncompleteCpuProfile();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -118,7 +118,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
@@ -132,7 +132,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         setUpCpuProfilesQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -148,7 +148,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         Throwable t = new RuntimeException(FAILURE);
         setUpCpuProfilesQueryExpectations(t);
 
@@ -165,7 +165,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 

@@ -52,18 +52,18 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddWithClonePermissionsDontClone() throws Exception {
+    public void testAddWithClonePermissionsDontClone() {
         doTestAddWithClonePermissions(getModel(0), false);
     }
 
     @Test
-    public void testAddWithClonePermissionsClone() throws Exception {
+    public void testAddWithClonePermissionsClone() {
         Template model = getModel(0);
 
         doTestAddWithClonePermissions(model, true);
     }
 
-    private void doTestAddWithClonePermissions(Template model, boolean copy) throws Exception{
+    private void doTestAddWithClonePermissions(Template model, boolean copy) {
         UriInfo uriInfo = setUpBasicUriExpectations();
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendTemplatesResource.CLONE_PERMISSIONS, Boolean.toString(copy));
         setUriInfo(uriInfo);
@@ -109,21 +109,21 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddAsyncPending() throws Exception {
+    public void testAddAsyncPending() {
         doTestAddAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
-    public void testAddAsyncInProgress() throws Exception {
+    public void testAddAsyncInProgress() {
         doTestAddAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
-    public void testAddAsyncFinished() throws Exception {
+    public void testAddAsyncFinished() {
         doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }
 
-    private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
+    private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpGetGraphicsExpectations(1);
@@ -202,7 +202,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddVersionNoBaseTemplateId() throws Exception {
+    public void testAddVersionNoBaseTemplateId() {
         setUriInfo(setUpBasicUriExpectations());
         Template t = getModel(2);
         t.getVersion().setBaseTemplate(null);
@@ -216,7 +216,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddVersion() throws Exception {
+    public void testAddVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
 
@@ -258,7 +258,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddNamedVm() throws Exception {
+    public void testAddNamedVm() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpHttpHeaderExpectations("Expect", "201-created");
@@ -304,7 +304,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddNamedVmFiltered() throws Exception {
+    public void testAddNamedVmFiltered() {
         setUpFilteredQueryExpectations();
         setUriInfo(setUpBasicUriExpectations());
 
@@ -351,7 +351,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddWithCluster() throws Exception {
+    public void testAddWithCluster() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
 
@@ -396,7 +396,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddWithClusterName() throws Exception {
+    public void testAddWithClusterName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetClusterById,
@@ -483,7 +483,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddUploadIcon() throws Exception {
+    public void testAddUploadIcon() {
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(0, 0, 1);
         setUpGetSoundcardExpectations(1);
@@ -522,7 +522,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddUseExistingIcons() throws Exception {
+    public void testAddUseExistingIcons() {
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(0, 0, 1);
         setUpGetSoundcardExpectations(1);
@@ -561,7 +561,7 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddSetAndUploadIconFailure() throws Exception {
+    public void testAddSetAndUploadIconFailure() {
         final Template restModel = getRestModel(0);
         restModel.setLargeIcon(IconTestHelpler.createIconWithData());
         restModel.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));

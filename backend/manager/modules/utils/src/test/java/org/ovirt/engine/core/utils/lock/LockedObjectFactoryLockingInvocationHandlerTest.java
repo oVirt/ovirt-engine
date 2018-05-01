@@ -35,7 +35,7 @@ public class LockedObjectFactoryLockingInvocationHandlerTest {
     private static final Object PROXY_INSTANCE = null;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         handler = new LockingInvocationHandler<>(testInterface, lock);
 
         when(lock.readLock()).thenReturn(readLock);

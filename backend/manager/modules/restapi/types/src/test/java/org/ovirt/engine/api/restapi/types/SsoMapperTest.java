@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.SsoMethod;
 public class SsoMapperTest {
 
     @Test
-    public void mapGuestAgentSsoFromBackendToRest() throws Exception {
+    public void mapGuestAgentSsoFromBackendToRest() {
         SsoMethod backendSsoMethod = SsoMethod.GUEST_AGENT;
 
         Sso restSso = SsoMapper.map(backendSsoMethod, null);
@@ -27,7 +27,7 @@ public class SsoMapperTest {
     }
 
     @Test
-    public void mapNoneSsoFromBackendToRest() throws Exception {
+    public void mapNoneSsoFromBackendToRest() {
         SsoMethod backendSsoMethod = SsoMethod.NONE;
 
         Sso restSso = SsoMapper.map(backendSsoMethod, null);
@@ -39,7 +39,7 @@ public class SsoMapperTest {
     }
 
     @Test
-    public void mapGuestAgentSsoFromRestToBackend() throws Exception {
+    public void mapGuestAgentSsoFromRestToBackend() {
         Sso restSso = new Sso();
         restSso.setMethods(new Methods());
         Method guestAgent = new Method();
@@ -52,7 +52,7 @@ public class SsoMapperTest {
     }
 
     @Test
-    public void mapNoMethodSsoFromRestToBackend() throws Exception {
+    public void mapNoMethodSsoFromRestToBackend() {
         Sso restSso = new Sso();
         restSso.setMethods(new Methods());
 
@@ -62,7 +62,7 @@ public class SsoMapperTest {
     }
 
     @Test
-    public void mapIncompleteSsoFromRestToBackend() throws Exception {
+    public void mapIncompleteSsoFromRestToBackend() {
         Sso restSso = new Sso();
 
         assertNull(SsoMapper.map(restSso, null));

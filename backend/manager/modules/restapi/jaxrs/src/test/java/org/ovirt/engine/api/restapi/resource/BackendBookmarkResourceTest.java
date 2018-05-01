@@ -25,7 +25,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendBookmarkResource("foo");
             fail("expected WebApplicationException");
@@ -35,7 +35,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         //Get will return 404
         setUpGetEntityExpectations(0, true);
@@ -48,7 +48,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetEntityExpectations(0);
         setUriInfo(setUpBasicUriExpectations());
 
@@ -57,7 +57,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         //Get will return 404
         setUpGetEntityExpectations(0, true);
@@ -70,7 +70,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
@@ -82,16 +82,16 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(0);
 
 
@@ -107,7 +107,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(0);
         setUriInfo(
             setUpActionExpectations(
@@ -123,7 +123,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(0, true);
         try {
             resource.remove();
@@ -135,16 +135,16 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(0);
         setUriInfo(
             setUpActionExpectations(
@@ -177,11 +177,11 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         verifyLinks(model);
     }
 
-    protected void setUpGetEntityExpectations(int index) throws Exception {
+    protected void setUpGetEntityExpectations(int index) {
         setUpGetEntityExpectations(index, false);
     }
 
-    protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int index, boolean notFound) {
         setUpGetEntityExpectations(QueryType.GetBookmarkByBookmarkId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

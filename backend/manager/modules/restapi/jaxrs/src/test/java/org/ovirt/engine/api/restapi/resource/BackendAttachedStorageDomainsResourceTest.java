@@ -44,11 +44,11 @@ public class BackendAttachedStorageDomainsResourceTest
     @Override
     @Test
     @Ignore
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpGetConnection(1);
@@ -83,7 +83,7 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
     @Test
-    public void testAddByName() throws Exception {
+    public void testAddByName() {
         setUriInfo(setUpBasicUriExpectations());
 
         setUpGetConnection(1);
@@ -117,16 +117,16 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
     @Test
-    public void testAddCantDo() throws Exception {
+    public void testAddCantDo() {
         doTestBadAdd(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddFailure() throws Exception {
+    public void testAddFailure() {
         doTestBadAdd(true, false, FAILURE);
     }
 
-    private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAdd(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AttachStorageDomainToPool,
                                            AttachStorageDomainToPoolParameters.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
@@ -146,7 +146,7 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         StorageDomain model = new StorageDomain();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -158,7 +158,7 @@ public class BackendAttachedStorageDomainsResourceTest
     }
 
 
-    private void setUpGetConnection(int times) throws Exception {
+    private void setUpGetConnection(int times) {
         for (int i=0; i<times; i++) {
             setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class,
@@ -186,7 +186,7 @@ public class BackendAttachedStorageDomainsResourceTest
 
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetStorageDomainsByStoragePoolId,

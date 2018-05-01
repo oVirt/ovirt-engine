@@ -45,7 +45,7 @@ public class BackendInstanceTypeNicResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetNicsExpectations();
         setUriInfo(
             setUpActionExpectations(
@@ -61,16 +61,16 @@ public class BackendInstanceTypeNicResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetNicsExpectations();
         setUriInfo(
             setUpActionExpectations(

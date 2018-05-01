@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
-import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAndBooleanQueryParameters, GetUnregisteredDisksFromDBQuery<? extends IdAndBooleanQueryParameters>> {
 
@@ -37,7 +36,7 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
     }
 
     @Test
-    public void testExecuteQueryGetAllEntitiesCommand() throws OvfReaderException {
+    public void testExecuteQueryGetAllEntitiesCommand() {
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
@@ -51,7 +50,7 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
         when(getQueryParameters().isFilterResult()).thenReturn(true);
     }
 
-    private void setUpQueryEntities() throws OvfReaderException {
+    private void setUpQueryEntities() {
         // Set up the expected result
         UnregisteredDisk unregistedDisk = new UnregisteredDisk();
         unregistedDisk.setId(new UnregisteredDiskId(newDiskId, storageDomainId));

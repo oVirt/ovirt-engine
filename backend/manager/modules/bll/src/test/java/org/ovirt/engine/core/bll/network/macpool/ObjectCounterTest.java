@@ -8,7 +8,7 @@ import org.junit.Test;
 public class ObjectCounterTest {
 
     @Test
-    public void testIncreaseNoDuplicates() throws Exception {
+    public void testIncreaseNoDuplicates() {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(false);
 
 
@@ -32,7 +32,7 @@ public class ObjectCounterTest {
     }
 
     @Test
-    public void testIncreaseWithDuplicates() throws Exception {
+    public void testIncreaseWithDuplicates() {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(true);
 
 
@@ -56,7 +56,7 @@ public class ObjectCounterTest {
     }
 
     @Test
-    public void testDecreaseNoDuplicates() throws Exception {
+    public void testDecreaseNoDuplicates() {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(false);
 
         objectCounter.increase(1);
@@ -78,7 +78,7 @@ public class ObjectCounterTest {
     }
 
     @Test
-    public void testDecreaseWithDuplicates() throws Exception {
+    public void testDecreaseWithDuplicates() {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(true);
 
         assertThat(objectCounter.containsDuplicates(), is(false));

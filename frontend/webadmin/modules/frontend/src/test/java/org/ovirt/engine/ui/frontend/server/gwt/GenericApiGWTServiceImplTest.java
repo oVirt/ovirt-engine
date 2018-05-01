@@ -7,11 +7,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,8 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-
-import com.google.gwt.user.client.rpc.SerializationException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GenericApiGWTServiceImplTest {
@@ -53,7 +49,7 @@ public class GenericApiGWTServiceImplTest {
     };
 
     @Before
-    public void setup() throws ServletException, IOException, SerializationException {
+    public void setup() {
         underTest.setBackend(backendLocal);
         when(request.getSession()).thenReturn(session);
     }

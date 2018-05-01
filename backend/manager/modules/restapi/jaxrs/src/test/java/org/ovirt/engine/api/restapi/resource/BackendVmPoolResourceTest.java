@@ -38,7 +38,7 @@ public class BackendVmPoolResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendVmPoolResource("foo", new BackendVmPoolsResource());
             fail("expected WebApplicationException");
@@ -48,7 +48,7 @@ public class BackendVmPoolResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -60,14 +60,14 @@ public class BackendVmPoolResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         verifyModel(resource.get(), 0);
     }
 
     @Test
-    public void testAllocateVm() throws Exception {
+    public void testAllocateVm() {
         setUpGetVmExpectations(1);
         setUriInfo(setUpActionExpectations(ActionType.AttachUserToVmFromPoolAndRun,
                                            AttachUserToVmFromPoolAndRunParameters.class,
@@ -79,7 +79,7 @@ public class BackendVmPoolResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(ActionType.RemoveVmPool,
                 VmPoolParametersBase.class,
@@ -90,7 +90,7 @@ public class BackendVmPoolResourceTest
         verifyRemove(resource.remove());
     }
 
-    private void setUpGetVmExpectations(int times) throws Exception {
+    private void setUpGetVmExpectations(int times) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                        IdQueryParameters.class,
@@ -116,15 +116,15 @@ public class BackendVmPoolResourceTest
         return entity;
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         setUpGetEntityExpectations(times, notFound, getEntity(0));
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VmPool entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VmPool entity) {
 
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetVmPoolById,
@@ -143,7 +143,7 @@ public class BackendVmPoolResourceTest
         return setUpActionExpectations(task, clz, names, values, true, true, taskReturn, null, true);
     }
 
-    private void verifyTestAllocateVmActionResponse(Response r) throws Exception {
+    private void verifyTestAllocateVmActionResponse(Response r) {
         assertNotNull(r.getEntity());
         assertNotNull(((org.ovirt.engine.api.model.Action)r.getEntity()).getVm());
         assertNotNull(((org.ovirt.engine.api.model.Action)r.getEntity()).getVm().getId());

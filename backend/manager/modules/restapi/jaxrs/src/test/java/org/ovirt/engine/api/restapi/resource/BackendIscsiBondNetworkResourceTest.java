@@ -30,7 +30,7 @@ public class BackendIscsiBondNetworkResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingNetwork());
         setUpEntityQueryExpectations(QueryType.GetNetworkById,
@@ -43,7 +43,7 @@ public class BackendIscsiBondNetworkResourceTest
     }
 
     @Test
-    public void testGetWithInvalidNetworkId() throws Exception {
+    public void testGetWithInvalidNetworkId() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondWithNoMatchingNetworks());
 
@@ -56,7 +56,7 @@ public class BackendIscsiBondNetworkResourceTest
     }
 
     @Test
-    public void testGetNetworkNotFound() throws Exception {
+    public void testGetNetworkNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingNetwork());
 
@@ -76,7 +76,7 @@ public class BackendIscsiBondNetworkResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(2, getIscsiBondContainingNetwork());
         setUpEntityQueryExpectations(
@@ -100,7 +100,7 @@ public class BackendIscsiBondNetworkResourceTest
         assertEquals(200, response.getStatus());
     }
 
-    protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetIscsiBondById,
                     IdQueryParameters.class,

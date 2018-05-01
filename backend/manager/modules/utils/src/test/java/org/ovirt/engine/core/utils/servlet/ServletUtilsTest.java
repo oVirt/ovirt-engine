@@ -34,7 +34,7 @@ public class ServletUtilsTest {
     private String canReadFileName;
 
     @Before
-    public void setup() throws IOException, URISyntaxException {
+    public void setup() throws URISyntaxException {
         canReadFileName = this.getClass().getResource("small_file.txt").toURI().toASCIIString().replaceAll("file:", "");
     }
 
@@ -264,7 +264,7 @@ public class ServletUtilsTest {
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
      */
     @Test
-    public void test_ETag_Format() throws IOException {
+    public void test_ETag_Format() {
         File mockFile = mock(File.class);
         when(mockFile.length()).thenReturn(1234L);
         when(mockFile.lastModified()).thenReturn(8271L);

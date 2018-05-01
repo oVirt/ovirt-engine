@@ -74,7 +74,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     }
 
     @Test
-    public void validateSpaceNotEnough() throws Exception {
+    public void validateSpaceNotEnough() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(any());
         mockGetAllSnapshots();
@@ -85,14 +85,14 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     }
 
     @Test
-    public void validateSpaceNotWithinThreshold() throws Exception {
+    public void validateSpaceNotWithinThreshold() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).isDomainWithinThresholds();
         assertFalse(cmd.validateSpaceRequirements());
     }
 
     @Test
-    public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
+    public void create10GBVmWith11GbAvailableAndA5GbBuffer() {
         doReturn(true).when(cmd).areParametersLegal();
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();

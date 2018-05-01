@@ -79,7 +79,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
             new DataFromHostSetupNetworksModel();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(logicalNetworkModelOfNetworkA.getNetwork()).thenReturn(networkA);
         when(logicalNetworkModelOfNetworkC.getNetwork()).thenReturn(networkC);
 
@@ -112,7 +112,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a void, then NetworkAttachment was created attaching given network and nic.
      */
     @Test
-    public void testCreatingBrandNewNetworkAttachment() throws Exception {
+    public void testCreatingBrandNewNetworkAttachment() {
         initNetworkIdToExistingAttachmentIdMap();
 
         when(logicalNetworkModelOfNetworkA.isAttached()).thenReturn(false);
@@ -134,7 +134,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * network was back attached to the nic unchanged.
      */
     @Test
-    public void testReattachingPreexistingNetworkAfterItsBeingDetached() throws Exception {
+    public void testReattachingPreexistingNetworkAfterItsBeingDetached() {
         NetworkAttachment attachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA, logicalNetworkModelOfNetworkA);
         initNetworkIdToExistingAttachmentIdMap(attachment);
 
@@ -162,7 +162,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * attached to another nic.
      */
     @Test
-    public void testReattachingPreexistingNetworkToDifferentNicAfterItsBeingDetached() throws Exception {
+    public void testReattachingPreexistingNetworkToDifferentNicAfterItsBeingDetached() {
         NetworkAttachment attachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA, logicalNetworkModelOfNetworkA);
         initNetworkIdToExistingAttachmentIdMap(attachment);
 
@@ -188,7 +188,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a NetworkAttachment, and network gets detached from the nic.
      */
     @Test
-    public void testDetachingPreexistingNetworkAttachment() throws Exception {
+    public void testDetachingPreexistingNetworkAttachment() {
         NetworkAttachment attachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA,
                 logicalNetworkModelOfNetworkA);
         Guid attachmentId = attachment.getId();
@@ -210,7 +210,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * her was immediately detached from him.
      */
     @Test
-    public void testDetachingPreviouslyAddedNetworkAttachment() throws Exception {
+    public void testDetachingPreviouslyAddedNetworkAttachment() {
         initNetworkIdToExistingAttachmentIdMap();
 
         NetworkOperation.ATTACH_NETWORK.getTarget().executeNetworkCommand(
@@ -235,7 +235,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a bond, which was then broken.
      */
     @Test
-    public void testBreakingExistingBond() throws Exception {
+    public void testBreakingExistingBond() {
         CreateOrUpdateBond createOrUpdateBond = CreateOrUpdateBond.fromBond(existingBond);
 
         dataFromHostSetupNetworksModel.getBonds().add(createOrUpdateBond);
@@ -262,7 +262,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a void, then bond was created and was immediately broken.
      */
     @Test
-    public void testBreakingNewlyCreatedBond() throws Exception {
+    public void testBreakingNewlyCreatedBond() {
         initOrginalBondNameToIdMap();
 
         NetworkOperation.BOND_WITH.getTarget().executeNetworkCommand(
@@ -291,7 +291,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a bond with one network attachment, which was then broken.
      */
     @Test
-    public void testBreakingExistingBondWithNetworkAttached() throws Exception {
+    public void testBreakingExistingBondWithNetworkAttached() {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
                 Collections.singletonList(logicalNetworkModelOfNetworkA));
@@ -321,7 +321,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * formed a firm bond adopting NetworkAttachment as their own.
      */
     @Test
-    public void testBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() throws Exception {
+    public void testBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() {
         NetworkAttachment attachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicA,
                 logicalNetworkModelOfNetworkA);
         initNetworkIdToExistingAttachmentIdMap(attachment);
@@ -377,7 +377,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was bond. It was broken into two nics, but they get back together in the end.
      */
     @Test
-    public void testReBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() throws Exception {
+    public void testReBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
                 Collections.emptyList());
@@ -410,7 +410,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * bringing his own network attachment along.
      */
     @Test
-    public void testAddingNewNicWithNetworkAttachmentToExistingBondWithoutAnyAttachment() throws Exception {
+    public void testAddingNewNicWithNetworkAttachmentToExistingBondWithoutAnyAttachment() {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
                 Collections.emptyList());
@@ -445,7 +445,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a bond with three slaves, the one of them left others.
      */
     @Test
-    public void testRemoveSlaveFromBond() throws Exception {
+    public void testRemoveSlaveFromBond() {
         existingBond.getSlaves().add(nicC.getName());
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
@@ -482,7 +482,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * At the beginning there was a bond with two slaves, the one of them left others.
      */
     @Test
-    public void testRemoveSlaveFromBondWithTwoSlaves() throws Exception {
+    public void testRemoveSlaveFromBondWithTwoSlaves() {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
                 Collections.emptyList());
@@ -518,7 +518,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * Two existing bonds are joined. The newly created bond will have a new name.
      */
     @Test
-    public void testJoiningBondsNotReusingName() throws Exception {
+    public void testJoiningBondsNotReusingName() {
         joinBondsTest(false);
     }
 
@@ -527,7 +527,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
      * from.
      */
     @Test
-    public void testJoiningBondsReusingName() throws Exception {
+    public void testJoiningBondsReusingName() {
         joinBondsTest(true);
     }
 

@@ -42,7 +42,7 @@ public class BackendOpenStackImageResourceTest
     }
 
     @Test
-    public void testBadId() throws Exception {
+    public void testBadId() {
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
@@ -52,7 +52,7 @@ public class BackendOpenStackImageResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -64,7 +64,7 @@ public class BackendOpenStackImageResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
         verifyModel(resource.get(), 1);
@@ -85,7 +85,7 @@ public class BackendOpenStackImageResourceTest
         return image;
     }
 
-    private void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    private void setUpGetEntityExpectations(boolean notFound) {
         setUpEntityQueryExpectations(
             QueryType.GetAllStorageDomains,
             QueryParametersBase.class,

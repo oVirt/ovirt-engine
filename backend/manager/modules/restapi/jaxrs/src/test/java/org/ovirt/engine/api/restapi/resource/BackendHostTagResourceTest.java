@@ -30,7 +30,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetTagExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -46,16 +46,16 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetTagExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -74,7 +74,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetTagExpectations(false);
         try {
             resource.remove();
@@ -85,7 +85,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
         }
     }
 
-    private void setUpGetTagExpectations(boolean succeed) throws Exception {
+    private void setUpGetTagExpectations(boolean succeed) {
         setUpGetEntityExpectations(
             QueryType.GetTagsByVdsId,
             GetTagsByVdsIdParameters.class,

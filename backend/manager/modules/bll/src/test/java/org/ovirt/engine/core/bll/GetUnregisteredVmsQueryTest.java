@@ -45,7 +45,7 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
     }
 
     @Test
-    public void testExecuteQueryGetAllEntitiesCommand() throws OvfReaderException {
+    public void testExecuteQueryGetAllEntitiesCommand() {
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")

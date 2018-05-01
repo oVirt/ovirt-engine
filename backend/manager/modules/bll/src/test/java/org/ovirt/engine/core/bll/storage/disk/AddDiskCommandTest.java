@@ -132,7 +132,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private AddDiskCommand<AddDiskParameters> command = new AddDiskCommand<>(createParameters(), null);
 
     @Test
-    public void validateSucceedsOnDiskDomainCheckWhenNoDisks() throws Exception {
+    public void validateSucceedsOnDiskDomainCheckWhenNoDisks() {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
@@ -142,7 +142,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailWithUnsupportedDiskInterface() throws Exception {
+    public void validateFailWithUnsupportedDiskInterface() {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
@@ -156,7 +156,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsOnDiskDomainCheckWhenEmptyStorageGuidInParams() throws Exception {
+    public void validateSucceedsOnDiskDomainCheckWhenEmptyStorageGuidInParams() {
         initializeCommand(Guid.Empty);
         Guid storageId = Guid.newGuid();
 
@@ -171,7 +171,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMatches() throws Exception {
+    public void validateSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMatches() {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
@@ -185,7 +185,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMismatches() throws Exception {
+    public void validateSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMismatches() {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
@@ -199,7 +199,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsOnNullDiskInterface() throws Exception {
+    public void validateFailsOnNullDiskInterface() {
         Guid storageId = Guid.newGuid();
         DiskImage image = new DiskImage();
         image.setVolumeFormat(VolumeFormat.COW);

@@ -43,7 +43,7 @@ public class BackendIscsiBondsResourceTest
     }
 
     @Test
-    public void testAddIscsiBond() throws Exception {
+    public void testAddIscsiBond() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddIscsiBond,
                 AddIscsiBondParameters.class,
@@ -81,7 +81,7 @@ public class BackendIscsiBondsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetIscsiBondsByStoragePoolId,
                 IdQueryParameters.class,
                 new String[] { "Id" },

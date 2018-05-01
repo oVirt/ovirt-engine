@@ -245,7 +245,7 @@ public class GlusterSyncJobTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void setupMocks() throws Exception {
+    private void setupMocks() {
         mockDaos();
 
         doReturn(existingServer1).when(glusterUtil).getUpServer(any());
@@ -466,7 +466,7 @@ public class GlusterSyncJobTest {
     }
 
     @Test
-    public void testRefreshLightWeight() throws Exception {
+    public void testRefreshLightWeight() {
         createCluster();
         setupMocks();
         doReturn(getGlusterServer()).when(glusterServerDao).getByServerId(any());
@@ -476,7 +476,7 @@ public class GlusterSyncJobTest {
     }
 
     @Test
-    public void testRefreshHeavyWeight() throws Exception {
+    public void testRefreshHeavyWeight() {
         createCluster();
         setupMocks();
         glusterManager.refreshHeavyWeightData();

@@ -52,7 +52,7 @@ public class BackendEntityAssignedPermissionsResourceTest
     }
 
     @Test
-    public void testAddIncompletePermission() throws Exception {
+    public void testAddIncompletePermission() {
         Permission model = new Permission();
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setId(GUIDS[2].toString());
@@ -68,7 +68,7 @@ public class BackendEntityAssignedPermissionsResourceTest
     }
 
     @Test
-    public void testAddGroupPermission() throws Exception {
+    public void testAddGroupPermission() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddPermission,
                                   PermissionsOperationsParameters.class,

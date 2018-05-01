@@ -48,7 +48,7 @@ public class BackendInstanceTypesResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         InstanceType model = new InstanceType();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -115,7 +115,7 @@ public class BackendInstanceTypesResourceTest
     }
 
     @Override
-    protected void setUpGetEntityExpectations(int index) throws Exception {
+    protected void setUpGetEntityExpectations(int index) {
         setUpGetEntityExpectations(QueryType.GetInstanceType,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },

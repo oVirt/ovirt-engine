@@ -49,7 +49,7 @@ public class BackendExternalHostsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(
             QueryType.GetHostListFromExternalProvider,
             GetHostListFromExternalProviderParameters.class,

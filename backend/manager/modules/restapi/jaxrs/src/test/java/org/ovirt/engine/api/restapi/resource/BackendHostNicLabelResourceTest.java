@@ -42,7 +42,7 @@ public class BackendHostNicLabelResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(Collections.emptyList());
         try {
@@ -54,7 +54,7 @@ public class BackendHostNicLabelResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(getEntityList());
         NetworkLabel model = resource.get();
@@ -63,7 +63,7 @@ public class BackendHostNicLabelResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(getEntityList());
         setUriInfo(
             setUpActionExpectations(
@@ -79,7 +79,7 @@ public class BackendHostNicLabelResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpEntityQueryExpectations(Collections.emptyList());
         try {
             resource.remove();
@@ -91,18 +91,18 @@ public class BackendHostNicLabelResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         setUpEntityQueryExpectations(getEntityList());
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         setUpEntityQueryExpectations(getEntityList());
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.UnlabelNic,
@@ -121,7 +121,7 @@ public class BackendHostNicLabelResourceTest
         }
     }
 
-    private void setUpEntityQueryExpectations(List<? super org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> result) throws Exception {
+    private void setUpEntityQueryExpectations(List<? super org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> result) {
         setUpEntityQueryExpectations(
             QueryType.GetNetworkLabelsByHostNicId,
             IdQueryParameters.class,

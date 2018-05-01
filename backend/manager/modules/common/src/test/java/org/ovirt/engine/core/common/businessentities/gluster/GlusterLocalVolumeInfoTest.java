@@ -37,7 +37,7 @@ public class GlusterLocalVolumeInfoTest {
      */
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         volumeInfo = new GlusterLocalVolumeInfo();
         volumeInfo.setLogicalVolumes(getLogicalVolumes());
         volumeInfo.setPhysicalVolumes(getPhysicalVolumes());

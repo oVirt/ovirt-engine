@@ -32,7 +32,7 @@ public class HeaderFilterTest {
     HeaderFilter testFilter;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(mockConfig.getInitParameterNames()).thenReturn(Collections.enumeration(new ArrayList<>()));
         testFilter = new HeaderFilter();
     }

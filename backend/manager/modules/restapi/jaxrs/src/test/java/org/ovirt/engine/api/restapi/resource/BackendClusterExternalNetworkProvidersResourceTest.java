@@ -29,20 +29,20 @@ public class BackendClusterExternalNetworkProvidersResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         setUpEntityQueryExpectations(
                 QueryType.GetClusterById,
                 IdQueryParameters.class,
@@ -102,7 +102,7 @@ public class BackendClusterExternalNetworkProvidersResourceTest
 
 
     @Override
-    protected void verifyCollection(List<ExternalProvider> collection) throws Exception {
+    protected void verifyCollection(List<ExternalProvider> collection) {
         assertNotNull(collection);
         assertEquals(1, collection.size());
         verifyModel(collection.get(0), 0);

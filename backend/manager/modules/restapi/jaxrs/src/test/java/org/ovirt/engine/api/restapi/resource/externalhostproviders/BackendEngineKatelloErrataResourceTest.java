@@ -26,7 +26,7 @@ public class BackendEngineKatelloErrataResourceTest extends AbstractBackendColle
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(
                 QueryType.GetErrataForEngine,
                 GetErrataCountsParameters.class,

@@ -60,7 +60,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     }
 
     @Test
-    public void testQuery() throws Exception {
+    public void testQuery() {
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(existingSnapshotId);
         VM vm = new VM();
@@ -73,7 +73,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     }
 
     @Test
-    public void testNonExistingSnapshotQuery() throws Exception {
+    public void testNonExistingSnapshotQuery() {
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(Guid.newGuid());
         QueryReturnValue returnValue = query.getQueryReturnValue();

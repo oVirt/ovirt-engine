@@ -35,7 +35,7 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
     protected AffinityGroup negative_enforcing_group;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
 

@@ -23,7 +23,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
     }
 
     @Test
-    public void testDetachSuccess() throws Exception {
+    public void testDetachSuccess() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpActionExpectations(ActionType.DetachStorageConnectionFromStorageDomain,
@@ -37,7 +37,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
     }
 
     @Test
-    public void testDetachFailure() throws Exception {
+    public void testDetachFailure() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpActionExpectations(ActionType.DetachStorageConnectionFromStorageDomain,
@@ -61,7 +61,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
         return entity;
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations() {
         setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },

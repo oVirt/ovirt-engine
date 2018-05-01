@@ -63,31 +63,31 @@ public class AddNetworkValidatorTest {
     }
 
     @Test
-    public void externalNetworkIsNewInDataCenterNoNetworks() throws Exception {
+    public void externalNetworkIsNewInDataCenterNoNetworks() {
         assertThat(validator.externalNetworkNewInDataCenter(), isValid());
     }
 
     @Test
-    public void externalNetworkIsNewInDataCenter() throws Exception {
+    public void externalNetworkIsNewInDataCenter() {
         externalNetworkNewInDataCenterTestSetup(false);
         assertThat(validator.externalNetworkNewInDataCenter(), isValid());
     }
 
     @Test
-    public void externalNetworkIsNotNewInDataCenter() throws Exception {
+    public void externalNetworkIsNotNewInDataCenter() {
         externalNetworkNewInDataCenterTestSetup(true);
         assertThat(validator.externalNetworkNewInDataCenter(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS));
     }
 
     @Test
-    public void externalNetworkIsAVmNetwork() throws Exception {
+    public void externalNetworkIsAVmNetwork() {
         when(network.isVmNetwork()).thenReturn(true);
         assertThat(validator.externalNetworkIsVmNetwork(), isValid());
     }
 
     @Test
-    public void externalNetworkIsNotAVmNetwork() throws Exception {
+    public void externalNetworkIsNotAVmNetwork() {
         when(network.isVmNetwork()).thenReturn(false);
         assertThat(validator.externalNetworkIsVmNetwork(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK));

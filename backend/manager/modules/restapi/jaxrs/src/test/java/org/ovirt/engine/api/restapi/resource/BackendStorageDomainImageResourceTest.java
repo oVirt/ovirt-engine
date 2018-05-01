@@ -45,7 +45,7 @@ public class BackendStorageDomainImageResourceTest extends AbstractBackendSubRes
     }
 
     @Test
-    public void testImport() throws Exception {
+    public void testImport() {
         setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId, IdQueryParameters.class,
                 new String[]{"Id"}, new Object[]{DESTINATION_DOMAIN_ID}, getStoragePoolList());
 

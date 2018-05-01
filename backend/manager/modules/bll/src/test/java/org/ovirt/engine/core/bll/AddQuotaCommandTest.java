@@ -41,12 +41,12 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testExecuteCommand() throws Exception {
+    public void testExecuteCommand() {
         command.executeCommand();
     }
 
     @Test
-    public void testValidateCommand() throws Exception {
+    public void testValidateCommand() {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 

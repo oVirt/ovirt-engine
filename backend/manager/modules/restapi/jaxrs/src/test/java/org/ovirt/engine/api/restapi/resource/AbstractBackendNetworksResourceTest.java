@@ -20,11 +20,11 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         super(collection, searchType, searchPrefix);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected abstract void setUpEntityQueryExpectations(int times, Object failure) throws Exception;
+    protected abstract void setUpEntityQueryExpectations(int times, Object failure);
 
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getEntityList() {
         List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<>();

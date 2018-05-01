@@ -41,24 +41,24 @@ public class ProviderValidatorTest {
     }
 
     @Test
-    public void providerIsSet() throws Exception {
+    public void providerIsSet() {
         assertThat(validator.providerIsSet(), isValid());
     }
 
     @Test
-    public void providerIsNotSet() throws Exception {
+    public void providerIsNotSet() {
         validator = new ProviderValidator(null);
         assertThat(validator.providerIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
     }
 
     @Test
-    public void nameAvailable() throws Exception {
+    public void nameAvailable() {
         assertThat(validator.nameAvailable(), isValid());
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void nameNotAvailable() throws Exception {
+    public void nameNotAvailable() {
         Provider<AdditionalProperties> otherProvider = createProvider(provider.getName());
         when((Provider<AdditionalProperties>) providerDao.getByName(provider.getName())).thenReturn(otherProvider);
         assertThat(validator.nameAvailable(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));

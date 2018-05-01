@@ -74,20 +74,20 @@ public class BackendVmDisksResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetAllDisksByVmId,
@@ -183,22 +183,22 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddAsyncPending() throws Exception {
+    public void testAddAsyncPending() {
         doTestAddAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
-    public void testAddAsyncInProgress() throws Exception {
+    public void testAddAsyncInProgress() {
         doTestAddAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
-    public void testAddAsyncFinished() throws Exception {
+    public void testAddAsyncFinished() {
         doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }
 
     @Test
-    public void testAttachDisk() throws Exception {
+    public void testAttachDisk() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
             ActionType.AttachDiskToVm,
@@ -224,7 +224,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAttachDiskSnapshot() throws Exception {
+    public void testAttachDiskSnapshot() {
         setUriInfo(setUpBasicUriExpectations());
         Guid snapshotId = Guid.newGuid();
         Disk model = getModel();
@@ -251,7 +251,7 @@ public class BackendVmDisksResourceTest
         assertEquals(201, response.getStatus());
     }
 
-    private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
+    private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
             QueryType.GetStorageDomainById,
@@ -289,7 +289,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDiskWithJobId() throws Exception {
+    public void testAddDiskWithJobId() {
 
         Disk model = getModel();
 
@@ -312,7 +312,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDiskWithStepId() throws Exception {
+    public void testAddDiskWithStepId() {
 
         Disk model = getModel();
 
@@ -382,7 +382,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDisk() throws Exception {
+    public void testAddDisk() {
         testAddDiskImpl(getModel());
     }
 
@@ -398,7 +398,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDiskIdentifyStorageDomainByName() throws Exception {
+    public void testAddDiskIdentifyStorageDomainByName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetDiskExpectations();
@@ -461,7 +461,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDiskWithinStorageDomain() throws Exception {
+    public void testAddDiskWithinStorageDomain() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetDiskExpectations();
@@ -503,16 +503,16 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDiskCantDo() throws Exception {
+    public void testAddDiskCantDo() {
         doTestBadAddDisk(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddDiskFailure() throws Exception {
+    public void testAddDiskFailure() {
         doTestBadAddDisk(true, false, FAILURE);
     }
 
-    private void doTestBadAddDisk(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddDisk(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(
             QueryType.GetStorageDomainById,
             IdQueryParameters.class,
@@ -542,7 +542,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         Disk model = new Disk();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -555,7 +555,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters2() throws Exception {
+    public void testAddIncompleteParameters2() {
         Disk model = getModel();
         model.setProvisionedSize(null);
         setUriInfo(setUpBasicUriExpectations());
@@ -667,7 +667,7 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             collection.getDiskResource("foo");
             fail("expected WebApplicationException");

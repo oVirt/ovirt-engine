@@ -38,7 +38,7 @@ public class SnapshotVmConfigurationHelperTest {
     private static final String EXISTING_VM_NAME = "Dummy configuration";
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingVm = createVm(existingVmId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
@@ -67,7 +67,7 @@ public class SnapshotVmConfigurationHelperTest {
     }
 
     @Test
-    public void testIllegalImageReturnedByQuery() throws Exception {
+    public void testIllegalImageReturnedByQuery() {
         existingVm.getDiskMap().put(existingDiskImage.getId(), existingDiskImage);
         existingVm.getImages().add(existingDiskImage);
         snapshotVmConfigurationHelper.markImagesIllegalIfNotInDb(existingVm, existingSnapshotId);

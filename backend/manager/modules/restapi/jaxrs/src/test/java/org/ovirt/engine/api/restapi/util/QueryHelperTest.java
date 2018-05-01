@@ -38,41 +38,41 @@ public class QueryHelperTest {
     private static final String QUERY = "name=zibert AND id=0*";
 
     @Test
-    public void testGetVMConstraint() throws Exception {
+    public void testGetVMConstraint() {
         doTestGetConstraint(Vm.class, "VMs : ");
     }
 
     @Test
-    public void testGetHostConstraint() throws Exception {
+    public void testGetHostConstraint() {
         doTestGetConstraint(Host.class, "Hosts : ");
     }
 
     @Test
-    public void testGetClusterConstraint() throws Exception {
+    public void testGetClusterConstraint() {
         doTestGetConstraint(Cluster.class, "Clusters : ");
     }
 
     @Test
-    public void testGetDataCenterConstraint() throws Exception {
+    public void testGetDataCenterConstraint() {
         doTestGetConstraint(DataCenter.class, "Datacenter : ");
     }
 
     @Test
-    public void testGetStorageConstraint() throws Exception {
+    public void testGetStorageConstraint() {
         doTestGetConstraint(StorageDomain.class, "Storage : ");
     }
 
     @Test
-    public void testGetTemplateConstraint() throws Exception {
+    public void testGetTemplateConstraint() {
         doTestGetConstraint(Template.class, "Template : ");
     }
 
     @Test
-    public void testGetNetworkConstraint() throws Exception {
+    public void testGetNetworkConstraint() {
         doTestGetConstraint(Network.class, "Networks : ");
     }
 
-    private void doTestGetConstraint(Class<?> clz, String expectedPrefix) throws Exception {
+    private void doTestGetConstraint(Class<?> clz, String expectedPrefix) {
         UriInfo uriInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
         when(queries.containsKey("search")).thenReturn(true);
@@ -88,71 +88,71 @@ public class QueryHelperTest {
     }
 
     @Test
-    public void testGetVMConstraintNoPrefix() throws Exception {
+    public void testGetVMConstraintNoPrefix() {
         doTestGetConstraint(Vm.class, "VMs : ");
     }
 
     @Test
-    public void testGetHostConstraintNoPrefix() throws Exception {
+    public void testGetHostConstraintNoPrefix() {
         doTestGetConstraint(Host.class, "Hosts : ");
     }
 
     @Test
-    public void testGetClusterConstraintNoPrefix() throws Exception {
+    public void testGetClusterConstraintNoPrefix() {
         doTestGetConstraint(Cluster.class, "Clusters : ");
     }
 
     @Test
-    public void testGetDataCenterConstraintNoPrefix() throws Exception {
+    public void testGetDataCenterConstraintNoPrefix() {
         doTestGetConstraint(DataCenter.class, "Datacenter : ");
     }
 
     @Test
-    public void testGetStorageConstraintNoPrefix() throws Exception {
+    public void testGetStorageConstraintNoPrefix() {
         doTestGetConstraint(StorageDomain.class, "Storage : ");
     }
 
     @Test
-    public void testGetTemplateConstraintNoPrefix() throws Exception {
+    public void testGetTemplateConstraintNoPrefix() {
         doTestGetConstraint(Template.class, "Template : ");
     }
 
     @Test
-    public void testGetVMDefaultConstraint() throws Exception {
+    public void testGetVMDefaultConstraint() {
         doTestGetDefaultConstraint(Vm.class, "VMs : ");
     }
 
     @Test
-    public void testGetHostDefaultConstraint() throws Exception {
+    public void testGetHostDefaultConstraint() {
         doTestGetDefaultConstraint(Host.class, "Hosts : ");
     }
 
     @Test
-    public void testGetClusterDefaultConstraint() throws Exception {
+    public void testGetClusterDefaultConstraint() {
         doTestGetDefaultConstraint(Cluster.class, "Clusters : ");
     }
 
     @Test
-    public void testGetDataCenterDefaultConstraint() throws Exception {
+    public void testGetDataCenterDefaultConstraint() {
         doTestGetDefaultConstraint(DataCenter.class, "Datacenter : ");
     }
 
     @Test
-    public void testGetStorageDefaultConstraint() throws Exception {
+    public void testGetStorageDefaultConstraint() {
         doTestGetDefaultConstraint(StorageDomain.class, "Storage : ");
     }
 
     @Test
-    public void testGetTemplateDefaultConstraint() throws Exception {
+    public void testGetTemplateDefaultConstraint() {
         doTestGetDefaultConstraint(Template.class, "Template : ");
     }
 
     @Test
-    public void testGetNetworkDefaultConstraint() throws Exception {
+    public void testGetNetworkDefaultConstraint() {
         doTestGetDefaultConstraint(Network.class, "Networks : ");
     }
 
-    private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) throws Exception {
+    private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) {
         UriInfo uriInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
         when(queries.isEmpty()).thenReturn(true);

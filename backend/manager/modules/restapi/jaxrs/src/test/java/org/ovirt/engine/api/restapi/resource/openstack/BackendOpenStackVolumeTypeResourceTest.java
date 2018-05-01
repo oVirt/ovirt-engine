@@ -43,7 +43,7 @@ public class BackendOpenStackVolumeTypeResourceTest
     }
 
     @Test
-    public void testBadId() throws Exception {
+    public void testBadId() {
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
@@ -53,7 +53,7 @@ public class BackendOpenStackVolumeTypeResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -65,7 +65,7 @@ public class BackendOpenStackVolumeTypeResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
         verifyModel(resource.get(), 1);
@@ -86,7 +86,7 @@ public class BackendOpenStackVolumeTypeResourceTest
         return cinderVolumeType;
     }
 
-    private void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    private void setUpGetEntityExpectations(boolean notFound) {
         setUpEntityQueryExpectations(
             QueryType.GetAllStorageDomains,
             QueryParametersBase.class,

@@ -48,14 +48,14 @@ public class BackendSnapshotResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
         verifyModel(resource.get(), 1);
     }
 
     @Test
-    public void testGetWithPopulate() throws Exception {
+    public void testGetWithPopulate() {
         List<String> populates = new ArrayList<>();
         populates.add("true");
         String ovfData = "data";
@@ -80,7 +80,7 @@ public class BackendSnapshotResourceTest
 
     @Test
     //empty list of snapshots returned from Backend.
-    public void testGetNotFound1() throws Exception {
+    public void testGetNotFound1() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(new ArrayList<>());
         try {
@@ -94,7 +94,7 @@ public class BackendSnapshotResourceTest
     @Test
     //non-empty list of snapshots returned from Backend,
     //but this specific snapshot is not there.
-    public void testGetNotFound2() throws Exception {
+    public void testGetNotFound2() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(2)));
         try {
@@ -114,7 +114,7 @@ public class BackendSnapshotResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUpActionExpectations(
@@ -129,16 +129,16 @@ public class BackendSnapshotResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUriInfo(
             setUpActionExpectations(
@@ -181,7 +181,7 @@ public class BackendSnapshotResourceTest
                 null);
     }
 
-    protected void setUpGetEntityExpectations(List<org.ovirt.engine.core.common.businessentities.Snapshot> result) throws Exception {
+    protected void setUpGetEntityExpectations(List<org.ovirt.engine.core.common.businessentities.Snapshot> result) {
         setUpGetEntityExpectations(QueryType.GetAllVmSnapshotsByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

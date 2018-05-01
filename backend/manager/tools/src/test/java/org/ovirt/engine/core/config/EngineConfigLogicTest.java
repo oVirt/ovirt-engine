@@ -27,7 +27,7 @@ public class EngineConfigLogicTest {
     }
 
     @Test
-    public void testGetValue() throws Exception {
+    public void testGetValue() {
         final String key = "MaxNumberOfHostsInStoragePool";
         log.info("getValue: Testing fetch of {}", key);
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
@@ -81,7 +81,7 @@ public class EngineConfigLogicTest {
     }
 
     @Test
-    public void testGetNonExitingKey() throws Exception {
+    public void testGetNonExitingKey() {
         final String key = "NonExistignKeyDB";
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
         assertTrue(configKey == null || configKey.getKey() == null);

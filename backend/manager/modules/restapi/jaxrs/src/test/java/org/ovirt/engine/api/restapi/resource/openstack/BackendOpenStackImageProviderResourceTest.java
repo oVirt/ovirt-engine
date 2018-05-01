@@ -38,7 +38,7 @@ public class BackendOpenStackImageProviderResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
@@ -48,7 +48,7 @@ public class BackendOpenStackImageProviderResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -60,14 +60,14 @@ public class BackendOpenStackImageProviderResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         verifyModel(resource.get(), 0);
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -79,7 +79,7 @@ public class BackendOpenStackImageProviderResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setUriInfo(
             setUpActionExpectations(
@@ -95,17 +95,17 @@ public class BackendOpenStackImageProviderResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpActionExpectations(ActionType.RemoveProvider,
@@ -117,7 +117,7 @@ public class BackendOpenStackImageProviderResourceTest
         resource.remove();
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -138,7 +138,7 @@ public class BackendOpenStackImageProviderResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
 
@@ -168,11 +168,11 @@ public class BackendOpenStackImageProviderResourceTest
         return provider;
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(
                 QueryType.GetProviderById,

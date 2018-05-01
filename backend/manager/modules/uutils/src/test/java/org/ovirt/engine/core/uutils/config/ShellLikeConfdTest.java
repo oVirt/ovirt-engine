@@ -42,7 +42,7 @@ public class ShellLikeConfdTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetSuffixedProperty() throws Exception {
+    public void testGetSuffixedProperty() {
 
         assertEquals("value0", config.getProperty("key00", "non_existent", false));
         assertEquals("suffixed val", config.getProperty("key01", "suffixed", false));

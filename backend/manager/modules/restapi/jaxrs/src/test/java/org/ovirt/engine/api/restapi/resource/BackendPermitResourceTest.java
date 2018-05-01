@@ -25,16 +25,16 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     }
 
     @Test
-    public void testGetBadId() throws Exception {
+    public void testGetBadId() {
         doTestGetNotFound("foo");
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         doTestGetNotFound("11111");
     }
 
-    private void doTestGetNotFound(String id) throws Exception {
+    private void doTestGetNotFound(String id) {
         BackendPermitResource resource = new BackendPermitResource(id, new BackendPermitsResource(ROLE_ID));
         resource.getParent().setMappingLocator(mapperLocator);
         try {
@@ -56,16 +56,16 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     }
 
     @Test
-    public void testRemoveBadId() throws Exception {
+    public void testRemoveBadId() {
         doTestRemoveNotFound("foo");
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testRemoveNotFound() {
         doTestRemoveNotFound("11111");
     }
 
-    private void doTestRemoveNotFound(String id) throws Exception {
+    private void doTestRemoveNotFound(String id) {
         initResource(resource.parent);
         resource.id = id;
         try {
@@ -78,7 +78,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         initResource(resource.parent);
         List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));
@@ -92,16 +92,16 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         initResource(resource.parent);
         List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));

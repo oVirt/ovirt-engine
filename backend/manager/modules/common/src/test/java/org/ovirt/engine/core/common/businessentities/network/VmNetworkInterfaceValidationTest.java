@@ -28,7 +28,7 @@ public class VmNetworkInterfaceValidationTest {
     private static final Random random = new Random();
 
     @Test
-    public void nameIsNullForCreate() throws Exception {
+    public void nameIsNullForCreate() {
         assertNicValidation(createNic(VALID_MAC_ADDRESS, null, VALID_NIC_TYPE),
                 CreateEntity.class,
                 true,
@@ -36,7 +36,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void nameIsNullForUpdate() throws Exception {
+    public void nameIsNullForUpdate() {
         assertNicValidation(createNic(VALID_MAC_ADDRESS, null, VALID_NIC_TYPE),
                 CreateEntity.class,
                 true,
@@ -44,7 +44,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void nameIsNullForDefault() throws Exception {
+    public void nameIsNullForDefault() {
         assertNicValidation(createNic(VALID_MAC_ADDRESS, null, VALID_NIC_TYPE),
                 Default.class,
                 false,
@@ -52,7 +52,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void nameIsNotNullForCreate() throws Exception {
+    public void nameIsNotNullForCreate() {
         assertNicValidation(createNic(VALID_MAC_ADDRESS, VALID_NIC_NAME, VALID_NIC_TYPE),
                 CreateEntity.class,
                 false,
@@ -60,7 +60,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void nameIsNotNullForUpdate() throws Exception {
+    public void nameIsNotNullForUpdate() {
         assertNicValidation(createNic(VALID_MAC_ADDRESS, VALID_NIC_NAME, VALID_NIC_TYPE),
                 UpdateEntity.class,
                 false,
@@ -68,7 +68,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void macAddressIsNullForVmNicUpdate() throws Exception {
+    public void macAddressIsNullForVmNicUpdate() {
         assertNicValidation(createNic(null, VALID_NIC_NAME, VALID_NIC_TYPE),
                 UpdateVmNic.class,
                 true,
@@ -76,7 +76,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void macAddressIsNullForUpdate() throws Exception {
+    public void macAddressIsNullForUpdate() {
         assertNicValidation(createNic(null, VALID_NIC_NAME, VALID_NIC_TYPE),
                 UpdateEntity.class,
                 false,
@@ -84,7 +84,7 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void macAddressIsNullForDefault() throws Exception {
+    public void macAddressIsNullForDefault() {
         assertNicValidation(createNic(null, VALID_NIC_NAME, VALID_NIC_TYPE),
                 Default.class,
                 false,
@@ -92,57 +92,57 @@ public class VmNetworkInterfaceValidationTest {
     }
 
     @Test
-    public void macAddressEmptyForCreate() throws Exception {
+    public void macAddressEmptyForCreate() {
         assertMacAddressFormatValidation("", CreateEntity.class, false);
     }
 
     @Test
-    public void macAddressFormatValidForCreate() throws Exception {
+    public void macAddressFormatValidForCreate() {
         assertMacAddressFormatValidation(VALID_MAC_ADDRESS, CreateEntity.class, false);
     }
 
     @Test
-    public void macAddressEmptyForUpdate() throws Exception {
+    public void macAddressEmptyForUpdate() {
         assertMacAddressFormatValidation("", UpdateEntity.class, true);
     }
 
     @Test
-    public void macAddressFormatValidForUpdate() throws Exception {
+    public void macAddressFormatValidForUpdate() {
         assertMacAddressFormatValidation(VALID_MAC_ADDRESS, UpdateEntity.class, false);
     }
 
     @Test
-    public void macAddressFormatInvalidForDefault() throws Exception {
+    public void macAddressFormatInvalidForDefault() {
         assertMacAddressFormatValidation(createInvalidMacAddress(), Default.class, false);
     }
 
     @Test
-    public void macAddressFormatInvalidForCreate() throws Exception {
+    public void macAddressFormatInvalidForCreate() {
         assertMacAddressFormatValidation(createInvalidMacAddress(), CreateEntity.class, true);
     }
 
     @Test
-    public void macAddressFormatInvalidForUpdate() throws Exception {
+    public void macAddressFormatInvalidForUpdate() {
         assertMacAddressFormatValidation(createInvalidMacAddress(), UpdateEntity.class, true);
     }
 
     @Test
-    public void macAddressTooLongForCreate() throws Exception {
+    public void macAddressTooLongForCreate() {
         assertMacAddressFormatValidation(VALID_MAC_ADDRESS + ":00", CreateEntity.class, true);
     }
 
     @Test
-    public void macAddressTooLongForUpdate() throws Exception {
+    public void macAddressTooLongForUpdate() {
         assertMacAddressFormatValidation(VALID_MAC_ADDRESS + ":00", UpdateEntity.class, true);
     }
 
     @Test
-    public void macAddressTooShortForCreate() throws Exception {
+    public void macAddressTooShortForCreate() {
         assertMacAddressFormatValidation(createShortMacAddress(), CreateEntity.class, true);
     }
 
     @Test
-    public void macAddressTooShortForUpdate() throws Exception {
+    public void macAddressTooShortForUpdate() {
         assertMacAddressFormatValidation(createShortMacAddress(), UpdateEntity.class, true);
     }
 

@@ -32,7 +32,7 @@ public class BackendTemplateTagResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetTagsExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -48,16 +48,16 @@ public class BackendTemplateTagResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetTagsExpectations(true);
         setUriInfo(
             setUpActionExpectations(
@@ -76,7 +76,7 @@ public class BackendTemplateTagResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetTagsExpectations(false);
         try {
             resource.remove();
@@ -87,7 +87,7 @@ public class BackendTemplateTagResourceTest
         }
     }
 
-    private void setUpGetTagsExpectations(boolean succeed) throws Exception {
+    private void setUpGetTagsExpectations(boolean succeed) {
         setUpGetEntityExpectations(
             QueryType.GetTagsByTemplateId,
             GetTagsByTemplateIdParameters.class,

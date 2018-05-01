@@ -38,7 +38,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testPositiveAffinity() throws Exception {
+    public void testPositiveAffinity() {
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group);
@@ -49,7 +49,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testNegativeAffinity() throws Exception {
+    public void testNegativeAffinity() {
         hosts = Arrays.asList(host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(negative_enforcing_group);
@@ -60,7 +60,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testNegativeAndPositiveAffinity() throws Exception {
+    public void testNegativeAndPositiveAffinity() {
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group, negative_enforcing_group);
@@ -72,7 +72,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testWithAffinityIntersection() throws Exception {
+    public void testWithAffinityIntersection() {
 
         AffinityGroup positiveCollisionGroup = new AffinityGroup();
         positiveCollisionGroup.setVdsIds(Arrays.asList(host_negative_enforcing.getId()));

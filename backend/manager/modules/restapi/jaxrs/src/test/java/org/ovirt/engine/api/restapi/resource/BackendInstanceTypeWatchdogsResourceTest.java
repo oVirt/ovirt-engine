@@ -78,7 +78,7 @@ public class BackendInstanceTypeWatchdogsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(
             QueryType.GetWatchdog,
             IdQueryParameters.class,
@@ -110,7 +110,7 @@ public class BackendInstanceTypeWatchdogsResourceTest
     }
 
     @Override
-    protected void verifyCollection(List<Watchdog> collection) throws Exception {
+    protected void verifyCollection(List<Watchdog> collection) {
         assertNotNull(collection);
         assertEquals(1, collection.size());
         if(!collection.isEmpty()) {

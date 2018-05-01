@@ -51,7 +51,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetVmTemplatesDisks,
                                      IdQueryParameters.class,
@@ -67,7 +67,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
 
@@ -90,7 +90,7 @@ public class BackendTemplateDiskResourceTest
 
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetVmTemplatesDisks,
                     IdQueryParameters.class,
@@ -101,7 +101,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testExport() throws Exception {
+    public void testExport() {
         setUriInfo(setUpActionExpectations(ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
                 new String[]{"ImageGroupID", "DestinationDomainId"},
@@ -115,7 +115,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -125,7 +125,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testIncompleteExport() throws Exception {
+    public void testIncompleteExport() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             resource.export(new Action());
@@ -136,7 +136,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testCopyBySdId() throws Exception {
+    public void testCopyBySdId() {
         setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -153,17 +153,17 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testCopyBySdNameWithoutFilter() throws Exception {
+    public void testCopyBySdNameWithoutFilter() {
         testCopyBySdName(false);
     }
 
     @Test
-    public void testCopyBySdNameWithFilter() throws Exception {
+    public void testCopyBySdNameWithFilter() {
         testCopyBySdName(true);
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(ActionType.RemoveDisk,
                 RemoveDiskParameters.class,
@@ -175,7 +175,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testRemoveByStorageDomain() throws Exception {
+    public void testRemoveByStorageDomain() {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveDisk,
@@ -192,7 +192,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testRemoveForced() throws Exception {
+    public void testRemoveForced() {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveDisk,
@@ -219,16 +219,16 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(ActionType.RemoveDisk,
                 RemoveDiskParameters.class,
@@ -244,7 +244,7 @@ public class BackendTemplateDiskResourceTest
         }
     }
 
-    protected void testCopyBySdName(boolean isFiltered) throws Exception {
+    protected void testCopyBySdName(boolean isFiltered) {
         setUriInfo(setUpBasicUriExpectations());
 
         if (isFiltered) {
@@ -316,12 +316,12 @@ public class BackendTemplateDiskResourceTest
         return action;
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "templates/" + TEMPLATE_ID + "/disks/" + DISK_ID, false);
     }
 
     @Test
-    public void testIncompleteCopy() throws Exception {
+    public void testIncompleteCopy() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             resource.copy(new Action());

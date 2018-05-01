@@ -16,14 +16,14 @@ public class BackendVmHostDevicesResourceTest
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         setUpGetVmHostDevicesExpectations();
 
         verifyHostDevices(resource.list().getHostDevices());
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
 
         resource.setUriInfo(setUpBasicUriExpectations());
 

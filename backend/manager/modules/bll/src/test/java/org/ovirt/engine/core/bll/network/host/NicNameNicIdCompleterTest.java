@@ -24,7 +24,7 @@ public class NicNameNicIdCompleterTest {
     private NicNameNicIdCompleter completer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         nic = new VdsNetworkInterface();
         nic.setId(Guid.newGuid());
         nic.setName("existingNic");
@@ -66,7 +66,7 @@ public class NicNameNicIdCompleterTest {
     }
 
     @Test
-    public void testCompleteWhenUnsetIdAndName() throws Exception {
+    public void testCompleteWhenUnsetIdAndName() {
         NicNameAndNicIdAccessors withoutNameOrIdSet = mock(NicNameAndNicIdAccessors.class);
         completer.complete(withoutNameOrIdSet);
         verify(withoutNameOrIdSet, never()).setName(any());
@@ -74,7 +74,7 @@ public class NicNameNicIdCompleterTest {
     }
 
     @Test
-    public void testCompleteWhenBothIdAndNameDoesNotReferenceExistingNic() throws Exception {
+    public void testCompleteWhenBothIdAndNameDoesNotReferenceExistingNic() {
         NicNameAndNicIdAccessors accessors = mock(NicNameAndNicIdAccessors.class);
 
         Guid guidOfNotExistingNic = Guid.newGuid();
@@ -87,7 +87,7 @@ public class NicNameNicIdCompleterTest {
     }
 
     @Test
-    public void testCompleteWhenNicIdReferencesExistingNic() throws Exception {
+    public void testCompleteWhenNicIdReferencesExistingNic() {
         TestAccessors withIdSet = new TestAccessors();
         withIdSet.setId(nic.getId());
 
@@ -97,7 +97,7 @@ public class NicNameNicIdCompleterTest {
     }
 
     @Test
-    public void testCompleteWhenNicNameReferencesExistingNic() throws Exception {
+    public void testCompleteWhenNicNameReferencesExistingNic() {
         TestAccessors withNameSet = new TestAccessors();
         withNameSet.setName(nic.getName());
 
@@ -107,7 +107,7 @@ public class NicNameNicIdCompleterTest {
     }
 
     @Test
-    public void testCompleteWhenNicNameAndNicIdAreIncoherent() throws Exception {
+    public void testCompleteWhenNicNameAndNicIdAreIncoherent() {
         TestAccessors accessors = new TestAccessors();
         Guid id = Guid.newGuid();
         String name = nic.getName();

@@ -60,7 +60,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmsRule() throws Exception {
+    public void testVmsRule() {
         AffinityGroup model = new AffinityGroup();
         model.setEnforcing(true);
         model.setPositive(false);
@@ -76,7 +76,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmsRuleNeg() throws Exception {
+    public void testVmsRuleNeg() {
         AffinityGroup model = new AffinityGroup();
         model.setEnforcing(false);
         model.setPositive(true);
@@ -92,7 +92,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmsRuleStructure() throws Exception {
+    public void testVmsRuleStructure() {
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
@@ -113,7 +113,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmsRuleStructureNeg() throws Exception {
+    public void testVmsRuleStructureNeg() {
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
@@ -134,7 +134,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmsRuleStructureDisabled() throws Exception {
+    public void testVmsRuleStructureDisabled() {
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
@@ -155,7 +155,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmsRuleStructureWins() throws Exception {
+    public void testVmsRuleStructureWins() {
         AffinityGroup model = new AffinityGroup();
         model.setEnforcing(false);
         model.setPositive(false);
@@ -178,7 +178,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostsRuleStructure() throws Exception {
+    public void testHostsRuleStructure() {
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
@@ -198,7 +198,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostsRuleStructureNeg() throws Exception {
+    public void testHostsRuleStructureNeg() {
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
@@ -218,7 +218,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostAffinityRestOutput() throws  Exception {
+    public void testHostAffinityRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();
         entity.setId(Guid.Empty);
@@ -237,7 +237,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostAffinityNegRestOutput() throws  Exception {
+    public void testHostAffinityNegRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();
         entity.setId(Guid.Empty);
@@ -256,7 +256,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostAffinityDisabledRestOutput() throws  Exception {
+    public void testHostAffinityDisabledRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();
         entity.setId(Guid.Empty);
@@ -274,7 +274,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmAffinityRestOutput() throws  Exception {
+    public void testVmAffinityRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();
         entity.setId(Guid.Empty);
@@ -295,7 +295,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmAffinityNegRestOutput() throws  Exception {
+    public void testVmAffinityNegRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();
         entity.setId(Guid.Empty);
@@ -316,7 +316,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmAffinityDisabledRestOutput() throws  Exception {
+    public void testVmAffinityDisabledRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();
         entity.setId(Guid.Empty);
@@ -337,7 +337,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmIds() throws Exception {
+    public void testVmIds() {
         AffinityGroup model = new AffinityGroup();
 
         Vm vm = new Vm();
@@ -355,7 +355,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testVmIdsReplacement() throws Exception {
+    public void testVmIdsReplacement() {
         AffinityGroup model = new AffinityGroup();
 
         Vm vm = new Vm();
@@ -375,7 +375,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostIds() throws Exception {
+    public void testHostIds() {
         AffinityGroup model = new AffinityGroup();
 
         Host host = new Host();
@@ -393,7 +393,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
-    public void testHostIdsReplacement() throws Exception {
+    public void testHostIdsReplacement() {
         AffinityGroup model = new AffinityGroup();
 
         Host host = new Host();

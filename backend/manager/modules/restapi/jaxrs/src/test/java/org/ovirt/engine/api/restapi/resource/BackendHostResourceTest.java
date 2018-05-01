@@ -98,7 +98,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendHostResource("foo", new BackendHostsResource());
             fail("expected WebApplicationException");
@@ -108,7 +108,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -120,7 +120,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
 
@@ -128,7 +128,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -140,7 +140,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -153,7 +153,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testUpdateWithClusterId() throws Exception {
+    public void testUpdateWithClusterId() {
         setUpGetEntityExpectations(3);
         setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
@@ -179,7 +179,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testUpdateWithClusterName() throws Exception {
+    public void testUpdateWithClusterName() {
         String clusterName = "Default";
         setUpGetEntityExpectations(3);
 
@@ -220,16 +220,16 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityWithNoCertificateInfoExpectations();
         setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
@@ -247,7 +247,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityWithNoCertificateInfoExpectations();
 
@@ -262,7 +262,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testActivate() throws Exception {
+    public void testActivate() {
         setUriInfo(setUpActionExpectations(ActionType.ActivateVds,
                                            VdsActionParameters.class,
                                            new String[] { "VdsId" },
@@ -272,21 +272,21 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testActivateAsyncPending() throws Exception {
+    public void testActivateAsyncPending() {
         doTestActivateAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
-    public void testActivateAsyncInProgress() throws Exception {
+    public void testActivateAsyncInProgress() {
         doTestActivateAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
-    public void testActivateAsyncFinished() throws Exception {
+    public void testActivateAsyncFinished() {
         doTestActivateAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }
 
-    private void doTestActivateAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
+    private void doTestActivateAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) {
         setUriInfo(setUpActionExpectations(ActionType.ActivateVds,
                                            VdsActionParameters.class,
                                            new String[] { "VdsId" },
@@ -303,7 +303,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testApprove() throws Exception {
+    public void testApprove() {
         setUriInfo(setUpActionExpectations(ActionType.ApproveVds,
                                            ApproveVdsParameters.class,
                                            new String[] { "VdsId" },
@@ -313,7 +313,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testApproveChangingCluster() throws Exception {
+    public void testApproveChangingCluster() {
         setUpGetEntityExpectations(4);
 
         setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
@@ -345,7 +345,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testIscsiLogin() throws Exception {
+    public void testIscsiLogin() {
         setUriInfo(setUpActionExpectations(ActionType.ConnectStorageToVds,
                                            StorageServerConnectionParametersBase.class,
                                            new String[] { "VdsId",
@@ -377,7 +377,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testIscsiDiscover() throws Exception {
+    public void testIscsiDiscover() {
         IscsiDetails iscsiDetails = new IscsiDetails();
         iscsiDetails.setAddress(ISCSI_SERVER_ADDRESS);
         iscsiDetails.setPort(ISCSI_PORT_INT);
@@ -404,7 +404,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testDeactivate() throws Exception {
+    public void testDeactivate() {
         setUriInfo(setUpActionExpectations(ActionType.MaintenanceNumberOfVdss,
                                            MaintenanceNumberOfVdssParameters.class,
                                            new String[] { "VdsIdList" },
@@ -414,7 +414,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testForceSelect() throws Exception {
+    public void testForceSelect() {
         setUriInfo(setUpActionExpectations(ActionType.ForceSelectSPM,
                                            ForceSelectSPMParameters.class,
                                            new String[] { "PreferredSPMId" },
@@ -424,7 +424,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testInstall() throws Exception {
+    public void testInstall() {
         setUpGetEntityWithNoCertificateInfoExpectations();
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
@@ -438,7 +438,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testUpgrade() throws Exception {
+    public void testUpgrade() {
         setUriInfo(setUpActionExpectations(ActionType.UpgradeHost,
                                            UpgradeHostParameters.class,
                                            new String[] { "VdsId", "oVirtIsoFile" },
@@ -450,7 +450,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testCommitNetConfig() throws Exception {
+    public void testCommitNetConfig() {
         setUriInfo(setUpActionExpectations(ActionType.CommitNetworkChanges,
                                            VdsActionParameters.class,
                                            new String[] { "VdsId" },
@@ -460,7 +460,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testManualFence() throws Exception {
+    public void testManualFence() {
         setUpGetEntityWithNoCertificateInfoExpectations();
 
         setUriInfo(setUpActionExpectations(ActionType.FenceVdsManualy,
@@ -475,25 +475,25 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testRestartFence() throws Exception {
+    public void testRestartFence() {
         doTestFence(FenceType.RESTART,
                     ActionType.RestartVds);
     }
 
     @Test
-    public void testStartFence() throws Exception {
+    public void testStartFence() {
         doTestFence(FenceType.START,
                     ActionType.StartVds);
     }
 
     @Test
-    public void testStopFence() throws Exception {
+    public void testStopFence() {
         doTestFence(FenceType.STOP,
                     ActionType.StopVds);
     }
 
     public void doTestFence(FenceType fenceType,
-                            ActionType actionType) throws Exception {
+                            ActionType actionType) {
         setUriInfo(setUpActionExpectations(actionType,
                                            FenceVdsActionParameters.class,
                                            new String[] { "VdsId" },
@@ -506,7 +506,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testIncompleteFence() throws Exception {
+    public void testIncompleteFence() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             resource.fence(new Action());
@@ -529,7 +529,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testFenceStatus() throws Exception {
+    public void testFenceStatus() {
         FenceOperationResult retVal = new FenceOperationResult(FenceOperationResult.Status.SUCCESS, PowerStatus.ON);
         setUpEntityQueryExpectations(QueryType.GetVdsFenceStatus,
                 IdQueryParameters.class,
@@ -544,7 +544,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testFenceStatusFailure() throws Exception {
+    public void testFenceStatusFailure() {
         FenceOperationResult retVal =
                 new FenceOperationResult(FenceOperationResult.Status.ERROR, PowerStatus.UNKNOWN, "some_error");
         setUpEntityQueryExpectations(QueryType.GetVdsFenceStatus,
@@ -562,7 +562,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -578,7 +578,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -591,7 +591,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testRemoveForced() throws Exception {
+    public void testRemoveForced() {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveVds,
@@ -608,7 +608,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testRemoveForcedIncomplete() throws Exception {
+    public void testRemoveForcedIncomplete() {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveVds,
@@ -625,18 +625,18 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         setUpGetEntityExpectations(1);
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         setUpGetEntityExpectations(1);
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.RemoveVds,
@@ -656,7 +656,7 @@ public class BackendHostResourceTest
     }
 
     @Test
-    public void testEnrollCertificate() throws Exception {
+    public void testEnrollCertificate() {
         setUriInfo(setUpActionExpectations(ActionType.HostEnrollCertificate,
                 VdsActionParameters.class,
                 new String[] { "VdsId" },
@@ -665,7 +665,7 @@ public class BackendHostResourceTest
         verifyActionResponse(resource.enrollCertificate(new Action()));
     }
 
-    protected VDS setUpStatisticalExpectations() throws Exception {
+    protected VDS setUpStatisticalExpectations() {
         VdsStatistics stats = mock(VdsStatistics.class);
         VDS entity = mock(VDS.class);
         setUpStatisticalEntityExpectations(entity, stats);
@@ -706,15 +706,15 @@ public class BackendHostResourceTest
         return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         setUpGetEntityExpectations(times, notFound, getEntity(0));
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound, VDS entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound, VDS entity) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                                        IdQueryParameters.class,
@@ -724,11 +724,11 @@ public class BackendHostResourceTest
         }
     }
 
-    private void setUpGetEntityWithNoCertificateInfoExpectations() throws Exception {
+    private void setUpGetEntityWithNoCertificateInfoExpectations() {
         setUpGetEntityWithNoCertificateInfoExpectations(1, false, getEntity(0));
     }
 
-    private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) throws Exception {
+    private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                                        IdQueryParameters.class,
@@ -738,7 +738,7 @@ public class BackendHostResourceTest
         }
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "hosts/" + GUIDS[0], false);
     }
 

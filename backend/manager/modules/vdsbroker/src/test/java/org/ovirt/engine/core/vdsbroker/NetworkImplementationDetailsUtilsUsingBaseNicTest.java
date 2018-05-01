@@ -25,7 +25,7 @@ public class NetworkImplementationDetailsUtilsUsingBaseNicTest extends BaseNetwo
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNetworkAndNicHasNoVlanId() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNetworkAndNicHasNoVlanId() {
         Network network = createNetwork(getTestIface().isBridged(), getTestIface().getMtu(), getTestIface().getVlanId());
 
         calculateNetworkImplementationDetailsAndAssertSync(getTestIface(), true, qosA, network);

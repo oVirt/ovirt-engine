@@ -40,26 +40,26 @@ public class BackendTemplateDisksResourceTest
     @Override
     @Test
     @Ignore
-    public void testQuery() throws Exception {
+    public void testQuery() {
         // skip test inherited from base class as searching
         // over DiskImages is unsupported by the backend
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetVmTemplatesDisks,
@@ -128,7 +128,7 @@ public class BackendTemplateDisksResourceTest
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             collection.getDiskResource("foo");
             fail("expected WebApplicationException");
@@ -155,7 +155,7 @@ public class BackendTemplateDisksResourceTest
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpEntityQueryExpectations(1, FAILURE);
@@ -171,7 +171,7 @@ public class BackendTemplateDisksResourceTest
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         UriInfo uriInfo = setUpUriExpectations(null);
 
         Throwable t = new RuntimeException(FAILURE);
@@ -187,7 +187,7 @@ public class BackendTemplateDisksResourceTest
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 

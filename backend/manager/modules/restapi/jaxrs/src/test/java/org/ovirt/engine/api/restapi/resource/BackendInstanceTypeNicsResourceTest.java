@@ -51,20 +51,20 @@ public class BackendInstanceTypeNicsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpEntityQueryExpectations(1);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(1, failure);
     }
 
-    protected void setUpEntityQueryExpectations(int times) throws Exception {
+    protected void setUpEntityQueryExpectations(int times) {
         setUpEntityQueryExpectations(times, null);
     }
 
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
                 QueryType.GetTemplateInterfacesByTemplateId,
@@ -157,7 +157,7 @@ public class BackendInstanceTypeNicsResourceTest
     }
 
     @Test
-    public void testAddNic() throws Exception {
+    public void testAddNic() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
             ActionType.AddVmTemplateInterface,
@@ -182,16 +182,16 @@ public class BackendInstanceTypeNicsResourceTest
     }
 
     @Test
-    public void testAddNicCantDo() throws Exception {
+    public void testAddNicCantDo() {
         doTestBadAddNic(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddNicFailure() throws Exception {
+    public void testAddNicFailure() {
         doTestBadAddNic(true, false, FAILURE);
     }
 
-    private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddNic(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.AddVmTemplateInterface,
@@ -213,7 +213,7 @@ public class BackendInstanceTypeNicsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         Nic model = new Nic();
         model.setName(null);
 
@@ -227,7 +227,7 @@ public class BackendInstanceTypeNicsResourceTest
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             collection.getNicResource("foo");
             fail("expected WebApplicationException");

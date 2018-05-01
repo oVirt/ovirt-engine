@@ -42,7 +42,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
     @Test
     @Override
     @Ignore
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
@@ -57,7 +57,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
     @Test
     @Override
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         collection.setUriInfo(setUpUriExpectations(null));
 
         setUpEntityQueryExpectations(FAILURE);
@@ -74,7 +74,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
     @Test
     @Override
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         collection.setUriInfo(setUpUriExpectations(null));
 
         setUpEntityQueryExpectations(FAILURE);
@@ -90,7 +90,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
     @Test
     @Override
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         locales.add(CLIENT_LOCALE);
         collection.setUriInfo(setUpUriExpectations(null));
 

@@ -39,7 +39,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendDataCenterResource("foo", null);
             fail("expected WebApplicationException");
@@ -49,7 +49,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -61,7 +61,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpVersionExpectations();
         setUpGetEntityExpectations(1);
@@ -70,7 +70,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -82,7 +82,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpVersionExpectations();
         setUpGetEntityExpectations(2);
 
@@ -97,16 +97,16 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateStoragePool,
@@ -125,7 +125,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
 
@@ -140,7 +140,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         setUriInfo(
@@ -157,7 +157,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testRemoveForced() throws Exception {
+    public void testRemoveForced() {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         UriInfo uriInfo = setUpActionExpectations(
@@ -175,7 +175,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testRemoveForcedIncomplete() throws Exception {
+    public void testRemoveForcedIncomplete() {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         UriInfo uriInfo = setUpActionExpectations(
@@ -193,7 +193,7 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(1, true);
         try {
             resource.remove();
@@ -205,16 +205,16 @@ public class BackendDataCenterResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         setUriInfo(
@@ -235,11 +235,11 @@ public class BackendDataCenterResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                        IdQueryParameters.class,
@@ -249,7 +249,7 @@ public class BackendDataCenterResourceTest
         }
     }
 
-    protected void setUpVersionExpectations() throws Exception {
+    protected void setUpVersionExpectations() {
         setUpGetEntityExpectations(QueryType.GetAvailableStoragePoolVersions,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

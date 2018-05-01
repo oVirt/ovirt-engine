@@ -41,39 +41,39 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
     }
 
     @Test
-    public void networkMappingsProvidedByParameters() throws Exception {
+    public void networkMappingsProvidedByParameters() {
         assertThat(validator.networkMappingsProvided(RandomUtils.instance().nextString(10)), isValid());
     }
 
     @Test
-    public void networkMappingsProvidedByProvider() throws Exception {
+    public void networkMappingsProvidedByProvider() {
         mockProviderAdditionalProperties();
         when(getProviderAgentConfiguration().getNetworkMappings()).thenReturn(RandomUtils.instance().nextString(10));
         assertThat(validator.networkMappingsProvided(null), isValid());
     }
 
     @Test
-    public void missingNetworkMappings() throws Exception {
+    public void missingNetworkMappings() {
         assertThat(validator.networkMappingsProvided(null),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MISSING_NETWORK_MAPPINGS));
     }
 
     @Test
-    public void messagingBrokerProvided() throws Exception {
+    public void messagingBrokerProvided() {
         mockMessagingBrokerAddress("1.1.1.1");
 
         assertThat(validator.messagingBrokerProvided(), isValid());
     }
 
     @Test
-    public void missingAgentConfigurationForMessagingBrokerValidation() throws Exception {
+    public void missingAgentConfigurationForMessagingBrokerValidation() {
         mockProviderAdditionalProperties();
         assertThat(validator.messagingBrokerProvided(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES));
     }
 
     @Test
-    public void missingMessagingConfigurationForMessagingBrokerValidation() throws Exception {
+    public void missingMessagingConfigurationForMessagingBrokerValidation() {
         mockMessagingConfiguration();
 
         assertThat(validator.messagingBrokerProvided(),

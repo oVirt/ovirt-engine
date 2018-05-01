@@ -24,7 +24,7 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendCpuProfileResource("foo");
             fail("expected WebApplicationException");
@@ -34,7 +34,7 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
         try {
@@ -46,7 +46,7 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, false);
 
@@ -54,7 +54,7 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testRemoveNotFound() {
         setUpEntityQueryExpectations(1, 0, true);
         try {
             resource.remove();
@@ -65,7 +65,7 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
@@ -81,7 +81,7 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpEntityQueryExpectations(
             QueryType.GetCpuProfileById,
             IdQueryParameters.class,
@@ -99,16 +99,16 @@ public class BackendAssignedCpuProfileResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
@@ -128,7 +128,7 @@ public class BackendAssignedCpuProfileResourceTest
         }
     }
 
-    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetCpuProfileById,
                     IdQueryParameters.class,

@@ -102,54 +102,54 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void vnicProfileSet() throws Exception {
+    public void vnicProfileSet() {
         assertThat(validator.vnicProfileIsSet(), isValid());
     }
 
     @Test
-    public void vnicProfileNull() throws Exception {
+    public void vnicProfileNull() {
         validator = new VnicProfileValidator(null);
         assertThat(validator.vnicProfileIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
-    public void vnicProfileExists() throws Exception {
+    public void vnicProfileExists() {
         assertThat(validator.vnicProfileExists(), isValid());
     }
 
     @Test
-    public void vnicProfileDoesNotExist() throws Exception {
+    public void vnicProfileDoesNotExist() {
         when(vnicProfileDao.get(any())).thenReturn(null);
         assertThat(validator.vnicProfileExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
-    public void networkExists() throws Exception {
+    public void networkExists() {
         when(networkDao.get(any())).thenReturn(network);
         assertThat(validator.networkExists(), isValid());
     }
 
     @Test
-    public void networkDoesntExist() throws Exception {
+    public void networkDoesntExist() {
         when(networkDao.get(any())).thenReturn(null);
         assertThat(validator.networkExists(), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
 
     @Test
-    public void networkQosExists() throws Exception {
+    public void networkQosExists() {
         when(vnicProfile.getNetworkQosId()).thenReturn(DEFAULT_GUID);
         when(networkQosDao.get(DEFAULT_GUID)).thenReturn(networkQos);
         assertThat(validator.networkQosExistsOrNull(), isValid());
     }
 
     @Test
-    public void networkQosNull() throws Exception {
+    public void networkQosNull() {
         when(vnicProfile.getNetworkQosId()).thenReturn(null);
         assertThat(validator.networkQosExistsOrNull(), isValid());
     }
 
     @Test
-    public void networkQosDoesntExist() throws Exception {
+    public void networkQosDoesntExist() {
         when(vnicProfile.getNetworkQosId()).thenReturn(DEFAULT_GUID);
         when(networkQosDao.get(any())).thenReturn(null);
         assertThat(validator.networkQosExistsOrNull(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS));
@@ -171,29 +171,29 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void vnicProfileNameNoVnicProfiles() throws Exception {
+    public void vnicProfileNameNoVnicProfiles() {
         vnicProfileAvailableTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void vnicProfileNameAvailable() throws Exception {
+    public void vnicProfileNameAvailable() {
         vnicProfileAvailableTest(isValid(), getSingletonNamedVnicProfileList(OTHER_VNIC_PROFILE_NAME, OTHER_GUID));
     }
 
     @Test
-    public void vnicProfileNameTakenByDifferentVnicProfile() throws Exception {
+    public void vnicProfileNameTakenByDifferentVnicProfile() {
         vnicProfileAvailableTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE),
                 getSingletonNamedVnicProfileList(DEFAULT_VNIC_PROFILE_NAME, OTHER_GUID));
     }
 
     @Test
-    public void vnicProfileNameTakenCaseSensitivelyByDifferentVnicProfile() throws Exception {
+    public void vnicProfileNameTakenCaseSensitivelyByDifferentVnicProfile() {
         vnicProfileAvailableTest(isValid(),
                 getSingletonNamedVnicProfileList(DEFAULT_VNIC_PROFILE_NAME.toUpperCase(), OTHER_GUID));
     }
 
     @Test
-    public void vnicProfileNameTakenBySameVnicProfile() throws Exception {
+    public void vnicProfileNameTakenBySameVnicProfile() {
         vnicProfileAvailableTest(isValid(),
                 getSingletonNamedVnicProfileList(DEFAULT_VNIC_PROFILE_NAME, DEFAULT_GUID));
     }
@@ -203,13 +203,13 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void networkChanged() throws Exception {
+    public void networkChanged() {
         mockVnicProfileNetworkChange(DEFAULT_GUID, DEFAULT_GUID);
         assertThat(validator.networkNotChanged(), isValid());
     }
 
     @Test
-    public void changingNetworkNotAllowed() throws Exception {
+    public void changingNetworkNotAllowed() {
         mockVnicProfileNetworkChange(DEFAULT_GUID, OTHER_GUID);
         assertThat(validator.networkNotChanged(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK));
@@ -258,12 +258,12 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void vnicProfileNotInUseByVms() throws Exception {
+    public void vnicProfileNotInUseByVms() {
         vnicProfileNotUsedByVmsTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void vnicProfileInUseByVms() throws Exception {
+    public void vnicProfileInUseByVms() {
         VM vm = mock(VM.class);
         when(vm.getName()).thenReturn(NAMEABLE_NAME);
         vnicProfileNotUsedByVmsTest(failsWithVnicProfileInUse(), Collections.singletonList(vm));
@@ -277,12 +277,12 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void vnicProfileNotInUseByTemplates() throws Exception {
+    public void vnicProfileNotInUseByTemplates() {
         vnicProfileNotUsedByTemplatesTest(isValid(), Collections.emptyList());
     }
 
     @Test
-    public void vnicProfileInUseByTemplates() throws Exception {
+    public void vnicProfileInUseByTemplates() {
         VmTemplate template = mock(VmTemplate.class);
         when(template.getName()).thenReturn(NAMEABLE_NAME);
 
@@ -307,24 +307,24 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
-    public void externalNetworkPortMirroring() throws Exception {
+    public void externalNetworkPortMirroring() {
         externalNetworkPortMirroringTest(true,
                 true,
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED));
     }
 
     @Test
-    public void externalNetworkNotPortMirroring() throws Exception {
+    public void externalNetworkNotPortMirroring() {
         externalNetworkPortMirroringTest(true, false, isValid());
     }
 
     @Test
-    public void internalNetworkPortMirroring() throws Exception {
+    public void internalNetworkPortMirroring() {
         externalNetworkPortMirroringTest(false, true, isValid());
     }
 
     @Test
-    public void internalNetworkNotPortMirroring() throws Exception {
+    public void internalNetworkNotPortMirroring() {
         externalNetworkPortMirroringTest(false, false, isValid());
     }
 

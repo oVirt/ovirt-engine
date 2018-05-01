@@ -98,7 +98,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         setUpBricksQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -114,7 +114,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         Throwable t = new RuntimeException(FAILURE);
         setUpBricksQueryExpectations(t);
 
@@ -132,7 +132,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 
@@ -151,7 +151,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         when(uriInfo.getPath()).thenReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks");
         setUriInfo(uriInfo);
@@ -163,7 +163,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testAddForce() throws Exception {
+    public void testAddForce() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         when(uriInfo.getPath()).thenReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks");
         setUriInfo(setUpGetMatrixConstraintsExpectations(
@@ -180,7 +180,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testAddForceFalse() throws Exception {
+    public void testAddForceFalse() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         when(uriInfo.getPath()).thenReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks");
         setUriInfo(setUpGetMatrixConstraintsExpectations(
@@ -212,7 +212,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -231,7 +231,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testRemoveCommit() throws Exception {
+    public void testRemoveCommit() {
         setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -250,7 +250,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testMigrate() throws Exception {
+    public void testMigrate() {
         GlusterBrick brick = new GlusterBrick();
         GlusterVolume volume = new GlusterVolume();
         brick.setName(serverName + ":" + brickDir);
@@ -273,7 +273,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testStopMigrate() throws Exception {
+    public void testStopMigrate() {
         GlusterBrick brick = new GlusterBrick();
         GlusterVolume volume = new GlusterVolume();
         brick.setName(serverName + ":" + brickDir);
@@ -296,7 +296,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     @Test
-    public void testActivate() throws Exception {
+    public void testActivate() {
         GlusterBrick brick = new GlusterBrick();
         GlusterVolume volume = new GlusterVolume();
         brick.setName(serverName + ":" + brickDir);
@@ -445,7 +445,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any())).thenReturn(queryResult);
     }
 
-    private void setUpGetEntityExpectationsAllContent(boolean notFound) throws Exception {
+    private void setUpGetEntityExpectationsAllContent(boolean notFound) {
         List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
         when(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).thenReturn(populateValue);
@@ -453,7 +453,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setupEntityExpectationAdvancedDetails(NAMES.length, notFound);
     }
 
-    private void setupEntityExpectationAdvancedDetails(int times, boolean notFound) throws Exception {
+    private void setupEntityExpectationAdvancedDetails(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                     IdQueryParameters.class,

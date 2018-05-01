@@ -78,7 +78,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     );
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         sampleDnsResolverConfiguration = new DnsResolverConfiguration();
         sampleDnsResolverConfiguration.setNameServers(Arrays.asList(
                         new NameServer("192.168.1.1"),
@@ -112,14 +112,14 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenMtuDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenMtuDifferent() {
         iface.setMtu(1);
         network.setMtu(2);
         assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenMtuSameViaDefault() throws Exception {
+    public void testIsNetworkInSyncWhenMtuSameViaDefault() {
         NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
                 createTestedInstanceWithSameNonQosValues();
 
@@ -130,7 +130,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenVlanIdDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenVlanIdDifferent() {
         iface.setMtu(1);
         network.setMtu(1);
 
@@ -140,7 +140,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenBridgedFlagDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenBridgedFlagDifferent() {
         iface.setMtu(1);
         network.setMtu(1);
 
@@ -153,57 +153,57 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIfaceQosEqual() throws Exception {
+    public void testIsNetworkInSyncWhenIfaceQosEqual() {
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIfaceQosIsNull() throws Exception {
+    public void testIsNetworkInSyncWhenIfaceQosIsNull() {
         iface.setQos(null);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenNetworkQosIsNull() throws Exception {
+    public void testIsNetworkInSyncWhenNetworkQosIsNull() {
         networkQos = null;
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenBothQosIsNull() throws Exception {
+    public void testIsNetworkInSyncWhenBothQosIsNull() {
         iface.setQos(null);
         networkQos = null;
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIfaceQosIsNullIfaceQosOverridden() throws Exception {
+    public void testIsNetworkInSyncWhenIfaceQosIsNullIfaceQosOverridden() {
         iface.setQos(null);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenNetworkQosIsNullIfaceQosOverridden() throws Exception {
+    public void testIsNetworkInSyncWhenNetworkQosIsNullIfaceQosOverridden() {
         networkQos = null;
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenAverageLinkShareDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenAverageLinkShareDifferent() {
         ifaceQos.setOutAverageLinkshare(1);
         networkQos.setOutAverageLinkshare(2);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenAverageUpperLimitDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenAverageUpperLimitDifferent() {
         ifaceQos.setOutAverageUpperlimit(1);
         networkQos.setOutAverageUpperlimit(2);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenAverageRealTimeDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenAverageRealTimeDifferent() {
         ifaceQos.setOutAverageRealtime(1);
         networkQos.setOutAverageRealtime(2);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
@@ -241,7 +241,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testReportConfigurationsOnHost() throws Exception {
+    public void testReportConfigurationsOnHost() {
         NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
                 createTestedInstanceWithSameNonQosValues();
         ifaceQos.setOutAverageLinkshare(1);
@@ -272,7 +272,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testReportConfigurationsOnHostWhenSwitchTypeIsOutOfSync() throws Exception {
+    public void testReportConfigurationsOnHostWhenSwitchTypeIsOutOfSync() {
         cluster.setRequiredSwitchTypeForCluster(SwitchType.OVS);
 
         ReportedConfigurations reportedConfigurations = createTestedInstance().reportConfigurationsOnHost();
@@ -360,7 +360,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testReportConfigurationsOnHostWhenIfaceQosIsNull() throws Exception {
+    public void testReportConfigurationsOnHostWhenIfaceQosIsNull() {
         ifaceQos = null;
         iface.setQos(null);
         NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
@@ -398,24 +398,24 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpConfigurationIsNull() throws Exception {
+    public void testIsNetworkInSyncWhenIpConfigurationIsNull() {
         this.testedNetworkAttachment.setIpConfiguration(null);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpConfigurationIsEmpty() throws Exception {
+    public void testIsNetworkInSyncWhenIpConfigurationIsEmpty() {
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4BootProtocolEqual() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4BootProtocolEqual() {
         initIpv4ConfigurationBootProtocol(true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4BootProtocolDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4BootProtocolDifferent() {
         initIpv4ConfigurationBootProtocol(false);
         iface.setIpv4BootProtocol(Ipv4BootProtocol.forValue(
                 (IPV4_BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
@@ -423,13 +423,13 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolAddressEqual() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolAddressEqual() {
         initIpv4ConfigurationBootProtocolAddress(IPV4_BOOT_PROTOCOL, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolAddressDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolAddressDifferent() {
         initIpv4ConfigurationBootProtocolAddress(IPV4_BOOT_PROTOCOL, false);
         iface.setIpv4BootProtocol(Ipv4BootProtocol.forValue(
                 (IPV4_BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
@@ -437,13 +437,13 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolNetmaskEqual() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolNetmaskEqual() {
         initIpv4ConfigurationBootProtocolNetmask(IPV4_BOOT_PROTOCOL, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolNetmaskDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4StaticBootProtocolNetmaskDifferent() {
         initIpv4ConfigurationBootProtocolNetmask(IPV4_BOOT_PROTOCOL, false);
         iface.setIpv4BootProtocol(Ipv4BootProtocol.forValue(
                 (IPV4_BOOT_PROTOCOL.getValue() + 1) % Ipv4BootProtocol.values().length));
@@ -451,13 +451,13 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4BootProtocolNotStaticAddressDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4BootProtocolNotStaticAddressDifferent() {
         initIpv4ConfigurationBootProtocolAddress(Ipv4BootProtocol.NONE, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4BootProtocolNotStaticNetmaskDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv4BootProtocolNotStaticNetmaskDifferent() {
         initIpv4ConfigurationBootProtocolNetmask(Ipv4BootProtocol.NONE, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
@@ -570,25 +570,25 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolAddressEqual() throws Exception {
+    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolAddressEqual() {
         initIpv6ConfigurationBootProtocolAddress(IPV6_BOOT_PROTOCOL, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolNetmaskEqual() throws Exception {
+    public void testIsNetworkInSyncWhenIpv6StaticBootProtocolNetmaskEqual() {
         initIpv6ConfigurationBootProtocolPrefix(IPV6_BOOT_PROTOCOL, true);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6BootProtocolNotStaticAddressDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv6BootProtocolNotStaticAddressDifferent() {
         initIpv6ConfigurationBootProtocolAddress(Ipv6BootProtocol.NONE, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6BootProtocolNotStaticNetmaskDifferent() throws Exception {
+    public void testIsNetworkInSyncWhenIpv6BootProtocolNotStaticNetmaskDifferent() {
         initIpv6ConfigurationBootProtocolPrefix(Ipv6BootProtocol.NONE, false);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }

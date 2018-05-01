@@ -25,7 +25,7 @@ public class BackendAffinityGroupVmsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         assertEquals("", query);
 
         setUpGetEntityExpectations(true);
@@ -41,7 +41,7 @@ public class BackendAffinityGroupVmsResourceTest
     }
 
     @Test
-    public void testAddVMToAffinityGroup() throws Exception {
+    public void testAddVMToAffinityGroup() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
 
@@ -59,7 +59,7 @@ public class BackendAffinityGroupVmsResourceTest
     }
 
 
-    private void setUpGetEntityExpectations(boolean withVms) throws Exception {
+    private void setUpGetEntityExpectations(boolean withVms) {
         setUpGetEntityExpectations(QueryType.GetAffinityGroupById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -88,7 +88,7 @@ public class BackendAffinityGroupVmsResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetAffinityGroupById,
                 IdQueryParameters.class,
                 new String[] {},

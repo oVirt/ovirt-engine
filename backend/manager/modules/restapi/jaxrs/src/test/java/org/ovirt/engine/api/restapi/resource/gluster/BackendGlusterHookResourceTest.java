@@ -42,14 +42,14 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         verifyModel(resource.get(), 0);
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -61,7 +61,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     @Test
-    public void testResolveCopy() throws Exception {
+    public void testResolveCopy() {
         setUriInfo(setUpActionExpectations(ActionType.UpdateGlusterHook,
                 GlusterHookManageParameters.class,
                 new String[] { "HookId" },
@@ -73,7 +73,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     @Test
-    public void testResolveAdd() throws Exception {
+    public void testResolveAdd() {
         setUriInfo(setUpActionExpectations(ActionType.AddGlusterHook,
                 GlusterHookManageParameters.class,
                 new String[] { "HookId" },
@@ -85,7 +85,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     @Test
-    public void testEnable() throws Exception {
+    public void testEnable() {
         setUriInfo(setUpActionExpectations(ActionType.EnableGlusterHook,
                 GlusterHookParameters.class,
                 new String[] { "HookId" },
@@ -96,7 +96,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     @Test
-    public void testDisable() throws Exception {
+    public void testDisable() {
         setUriInfo(setUpActionExpectations(ActionType.DisableGlusterHook,
                 GlusterHookParameters.class,
                 new String[] { "HookId" },
@@ -107,7 +107,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -129,7 +129,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "glusterHooks/" + hookId, false);
     }
 
@@ -154,11 +154,11 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         verifyLinks(model);
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetGlusterHookById,
                     GlusterHookQueryParameters.class,

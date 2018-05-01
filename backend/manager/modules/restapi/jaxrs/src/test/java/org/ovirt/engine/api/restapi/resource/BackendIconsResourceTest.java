@@ -54,7 +54,7 @@ public class BackendIconsResourceTest
     }
 
     @Override
-     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+     protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetAllVmIcons,
                 QueryParametersBase.class,
                 new String[] {},

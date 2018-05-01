@@ -37,7 +37,7 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         BackendUserResource userResourceMock = mock(BackendUserResource.class);
         resource.setUserResource(userResourceMock);
         resource.setUriInfo(setUpBasicUriExpectations());

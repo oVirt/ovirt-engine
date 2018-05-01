@@ -52,14 +52,14 @@ public class RemoveProviderValidatorTest {
     /* --- Set up for tests --- */
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         validator = spy(new RemoveProviderValidator(networkDao, clusterDao, provider));
         when(networkDao.getAllForProvider(any())).thenReturn(networks);
         when(clusterDao.getAllClustersByDefaultNetworkProviderId(any())).thenReturn(clusters);
     }
 
     @Test
-    public void networksNotUsedWhenNoNetworks() throws Exception {
+    public void networksNotUsedWhenNoNetworks() {
         assertThat(validator.providerNetworksNotUsed(), isValid());
     }
 
@@ -90,13 +90,13 @@ public class RemoveProviderValidatorTest {
     }
 
     @Test
-    public void networksNotUsedByVmsNorTemplates() throws Exception {
+    public void networksNotUsedByVmsNorTemplates() {
         mockNetwork();
         networksUsedTest(true, true, isValid());
     }
 
     @Test
-    public void networksUsedByAVm() throws Exception {
+    public void networksUsedByAVm() {
         Network net = mockNetwork();
 
         networksUsedTest(
@@ -107,7 +107,7 @@ public class RemoveProviderValidatorTest {
     }
 
     @Test
-    public void networksUsedByAVmMultipleNetworks() throws Exception {
+    public void networksUsedByAVmMultipleNetworks() {
         Network net = mockNetwork();
         Network net2 = mockNetwork();
 
@@ -120,7 +120,7 @@ public class RemoveProviderValidatorTest {
     }
 
     @Test
-    public void networksUsedByATemplate() throws Exception {
+    public void networksUsedByATemplate() {
         Network net = mockNetwork();
 
         networksUsedTest(
@@ -131,7 +131,7 @@ public class RemoveProviderValidatorTest {
     }
 
     @Test
-    public void networksUsedByATemplateMultipleNetworks() throws Exception {
+    public void networksUsedByATemplateMultipleNetworks() {
         Network net = mockNetwork();
         Network net2 = mockNetwork();
 
@@ -144,12 +144,12 @@ public class RemoveProviderValidatorTest {
     }
 
     @Test
-    public void providerIsNoDefaultProvider() throws Exception {
+    public void providerIsNoDefaultProvider() {
         assertThat(validator.providerIsNoDefaultProvider(), isValid());
     }
 
     @Test
-    public void providerIsDefaultProviderOfCluster() throws Exception {
+    public void providerIsDefaultProviderOfCluster() {
         Cluster cluster0 = mockCluster("0");
         Cluster cluster1 = mockCluster("1");
 

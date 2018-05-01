@@ -28,7 +28,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     }
 
     @Test
-    public void testAddBookmark() throws Exception {
+    public void testAddBookmark() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Name", "Bookmark.Value" },
@@ -42,7 +42,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             collection.add(new Bookmark());
@@ -53,12 +53,12 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     }
 
     @Test
-    public void testAddBookmarkCantDo() throws Exception {
+    public void testAddBookmarkCantDo() {
         doTestBadAddBookmark(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddBookmarkFailure() throws Exception {
+    public void testAddBookmarkFailure() {
         doTestBadAddBookmark(true, false, FAILURE);
     }
 
@@ -66,7 +66,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
      * Helpers.
      *************************************************************************************/
 
-    private void doTestBadAddBookmark(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddBookmark(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { NAMES[0], VALUES[0] }, valid, success));
@@ -94,7 +94,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetAllBookmarks,
                                      QueryParametersBase.class,
                                      new String[] { },

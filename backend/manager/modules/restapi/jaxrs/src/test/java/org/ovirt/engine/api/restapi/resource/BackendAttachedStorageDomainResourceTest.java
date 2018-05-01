@@ -46,7 +46,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendAttachedStorageDomainResource("foo", null);
             fail("expected WebApplicationException");
@@ -56,7 +56,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetDomainExpectations(StorageType.NFS, false);
         try {
@@ -68,7 +68,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetDomainExpectations(StorageType.NFS, true);
         setUpGetConnectionExpectations();
         setUriInfo(setUpBasicUriExpectations());
@@ -76,7 +76,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testActivate() throws Exception {
+    public void testActivate() {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.ActivateStorageDomain,
@@ -90,21 +90,21 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testActivateAsyncPending() throws Exception {
+    public void testActivateAsyncPending() {
         doTestActivateAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
-    public void testActivateAsyncInProgress() throws Exception {
+    public void testActivateAsyncInProgress() {
         doTestActivateAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
-    public void testActivateAsyncFinished() throws Exception {
+    public void testActivateAsyncFinished() {
         doTestActivateAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }
 
-    private void doTestActivateAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
+    private void doTestActivateAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.ActivateStorageDomain,
@@ -128,7 +128,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testDeactivate() throws Exception {
+    public void testDeactivate() {
         setUriInfo(
             setUpActionExpectations(
                 ActionType.DeactivateStorageDomainWithOvfUpdate,
@@ -142,7 +142,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetDomainExpectations(StorageType.NFS, true);
         setUpGetConnectionExpectations();
         setUriInfo(
@@ -160,7 +160,7 @@ public class BackendAttachedStorageDomainResourceTest
 
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() {
         setUpGetDomainExpectations(StorageType.NFS, false);
         try {
             resource.remove();
@@ -172,7 +172,7 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testRemoveLocalStorage() throws Exception {
+    public void testRemoveLocalStorage() {
         setUpGetDomainExpectations(StorageType.LOCALFS, true);
         setUpGetConnectionExpectations();
         setUriInfo(
@@ -189,16 +189,16 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetDomainExpectations(StorageType.NFS, true);
         setUpGetConnectionExpectations();
         setUriInfo(
@@ -219,7 +219,7 @@ public class BackendAttachedStorageDomainResourceTest
         }
     }
 
-    private void setUpGetDomainExpectations(StorageType storageType, boolean succeed) throws Exception {
+    private void setUpGetDomainExpectations(StorageType storageType, boolean succeed) {
         setUpGetEntityExpectations(
             QueryType.GetStorageDomainByIdAndStoragePoolId,
             StorageDomainAndPoolQueryParameters.class,
@@ -246,7 +246,7 @@ public class BackendAttachedStorageDomainResourceTest
         return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "datacenters/" + DATA_CENTER_ID + "/storagedomains/" + STORAGE_DOMAIN_ID, false);
     }
 
@@ -267,7 +267,7 @@ public class BackendAttachedStorageDomainResourceTest
         return connection;
     }
 
-    private void setUpGetConnectionExpectations() throws Exception {
+    private void setUpGetConnectionExpectations() {
         setUpGetEntityExpectations(
             QueryType.GetStorageServerConnectionById,
             StorageServerConnectionQueryParametersBase.class,

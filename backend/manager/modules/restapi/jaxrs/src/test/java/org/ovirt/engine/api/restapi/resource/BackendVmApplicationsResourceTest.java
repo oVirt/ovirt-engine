@@ -47,7 +47,7 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                     IdQueryParameters.class,
@@ -91,12 +91,12 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
     }
 
     @Test
-    public void testSubResourceLocator() throws Exception {
+    public void testSubResourceLocator() {
         assertTrue(resource.getApplicationResource(VM_ID.toString()) instanceof VmApplicationResource);
     }
 
     @Test
-    public void testSubResourceLocatorBadGuid() throws Exception {
+    public void testSubResourceLocatorBadGuid() {
         try {
             resource.getApplicationResource("foo");
             fail("expected WebApplicationException");

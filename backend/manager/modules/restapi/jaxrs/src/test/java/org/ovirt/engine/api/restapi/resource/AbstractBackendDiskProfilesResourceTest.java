@@ -39,7 +39,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddDiskProfile() throws Exception {
+    public void testAddDiskProfile() {
         setUriInfo(setUpBasicUriExpectations());
         setUpStorageDomainQueryExpectations();
         setUpCreationExpectations(ActionType.AddDiskProfile,
@@ -65,18 +65,18 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddDiskProfileCantDo() throws Exception {
+    public void testAddDiskProfileCantDo() {
         setUpStorageDomainQueryExpectations();
         doTestBadAddDiskProfile(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddDiskProfileFailure() throws Exception {
+    public void testAddDiskProfileFailure() {
         setUpStorageDomainQueryExpectations();
         doTestBadAddDiskProfile(true, false, FAILURE);
     }
 
-    private void doTestBadAddDiskProfile(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddDiskProfile(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
@@ -96,7 +96,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         DiskProfile model = createIncompleteDiskProfile();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -118,7 +118,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
@@ -132,7 +132,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         setUpDiskProfilesQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -148,7 +148,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         Throwable t = new RuntimeException(FAILURE);
         setUpDiskProfilesQueryExpectations(t);
 
@@ -165,7 +165,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 

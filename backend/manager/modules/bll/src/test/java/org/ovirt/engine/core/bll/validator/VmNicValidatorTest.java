@@ -71,18 +71,18 @@ public class VmNicValidatorTest {
     }
 
     @Test
-    public void e1000VmInterfaceTypeWhenNotIsCompatibleWithOs() throws Exception {
+    public void e1000VmInterfaceTypeWhenNotIsCompatibleWithOs() {
         isCompatibleWithOsTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS),
                 VmInterfaceType.e1000.getValue());
     }
 
     @Test
-    public void pvVmInterfaceTypeWhenIsCompatibleWithOs() throws Exception {
+    public void pvVmInterfaceTypeWhenIsCompatibleWithOs() {
         isCompatibleWithOsTest(isValid(), VmInterfaceType.pv.getValue());
     }
 
     @Test
-    public void rtl8139VmInterfaceTypeWhenIsCompatibleWithOs() throws Exception {
+    public void rtl8139VmInterfaceTypeWhenIsCompatibleWithOs() {
         isCompatibleWithOsTest(isValid(), VmInterfaceType.rtl8139.getValue());
     }
 
@@ -97,24 +97,24 @@ public class VmNicValidatorTest {
     }
 
     @Test
-    public void vnicProfileExist() throws Exception {
+    public void vnicProfileExist() {
         vnicProfileValidationTest(isValid(), true, true);
     }
 
     @Test
-    public void vnicProfileNotExist() throws Exception {
+    public void vnicProfileNotExist() {
         vnicProfileValidationTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS),
                 false,
                 false);
     }
 
     @Test
-    public void networkInCluster() throws Exception {
+    public void networkInCluster() {
         vnicProfileValidationTest(isValid(), true, true);
     }
 
     @Test
-    public void networkNotInCluster() throws Exception {
+    public void networkNotInCluster() {
         vnicProfileValidationTest(failsWith(EngineMessage.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER),
                 true,
                 false);

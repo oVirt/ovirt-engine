@@ -53,7 +53,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setupParentExpectations();
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
@@ -63,7 +63,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -75,7 +75,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testReplace() throws Exception {
+    public void testReplace() {
         try {
             resource.replace(new Action());
             fail("Expected excpetion");
@@ -85,7 +85,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testPopulate() throws Exception {
+    public void testPopulate() {
         setupParentExpectations();
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectationsAllContent(1, false);
@@ -96,7 +96,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testPopulateNotFound() throws Exception {
+    public void testPopulateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectationsAllContent(1, true);
 
@@ -111,7 +111,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     @Test
-    public void testStatisticalQuery() throws Exception {
+    public void testStatisticalQuery() {
 
         setUriInfo(setUpBasicUriExpectations());
         setupParentExpectations();
@@ -129,7 +129,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
      * test of that logic is part of the parent tests.
      */
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         resource.setParent(bricksResourceMock);
         setupParentExpectations();
         setUpGetEntityExpectations(1);
@@ -167,11 +167,11 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         assertEquals(GlusterTestHelper.BRICK_MNT_OPT, model.getMntOptions());
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetGlusterBrickById,
                     IdQueryParameters.class,
@@ -181,7 +181,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         }
     }
 
-    private void setUpGetEntityExpectationsAllContent(int times, boolean notFound) throws Exception {
+    private void setUpGetEntityExpectationsAllContent(int times, boolean notFound) {
         setUpGetEntityExpectations(times, notFound);
         List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
@@ -189,7 +189,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         setupParentPopulateExpectations();
     }
 
-    private void setupEntityExpectationAdvancedDetails(int times, boolean notFound, boolean hasBrickDetails) throws Exception {
+    private void setupEntityExpectationAdvancedDetails(int times, boolean notFound, boolean hasBrickDetails) {
         // the brick entity should be returned. We are not testing for not found on that.
         //setUpGetEntityExpectations(times,false);
         while (times-- > 0) {

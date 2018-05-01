@@ -31,7 +31,7 @@ public class NetworkMtuValidatorTest {
     public static final MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DefaultMTU, 1500));
 
     @Test
-    public void testNetworksOnNicMatchMtuWhenNoNetworksAreProvided() throws Exception {
+    public void testNetworksOnNicMatchMtuWhenNoNetworksAreProvided() {
 
         Map<String, List<Network>> networksOnNics =
             Collections.singletonMap("nicName", Collections.emptyList());
@@ -43,7 +43,7 @@ public class NetworkMtuValidatorTest {
     }
 
     @Test
-    public void testNetworksOnNicMatchMtu() throws Exception {
+    public void testNetworksOnNicMatchMtu() {
         List<Network> networks = Collections.singletonList(createNetwork(1, false, "netA"));
 
         Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
@@ -53,7 +53,7 @@ public class NetworkMtuValidatorTest {
     }
 
     @Test
-    public void testNetworksOnNicMatchMtuAllDefault() throws Exception {
+    public void testNetworksOnNicMatchMtuAllDefault() {
         Network networkA = createNetwork(0, false, "netA");
         networkA.setVlanId(11);
 
@@ -67,7 +67,7 @@ public class NetworkMtuValidatorTest {
     }
 
     @Test
-    public void testNetworksOnNicMatchMtuNetworkMtuDoesNotMatch() throws Exception {
+    public void testNetworksOnNicMatchMtuNetworkMtuDoesNotMatch() {
         Network networkA = createNetwork(1, false, "netA");
         networkA.setVlanId(11);
 
@@ -84,7 +84,7 @@ public class NetworkMtuValidatorTest {
     }
 
     @Test
-    public void testGetNetworksOnNics() throws Exception {
+    public void testGetNetworksOnNics() {
         Network networkA = createNetwork(1, true, "netA");
         Network networkB = createNetwork(2, true, "netB");
         Network networkC = createNetwork(2, true, "netC");

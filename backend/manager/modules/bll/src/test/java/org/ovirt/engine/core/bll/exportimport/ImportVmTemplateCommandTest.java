@@ -97,7 +97,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validVolumeFormatAndTypeCombinations() throws Exception {
+    public void validVolumeFormatAndTypeCombinations() {
         assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
         assertValidVolumeInfoCombination(VolumeFormat.RAW, VolumeType.Sparse, StorageType.NFS);
         assertValidVolumeInfoCombination(VolumeFormat.COW, VolumeType.Sparse, StorageType.NFS);
@@ -116,7 +116,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void invalidVolumeFormatAndTypeCombinations() throws Exception {
+    public void invalidVolumeFormatAndTypeCombinations() {
         assertInvalidVolumeInfoCombination(VolumeFormat.COW, VolumeType.Preallocated, StorageType.NFS);
         assertInvalidVolumeInfoCombination(VolumeFormat.COW, VolumeType.Preallocated, StorageType.ISCSI);
         assertInvalidVolumeInfoCombination(VolumeFormat.COW, VolumeType.Preallocated, StorageType.FCP);

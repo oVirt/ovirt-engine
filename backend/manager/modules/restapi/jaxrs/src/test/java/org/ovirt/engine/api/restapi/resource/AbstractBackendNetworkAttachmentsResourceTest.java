@@ -46,7 +46,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     @Test
-    public void testAddNetworkAttachment() throws Exception {
+    public void testAddNetworkAttachment() {
         setUriInfo(setUpBasicUriExpectations());
         setUpVerifyHostExpectations();
         setUpCreationExpectations(ActionType.AddNetworkAttachment,
@@ -69,17 +69,17 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     }
 
     @Test
-    public void testAddNetworkAttachmentCantDo() throws Exception {
+    public void testAddNetworkAttachmentCantDo() {
         doTestBadAddNetworkAttachment(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddNetworkAttachmentFailure() throws Exception {
+    public void testAddNetworkAttachmentFailure() {
         doTestBadAddNetworkAttachment(true, false, FAILURE);
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         org.ovirt.engine.api.model.NetworkAttachment model = createIncompleteNetworkAttachment();
         setUriInfo(setUpBasicUriExpectations());
         setUpVerifyHostExpectations();
@@ -94,12 +94,12 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpNetworkAttachmentsQueryExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -108,7 +108,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         setUpNetworkAttachmentsQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -124,7 +124,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         Throwable t = new RuntimeException(FAILURE);
         setUpNetworkAttachmentsQueryExpectations(t);
 
@@ -141,7 +141,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 
@@ -177,7 +177,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         return setUpEntityExpectations(mock(NetworkAttachment.class), index);
     }
 
-    protected void verifyCollection(List<org.ovirt.engine.api.model.NetworkAttachment> collection) throws Exception {
+    protected void verifyCollection(List<org.ovirt.engine.api.model.NetworkAttachment> collection) {
         assertNotNull(collection);
         assertEquals(GUIDS.length, collection.size());
         for (int i = 0; i < GUIDS.length; i++) {
@@ -214,7 +214,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     protected void setUpEntityExpectations(NetworkAttachment entity) {
     }
 
-    private void doTestBadAddNetworkAttachment(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddNetworkAttachment(boolean valid, boolean success, String detail) {
         setUpVerifyHostExpectations();
         setUriInfo(setUpActionExpectations(ActionType.AddNetworkAttachment,
                 NetworkAttachmentParameters.class,

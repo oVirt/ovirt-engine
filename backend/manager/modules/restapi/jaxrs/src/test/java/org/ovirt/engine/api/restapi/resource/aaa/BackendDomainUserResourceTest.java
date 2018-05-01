@@ -31,7 +31,7 @@ public class BackendDomainUserResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(1, false);
@@ -44,7 +44,7 @@ public class BackendDomainUserResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(1, true);
@@ -64,7 +64,7 @@ public class BackendDomainUserResourceTest
         resource.setParent(parent);
     }
 
-    private void setUpEntityQueryExpectations(int index, boolean notFound) throws Exception {
+    private void setUpEntityQueryExpectations(int index, boolean notFound) {
         setUpGetEntityExpectations(
             QueryType.GetDirectoryUserById,
             DirectoryIdQueryParameters.class,

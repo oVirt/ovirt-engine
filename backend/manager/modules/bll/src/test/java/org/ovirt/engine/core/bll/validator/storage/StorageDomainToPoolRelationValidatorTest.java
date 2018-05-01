@@ -41,7 +41,7 @@ public class StorageDomainToPoolRelationValidatorTest {
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         // Create the storage domain.
         storageDomain = new StorageDomain();
         storageDomain.setId(Guid.newGuid());

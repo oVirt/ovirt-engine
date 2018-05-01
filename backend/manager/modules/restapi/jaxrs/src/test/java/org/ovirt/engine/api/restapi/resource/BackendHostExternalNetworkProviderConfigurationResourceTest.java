@@ -32,7 +32,7 @@ public class BackendHostExternalNetworkProviderConfigurationResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
                 QueryType.GetProviderById,
@@ -50,7 +50,7 @@ public class BackendHostExternalNetworkProviderConfigurationResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
                 QueryType.GetProviderById,

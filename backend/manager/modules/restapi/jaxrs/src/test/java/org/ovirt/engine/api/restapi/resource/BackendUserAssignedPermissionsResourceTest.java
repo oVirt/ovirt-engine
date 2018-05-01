@@ -27,7 +27,7 @@ public class BackendUserAssignedPermissionsResourceTest
     }
 
     @Test
-    public void testAddIncompletePermission() throws Exception {
+    public void testAddIncompletePermission() {
         Permission model = new Permission();
         model.setUser(new User());
         model.getUser().setId(GUIDS[1].toString());

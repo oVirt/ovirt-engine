@@ -19,7 +19,7 @@ public class BackendAffinityGroupVmResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetGroupExpectations();
         setUriInfo(
@@ -35,7 +35,7 @@ public class BackendAffinityGroupVmResourceTest
         verifyRemove(resource.remove());
     }
 
-    private void setUpGetGroupExpectations() throws Exception {
+    private void setUpGetGroupExpectations() {
         setUpGetEntityExpectations(
             QueryType.GetAffinityGroupById,
             IdQueryParameters.class,

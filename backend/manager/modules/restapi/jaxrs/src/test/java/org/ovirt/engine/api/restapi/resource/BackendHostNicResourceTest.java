@@ -65,7 +65,7 @@ public class BackendHostNicResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendHostNicResource("foo", null);
             fail("expected WebApplicationException");
@@ -75,7 +75,7 @@ public class BackendHostNicResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
@@ -91,7 +91,7 @@ public class BackendHostNicResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setGetVdsQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
@@ -101,7 +101,7 @@ public class BackendHostNicResourceTest
     }
 
     @Test
-    public void testGetIncludeStatistics() throws Exception {
+    public void testGetIncludeStatistics() {
         try {
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpBasicUriExpectations());
@@ -129,7 +129,7 @@ public class BackendHostNicResourceTest
         verifyQuery(statisticsResource.getQuery(), entity);
     }
 
-    protected VdsNetworkInterface setUpStatisticalExpectations() throws Exception {
+    protected VdsNetworkInterface setUpStatisticalExpectations() {
         VdsNetworkStatistics stats = mock(VdsNetworkStatistics.class);
         VdsNetworkInterface entity = mock(VdsNetworkInterface.class);
         when(entity.getSpeed()).thenReturn(SPEED);
@@ -172,7 +172,7 @@ public class BackendHostNicResourceTest
         assertEquals(GUIDS[0].toString(), adopted.getHostNic().getHost().getId());
     }
 
-    protected void setUpEntityQueryExpectations() throws Exception {
+    protected void setUpEntityQueryExpectations() {
         setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -180,7 +180,7 @@ public class BackendHostNicResourceTest
                                      setUpInterfaces());
     }
 
-    protected void setGetVdsQueryExpectations(int times) throws Exception {
+    protected void setGetVdsQueryExpectations(int times) {
         while (times-- > 0) {
             VDS vds = new VDS();
             vds.setClusterId(GUIDS[0]);
@@ -192,7 +192,7 @@ public class BackendHostNicResourceTest
         }
     }
 
-    protected void setGetNetworksQueryExpectations(int times) throws Exception {
+    protected void setGetNetworksQueryExpectations(int times) {
         while (times-- > 0) {
             ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<>();
             org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();

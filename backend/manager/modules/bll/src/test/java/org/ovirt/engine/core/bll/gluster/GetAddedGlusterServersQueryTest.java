@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +99,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         expectedServers.add(server);
     }
 
-    private void setupMock() throws Exception {
+    private void setupMock() {
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
 
         VDSReturnValue returnValue = getVDSReturnValue();
@@ -144,7 +143,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testExecuteQueryCommand() throws IOException {
+    public void testExecuteQueryCommand() {
         getQuery().executeQueryCommand();
         Map<String, String> servers = getQuery().getQueryReturnValue().getReturnValue();
 

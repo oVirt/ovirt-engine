@@ -27,14 +27,14 @@ public class MacPoolUsingRangesTest {
 
 
     @Test
-    public void testReactionToDuplicatesWhenDuplicatesDuringStartup() throws Exception {
+    public void testReactionToDuplicatesWhenDuplicatesDuringStartup() {
         MacPoolUsingRanges macPoolUsingRanges = createMacPoolDisallowingDuplicates();
         macPoolUsingRanges.initialize(true, Arrays.asList(MAC_ADDRESS, MAC_ADDRESS));
         verify(auditLogDirector).log(any(AuditLogableImpl.class), eq(AuditLogType.MAC_ADDRESS_VIOLATES_NO_DUPLICATES_SETTING), anyString());
     }
 
     @Test(expected = EngineException.class)
-    public void testReactionToDuplicatesWhenDuplicatesNotDuringStartup() throws Exception {
+    public void testReactionToDuplicatesWhenDuplicatesNotDuringStartup() {
         MacPoolUsingRanges macPoolUsingRanges = createMacPoolDisallowingDuplicates();
         macPoolUsingRanges.initialize(false, Arrays.asList(MAC_ADDRESS, MAC_ADDRESS));
     }

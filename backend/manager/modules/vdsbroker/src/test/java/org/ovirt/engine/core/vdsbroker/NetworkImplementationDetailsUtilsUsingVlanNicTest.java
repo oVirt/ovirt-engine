@@ -30,13 +30,13 @@ public class NetworkImplementationDetailsUtilsUsingVlanNicTest extends BaseNetwo
      * Cover a case when MTU is unset & other network parameters out of sync, which is not covered by other tests.
      */
     @Test
-    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNetworkHasDifferentVlanId() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNetworkHasDifferentVlanId() {
         Network network = createNetwork(getTestIface().isBridged(), getTestIface().getMtu(), getTestIface().getVlanId() + 1);
         calculateNetworkImplementationDetailsAndAssertSync(getTestIface(), false, qosA, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNetworkHasNoVlanId() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkVlanOutOfSyncNicAndNetworkHasNoVlanId() {
         Network network = createNetwork(getTestIface().isBridged(), getTestIface().getMtu(), null);
         calculateNetworkImplementationDetailsAndAssertSync(getTestIface(), false, qosA, network);
     }

@@ -14,7 +14,7 @@ public class GetConsoleDescriptorFileQueryTest extends
         AbstractUserQueryTest<ConsoleOptionsParams, GetConsoleDescriptorFileQuery<ConsoleOptionsParams>> {
 
     @Test
-    public void shouldFailWhenVmNull() throws Exception {
+    public void shouldFailWhenVmNull() {
         ConsoleOptions options = new ConsoleOptions(GraphicsType.SPICE);
 
         when(getQueryParameters().getOptions()).thenReturn(options);
@@ -22,7 +22,7 @@ public class GetConsoleDescriptorFileQueryTest extends
     }
 
     @Test
-    public void shouldFailWhenGraphicsTypeNull() throws Exception {
+    public void shouldFailWhenGraphicsTypeNull() {
         ConsoleOptions options = new ConsoleOptions();
         options.setVmId(Guid.Empty);
 
@@ -31,7 +31,7 @@ public class GetConsoleDescriptorFileQueryTest extends
     }
 
     @Test
-    public void shouldPass() throws Exception {
+    public void shouldPass() {
         ConsoleOptions options = new ConsoleOptions(GraphicsType.SPICE);
         options.setVmId(Guid.Empty);
 

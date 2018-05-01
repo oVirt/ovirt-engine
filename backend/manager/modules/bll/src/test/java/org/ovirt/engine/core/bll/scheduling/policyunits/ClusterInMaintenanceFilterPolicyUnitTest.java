@@ -28,7 +28,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     }
 
     @Test
-    public void testHaCanStart() throws Exception {
+    public void testHaCanStart() {
         vm.setAutoStartup(true);
 
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
@@ -40,7 +40,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     }
 
     @Test
-    public void testHaCanMigrate() throws Exception {
+    public void testHaCanMigrate() {
         vm.setRunOnVds(Guid.newGuid());
         vm.setAutoStartup(true);
 
@@ -55,7 +55,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     }
 
     @Test
-    public void testNonHaCannotStart() throws Exception {
+    public void testNonHaCannotStart() {
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
         final PerHostMessages messages = new PerHostMessages();
         List<VDS> result = unit.filter(null,
@@ -70,7 +70,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     }
 
     @Test
-    public void testNonHaCanMigrate() throws Exception {
+    public void testNonHaCanMigrate() {
         vm.setRunOnVds(Guid.newGuid());
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
         List<VDS> result = unit.filter(null,

@@ -34,11 +34,11 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetStepsWithSubjectEntitiesByJobId,
@@ -80,7 +80,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
     }
 
     @Test
-    public void testAddStep() throws Exception {
+    public void testAddStep() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddExternalStep,
                                   AddExternalStepParameters.class,

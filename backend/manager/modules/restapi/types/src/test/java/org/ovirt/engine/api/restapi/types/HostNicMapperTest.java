@@ -60,7 +60,7 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNic, Vd
     }
 
     @Test
-    public void testCustomNetworkConfigurationMapped() throws Exception {
+    public void testCustomNetworkConfigurationMapped() {
         VdsNetworkInterface entity = new VdsNetworkInterface();
         HostNic model = HostNicMapper.map(entity, null);
         assertFalse(model.isSetCustomConfiguration());

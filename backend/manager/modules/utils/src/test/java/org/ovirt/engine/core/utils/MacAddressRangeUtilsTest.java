@@ -12,12 +12,12 @@ import org.junit.Test;
 public class MacAddressRangeUtilsTest {
 
     @Test
-    public void testMacToString() throws Exception {
+    public void testMacToString() {
         assertThat(MacAddressRangeUtils.macToString(112910729216L), is("00:1a:4a:01:00:00"));
     }
 
     @Test
-    public void testMacToLong() throws Exception {
+    public void testMacToLong() {
         assertThat(MacAddressRangeUtils.macToLong("00:1a:4a:01:00:00"), is(112910729216L));
     }
 

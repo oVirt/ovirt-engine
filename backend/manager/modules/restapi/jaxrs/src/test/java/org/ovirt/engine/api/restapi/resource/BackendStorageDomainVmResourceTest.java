@@ -67,7 +67,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
@@ -77,7 +77,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testGetExportNotFound() throws Exception {
+    public void testGetExportNotFound() {
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
         setUriInfo(setUpBasicUriExpectations());
@@ -90,11 +90,11 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testGetExport() throws Exception {
+    public void testGetExport() {
         testGet(StorageDomainType.ImportExport);
     }
 
-    protected void testGet(StorageDomainType domainType) throws Exception {
+    protected void testGet(StorageDomainType domainType) {
         setUpGetStorageDomainExpectations(domainType);
         setUpGetEntityExpectations(domainType, STORAGE_DOMAIN_ID);
         setUriInfo(setUpBasicUriExpectations());
@@ -103,7 +103,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportNotFound() throws Exception {
+    public void testImportNotFound() {
         Action action = new Action();
         action.setStorageDomain(new StorageDomain());
         action.getStorageDomain().setId(GUIDS[2].toString());
@@ -119,7 +119,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImport() throws Exception {
+    public void testImport() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
         org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
@@ -129,7 +129,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportCollapseSnapshots() throws Exception {
+    public void testImportCollapseSnapshots() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
         org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
@@ -139,7 +139,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportWithStorageDomainName() throws Exception {
+    public void testImportWithStorageDomainName() {
         setUpEntityQueryExpectations(QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -155,7 +155,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportWithClusterName() throws Exception {
+    public void testImportWithClusterName() {
         setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -171,7 +171,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportAsNewEntity() throws Exception {
+    public void testImportAsNewEntity() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
         org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
@@ -181,7 +181,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportWithDiskWithoutId() throws Exception {
+    public void testImportWithDiskWithoutId() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(GUIDS[2].toString());
         org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
@@ -215,7 +215,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
@@ -230,7 +230,7 @@ public class BackendStorageDomainVmResourceTest
         verifyRemove(resource.remove());
     }
 
-    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
@@ -278,7 +278,7 @@ public class BackendStorageDomainVmResourceTest
         setUpGetDataCenterByStorageDomainExpectations(id, 1);
     }
 
-    public void doTestImport(StorageDomain storageDomain, org.ovirt.engine.api.model.Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {
+    public void doTestImport(StorageDomain storageDomain, org.ovirt.engine.api.model.Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.ImportVm,
@@ -302,7 +302,7 @@ public class BackendStorageDomainVmResourceTest
         verifyActionResponse(resource.doImport(action));
     }
 
-    public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
+    public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) {
         setUriInfo(setUpActionExpectations(ActionType.ImportVmFromConfiguration,
                 ImportVmFromConfParameters.class,
                 new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity",
@@ -318,21 +318,21 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testImportAsyncPending() throws Exception {
+    public void testImportAsyncPending() {
         doTestImportAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
-    public void testImportAsyncInProgress() throws Exception {
+    public void testImportAsyncInProgress() {
         doTestImportAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
-    public void testImportAsyncFinished() throws Exception {
+    public void testImportAsyncFinished() {
         doTestImportAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }
 
-    private void doTestImportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
+    private void doTestImportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
 
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3]);
@@ -362,7 +362,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testIncompleteImport() throws Exception {
+    public void testIncompleteImport() {
         setUriInfo(setUpBasicUriExpectations());
         try {
             resource.doImport(new Action());
@@ -373,20 +373,20 @@ public class BackendStorageDomainVmResourceTest
     }
 
     @Test
-    public void testRegisterVM() throws Exception {
+    public void testRegisterVM() {
         org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestRegister(cluster, false);
     }
 
     @Test
-    public void testRegisterAsNewEntity() throws Exception {
+    public void testRegisterAsNewEntity() {
         org.ovirt.engine.api.model.Cluster cluster = new org.ovirt.engine.api.model.Cluster();
         cluster.setId(GUIDS[1].toString());
         doTestRegister(cluster, true);
     }
 
-    protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) throws Exception {
+    protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) {
         setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -394,17 +394,17 @@ public class BackendStorageDomainVmResourceTest
                                      setUpStorageDomain(domainType));
     }
 
-    protected void setUpGetEntityExpectations(int times, StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) throws Exception {
+    protected void setUpGetEntityExpectations(int times, StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) {
         while (times-- > 0) {
             setUpGetEntityExpectations(domainType, getStoragePoolsByStorageDomainId);
         }
     }
 
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) throws Exception {
+    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId) {
         setUpGetEntityExpectations(domainType, getStoragePoolsByStorageDomainId, false);
     }
 
-    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound) {
         switch (domainType) {
         case Data:
             setUpEntityQueryExpectations(QueryType.GetVmByVmId,
@@ -447,7 +447,7 @@ public class BackendStorageDomainVmResourceTest
         return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, URL_BASE, false);
     }
 

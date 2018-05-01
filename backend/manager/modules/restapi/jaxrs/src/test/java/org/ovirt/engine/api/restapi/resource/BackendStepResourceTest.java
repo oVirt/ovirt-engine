@@ -27,7 +27,7 @@ public class BackendStepResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -39,14 +39,14 @@ public class BackendStepResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         verifyModel(resource.get(), 0);
     }
 
     @Test
-    public void testEnd() throws Exception {
+    public void testEnd() {
         setUriInfo(setUpActionExpectations(ActionType.EndExternalStep,
                 EndExternalStepParameters.class,
               new String[] { "Id", "Status"},
@@ -56,11 +56,11 @@ public class BackendStepResourceTest
         verifyActionResponse(resource.end(action));
     }
 
-    protected void setUpGetEntityExpectations() throws Exception {
+    protected void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(false);
     }
 
-    protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(boolean notFound) {
         setUpGetEntityExpectations(QueryType.GetStepWithSubjectEntitiesByStepId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -90,7 +90,7 @@ public class BackendStepResourceTest
         verifyLinks(model);
     }
 
-    private void verifyActionResponse(Response r) throws Exception {
+    private void verifyActionResponse(Response r) {
         verifyActionResponse(r, "jobs/" + GUIDS[1] + "/steps/" + GUIDS[0]  , false);
     }
 }

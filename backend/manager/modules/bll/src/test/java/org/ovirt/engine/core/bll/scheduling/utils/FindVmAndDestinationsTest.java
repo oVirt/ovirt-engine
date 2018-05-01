@@ -35,7 +35,7 @@ public class FindVmAndDestinationsTest {
      * and that migration support is not tied to host pinning.
      */
     @Test
-    public void testGetMigratableVmsFromHost() throws Exception {
+    public void testGetMigratableVmsFromHost() {
         List<VDS> hosts = new ArrayList<>();
         hosts.add(createHost());
         hosts.add(createHost());

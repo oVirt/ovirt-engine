@@ -47,7 +47,7 @@ public class JobRepositoryTest {
     private Job job;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         jobRepository = new JobRepositoryImpl(jobDao, jobSubjectEntityDao, stepDao, stepSubjectEntityDao);
         job = createJob();

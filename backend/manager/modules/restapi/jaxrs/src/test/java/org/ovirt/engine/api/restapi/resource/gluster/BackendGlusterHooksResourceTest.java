@@ -62,7 +62,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     }
 
     @Override
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
@@ -87,7 +87,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     }
 
     @Override
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         collection.setUriInfo(setUpUriExpectations(null));
         locales.add(CLIENT_LOCALE);
 
@@ -105,7 +105,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     }
 
     @Override
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         collection.setUriInfo(setUpUriExpectations(null));
 
         setUpHooksQueryExpectations(FAILURE);

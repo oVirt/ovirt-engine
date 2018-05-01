@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class UsageFinderTest {
         return requestMock;
     }
 
-    private UriInfo mockUri(String...strings) throws URISyntaxException {
+    private UriInfo mockUri(String...strings) {
         UriInfo uriInfoMock = mock(UriInfo.class);
         List<PathSegment> pathSegments = new ArrayList<>();
         for (String s : strings) {

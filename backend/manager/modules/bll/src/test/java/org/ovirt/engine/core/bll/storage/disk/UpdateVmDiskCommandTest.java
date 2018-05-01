@@ -146,14 +146,14 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
             new UpdateVmDiskCommand<>(createParameters(), CommandContext.createContext(""));
 
     @Test
-    public void validateFailedVMNotFound() throws Exception {
+    public void validateFailedVMNotFound() {
         initializeCommand();
         mockNullVm();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
-    public void validateFailedVMHasNotDisk() throws Exception {
+    public void validateFailedVMHasNotDisk() {
         initializeCommand();
         createNullDisk();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST)).
@@ -162,7 +162,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailedShareableDiskVolumeFormatUnsupported() throws Exception {
+    public void validateFailedShareableDiskVolumeFormatUnsupported() {
         DiskImage disk = createShareableDisk(VolumeFormat.COW);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.NFS);
         command.getParameters().setDiskInfo(disk);
@@ -222,7 +222,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailedShareableDiskOnGlusterDomain() throws Exception {
+    public void validateFailedShareableDiskOnGlusterDomain() {
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);
         StorageDomain storage = addNewStorageDomainToDisk(disk, StorageType.GLUSTERFS);
         command.getParameters().setDiskInfo(disk);

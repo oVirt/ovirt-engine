@@ -41,7 +41,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testNoHugePages() throws Exception {
+    public void testNoHugePages() {
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
         List<VDS> hosts = unit.filter(null,
                 Collections.singletonList(host1),
@@ -54,7 +54,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testHugePagesNotPresentOnHost() throws Exception {
+    public void testHugePagesNotPresentOnHost() {
         vm.setCustomProperties("hugepages=1024");
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
@@ -67,7 +67,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testHugePagesWrongSizeOnHost() throws Exception {
+    public void testHugePagesWrongSizeOnHost() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Collections.singletonList(new HugePage(2048, 50)));
@@ -82,7 +82,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testHugePagesGoodAndWrongSizeOnHost() throws Exception {
+    public void testHugePagesGoodAndWrongSizeOnHost() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Arrays.asList(
@@ -99,7 +99,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testNotEnoughFreeHugePagesOnHost() throws Exception {
+    public void testNotEnoughFreeHugePagesOnHost() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Collections.singletonList(new HugePage(1024, 50)));
@@ -114,7 +114,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testNotEnoughFreeHugePagesOnHostPending() throws Exception {
+    public void testNotEnoughFreeHugePagesOnHostPending() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Collections.singletonList(new HugePage(1024, 1050)));
@@ -132,7 +132,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testEnoughFreeHugePagesOnHostBadSizePending() throws Exception {
+    public void testEnoughFreeHugePagesOnHostBadSizePending() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Collections.singletonList(new HugePage(1024, 1050)));
@@ -151,7 +151,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testEnoughFreeHugePagesOnHostBadSizeAvailableAndPending() throws Exception {
+    public void testEnoughFreeHugePagesOnHostBadSizeAvailableAndPending() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Arrays.asList(
@@ -172,7 +172,7 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     @Test
-    public void testEnoughFreeHugePagesOnHostSimple() throws Exception {
+    public void testEnoughFreeHugePagesOnHostSimple() {
         vm.setCustomProperties("hugepages=1024");
 
         host1.setHugePages(Collections.singletonList(new HugePage(1024, 1024)));

@@ -134,7 +134,7 @@ public class FileServletTest {
      * Test method for {@link org.ovirt.engine.core.FileServlet#checkForIndex(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
      */
     @Test
-    public void testCheckForIndex_BadParams() throws IOException, URISyntaxException {
+    public void testCheckForIndex_BadParams() throws IOException {
         assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, null, null));
         assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, file.getParentFile(), null));
     }

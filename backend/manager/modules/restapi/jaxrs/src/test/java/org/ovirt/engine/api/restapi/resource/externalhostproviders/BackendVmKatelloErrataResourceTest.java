@@ -43,7 +43,7 @@ public class BackendVmKatelloErrataResourceTest extends AbstractBackendCollectio
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(
                 QueryType.GetErrataForVm,
                 GetErrataCountsParameters.class,

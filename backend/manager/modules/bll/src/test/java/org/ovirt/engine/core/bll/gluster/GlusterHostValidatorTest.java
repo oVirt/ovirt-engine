@@ -42,12 +42,12 @@ public class GlusterHostValidatorTest {
     private GlusterHostValidator hostValidator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         setupMock();
         hostValidator = new GlusterHostValidator(volumeDao, brickDao);
     }
 
-    private void setupMock() throws Exception {
+    private void setupMock() {
         doReturn(getBricksFromServer(SERVER_ID_1, GlusterStatus.UP)).when(brickDao)
                 .getGlusterVolumeBricksByServerId(SERVER_ID_1);
         doReturn(getBricksFromServer(SERVER_ID_2, GlusterStatus.UP)).when(brickDao)

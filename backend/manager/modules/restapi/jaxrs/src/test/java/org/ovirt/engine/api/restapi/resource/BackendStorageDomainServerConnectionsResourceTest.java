@@ -35,11 +35,11 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testAttachSuccess() throws Exception {
+    public void testAttachSuccess() {
         setUriInfo(setUpBasicUriExpectations());
         setUpActionExpectations(ActionType.AttachStorageConnectionToStorageDomain,
                 AttachDetachStorageConnectionParameters.class,
@@ -54,7 +54,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     }
 
     @Test
-    public void testAttachFailure() throws Exception {
+    public void testAttachFailure() {
         setUriInfo(setUpBasicUriExpectations());
         setUpActionExpectations(ActionType.AttachStorageConnectionToStorageDomain,
                 AttachDetachStorageConnectionParameters.class,
@@ -78,7 +78,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionsForDomain,
@@ -97,7 +97,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     }
 
     @Override
-    protected void verifyCollection(List<StorageConnection> collection) throws Exception {
+    protected void verifyCollection(List<StorageConnection> collection) {
         assertNotNull(collection);
         assertEquals(1, collection.size());
     }

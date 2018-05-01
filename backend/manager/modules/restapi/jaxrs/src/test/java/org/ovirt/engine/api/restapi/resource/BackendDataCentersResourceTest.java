@@ -60,7 +60,7 @@ public class BackendDataCentersResourceTest
     }
 
     @Test
-    public void testAddDataCenter() throws Exception {
+    public void testAddDataCenter() {
         setUriInfo(setUpBasicUriExpectations());
         setUpVersionExpectations(0);
         setUpCreationExpectations(ActionType.AddEmptyStoragePool,
@@ -85,17 +85,16 @@ public class BackendDataCentersResourceTest
     }
 
     @Test
-    public void testAddDataCenterCantDo() throws Exception {
+    public void testAddDataCenterCantDo() {
         doTestBadAddDataCenter(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddDataCenterFailure() throws Exception {
+    public void testAddDataCenterFailure() {
         doTestBadAddDataCenter(true, false, FAILURE);
     }
 
-    private void doTestBadAddDataCenter(boolean valid, boolean success, String detail)
-            throws Exception {
+    private void doTestBadAddDataCenter(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddEmptyStoragePool,
                                            StoragePoolManagementParameter.class,
                                            new String[] {},
@@ -114,7 +113,7 @@ public class BackendDataCentersResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         DataCenter model = new DataCenter();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -125,7 +124,7 @@ public class BackendDataCentersResourceTest
         }
     }
 
-    protected void setUpVersionExpectations(int index) throws Exception {
+    protected void setUpVersionExpectations(int index) {
         setUpGetEntityExpectations(QueryType.GetAvailableStoragePoolVersions,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },

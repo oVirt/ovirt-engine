@@ -130,7 +130,7 @@ public class BackendGroupsResourceTest
      * to extract it from the name of the group.
      */
     @Test
-    public void testAddGroupWithExplicitDirectoryName() throws Exception {
+    public void testAddGroupWithExplicitDirectoryName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
@@ -183,7 +183,7 @@ public class BackendGroupsResourceTest
      * it as part of the group name.
      */
     @Test
-    public void testAddGroupWithImplicitDirectoryName() throws Exception {
+    public void testAddGroupWithImplicitDirectoryName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
@@ -223,7 +223,7 @@ public class BackendGroupsResourceTest
      * Test that a group can't be added if the directory name isn't provider explicitly or as part of the group name.
      */
     @Test
-    public void testAddGroupWithoutDirectoryName() throws Exception {
+    public void testAddGroupWithoutDirectoryName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
@@ -247,7 +247,7 @@ public class BackendGroupsResourceTest
      * Test that if the group identifier is provided it is used to search in the directory instead of the name.
      */
     @Test
-    public void testAddGroupById() throws Exception {
+    public void testAddGroupById() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
@@ -291,7 +291,7 @@ public class BackendGroupsResourceTest
      * added.
      */
     @Test
-    public void testAddGroupByIdFailure() throws Exception {
+    public void testAddGroupByIdFailure() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,

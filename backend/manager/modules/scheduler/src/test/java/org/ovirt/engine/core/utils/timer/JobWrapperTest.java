@@ -20,7 +20,7 @@ public class JobWrapperTest {
     }
 
     @Test
-    public void testMethodAllowsConcurrent() throws Exception {
+    public void testMethodAllowsConcurrent() {
         assertFalse(JobWrapper.methodAllowsConcurrent(new Dummy(), "serialOnly"));
         assertTrue(JobWrapper.methodAllowsConcurrent(new Dummy(), "normalJob"));
     }

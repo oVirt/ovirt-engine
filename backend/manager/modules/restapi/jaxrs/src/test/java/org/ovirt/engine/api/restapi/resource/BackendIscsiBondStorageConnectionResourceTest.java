@@ -34,7 +34,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingStorageConnection());
 
@@ -51,7 +51,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
     }
 
     @Test
-    public void testGetWithInvalidStorageId() throws Exception {
+    public void testGetWithInvalidStorageId() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondWithNoMatchingStorages());
 
@@ -64,7 +64,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
     }
 
     @Test
-    public void testGetStorageConnectionNotFound() throws Exception {
+    public void testGetStorageConnectionNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingStorageConnection());
 
@@ -83,7 +83,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(2, getIscsiBondContainingStorageConnection());
         setUpEntityQueryExpectations(
@@ -106,7 +106,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         assertEquals(200, response.getStatus());
     }
 
-    protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetIscsiBondById,
                     IdQueryParameters.class,

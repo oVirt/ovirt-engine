@@ -77,14 +77,14 @@ public class AddUnmanagedVmsCommandTest {
     }
 
     @Test
-    public void shouldConvertExternalVm() throws IOException {
+    public void shouldConvertExternalVm() {
         addUnamangedVmsCommand.convertVm(1, DisplayType.qxl, System.nanoTime(), externalVm);
         verify(addUnamangedVmsCommand).addExternallyManagedVm(argThat(
                 vmStatic -> vmStatic.getNumOfSockets() == 4 && vmStatic.getMemSizeMb() == 7052));
     }
 
     @Test
-    public void shouldDetectHostedEngineVM() throws IOException {
+    public void shouldDetectHostedEngineVM() {
         addUnamangedVmsCommand.importHostedEngineVm(hostedEngine);
         verify(addUnamangedVmsCommand, times(0)).addExternallyManagedVm(any());
         verify(addUnamangedVmsCommand).importHostedEngineVm(argThat((VM argument) -> {

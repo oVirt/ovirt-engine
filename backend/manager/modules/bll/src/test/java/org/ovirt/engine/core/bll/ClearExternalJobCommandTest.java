@@ -34,18 +34,18 @@ public class ClearExternalJobCommandTest extends BaseCommandTest {
     }
 
     @Before
-    public void setupMock() throws Exception {
+    public void setupMock() {
         when(jobDaoMock.get(jobId)).thenReturn(makeTestJob(jobId));
     }
 
     @Test
-    public void validateOkSucceeds() throws Exception {
+    public void validateOkSucceeds() {
         command.getParameters().setJobId(jobId);
         assertTrue(command.validate());
     }
 
     @Test
-    public void validateNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() {
         command.getParameters().setJobId(nonExistingJobId);
         assertTrue(!command.validate());
     }

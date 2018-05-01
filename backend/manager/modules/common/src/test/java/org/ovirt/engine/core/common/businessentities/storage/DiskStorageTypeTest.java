@@ -13,7 +13,7 @@ import org.reflections.Reflections;
 
 public class DiskStorageTypeTest {
     @Test
-    public void forClass() throws Exception {
+    public void forClass() {
         Reflections reflections = new Reflections(getClass().getPackage().getName());
         Set<Class<? extends Disk>> diskClasses = reflections.getSubTypesOf(Disk.class);
         Set<Class<? extends Disk>> concreteDiskClasses = new HashSet<>();

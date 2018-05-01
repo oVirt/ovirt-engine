@@ -23,7 +23,7 @@ public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Eve
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         setUriInfo(
             setUpActionExpectations(
@@ -38,7 +38,7 @@ public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Eve
         verifyRemove(resource.remove());
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(
             QueryType.GetAuditLogById,
             GetAuditLogByIdParameters.class,

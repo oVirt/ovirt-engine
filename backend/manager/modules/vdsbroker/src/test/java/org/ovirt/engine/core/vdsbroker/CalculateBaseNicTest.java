@@ -36,19 +36,19 @@ public class CalculateBaseNicTest {
     private VdsNetworkInterface vlanNic = createVlanNic(baseNic);
 
     @Test(expected = NullPointerException.class)
-    public void testGetBaseNicWithNullNic() throws Exception {
+    public void testGetBaseNicWithNullNic() {
         calculateBaseNic.getBaseNic(null);
     }
 
     @Test
-    public void testGetBaseNicBaseNicIsSimplyReturned() throws Exception {
+    public void testGetBaseNicBaseNicIsSimplyReturned() {
         verifyNoMoreInteractions(interfaceDao);
         assertThat(calculateBaseNic.getBaseNic(baseNic, null), is(baseNic));
 
     }
 
     @Test
-    public void testGetBaseNicVerifyDelegation() throws Exception {
+    public void testGetBaseNicVerifyDelegation() {
         CalculateBaseNic spy = spy(calculateBaseNic);
 
         spy.getBaseNic(baseNic);
@@ -56,7 +56,7 @@ public class CalculateBaseNicTest {
     }
 
     @Test
-    public void testGetBaseNicWhenCacheIsNotProvided() throws Exception {
+    public void testGetBaseNicWhenCacheIsNotProvided() {
         when(interfaceDao.get(baseNic.getVdsId(), baseNic.getName())).thenReturn(baseNic);
         assertThat(calculateBaseNic.getBaseNic(vlanNic, null), is(baseNic));
         verify(interfaceDao).get(eq(baseNic.getVdsId()), eq(baseNic.getName()));
@@ -64,7 +64,7 @@ public class CalculateBaseNicTest {
     }
 
     @Test
-    public void testGetBaseNicUsingCacheNotHavingRequiredRecord() throws Exception {
+    public void testGetBaseNicUsingCacheNotHavingRequiredRecord() {
         when(interfaceDao.get(baseNic.getVdsId(), baseNic.getName())).thenReturn(baseNic);
         Map<String, VdsNetworkInterface> cachedExistingInterfaces =
             Collections.singletonMap("unrelatedNicName", new VdsNetworkInterface());
@@ -74,7 +74,7 @@ public class CalculateBaseNicTest {
     }
 
     @Test
-    public void testGetBaseNicUsingCache() throws Exception {
+    public void testGetBaseNicUsingCache() {
         Map<String, VdsNetworkInterface> cachedExistingInterfaces =
             Collections.singletonMap(baseNic.getName(), baseNic);
         assertThat(calculateBaseNic.getBaseNic(vlanNic, cachedExistingInterfaces), is(baseNic));

@@ -59,13 +59,13 @@ public class LockedObjectFactoryTest {
     }
 
     @Test
-    public void testMethodWithReadLockWhenBlockedByWriteMethod() throws Exception {
+    public void testMethodWithReadLockWhenBlockedByWriteMethod() {
         Runnable action = () -> lockedTestInstanceA.methodWithReadLock();
         performOperation(action, () -> lockedTestInstanceB.methodWithWriteLock(), false);
     }
 
     @Test
-    public void testMethodWithReadLockWhenAccessedTwice() throws Exception {
+    public void testMethodWithReadLockWhenAccessedTwice() {
         performOperation(() -> lockedTestInstanceA.methodWithReadLock(),
                 () -> lockedTestInstanceB.methodWithReadLock(), true);
     }

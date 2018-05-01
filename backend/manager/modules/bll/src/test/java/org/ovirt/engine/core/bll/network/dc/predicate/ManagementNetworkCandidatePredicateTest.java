@@ -26,7 +26,7 @@ public class ManagementNetworkCandidatePredicateTest {
     private ManagementNetworkCandidatePredicate underTest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         underTest = new ManagementNetworkCandidatePredicate(mockExternalNetworkPredicate);
     }
 

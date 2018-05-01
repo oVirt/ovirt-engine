@@ -29,7 +29,7 @@ public class BackendGroupResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendGroupResource("foo", null);
             fail("expected WebApplicationException");
@@ -39,7 +39,7 @@ public class BackendGroupResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
         try {
@@ -51,14 +51,14 @@ public class BackendGroupResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         verifyModel(resource.get(), 0);
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveGroup,
@@ -71,7 +71,7 @@ public class BackendGroupResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception {
+    public void testRemoveNonExistant() {
         setUpGetEntityExpectations(GUIDS[0], true);
         try {
             resource.remove();
@@ -82,7 +82,7 @@ public class BackendGroupResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
+    private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) {
         setUpGetEntityExpectations(
                 QueryType.GetDbGroupById,
                 IdQueryParameters.class,
@@ -92,16 +92,16 @@ public class BackendGroupResourceTest
     }
 
     @Test
-    public void testRemoveCantDo() throws Exception {
+    public void testRemoveCantDo() {
         doTestBadRemove(false, true, CANT_DO);
     }
 
     @Test
-    public void testRemoveFailed() throws Exception {
+    public void testRemoveFailed() {
         doTestBadRemove(true, false, FAILURE);
     }
 
-    private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveGroup,
@@ -118,11 +118,11 @@ public class BackendGroupResourceTest
         }
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations() {
         setUpGetEntityExpectations(false);
     }
 
-    private void setUpGetEntityExpectations(boolean notFound) throws Exception {
+    private void setUpGetEntityExpectations(boolean notFound) {
         setUpGetEntityExpectations(
              QueryType.GetDbGroupById,
              IdQueryParameters.class,

@@ -38,7 +38,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
         return StorageConnectionExtensionResourceTestHelper.getModel(extensionID, hostID, pass, username, iqn);
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
+    private void setUpGetEntityExpectations() {
         setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionExtensionById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -47,7 +47,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUpGetEntityExpectations();
         setUriInfo(setUpBasicUriExpectations());
         StorageConnectionExtension extension = resource.get();
@@ -56,7 +56,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpGetEntityExpectations();
         setUriInfo(
                 setUpActionExpectations(
@@ -72,7 +72,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations();
         setUpGetEntityExpectations(); // Get is being called twice.
 

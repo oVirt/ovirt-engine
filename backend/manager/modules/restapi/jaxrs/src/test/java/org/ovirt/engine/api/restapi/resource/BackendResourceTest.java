@@ -47,14 +47,14 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     @Test
-    public void testQueryWithoutFilter() throws Exception {
+    public void testQueryWithoutFilter() {
         resource.setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
         resource.get();
     }
 
     @Test(expected = javax.ws.rs.WebApplicationException.class)
-    public void testQueryWithFilter() throws Exception {
+    public void testQueryWithFilter() {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
         reset(httpHeaders);
@@ -64,7 +64,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     @Test
-    public void testActionWithCorrelationId() throws Exception {
+    public void testActionWithCorrelationId() {
         setUpGetEntityExpectations(false);
         resource.getCurrent().getParameters().put("correlation_id", "Some-Correlation-id");
         resource.setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
@@ -79,7 +79,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     @Test(expected = MalformedIdException.class)
-    public void testBadGuidValidation() throws Exception {
+    public void testBadGuidValidation() {
         setUpGetEntityExpectations(false);
         Host host = new Host();
         host.setCluster(new Cluster());
@@ -96,7 +96,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         setUpGetEntityWithNoCertificateInfoExpectations();
 
         resource.setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
@@ -115,12 +115,11 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         }
     }
 
-    private void setUpGetEntityWithNoCertificateInfoExpectations() throws Exception {
+    private void setUpGetEntityWithNoCertificateInfoExpectations() {
         setUpGetEntityWithNoCertificateInfoExpectations(1, false, getEntity(0));
     }
 
-    private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity)
-            throws Exception {
+    private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) {
         while (times-- > 0) {
             setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                     IdQueryParameters.class,
@@ -130,7 +129,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         }
     }
 
-    protected void setUpGetEntityExpectations(boolean filter) throws Exception {
+    protected void setUpGetEntityExpectations(boolean filter) {
         setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                 IdQueryParameters.class,
                 new String[] { "Id", "Filtered" },

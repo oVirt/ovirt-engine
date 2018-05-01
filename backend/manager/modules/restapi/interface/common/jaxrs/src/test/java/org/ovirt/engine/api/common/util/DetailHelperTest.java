@@ -34,70 +34,70 @@ public class DetailHelperTest {
     private static final String ACCEPTABLE = "application/xml";
 
     @Test
-    public void testIncludeSingle() throws Exception {
+    public void testIncludeSingle() {
         doTestIncludes(";detail=statistics",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, false});
     }
 
     @Test
-    public void testIncludeSome() throws Exception {
+    public void testIncludeSome() {
         doTestIncludes(";detail=devices ;detail=statistics",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, false});
     }
 
     @Test
-    public void testIncludeSomeCollapsed() throws Exception {
+    public void testIncludeSomeCollapsed() {
         doTestIncludes(";detail=devices+statistics",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, false});
     }
 
     @Test
-    public void testIncludeMore() throws Exception {
+    public void testIncludeMore() {
         doTestIncludes(";detail=devices; detail=statistics; detail=tags; detail=permissions",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, true});
     }
 
     @Test
-    public void testIncludeMoreCollapsed() throws Exception {
+    public void testIncludeMoreCollapsed() {
         doTestIncludes(";detail=devices; detail=statistics+tags+permissions",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, true});
     }
 
     @Test
-    public void testIncludeAll() throws Exception {
+    public void testIncludeAll() {
         doTestIncludes(";detail=statistics; detail=permissions",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, true});
     }
 
     @Test
-    public void testIncludeAllCollapsed() throws Exception {
+    public void testIncludeAllCollapsed() {
         doTestIncludes(";detail=statistics+permissions",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, true});
     }
 
     @Test
-    public void testIncludeWithSpacePrefix() throws Exception {
+    public void testIncludeWithSpacePrefix() {
         doTestIncludes("; detail=statistics ; detail=permissions",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {true, true});
     }
 
     @Test
-    public void testIncludeNone() throws Exception {
+    public void testIncludeNone() {
         doTestIncludes("",
                        new String[] {"statistics", "permissions"},
                        new boolean[] {false, false});
     }
 
     @Test
-    public void testMainIncludedByDefault() throws Exception {
+    public void testMainIncludedByDefault() {
         doTestIncludes(
             "",
             new String[] { "main" },
@@ -105,7 +105,7 @@ public class DetailHelperTest {
         );
     }
 
-    private void doTestIncludes(String spec, String[] rels, boolean[] expected) throws Exception {
+    private void doTestIncludes(String spec, String[] rels, boolean[] expected) {
 
         HttpHeaders httpheaders = mock(HttpHeaders.class);
         List<String> requestHeaders = new ArrayList<>();

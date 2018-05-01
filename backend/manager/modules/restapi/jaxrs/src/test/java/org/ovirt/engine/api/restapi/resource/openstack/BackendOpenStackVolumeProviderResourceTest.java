@@ -49,7 +49,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testBadGuid() throws Exception {
+    public void testBadGuid() {
         try {
             new BackendOpenStackVolumeProviderResource("foo", resource.getParent());
             fail("expected WebApplicationException");
@@ -59,7 +59,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testGetNotFound() throws Exception {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -71,14 +71,14 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         verifyModel(resource.get(), 0);
     }
 
     @Test
-    public void testUpdateNotFound() throws Exception {
+    public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         try {
@@ -90,7 +90,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpGetEntityExpectations(2);
         setUpGetEntityExpectationsOnDoPopulate(false);
         setUriInfo(
@@ -107,16 +107,16 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testUpdateCantDo() throws Exception {
+    public void testUpdateCantDo() {
         doTestBadUpdate(false, true, CANT_DO);
     }
 
     @Test
-    public void testUpdateFailed() throws Exception {
+    public void testUpdateFailed() {
         doTestBadUpdate(true, false, FAILURE);
     }
 
-    private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -137,7 +137,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testConflictedUpdate() throws Exception {
+    public void testConflictedUpdate() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
 
@@ -152,7 +152,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpActionExpectations(ActionType.RemoveProvider,
@@ -193,11 +193,11 @@ public class BackendOpenStackVolumeProviderResourceTest
         return Collections.singletonList(storagePool);
     }
 
-    protected void setUpGetEntityExpectations(int times) throws Exception {
+    protected void setUpGetEntityExpectations(int times) {
         setUpGetEntityExpectations(times, false);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound) {
         while (times-- > 0) {
             setUpGetEntityExpectations(
                 QueryType.GetProviderById,
@@ -209,7 +209,7 @@ public class BackendOpenStackVolumeProviderResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectationsOnDoPopulate(boolean notFound) throws Exception {
+    protected void setUpGetEntityExpectationsOnDoPopulate(boolean notFound) {
         setUpGetEntityExpectations(
                 QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,

@@ -26,7 +26,7 @@ public class BackendDataCenterNetworksResourceTest
     }
 
     @Test
-    public void testAddNetwork() throws Exception {
+    public void testAddNetwork() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddNetwork,
                                   AddNetworkStoragePoolParameters.class,
@@ -51,16 +51,16 @@ public class BackendDataCenterNetworksResourceTest
     }
 
     @Test
-    public void testAddNetworkCantDo() throws Exception {
+    public void testAddNetworkCantDo() {
         doTestBadAddNetwork(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddNetworkFailure() throws Exception {
+    public void testAddNetworkFailure() {
         doTestBadAddNetwork(true, false, FAILURE);
     }
 
-    private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddNetwork(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
@@ -80,7 +80,7 @@ public class BackendDataCenterNetworksResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         Network model = new Network();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -92,12 +92,12 @@ public class BackendDataCenterNetworksResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpQueryExpectations(query, null);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
@@ -107,7 +107,7 @@ public class BackendDataCenterNetworksResourceTest
     }
 
     @Override
-    protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, Object failure) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,

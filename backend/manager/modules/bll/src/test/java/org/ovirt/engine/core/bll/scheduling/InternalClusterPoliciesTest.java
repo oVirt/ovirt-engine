@@ -51,7 +51,7 @@ public class InternalClusterPoliciesTest {
     }
 
     @Test
-    public void testPolicyCreation() throws Exception {
+    public void testPolicyCreation() {
         Guid uuid = Guid.newGuid();
         ClusterPolicy policy = InternalClusterPolicies.createBuilder(uuid.toString())
                 .name("test-policy")

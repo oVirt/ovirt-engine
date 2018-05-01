@@ -21,62 +21,62 @@ public class ValidationResultTest {
     private final String[] variableReplacements = new String[] { "a", "b" };
 
     @Test
-    public void invalidWhenConditionOccurs() throws Exception {
+    public void invalidWhenConditionOccurs() {
         assertThat(ValidationResult.failWith(ERROR).when(true), failsWith(ERROR));
     }
 
     @Test
-    public void validWhenConditionDoesntOccur() throws Exception {
+    public void validWhenConditionDoesntOccur() {
         assertThat(ValidationResult.failWith(ERROR).when(false), isValid());
     }
 
     @Test
-    public void validUnlessConditionOccurs() throws Exception {
+    public void validUnlessConditionOccurs() {
         assertThat(ValidationResult.failWith(ERROR).unless(true), isValid());
     }
 
     @Test
-    public void invalidUnlessConditionDoesntOccur() throws Exception {
+    public void invalidUnlessConditionDoesntOccur() {
         assertThat(ValidationResult.failWith(ERROR).unless(false), failsWith(ERROR));
     }
 
     @Test
-    public void invalidWhenConditionDoesntOccurWithSingleReplacement() throws Exception {
+    public void invalidWhenConditionDoesntOccurWithSingleReplacement() {
         assertThat(ValidationResult.failWith(ERROR, REPLACEMENT).when(true),
                 both(failsWith(ERROR)).and(replacements(hasItem(REPLACEMENT))));
     }
 
     @Test
-    public void invalidWhenConditionDoesntOccurWithMultipleReplacements() throws Exception {
+    public void invalidWhenConditionDoesntOccurWithMultipleReplacements() {
         assertThat(ValidationResult.failWith(ERROR, REPLACEMENT, OTHER_REPLACEMENT).when(true),
                 both(failsWith(ERROR)).and(replacements(hasItem(REPLACEMENT)))
                         .and(replacements(hasItem(OTHER_REPLACEMENT))));
     }
 
     @Test
-    public void invalidWhenConditionOccursWithVariableReplacements() throws Exception {
+    public void invalidWhenConditionOccursWithVariableReplacements() {
         assertThat(ValidationResult.failWith(ERROR, variableReplacements).when(true),
                 failsWith(ERROR, variableReplacements));
     }
 
     @Test
-    public void validWhenConditionDoesntOccurWithVariableReplacements() throws Exception {
+    public void validWhenConditionDoesntOccurWithVariableReplacements() {
         assertThat(ValidationResult.failWith(ERROR, variableReplacements).when(false), isValid());
     }
 
     @Test
-    public void validUnlessConditionOccursWithVariableReplacements() throws Exception {
+    public void validUnlessConditionOccursWithVariableReplacements() {
         assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(true), isValid());
     }
 
     @Test
-    public void invalidUnlessConditionDoesntOccurWithVariableReplacements() throws Exception {
+    public void invalidUnlessConditionDoesntOccurWithVariableReplacements() {
         assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(false),
                 failsWith(ERROR, variableReplacements));
     }
 
     @Test
-    public void invalidUnlessConditionDoesntOccurWithVariableReplacements2() throws Exception {
+    public void invalidUnlessConditionDoesntOccurWithVariableReplacements2() {
         assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(false),
                 failsWith(ERROR, variableReplacements));
 

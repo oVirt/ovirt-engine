@@ -113,62 +113,62 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsUnmanagedNetwork() throws Exception {
+    public void calculateNetworkImplementationDetailsUnmanagedNetwork() {
         calculateNetworkImplementationDetailsAndAssertManaged(testIface, false, null);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsManagedNetwork() throws Exception {
+    public void calculateNetworkImplementationDetailsManagedNetwork() {
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertManaged(testIface, true, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkIsSync() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkIsSync() {
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, true, qosA, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkDefaultMtuAndVmNetworkOutOfSync() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkDefaultMtuAndVmNetworkOutOfSync() {
         Network network = createNetwork(!testIface.isBridged(), 0, RandomUtils.instance().nextInt());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
     }
 
     @Test
-    public void caluculateNetworkImplementationDetailsNetworkInSyncWithoutQos() throws Exception {
+    public void caluculateNetworkImplementationDetailsNetworkInSyncWithoutQos() {
         testIface.setQos(null);
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, true, null, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkMtuOutOfSync() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkMtuOutOfSync() {
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu() + 1, testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkVmNetworkOutOfSync() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkVmNetworkOutOfSync() {
         Network network = createNetwork(!testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsInterfaceQosMissing() throws Exception {
+    public void calculateNetworkImplementationDetailsInterfaceQosMissing() {
         testIface.setQos(null);
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkQosMissing() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkQosMissing() {
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, null, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkQosOutOfSync() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkQosOutOfSync() {
         HostNetworkQos qos = qosB;
 
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
@@ -177,7 +177,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsOverriddenQosOutOfSync() throws Exception {
+    public void calculateNetworkImplementationDetailsOverriddenQosOutOfSync() {
         HostNetworkQos qos = qosB;
 
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
@@ -188,13 +188,13 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkQosOverridden() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkQosOverridden() {
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, unlimitedHostNetworkQos, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNoNetworkName() throws Exception {
+    public void calculateNetworkImplementationDetailsNoNetworkName() {
         testIface.setNetworkName(null);
 
         assertNull("Network implementation details should not be filled.",
@@ -203,7 +203,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsEmptyNetworkName() throws Exception {
+    public void calculateNetworkImplementationDetailsEmptyNetworkName() {
         testIface.setNetworkName("");
 
         assertNull("Network implementation details should not be filled.",
@@ -213,13 +213,13 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkDefaultMtuOutOfSync() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkDefaultMtuOutOfSync() {
         Network network = createNetwork(testIface.isBridged(), 0, testIface.getVlanId());
         calculateNetworkImplementationDetailsAndAssertSync(testIface, false, qosA, network);
     }
 
     @Test
-    public void calculateNetworkImplementationDetailsNetworkQosOverriddenBackToUnlimited() throws Exception {
+    public void calculateNetworkImplementationDetailsNetworkQosOverriddenBackToUnlimited() {
         testIface.setQos(unlimitedHostNetworkQos);
         Network network = createNetwork(testIface.isBridged(), testIface.getMtu(), testIface.getVlanId());
         network.setQosId(qosA.getId());

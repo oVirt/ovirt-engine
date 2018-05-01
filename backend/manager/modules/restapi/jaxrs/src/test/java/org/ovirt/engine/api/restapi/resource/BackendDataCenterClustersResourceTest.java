@@ -35,7 +35,7 @@ public class BackendDataCenterClustersResourceTest extends
     }
 
     @Test
-    public void testAddClusterFallbackVersion() throws Exception {
+    public void testAddClusterFallbackVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
@@ -72,7 +72,7 @@ public class BackendDataCenterClustersResourceTest extends
     }
 
     @Test
-    public void testAddClusterSpecificVersion() throws Exception {
+    public void testAddClusterSpecificVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
@@ -112,7 +112,7 @@ public class BackendDataCenterClustersResourceTest extends
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         org.ovirt.engine.api.model.Cluster model = new org.ovirt.engine.api.model.Cluster();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -124,12 +124,12 @@ public class BackendDataCenterClustersResourceTest extends
     }
 
     @Override
-    protected void setUpQueryExpectations(String query) throws Exception {
+    protected void setUpQueryExpectations(String query) {
         setUpQueryExpectations(query, null);
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         setUpEntityQueryExpectations(QueryType.GetClustersByStoragePoolId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },

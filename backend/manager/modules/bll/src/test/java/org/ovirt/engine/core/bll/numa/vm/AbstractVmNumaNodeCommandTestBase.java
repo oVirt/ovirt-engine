@@ -65,7 +65,7 @@ public abstract class AbstractVmNumaNodeCommandTestBase
     protected abstract void initNumaNodes();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initNumaNodes();
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);

@@ -10,18 +10,18 @@ public class AddExternalJobCommandTest {
             new AddExternalJobCommand<>(new AddExternalJobParameters("test"), null);
 
     @Test
-    public void validateDescriptionOkSucceeds() throws Exception {
+    public void validateDescriptionOkSucceeds() {
         assertTrue(command.validate());
     }
 
     @Test
-    public void validateEmptyDescriptionFails() throws Exception {
+    public void validateEmptyDescriptionFails() {
         command.getParameters().setDescription("");
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateBlankDescriptionFails() throws Exception {
+    public void validateBlankDescriptionFails() {
         command.getParameters().setDescription("      ");
         assertTrue(! command.validate());
     }

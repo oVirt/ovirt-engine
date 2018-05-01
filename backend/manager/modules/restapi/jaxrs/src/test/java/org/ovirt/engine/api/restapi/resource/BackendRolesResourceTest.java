@@ -33,11 +33,11 @@ public class BackendRolesResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Test
-    public void testAddRole() throws Exception {
+    public void testAddRole() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddRoleWithActionGroups,
                                   RoleWithActionGroupsParameters.class,
@@ -64,7 +64,7 @@ public class BackendRolesResourceTest
     }
 
     @Test
-    public void testAddRoleInvalidPermit() throws Exception {
+    public void testAddRoleInvalidPermit() {
         setUriInfo(setUpBasicUriExpectations());
         Role model = new Role();
         model.setName(NAMES[0]);
@@ -82,7 +82,7 @@ public class BackendRolesResourceTest
     }
 
     @Test
-    public void testAddIncompleteParametersNoPermits() throws Exception {
+    public void testAddIncompleteParametersNoPermits() {
         Role model = new Role();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
@@ -95,7 +95,7 @@ public class BackendRolesResourceTest
     }
 
     @Test
-    public void testAddIncompleteParametersNoName() throws Exception {
+    public void testAddIncompleteParametersNoName() {
         Role model = new Role();
         model.setPermits(new Permits());
         model.getPermits().getPermits().add(new Permit());
@@ -115,7 +115,7 @@ public class BackendRolesResourceTest
     }
 
     @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+    protected void setUpQueryExpectations(String query, Object failure) {
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetAllRoles,

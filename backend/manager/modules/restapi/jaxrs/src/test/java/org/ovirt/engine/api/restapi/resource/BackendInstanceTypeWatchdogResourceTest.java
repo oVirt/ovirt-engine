@@ -43,7 +43,7 @@ public class BackendInstanceTypeWatchdogResourceTest
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         Watchdog watchdog = resource.get();
@@ -51,7 +51,7 @@ public class BackendInstanceTypeWatchdogResourceTest
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate() {
         setUpEntityQueryExpectations(2);
         setUriInfo(
             setUpActionExpectations(
@@ -68,7 +68,7 @@ public class BackendInstanceTypeWatchdogResourceTest
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         setUpEntityQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
@@ -83,7 +83,7 @@ public class BackendInstanceTypeWatchdogResourceTest
         verifyRemove(resource.remove());
     }
 
-    private void setUpEntityQueryExpectations(int cnt) throws Exception {
+    private void setUpEntityQueryExpectations(int cnt) {
         for (int i = 0; i < cnt; i++) {
             setUpGetEntityExpectations(
                 QueryType.GetWatchdog,

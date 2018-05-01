@@ -64,7 +64,7 @@ public class ReapedMapTest {
     }
 
     @Test
-    public void testReapingOnGetWithGC() throws Exception {
+    public void testReapingOnGetWithGC() {
         setUpGCExpectations(5);
 
         populate(1, 2, 3);
@@ -103,7 +103,7 @@ public class ReapedMapTest {
     }
 
     @Test
-    public void testReapingOnPutWithGC() throws Exception {
+    public void testReapingOnPutWithGC() {
         setUpGCExpectations(5);
 
         populate(1, 2, 3);
@@ -116,7 +116,7 @@ public class ReapedMapTest {
     }
 
     @Test
-    public void testReapingOnRemoveWithGC() throws Exception {
+    public void testReapingOnRemoveWithGC() {
         setUpGCExpectations(5);
 
         populate(1, 2, 3);
@@ -142,7 +142,7 @@ public class ReapedMapTest {
             private int times = 0;
 
             @Override
-            public Reference<Integer> answer(InvocationOnMock invocation) throws Throwable {
+            public Reference<Integer> answer(InvocationOnMock invocation) {
                 return times++ == gcAfter ? ref : null;
             }
         });

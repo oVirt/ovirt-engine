@@ -175,7 +175,7 @@ public class SSHDialogTest {
     }
 
     @BeforeClass
-    public static void init() throws IOException {
+    public static void init() {
         assumeTrue(SystemUtils.IS_OS_UNIX);
 
         sshHost = System.getProperty("ssh-host");
@@ -218,7 +218,7 @@ public class SSHDialogTest {
     }
 
     @AfterClass
-    public static void terminate() throws Exception {
+    public static void terminate() {
         if (sshd != null) {
             sshd.stop();
         }

@@ -70,7 +70,7 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
     }
 
     @Before
-    public void setupMock() throws Exception {
+    public void setupMock() {
         when(jobDaoMock.get(jobId)).thenReturn(makeExternalTestJob(jobId));
         when(jobDaoMock.get(nonExternalJobId)).thenReturn(makeNonExternalTestJob(nonExternalJobId));
         when(stepDaoMock.get(stepId)).thenReturn(makeExternalTestStep(jobId, stepId));
@@ -80,35 +80,35 @@ public class EndExternalStepCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateOkSucceeds() throws Exception {
+    public void validateOkSucceeds() {
         parameters.setId(stepId);
         parameters.setJobId(jobId);
         assertTrue(command.validate());
     }
 
     @Test
-    public void validateNonExistingJobFails() throws Exception {
+    public void validateNonExistingJobFails() {
         parameters.setId(nonExistingStepId);
         parameters.setJobId(jobId);
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateNonExternalJobFails() throws Exception {
+    public void validateNonExternalJobFails() {
         parameters.setId(nonExternalStepId);
         parameters.setJobId(jobId);
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateNonExistingStepFails() throws Exception {
+    public void validateNonExistingStepFails() {
         parameters.setId(nonExistingStepId);
         parameters.setJobId(jobId);
         assertTrue(! command.validate());
     }
 
     @Test
-    public void validateNonExternalStepFails() throws Exception {
+    public void validateNonExternalStepFails() {
         parameters.setJobId(jobId);
         parameters.setId(nonExternalStepId);
         assertTrue(! command.validate());

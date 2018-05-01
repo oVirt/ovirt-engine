@@ -42,7 +42,7 @@ public class BackendMacPoolsResourceTest
     }
 
     @Test
-    public void testAddMacPool() throws Exception {
+    public void testAddMacPool() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddMacPool,
                 MacPoolParameters.class,
@@ -65,16 +65,16 @@ public class BackendMacPoolsResourceTest
     }
 
     @Test
-    public void testAddMacPoolCantDo() throws Exception {
+    public void testAddMacPoolCantDo() {
         doTestBadAddMacPool(false, true, CANT_DO);
     }
 
     @Test
-    public void testAddMacPoolFailure() throws Exception {
+    public void testAddMacPoolFailure() {
         doTestBadAddMacPool(true, false, FAILURE);
     }
 
-    private void doTestBadAddMacPool(boolean valid, boolean success, String detail) throws Exception {
+    private void doTestBadAddMacPool(boolean valid, boolean success, String detail) {
         setUriInfo(setUpActionExpectations(ActionType.AddMacPool,
                 MacPoolParameters.class,
                 new String[] {},
@@ -92,7 +92,7 @@ public class BackendMacPoolsResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
+    public void testAddIncompleteParameters() {
         MacPool model = createIncompleteMacPool();
         setUriInfo(setUpBasicUriExpectations());
         try {
@@ -115,7 +115,7 @@ public class BackendMacPoolsResourceTest
     @Test
     @Ignore
     @Override
-    public void testQuery() throws Exception {
+    public void testQuery() {
     }
 
     @Override
@@ -129,7 +129,7 @@ public class BackendMacPoolsResourceTest
 
     @Override
     @Test
-    public void testListFailure() throws Exception {
+    public void testListFailure() {
         setUpMacPoolsQueryExpectations(FAILURE);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
@@ -145,7 +145,7 @@ public class BackendMacPoolsResourceTest
 
     @Override
     @Test
-    public void testListCrash() throws Exception {
+    public void testListCrash() {
         Throwable t = new RuntimeException(FAILURE);
         setUpMacPoolsQueryExpectations(t);
 
@@ -163,7 +163,7 @@ public class BackendMacPoolsResourceTest
 
     @Override
     @Test
-    public void testListCrashClientLocale() throws Exception {
+    public void testListCrashClientLocale() {
         UriInfo uriInfo = setUpUriExpectations(null);
         locales.add(CLIENT_LOCALE);
 

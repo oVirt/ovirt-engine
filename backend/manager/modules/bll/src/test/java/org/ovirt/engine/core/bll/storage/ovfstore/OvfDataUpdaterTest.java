@@ -49,7 +49,7 @@ public class OvfDataUpdaterTest {
     }
 
     @Test
-    public void poolUpdateOvfStoreOnAnyDomainSupported() throws Exception {
+    public void poolUpdateOvfStoreOnAnyDomainSupported() {
         ovfDataUpdater.ovfUpdate();
         verify();
     }

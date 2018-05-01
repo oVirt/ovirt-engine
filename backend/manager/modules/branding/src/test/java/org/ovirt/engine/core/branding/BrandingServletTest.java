@@ -67,7 +67,7 @@ public class BrandingServletTest {
     }
 
     @Test
-    public void testDoGetExistingFile() throws IOException, ServletException, URISyntaxException {
+    public void testDoGetExistingFile() throws IOException, URISyntaxException, ServletException {
         when(mockRequest.getPathInfo())
             .thenReturn("/org/ovirt/engine/core/branding/BrandingServletTest.class"); //$NON-NLS-1$
         when(mockFile.getAbsolutePath()).thenReturn(this.getClass().getClassLoader().

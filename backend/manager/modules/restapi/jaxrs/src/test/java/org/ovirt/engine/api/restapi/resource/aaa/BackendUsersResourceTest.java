@@ -56,7 +56,7 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser2() throws Exception {
+    public void testAddUser2() {
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
                 new String[] {},
@@ -74,7 +74,7 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser3() throws Exception {
+    public void testAddUser3() {
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
                 new String[] {},
@@ -89,7 +89,7 @@ public class BackendUsersResourceTest
     }
 
     @Test
-    public void testAddUser4() throws Exception {
+    public void testAddUser4() {
         setUpEntityQueryExpectations(QueryType.GetDomainList,
                 QueryParametersBase.class,
                 new String[] { },
@@ -119,7 +119,7 @@ public class BackendUsersResourceTest
         verifyModel((User) response.getEntity(), 0);
     }
 
-    private void setUpAddUserExpectations(String query) throws Exception {
+    private void setUpAddUserExpectations(String query) {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
             query,

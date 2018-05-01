@@ -71,7 +71,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     private CommandContext commandContext;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         injectorRule.bind(AuditLogDirector.class, auditLogDirector);
 
         commandContext = CommandContext.createContext(SESSION_ID);
@@ -89,7 +89,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testPoolDoesNotExistForGivenCluster() throws Exception {
+    public void testPoolDoesNotExistForGivenCluster() {
         macPoolPerCluster.initialize();
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(null));
@@ -105,7 +105,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testNicIsCorrectlyAllocatedInScopedPool() throws Exception {
+    public void testNicIsCorrectlyAllocatedInScopedPool() {
         mockCluster(cluster);
         mockGettingAllMacPools(macPool);
         mockUsedMacsInSystem(macPool.getId(), vmNic.getMacAddress());
@@ -119,7 +119,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCreatePool() throws Exception {
+    public void testCreatePool() {
         macPoolPerCluster.initialize();
 
         mockCluster(cluster);
@@ -129,7 +129,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testCreatePoolWhichExists() throws Exception {
+    public void testCreatePoolWhichExists() {
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
 
@@ -139,7 +139,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testModifyOfExistingMacPool() throws Exception {
+    public void testModifyOfExistingMacPool() {
         final String macAddress1 = "00:00:00:00:00:01";
         final String macAddress2 = "00:00:00:00:00:02";
 
@@ -191,7 +191,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testModifyOfNotExistingMacPool() throws Exception {
+    public void testModifyOfNotExistingMacPool() {
         macPoolPerCluster.initialize();
 
         expectedException.expect(IllegalStateException.class);
@@ -202,7 +202,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testRemoveOfMacPool() throws Exception {
+    public void testRemoveOfMacPool() {
         mockCluster(cluster);
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
@@ -218,7 +218,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     }
 
     @Test
-    public void testRemoveOfInexistentMacPool() throws Exception {
+    public void testRemoveOfInexistentMacPool() {
         macPoolPerCluster.initialize();
 
         try {

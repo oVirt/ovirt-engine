@@ -48,7 +48,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(ActionType.AddExternalEvent,
                                   AddExternalEventParameters.class,
@@ -101,7 +101,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     }
 
     @Test
-    public void testUndelete() throws Exception {
+    public void testUndelete() {
 
         setUriInfo(setUpActionExpectations(ActionType.DisplayAllAuditLogAlerts,
                 ActionParametersBase.class,
