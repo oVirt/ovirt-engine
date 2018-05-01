@@ -51,6 +51,14 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
         }
 
         if (entity != null) {
+            if (entity.getType() == TransferType.Download && getParameters().getUpdates().getPhase() != null &&
+                    getParameters().getUpdates().getPhase().isPaused()) {
+                log.error("Invalid parameters: cannot move an image download to any kind of a paused state as the " +
+                        "download is handled by the client and cannot be paused. Note that a download can be " +
+                        "canceled if you wish to stop it.");
+                setSucceeded(false);
+                return;
+            }
             // Always update; this serves as a keepalive
             entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId(), false);
         } else {

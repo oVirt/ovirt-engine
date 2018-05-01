@@ -503,8 +503,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                     // for another extend attempt.
                     getParameters().setRetryExtendTicket(false);
                 } else {
-                    updateEntityPhaseToPausedBySystem(
-                            AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_TICKET_RENEW_FAILURE);
+                    updateEntityPhaseToStoppedBySystem(
+                            AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_TICKET_RENEW_FAILURE);
                     getParameters().setRetryExtendTicket(true);
                 }
             }
@@ -527,8 +527,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                             context.entity.getVdsId(), context.entity.getImagedTicketId())).getReturnValue();
         } catch (EngineException e) {
             log.error("Could not get image ticket '{}' from vdsm", context.entity.getImagedTicketId(), e);
-            updateEntityPhaseToPausedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_MISSING_TICKET);
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_TICKET);
             return;
         }
         ImageTransfer upToDateImageTransfer = updateTransferStatusWithTicketInformation(context.entity, ticketInfo);
@@ -686,7 +686,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
                 updateEntityPhase(ImageTransferPhase.CANCELLED);
             } else {
-                updateEntityPhaseToPausedBySystem(
+                updateEntityPhaseToStoppedBySystem(
                         AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
             }
         }
@@ -726,8 +726,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     protected void startImageTransferSession() {
         if (!initializeVds()) {
             log.error("Could not find a suitable host for image data transfer");
-            updateEntityPhaseToPausedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_MISSING_HOST);
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_HOST);
             return;
         }
         Guid imagedTicketId = Guid.newGuid();
@@ -737,22 +737,22 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         String signedTicket = createSignedTicket(getVds(), imagedTicketId);
         if (signedTicket == null) {
             log.error("Failed to create a signed image ticket");
-            updateEntityPhaseToPausedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
             return;
         }
 
         long timeout = getHostTicketLifetime();
         if (!addImageTicketToDaemon(imagedTicketId, timeout)) {
             log.error("Failed to add image ticket to ovirt-imageio-daemon");
-            updateEntityPhaseToPausedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
             return;
         }
         if (!addImageTicketToProxy(imagedTicketId, signedTicket)) {
             log.error("Failed to add image ticket to ovirt-imageio-proxy");
-            updateEntityPhaseToPausedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
+            updateEntityPhaseToStoppedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
             return;
         }
 
@@ -1011,9 +1011,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         updateEntity(updates);
     }
 
-    private void updateEntityPhaseToPausedBySystem(AuditLogType pausedBySystemReason) {
-        auditLog(this, pausedBySystemReason);
-        updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+    private void updateEntityPhaseToStoppedBySystem(AuditLogType stoppedBySystemReason) {
+        auditLog(this, stoppedBySystemReason);
+        if (getParameters().getTransferType() == TransferType.Upload) {
+            updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+        } else {
+            updateEntityPhase(ImageTransferPhase.CANCELLED);
+        }
     }
 
     private void updateEntity(ImageTransfer updates) {
