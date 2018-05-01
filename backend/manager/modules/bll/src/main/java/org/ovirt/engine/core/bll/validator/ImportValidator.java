@@ -132,6 +132,10 @@ public class ImportValidator {
         for (Snapshot snap : snapshots) {
             if (snap.containsMemory()) {
                 DiskImage memoryDump = (DiskImage) getDiskDao().get(snap.getMemoryDiskId());
+                // If a memory disk is not found in the DB there will be an attempt to import it from the domain
+                if (memoryDump == null) {
+                    return ValidationResult.VALID;
+                }
                 StorageDomain dumpSd = getStorageDomainDao().getForStoragePool(memoryDump.getStorageIds().get(0), params.getStoragePoolId());
                 ValidationResult dumpSdResult = new StorageDomainValidator(dumpSd).isDomainExistAndActive();
                 if (!handleStorageValidationResult(dumpSdResult, memoryDump, snap, failedDisksToImport) && !allowPartial) {
@@ -139,6 +143,10 @@ public class ImportValidator {
                 }
 
                 DiskImage memoryConf = (DiskImage) getDiskDao().get(snap.getMetadataDiskId());
+                // If a memory disk is not found in the DB there will be an attempt to import it from the domain
+                if (memoryConf == null) {
+                    return ValidationResult.VALID;
+                }
                 StorageDomain confSd = getStorageDomainDao().getForStoragePool(memoryConf.getStorageIds().get(0), params.getStoragePoolId());
                 ValidationResult confSdResult = new StorageDomainValidator(confSd).isDomainExistAndActive();
                 if (!handleStorageValidationResult(confSdResult, memoryConf, snap, failedDisksToImport) && !allowPartial) {

@@ -1241,6 +1241,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, memoryDiskDomainMap.get(snapshot.getMemoryDiskId()));
         DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, snapshot.getMemoryDiskId());
         if (sd == null || disk != null) {
+            snapshot.setMetadataDiskId(null);
+            snapshot.setMemoryDiskId(null);
             return null;
         }
         VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
