@@ -675,8 +675,6 @@ select fn_db_add_config_value('UploadImageXhrRetryIntervalInSeconds','3','genera
 select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('TestImageIOProxyConnectionSupported', 'false', '4.1');
-select fn_db_add_config_value_for_versions_up_to('TestImageIOProxyConnectionSupported', 'true', '4.3');
 
 select fn_db_add_config_value('AdPartnerMacSupported','false','3.6');
 select fn_db_add_config_value_for_versions_up_to('AdPartnerMacSupported', 'true', '4.3');

@@ -2834,10 +2834,6 @@ public class AsyncDataProvider {
         return getSupportedVersions(ConfigValues.MigrationPoliciesSupported);
     }
 
-    public boolean isTestImageIOProxyConnectionSupported(Version clusterVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigValues.TestImageIOProxyConnectionSupported, clusterVersion.toString());
-    }
-
     private List<String> getSupportedVersions(ConfigValues option) {
         List<String> versions = new ArrayList<>();
         for (Entry<KeyValuePairCompat<ConfigValues, String>, Object> entry : cachedConfigValuesPreConvert.entrySet()) {
