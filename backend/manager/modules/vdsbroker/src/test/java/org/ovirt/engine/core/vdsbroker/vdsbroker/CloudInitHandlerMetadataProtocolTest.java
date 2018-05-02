@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -44,11 +43,6 @@ public class CloudInitHandlerMetadataProtocolTest {
     public CloudInitHandlerMetadataProtocolTest(VmInit vmInit, Object expected) {
         this.vmInit = vmInit;
         this.expected = expected;
-    }
-
-    @Before
-    public void before() {
-
     }
 
     @Parameterized.Parameters(name="{index}: {1}")
