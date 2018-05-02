@@ -81,7 +81,7 @@
                         <vm:VmDiskPopupWidget ui:field="vmDiskPopupWidget" />
                     </b:PanelBody>
                 </b:Panel>
-                <w:UiCommandButton ui:field="testButton" label="{constants.testImageIOProxyConnection}" visible="false" />
+                <w:UiCommandButton ui:field="testButton" label="{constants.testImageIOProxyConnection}" />
                 <p:AlertPanel ui:field="messagePanel" addStyleNames="col-sm-11 {style.messagePanel}" visible="false" />
             </g:FlowPanel>
         </d:content>

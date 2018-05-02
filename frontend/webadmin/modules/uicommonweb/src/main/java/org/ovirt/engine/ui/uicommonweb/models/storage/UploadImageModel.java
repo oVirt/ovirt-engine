@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -29,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
@@ -37,7 +35,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ReadOnlyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
@@ -208,7 +205,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
         getCommands().add(getOkCommand());
 
         setTestCommand(new UICommand("OnTest", this)); //$NON-NLS-1$
-        getTestCommand().setIsAvailable(false);
         setTestResponse(new EntityModel<>());
 
         getDiskModel().getStorageDomain().getSelectedItemChangedEvent().addListener(this);
@@ -247,25 +243,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
             onUpload();
         } else if (getTestCommand().equals(command)) {
             onTest();
-        }
-    }
-
-    @Override
-    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-        super.eventRaised(ev, sender, args);
-
-        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
-            if (sender == getDiskModel().getHost()) {
-                host_SelectedItemChanged();
-            }
-        }
-    }
-
-    private void host_SelectedItemChanged() {
-        VDS selectedHost = getDiskModel().getHost().getSelectedItem();
-        if (selectedHost != null) {
-            getTestCommand().setIsAvailable(AsyncDataProvider.getInstance().isTestImageIOProxyConnectionSupported(
-                    selectedHost.getClusterCompatibilityVersion()));
         }
     }
 

@@ -34,12 +34,5 @@ public class UploadImagePopupPresenterWidget extends AbstractModelBoundPopupPres
             boolean testSucceeded = testResponse != null && testResponse.getStatusCode() == Response.SC_OK;
             getView().updateTestResult(testSucceeded);
         });
-
-        // Show/hide test button according to the model
-        getModel().getTestCommand().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                getView().showTestCommand(getModel().getTestCommand().getIsAvailable());
-            }
-        });
     }
 }
