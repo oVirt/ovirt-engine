@@ -22,8 +22,8 @@ public class NumericSuffixNameableComparatorTest {
     private final Matcher<Integer> expected;
 
     public NumericSuffixNameableComparatorTest(String name1, String name2, int expected) {
-        this.nameable1 = new MyNameable(name1);
-        this.nameable2 = new MyNameable(name2);
+        this.nameable1 = () -> name1;
+        this.nameable2 = () -> name2;
         if (expected == 0) {
             this.expected = is(0);
         } else if (expected > 0) {
@@ -70,18 +70,5 @@ public class NumericSuffixNameableComparatorTest {
                 { "abc", "abc123", -1 },
                 { "abc123", "abc", 1 },
         };
-    }
-
-    private static class MyNameable implements Nameable {
-        private final String name;
-
-        private MyNameable(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
     }
 }
