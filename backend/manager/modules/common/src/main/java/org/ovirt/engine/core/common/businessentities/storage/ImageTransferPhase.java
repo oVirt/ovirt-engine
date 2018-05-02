@@ -51,11 +51,11 @@ public enum ImageTransferPhase implements Identifiable {
         return this == INITIALIZING || this == RESUMING || this == TRANSFERRING;
     }
 
-    public boolean canBeResumed() {
+    public boolean isPaused() {
         return this == PAUSED_SYSTEM || this == PAUSED_USER;
     }
 
     public boolean canBeCancelled() {
-        return canBePaused() || canBeResumed();
+        return canBePaused() || isPaused();
     }
 }

@@ -541,7 +541,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 && disks.get(0) instanceof DiskImage
                 && disks.get(0).getTransferType() == TransferType.Upload
                 && disks.get(0).getImageTransferPhase() != null
-                && disks.get(0).getImageTransferPhase().canBeResumed()
+                && disks.get(0).getImageTransferPhase().isPaused()
                 && !isImageUploadViaAPI((DiskImage) disks.get(0));
     }
 
