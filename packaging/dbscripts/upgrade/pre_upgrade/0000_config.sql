@@ -1034,6 +1034,10 @@ select fn_db_update_default_config_value('ImageTransferClientTicketValidityInSec
 select fn_db_update_default_config_value('AlertOnNumberOfLVs', '300', '1300', 'general', false);
 select fn_db_update_default_config_value('AlertOnNumberOfLVs', '1000', '1300', 'general', false);
 
+-- Increase default values of Quality of Service (QoS) allowed bandwidth, Mbps (Mega bits per sec)
+select fn_db_update_default_config_value('MaxAverageNetworkQoSValue', '1024', '17179', 'general', false);
+select fn_db_update_default_config_value('MaxPeakNetworkQoSValue', '2048', '34359', 'general', false);
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
