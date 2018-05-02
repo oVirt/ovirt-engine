@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.TagDao;
@@ -92,8 +91,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private TagDao tagDao;
     @Inject
     private SnapshotDao snapshotDao;
-    @Inject
-    private QuotaDao quotaDao;
     @Inject
     private StorageDomainDao storageDomainDao;
     @Inject

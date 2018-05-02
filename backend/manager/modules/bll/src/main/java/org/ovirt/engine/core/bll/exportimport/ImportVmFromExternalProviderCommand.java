@@ -29,7 +29,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -46,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -65,7 +63,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 @DisableInPrepareMode
@@ -87,11 +84,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
     @Inject
     private VdsDao vdsDao;
     @Inject
-    private StorageDomainDao storageDomainDao;
-    @Inject
     private DiskDao diskDao;
-    @Inject
-    private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     private ImportUtils importUtils;
     @Inject
@@ -114,7 +107,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
         setSingleQxlPci();
-        checkImageTarget();
+        replaceImageActualSizeWithVirtualSizeIfNeeded();
         vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
 
@@ -202,9 +195,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     protected boolean setAndValidateDiskProfiles() {
         Map<DiskImage, Guid> map = new HashMap<>();
-        for (DiskImage diskImage : getVm().getImages()) {
-            map.put(diskImage, getStorageDomainId());
-        }
+        getVm().getImages().forEach(diskImage -> map.put(diskImage, getStorageDomainId()));
         return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
     }
 
@@ -330,18 +321,17 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         return diskParameters;
     }
 
-    private void checkImageTarget() {
-        // TODO:
+    private void replaceImageActualSizeWithVirtualSizeIfNeeded() {
         // This is a workaround until bz 1332019 will be merged
         // since KVM is currently the only source for which we use Libvirt streaming API.
         // Libvirt currently reports the actual disk size and the virtual one,
         // when using preallocated qcow2 on block domain the size that the Libvirt stream emits
         // can be larger then the actual size.
-        if (getVm().getOrigin() == OriginType.KVM && getActionState() == CommandActionState.EXECUTE) {
-            StorageDomain domain = storageDomainDao.get(getStorageDomainId());
-            if (domain.getStorageType().isBlockDomain()) {
-                getVm().getImages().forEach(image -> image.setActualSizeInBytes(image.getSize()));
-            }
+        if (getVm().getOrigin() == OriginType.KVM
+                && getActionState() == CommandActionState.EXECUTE
+                && getStorageDomain() != null
+                && getStorageDomain().getStorageType().isBlockDomain()) {
+            getVm().getImages().forEach(image -> image.setActualSizeInBytes(image.getSize()));
         }
     }
 
@@ -449,7 +439,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
     private void setSingleQxlPci() {
         if (!osRepository.isSingleQxlDeviceEnabled(getVm().getVmOsId())
                 || getVm().getDefaultDisplayType() != DisplayType.qxl) {
-            getVm().getStaticData().setSingleQxlPci(false);
+            getVm().setSingleQxlPci(false);
         }
     }
 

@@ -371,9 +371,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
      */
     protected void generateNewDiskId(List<DiskImage> diskImagesList, DiskImage disk) {
         Guid generatedGuid = generateNewDiskId(disk);
-        for (DiskImage diskImage : diskImagesList) {
-            diskImage.setId(generatedGuid);
-        }
+        diskImagesList.forEach(diskImage ->  diskImage.setId(generatedGuid));
     }
 
     /**
@@ -553,11 +551,11 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected void addVmStatic() {
         logImportEvents();
-        getVm().getStaticData().setId(getVmId());
-        getVm().getStaticData().setCreationDate(new Date());
-        getVm().getStaticData().setClusterId(getParameters().getClusterId());
-        getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
-        getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
+        getVm().setId(getVmId());
+        getVm().setVmCreationDate(new Date());
+        getVm().setClusterId(getParameters().getClusterId());
+        getVm().setMinAllocatedMem(computeMinAllocatedMem());
+        getVm().setQuotaId(getParameters().getQuotaId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
         if (!vmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData()).isValid()) {
@@ -569,7 +567,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             VmTemplate originalTemplate = vmTemplateDao.get(getVm().getOriginalTemplateGuid());
             if (originalTemplate != null) {
                 // in case the original template name has been changed in the meantime
-                getVm().getStaticData().setOriginalTemplateName(originalTemplate.getName());
+                getVm().setOriginalTemplateName(originalTemplate.getName());
             }
         }
 
