@@ -24,9 +24,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
@@ -38,10 +36,6 @@ import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionalMacPoolDecoratorRollbackTest {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
 

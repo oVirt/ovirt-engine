@@ -12,9 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.ovirt.engine.core.bll.network.host.NicNameNicIdCompleter.NicNameAndNicIdAccessors;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -24,9 +22,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class NicNameNicIdCompleterTest {
     private VdsNetworkInterface nic;
     private NicNameNicIdCompleter completer;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {

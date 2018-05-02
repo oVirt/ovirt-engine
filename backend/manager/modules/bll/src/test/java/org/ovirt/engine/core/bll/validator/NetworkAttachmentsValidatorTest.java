@@ -15,9 +15,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -45,8 +43,6 @@ public class NetworkAttachmentsValidatorTest {
 
     private VdsNetworkInterface nic;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
     private BusinessEntityMap<Network> networkMap;
 
     @Mock
