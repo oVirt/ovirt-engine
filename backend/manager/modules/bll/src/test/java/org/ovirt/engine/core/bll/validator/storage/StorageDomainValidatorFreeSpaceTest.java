@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(Parameterized.class)
 public class StorageDomainValidatorFreeSpaceTest {
@@ -45,9 +46,10 @@ public class StorageDomainValidatorFreeSpaceTest {
                         DiskImage disk = new DiskImage();
                         disk.setVolumeFormat(volumeFormat);
                         disk.setVolumeType(volumeType);
-                        disk.getSnapshots().add(disk);
+                        disk.setStorageIds(Collections.singletonList(Guid.newGuid()));
                         disk.setSizeInGigabytes(200);
                         disk.setActualSize(100); // GB
+                        disk.getSnapshots().add(DiskImage.copyOf(disk));
 
                         StorageDomain sd = new StorageDomain();
                         sd.setStorageType(storageType);
