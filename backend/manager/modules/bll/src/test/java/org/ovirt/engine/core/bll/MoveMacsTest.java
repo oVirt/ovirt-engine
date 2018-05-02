@@ -110,14 +110,6 @@ public class MoveMacsTest {
         expectedException.expectMessage(expectedMessage);
 
         underTest.migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, commandContext);
-
-        verify(macPoolPerCluster).getMacPoolById(sourceMacPoolId, commandContext);
-        verify(macPoolPerCluster).getMacPoolById(targetMacPoolId, commandContext);
-
-        InOrder inOrder = inOrder(sourceMacPool, targetMacPool);
-
-        inOrder.verify(sourceMacPool).freeMacs(macsToMigrate);
-        inOrder.verify(targetMacPool).addMacs(macsToMigrate);
     }
 
     @Test
