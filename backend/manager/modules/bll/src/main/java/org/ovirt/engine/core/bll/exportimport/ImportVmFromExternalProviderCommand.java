@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameter
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters.Phase;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -106,7 +105,6 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
-        setSingleQxlPci();
         replaceImageActualSizeWithVirtualSizeIfNeeded();
         vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
@@ -434,13 +432,6 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     protected Guid getActiveIsoDomainId() {
         return isoDomainListSynchronizer.findActiveISODomain(getStoragePoolId());
-    }
-
-    private void setSingleQxlPci() {
-        if (!osRepository.isSingleQxlDeviceEnabled(getVm().getVmOsId())
-                || getVm().getDefaultDisplayType() != DisplayType.qxl) {
-            getVm().setSingleQxlPci(false);
-        }
     }
 
     @Override
