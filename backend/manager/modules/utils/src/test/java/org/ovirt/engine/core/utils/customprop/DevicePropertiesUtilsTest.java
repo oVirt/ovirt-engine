@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.ValidationFailureReason;
@@ -28,7 +26,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Tests for custom device properties handling
  */
-@RunWith(MockitoJUnitRunner.class)
 public class DevicePropertiesUtilsTest {
     private static final Logger log = LoggerFactory.getLogger(DevicePropertiesUtilsTest.class);
 

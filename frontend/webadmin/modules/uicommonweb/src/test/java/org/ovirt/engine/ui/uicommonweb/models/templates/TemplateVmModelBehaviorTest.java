@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BaseVmModelBehaviorTest;
@@ -9,7 +7,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 
-@RunWith(Silent.class)
 public class TemplateVmModelBehaviorTest extends BaseVmModelBehaviorTest {
 
     VmTemplate template = new VmTemplate();

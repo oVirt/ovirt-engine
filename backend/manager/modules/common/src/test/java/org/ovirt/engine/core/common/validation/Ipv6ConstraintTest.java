@@ -10,11 +10,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.validation.annotation.Ipv6;
 
-@RunWith(MockitoJUnitRunner.class)
 public class Ipv6ConstraintTest {
 
     @Test

@@ -16,16 +16,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CpuPinningPolicyUnitTest {
     private VDS hostWithCpus;
 
@@ -33,7 +29,6 @@ public class CpuPinningPolicyUnitTest {
 
     private VM vm;
 
-    @InjectMocks
     private final CpuPinningPolicyUnit policyUnit = new CpuPinningPolicyUnit(null, null);
 
     private PerHostMessages perHostMessages;

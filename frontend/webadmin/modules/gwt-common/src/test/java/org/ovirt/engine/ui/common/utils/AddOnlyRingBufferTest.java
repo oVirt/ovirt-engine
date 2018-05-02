@@ -8,11 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.ui.common.utils.AddOnlyRingBuffer.LinearBuffer;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AddOnlyRingBufferTest {
 
     private class StringArrayBuffer implements LinearBuffer<String> {
