@@ -22,6 +22,17 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
         assertQueryExecution(ConfigValues.PredefinedVMProperties, false, true);
     }
 
+
+    @Test
+    public void testExecuteQueryAdminConfigFiltered() {
+        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, true, false);
+    }
+
+    @Test
+    public void testExecuteQueryAdminConfigNotFiltered() {
+        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, false, true);
+    }
+
     private void assertQueryExecution(ConfigValues configValue, boolean isFiltered, boolean shouldSucceed) {
         // Mock the parameters
         Version version = RandomUtils.instance().pickRandom(Version.ALL);
