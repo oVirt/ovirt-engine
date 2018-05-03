@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
@@ -10,6 +9,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class VersionSupportTest {
@@ -18,7 +18,7 @@ public class VersionSupportTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.SupportedClusterLevels, Collections.singleton(VALID_VERSION))
+            MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, Collections.singleton(VALID_VERSION))
             );
 
     @Test

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,10 +31,10 @@ public class SingleAgentFenceActionExecutorTest {
     @ClassRule
     public static MockConfigRule configRule =
             new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.FenceStartStatusRetries, 1),
-                    MockConfigRule.mockConfig(ConfigValues.FenceStopStatusRetries, 1),
-                    MockConfigRule.mockConfig(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec, 0),
-                    MockConfigRule.mockConfig(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec, 0));
+                    MockConfigDescriptor.of(ConfigValues.FenceStartStatusRetries, 1),
+                    MockConfigDescriptor.of(ConfigValues.FenceStopStatusRetries, 1),
+                    MockConfigDescriptor.of(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec, 0),
+                    MockConfigDescriptor.of(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec, 0));
 
     @Mock
     FenceAgentExecutor fenceAgentExecutor;

@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +57,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -79,14 +79,14 @@ public class OvfManagerTest {
 
     @ClassRule
     public static MockConfigRule mockConfigRule = new MockConfigRule(
-        mockConfig(ConfigValues.VdcVersion, "3.0.0.0"),
-        mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
-        mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
-        mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
-        mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
-        mockConfig(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
-        mockConfig(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
-        mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, true)
+        MockConfigDescriptor.of(ConfigValues.VdcVersion, "3.0.0.0"),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
+        MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, true)
     );
 
     @Rule

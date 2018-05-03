@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
@@ -69,8 +69,8 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterSupportArbiterVolume, Version.v4_0, false),
-            mockConfig(ConfigValues.GlusterSupportArbiterVolume, Version.v4_1, true)
+            MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_0, false),
+            MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_1, true)
             );
 
     private CreateGlusterVolumeCommand createTestCommand(GlusterVolumeEntity volumeEntity) {

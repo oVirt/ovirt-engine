@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -21,6 +20,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -33,7 +33,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 public class HostMonitoringTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DebugTimerLogging, true));
+    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.DebugTimerLogging, true));
 
     @Mock
     private VDS vds;

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
 @RunWith(Theories.class)
 public class GetStorageDomainDefaultWipeAfterDeleteQueryTest
@@ -26,8 +26,8 @@ public class GetStorageDomainDefaultWipeAfterDeleteQueryTest
     public static StorageType[] types = StorageType.values();
 
     @Override
-    public Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
-        return Collections.singleton(MockConfigRule.mockConfig(ConfigValues.SANWipeAfterDelete, true));
+    public Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
+        return Collections.singleton(MockConfigDescriptor.of(ConfigValues.SANWipeAfterDelete, true));
     }
 
     @Theory

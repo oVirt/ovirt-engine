@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.MB_TO_BYTES;
 
 import java.util.ArrayList;
@@ -62,6 +61,7 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -132,9 +132,9 @@ public class VmInfoBuildUtilsTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.LibgfApiSupported, Version.v4_1, false),
-            mockConfig(ConfigValues.LibgfApiSupported, Version.v4_2, true),
-            mockConfig(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true)
+            MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_1, false),
+            MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_2, true),
+            MockConfigDescriptor.of(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true)
     );
 
     @Before

@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 
@@ -46,11 +47,11 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
     @ClassRule
     public static MockConfigRule configRule =
             new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.HighUtilizationForPowerSave, 80),
-                    MockConfigRule.mockConfig(ConfigValues.LowUtilizationForPowerSave, 20),
-                    MockConfigRule.mockConfig(ConfigValues.CpuOverCommitDurationMinutes, 5),
-                    MockConfigRule.mockConfig(ConfigValues.VcpuConsumptionPercentage, 20),
-                    MockConfigRule.mockConfig(ConfigValues.UtilizationThresholdInPercent, 80)
+                    MockConfigDescriptor.of(ConfigValues.HighUtilizationForPowerSave, 80),
+                    MockConfigDescriptor.of(ConfigValues.LowUtilizationForPowerSave, 20),
+                    MockConfigDescriptor.of(ConfigValues.CpuOverCommitDurationMinutes, 5),
+                    MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 20),
+                    MockConfigDescriptor.of(ConfigValues.UtilizationThresholdInPercent, 80)
                     );
 
     @Test

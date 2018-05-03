@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.Date;
@@ -30,6 +29,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,9 +37,9 @@ public class FenceValidatorTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DisableFenceAtStartupInSec, 5),
-            mockConfig(ConfigValues.VdsFenceType, Version.getLast(), "apc"),
-            mockConfig(ConfigValues.CustomVdsFenceType, "apc")
+            MockConfigDescriptor.of(ConfigValues.DisableFenceAtStartupInSec, 5),
+            MockConfigDescriptor.of(ConfigValues.VdsFenceType, Version.getLast(), "apc"),
+            MockConfigDescriptor.of(ConfigValues.CustomVdsFenceType, "apc")
     );
 
     @InjectMocks

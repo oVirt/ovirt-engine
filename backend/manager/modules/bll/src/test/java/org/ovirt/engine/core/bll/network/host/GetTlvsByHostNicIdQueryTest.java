@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
 public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParameters,
         GetTlvsByHostNicIdQuery<? extends IdQueryParameters>> {
@@ -161,10 +160,10 @@ public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParame
     }
 
     @Override
-    protected Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
+    protected Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
         return new HashSet<>(Arrays.asList(
-                mockConfig(ConfigValues.LldpInformationSupported, Version.v4_1, false),
-                mockConfig(ConfigValues.LldpInformationSupported, Version.v4_2, true)
+                MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_1, false),
+                MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_2, true)
         ));
     }
 

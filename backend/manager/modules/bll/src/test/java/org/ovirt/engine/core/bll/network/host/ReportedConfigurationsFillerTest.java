@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +34,7 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
@@ -82,9 +82,9 @@ public class ReportedConfigurationsFillerTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DefaultMTU, 1500),
-            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+            MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
+            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
     );
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 

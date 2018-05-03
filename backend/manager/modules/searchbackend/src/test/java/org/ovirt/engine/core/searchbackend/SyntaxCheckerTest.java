@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 
@@ -16,6 +15,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 
@@ -26,11 +26,11 @@ public class SyntaxCheckerTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DBPagingType, "Range"),
-            mockConfig(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
-            mockConfig(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
-            mockConfig(ConfigValues.PgMajorRelease, 9),
-            mockConfig(ConfigValues.DBI18NPrefix, "")
+            MockConfigDescriptor.of(ConfigValues.DBPagingType, "Range"),
+            MockConfigDescriptor.of(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
+            MockConfigDescriptor.of(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
+            MockConfigDescriptor.of(ConfigValues.PgMajorRelease, 9),
+            MockConfigDescriptor.of(ConfigValues.DBI18NPrefix, "")
     );
 
     public boolean contains(SyntaxContainer res, String item) {

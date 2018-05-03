@@ -15,7 +15,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +72,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class AddDiskCommandTest extends BaseCommandTest {
@@ -81,8 +81,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxBlockDiskSize, 8192),
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_1, true)
+            MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8192),
+            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true)
     );
 
     @Mock

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 
@@ -33,6 +32,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
@@ -58,7 +58,7 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.QcowCompatSupported, Version.v4_2, true));
+            MockConfigDescriptor.of(ConfigValues.QcowCompatSupported, Version.v4_2, true));
 
     @Spy
     @InjectMocks

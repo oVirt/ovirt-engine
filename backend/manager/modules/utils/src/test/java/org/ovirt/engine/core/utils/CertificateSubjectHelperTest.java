@@ -12,7 +12,7 @@ public class CertificateSubjectHelperTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.OrganizationName, "ORG"));
+            MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"));
     @Test
     public void testGetCertificateSubject() {
         final String CERTIFICATE_SUBJECT = "O=ORG,CN=HOSTNAME";

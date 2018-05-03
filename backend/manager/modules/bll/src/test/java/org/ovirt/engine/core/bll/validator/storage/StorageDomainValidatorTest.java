@@ -10,7 +10,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +43,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -71,8 +71,8 @@ public class StorageDomainValidatorTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DiscardAfterDeleteSupported, Version.v4_0, false),
-            mockConfig(ConfigValues.DiscardAfterDeleteSupported, Version.v4_1, true)
+            MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_0, false),
+            MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_1, true)
     );
 
     @Mock

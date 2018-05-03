@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -19,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StorageHandlingCommandBaseTest extends BaseCommandTest {
@@ -35,7 +35,8 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
     private StoragePool storagePool;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10));
+    public static MockConfigRule mcr =
+            new MockConfigRule(MockConfigDescriptor.of(ConfigValues.StoragePoolNameSizeLimit, 10));
 
     @Before
     public void setUp() {

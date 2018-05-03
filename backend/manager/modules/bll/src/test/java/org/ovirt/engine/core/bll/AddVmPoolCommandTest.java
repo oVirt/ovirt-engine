@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 
@@ -11,13 +10,14 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
-            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
+            MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
+            MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
     );
 
     @Mock

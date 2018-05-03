@@ -11,7 +11,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +55,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
@@ -67,8 +67,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_1, false),
-            mockConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_2, true));
+            MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_1, false),
+            MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_2, true));
 
     @Mock
     private DiskDao diskDao;

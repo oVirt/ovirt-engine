@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -52,12 +52,12 @@ public class VmValidatorTest extends BaseCommandTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.MaxNumOfVmCpus, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS),
-            mockConfig(ConfigValues.MaxNumOfVmSockets, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_SOCKETS),
-            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS_PER_SOCKET),
-            mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_THREADS_PER_CPU),
-            mockConfig(ConfigValues.SriovHotPlugSupported, Version.v3_6, false),
-            mockConfig(ConfigValues.SriovHotPlugSupported, Version.v4_0, true)
+            MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS),
+            MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_SOCKETS),
+            MockConfigDescriptor.of(ConfigValues.MaxNumOfCpuPerSocket, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS_PER_SOCKET),
+            MockConfigDescriptor.of(ConfigValues.MaxNumOfThreadsPerCpu, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_THREADS_PER_CPU),
+            MockConfigDescriptor.of(ConfigValues.SriovHotPlugSupported, Version.v3_6, false),
+            MockConfigDescriptor.of(ConfigValues.SriovHotPlugSupported, Version.v4_0, true)
     );
 
     @Mock

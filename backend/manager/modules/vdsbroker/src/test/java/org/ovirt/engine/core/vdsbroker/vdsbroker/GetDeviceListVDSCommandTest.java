@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -28,8 +28,8 @@ public class GetDeviceListVDSCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false),
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_1, true)
+            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, false),
+            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true)
     );
 
     @Test

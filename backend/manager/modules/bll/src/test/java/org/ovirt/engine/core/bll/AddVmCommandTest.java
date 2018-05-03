@@ -11,7 +11,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +34,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
@@ -60,13 +60,13 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
-        mockConfig(ConfigValues.MaxVmNameLength, 64),
-        mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
-        mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
-        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
-        mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
-        mockConfig(ConfigValues.IsMigrationSupported, Version.v4_3, createMigrationMap())
+        MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
+        MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
+        MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
+        MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
+        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
+        MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+        MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, Version.v4_3, createMigrationMap())
     );
 
     @Override

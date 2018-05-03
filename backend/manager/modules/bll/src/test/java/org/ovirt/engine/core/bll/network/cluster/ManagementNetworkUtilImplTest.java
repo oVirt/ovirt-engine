@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,7 +51,7 @@ public class ManagementNetworkUtilImplTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, TEST_NETWORK_NAME));
+            MockConfigDescriptor.of(ConfigValues.DefaultManagementNetwork, TEST_NETWORK_NAME));
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

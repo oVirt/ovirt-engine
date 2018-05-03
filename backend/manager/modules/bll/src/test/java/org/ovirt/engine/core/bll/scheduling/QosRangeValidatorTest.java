@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import static org.junit.Assert.assertEquals;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class QosRangeValidatorTest {
@@ -26,16 +26,16 @@ public class QosRangeValidatorTest {
 
     @Rule
     public final MockConfigRule configRule = new MockConfigRule(
-        mockConfig(ConfigValues.MaxCpuLimitQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxThroughputUpperBoundQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxReadThroughputUpperBoundQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxWriteThroughputUpperBoundQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxIopsUpperBoundQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxReadIopsUpperBoundQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxWriteIopsUpperBoundQosValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxAverageNetworkQoSValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxPeakNetworkQoSValue, MAX_RANGE),
-        mockConfig(ConfigValues.MaxBurstNetworkQoSValue, MAX_RANGE)
+        MockConfigDescriptor.of(ConfigValues.MaxCpuLimitQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxThroughputUpperBoundQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxReadThroughputUpperBoundQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxWriteThroughputUpperBoundQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxIopsUpperBoundQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxReadIopsUpperBoundQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxWriteIopsUpperBoundQosValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxAverageNetworkQoSValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxPeakNetworkQoSValue, MAX_RANGE),
+        MockConfigDescriptor.of(ConfigValues.MaxBurstNetworkQoSValue, MAX_RANGE)
     );
 
     @Test

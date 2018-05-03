@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +12,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class UnsupportedLocaleHelperTest {
@@ -20,7 +20,7 @@ public class UnsupportedLocaleHelperTest {
 
     @ClassRule
     public static MockConfigRule mcr =
-    new MockConfigRule(mockConfig(ConfigValues.UnsupportedLocalesFilterOverrides, unvalidatedUnsupportedLocales));
+    new MockConfigRule(MockConfigDescriptor.of(ConfigValues.UnsupportedLocalesFilterOverrides, unvalidatedUnsupportedLocales));
 
     List<String> allLocales;
 

@@ -10,7 +10,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +61,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
@@ -83,7 +83,7 @@ public class UpdateClusterCommandTest {
     private static final Set<Version> versions = new HashSet<>(Arrays.asList(VERSION_1_0, VERSION_1_1, VERSION_1_2));
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SupportedClusterLevels, versions));
+    public MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, versions));
 
     @Mock
     private VmStaticDao vmStaticDao;

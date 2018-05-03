@@ -16,7 +16,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,6 +77,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -133,9 +133,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false),
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_1, true),
-            mockConfig(ConfigValues.MaxBlockDiskSize, 8));
+            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, false),
+            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true),
+            MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8));
 
     /**
      * The command under test.

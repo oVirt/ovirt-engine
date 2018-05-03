@@ -6,7 +6,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,7 +41,7 @@ public class AutoRecoveryManagerTest {
 
     @ClassRule
     public static MockConfigRule mcr =
-    new MockConfigRule(mockConfig(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<>()));
+    new MockConfigRule(MockConfigDescriptor.of(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<>()));
 
     @Mock
     private BackendInternal backendMock;

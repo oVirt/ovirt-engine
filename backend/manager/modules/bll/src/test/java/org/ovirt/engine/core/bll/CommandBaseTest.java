@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,12 +25,13 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest extends BaseCommandTest {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.UserSessionTimeOutInterval, 30));
+    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
 
     protected String session = "someSession";
 

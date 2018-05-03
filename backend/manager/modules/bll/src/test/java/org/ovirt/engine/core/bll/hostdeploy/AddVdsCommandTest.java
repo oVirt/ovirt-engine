@@ -9,7 +9,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,7 +61,7 @@ public class AddVdsCommandTest {
     private HostValidator validator;
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.InstallVds, true));
+    public static MockConfigRule configRule = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.InstallVds, true));
 
     private VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();

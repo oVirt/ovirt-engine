@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils.ovf;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,9 +35,9 @@ public class HostedEngineOvfWriterTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(ConfigValues.VdcVersion, version.getValue()),
-            mockConfig(ConfigValues.MaxNumOfVmCpus, version, 160),
-            mockConfig(ConfigValues.MaxNumOfVmSockets, version, 4));
+            MockConfigDescriptor.of(ConfigValues.VdcVersion, version.getValue()),
+            MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, version, 160),
+            MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, version, 4));
 
     @Before
     public void setup() {

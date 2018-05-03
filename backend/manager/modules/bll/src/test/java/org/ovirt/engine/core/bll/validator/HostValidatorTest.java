@@ -8,7 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
@@ -36,6 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -55,9 +55,9 @@ public class HostValidatorTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-            mockConfig(ConfigValues.EncryptHostCommunication, true),
-            mockConfig(ConfigValues.InstallVds, Boolean.TRUE),
-            mockConfig(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
+            MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, true),
+            MockConfigDescriptor.of(ConfigValues.InstallVds, Boolean.TRUE),
+            MockConfigDescriptor.of(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
     );
 
     @Mock

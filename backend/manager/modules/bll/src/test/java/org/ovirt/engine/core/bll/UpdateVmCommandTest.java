@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,6 +68,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link UpdateVmCommand}. */
@@ -141,19 +141,19 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.MaxVmNameLength, 64),
-        mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
-        mockConfig(ConfigValues.VmPriorityMaxValue, 100),
-        mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
-        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singleton(Version.getLast()))),
-        mockConfig(ConfigValues.IsMigrationSupported, version, createMigrationMap()),
-        mockConfig(ConfigValues.MaxNumOfCpuPerSocket, version, 16),
-        mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, version, 8),
-        mockConfig(ConfigValues.MaxNumOfVmCpus, version, 16),
-        mockConfig(ConfigValues.MaxNumOfVmSockets, version, 16),
-        mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
-        mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),
-        mockConfig(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576)
+        MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
+        MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+        MockConfigDescriptor.of(ConfigValues.VmPriorityMaxValue, 100),
+        MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
+        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singleton(Version.getLast()))),
+        MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, version, createMigrationMap()),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfCpuPerSocket, version, 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfThreadsPerCpu, version, 8),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, version, 16),
+        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, version, 16),
+        MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
+        MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),
+        MockConfigDescriptor.of(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576)
     );
 
     private static VmManagementParametersBase initParams() {

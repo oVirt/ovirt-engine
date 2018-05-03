@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest {
@@ -32,9 +32,9 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
 
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(
-        mockConfig(ConfigValues.MaxSchedulerWeight, 1000),
-        mockConfig(ConfigValues.VcpuConsumptionPercentage, 10),
-        mockConfig(ConfigValues.SpmVCpuConsumption, 1)
+        MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000),
+        MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 10),
+        MockConfigDescriptor.of(ConfigValues.SpmVCpuConsumption, 1)
     );
 
     @Before

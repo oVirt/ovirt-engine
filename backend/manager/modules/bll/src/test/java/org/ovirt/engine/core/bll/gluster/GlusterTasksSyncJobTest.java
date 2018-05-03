@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +37,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.ExecutorServiceRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -76,7 +76,7 @@ public class GlusterTasksSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.GlusterTaskMinWaitForCleanupInMins, 10)
+        MockConfigDescriptor.of(ConfigValues.GlusterTaskMinWaitForCleanupInMins, 10)
     );
 
     @ClassRule

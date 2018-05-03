@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,6 +19,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
@@ -34,11 +34,11 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
-            mockConfig(ConfigValues.DataDir, "."),
-            mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
-            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, VALID_OVIRT_VERSION),
-            mockConfig(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
+            MockConfigDescriptor.of(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
+            MockConfigDescriptor.of(ConfigValues.DataDir, "."),
+            MockConfigDescriptor.of(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
+            MockConfigDescriptor.of(ConfigValues.OvirtInitialSupportedIsoVersion, VALID_OVIRT_VERSION),
+            MockConfigDescriptor.of(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
             );
 
     @Mock

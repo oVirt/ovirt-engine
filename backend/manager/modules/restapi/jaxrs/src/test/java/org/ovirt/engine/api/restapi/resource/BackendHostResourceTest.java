@@ -16,7 +16,6 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.set
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.verifyModelSpecific;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -66,13 +65,14 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class BackendHostResourceTest
         extends AbstractBackendSubResourceTest<Host, VDS, BackendHostResource> {
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.OrganizationName, "oVirt"));
+    public MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.OrganizationName, "oVirt"));
 
     private static final StorageType ISCSI_STORAGE_TYPE = StorageType.ISCSI;
     private static final int ISCSI_PORT_INT = 3260;

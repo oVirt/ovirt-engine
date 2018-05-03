@@ -10,7 +10,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
@@ -37,9 +37,9 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.MaxVmNameLength, 64),
-        mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
-        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0))))
+        MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
+        MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
+        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0))))
     );
 
     @Override

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,11 +14,12 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class VmToHostAffinityPolicyUnitBaseTest {
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
+    public static MockConfigRule configRule = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000));
 
     @Mock
     AffinityGroupDao affinityGroupDao;

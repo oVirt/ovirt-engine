@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,17 +42,18 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQuery<SearchParameters>> {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 30),
-            mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
-            mockConfig(ConfigValues.DBEngine, null),
-            mockConfig(ConfigValues.DBPagingType, null),
-            mockConfig(ConfigValues.DBSearchTemplate,
+            MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30),
+            MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
+            MockConfigDescriptor.of(ConfigValues.DBEngine, null),
+            MockConfigDescriptor.of(ConfigValues.DBPagingType, null),
+            MockConfigDescriptor.of(ConfigValues.DBSearchTemplate,
                     "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
             );
 

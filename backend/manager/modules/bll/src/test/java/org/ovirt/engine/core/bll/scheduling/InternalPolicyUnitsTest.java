@@ -1,22 +1,21 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class InternalPolicyUnitsTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-        mockConfig(ConfigValues.SpmVmGraceForEvenGuestDistribute, 5),
-        mockConfig(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
-        mockConfig(ConfigValues.HighVmCountForEvenGuestDistribute, 10)
+        MockConfigDescriptor.of(ConfigValues.SpmVmGraceForEvenGuestDistribute, 5),
+        MockConfigDescriptor.of(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
+        MockConfigDescriptor.of(ConfigValues.HighVmCountForEvenGuestDistribute, 10)
     );
 
     public class DummyUnit extends PolicyUnitImpl {

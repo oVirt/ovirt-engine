@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoVirtISOsQuery<IdQueryParameters>> {
@@ -35,13 +34,13 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
     private VdsDao vdsDao;
 
     @Override
-    protected Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
+    protected Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
         return new HashSet<>(Arrays.asList(
-            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, "2.5.5:5.8"),
-            mockConfig(ConfigValues.OvirtIsoPrefix, "^ovirt-node-iso-([0-9].*)\\.iso$:^rhevh-([0-9].*)\\.iso$"),
-            mockConfig(ConfigValues.OvirtNodeOS, "^ovirt.*$:^rhev.*$"),
-            mockConfig(ConfigValues.DataDir, "/usr/share/engine"),
-            mockConfig(ConfigValues.oVirtISOsRepositoryPath, "/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor"))
+            MockConfigDescriptor.of(ConfigValues.OvirtInitialSupportedIsoVersion, "2.5.5:5.8"),
+            MockConfigDescriptor.of(ConfigValues.OvirtIsoPrefix, "^ovirt-node-iso-([0-9].*)\\.iso$:^rhevh-([0-9].*)\\.iso$"),
+            MockConfigDescriptor.of(ConfigValues.OvirtNodeOS, "^ovirt.*$:^rhev.*$"),
+            MockConfigDescriptor.of(ConfigValues.DataDir, "/usr/share/engine"),
+            MockConfigDescriptor.of(ConfigValues.oVirtISOsRepositoryPath, "/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor"))
         );
     }
 

@@ -25,32 +25,6 @@ import org.ovirt.engine.core.compat.Version;
 public class MockConfigRule extends TestWatcher {
     private final IConfigUtilsInterface mockConfigUtils = mock(IConfigUtilsInterface.class);
 
-    /** A descriptor for a single config mocking */
-    public static class MockConfigDescriptor<T> {
-
-        public MockConfigDescriptor(ConfigValues value, String version, T returnValue) {
-            this.value = value;
-            this.version = version;
-            this.returnValue = returnValue;
-        }
-
-        public ConfigValues getValue() {
-            return value;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public T getReturnValue() {
-            return returnValue;
-        }
-
-        private ConfigValues value;
-        private String version;
-        private T returnValue;
-    }
-
     private IConfigUtilsInterface origConfUtils;
     private List<MockConfigDescriptor<?>> configs;
 
@@ -62,20 +36,6 @@ public class MockConfigRule extends TestWatcher {
     /** Create the rule, mocking the given configurations */
     public <T> MockConfigRule(List<MockConfigDescriptor<?>> configs) {
         this.configs = new ArrayList<>(configs);
-    }
-
-    /** Mock the configuration of a single value - this can be given as an argument to the rule's constructor */
-    public static <T> MockConfigDescriptor<T> mockConfig(ConfigValues value, String version, T returnValue) {
-        return new MockConfigDescriptor<>(value, version, returnValue);
-    }
-
-    public static <T> MockConfigDescriptor<T> mockConfig(ConfigValues value, Version version, T returnValue) {
-        return new MockConfigDescriptor<>(value, version.toString(), returnValue);
-    }
-
-    /** Mock the default version configuration of a single value - this can be given as an argument to the rule's constructor */
-    public static <T> MockConfigDescriptor<T> mockConfig(ConfigValues value, T returnValue) {
-        return new MockConfigDescriptor<>(value, ConfigCommon.defaultConfigurationVersion, returnValue);
     }
 
     public <T> void mockConfigValue(ConfigValues value, T returnValue) {

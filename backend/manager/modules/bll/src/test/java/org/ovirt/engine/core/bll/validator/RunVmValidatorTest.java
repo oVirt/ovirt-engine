@@ -11,7 +11,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +52,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,10 +64,10 @@ public class RunVmValidatorTest {
     public static final int MEMORY_LIMIT_64_BIT = 640000;
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
-            mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
-            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_32_BIT),
-            mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
+            MockConfigDescriptor.of(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
+            MockConfigDescriptor.of(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
+            MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_32_BIT),
+            MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
             );
 
     @Spy

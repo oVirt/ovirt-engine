@@ -12,7 +12,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
@@ -44,6 +43,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,7 +73,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
             new TransferDiskImageCommand<>(new TransferDiskImageParameters(), null);
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(mockConfig(
+    public static MockConfigRule configRule = new MockConfigRule(MockConfigDescriptor.of(
             ConfigValues.TransferImageClientInactivityTimeoutInSeconds, 600));
 
     @Before

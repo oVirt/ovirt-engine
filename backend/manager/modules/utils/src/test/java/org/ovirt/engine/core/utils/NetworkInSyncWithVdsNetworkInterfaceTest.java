@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,9 +71,9 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.DefaultMTU, 1500),
-            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+            MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
+            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
     );
 
     @Before

@@ -19,7 +19,6 @@ import static org.ovirt.engine.core.common.businessentities.VDSStatus.PreparingF
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Reboot;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Unassigned;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Up;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,6 +28,7 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
@@ -47,8 +47,8 @@ public class PollVmStatsRefresherTest {
 
     @Rule
     public final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.VdsRefreshRate, 2L),
-        mockConfig(ConfigValues.NumberVmRefreshesBeforeSave, 1)
+        MockConfigDescriptor.of(ConfigValues.VdsRefreshRate, 2L),
+        MockConfigDescriptor.of(ConfigValues.NumberVmRefreshesBeforeSave, 1)
     );
 
     @Parameterized.Parameters(name = "status {0} is monitoring needed - {1}")

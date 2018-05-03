@@ -9,7 +9,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,7 +32,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.TrustStoreTestUtils;
 
@@ -62,13 +61,13 @@ public class ConfigureConsoleOptionsQueryTest extends
     SessionDataContainer sessionDataContainer;
 
     @Override
-    protected Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
+    protected Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
         return new HashSet<>(Arrays.asList(
-            mockConfig(ConfigValues.ConsoleToggleFullScreenKeys, "shift+f11"),
-            mockConfig(ConfigValues.ConsoleReleaseCursorKeys, "shift+f12"),
-            mockConfig(ConfigValues.RemapCtrlAltDelDefault, true),
-            mockConfig(ConfigValues.FullScreenWebadminDefault, false),
-            mockConfig(ConfigValues.EnableSpiceRootCertificateValidation, true))
+            MockConfigDescriptor.of(ConfigValues.ConsoleToggleFullScreenKeys, "shift+f11"),
+            MockConfigDescriptor.of(ConfigValues.ConsoleReleaseCursorKeys, "shift+f12"),
+            MockConfigDescriptor.of(ConfigValues.RemapCtrlAltDelDefault, true),
+            MockConfigDescriptor.of(ConfigValues.FullScreenWebadminDefault, false),
+            MockConfigDescriptor.of(ConfigValues.EnableSpiceRootCertificateValidation, true))
         );
     }
 

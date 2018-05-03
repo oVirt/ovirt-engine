@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +44,7 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class UpdateStoragePoolCommandTest extends BaseCommandTest {
@@ -60,9 +60,9 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
-            mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10),
-            mockConfig(ConfigValues.SupportedClusterLevels, SUPPORTED_VERSIONS)
+            MockConfigDescriptor.of(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
+            MockConfigDescriptor.of(ConfigValues.StoragePoolNameSizeLimit, 10),
+            MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, SUPPORTED_VERSIONS)
     );
 
     @Spy

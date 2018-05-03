@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,6 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class HttpUtilsTest {
@@ -22,7 +22,7 @@ public class HttpUtilsTest {
     private static final String IPV4_ADDRESS = "1.2.3.4";
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.EncryptHostCommunication, false));
+    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, false));
 
     @Test
     public void testGetConnectionUrl1() throws MalformedURLException {

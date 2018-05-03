@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -43,10 +43,10 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.QuotaGraceStorage, 20),
-            mockConfig(ConfigValues.QuotaGraceCluster, 20),
-            mockConfig(ConfigValues.QuotaThresholdStorage, 80),
-            mockConfig(ConfigValues.QuotaThresholdCluster, 80)
+            MockConfigDescriptor.of(ConfigValues.QuotaGraceStorage, 20),
+            MockConfigDescriptor.of(ConfigValues.QuotaGraceCluster, 20),
+            MockConfigDescriptor.of(ConfigValues.QuotaThresholdStorage, 80),
+            MockConfigDescriptor.of(ConfigValues.QuotaThresholdCluster, 80)
     );
 
     /** The quota to use for testing */

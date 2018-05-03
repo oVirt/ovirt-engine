@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
@@ -51,7 +51,7 @@ public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr =
-            new MockConfigRule(mockConfig(ConfigValues.ResetBrickSupported, Version.v4_2, Boolean.TRUE));
+            new MockConfigRule(MockConfigDescriptor.of(ConfigValues.ResetBrickSupported, Version.v4_2, Boolean.TRUE));
 
     private static final String serverName = "myhost";
     private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");

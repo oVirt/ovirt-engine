@@ -7,7 +7,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,8 +38,8 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-        mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1L),
-        mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1L)
+        MockConfigDescriptor.of(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1L),
+        MockConfigDescriptor.of(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1L)
     );
 
     @Mock

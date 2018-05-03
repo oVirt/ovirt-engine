@@ -14,7 +14,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,6 +49,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,8 +77,8 @@ public class NetworkConfiguratorTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.Ipv6Supported, Version.v3_6, false),
-            mockConfig(ConfigValues.Ipv6Supported, Version.v4_0, true));
+            MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v3_6, false),
+            MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_0, true));
 
     @Mock
     private ManagementNetworkUtil mockManagementNetworkUtil;

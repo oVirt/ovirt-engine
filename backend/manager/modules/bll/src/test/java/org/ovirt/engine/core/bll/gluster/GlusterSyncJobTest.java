@@ -8,7 +8,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +67,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
@@ -82,7 +82,7 @@ public class GlusterSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage")
+        MockConfigDescriptor.of(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage")
     );
 
     @Rule
