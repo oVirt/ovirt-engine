@@ -948,6 +948,13 @@ class OvirtUtils(base.Base):
         )
 
     @staticmethod
+    def _pg_versions_match(key, current, expected):
+        return (
+            distutils.version.LooseVersion(current).version[:2] ==
+            distutils.version.LooseVersion(expected).version[:2]
+        )
+
+    @staticmethod
     def _lower_equal_no_dash(key, current, expected):
         return OvirtUtils._lower_equal(
             key,
@@ -1027,7 +1034,7 @@ class OvirtUtils(base.Base):
                 )[
                     -1
                 ],
-                'ok': self._lower_equal,
+                'ok': self._pg_versions_match,
                 'check_on_use': True,
                 'skip_on_dbmsupgrade': True,
                 'needed_on_create': False,
