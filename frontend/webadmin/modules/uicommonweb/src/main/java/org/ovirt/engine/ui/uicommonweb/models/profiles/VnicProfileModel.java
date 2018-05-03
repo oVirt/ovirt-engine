@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -237,16 +237,16 @@ public abstract class VnicProfileModel extends Model {
     private void initNetworkList(Guid dataCenterId) {
         startProgress();
 
-        IdQueryParameters queryParams = new IdQueryParameters(dataCenterId);
-        Frontend.getInstance().runQuery(QueryType.GetAllNetworks, queryParams, new AsyncQuery<QueryReturnValue>(returnValue -> {
-            Collection<Network> networks = returnValue.getReturnValue();
+        AsyncDataProvider.getInstance().getNetworkList(new AsyncQuery<>(returnValue -> {
+            Collection<Network> networks =
+                    returnValue.stream().filter(Network::isVmNetwork).collect(Collectors.toList());
 
             getNetwork().setItems(networks);
 
             updateNetworks(networks);
 
             stopProgress();
-        }));
+        }), dataCenterId);
     }
 
     protected void updateNetworks(Collection<Network> networks) {
