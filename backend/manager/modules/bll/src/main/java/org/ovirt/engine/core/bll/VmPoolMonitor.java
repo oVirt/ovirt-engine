@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -52,6 +53,8 @@ public class VmPoolMonitor implements BackendService {
     private ScheduledFuture poolMonitoringJob;
 
     private long vmPoolMonitorIntervalInMinutes;
+
+    private Set<Guid> startingVms = ConcurrentHashMap.newKeySet();
 
     @Inject
     private VmPoolHandler vmPoolHandler;
@@ -136,11 +139,11 @@ public class VmPoolMonitor implements BackendService {
         // TODO move to VmPoolHandler and rewrite. Worth to consider using a query that uses vms_monitoring_view
         List<VM> vmsInPool = vmDao.getAllForVmPool(pool.getVmPoolId());
         return vmsInPool == null ? 0
-                : vmsInPool.stream()
-                        .filter(vm -> vm.isStartingOrUp()
-                                && vmPoolHandler.isPrestartedVmFree(vm.getId(), pool.isStateful(), null))
-                        .collect(Collectors.counting())
-                        .intValue();
+                : (int) vmsInPool.stream()
+                        .filter(vm -> startingVms.contains(vm.getId())
+                                || (vm.isStartingOrUp()
+                                        && vmPoolHandler.isPrestartedVmFree(vm.getId(), pool.isStateful(), null)))
+                        .count();
     }
 
     /***
@@ -225,16 +228,19 @@ public class VmPoolMonitor implements BackendService {
      */
     private boolean runVmFromPool(VmStatic vmToRun, boolean runAsStateless, String poolName) {
         log.info("Running VM '{}' as {}", vmToRun.getName(), runAsStateless ? "stateless" : "stateful");
+        startingVm(vmToRun.getId());
 
         RunVmParams runVmParams = new RunVmParams(vmToRun.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRun.getId()));
         runVmParams.setRunAsStateless(runAsStateless);
-        ActionReturnValue actionReturnValueurnValue = backend.runInternalAction(ActionType.RunVm,
+        ActionReturnValue actionReturnValue = backend.runInternalAction(ActionType.RunVm,
                 runVmParams,
                 ExecutionHandler.createInternalJobContext().withLock(vmPoolHandler.createLock(vmToRun.getId())));
-        boolean prestartingVmSucceeded = actionReturnValueurnValue.getSucceeded();
+        boolean prestartingVmSucceeded = actionReturnValue.getSucceeded();
 
         if (!prestartingVmSucceeded) {
+            startingVmCompleted(vmToRun.getId(), "RunVmCommand execution failed");
+
             AuditLogable log = new AuditLogableImpl();
             log.addCustomValue("VmPoolName", poolName);
             Injector.get(AuditLogDirector.class).log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
@@ -246,6 +252,17 @@ public class VmPoolMonitor implements BackendService {
                 prestartingVmSucceeded ? "succeeded" : "failed");
 
         return prestartingVmSucceeded;
+    }
+
+    private void startingVm(Guid vmId) {
+        startingVms.add(vmId);
+    }
+
+
+    public void startingVmCompleted(Guid vmId, String cause) {
+        if (startingVms.remove(vmId)) {
+            log.debug("Startup of VM {} completed ({})", vmId, cause);
+        }
     }
 
 }

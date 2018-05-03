@@ -123,6 +123,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
     @Inject
+    private VmPoolMonitor vmPoolMonitor;
+    @Inject
     private VmStaticDao vmStaticDao;
     @Inject
     private SnapshotDao snapshotDao;
@@ -1154,6 +1156,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         } else {
             super.endWithFailure();
         }
+        if (getVm().getVmPoolId() != null) {
+            vmPoolMonitor.startingVmCompleted(getVmId(), "endWithFailure");
+        }
     }
 
     @Override
@@ -1162,6 +1167,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         setFlow(RunVmFlow.RUNNING_SUCCEEDED);
         vmStaticDao.incrementDbGeneration(getVm().getId());
         super.runningSucceded();
+        if (getVm().getVmPoolId() != null) {
+            vmPoolMonitor.startingVmCompleted(getVmId(), "runningSucceded");
+        }
     }
 
     @Override
@@ -1171,6 +1179,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             removeMemoryFromActiveSnapshot();
         }
         super.runningFailed();
+        if (getVm().getVmPoolId() != null) {
+            vmPoolMonitor.startingVmCompleted(getVmId(), "runningFailed");
+        }
+    }
+
+    @Override
+    public void reportCompleted() {
+        super.reportCompleted();
+        if (getVm().getVmPoolId() != null) {
+            vmPoolMonitor.startingVmCompleted(getVmId(), "reportCompleted");
+        }
     }
 
     private void removeMemoryFromActiveSnapshot() {
