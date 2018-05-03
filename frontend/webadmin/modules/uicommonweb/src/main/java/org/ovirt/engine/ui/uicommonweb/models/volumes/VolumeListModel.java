@@ -536,14 +536,6 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             allowEditSnapshotSchedule = isEditSnapshotScheduleAvailable(list);
         }
 
-        if (getSelectedItems().get(0) == null || getSelectedItems().get(0).getStatus() == GlusterStatus.DOWN) {
-            allowCreateSnapshot = false;
-        }
-
-        if (getSelectedItems().get(0) != null && getSelectedItems().get(0).getStatus() == GlusterStatus.UP && getSelectedItems().get(0).getSnapshotScheduled()) {
-            allowEditSnapshotSchedule = true;
-        }
-
         getStartCommand().setIsExecutionAllowed(allowStart);
         getStopCommand().setIsExecutionAllowed(allowStop);
         getRemoveVolumeCommand().setIsExecutionAllowed(allowRemove);
