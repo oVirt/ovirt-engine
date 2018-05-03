@@ -14,26 +14,26 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
 
     @Test
     public void testExecuteQueryUserConfigFiltered() {
-        assertQueryExecution(ConfigValues.PredefinedVMProperties, true, true);
+        assertQueryExecution(ConfigValues.PredefinedVMProperties, true);
     }
 
     @Test
     public void testExecuteQueryUserConfigNotFiltered() {
-        assertQueryExecution(ConfigValues.PredefinedVMProperties, false, true);
+        assertQueryExecution(ConfigValues.PredefinedVMProperties, false);
     }
 
 
     @Test
     public void testExecuteQueryAdminConfigFiltered() {
-        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, true, false);
+        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, true);
     }
 
     @Test
     public void testExecuteQueryAdminConfigNotFiltered() {
-        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, false, true);
+        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, false);
     }
 
-    private void assertQueryExecution(ConfigValues configValue, boolean isFiltered, boolean shouldSucceed) {
+    private void assertQueryExecution(ConfigValues configValue, boolean isFiltered) {
         // Mock the parameters
         Version version = RandomUtils.instance().pickRandom(Version.ALL);
         when(getQueryParameters().getVersion()).thenReturn(version.toString());
@@ -47,6 +47,7 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
 
         Object actual = getQuery().getQueryReturnValue().getReturnValue();
 
+        boolean shouldSucceed = !isFiltered || configValue.nonAdminVisible();
         if (shouldSucceed) {
             assertEquals("Got wrong expected value for " + configValue, expected, actual);
         } else {
