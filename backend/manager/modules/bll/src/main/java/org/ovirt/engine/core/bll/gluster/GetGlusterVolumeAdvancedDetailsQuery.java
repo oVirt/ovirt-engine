@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -164,9 +165,13 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         if (brick != null) {
             //We need to update confirmedFreeSize with precalculated value
             advancedDetails.getBrickDetails().forEach(b -> {
-                b.getBrickProperties().setConfirmedFreeSize(
-                        glusterBrickDao.getById(b.getBrickProperties().getBrickId()).getBrickProperties().getConfirmedFreeSize()
-                );
+                BrickProperties properties = glusterBrickDao.getById(b.getBrickProperties().getBrickId()).getBrickProperties();
+                if (properties != null) {
+                    double confirmedFreeSize = properties.getConfirmedFreeSize() == null ? properties.getFreeSize() : properties.getConfirmedFreeSize();
+                    b.getBrickProperties().setConfirmedFreeSize(confirmedFreeSize);
+                } else {
+                    b.getBrickProperties().setConfirmedFreeSize(b.getBrickProperties().getFreeSize());
+                }
             });
         }
         return  advancedDetails;
