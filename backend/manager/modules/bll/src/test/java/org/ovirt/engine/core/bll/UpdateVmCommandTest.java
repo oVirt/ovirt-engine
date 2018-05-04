@@ -131,13 +131,29 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
+    private static Map<String, String> createMigrationMap() {
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+        return migrationMap;
+    }
+
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.MaxVmNameLength, 64),
         mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
         mockConfig(ConfigValues.VmPriorityMaxValue, 100),
         mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
-        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singleton(Version.getLast())))
+        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singleton(Version.getLast()))),
+        mockConfig(ConfigValues.IsMigrationSupported, version, createMigrationMap()),
+        mockConfig(ConfigValues.MaxNumOfCpuPerSocket, version, 16),
+        mockConfig(ConfigValues.MaxNumOfThreadsPerCpu, version, 8),
+        mockConfig(ConfigValues.MaxNumOfVmCpus, version, 16),
+        mockConfig(ConfigValues.MaxNumOfVmSockets, version, 16),
+        mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
+        mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),
+        mockConfig(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576)
     );
 
     private static VmManagementParametersBase initParams() {
@@ -245,19 +261,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockSameNameQuery(true);
         mockVmValidator();
         command.initEffectiveCompatibilityVersion();
-
-        Map<String, String> migrationMap = new HashMap<>();
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86", "true");
-        migrationMap.put("ppc", "true");
-        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, command.getEffectiveCompatibilityVersion(), migrationMap);
-        mcr.mockConfigValue(ConfigValues.MaxNumOfCpuPerSocket, command.getEffectiveCompatibilityVersion(), 16);
-        mcr.mockConfigValue(ConfigValues.MaxNumOfThreadsPerCpu, command.getEffectiveCompatibilityVersion(), 8);
-        mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, command.getEffectiveCompatibilityVersion(), 16);
-        mcr.mockConfigValue(ConfigValues.MaxNumOfVmSockets, command.getEffectiveCompatibilityVersion(), 16);
-        mcr.mockConfigValue(ConfigValues.VM32BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 20480);
-        mcr.mockConfigValue(ConfigValues.VM64BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 4194304);
-        mcr.mockConfigValue(ConfigValues.VMPpc64BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 1048576);
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
