@@ -87,7 +87,7 @@ public class SyntaxCheckerTest {
     }
 
     @Test
-    public void testGetPagPhrase() {
+    public void testGetPagPhraseWrong() {
         mcr.mockConfigValue(ConfigValues.DBPagingType, "wrongPageType");
         mcr.mockConfigValue(ConfigValues.DBPagingSyntax, "wrongPageSyntax");
         SyntaxChecker chkr = new SyntaxChecker();
@@ -96,9 +96,15 @@ public class SyntaxCheckerTest {
 
         // check wrong config values
         assertEquals("", chkr.getPagePhrase(res, "1"));
+    }
 
+    @Test
+    public void testGetPagPhrase() {
         mcr.mockConfigValue(ConfigValues.DBPagingType, "Range");
         mcr.mockConfigValue(ConfigValues.DBPagingSyntax, " WHERE RowNum BETWEEN %1$s AND %2$s");
+        SyntaxChecker chkr = new SyntaxChecker();
+        SyntaxContainer res = new SyntaxContainer("");
+        res.setMaxCount(0);
 
         // check valid config values
         assertNotEquals("", chkr.getPagePhrase(res, "1"));
