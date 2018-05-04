@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,14 +16,10 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class InstallVdsInternalCommandTest extends BaseCommandTest {
 
     private static final String VALID_OVIRT_VERSION = "6.2";
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private VdsDao vdsDao;

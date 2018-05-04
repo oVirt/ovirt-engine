@@ -38,7 +38,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.ExecutorServiceRule;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -72,9 +71,6 @@ public class GlusterGeoRepSyncJobTest {
 
     @Mock
     private GlusterAuditLogUtil logUtil;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @ClassRule
     public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();

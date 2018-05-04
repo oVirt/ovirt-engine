@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuotaManagerTest {
@@ -73,10 +71,6 @@ public class QuotaManagerTest {
 
     @Mock
     private QuotaDao quotaDao;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     @Spy
     private QuotaManager quotaManager = new QuotaManager();
     @Spy

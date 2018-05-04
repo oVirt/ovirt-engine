@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -56,7 +55,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -65,7 +63,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -99,9 +96,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Mock
     private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     @Before
     public void setUpOsRepository() {
         final int osId = 0;
@@ -123,7 +117,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateImages(any());
         when(cmd.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        mockMemorySizeConfigValues(Version.getLast());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
@@ -134,7 +127,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateImages(any());
         when(cmd.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        mockMemorySizeConfigValues(Version.getLast());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
@@ -178,7 +170,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         addBalloonToVm(cmd.getVmFromExportDomain(null));
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
-        mockMemorySizeConfigValues(cmd.getCluster().getCompatibilityVersion());
 
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
@@ -192,7 +183,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         addSoundDeviceToVm(cmd.getVmFromExportDomain(null));
         when(osRepository.isSoundDeviceEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
-        mockMemorySizeConfigValues(cmd.getCluster().getCompatibilityVersion());
 
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
@@ -228,7 +218,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateImages(any());
         when(cmd.getImportValidator().validateSpaceRequirements(anyCollection()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        mockMemorySizeConfigValues(Version.getLast());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
@@ -520,11 +509,5 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
-    }
-
-    private void mockMemorySizeConfigValues(Version version) {
-        mcr.mockConfigValue(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480);
-        mcr.mockConfigValue(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304);
-        mcr.mockConfigValue(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576);
     }
 }

@@ -306,7 +306,6 @@ public class RunVmValidatorTest {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_0);
         vm.setVmMemSizeMb(MEMORY_LIMIT_32_BIT + 1);
-        mcr.mockConfigValue(ConfigValues.VM32BitMaxMemorySizeInMB, Version.v4_0, 20480);
 
         validateResult(runVmValidator.validateMemorySize(vm), false, EngineMessage.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
     }

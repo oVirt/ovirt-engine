@@ -13,7 +13,6 @@ import java.util.Objects;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /**
@@ -46,9 +44,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class JsonObjectSerializationEntitiesTest {
     @Parameterized.Parameter
     public BusinessEntity<?> entity;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @Parameterized.Parameters
     public static Object[] data() {

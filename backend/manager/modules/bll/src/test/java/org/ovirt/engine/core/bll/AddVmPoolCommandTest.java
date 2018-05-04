@@ -1,17 +1,24 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
+            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
+    );
 
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
@@ -21,11 +28,6 @@ public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
         AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
         return new AddVmPoolCommand<>(param, null);
-    }
-
-    @Before
-    public void setUp() {
-        mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"));
     }
 
     @Test

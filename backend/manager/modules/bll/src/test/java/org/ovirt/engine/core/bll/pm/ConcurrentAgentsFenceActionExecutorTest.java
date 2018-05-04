@@ -25,13 +25,9 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ExecutorServiceRule;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConcurrentAgentsFenceActionExecutorTest {
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule();
-
     @ClassRule
     public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 

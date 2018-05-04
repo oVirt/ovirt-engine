@@ -6,16 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class BasicWeightSelectorPolicyUnitTest {
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule();
-
     private Guid unit1;
     private Guid unit2;
     private Guid host1;

@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddClusterCommandTest extends BaseCommandTest {
@@ -50,9 +48,6 @@ public class AddClusterCommandTest extends BaseCommandTest {
     private static final MigrateOnErrorOptions MIGRATE_ON_ERROR = MigrateOnErrorOptions.NO;
     private static final String CORRELATION_ID = "C0RR3LAT10N1D";
     private static final ArchitectureType ARCHITECTURE_TYPE = ArchitectureType.x86;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     //Mocks
     @Mock

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ClassRule;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 
 public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends GlusterHookParameters>>
@@ -41,9 +39,6 @@ public abstract class GlusterHookCommandTest<T extends GlusterHookCommandBase<? 
                                              new Guid("2001751e-549b-4e7a-aff6-32d36856c125")};
     protected static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     protected static final Guid HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     protected GlusterHooksDao hooksDao;

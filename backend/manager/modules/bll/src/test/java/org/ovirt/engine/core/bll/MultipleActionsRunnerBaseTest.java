@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.assertj.core.util.Lists;
-import org.junit.ClassRule;
 import org.mockito.Mock;
 import org.mockito.stubbing.OngoingStubbing;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -16,7 +15,6 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
 
@@ -25,9 +23,6 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
 
     @Mock
     private NestedCommandFactory commandFactory;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     protected static class TestCommand extends CommandBase {
 

@@ -249,7 +249,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     @Test
     public void poolHasDefaultCluster() {
-        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID);
         addDefaultClusterToPool();
         doReturn(new ValidationResult
                 (EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_CLUSTER_CANNOT_BE_LOCALFS))

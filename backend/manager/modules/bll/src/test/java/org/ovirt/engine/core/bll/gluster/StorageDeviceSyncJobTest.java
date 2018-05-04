@@ -34,7 +34,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.utils.ExecutorServiceRule;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDeviceSyncJobTest {
@@ -67,9 +66,6 @@ public class StorageDeviceSyncJobTest {
 
     @Mock
     private GlusterAuditLogUtil logUtil;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void init() {

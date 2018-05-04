@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     @Spy
@@ -57,9 +55,6 @@ public class ManageGlusterServiceCommandTest extends BaseCommandTest {
     protected VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
     GlusterUtil glusterUtils;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     private final Guid startedServiceId1 = Guid.newGuid();
     private final Guid startedServiceId2 = Guid.newGuid();
