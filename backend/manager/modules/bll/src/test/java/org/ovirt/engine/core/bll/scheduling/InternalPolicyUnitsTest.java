@@ -17,7 +17,6 @@ public class InternalPolicyUnitsTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-        mockConfig(ConfigValues.MaxSchedulerWeight, 1000),
         mockConfig(ConfigValues.SpmVmGraceForEvenGuestDistribute, 5),
         mockConfig(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
         mockConfig(ConfigValues.HighVmCountForEvenGuestDistribute, 10)

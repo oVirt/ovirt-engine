@@ -45,7 +45,7 @@ public class VmAffinityWeightPolicyUnit extends VmAffinityPolicyUnit {
         for (VDS host : hosts) {
             int score = acceptableHosts.containsKey(host.getId()) ?
                     DEFAULT_SCORE + maxNonmigratableVms - acceptableHosts.get(host.getId()) :
-                    MaxSchedulerWeight;
+                    getMaxSchedulerWeight();
 
             retList.add(new Pair<>(host.getId(), score));
         }

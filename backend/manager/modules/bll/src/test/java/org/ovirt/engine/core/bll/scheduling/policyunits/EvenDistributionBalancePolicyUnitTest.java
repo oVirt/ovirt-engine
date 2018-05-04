@@ -32,7 +32,6 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
     @ClassRule
     public static MockConfigRule configRule =
             new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, 1000),
                     MockConfigRule.mockConfig(ConfigValues.HighUtilizationForEvenlyDistribute, 80),
                     MockConfigRule.mockConfig(ConfigValues.LowUtilizationForEvenlyDistribute, 20),
                     MockConfigRule.mockConfig(ConfigValues.CpuOverCommitDurationMinutes, 5),

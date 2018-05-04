@@ -46,9 +46,9 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
     protected int calcHostScore(VDS vds, VM vm, boolean countThreadsAsCores) {
         // If the host is overutilized, return the worst score
         if (vds.getUsageCpuPercent() == null || vds.getUsageCpuPercent() > highUtilization) {
-            return MaxSchedulerWeight - 1;
+            return getMaxSchedulerWeight() - 1;
         }
 
-        return (MaxSchedulerWeight - 1) - super.calcHostScore(vds, vm, countThreadsAsCores);
+        return (getMaxSchedulerWeight() - 1) - super.calcHostScore(vds, vm, countThreadsAsCores);
     }
 }

@@ -69,15 +69,15 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
     protected int calcHostScore(VDS vds, VM vm, boolean countThreadsAsCores) {
         Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
         if (effectiveCpuCores == null || vds.getUsageCpuPercent() == null) {
-            return MaxSchedulerWeight - 1;
+            return getMaxSchedulerWeight() - 1;
         }
 
         double loadPerCore = calcHostLoadPerCore(vds, vm, effectiveCpuCores);
 
         // Scale so that 110 %  maps to MaxSchedulerWeight - 2
-        double score = loadPerCore * (MaxSchedulerWeight - 2) / 110.0;
+        double score = loadPerCore * (getMaxSchedulerWeight() - 2) / 110.0;
 
         // rounding the result and adding one to avoid zero
-        return Math.min((int) Math.round(score) + 1, MaxSchedulerWeight - 1);
+        return Math.min((int) Math.round(score) + 1, getMaxSchedulerWeight() - 1);
     }
 }

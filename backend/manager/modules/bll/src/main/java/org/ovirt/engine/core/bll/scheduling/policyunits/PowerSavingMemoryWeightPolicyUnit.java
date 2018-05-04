@@ -87,7 +87,7 @@ public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {
         }
 
         // Scores are in the interval [1, MaxSchedulerWeight]
-        return (int)((hostSchedulingMem / maxMemory) * (MaxSchedulerWeight - 1)) + 1;
+        return (int)((hostSchedulingMem / maxMemory) * (getMaxSchedulerWeight() - 1)) + 1;
     }
 
     private float getMaxMemoryOfVdsInCluster(List<VDS> hosts) {

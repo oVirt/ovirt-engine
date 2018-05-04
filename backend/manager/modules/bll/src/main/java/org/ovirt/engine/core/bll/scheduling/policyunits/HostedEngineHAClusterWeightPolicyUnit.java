@@ -43,9 +43,9 @@ public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
 
         if (isHostedEngine) {
             // If the max HA score is higher than the max weight, then we normalize. Otherwise the ratio is 1, keeping the value as is
-            float ratio = MAXIMUM_HA_SCORE > MaxSchedulerWeight ? ((float) MaxSchedulerWeight / MAXIMUM_HA_SCORE) : 1;
+            float ratio = MAXIMUM_HA_SCORE > getMaxSchedulerWeight() ? ((float) getMaxSchedulerWeight() / MAXIMUM_HA_SCORE) : 1;
             for (VDS host : hosts) {
-                scores.add(new Pair<>(host.getId(), MaxSchedulerWeight - Math.round(host.getHighlyAvailableScore() * ratio)));
+                scores.add(new Pair<>(host.getId(), getMaxSchedulerWeight() - Math.round(host.getHighlyAvailableScore() * ratio)));
             }
         } else {
             fillDefaultScores(hosts, scores);

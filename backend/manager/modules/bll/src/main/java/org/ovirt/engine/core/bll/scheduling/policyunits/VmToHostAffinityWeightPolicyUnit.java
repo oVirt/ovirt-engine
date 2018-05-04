@@ -39,7 +39,7 @@ public class VmToHostAffinityWeightPolicyUnit extends VmToHostAffinityPolicyUnit
                 getHostViolationCount(false, hosts, vm, new PerHostMessages());
 
         Guid currentHostId = vm.getRunOnVds();
-        int currentHostScore = hostViolations.getOrDefault(currentHostId, MaxSchedulerWeight);
+        int currentHostScore = hostViolations.getOrDefault(currentHostId, getMaxSchedulerWeight());
 
         List<Pair<Guid, Integer>> retList = new ArrayList<>();
         for (VDS host : hosts) {
@@ -53,7 +53,7 @@ public class VmToHostAffinityWeightPolicyUnit extends VmToHostAffinityPolicyUnit
                 score += 1;
             }
 
-            retList.add(new Pair<>(host.getId(), Math.min(score, MaxSchedulerWeight)));
+            retList.add(new Pair<>(host.getId(), Math.min(score, getMaxSchedulerWeight())));
         }
 
         return retList;

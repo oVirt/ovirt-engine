@@ -33,7 +33,9 @@ import org.slf4j.LoggerFactory;
 public abstract class PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(PolicyUnitImpl.class);
 
-    public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);
+    public static int getMaxSchedulerWeight() {
+        return Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);
+    }
 
     private final PolicyUnit policyUnit;
     protected RunVmDelayer runVmDelayer;
