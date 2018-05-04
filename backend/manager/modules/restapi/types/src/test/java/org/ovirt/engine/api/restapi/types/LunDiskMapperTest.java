@@ -35,8 +35,6 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
     @Test
     @Override
     public void testRoundtrip() throws Exception {
-        setUpConfigExpectations();
-
         Disk model = Disk.class.cast(populate(Disk.class));
         model = postPopulate(model);
         Mapper<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> out =

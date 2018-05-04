@@ -48,8 +48,6 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
 
     @Test
     public void testRoundtrip() throws Exception {
-        setUpConfigExpectations();
-
         F model = fromClass.cast(populate(fromClass));
         model = postPopulate(model);
         Mapper<F, T> out = mappingLocator.getMapper(fromClass, toClass);
@@ -62,9 +60,6 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
 
     protected F getModel(F model) {
         return model;
-    }
-
-    protected void setUpConfigExpectations() {
     }
 
     protected F postPopulate(F model) {

@@ -43,8 +43,6 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
     @Test
     @Override
     public void testRoundtrip() throws Exception {
-        setUpConfigExpectations();
-
         DiskSnapshot model = DiskSnapshot.class.cast(populate(DiskSnapshot.class));
         model = postPopulate(model);
         Mapper<DiskSnapshot, Disk> out =

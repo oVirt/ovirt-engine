@@ -18,8 +18,6 @@ public class ApplicationMapperTest extends AbstractInvertibleMappingTest<Applica
     @Test
     @Override
     public void testRoundtrip() throws Exception {
-        setUpConfigExpectations();
-
         Application model = Application.class.cast(populate(Application.class));
         model = postPopulate(model);
         model.setName(NAMES[0]);
