@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkImplementationDetailsUtilsUsingBaseNicTest extends BaseNetworkImplementationDetailsUtilsTest {
@@ -17,7 +16,6 @@ public class NetworkImplementationDetailsUtilsUsingBaseNicTest extends BaseNetwo
     @Before
     public void setUpBefore() throws Exception {
         super.setUpBefore();
-        mcr.mockConfigValue(ConfigValues.DefaultMTU, 1500);
         VdsNetworkInterface baseIface = createBaseInterface(qosA, networkName);
         baseIface.setMtu(100);
 

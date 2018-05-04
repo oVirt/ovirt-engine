@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +36,11 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class FenceValidatorTest {
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.DisableFenceAtStartupInSec, 5),
+            mockConfig(ConfigValues.VdsFenceType, Version.getLast(), "apc"),
+            mockConfig(ConfigValues.CustomVdsFenceType, "apc")
+    );
 
     @InjectMocks
     @Spy
@@ -94,7 +99,6 @@ public class FenceValidatorTest {
     @Test
     public void failWhenStartupTimeoutHasNotPassed() {
         List<String> messages = new LinkedList<>();
-        mcr.mockConfigValue(ConfigValues.DisableFenceAtStartupInSec, 5);
         when(backend.getStartedAt()).thenReturn(new DateTime(new Date()));
         boolean result = validator.isStartupTimeoutPassed(messages);
         assertEquals(1, messages.size());
@@ -105,7 +109,6 @@ public class FenceValidatorTest {
     @Test
     public void succeedWhenStartupTimeoutHasPassed() {
         List<String> messages = new LinkedList<>();
-        mcr.mockConfigValue(ConfigValues.DisableFenceAtStartupInSec, 5);
         when(backend.getStartedAt()).thenReturn(new DateTime(new Date().getTime() - 20000));
         boolean result = validator.isStartupTimeoutPassed(messages);
         assertTrue(result);
@@ -160,8 +163,6 @@ public class FenceValidatorTest {
         agent.setType("apc");
         when(fenceAgentDao.getFenceAgentsForHost(vds.getId())).thenReturn(Collections.singletonList(agent));
         List<String> messages = new LinkedList<>();
-        mcr.mockConfigValue(ConfigValues.VdsFenceType, Version.getLast(), "apc");
-        mcr.mockConfigValue(ConfigValues.CustomVdsFenceType, "apc");
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, cluster, messages);
         assertTrue(result);
     }

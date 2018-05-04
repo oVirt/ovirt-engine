@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,12 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class EmulatedMachineUtilsTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(
+                    ConfigValues.ClusterEmulatedMachines,
+                    Version.v4_0,
+                    Arrays.asList("pc-i440fx-rhel7.2.0", "pc-i440fx-2.1", "pseries-rhel7.2.0"))
+    );
 
     @Test
     public void testEffectiveEmulatedMachineWithCustomSet() {
@@ -41,8 +47,6 @@ public class EmulatedMachineUtilsTest {
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
         vmBase.setCustomCompatibilityVersion(Version.v4_0);
-        List<String> supported = Arrays.asList("pc-i440fx-rhel7.2.0", "pc-i440fx-2.1", "pseries-rhel7.2.0");
-        mcr.mockConfigValue(ConfigValues.ClusterEmulatedMachines, Version.v4_0, supported);
         assertEquals("pc-i440fx-rhel7.2.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
     }
 

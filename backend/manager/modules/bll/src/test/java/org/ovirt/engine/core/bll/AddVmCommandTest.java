@@ -50,6 +50,14 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    private static Map<String, String> createMigrationMap() {
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+        return migrationMap;
+    }
+
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
@@ -57,7 +65,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
         mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
         mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
-        mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
+        mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+        mockConfig(ConfigValues.IsMigrationSupported, Version.v4_3, createMigrationMap())
     );
 
     @Override
@@ -179,11 +188,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.getParameters().getVm().setVmOs(OsType.Other.ordinal());
         cmd.init();
-        Map<String, String> migrationMap = new HashMap<>();
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86", "true");
-        migrationMap.put("ppc", "true");
-        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, cmd.getEffectiveCompatibilityVersion(), migrationMap);
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
     }
 

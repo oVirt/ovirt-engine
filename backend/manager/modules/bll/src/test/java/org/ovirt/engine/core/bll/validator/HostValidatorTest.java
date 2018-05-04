@@ -54,7 +54,11 @@ public class HostValidatorTest {
     private StoragePoolDao storagePoolDao;
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(mockConfig(ConfigValues.EncryptHostCommunication, true));
+    public MockConfigRule mockConfigRule = new MockConfigRule(
+            mockConfig(ConfigValues.EncryptHostCommunication, true),
+            mockConfig(ConfigValues.InstallVds, Boolean.TRUE),
+            mockConfig(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
+    );
 
     @Mock
     private VDS host;
@@ -68,11 +72,6 @@ public class HostValidatorTest {
 
     private void mockHostForActivation(VDSStatus status) {
         when(host.getStatus()).thenReturn(status);
-    }
-
-    private void mockHostForUniqueId(String value) {
-        mockConfigRule.mockConfigValue(ConfigValues.InstallVds, Boolean.TRUE);
-        when(host.getUniqueId()).thenReturn(value);
     }
 
     @Test
@@ -94,7 +93,6 @@ public class HostValidatorTest {
 
     @Test
     public void nameLengthIsTooLong() {
-        mockConfigRule.mockConfigValue(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE);
         when(host.getName()).thenReturn(RandomUtils.instance().nextString(HOST_NAME_SIZE * 2));
         assertThat(validator.nameLengthIsLegal(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG));
     }
@@ -259,13 +257,13 @@ public class HostValidatorTest {
 
     @Test
     public void testValidateNoUniqueId() {
-        mockHostForUniqueId(StringUtils.EMPTY);
+        when(host.getUniqueId()).thenReturn(StringUtils.EMPTY);
         assertThat(validator.validateUniqueId(), failsWith( EngineMessage.VDS_NO_UUID));
     }
 
     @Test
     public void testValidateUniqueId() {
-        mockHostForUniqueId(Guid.newGuid().toString());
+        when(host.getUniqueId()).thenReturn(Guid.newGuid().toString());
         assertThat(validator.validateUniqueId(), isValid());
     }
 

@@ -135,7 +135,8 @@ public class VmInfoBuildUtilsTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.LibgfApiSupported, Version.v4_1, false),
-            mockConfig(ConfigValues.LibgfApiSupported, Version.v4_2, true)
+            mockConfig(ConfigValues.LibgfApiSupported, Version.v4_2, true),
+            mockConfig(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true)
     );
 
     @Before
@@ -298,8 +299,6 @@ public class VmInfoBuildUtilsTest {
         vm.setDiskMap(mockUnsortedDisksMap(lunDiskVmDevice, diskImageVmDevice));
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setClusterCompatibilityVersion(Version.v4_1);
-
-        mcr.mockConfigValue(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true);
 
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap =
                 underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false, false);

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,8 @@ public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
     InterfaceDao interfaceDao;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr =
+            new MockConfigRule(mockConfig(ConfigValues.ResetBrickSupported, Version.v4_2, Boolean.TRUE));
 
     private static final String serverName = "myhost";
     private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
@@ -76,7 +78,6 @@ public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
         doReturn(getVolume(volumeId4, GlusterVolumeType.REPLICATE, 4)).when(volumeDao).getById(volumeId4);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getCluster()).when(cmd).getCluster();
-        mcr.mockConfigValue(ConfigValues.ResetBrickSupported, getCluster().getCompatibilityVersion(), Boolean.TRUE);
     }
 
     private Cluster getCluster() {

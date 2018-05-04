@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class VmDevicesMonitoringTest {
     public static InjectorRule injectorRule = new InjectorRule();
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DomainXML, Version.getLast(), true));
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private TransactionManager transactionManager;
@@ -86,12 +87,6 @@ public class VmDevicesMonitoringTest {
         doReturn(vdsManager).when(resourceManager).getVdsManager(any());
 
         injectorRule.bind(TransactionManager.class, transactionManager);
-
-        mcr.mockConfigValue(
-            ConfigValues.DomainXML,
-            resourceManager.getVdsManager(VDS_ID).getCompatibilityVersion(),
-            true
-        );
     }
 
     private static Map<String, Object> getDeviceInfo(Guid id, String deviceType, String device, String address) {

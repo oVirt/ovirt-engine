@@ -43,7 +43,8 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false),
+            mockConfig(ConfigValues.DefaultMTU, 1500)
     );
 
 

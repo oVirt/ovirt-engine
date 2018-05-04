@@ -80,7 +80,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static final Guid vmId = Guid.newGuid();
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.MaxBlockDiskSize, 8192));
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaxBlockDiskSize, 8192),
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_1, true)
+    );
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
@@ -843,11 +846,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().getDiskVmElement().setPassDiscard(true);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
                 .when(diskVmElementValidator).isPassDiscardSupported(any());
-        mcr.mockConfigValue(
-            ConfigValues.PassDiscardSupported,
-            command.getStoragePool().getCompatibilityVersion(),
-            true
-        );
 
         ValidateTestUtils.runAndAssertValidateFailure(
                 command, EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
