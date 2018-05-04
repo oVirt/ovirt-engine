@@ -27,6 +27,7 @@ public class StorageDomainStaticDaoTest
         newStaticDomain.setDiscardAfterDelete(false);
         newStaticDomain.setWarningLowSpaceIndicator(3);
         newStaticDomain.setCriticalSpaceActionBlocker(9);
+        newStaticDomain.setWarningLowConfirmedSpaceIndicator(6);
         newStaticDomain.setFirstMetadataDevice(FixturesTool.LUN_ID2);
         newStaticDomain.setVgMetadataDevice(FixturesTool.LUN_ID2);
         newStaticDomain.setBackup(false);
@@ -39,6 +40,7 @@ public class StorageDomainStaticDaoTest
         existingEntity.setWipeAfterDelete(true);
         existingEntity.setWarningLowSpaceIndicator(4);
         existingEntity.setCriticalSpaceActionBlocker(8);
+        existingEntity.setWarningLowConfirmedSpaceIndicator(5);
         existingEntity.setFirstMetadataDevice(FixturesTool.LUN_ID1);
         existingEntity.setVgMetadataDevice(FixturesTool.LUN_ID1);
         existingEntity.setBackup(true);

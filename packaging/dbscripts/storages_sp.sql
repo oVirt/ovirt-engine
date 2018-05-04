@@ -492,6 +492,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_domain_static (
     v_vg_metadata_device VARCHAR(100),
     v_warning_low_space_indicator INT,
     v_critical_space_action_blocker INT,
+    v_warning_low_confirmed_space_indicator INT,
     v_backup BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
@@ -512,6 +513,7 @@ BEGIN
         vg_metadata_device,
         warning_low_space_indicator,
         critical_space_action_blocker,
+        warning_low_confirmed_space_indicator,
         backup
         )
     VALUES (
@@ -530,6 +532,7 @@ BEGIN
         v_vg_metadata_device,
         v_warning_low_space_indicator,
         v_critical_space_action_blocker,
+        v_warning_low_confirmed_space_indicator,
         v_backup
         );
 END;$PROCEDURE$
@@ -566,6 +569,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     v_vg_metadata_device VARCHAR(100),
     v_warning_low_space_indicator INT,
     v_critical_space_action_blocker INT,
+    v_warning_low_confirmed_space_indicator INT,
     v_backup BOOLEAN
     )
 RETURNS VOID
@@ -588,6 +592,7 @@ BEGIN
         storage_comment = v_storage_comment,
         warning_low_space_indicator = v_warning_low_space_indicator,
         critical_space_action_blocker = v_critical_space_action_blocker,
+        warning_low_confirmed_space_indicator = v_warning_low_confirmed_space_indicator,
         backup = v_backup
     WHERE id = v_id;
 END;$PROCEDURE$
