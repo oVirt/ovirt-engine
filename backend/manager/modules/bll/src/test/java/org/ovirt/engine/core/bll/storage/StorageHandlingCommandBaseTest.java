@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -34,7 +35,7 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
     private StoragePool storagePool;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.StoragePoolNameSizeLimit, 10));
 
     @Before
     public void setUp() {
@@ -46,13 +47,13 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     @Test
     public void nameTooLong() {
-        setAcceptableNameLength(10);
+        storagePool.setName("123456789 - this is too long");
         checkStoragePoolNameLengthSucceeds();
     }
 
     @Test
     public void nameAcceptableLength() {
-        setAcceptableNameLength(255);
+        storagePool.setName("123456789");
         checkStoragePoolNameLengthFails();
     }
 
@@ -62,10 +63,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         pool.setId(Guid.newGuid());
         pool.setIsLocal(false);
         return pool;
-    }
-
-    private static void setAcceptableNameLength(final int length) {
-        mcr.mockConfigValue(ConfigValues.StoragePoolNameSizeLimit, length);
     }
 
     private void checkStoragePoolNameLengthSucceeds() {
