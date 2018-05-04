@@ -50,7 +50,7 @@ public class BackendExternalHostProvidersResourceTest
     @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         if (StringUtils.isNotBlank(query)) {
-            query = " AND (" + query + ")";
+            query = " AND " + query;
         }
         super.setUpQueryExpectations(query);
     }
