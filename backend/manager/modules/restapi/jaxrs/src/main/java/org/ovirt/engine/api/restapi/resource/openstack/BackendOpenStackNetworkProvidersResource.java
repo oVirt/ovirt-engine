@@ -79,9 +79,7 @@ public class BackendOpenStackNetworkProvidersResource
         buffer.append(providerType);
         String query = QueryHelper.getConstraint(httpHeaders, uriInfo, null, modelType, false);
         if (StringUtils.isNotBlank(query)) {
-            buffer.append(" AND (");
-            buffer.append(query);
-            buffer.append(")");
+            buffer.append(String.format(" AND %1$s", query));
         }
         return buffer.toString();
     }
