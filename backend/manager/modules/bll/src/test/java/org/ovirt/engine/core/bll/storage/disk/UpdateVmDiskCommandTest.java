@@ -134,6 +134,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false),
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_1, true),
             mockConfig(ConfigValues.MaxBlockDiskSize, 8));
 
     /**
@@ -249,7 +250,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
-        mockDefaultDiscardSupported();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
         command.executeVmCommand();
@@ -812,6 +812,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
+        storagePool.setCompatibilityVersion(Version.v4_1);
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;
@@ -884,9 +885,5 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         VmDevice vmDevice = createVmDevice(diskId, vmId);
         doReturn(vmDevice).when(command).getVmDeviceForVm();
         return vmDevice;
-    }
-
-    private void mockDefaultDiscardSupported() {
-        mcr.mockConfigValue(ConfigValues.PassDiscardSupported, command.getStoragePool().getCompatibilityVersion(), true);
     }
 }
