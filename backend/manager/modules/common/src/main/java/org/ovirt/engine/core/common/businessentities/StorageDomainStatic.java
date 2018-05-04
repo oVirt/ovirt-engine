@@ -74,6 +74,10 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     @Max(value = Integer.MAX_VALUE, message = "VALIDATION_STORAGE_DOMAIN_CRITICAL_SPACE_ACTION_BLOCKER_RANGE")
     private Integer criticalSpaceActionBlocker;
 
+    @Min(value = 0, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_CONFIRMED_SPACE_INDICATOR_RANGE")
+    @Max(value = 100, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_CONFIRMED_SPACE_INDICATOR_RANGE")
+    private Integer warningLowConfirmedSpaceIndicator;
+
     public StorageDomainStatic() {
         id = Guid.Empty;
         storageType = StorageDomainType.Master;
@@ -204,6 +208,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         this.warningLowSpaceIndicator = warningLowSpaceIndicator;
     }
 
+    public Integer getWarningLowConfirmedSpaceIndicator() {
+        return warningLowConfirmedSpaceIndicator;
+    }
+
+    public void setWarningLowConfirmedSpaceIndicator(Integer warningLowConfirmedSpaceIndicator) {
+        this.warningLowConfirmedSpaceIndicator = warningLowConfirmedSpaceIndicator;
+    }
+
     public Integer getCriticalSpaceActionBlocker() {
         return criticalSpaceActionBlocker;
     }
@@ -261,6 +273,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 vgMetadataDevice,
                 warningLowSpaceIndicator,
                 criticalSpaceActionBlocker,
+                warningLowConfirmedSpaceIndicator,
                 backup
         );
     }
@@ -290,6 +303,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && Objects.equals(description, other.description)
                 && Objects.equals(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
                 && Objects.equals(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker)
+                && Objects.equals(warningLowConfirmedSpaceIndicator, other.warningLowConfirmedSpaceIndicator)
                 && Objects.equals(backup, other.backup);
     }
 
