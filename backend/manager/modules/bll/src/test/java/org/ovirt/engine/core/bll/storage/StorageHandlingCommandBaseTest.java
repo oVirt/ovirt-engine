@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StorageHandlingCommandBaseTest extends BaseCommandTest {
@@ -31,9 +30,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
 
     @Mock
     private StoragePoolDao storagePoolDao;
-
-    @Mock
-    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     private StoragePool storagePool;
 
@@ -66,12 +62,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         pool.setId(Guid.newGuid());
         pool.setIsLocal(false);
         return pool;
-    }
-
-    private void createCommandWithNullPool() {
-        cmd = mock(StorageHandlingCommandBase.class,
-                withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS)
-                        .useConstructor(new StoragePoolManagementParameter(), null));
     }
 
     private static void setAcceptableNameLength(final int length) {
