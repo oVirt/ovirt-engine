@@ -38,9 +38,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(Strict.class)
 public class ClusterValidatorTest {
-
-    private static final Version SUPPORTED_VERSION = new Version(1, 1);
-
     @Mock
     private ClusterDao clusterDao;
 
@@ -59,7 +56,7 @@ public class ClusterValidatorTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0))))
+        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(Version.getLast())))
     );
 
     @Test
@@ -97,8 +94,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void versionSupported() {
-        mockConfigRule.mockConfigValue(ConfigValues.SupportedClusterLevels, Collections.singleton(SUPPORTED_VERSION));
-        when(cluster.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.getLast());
 
         assertThat(validator.versionSupported(), isValid());
     }
@@ -143,7 +139,7 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         StoragePool dataCenter = mock(StoragePool.class);
-        when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
+        when(dataCenter.getCompatibilityVersion()).thenReturn(Version.getLowest());
         when(dataCenterDao.get(any())).thenReturn(dataCenter);
         when(cluster.supportsVirtService()).thenReturn(true);
 
