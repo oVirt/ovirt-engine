@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.TrustStoreTestUtils;
 
@@ -16,13 +17,13 @@ public class EngineEncryptionUtilsTest {
 
     @ClassRule
     public static MockEngineLocalConfigRule mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE_TYPE", "JKS"),
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE_PASSWORD", "NoSoup4U"),
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_TYPE", "PKCS12"),
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE", TrustStoreTestUtils.getTrustStorePath()),
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_PASSWORD", "NoSoup4U"),
-                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_ALIAS", "1")
+            new Pair<>("ENGINE_PKI_TRUST_STORE_TYPE", "JKS"),
+            new Pair<>("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
+            new Pair<>("ENGINE_PKI_TRUST_STORE_PASSWORD", "NoSoup4U"),
+            new Pair<>("ENGINE_PKI_ENGINE_STORE_TYPE", "PKCS12"),
+            new Pair<>("ENGINE_PKI_ENGINE_STORE", TrustStoreTestUtils.getTrustStorePath()),
+            new Pair<>("ENGINE_PKI_ENGINE_STORE_PASSWORD", "NoSoup4U"),
+            new Pair<>("ENGINE_PKI_ENGINE_STORE_ALIAS", "1")
             );
 
     @Test

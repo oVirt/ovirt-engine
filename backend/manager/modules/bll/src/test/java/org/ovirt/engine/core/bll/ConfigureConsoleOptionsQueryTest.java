@@ -31,10 +31,10 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
-import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
 import org.ovirt.engine.core.utils.TrustStoreTestUtils;
 
 public class ConfigureConsoleOptionsQueryTest extends
@@ -47,12 +47,12 @@ public class ConfigureConsoleOptionsQueryTest extends
     @ClassRule
     public static MockEngineLocalConfigRule mockEngineLocalConfigRule =
             new MockEngineLocalConfigRule(
-                    new KeyValue("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
-                    new KeyValue("ENGINE_HTTPS_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
-                    new KeyValue("ENGINE_FQDN", "engine-host"),
-                    new KeyValue("ENGINE_PROXY_ENABLED", "false"),
-                    new KeyValue("ENGINE_HTTPS_PORT", "8443"),
-                    new KeyValue("ENGINE_PROXY_HTTPS_PORT", "443")
+                    new Pair<>("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
+                    new Pair<>("ENGINE_HTTPS_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
+                    new Pair<>("ENGINE_FQDN", "engine-host"),
+                    new Pair<>("ENGINE_PROXY_ENABLED", "false"),
+                    new Pair<>("ENGINE_HTTPS_PORT", "8443"),
+                    new Pair<>("ENGINE_PROXY_HTTPS_PORT", "443")
             );
 
     @Mock

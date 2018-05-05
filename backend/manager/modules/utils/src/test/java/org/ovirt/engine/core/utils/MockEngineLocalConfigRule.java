@@ -5,25 +5,16 @@ import java.util.Map;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.ovirt.engine.core.common.utils.Pair;
 
 public class MockEngineLocalConfigRule extends TestWatcher {
 
-    public static class KeyValue {
-        String key;
-        String value;
-
-        public KeyValue(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
     private Map<String, String> newValues;
 
-    public MockEngineLocalConfigRule(KeyValue... values) {
+    public MockEngineLocalConfigRule(Pair<String, String>... values) {
         newValues = new HashMap<>();
-        for (KeyValue v : values) {
-            newValues.put(v.key, v.value);
+        for (Pair<String, String> v : values) {
+            newValues.put(v.getFirst(), v.getSecond());
         }
     }
 

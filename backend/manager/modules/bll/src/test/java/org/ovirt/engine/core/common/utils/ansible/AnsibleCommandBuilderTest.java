@@ -41,10 +41,10 @@ public class AnsibleCommandBuilderTest {
 
     static {
         mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
-            new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI", "/etc/pki/ovirt-engine/"),
-            new MockEngineLocalConfigRule.KeyValue("ENGINE_USR", "/usr/share/ovirt-engine/"),
-            new MockEngineLocalConfigRule.KeyValue("ENGINE_VAR", OVIRT_HOME),
-            new MockEngineLocalConfigRule.KeyValue("ENGINE_LOG", "/var/log/ovirt-engine/")
+                new Pair<>("ENGINE_PKI", "/etc/pki/ovirt-engine/"),
+                new Pair<>("ENGINE_USR", "/usr/share/ovirt-engine/"),
+                new Pair<>("ENGINE_VAR", OVIRT_HOME),
+                new Pair<>("ENGINE_LOG", "/var/log/ovirt-engine/")
         );
     }
 
