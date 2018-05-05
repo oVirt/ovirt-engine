@@ -139,14 +139,6 @@ public class NetworkValidatorTest {
         networkPrefixValidTest(isValid(), DEFAULT_NETWORK_NAME);
     }
 
-
-    private static List<Network> getSingletonVlanNetworkList(int vlanId, Guid networkId) {
-        Network network = new Network();
-        network.setVlanId(vlanId);
-        network.setId(networkId);
-        return Collections.singletonList(network);
-    }
-
     private void networkNameAvailableTest(Matcher<ValidationResult> matcher, List<Network> networks) {
         this.networks.addAll(networks);
         when(network.getName()).thenReturn(DEFAULT_NETWORK_NAME);
