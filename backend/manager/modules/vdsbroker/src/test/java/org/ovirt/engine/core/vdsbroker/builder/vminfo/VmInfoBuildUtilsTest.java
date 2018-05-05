@@ -61,7 +61,6 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -84,8 +83,6 @@ public class VmInfoBuildUtilsTest {
     private static final Guid LUN_DISK_ID = Guid.newGuid();
     private static final Guid CLUSTER_ID = Guid.newGuid();
 
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
     @Mock
     private NetworkDao networkDao;
     @Mock
@@ -141,7 +138,6 @@ public class VmInfoBuildUtilsTest {
 
     @Before
     public void setUp() {
-        injectorRule.bind(AuditLogDirector.class, auditLogDirector);
         diskImage.setDiskProfileId(Guid.newGuid());
 
         qos = new StorageQos();

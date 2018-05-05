@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DisplayNetworkClusterHelperTest {
@@ -41,9 +39,6 @@ public class DisplayNetworkClusterHelperTest {
     private static final NetworkClusterId TEST_NETWORK_CLUSTER_ID = new NetworkClusterId(
             TEST_CLUSTER_ID,
             TEST_NETWORK_ID);
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private NetworkClusterDao mockNetworkClusterDao;
