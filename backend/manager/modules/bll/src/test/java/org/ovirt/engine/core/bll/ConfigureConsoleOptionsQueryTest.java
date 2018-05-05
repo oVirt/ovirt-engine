@@ -11,8 +11,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
+import org.ovirt.engine.core.utils.TrustStoreTestUtils;
 
 public class ConfigureConsoleOptionsQueryTest extends
         AbstractQueryTest<ConfigureConsoleOptionsParams, ConfigureConsoleOptionsQuery<ConfigureConsoleOptionsParams>> {
@@ -48,21 +47,13 @@ public class ConfigureConsoleOptionsQueryTest extends
     @ClassRule
     public static MockEngineLocalConfigRule mockEngineLocalConfigRule =
             new MockEngineLocalConfigRule(
-                    new KeyValue("ENGINE_PKI_TRUST_STORE", loadKey()),
-                    new KeyValue("ENGINE_HTTPS_PKI_TRUST_STORE", loadKey()),
+                    new KeyValue("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
+                    new KeyValue("ENGINE_HTTPS_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
                     new KeyValue("ENGINE_FQDN", "engine-host"),
                     new KeyValue("ENGINE_PROXY_ENABLED", "false"),
                     new KeyValue("ENGINE_HTTPS_PORT", "8443"),
                     new KeyValue("ENGINE_PROXY_HTTPS_PORT", "443")
             );
-
-    private static String loadKey()  {
-        try {
-            return URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Mock
     BackendInternal backend;
