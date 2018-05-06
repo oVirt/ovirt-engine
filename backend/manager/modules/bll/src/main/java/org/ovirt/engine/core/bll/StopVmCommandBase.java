@@ -19,9 +19,11 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -82,11 +84,63 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     }
 
     protected void destroyVm() {
-        if (getVm().getStatus() == VMStatus.MigratingFrom && getVm().getMigratingToVds() != null) {
-            runVdsCommand(VDSCommandType.DestroyVm, buildDestroyVmVDSCommandParameters(getVm().getMigratingToVds()));
-        }
+        boolean vmMigrating = getVm().getStatus() == VMStatus.MigratingFrom && getVm().getMigratingToVds() != null;
+        setActionReturnValue(vmMigrating ? destroyMigratingVm() : destroyNonMigratingVm());
+    }
 
-        setActionReturnValue(runVdsCommand(VDSCommandType.DestroyVm, buildDestroyVmVDSCommandParameters(getVdsId())));
+    private VDSReturnValue destroyNonMigratingVm() {
+        return runVdsCommand(VDSCommandType.DestroyVm, buildDestroyVmVDSCommandParameters(getVdsId()));
+    }
+
+    /**
+     * Try to destroy the VM on the destination host first, otherwise the VM may end up Paused on the destination.
+     * In case this attempt fails due to noVM, that's fine because the VM may already been destroyed there by the
+     * monitoring thread when detecting that the migration failed.
+     * In case the destroy attempt on the source host fails as well due to noVM, the user should be notified that
+     * the VM could not be destroyed because it was no found. If we manage to destroy the VM on the source host
+     * then that should be placed as the action return value.
+     * In case the destroy attempt on the source host fails due to noVM but the destroy attempt on the destination
+     * host was successful, use the return value of the latter.
+     */
+    private VDSReturnValue destroyMigratingVm() {
+        // We must prevent VM monitoring from happening so it won't issue a migration rerun attempt
+        getVmManager().lock();
+        try {
+            VDSReturnValue returnValueFromDestination = null;
+            try {
+                returnValueFromDestination = runVdsCommand(
+                        VDSCommandType.DestroyVm,
+                        buildDestroyVmVDSCommandParameters(getVm().getMigratingToVds()));
+            } catch(EngineException e) {
+                switch (e.getErrorCode()) {
+                case noVM:
+                    break;
+                default:
+                    throw e;
+                }
+            }
+
+            VDSReturnValue returnValueFromSource = null;
+            try {
+                returnValueFromSource = runVdsCommand(
+                        VDSCommandType.DestroyVm,
+                        buildDestroyVmVDSCommandParameters(getVdsId()));
+            } catch(EngineException e) {
+                switch (e.getErrorCode()) {
+                case noVM:
+                    if (returnValueFromDestination == null) {
+                        throw e;
+                    }
+                    break;
+                default:
+                    throw e;
+                }
+            }
+
+            return returnValueFromSource != null ? returnValueFromSource : returnValueFromDestination;
+        } finally {
+            getVmManager().unlock();
+        }
     }
 
     private DestroyVmVDSCommandParameters buildDestroyVmVDSCommandParameters(Guid vdsId) {
