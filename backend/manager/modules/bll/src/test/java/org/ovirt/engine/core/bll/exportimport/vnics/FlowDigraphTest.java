@@ -5,12 +5,9 @@ import static org.mockito.Mockito.mock;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicHandlers.ApplyProfileById;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicHandlers.NetworkAttachedToCluster;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicHandlers.SourceNameExistsOnEngine;
@@ -27,8 +24,6 @@ public class FlowDigraphTest {
 
     private static final boolean GENERATE_DEBUG_INFO = false;
     private final String flowName;
-    @Rule
-    public MockitoRule initMocks = MockitoJUnit.rule();
 
     private Flow<MapVnicContext> underTest;
     private final String circleSize;
