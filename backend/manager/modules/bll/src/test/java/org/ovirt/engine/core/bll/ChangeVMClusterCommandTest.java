@@ -14,8 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
-import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -37,15 +35,6 @@ public class ChangeVMClusterCommandTest {
 
     @Mock
     private VmNicDao vmNicDao;
-
-    @Mock
-    private MacPoolPerCluster macPoolPerCluster;
-
-    @Mock
-    private ReadMacPool sourceMacPool;
-
-    @Mock
-    private ReadMacPool targetMacPool;
 
     private final ChangeVMClusterParameters parameters = new ChangeVMClusterParameters();
     private final VM existingVm = createVm();
