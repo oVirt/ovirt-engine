@@ -13,9 +13,6 @@ import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -23,9 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
-@RunWith(MockitoJUnitRunner.class)
 public class StorageConnectionValidatorTest {
     private StorageServerConnections connection;
     private StorageConnectionValidator validator;
@@ -33,9 +28,6 @@ public class StorageConnectionValidatorTest {
 
     private static final String CONNECTION_ID_FOR_VALIDATION = Guid.newGuid().toString();
     private static final int NUMBER_OF_EXISTING_CONNECTIONS = 3;
-
-    @Mock
-    protected StorageServerConnectionDao storageServerConnectionDao;
 
     @Before
     public void setUp() {
