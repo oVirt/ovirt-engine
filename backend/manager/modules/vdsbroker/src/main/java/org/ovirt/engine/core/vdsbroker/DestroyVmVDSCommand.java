@@ -51,13 +51,12 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
     @Override
     protected void executeVmCommand() {
-        resourceManager.removeAsyncRunningVm(getParameters().getVmId());
-
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
                 VDSCommandType.Destroy,
                 getParameters());
 
         if (vdsReturnValue.getSucceeded()) {
+            resourceManager.removeAsyncRunningVm(getParameters().getVmId());
             VmDynamic vm = vmDynamicDao.get(getParameters().getVmId());
             changeStatus(vm);
             vm.setStopReason(getParameters().getReason());
