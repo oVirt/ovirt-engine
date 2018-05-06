@@ -191,7 +191,11 @@ public class VmAnalyzer {
         if (vdsManager.getVdsId().equals(dbVm.getRunOnVds())) {
             return true;
         }
-        logVmDetectedOnUnexpectedHost();
+        boolean migratingToThisVds = vdsmVm.getVmDynamic().getStatus() == VMStatus.MigratingTo
+                && vdsManager.getVdsId().equals(dbVm.getMigratingToVds());
+        if (!migratingToThisVds) {
+            logVmDetectedOnUnexpectedHost();
+        }
         return false;
     }
 
