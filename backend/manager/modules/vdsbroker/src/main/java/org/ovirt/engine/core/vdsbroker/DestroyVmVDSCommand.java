@@ -25,8 +25,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
     @Override
     protected void executeVDSCommand() {
-        resourceManager.removeAsyncRunningVm(getParameters().getVmId());
-
         if (getParameters().getGracefully()) {
             super.executeVDSCommand();
             return;
@@ -53,6 +51,8 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
     @Override
     protected void executeVmCommand() {
+        resourceManager.removeAsyncRunningVm(getParameters().getVmId());
+
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(
                 VDSCommandType.Destroy,
                 getParameters());
