@@ -9,13 +9,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Spy;
 import org.ovirt.engine.ui.uicommonweb.Uri;
 
 @RunWith(Parameterized.class)
 public class UrlValidationTest {
 
-    @Spy
     private UrlValidation urlValidation;
 
     private UriHostAddressValidation hostValidation;
