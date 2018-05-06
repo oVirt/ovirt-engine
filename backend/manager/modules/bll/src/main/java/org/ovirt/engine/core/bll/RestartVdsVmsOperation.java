@@ -61,12 +61,7 @@ public class RestartVdsVmsOperation {
                 if (vm.getMigratingToVds() != null) {
                     Backend.getInstance().getResourceManager().runVdsCommand(
                             VDSCommandType.DestroyVm,
-                            new DestroyVmVDSCommandParameters(
-                                    new Guid(vm.getMigratingToVds().toString()),
-                                    vm.getId(),
-                                    false,
-                                    0
-                            )
+                            new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId())
                     );
                     log.info(
                             "Stopped migrating vm '{}' on vds '{}'",

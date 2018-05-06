@@ -10,39 +10,43 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String reason;
     private boolean ignoreNoVm;
 
-    public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId, boolean gracefully, int secondsToWait) {
-        this(vdsId, vmId, null, gracefully, secondsToWait);
+    public DestroyVmVDSCommandParameters() {
     }
 
-    public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId, String reason, boolean gracefully, int secondsToWait, boolean ignoreNoVm) {
+    public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId) {
         super(vdsId, vmId);
-        this.gracefully = gracefully;
-        this.secondsToWait = secondsToWait;
-        this.reason = reason;
-        this.ignoreNoVm = ignoreNoVm;
     }
 
-    public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId, String reason, boolean gracefully, int secondsToWait) {
-        this(vdsId, vmId, reason, gracefully, secondsToWait, false);
+    public void setSecondsToWait(int secondsToWait) {
+        this.secondsToWait = secondsToWait;
     }
 
     public int getSecondsToWait() {
         return secondsToWait;
     }
 
+    public void setGracefully(boolean gracefully) {
+        this.gracefully = gracefully;
+    }
+
     public boolean getGracefully() {
         return gracefully;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public String getReason() {
         return reason == null ? "" : reason;
     }
 
-    public boolean isIgnoreNoVm() {
-        return ignoreNoVm;
+    public void setIgnoreNoVm(boolean ignoreNoVm) {
+        this.ignoreNoVm = ignoreNoVm;
     }
 
-    public DestroyVmVDSCommandParameters() {
+    public boolean isIgnoreNoVm() {
+        return ignoreNoVm;
     }
 
     @Override
