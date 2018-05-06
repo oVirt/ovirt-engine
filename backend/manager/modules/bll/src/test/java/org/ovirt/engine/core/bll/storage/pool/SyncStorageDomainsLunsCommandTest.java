@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.SyncStorageDomainsLunsParameters;
@@ -24,7 +23,6 @@ public class SyncStorageDomainsLunsCommandTest {
             new SyncStorageDomainsLunsParameters(Guid.newGuid(), Collections.emptyList());
 
     @Spy
-    @InjectMocks
     private SyncStorageDomainsLunsCommand<SyncStorageDomainsLunsParameters> command =
             new SyncStorageDomainsLunsCommand<>(parameters, null);
 
