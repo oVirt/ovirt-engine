@@ -35,9 +35,7 @@ import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -97,9 +95,6 @@ public class HostSetupNetworksValidatorTest {
 
     @Mock
     private VdsDao vdsDaoMock;
-
-    @Rule
-    public ErrorCollector collector= new ErrorCollector();
 
     private Bond bond;
 
@@ -1371,9 +1366,9 @@ public class HostSetupNetworksValidatorTest {
         List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(vmNetworkNetworkAttachment);
         ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
         if (bondMode.isBondModeValidForVmNetwork()) {
-            collector.checkThat(result, isValid());
+            assertThat(result, isValid());
         } else {
-            collector.checkThat(result,
+            assertThat(result,
                 failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_LABELED_VM_NETWORK,
                         ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME,
                                 bondName),
@@ -1420,9 +1415,9 @@ public class HostSetupNetworksValidatorTest {
         List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(vmNetworkNetworkAttachment);
         ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
         if (!isVmNetwork || bondMode.isBondModeValidForVmNetwork()) {
-            collector.checkThat(result, isValid());
+            assertThat(result, isValid());
         } else {
-            collector.checkThat(result,
+            assertThat(result,
                 failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
                         ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, bondName),
                         ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkName)
@@ -1499,9 +1494,9 @@ public class HostSetupNetworksValidatorTest {
         List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
         ValidationResult result = validator.validateBondModeVsNetworksAttachedToIt(attachmentsToConfigure);
         if (expectValidValidationResult) {
-            collector.checkThat(result, isValid());
+            assertThat(result, isValid());
         } else {
-            collector.checkThat(result, failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
+            assertThat(result, failsWith(EngineMessage.INVALID_BOND_MODE_FOR_BOND_WITH_VM_NETWORK,
                     ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, bondName),
                     ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME, networkName)
             ));

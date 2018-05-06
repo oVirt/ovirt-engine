@@ -1,17 +1,13 @@
 package org.ovirt.engine.core.common.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 
 public class IPv4AddressConverterTest {
     private IPAddressConverter underTest = IPv4AddressConverter.getInstance();
-
-    @Rule
-    public ErrorCollector errorCollector = new ErrorCollector();
 
     @Test
     public void checkIpAddressConversionToLong() {
@@ -32,7 +28,7 @@ public class IPv4AddressConverterTest {
     }
 
     private <T> void runTest(String errorMessage, T expected, T actual) {
-        errorCollector.checkThat(errorMessage, expected, equalTo(actual));
+        assertThat(errorMessage, expected, equalTo(actual));
     }
 
     @Test
