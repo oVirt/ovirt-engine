@@ -156,23 +156,6 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>test-jar</id>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-              <configuration>
-                <includes>
-                  <include>org/ovirt/engine/core/builder/**</include>
-                </includes>
-              </configuration>
-            </execution>
-           </executions>
-      </plugin>
     </plugins>
   </build>
   <profiles>
