@@ -858,7 +858,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             for (RepoImage map : repoFilesMap) {
                 String fileName = StringUtils.defaultString(map.getRepoImageId(), "");
                 Matcher matchToolPattern =
-                        Pattern.compile(IsoDomainListSynchronizer.REGEX_TOOL_PATTERN).matcher(fileName);
+                        Pattern.compile(isoDomainListSynchronizer.getRegexToolPattern()).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL));
@@ -891,7 +891,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (attachCd) {
             String rhevToolsPath =
-                    String.format("%1$s%2$s_%3$s.iso", IsoDomainListSynchronizer.getGuestToolsSetupIsoPrefix(),
+                    String.format("%1$s%2$s_%3$s.iso", isoDomainListSynchronizer.getGuestToolsSetupIsoPrefix(),
                             selectedToolsClusterVersion, selectedToolsVersion);
 
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,

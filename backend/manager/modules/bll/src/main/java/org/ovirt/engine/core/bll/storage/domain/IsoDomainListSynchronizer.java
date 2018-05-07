@@ -103,15 +103,17 @@ public class IsoDomainListSynchronizer implements BackendService {
 
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
     public static final String TOOL_VERSION = "toolVersion";
-    public static final String REGEX_TOOL_PATTERN =
-            String.format("%1$s(?<%2$s>[0-9]{1,}.[0-9])_{1}(?<%3$s>[0-9]{1,}).[i|I][s|S][o|O]$",
-                    getGuestToolsSetupIsoPrefix(),
-                    TOOL_CLUSTER_LEVEL,
-                    TOOL_VERSION);
 
     // Not kept as static member to enable reloading the config value
-    public static String getGuestToolsSetupIsoPrefix() {
+    public String getGuestToolsSetupIsoPrefix() {
         return Config.getValue(ConfigValues.GuestToolsSetupIsoPrefix);
+    }
+
+    public String getRegexToolPattern() {
+        return String.format("%1$s(?<%2$s>[0-9]{1,}.[0-9])_{1}(?<%3$s>[0-9]{1,}).[i|I][s|S][o|O]$",
+                getGuestToolsSetupIsoPrefix(),
+                TOOL_CLUSTER_LEVEL,
+                TOOL_VERSION);
     }
 
     /**

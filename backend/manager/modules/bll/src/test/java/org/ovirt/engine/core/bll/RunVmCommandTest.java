@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -67,14 +66,9 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Theories.class)
 public class RunVmCommandTest extends BaseCommandTest {
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     /**
      * The command under test.
      */
