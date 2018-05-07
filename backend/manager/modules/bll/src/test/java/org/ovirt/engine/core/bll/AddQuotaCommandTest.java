@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
@@ -39,7 +37,6 @@ public class AddQuotaCommandTest extends BaseCommandTest {
 
     @Before
     public void testSetup() {
-        when(quotaDao.getById(any())).thenReturn(mockGeneralStorageQuota());
         command.init();
     }
 
