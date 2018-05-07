@@ -69,11 +69,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         List<VDS> allHosts = new ArrayList<>();
         allHosts.add(host1);
         allHosts.add(host2);
-        List<VDS> existingHosts = new ArrayList<>();
-        existingHosts.add(existingHost1);
-        existingHosts.add(existingHost2);
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
-        doReturn(existingHosts).when(getQuery()).getExistingHosts();
         getQuery().executeQueryCommand();
         assertEquals(allHosts, getQuery().getQueryReturnValue().getReturnValue());
     }
@@ -85,10 +81,7 @@ public class GetHostListFromExternalProviderQueryTest extends AbstractQueryTest<
         List<VDS> allHosts = new ArrayList<>();
         allHosts.add(host1);
         allHosts.add(host2);
-        List<VDS> existingHosts = new ArrayList<>();
-        existingHosts.add(host1);
         doReturn(allHosts).when(getQuery()).getProviderHosts(hostProvider, null);
-        doReturn(existingHosts).when(getQuery()).getExistingHosts();
         getQuery().executeQueryCommand();
         assertEquals(2, ((List<VDS>) getQuery().getQueryReturnValue().getReturnValue()).size());
     }
