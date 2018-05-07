@@ -1,11 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,11 +38,6 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     public void mockQuotaDao() {
         quota = mockStorageQuota(quotaGuid);
         when(quotaDao.getById(quotaGuid)).thenReturn(quota);
-        List<Quota> quotaList = new ArrayList<>();
-        quotaList.add(new Quota());
-        quotaList.add(new Quota());
-        when(quotaDao.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(quotaList);
-        when(quotaDao.isQuotaInUse(any())).thenReturn(false);
     }
 
     @Test
