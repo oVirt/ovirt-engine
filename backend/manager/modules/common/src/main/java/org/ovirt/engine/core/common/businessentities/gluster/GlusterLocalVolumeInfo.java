@@ -7,6 +7,18 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class GlusterLocalVolumeInfo {
+    private static class ThinSize {
+        Long free;
+        Long size;
+
+        private ThinSize() { }
+
+        ThinSize(Long free, Long size) {
+            this.free = free;
+            this.size = size;
+        }
+    }
+
     private List<GlusterLocalLogicalVolume> logicalVolumes = Collections.emptyList();
     private List<GlusterLocalPhysicalVolume> physicalVolumes = Collections.emptyList();
     private List<GlusterVDOVolume> vdoVolumes = Collections.emptyList();
@@ -24,14 +36,22 @@ public class GlusterLocalVolumeInfo {
     }
 
     public Optional<Long> getAvailableThinSizeForDevice(String device) {
-        Optional<Long> result = getLvmSizeForDevice(device);
+        return getThinSizeForDevice(device).map(s -> s.free);
+    }
+
+    public Optional<Long> getTotalThinSizeForDevice(String device) {
+        return getThinSizeForDevice(device).map(s -> s.size);
+    }
+
+    private Optional<ThinSize> getThinSizeForDevice(String device) {
+        Optional<ThinSize> result = getLvmSizeForDevice(device);
         if (!result.isPresent()) {
             result = getVdoSizeForDevice(device);
         }
         return result;
     }
 
-    private Optional<Long> getLvmSizeForDevice(String device) {
+    private Optional<ThinSize> getLvmSizeForDevice(String device) {
         Optional<GlusterLocalLogicalVolume> thinVolume = logicalVolumes.stream()
                 .filter(lvmMatchMapperName(device))
                 .filter(v -> !v.getPoolName().trim().isEmpty())
@@ -41,7 +61,7 @@ public class GlusterLocalVolumeInfo {
                 .filter(lv -> v.getPoolName().equals(lv.getLogicalVolumeName()))
                 .findAny());
 
-        Optional<Long> result = thinVolume.map(GlusterLocalLogicalVolume::getFree);
+        Optional<ThinSize> result = thinVolume.map(v -> new ThinSize(v.getFree(), v.getSize()));
         List<String> physicalDevices = thinVolume.map(GlusterLocalLogicalVolume::getVolumeGroupName)
                 .map(v -> physicalVolumes.stream()
                         .filter(g -> g.getVolumeGroupName().equals(v))
@@ -52,25 +72,25 @@ public class GlusterLocalVolumeInfo {
             //We can not handle other number of physical devices
             return result;
         }
-        Optional<Long> innerResult = getAvailableThinSizeForDevice(physicalDevices.get(0));
+        Optional<ThinSize> innerResult = getThinSizeForDevice(physicalDevices.get(0));
 
         if (innerResult.isPresent()) {
-            result = result.map(s -> s > innerResult.get() ? innerResult.get() : s);
+            result = result.map(s -> s.free > innerResult.get().free ? innerResult.get() : s);
         }
 
         return result;
     }
 
-    private Optional<Long> getVdoSizeForDevice(String device) {
+    private Optional<ThinSize> getVdoSizeForDevice(String device) {
         Optional<GlusterVDOVolume> vdoVolume = vdoVolumes.stream()
                 .filter(v -> device.equals(v.getName()))
                 .findAny();
 
-        Optional<Long> result = vdoVolume.map(GlusterVDOVolume::getFree);
-        Optional<Long> innerResult = vdoVolume.flatMap(v -> getAvailableThinSizeForDevice(v.getDevice()));
+        Optional<ThinSize> result = vdoVolume.map(v -> new ThinSize(v.getFree(), v.getSize()));
+        Optional<ThinSize> innerResult = vdoVolume.flatMap(v -> getThinSizeForDevice(v.getDevice()));
 
         if (innerResult.isPresent()) {
-            result = result.map(s -> s > innerResult.get() ? innerResult.get() : s);
+            result = result.map(s -> s.free > innerResult.get().free ? innerResult.get() : s);
         }
 
         return result;
