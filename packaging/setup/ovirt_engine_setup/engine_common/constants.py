@@ -285,6 +285,7 @@ class ConfigEnv(object):
     ENGINE_SERVICE_STOP_NEEDED = 'OVESETUP_CONFIG/engineServiceStopNeeded'
     FENCE_KDUMP_LISTENER_STOP_NEEDED = \
         'OVESETUP_CONFIG/fenceKdumpListenerStopNeeded'
+    FORCE_INVALID_PG_CONF = 'OVESETUP_CONFIG/forceInvalidPGConf'
 
 
 @util.export
