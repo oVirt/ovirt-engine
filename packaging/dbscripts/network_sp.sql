@@ -2505,6 +2505,7 @@ CREATE OR REPLACE FUNCTION UpdateHostProviderBinding (
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
+    PERFORM 1 FROM provider_binding_host_id WHERE vds_id = v_vds_id FOR UPDATE;
     DELETE FROM provider_binding_host_id WHERE vds_id = v_vds_id;
     INSERT INTO provider_binding_host_id (
         vds_id,
