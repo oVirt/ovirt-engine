@@ -96,10 +96,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
                         when(params.isFiltered()).thenReturn(isFiltered);
                         when(params.getSessionId()).thenReturn(sessionId);
 
-                        Guid guid = mock(Guid.class);
-
                         // Set up the user id env.
-                        when(mockDbUser.getId()).thenReturn(guid);
                         when(mockDbUser.isAdmin()).thenReturn(isUserAdmin);
                         when(mockSessionDataContainer.getUser(sessionId, false)).thenReturn(mockDbUser);
 
