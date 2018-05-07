@@ -90,14 +90,12 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
         returnValue.setSucceeded(true);
         List<DiskImage> diskImages = new ArrayList<>();
         DiskImage d1 = mock(DiskImage.class);
-        when(d1.isShareable()).thenReturn(true);
         ArrayList<String> vmNames = new ArrayList<>();
         vmNames.add("vm1");
         vmNames.add("vm2");
         when(d1.getVmNames()).thenReturn(vmNames);
         //floating disk
         DiskImage d2 = mock(DiskImage.class);
-        when(d2.isShareable()).thenReturn(false);
 
         diskImages.add(d1);
         diskImages.add(d2);
