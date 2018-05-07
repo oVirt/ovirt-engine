@@ -55,7 +55,6 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
                         new HashSet<>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null), null));
-        doReturn(vds).when(command).getUpServer();
         doReturn(null).when(command).getSlaveVolume();
         assertFalse(command.validate());
     }
@@ -67,7 +66,6 @@ public class SetupGlusterGeoRepMountBrokerInternalCommandTest extends BaseComman
                         new HashSet<>(Collections.singletonList(Guid.newGuid())),
                         null,
                         null), null));
-        doReturn(vds).when(command).getUpServer();
         doReturn(volume).when(command).getSlaveVolume();
         doReturn(GlusterStatus.DOWN).when(volume).getStatus();
         assertFalse(command.validate());
