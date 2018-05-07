@@ -542,7 +542,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             return;
         }
 
-        final UnitVmModel model = new UnitVmModel(createNewTemplateBehavior(), this);
+        final UnitVmModel model = new UnitVmModel(createNewTemplateBehavior(snapshot.getId()), this);
         setWindow(model);
         model.startProgress();
 
@@ -568,8 +568,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         }), snapshot.getId());
     }
 
-    protected NewTemplateVmModelBehavior createNewTemplateBehavior() {
-        return new NewTemplateVmModelBehavior();
+    protected NewTemplateVmModelBehavior createNewTemplateBehavior(Guid snapshotId) {
+        return new NewTemplateVmModelBehavior(snapshotId);
     }
 
     private void onCloneTemplate() {

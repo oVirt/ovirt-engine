@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -39,12 +40,17 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private VM vm;
+    private Guid snapshotId;
 
     public NewTemplateVmModelBehavior() {
     }
 
     public NewTemplateVmModelBehavior(VM vm) {
         this.vm = vm;
+    }
+
+    public NewTemplateVmModelBehavior(Guid snapshotId) {
+        this.snapshotId = snapshotId;
     }
 
     public void setVm(VM vm) {
@@ -156,30 +162,38 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public void dataCenterWithClusterSelectedItemChanged() {
         super.dataCenterWithClusterSelectedItemChanged();
 
-        // If a VM has at least one disk, present its storage domain.
-        AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(
-                vmDisks -> {
-                    ArrayList<Disk> imageDisks = new ArrayList<>();
+        if (snapshotId != null) {
+            // In case of creating a template from a snapshot, the snapshot VM configuration is needed
+            AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(asyncQuery(
+                    vm -> initDisksAndStorageDomains(new ArrayList<>(vm.getDiskMap().values()))), snapshotId);
+        } else {
+            // If a VM has at least one disk, present its storage domain.
+            AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(
+                    this::initDisksAndStorageDomains),
+                    vm.getId(),
+                    true);
+        }
+    }
 
-                    for (Disk disk : vmDisks) {
-                        if (disk.isShareable() || disk.isDiskSnapshot()) {
-                            continue;
-                        }
-                        if (disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                                disk.getDiskStorageType() == DiskStorageType.CINDER) {
-                            imageDisks.add(disk);
-                        }
-                    }
+    private void initDisksAndStorageDomains(List<Disk> disks) {
+        ArrayList<Disk> imageDisks = new ArrayList<>();
 
-                    initStorageDomains();
-                    initDisks(imageDisks);
+        for (Disk disk : disks) {
+            if (disk.isShareable() || disk.isDiskSnapshot()) {
+                continue;
+            }
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE ||
+                    disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                imageDisks.add(disk);
+            }
+        }
 
-                    VmModelHelper.sendWarningForNonExportableDisks(getModel(),
-                            vmDisks,
-                            VmModelHelper.WarningType.VM_TEMPLATE);
-                }),
-                vm.getId(),
-                true);
+        initStorageDomains();
+        initDisks(imageDisks);
+
+        VmModelHelper.sendWarningForNonExportableDisks(getModel(),
+                disks,
+                VmModelHelper.WarningType.VM_TEMPLATE);
     }
 
     private void initDisks(ArrayList<Disk> disks) {
