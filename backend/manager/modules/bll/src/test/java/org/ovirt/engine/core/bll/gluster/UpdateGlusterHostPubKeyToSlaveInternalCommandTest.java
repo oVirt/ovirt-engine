@@ -39,7 +39,6 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommandTest extends BaseComma
         command =
                 spy(new UpdateGlusterHostPubKeyToSlaveInternalCommand(new UpdateGlusterHostPubKeyToSlaveParameters(Guid.newGuid(),
                         pubKeys), null));
-        doReturn(vds).when(command).getUpServer();
         assertFalse(command.validate());
     }
 
