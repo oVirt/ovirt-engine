@@ -1,0 +1,1 @@
+SELECT fn_db_add_column('gluster_volume_brick_details', 'confirmed_total_space', 'bigint default null');
