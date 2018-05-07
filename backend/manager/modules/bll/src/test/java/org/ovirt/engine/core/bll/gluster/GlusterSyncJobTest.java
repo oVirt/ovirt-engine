@@ -30,7 +30,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -70,7 +70,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(Silent.class)
+@RunWith(Strict.class)
 public class GlusterSyncJobTest {
 
     private static final String REPL_VOL_NAME = "repl-vol";
@@ -349,7 +349,6 @@ public class GlusterSyncJobTest {
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
         doReturn(existingCluster).when(clusterDao).get(any());
         doReturn(existingServers).when(vdsDao).getAllForCluster(CLUSTER_ID);
-        doReturn(existingDistVol).when(volumeDao).getById(EXISTING_VOL_DIST_ID);
         doReturn(existingReplVol).when(volumeDao).getById(EXISTING_VOL_REPL_ID);
         doReturn(existingVolumes).when(volumeDao).getByClusterId(CLUSTER_ID);
     }
