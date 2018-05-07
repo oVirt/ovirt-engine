@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,6 +69,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -1083,21 +1085,41 @@ public class GlusterSyncJob extends GlusterJob {
             volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         }
         if (confirmedFreeSize != null) {
-            storageDomainStaticDao.getAllForStoragePool(clusterDao.get(volume.getClusterId()).getStoragePoolId())
+            Long confirmedTotalSize = calculateConfirmedVolumeTotal(volume);
+            Double percentUsedSize = (1 - confirmedFreeSize.doubleValue()/confirmedTotalSize)*100;
+
+            List<Guid> sdId = storageDomainStaticDao.getAllForStoragePool(clusterDao.get(volume.getClusterId()).getStoragePoolId())
                     .stream()
                     .map(StorageDomainStatic::getId)
                     .filter(sd -> storageServerConnectionDao.getAllForDomain(sd)
                             .stream()
                             .anyMatch(c -> volume.getId().equals(c.getGlusterVolumeId())))
-                    .map(i -> storageDomainDynamicDao.get(i))
+                    .collect(Collectors.toList());
+
+            sdId.stream().map(i -> storageDomainDynamicDao.get(i))
                     .forEach(d -> {
                         d.setConfirmedAvailableDiskSize((int) (confirmedFreeSize / SizeConverter.BYTES_IN_GB));
                         storageDomainDynamicDao.updateConfirmedSize(d);
                     });
+
+            sdId.stream()
+                    .map(storageDomainStaticDao::get)
+                    .filter(s -> s.getWarningLowConfirmedSpaceIndicator() != null)
+                    .filter(s -> s.getWarningLowConfirmedSpaceIndicator() < percentUsedSize)
+                    .forEach(sd -> {
+                        AuditLogable event = new AuditLogableImpl();
+                        event.setStorageDomainId(sd.getId());
+                        event.setStorageDomainName(sd.getName());
+                        event.setRepeatable(true);
+                        event.addCustomValue("DiskSpace", String.valueOf(confirmedFreeSize / SizeConverter.BYTES_IN_GB));
+
+                        auditLogDirector.log(event, AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW);
+                    });
+
         }
     }
 
-    private Long calculateConfirmedVolumeCapacity(GlusterVolumeEntity volume) {
+    private Long calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, Double> field) {
         List<BrickProperties> bricks = volume.getBricks().stream()
                 .map(GlusterBrickEntity::getId)
                 .map(b -> brickDao.getById(b))
@@ -1112,7 +1134,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         Stream<Double> brickSizes = bricks.stream()
-                .map(BrickProperties::getConfirmedFreeSize)
+                .map(field)
                 .map(v -> v*1024*1024);
 
         switch (volume.getVolumeType()) {
@@ -1128,6 +1150,14 @@ public class GlusterSyncJob extends GlusterJob {
         default:
             return brickSizes.mapToLong(Double::longValue).sum();
         }
+    }
+
+    private Long calculateConfirmedVolumeCapacity(GlusterVolumeEntity volume) {
+        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedFreeSize);
+    }
+
+    private Long calculateConfirmedVolumeTotal(GlusterVolumeEntity volume) {
+        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedTotalSize);
     }
 
     private void logBrickStatusChange(GlusterVolumeEntity volume, final GlusterBrickEntity brick, final GlusterStatus fetchedStatus) {

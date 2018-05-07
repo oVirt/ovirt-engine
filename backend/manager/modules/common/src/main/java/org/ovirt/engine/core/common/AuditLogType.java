@@ -165,6 +165,8 @@ public enum AuditLogType {
             AuditLogTimeInterval.HOUR.getValue() * 12),
     IRS_DISK_SPACE_LOW(26, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.HOUR.getValue() * 12),
+    IRS_CONFIRMED_DISK_SPACE_LOW(1403, AuditLogSeverity.WARNING,
+            AuditLogTimeInterval.HOUR.getValue() * 12),
     IRS_DISK_SPACE_LOW_ERROR(201, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue() * 15),
     IRS_HOSTED_ON_VDS(204),

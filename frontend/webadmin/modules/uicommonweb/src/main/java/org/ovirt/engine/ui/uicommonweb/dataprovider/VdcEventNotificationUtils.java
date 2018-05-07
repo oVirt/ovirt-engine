@@ -86,6 +86,7 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.VDS_SLOW_STORAGE_RESPONSE_TIME);
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_FAILURE);
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_DISK_SPACE_LOW);
+        addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW);
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
         addEventNotificationEntry(EventNotificationEntity.Storage,
                 AuditLogType.NUMBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
