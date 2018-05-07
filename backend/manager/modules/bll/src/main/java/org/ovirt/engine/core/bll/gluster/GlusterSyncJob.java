@@ -1036,6 +1036,12 @@ public class GlusterSyncJob extends GlusterJob {
                                     .getAvailableThinSizeForDevice(brickProperties.getDevice())
                                     .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElse(null)
                     );
+
+                    brickProperties.setConfirmedTotalSize(
+                            localVolumeInfo.get(brick.getServerId())
+                                    .getTotalThinSizeForDevice(brickProperties.getDevice())
+                                    .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElse(null)
+                    );
                 }
                 if (brickProperties.getStatus() != brick.getStatus()) {
                     logBrickStatusChange(volume, brick, brickProperties.getStatus());
