@@ -1117,7 +1117,7 @@ class OvirtUtils(base.Base):
                     current,
                     expected,
                 )
-                invalid_config_items.append({
+                item_data = {
                     'key': key,
                     'current': current,
                     'expected': expected,
@@ -1125,7 +1125,38 @@ class OvirtUtils(base.Base):
                     'name': name,
                     'pg_host': environment[self._dbenvkeys[DEK.HOST]],
                     'needed_on_create': item['needed_on_create'],
-                })
+                }
+                if self._environment.get(
+                    oengcommcons.ConfigEnv.FORCE_INVALID_PG_CONF,
+                    False
+                ):
+                    formatted_msg = ''
+                    if item['error_msg']:
+                        formatted_msg = item['error_msg'].format(**item_data)
+                    self.logger.warn(
+                        formatted_msg
+                        if formatted_msg and not item['needed_on_create']
+                        else _(
+                            "Ignoring invalid PostgreSql configuration for "
+                            "{name}: "
+                            "host = '{pg_host}', "
+                            "key = '{key}', "
+                            "current value = '{current}'."
+                            "{error_msg}"
+                        ).format(
+                            name=name,
+                            pg_host=environment[self._dbenvkeys[DEK.HOST]],
+                            key=key,
+                            current=current,
+                            error_msg=(
+                                ' {m}.'.format(m=formatted_msg)
+                                if formatted_msg
+                                else ''
+                            ),
+                        )
+                    )
+                else:
+                    invalid_config_items.append(item_data)
         return invalid_config_items
 
     def getUpdatedPGConf(self, content):
