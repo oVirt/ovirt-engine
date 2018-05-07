@@ -87,7 +87,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
     private Map<Guid, List<Integer>> getAllNumaNodeCpuMap() {
         List<Pair<Guid, Integer>> numaNodesCpus =
                 getCallsHandler().executeReadList("GetAllFromNumaNodeCpuMap",
-                        vmNumaNodeCpusRowMapper, null);
+                        vmNumaNodeCpusRowMapper, getCustomMapSqlParameterSource());
 
         return pairsToMap(numaNodesCpus);
     }
@@ -95,7 +95,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
     private Map<Guid, List<Integer>> getAllVmNumaNodePinInfo() {
         List<Pair<Guid, Integer>> numaNodesAssign =
                 getCallsHandler().executeReadList("GetAllAssignedNumaNodeInfomation",
-                        vmNumaNodeAssignmentRowMapper, null);
+                        vmNumaNodeAssignmentRowMapper, getCustomMapSqlParameterSource());
 
         return pairsToMap(numaNodesAssign);
     }

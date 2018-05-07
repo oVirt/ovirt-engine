@@ -1,2 +1,26 @@
 <FindBugsFilter>
+     <!--
+          Spring 5 is much stricter than Spring 4 when it comes to null
+          arguments, although the engine uses nulls all over the show.
+          All of these are supressed, as they are intentional.
+      -->
+     <Match>
+       <Or>
+         <Class name="~org\.ovirt\.engine\.core\.dao\..*Dao.*" />
+         <Class name="~org\.ovirt\.engine\.core\.dao\..*RowMapper" />
+         <Class name="org.ovirt.engine.core.dal.dbbroker.BatchProcedureExecutionConnectionCallback" />
+         <Class name="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresSimpleJdbcCall" />
+       </Or>
+       <Bug code="NP" />
+     </Match>
+
+     <!--
+          The return of execute() is known to be non-null in Spring 5,
+          but fixing this will require some refactoring
+      -->
+     <Match>
+        <Class name="org.ovirt.engine.core.dal.dbbroker.DbConnectionUtil" />
+        <Method name="checkDBConnection" params="" />
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
+     </Match>
 </FindBugsFilter>

@@ -205,7 +205,7 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
     public List<GlusterVolumeEntity> getVolumesSupportedAsStorageDomain() {
         List<GlusterVolumeEntity> volumes =
                 getCallsHandler().executeReadList("GetGlusterVolumesSupportedAsStorageDomain",
-                        volumeRowMapper, null);
+                        volumeRowMapper, getCustomMapSqlParameterSource());
         fetchRelatedEntities(volumes);
         return volumes;
     }
