@@ -10,12 +10,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -36,9 +34,6 @@ public class VmNicFilterParameterValidatorTest {
     @Mock
     private VmNicDao vmNicDao;
 
-    @Mock
-    private VmDao vmDao;
-
     private VmNicFilterParameterValidator validator;
 
     @Before
@@ -48,7 +43,6 @@ public class VmNicFilterParameterValidatorTest {
         vmNetworkInterface.setVmId(usedId);
         when(vmNicDao.get(usedId)).thenReturn(vmNetworkInterface);
         when(vmNicFilterParameterDao.get(usedId)).thenReturn(new VmNicFilterParameter());
-        when(vmDao.get(usedId)).thenReturn(new VM());
     }
 
     @Test

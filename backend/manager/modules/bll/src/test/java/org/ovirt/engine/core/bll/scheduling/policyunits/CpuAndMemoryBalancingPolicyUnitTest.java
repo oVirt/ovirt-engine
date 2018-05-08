@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.text.ParseException;
@@ -37,8 +36,6 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
             Map<Guid, VM> vms) throws ParseException {
 
         doReturn(TIME_FORMAT.parse("2015-01-01 12:00:00")).when(unit).getTime();
-
-        doReturn(cluster).when(clusterDao).get(any());
 
         for (Guid guid: hosts.keySet()) {
             doReturn(vmsOnAHost(vms.values(), guid)).when(vmDao).getAllRunningForVds(guid);
