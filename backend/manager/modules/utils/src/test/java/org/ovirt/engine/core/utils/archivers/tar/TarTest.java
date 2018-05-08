@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,8 +17,9 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import org.apache.commons.lang.SystemUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 public class TarTest {
 
@@ -61,9 +61,8 @@ public class TarTest {
     }
 
     @Test
+    @DisabledOnOs({OS.WINDOWS, OS.OTHER})
     public void testSimple() throws Exception {
-        assumeTrue(SystemUtils.IS_OS_UNIX);
-
         File tmpTar = null;
         File tmpDir1 = null;
         File tmpDir2 = null;

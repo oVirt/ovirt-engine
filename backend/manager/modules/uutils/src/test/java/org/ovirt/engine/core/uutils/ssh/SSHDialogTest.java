@@ -2,7 +2,6 @@ package org.ovirt.engine.core.uutils.ssh;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -26,18 +25,19 @@ import java.util.List;
 import javax.naming.AuthenticationException;
 import javax.naming.TimeLimitExceededException;
 
-import org.apache.commons.lang.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /*
  * Test properties
  * $ mvn -Dssh-host=host1 -Dssh-test-port=22 -Dssh-test-user=root -Dssh-test-password=password -Dssh-test-p12=a.p12 -Dssh-test-p12-alias=alias -Dssh-test-p12-password=password
  */
-
+@DisabledOnOs({OS.WINDOWS, OS.OTHER})
 public class SSHDialogTest {
 
     private static final int BUFFER_SIZE = 10 * 1024;
@@ -177,8 +177,6 @@ public class SSHDialogTest {
 
     @BeforeAll
     public static void init() {
-        assumeTrue(SystemUtils.IS_OS_UNIX);
-
         sshHost = System.getProperty("ssh-host");
         if (sshHost == null) {
             sshHost = "localhost";
