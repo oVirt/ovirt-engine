@@ -453,15 +453,15 @@ public class VmAnalyzer {
     }
 
     private void auditVmMigrationAbort(String exitMessage) {
-        AuditLogableBase logable =Injector.injectMembers( new AuditLogableBase(vdsManager.getVdsId(), dbVm.getId()));
+        AuditLogableBase logable =Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), dbVm.getId()));
         logable.addCustomValue("MigrationError", exitMessage);
         auditLog(logable, AuditLogType.VM_MIGRATION_ABORT);
     }
 
     private void destroyVmOnDestinationHost() {
-        VDSReturnValue destoryReturnValue = runVdsCommand(
-                VDSCommandType.DestroyVm,
-                new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), dbVm.getId()));
+        DestroyVmVDSCommandParameters params = new DestroyVmVDSCommandParameters(dbVm.getMigratingToVds(), getVmId());
+        params.setIgnoreNoVm(true);
+        VDSReturnValue destoryReturnValue = runVdsCommand(VDSCommandType.DestroyVm, params);
         if (destoryReturnValue.getSucceeded()) {
             log.info("Stopped migrating VM: '{}'({}) on VDS: '{}'",
                     dbVm.getId(), getVmManager().getName(), dbVm.getMigratingToVds());
