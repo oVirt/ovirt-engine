@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ public class TicketingTest {
         String sample = Ticketing.generateOTP();
         for (int x = 0; x < 1000; x++) {
             String other = Ticketing.generateOTP();
-            assertNotSame(sample, other);
+            assertNotEquals(sample, other);
         }
     }
 }
