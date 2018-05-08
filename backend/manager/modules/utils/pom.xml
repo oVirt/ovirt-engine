@@ -164,9 +164,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
-          </additionalClasspathElements>
           <systemPropertyVariables>
             <org.ovirt.engine.mime.types>${basedir}/target/test-classes/mime.types</org.ovirt.engine.mime.types>
           </systemPropertyVariables>

@@ -44,16 +44,6 @@
 
   <build>
     <plugins>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
-
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
@@ -66,7 +56,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
 

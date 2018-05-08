@@ -59,9 +59,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
-          </additionalClasspathElements>
           <excludes>
             <exclude>**/DBSchedulerUtilQuartzImplTest.java</exclude>
           </excludes>
