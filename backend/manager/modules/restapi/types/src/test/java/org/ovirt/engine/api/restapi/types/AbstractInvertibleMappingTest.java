@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
 /**
  * Test invertible mappings, by mapping the outward followed by the inverse
@@ -24,6 +25,9 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
+
+    @Rule
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     private MappingLocator mappingLocator;
     private Class<F> fromClass;

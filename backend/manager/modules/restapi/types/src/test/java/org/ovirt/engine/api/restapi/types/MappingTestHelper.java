@@ -17,6 +17,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 public class MappingTestHelper {
 
@@ -118,9 +119,9 @@ public class MappingTestHelper {
         } else if (takesLong(m)) {
             value = (long) rand(1000000000);
         } else if (takesBoolean(m)) {
-            value = Math.random() < 0.5D;
+            value = RandomUtils.instance().nextBoolean();
         } else if (takesDouble(m)) {
-            value = Math.random();
+            value = RandomUtils.instance().nextDouble();
         }
         if (value != null) {
             m.invoke(model, value);
@@ -241,7 +242,7 @@ public class MappingTestHelper {
     }
 
     public static int rand(int ceiling) {
-        return (int) Math.floor(Math.random() * 0.9999 * ceiling);
+        return RandomUtils.instance().nextInt(ceiling);
     }
 
     private static Object garble(Method m) {
