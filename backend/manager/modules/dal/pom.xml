@@ -144,13 +144,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <excludes>
-            <exclude>**/*D??Test*.java</exclude>
-            <exclude>**/*D??ImplTest*.java</exclude>
-            <exclude>**/DBConfigUtilsTest.java</exclude>
-            <exclude>**/DbConnectionUtilTest.java</exclude>
-            <exclude>**/BatchProcedureCallTest.java</exclude>
-          </excludes>
+          <properties>
+            <excludeTags>dao</excludeTags>
+          </properties>
           <systemPropertyVariables>
             <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
           </systemPropertyVariables>
@@ -166,7 +162,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration combine.self="override">
-              <excludes/>
+              <properties />
               <systemPropertyVariables>
                 <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
                 <ovirt-engine.config.defaults>src/test/resources/engine.conf</ovirt-engine.config.defaults>

@@ -53,9 +53,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <excludes>
-            <exclude>**/ssh/*.java</exclude>
-          </excludes>
+          <properties>
+            <excludeTags>ssh</excludeTags>
+          </properties>
         </configuration>
       </plugin>
     </plugins>
@@ -63,9 +63,7 @@
   <profiles>
     <profile>
       <id>enable-ssh-tests</id>
-      <properties>
-        <test>**/ssh/*.java</test>
-      </properties>
+      <properties />
     </profile>
   </profiles>
 

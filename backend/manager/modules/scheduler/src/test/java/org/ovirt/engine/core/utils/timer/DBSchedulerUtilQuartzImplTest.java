@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.quartz.JobDetail;
@@ -17,6 +18,7 @@ import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 
+@Tag("dao")
 public class DBSchedulerUtilQuartzImplTest {
 
     private static DBSchedulerUtilQuartzImpl scheduler;
