@@ -2,15 +2,15 @@ package org.ovirt.engine.core.utils;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 public class TicketingTest {
-    @Test
+    private static final String sample = Ticketing.generateOTP();
+
+    @RepeatedTest(1000)
     public void testNoRepeats() {
-        String sample = Ticketing.generateOTP();
-        for (int x = 0; x < 1000; x++) {
-            String other = Ticketing.generateOTP();
-            assertNotEquals(sample, other);
-        }
+        String other = Ticketing.generateOTP();
+        assertNotEquals(sample, other);
+
     }
 }
