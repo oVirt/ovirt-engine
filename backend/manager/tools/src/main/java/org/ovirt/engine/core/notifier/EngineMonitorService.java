@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 public class EngineMonitorService implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(EngineMonitorService.class);
-    private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
+    private static final String ENGINE_NOT_RESPONDING_ERROR =
+            "ovirt-engine-notifier is not able to connect to engine server, engine might be down or not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String HEALTH_SERVLET_PATH = "/services/health";
     private DataSource ds;
