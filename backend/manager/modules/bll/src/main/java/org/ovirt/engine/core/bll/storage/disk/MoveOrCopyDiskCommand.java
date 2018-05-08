@@ -34,6 +34,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -415,8 +416,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private void endCommandActions() {
         if (!getParameters().getImagesParameters().isEmpty()) {
-            backend.endAction(getImagesActionType(),
-                    getParameters().getImagesParameters().get(0),
+            ActionParametersBase params = getParameters().getImagesParameters().get(0);
+
+            // If this command failed the children should be marked as failed too
+            if (!getParameters().getTaskGroupSuccess()) {
+                params.setTaskGroupSuccess(false);
+            }
+
+            backend.endAction(getImagesActionType(), params,
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
         }
         setSucceeded(true);
