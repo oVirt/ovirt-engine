@@ -91,8 +91,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
             getCollection();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 
@@ -306,6 +305,11 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     protected void verifyRemove(Response response) {
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+    }
+
+    protected void verifyFault(WebApplicationException wae) {
+        assertTrue(wae.getResponse().getEntity() instanceof Fault);
+        assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
     }
 
     protected static Link getLinkByName(BaseResource model, String name) {

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
@@ -141,8 +140,7 @@ public class BackendMacPoolsResourceTest
             getCollection();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 

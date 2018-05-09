@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Domain;
-import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
@@ -208,8 +207,7 @@ public class BackendUsersResourceTest
             getCollection();
             fail("expected WebApplicationException");
         } catch(WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 

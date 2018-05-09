@@ -158,8 +158,7 @@ public class BackendFilesResourceTest
             getCollection();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 

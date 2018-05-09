@@ -18,7 +18,6 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.DiskProfile;
-import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
@@ -141,8 +140,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
             getCollection();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 

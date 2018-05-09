@@ -17,7 +17,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -144,8 +143,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
             getCollection();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 

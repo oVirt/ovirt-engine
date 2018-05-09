@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
-import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -141,8 +140,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
             getCollection();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-            assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
+            verifyFault(wae);
         }
     }
 
