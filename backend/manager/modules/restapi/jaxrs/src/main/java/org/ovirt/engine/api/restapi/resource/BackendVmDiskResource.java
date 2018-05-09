@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
@@ -186,6 +187,14 @@ public class BackendVmDiskResource
         validateParameters(action, "storageDomain.id|name");
         return doAction(ActionType.ExportRepoImage,
             new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
+    }
+
+    @Override
+    public Response reduce(Action action) {
+        Disk disk = get();
+        Guid imageId = getDiskImageId(disk.getImageId());
+        ImagesActionsParametersBase params = new ImagesActionsParametersBase(imageId);
+        return doAction(ActionType.ReduceImage, params, action);
     }
 
     @Override
