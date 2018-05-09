@@ -18,8 +18,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,12 +67,8 @@ public class BackendVmNicFilterParameterResourceTest
             new Object[] { PARAMETER_ID },
             Collections.emptyList()
         );
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -94,12 +90,8 @@ public class BackendVmNicFilterParameterResourceTest
             new Object[] { PARAMETER_ID },
             new ArrayList<VmNetworkInterface>()
         );
-        try {
-            resource.update(getParameter());
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getParameter())));
     }
 
     @Test
@@ -155,12 +147,8 @@ public class BackendVmNicFilterParameterResourceTest
                         success
                 )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected NetworkFilterParameter getParameter() {

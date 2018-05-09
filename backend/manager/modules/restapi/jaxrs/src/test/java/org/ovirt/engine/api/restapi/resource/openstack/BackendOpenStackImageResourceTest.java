@@ -17,7 +17,7 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,24 +46,15 @@ public class BackendOpenStackImageResourceTest
 
     @Test
     public void testBadId() {
-        try {
-            new BackendOpenStackImageProviderResource("foo");
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendOpenStackImageProviderResource("foo")));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test

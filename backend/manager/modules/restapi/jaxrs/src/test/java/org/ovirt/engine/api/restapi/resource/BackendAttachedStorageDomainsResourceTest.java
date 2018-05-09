@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -140,24 +140,16 @@ public class BackendAttachedStorageDomainsResourceTest
         StorageDomain model = new StorageDomain();
         model.setId(GUIDS[0].toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
     public void testAddIncompleteParameters() {
         StorageDomain model = new StorageDomain();
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "StorageDomain", "add", "id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "StorageDomain", "add", "id|name");
     }
 
 

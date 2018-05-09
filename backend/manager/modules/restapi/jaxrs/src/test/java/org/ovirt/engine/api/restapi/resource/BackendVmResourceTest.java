@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -112,24 +112,15 @@ public class BackendVmResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendVmResource("foo", new BackendVmsResource());
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(
+                WebApplicationException.class, () -> new BackendVmResource("foo", new BackendVmsResource())));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -216,12 +207,7 @@ public class BackendVmResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))));
     }
 
     @Test
@@ -328,12 +314,8 @@ public class BackendVmResourceTest
         final Vm model = getModel(0);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIconWithData());
-        try {
-            verifyModel(resource.update(model), 0);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BAD_REQUEST);
-        }
+        verifyFault(
+                assertThrows(WebApplicationException.class, () -> verifyModel(resource.update(model), 0)), BAD_REQUEST);
     }
 
     protected void verifyModelClearingPayloads(Vm model, int index) {
@@ -506,12 +488,7 @@ public class BackendVmResourceTest
                 valid,
                 success));
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))), detail);
     }
 
     @Test
@@ -526,12 +503,7 @@ public class BackendVmResourceTest
 
         Vm model = getModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     @Test
@@ -1126,12 +1098,7 @@ public class BackendVmResourceTest
                 new Object[] { GUIDS[0] },
                 null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     private void setUpGetEntityExpectations() {
@@ -1163,12 +1130,8 @@ public class BackendVmResourceTest
                 new Object[] { GUIDS[0], Boolean.FALSE },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpStatisticalExpectations() {

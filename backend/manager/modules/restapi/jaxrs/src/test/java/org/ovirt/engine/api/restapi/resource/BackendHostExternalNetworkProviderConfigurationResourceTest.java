@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,12 +44,8 @@ public class BackendHostExternalNetworkProviderConfigurationResourceTest
                 new Object[] { PROVIDER_ID },
                 Collections.emptyList()
         );
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test

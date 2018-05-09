@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,24 +50,15 @@ public class BackendAttachedStorageDomainResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendAttachedStorageDomainResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(
+                WebApplicationException.class, () -> new BackendAttachedStorageDomainResource("foo", null)));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetDomainExpectations(StorageType.NFS, false);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test
@@ -165,12 +156,7 @@ public class BackendAttachedStorageDomainResourceTest
     @Test
     public void testRemoveNonExistant() {
         setUpGetDomainExpectations(StorageType.NFS, false);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -213,12 +199,8 @@ public class BackendAttachedStorageDomainResourceTest
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     private void setUpGetDomainExpectations(StorageType storageType, boolean succeed) {

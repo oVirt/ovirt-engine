@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +47,9 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     @Test
     public void testAddIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(new Bookmark());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Bookmark", "add", "name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(new Bookmark())),
+                "Bookmark", "add", "name");
     }
 
     @Test
@@ -73,12 +70,8 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
         setUriInfo(setUpActionExpectations(ActionType.AddBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { NAMES[0], VALUES[0] }, valid, success));
-        try {
-            collection.add(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(getModel(0))), detail);
     }
 
     @Override

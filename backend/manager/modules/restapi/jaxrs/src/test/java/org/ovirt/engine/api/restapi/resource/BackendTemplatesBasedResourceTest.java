@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -83,12 +83,8 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
                 new Object[]{NAMES[0], DESCRIPTIONS[0]},
                 valid,
                 success));
-        try {
-            doAdd(getRestModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> doAdd(getRestModel(0))), detail);
     }
 
     @Test

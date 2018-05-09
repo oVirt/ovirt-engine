@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -72,24 +72,16 @@ public class BackendNetworkLabelsResourceTest
                 new Object[] {NETWORK_ID, LABELS[0] },
                 valid,
                 success));
-        try {
-            collection.add(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(getModel(0))), detail);
     }
 
     @Test
     public void testAddIncompleteParameters() {
         NetworkLabel model = new NetworkLabel();
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "NetworkLabel", "add", "id");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)), "NetworkLabel", "add", "id");
     }
 
 

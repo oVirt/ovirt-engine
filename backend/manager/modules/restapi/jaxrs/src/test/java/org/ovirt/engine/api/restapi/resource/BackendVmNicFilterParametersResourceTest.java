@@ -17,8 +17,8 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -174,12 +174,7 @@ public class BackendVmNicFilterParametersResourceTest
         );
         NetworkFilterParameter model = getModel(0);
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -187,22 +182,15 @@ public class BackendVmNicFilterParametersResourceTest
         NetworkFilterParameter model = new NetworkFilterParameter();
 
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "NetworkFilterParameter", "add", "value");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "NetworkFilterParameter", "add", "value");
     }
 
     @Test
     public void testSubResourceLocatorBadGuid() {
-        try {
-            collection.getParameterResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> collection.getParameterResource("foo")));
     }
 
     @Test

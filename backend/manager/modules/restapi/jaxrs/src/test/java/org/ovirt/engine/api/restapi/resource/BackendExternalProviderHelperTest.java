@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,12 +60,11 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
                 getExternalNetworkProviderConfigurations(1);
         configurations.getExternalNetworkProviderConfigurations().get(0).getExternalNetworkProvider().setName(null);
 
-        try {
-            BackendExternalProviderHelper.completeExternalNetworkProviderConfigurations(resource, configurations);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, Response.Status.BAD_REQUEST.getStatusCode());
-        }
+        verifyFault(
+                assertThrows(
+                        WebApplicationException.class,
+                        () -> BackendExternalProviderHelper.completeExternalNetworkProviderConfigurations(resource, configurations)),
+                Response.Status.BAD_REQUEST.getStatusCode());
     }
 
     @Test
@@ -85,12 +84,11 @@ public class BackendExternalProviderHelperTest extends AbstractBackendBaseTest {
         ExternalProviders providers = getExternalProviders(1);
         providers.getExternalProviders().get(0).setName(null);
 
-        try {
-            BackendExternalProviderHelper.completeExternalProviders(resource, providers);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, Response.Status.BAD_REQUEST.getStatusCode());
-        }
+        verifyFault(
+                assertThrows(
+                        WebApplicationException.class,
+                        () -> BackendExternalProviderHelper.completeExternalProviders(resource, providers)),
+                Response.Status.BAD_REQUEST.getStatusCode());
     }
 
     private void setUpQueryExpectations() {

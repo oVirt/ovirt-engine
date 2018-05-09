@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,24 +25,15 @@ public class BackendCpuProfileResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendCpuProfileResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendCpuProfileResource("foo")));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test
@@ -58,12 +49,7 @@ public class BackendCpuProfileResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, 0, true);
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))));
     }
 
     @Test
@@ -100,12 +86,7 @@ public class BackendCpuProfileResourceTest
                 valid,
                 success));
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))), detail);
     }
 
     @Test
@@ -115,23 +96,13 @@ public class BackendCpuProfileResourceTest
 
         CpuProfile model = getModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     @Test
     public void testRemoveNotFound() {
         setUpEntityQueryExpectations(1, 0, true);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -159,12 +130,7 @@ public class BackendCpuProfileResourceTest
             new Object[] { GUIDS[0] },
             null
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -189,12 +155,8 @@ public class BackendCpuProfileResourceTest
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -61,12 +61,8 @@ public class BackendTemplateDiskResourceTest
                                      new String[] { "Id" },
                                      new Object[] { TEMPLATE_ID },
                                      new ArrayList<DiskImage>());
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -119,23 +115,16 @@ public class BackendTemplateDiskResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendStorageDomainVmResource(null, "foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendStorageDomainVmResource(null, "foo")));
     }
 
     @Test
     public void testIncompleteExport() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.export(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.export(new Action())),
+                "Action", "export", "storageDomain.id|name");
     }
 
     @Test
@@ -239,12 +228,8 @@ public class BackendTemplateDiskResourceTest
                 new Object[] { GUIDS[1] },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected void testCopyBySdName(boolean isFiltered) {
@@ -326,12 +311,9 @@ public class BackendTemplateDiskResourceTest
     @Test
     public void testIncompleteCopy() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.copy(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Action", "copy", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.copy(new Action())),
+                        "Action", "copy", "storageDomain.id|name");
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,

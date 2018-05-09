@@ -18,8 +18,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,12 +59,7 @@ public class BackendVmCdromResourceTest
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -113,12 +108,7 @@ public class BackendVmCdromResourceTest
     public void testChangeCdNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        try {
-            resource.update(getCdrom(B_ISO));
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getCdrom(B_ISO))));
     }
 
     @Test
@@ -189,13 +179,8 @@ public class BackendVmCdromResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(null);
-        try {
-            Cdrom cdrom = getCdrom(A_ISO);
-            resource.update(cdrom);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        Cdrom cdrom = getCdrom(A_ISO);
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(cdrom)));
     }
 
     @Test
@@ -222,12 +207,8 @@ public class BackendVmCdromResourceTest
         setUriInfo(setUpBasicUriExpectations());
         Cdrom cdrom = new Cdrom();
         cdrom.setFile(null);
-        try {
-            resource.update(cdrom);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch(WebApplicationException wae) {
-             verifyIncompleteException(wae, "Cdrom", "update", "file");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.update(cdrom)), "Cdrom", "update", "file");
     }
 
     @Test
@@ -262,12 +243,7 @@ public class BackendVmCdromResourceTest
             null
         );
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -298,12 +274,8 @@ public class BackendVmCdromResourceTest
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     private Cdrom getCdrom(String path) {

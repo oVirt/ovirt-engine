@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -74,24 +74,15 @@ public class BackendDataCenterNetworksResourceTest
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setId(DATA_CENTER_ID.toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
     public void testAddIncompleteParameters() {
         Network model = new Network();
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Network", "add", "name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)), "Network", "add", "name");
     }
 
     @Override

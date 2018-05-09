@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.getModel;
@@ -51,24 +51,14 @@ public class BackendTemplateResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendTemplateResource("foo");
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendTemplateResource("foo")));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -153,12 +143,7 @@ public class BackendTemplateResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.update(getRestModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getRestModel(0))));
     }
 
     @Test
@@ -180,12 +165,7 @@ public class BackendTemplateResourceTest
                 valid,
                 success));
 
-        try {
-            resource.update(getRestModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getRestModel(0))), detail);
     }
 
     @Test
@@ -195,12 +175,7 @@ public class BackendTemplateResourceTest
 
         Template model = getRestModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     protected void setUpUpdateExpectations() {
@@ -267,12 +242,7 @@ public class BackendTemplateResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -295,12 +265,8 @@ public class BackendTemplateResourceTest
                 new Object[] { GUIDS[0] },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     @Test
@@ -404,12 +370,9 @@ public class BackendTemplateResourceTest
         final Template model = getRestModel(0);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIconWithData());
-        try {
-            verifyModel(resource.update(model), 0);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BAD_REQUEST);
-        }
+
+        verifyFault(
+                assertThrows(WebApplicationException.class, () -> verifyModel(resource.update(model), 0)), BAD_REQUEST);
     }
 
     private void doTestExportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) {

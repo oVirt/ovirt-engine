@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -86,24 +86,16 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
         model.setStorageDomain(new StorageDomain());
         model.getStorageDomain().setId(STORAGE_DOMAIN_ID.toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
     public void testAddIncompleteParameters() {
         DiskProfile model = createIncompleteDiskProfile();
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "DiskProfile", "validateParameters", getIncompleteFields());
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "DiskProfile", "validateParameters", getIncompleteFields());
     }
 
     protected String[] getIncompleteFields() {
@@ -136,12 +128,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Override
@@ -153,12 +140,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     @Override
@@ -171,12 +153,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
         setUpDiskProfilesQueryExpectations(t);
         collection.setUriInfo(uriInfo);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 
     private void setUpDiskProfilesQueryExpectations(Object failure) {

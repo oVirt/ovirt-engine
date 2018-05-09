@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -60,12 +60,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -86,12 +81,8 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
                                            new Object[] { GUIDS[0] },
                                            valid,
                                            success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
 

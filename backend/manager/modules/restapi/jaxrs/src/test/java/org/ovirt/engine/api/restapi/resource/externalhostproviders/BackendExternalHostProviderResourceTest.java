@@ -16,7 +16,7 @@
 
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,24 +46,15 @@ public class BackendExternalHostProviderResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendExternalHostProviderResource("foo");
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendExternalHostProviderResource("foo")));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -77,12 +68,7 @@ public class BackendExternalHostProviderResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))));
     }
 
     @Test
@@ -123,12 +109,8 @@ public class BackendExternalHostProviderResourceTest
                 success
             )
         );
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))), detail);
     }
 
     @Test
@@ -138,12 +120,7 @@ public class BackendExternalHostProviderResourceTest
 
         ExternalHostProvider model = getModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     private ExternalHostProvider getModel(int index) {

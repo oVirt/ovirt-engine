@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,12 +64,7 @@ public class BackendStorageDomainDiskResourceTest
                 new Object[] { DISK_ID },
                 getEntity(1, true));
 
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -92,23 +87,16 @@ public class BackendStorageDomainDiskResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendStorageDomainVmResource(null, "foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendStorageDomainVmResource(null, "foo")));
     }
 
     @Test
     public void testIncompleteExport() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.export(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.export(new Action())),
+                "Action", "export", "storageDomain.id|name");
     }
 
     @Override

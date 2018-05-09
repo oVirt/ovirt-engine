@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -33,24 +33,15 @@ public class BackendGroupResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendGroupResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendGroupResource("foo", null)));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -76,12 +67,7 @@ public class BackendGroupResourceTest
     @Test
     public void testRemoveNonExistant() {
         setUpGetEntityExpectations(GUIDS[0], true);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) {
@@ -112,12 +98,8 @@ public class BackendGroupResourceTest
                 new Object[] { GUIDS[0] },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     private void setUpGetEntityExpectations() {

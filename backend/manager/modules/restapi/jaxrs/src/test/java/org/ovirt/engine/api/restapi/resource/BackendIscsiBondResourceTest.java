@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -41,12 +41,7 @@ public class BackendIscsiBondResourceTest
     public void testRemoveNonExistant() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, null);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     private void setUpGetEntityExpectations(int index, org.ovirt.engine.core.common.businessentities.IscsiBond result) {

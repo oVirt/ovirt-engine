@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -131,12 +131,7 @@ public class BackendTemplateDisksResourceTest
 
     @Test
     public void testSubResourceLocatorBadGuid() {
-        try {
-            collection.getDiskResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> collection.getDiskResource("foo")));
     }
 
     @Test
@@ -162,12 +157,7 @@ public class BackendTemplateDisksResourceTest
 
         setUpEntityQueryExpectations(1, FAILURE);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Override
@@ -178,12 +168,7 @@ public class BackendTemplateDisksResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(1, t);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     @Override
@@ -195,11 +180,6 @@ public class BackendTemplateDisksResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(1, t);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 }

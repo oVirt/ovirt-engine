@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,12 +66,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
         setUpEntityQueryExpectations(FAILURE);
 
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Test
@@ -81,13 +76,10 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
         setUpEntityQueryExpectations(FAILURE);
 
-
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, new RuntimeException(FAILURE));
-        }
+        verifyFault(
+                assertThrows(WebApplicationException.class, this::getCollection),
+                BACKEND_FAILED_SERVER_LOCALE,
+                new RuntimeException(FAILURE));
     }
 
     @Test
@@ -98,13 +90,10 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
         setUpEntityQueryExpectations(FAILURE);
 
-
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, new RuntimeException(FAILURE));
-        }
+        verifyFault(
+                assertThrows(WebApplicationException.class, this::getCollection),
+                BACKEND_FAILED_CLIENT_LOCALE,
+                new RuntimeException(FAILURE));
     }
 
     @Override

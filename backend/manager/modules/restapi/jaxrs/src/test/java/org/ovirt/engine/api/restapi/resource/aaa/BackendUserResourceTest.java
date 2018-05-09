@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest.GROUPS;
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest.PARSED_GROUPS;
 
@@ -42,24 +42,15 @@ public class BackendUserResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendUserResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendUserResource("foo", null)));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -91,12 +82,7 @@ public class BackendUserResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -118,12 +104,8 @@ public class BackendUserResourceTest
                 new Object[] { GUIDS[0] },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected void setUpGetEntityExpectations() {

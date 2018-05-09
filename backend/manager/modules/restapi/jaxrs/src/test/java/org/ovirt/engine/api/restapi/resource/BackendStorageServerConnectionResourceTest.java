@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,12 +61,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNotExistingEntityExpectations();
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test
@@ -78,32 +73,17 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     public void testUpdateNotExistingConnection() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNotExistingEntityExpectations();
-        try {
-            resource.update(getModel(3));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
-
-
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(3))));
     }
 
     @Test
     public void testUpdateCantDo() {
-        try {
-            update(false, false, 1);
-        } catch (WebApplicationException e) {
-            verifyBadRequest(e);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> update(false, false, 1)));
     }
 
     @Test
     public void testUpdateFailed() {
-        try {
-            update(true, false, 1);
-        } catch (WebApplicationException e) {
-            verifyBadRequest(e);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> update(true, false, 1)));
     }
 
     @Test
@@ -142,12 +122,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
             GUIDS[1].toString()
         );
         setUriInfo(uriInfo);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -173,11 +148,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
                 GUIDS[1].toString()
         );
         setUriInfo(uriInfo);
-        try {
-            resource.remove();
-        } catch (WebApplicationException wae) {
-            verifyBadRequest(wae);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () ->  resource.remove()));
     }
 
     protected void update(boolean valid, boolean executeCommandResult, int getConnectionExecTimes) {

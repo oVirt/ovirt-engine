@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -48,11 +49,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
                 new Object[] {},
                 false,
                 false);
-        try {
-            Response response = resource.remove();
-        } catch (WebApplicationException wae) {
-            verifyBadRequest(wae);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Override

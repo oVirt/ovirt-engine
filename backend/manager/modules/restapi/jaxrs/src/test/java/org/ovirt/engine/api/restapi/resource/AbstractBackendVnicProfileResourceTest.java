@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,12 +21,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     @Test
     public void testRemoveNotFound() {
         setUpEntityQueryExpectations(1, 0, true);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -48,12 +43,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -75,12 +65,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
                 new Object[] {},
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) {

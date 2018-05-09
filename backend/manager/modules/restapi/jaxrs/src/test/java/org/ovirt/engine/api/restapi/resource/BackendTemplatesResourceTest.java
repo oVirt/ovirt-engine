@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -209,12 +209,7 @@ public class BackendTemplatesResourceTest
         setUriInfo(setUpBasicUriExpectations());
         Template t = getModel(2);
         t.getVersion().setBaseTemplate(null);
-        try {
-            collection.add(t);
-            fail("Should have failed with 400 error due to a missing base template");
-        } catch (WebApplicationException e) {
-            verifyBadRequest(e);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> collection.add(t)));
     }
 
     @Test
@@ -567,12 +562,7 @@ public class BackendTemplatesResourceTest
         final Template restModel = getRestModel(0);
         restModel.setLargeIcon(IconTestHelpler.createIconWithData());
         restModel.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
-        try {
-            collection.add(restModel);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BAD_REQUEST);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(restModel)), BAD_REQUEST);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpVm(Guid id) {

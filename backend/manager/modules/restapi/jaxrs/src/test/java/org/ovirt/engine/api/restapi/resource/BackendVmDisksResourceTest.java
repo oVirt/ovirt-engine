@@ -19,8 +19,8 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -536,25 +536,16 @@ public class BackendVmDisksResourceTest
         Disk model = getModel();
         model.setProvisionedSize(1024 * 1024L);
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
     public void testAddIncompleteParameters() {
         Disk model = new Disk();
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters", "provisionedSize|size", "format");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Disk", "lambda$testAddIncompleteParameters$1", "provisionedSize|size", "format");
     }
 
     @Test
@@ -562,13 +553,9 @@ public class BackendVmDisksResourceTest
         Disk model = getModel();
         model.setProvisionedSize(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters2", "provisionedSize|size");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Disk", "lambda$testAddIncompleteParameters2$2", "provisionedSize|size");
     }
 
     @Test
@@ -576,13 +563,9 @@ public class BackendVmDisksResourceTest
         Disk model = createIscsiLunDisk();
         model.getLunStorage().setType(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "HostStorage", "testAddLunDiskMissingType", "type");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "HostStorage", "lambda$testAddLunDiskMissingType$3", "type");
     }
 
     @Test
@@ -590,13 +573,9 @@ public class BackendVmDisksResourceTest
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setId(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddLunDiskMissingId", "id");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "LogicalUnit", "lambda$testAddLunDiskMissingId$4", "id");
     }
 
     @Test
@@ -604,13 +583,9 @@ public class BackendVmDisksResourceTest
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setAddress(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDiskIncompleteParametersConnectionAddress", "address");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "LogicalUnit", "lambda$testAddIscsiLunDiskIncompleteParametersConnectionAddress$5", "address");
     }
 
     @Test
@@ -618,13 +593,9 @@ public class BackendVmDisksResourceTest
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setTarget(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDiskIncompleteParametersConnectionTarget", "target");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "LogicalUnit", "lambda$testAddIscsiLunDiskIncompleteParametersConnectionTarget$6", "target");
     }
 
     @Test
@@ -632,13 +603,9 @@ public class BackendVmDisksResourceTest
         Disk model = createIscsiLunDisk();
         model.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).setPort(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "LogicalUnit", "testAddIscsiLunDiskIncompleteParametersConnectionPort", "port");
-        }
+        // Because of extra frame offset used current method name in test, while in real world used "add" method name
+        verifyIncompleteException(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "LogicalUnit", "lambda$testAddIscsiLunDiskIncompleteParametersConnectionPort$7", "port");
     }
 
     private Disk createIscsiLunDisk() {
@@ -671,11 +638,6 @@ public class BackendVmDisksResourceTest
 
     @Test
     public void testSubResourceLocatorBadGuid() {
-        try {
-            collection.getDiskResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> collection.getDiskResource("foo")));
     }
 }

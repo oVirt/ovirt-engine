@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResourceTest.getModel;
@@ -39,24 +39,14 @@ public class BackendInstanceTypeResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendTemplateResource("foo");
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendTemplateResource("foo")));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -131,12 +121,7 @@ public class BackendInstanceTypeResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.update(getRestModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getRestModel(0))));
     }
 
     @Test
@@ -174,12 +159,7 @@ public class BackendInstanceTypeResourceTest
                 valid,
                 success));
 
-        try {
-            resource.update(getRestModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getRestModel(0))), detail);
     }
 
     @Test
@@ -189,12 +169,7 @@ public class BackendInstanceTypeResourceTest
 
         InstanceType model = getRestModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     protected void setUpUpdateExpectations() {

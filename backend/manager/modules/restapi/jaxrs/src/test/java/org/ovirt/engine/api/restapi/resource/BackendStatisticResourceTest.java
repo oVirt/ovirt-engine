@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -57,12 +57,7 @@ public class BackendStatisticResourceTest extends AbstractBackendSubResourceTest
     public void testGetBadGuid() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations(new String[] {"cpu.burnout", "cpu.meltdown", "cpu.vapourized"}, false);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     private void setUpQueryExpectations(String[] names, boolean link) throws Exception {

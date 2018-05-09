@@ -19,8 +19,8 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -90,12 +90,8 @@ public class BackendVmDiskResourceTest
             new Object[] { DISK_ID },
             null
         );
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -134,12 +130,8 @@ public class BackendVmDiskResourceTest
             new Object[] { DISK_ID },
             null
         );
-        try {
-            resource.update(getUpdate());
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getUpdate())));
     }
 
     @Test
@@ -247,23 +239,16 @@ public class BackendVmDiskResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendStorageDomainVmResource(null, "foo");
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendStorageDomainVmResource(null, "foo")));
     }
 
     @Test
     public void testIncompleteExport() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.export(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch(WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.export(new Action())),
+                "Action", "export", "storageDomain.id|name");
     }
 
     @Test
@@ -306,12 +291,7 @@ public class BackendVmDiskResourceTest
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected DiskImage setUpStatisticalExpectations() {
@@ -505,12 +485,9 @@ public class BackendVmDiskResourceTest
     @Test
     public void testIncompleteMove() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.move(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch(WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "move", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.move(new Action())),
+                "Action", "move", "storageDomain.id|name");
     }
 
     private void verifyActionResponse(Response r) {

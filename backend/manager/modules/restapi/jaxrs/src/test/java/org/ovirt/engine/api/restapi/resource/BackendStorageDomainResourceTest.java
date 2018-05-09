@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.getModel;
@@ -59,24 +59,15 @@ public class BackendStorageDomainResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendStorageDomainResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendStorageDomainResource("foo", null)));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true, getEntity(0));
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -131,12 +122,7 @@ public class BackendStorageDomainResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true, getEntity(0));
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))));
     }
 
     @Test
@@ -175,12 +161,7 @@ public class BackendStorageDomainResourceTest
                                            valid,
                                            success));
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))), detail);
     }
 
     @Test
@@ -191,12 +172,7 @@ public class BackendStorageDomainResourceTest
 
         StorageDomain model = getModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     @Test
@@ -204,12 +180,7 @@ public class BackendStorageDomainResourceTest
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyBadRequest(wae);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -315,12 +286,7 @@ public class BackendStorageDomainResourceTest
         );
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainResource.HOST, GUIDS[1].toString());
         setUriInfo(uriInfo);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
     protected void setUpGetEntityExpectations(int times, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         setUpGetEntityExpectations(times, false, entity);

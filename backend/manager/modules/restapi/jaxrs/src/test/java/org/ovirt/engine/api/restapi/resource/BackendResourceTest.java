@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -116,12 +115,9 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
                 true,
                 "ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST"));
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, "ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST", 409);
-        }
+        verifyFault(
+                assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))),
+                "ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST", 409);
     }
 
     private void setUpGetEntityWithNoCertificateInfoExpectations() {

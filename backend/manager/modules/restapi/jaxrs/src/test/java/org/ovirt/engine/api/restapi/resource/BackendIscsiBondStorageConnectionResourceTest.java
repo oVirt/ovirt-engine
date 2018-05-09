@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -58,12 +58,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondWithNoMatchingStorages());
 
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -77,12 +72,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
                 new Object[] { STORAGE_CONNECTION_ID.toString() },
                 null);
 
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test

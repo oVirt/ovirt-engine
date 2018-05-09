@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.PARENT_GUID;
@@ -69,12 +69,8 @@ public class BackendHostNicResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendHostNicResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendHostNicResource("foo", null)));
     }
 
     @Test
@@ -85,12 +81,8 @@ public class BackendHostNicResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      new ArrayList<VdsNetworkInterface>());
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test

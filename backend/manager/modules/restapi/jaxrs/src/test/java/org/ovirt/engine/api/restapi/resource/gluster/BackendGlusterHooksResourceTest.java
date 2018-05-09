@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -70,12 +70,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
         Throwable t = new RuntimeException(FAILURE);
         setUpHooksQueryExpectations(t);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     /**
@@ -95,12 +90,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
         Throwable t = new RuntimeException(FAILURE);
         setUpHooksQueryExpectations(t);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 
     @Override
@@ -109,12 +99,7 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
 
         setUpHooksQueryExpectations(FAILURE);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Override

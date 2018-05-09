@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.net.URLEncoder;
@@ -35,12 +35,7 @@ public class BackendCreationResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendCreationResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendCreationResource("foo")));
     }
 
     @Test

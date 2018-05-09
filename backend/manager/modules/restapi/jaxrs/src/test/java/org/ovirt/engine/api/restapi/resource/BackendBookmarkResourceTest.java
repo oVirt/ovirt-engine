@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.ovirt.engine.api.restapi.resource.BackendBookmarksResourceTest.VALUES;
 import static org.ovirt.engine.api.restapi.resource.BackendBookmarksResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendBookmarksResourceTest.setUpBookmarks;
@@ -28,12 +28,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendBookmarkResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendBookmarkResource("foo")));
     }
 
     @Test
@@ -41,12 +36,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUriInfo(setUpBasicUriExpectations());
         //Get will return 404
         setUpGetEntityExpectations(0, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test
@@ -63,12 +53,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUriInfo(setUpBasicUriExpectations());
         //Get will return 404
         setUpGetEntityExpectations(0, true);
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))));
     }
 
     @Test
@@ -100,12 +85,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUriInfo(setUpActionExpectations(ActionType.UpdateBookmark, BookmarksOperationParameters.class,
                 new String[] {}, new Object[] {}, valid, success));
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))), detail);
     }
 
     @Test
@@ -127,12 +107,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     @Test
     public void testRemoveNonExistant() {
         setUpGetEntityExpectations(0, true);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -157,12 +132,8 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_IDX;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.getModel;
@@ -42,24 +42,14 @@ public class BackendTagResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendTagResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendTagResource("foo", null)));
     }
 
     @Test
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -74,12 +64,7 @@ public class BackendTagResourceTest
     public void testUpdateNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
-        try {
-            resource.update(getModel(0, false));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0, false))));
     }
 
     @Test
@@ -165,12 +150,7 @@ public class BackendTagResourceTest
                                            valid,
                                            success));
 
-        try {
-            resource.update(getModel(0, false));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0, false))), detail);
     }
 
     @Test
@@ -181,12 +161,7 @@ public class BackendTagResourceTest
 
         Tag model = getModel(1, false);
         model.setId(NEW_PARENT_ID.toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     @Test
@@ -208,12 +183,7 @@ public class BackendTagResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 null);
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -234,12 +204,8 @@ public class BackendTagResourceTest
                 new Object[] { GUIDS[0] },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     private void setUpGetEntityExcpectations() {

@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -143,12 +143,9 @@ public class BackendStorageDomainsResourceTest
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "StorageDomain", "add", "storage");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "StorageDomain", "add", "storage");
     }
 
     @Test
@@ -402,12 +399,9 @@ public class BackendStorageDomainsResourceTest
     public void testAddStorageDomainNoHost() {
         setUriInfo(setUpBasicUriExpectations());
         StorageDomain model = getModel(0);
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "StorageDomain", "add", "host.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "StorageDomain", "add", "host.id|name");
     }
 
     @Test
@@ -453,12 +447,7 @@ public class BackendStorageDomainsResourceTest
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -485,11 +474,7 @@ public class BackendStorageDomainsResourceTest
         model.setHost(new Host());
         model.getHost().setId(GUIDS[0].toString());
 
-        try {
-            collection.add(model);
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -502,12 +487,9 @@ public class BackendStorageDomainsResourceTest
         model.getStorage().setAddress(ADDRESSES[0]);
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "StorageDomain", "add", "storage.type");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "StorageDomain", "add", "storage.type");
     }
 
     @Test
@@ -520,12 +502,9 @@ public class BackendStorageDomainsResourceTest
         model.getStorage().setType(StorageType.NFS);
         model.getStorage().setPath(PATHS[0]);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "HostStorage", "add", "address");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "HostStorage", "add", "address");
     }
 
     @Override

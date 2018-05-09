@@ -18,8 +18,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -158,12 +158,7 @@ public class BackendVmCdromsResourceTest
             )
         );
         Cdrom cdrom = getCdrom();
-        try {
-            collection.add(cdrom);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(cdrom)), detail);
     }
 
     @Test
@@ -172,23 +167,14 @@ public class BackendVmCdromsResourceTest
         model.setName(NAMES[0]);
         model.setFile(new File());
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch(WebApplicationException wae) {
-             verifyIncompleteException(wae, "Cdrom", "add", "file.id");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)), "Cdrom", "add", "file.id");
     }
 
 
     @Test
     public void testSubResourceLocatorBadGuid() {
-        try {
-            collection.getCdromResource("foo");
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> collection.getCdromResource("foo")));
     }
 
     private void setUpEntityQueryExpectations(

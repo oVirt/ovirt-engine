@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -203,12 +203,7 @@ public class BackendUsersResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpQueryExpectations(QUERY, FAILURE);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Override
@@ -218,12 +213,7 @@ public class BackendUsersResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpQueryExpectations(QUERY, t);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     @Override
@@ -234,11 +224,6 @@ public class BackendUsersResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpQueryExpectations(QUERY, t);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 }

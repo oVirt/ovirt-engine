@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;
@@ -58,12 +58,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -119,14 +114,11 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         setUriInfo(setUpBasicUriExpectations());
         resource.setUriInfo(setUpBasicUriExpectations());
 
-        try {
-            Action action = new Action();
-            action.setOption(new Option());
-            resource.setOption(action);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Option", "setOption", "name, value");
-        }
+        Action action = new Action();
+        action.setOption(new Option());
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.setOption(action)),
+                "Option", "setOption", "name, value");
     }
 
     @Test
@@ -150,14 +142,11 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         setUriInfo(setUpBasicUriExpectations());
         resource.setUriInfo(setUpBasicUriExpectations());
 
-        try {
-            Action action = new Action();
-            action.setOption(new Option());
-            resource.resetOption(action);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Option", "resetOption", "name");
-        }
+        Action action = new Action();
+        action.setOption(new Option());
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.resetOption(action)),
+                "Option", "resetOption", "name");
     }
 
     @Test

@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
@@ -345,12 +345,7 @@ public class BackendVmsResourceTest
         model.setTemplate(new Template());
         model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -769,12 +764,8 @@ public class BackendVmsResourceTest
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId())},
                 valid,
                 success));
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -783,12 +774,9 @@ public class BackendVmsResourceTest
         Vm model = createModel(null);
         model.setInitialization(new Initialization());
         model.getInitialization().setConfiguration(new Configuration());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Vm", "add", "initialization.configuration.type", "initialization.configuration.data");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Vm", "add", "initialization.configuration.type", "initialization.configuration.data");
     }
 
     @Test
@@ -1248,12 +1236,7 @@ public class BackendVmsResourceTest
                                            valid,
                                            success));
 
-        try {
-            collection.add(createModel(null));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(createModel(null))), detail);
     }
 
     @Test
@@ -1261,12 +1244,9 @@ public class BackendVmsResourceTest
         Vm model = new Vm();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Vm", "add", "cluster.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Vm", "add", "cluster.id|name");
     }
 
     @Test
@@ -1274,12 +1254,9 @@ public class BackendVmsResourceTest
         Vm model = createModel(null);
         model.setTemplate(null);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Vm", "add", "template.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Vm", "add", "template.id|name");
     }
 
     @Test
@@ -1346,12 +1323,7 @@ public class BackendVmsResourceTest
         final Vm model = createModel(null);
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BAD_REQUEST);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), BAD_REQUEST);
     }
 
     private void setUpTemplateDisksExpectations(Guid templateId) {

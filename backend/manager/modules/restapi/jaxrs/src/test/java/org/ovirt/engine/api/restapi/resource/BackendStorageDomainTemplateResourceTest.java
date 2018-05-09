@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
@@ -78,12 +78,8 @@ public class BackendStorageDomainTemplateResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendStorageDomainTemplateResource(null, "foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(
+                WebApplicationException.class, () -> new BackendStorageDomainTemplateResource(null, "foo")));
     }
 
     @Test
@@ -91,12 +87,7 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -121,12 +112,7 @@ public class BackendStorageDomainTemplateResourceTest
         action.getCluster().setId(GUIDS[1].toString());
         setUpGetEntityExpectations(StorageDomainType.ImportExport, GUIDS[2], true);
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
-        try {
-            resource.doImport(action);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.doImport(action)));
     }
 
     @Test
@@ -240,12 +226,8 @@ public class BackendStorageDomainTemplateResourceTest
                 new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
@@ -323,12 +305,9 @@ public class BackendStorageDomainTemplateResourceTest
     @Test
     public void testIncompleteImport() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.doImport(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "doImport", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.doImport(new Action())),
+                "Action", "doImport", "storageDomain.id|name");
     }
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) {

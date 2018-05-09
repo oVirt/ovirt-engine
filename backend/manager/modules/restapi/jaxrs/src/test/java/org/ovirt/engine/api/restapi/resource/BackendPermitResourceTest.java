@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +39,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
 
     private void doTestGetNotFound(String id) {
         BackendPermitResource resource = new BackendPermitResource(id, new BackendPermitsResource(ROLE_ID));
-        resource.getParent().setMappingLocator(mapperLocator);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -71,12 +65,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
     private void doTestRemoveNotFound(String id) {
         initResource(resource.parent);
         resource.id = id;
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::remove));
         resource.id = "1";
     }
 
@@ -114,12 +103,8 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
                 new Object[] { GUIDS[1], actionGroups },
                 valid,
                 success));
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
     private void verifyPermit(Permit permit, ActionGroup action) {
         assertEquals(Integer.toString(action.getId()), permit.getId());

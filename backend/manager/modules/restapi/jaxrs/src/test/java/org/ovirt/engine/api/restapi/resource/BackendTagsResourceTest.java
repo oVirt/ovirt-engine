@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -159,12 +158,8 @@ public class BackendTagsResourceTest
     @Test
     public void testAddIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(new Tag());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Tag", "add", "name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(new Tag())), "Tag", "add", "name");
     }
 
     @Test
@@ -184,12 +179,8 @@ public class BackendTagsResourceTest
                                            new Object[] { NAMES[0], PARENT_GUID },
                                            valid,
                                            success));
-        try {
-            collection.add(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(getModel(0))), detail);
     }
 
     @Override

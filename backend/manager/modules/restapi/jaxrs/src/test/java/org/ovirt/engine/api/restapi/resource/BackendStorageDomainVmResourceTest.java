@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainVmsResourceTest.setUpStorageDomain;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
@@ -71,12 +71,8 @@ public class BackendStorageDomainVmResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendStorageDomainVmResource(null, "foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendStorageDomainVmResource(null, "foo")));
     }
 
     @Test
@@ -84,12 +80,7 @@ public class BackendStorageDomainVmResourceTest
         setUpGetStorageDomainExpectations(StorageDomainType.ImportExport);
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
@@ -113,12 +104,7 @@ public class BackendStorageDomainVmResourceTest
         action.setCluster(new org.ovirt.engine.api.model.Cluster());
         action.getCluster().setId(GUIDS[1].toString());
         setUpGetEntityExpectations(StorageDomainType.ImportExport, STORAGE_DOMAIN_ID, true);
-        try {
-            resource.doImport(action);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.doImport(action)));
     }
 
     @Test
@@ -209,12 +195,9 @@ public class BackendStorageDomainVmResourceTest
         vm.setDiskAttachments(diskAttachments);
         action.setVm(vm);
 
-        try {
-            resource.doImport(action);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Disk", "setVolumesTypeFormat", "id");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.doImport(action)),
+                "Disk", "setVolumesTypeFormat", "id");
     }
 
     @Test
@@ -367,12 +350,9 @@ public class BackendStorageDomainVmResourceTest
     @Test
     public void testIncompleteImport() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.doImport(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "doImport", "storageDomain.id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> resource.doImport(new Action())),
+                "Action", "doImport", "storageDomain.id|name");
     }
 
     @Test

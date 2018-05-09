@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -79,12 +79,7 @@ public class BackendGroupsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpQueryExpectations(QUERY, FAILURE);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Test
@@ -93,12 +88,7 @@ public class BackendGroupsResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpQueryExpectations(QUERY, t);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     @Test
@@ -108,12 +98,7 @@ public class BackendGroupsResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpQueryExpectations(QUERY, t);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 
     @Test
@@ -233,12 +218,7 @@ public class BackendGroupsResourceTest
         Group model = new Group();
         model.setName(GROUP_NAMES_WITH_NO_DOMAIN[0]);
 
-        try {
-           collection.add(model);
-           fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyBadRequest(wae);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> collection.add(model)));
     }
 
     /**
@@ -307,12 +287,7 @@ public class BackendGroupsResourceTest
         model.setName(GROUP_NAMES[0]);
         model.setId(NON_EXISTANT_EXTERNAL_ID);
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> collection.add(model)));
     }
 
     @Override

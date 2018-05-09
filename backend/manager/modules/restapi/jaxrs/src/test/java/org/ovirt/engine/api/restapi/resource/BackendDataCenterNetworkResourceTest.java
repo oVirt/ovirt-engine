@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.getModel;
 
 import java.util.ArrayList;
@@ -31,12 +31,8 @@ public class BackendDataCenterNetworkResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendDataCenterNetworkResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(
+                WebApplicationException.class, () -> new BackendDataCenterNetworkResource("foo", null)));
     }
 
     @Test
@@ -47,12 +43,8 @@ public class BackendDataCenterNetworkResourceTest
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test
@@ -71,12 +63,8 @@ public class BackendDataCenterNetworkResourceTest
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))));
     }
 
     @Test
@@ -113,12 +101,7 @@ public class BackendDataCenterNetworkResourceTest
                                            valid,
                                            success));
 
-        try {
-            resource.update(getModel(0));
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> resource.update(getModel(0))), detail);
     }
 
     @Test
@@ -128,12 +111,7 @@ public class BackendDataCenterNetworkResourceTest
 
         Network model = getModel(1);
         model.setId(GUIDS[1].toString());
-        try {
-            resource.update(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyImmutabilityConstraint(wae);
-        }
+        verifyImmutabilityConstraint(assertThrows(WebApplicationException.class, () -> resource.update(model)));
     }
 
     @Test
@@ -145,12 +123,8 @@ public class BackendDataCenterNetworkResourceTest
             new Object[] { dataCenterId },
             new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>()
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -179,12 +153,7 @@ public class BackendDataCenterNetworkResourceTest
             new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>(),
             null
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -209,12 +178,8 @@ public class BackendDataCenterNetworkResourceTest
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected void setUpEntityQueryExpectations(int times) {

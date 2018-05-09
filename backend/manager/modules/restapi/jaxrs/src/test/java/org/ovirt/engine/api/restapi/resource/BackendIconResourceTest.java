@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -44,23 +44,12 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(0, true);
 
-
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
      public void testBadGuid() {
-        try {
-            new BackendIconResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> new BackendIconResource("foo")));
     }
 
     protected void setUpGetEntityExpectations(int index, boolean notFound) {

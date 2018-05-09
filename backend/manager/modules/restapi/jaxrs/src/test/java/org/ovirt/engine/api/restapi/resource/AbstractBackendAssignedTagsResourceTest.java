@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +48,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
 
     @Test
     public void testBadGuid() {
-        try {
-            collection.getTagResource("foo");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> collection.getTagResource("foo")));
     }
 
     @Test
@@ -116,12 +111,8 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     @Test
     public void testAddIncompleteParameters() {
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(new Tag());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Tag", "add", "id|name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(new Tag())), "Tag", "add", "id|name");
     }
 
     @Test
@@ -144,12 +135,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         Tag model = new Tag();
         model.setId(GUIDS[0].toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Override

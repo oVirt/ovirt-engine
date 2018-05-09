@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
@@ -105,12 +105,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     @Override
@@ -122,13 +117,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
 
-
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     @Override
@@ -141,12 +130,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         setUpBricksQueryExpectations(t);
         collection.setUriInfo(uriInfo);
 
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 
     @Test

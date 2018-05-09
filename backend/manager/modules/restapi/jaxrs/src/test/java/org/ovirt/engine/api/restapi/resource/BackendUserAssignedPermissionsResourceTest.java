@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.ws.rs.WebApplicationException;
@@ -38,14 +39,11 @@ public class BackendUserAssignedPermissionsResourceTest
         model.getRole().setId(GUIDS[3].toString());
 
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae,
-                                       "Permission",
-                                       "add",
-                                       "dataCenter|cluster|host|storageDomain|vm|vmPool|template.id");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Permission",
+                "add",
+                "dataCenter|cluster|host|storageDomain|vm|vmPool|template.id");
     }
 
     @Override

@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,13 +75,9 @@ public class BackendRolesResourceTest
         model.getPermits().getPermits().add(new Permit());
         model.getPermits().getPermits().get(0).setId("1234");
 
-        try {
-            Response response = collection.add(model);
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyBadRequest(wae);
-            assertEquals("1234 is not a valid permit ID.", wae.getResponse().getEntity());
-        }
+        WebApplicationException wae = assertThrows(WebApplicationException.class, () -> collection.add(model));
+        verifyBadRequest(wae);
+        assertEquals("1234 is not a valid permit ID.", wae.getResponse().getEntity());
     }
 
     @Test
@@ -89,12 +85,8 @@ public class BackendRolesResourceTest
         Role model = new Role();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Role", "add", "permits.id");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)), "Role", "add", "permits.id");
     }
 
     @Test
@@ -104,12 +96,8 @@ public class BackendRolesResourceTest
         model.getPermits().getPermits().add(new Permit());
         model.getPermits().getPermits().get(0).setId("1");
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Role", "add", "name");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)), "Role", "add", "name");
     }
 
     @Override

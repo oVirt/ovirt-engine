@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +43,7 @@ public class BackendHostStorageResourceTest
         StorageResource subresource = collection.getStorageResource("foo");
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("");
-        try {
-            subresource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, subresource::get));
     }
 
     @Test

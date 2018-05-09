@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.isA;
@@ -69,22 +69,13 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test
     public void testReplace() {
-        try {
-            resource.replace(new Action());
-            fail("Expected excpetion");
-        } catch (WebApplicationException wae) {
-            assertTrue(wae.getResponse().getEntity() instanceof Fault);
-        }
+        WebApplicationException wae = assertThrows(WebApplicationException.class,  () -> resource.replace(new Action()));
+        assertTrue(wae.getResponse().getEntity() instanceof Fault);
     }
 
     @Test
@@ -104,13 +95,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         setUpGetEntityExpectationsAllContent(1, true);
 
         resource.setParent(bricksResourceMock);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        }catch (WebApplicationException ex) {
-            verifyNotFoundException(ex);
-        }
-
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Test

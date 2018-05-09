@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +52,7 @@ public class BackendFilesResourceTest
         BackendFileResource resource = new BackendFileResource("foo", collection);
         collection.setUriInfo(setUpUriExpectations(null));
         setUpQueryExpectations("", null);
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
     @Override
@@ -73,18 +68,14 @@ public class BackendFilesResourceTest
 
     @Test
     public void testListNonIso() {
-        try {
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> {
             UriInfo uriInfo = setUpUriExpectations(null);
 
             setupGetStorageDomainExpectations(StorageDomainType.Data);
 
             collection.setUriInfo(uriInfo);
             verifyCollection(getCollection());
-
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        }));
     }
 
     @Override
@@ -102,12 +93,7 @@ public class BackendFilesResourceTest
                 AbstractBackendCollectionResourceTest.FAILURE);
         collection.setUriInfo(uriInfo);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_CLIENT_LOCALE, t);
     }
 
     @Test
@@ -124,12 +110,7 @@ public class BackendFilesResourceTest
                 AbstractBackendCollectionResourceTest.FAILURE);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection), BACKEND_FAILED_SERVER_LOCALE, t);
     }
 
     @Override
@@ -154,12 +135,7 @@ public class BackendFilesResourceTest
                 AbstractBackendCollectionResourceTest.FAILURE);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
         collection.setUriInfo(uriInfo);
-        try {
-            getCollection();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, this::getCollection));
     }
 
     private void setupGetStorageDomainExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainType type) {

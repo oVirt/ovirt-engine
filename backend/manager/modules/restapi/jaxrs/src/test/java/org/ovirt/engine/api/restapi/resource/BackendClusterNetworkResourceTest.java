@@ -2,8 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendClusterNetworksResourceTest.CLUSTER_ID;
@@ -36,12 +36,8 @@ public class BackendClusterNetworkResourceTest
 
     @Test
     public void testBadGuid() {
-        try {
-            new BackendClusterNetworkResource("foo", null);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyNotFoundException(
+                assertThrows(WebApplicationException.class, () -> new BackendClusterNetworkResource("foo", null)));
     }
 
     @Test
@@ -52,12 +48,8 @@ public class BackendClusterNetworkResourceTest
                                      new String[] { "Id" },
                                      new Object[] { CLUSTER_ID },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
-        try {
-            resource.get();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.get()));
     }
 
     @Test
@@ -92,12 +84,8 @@ public class BackendClusterNetworkResourceTest
             new Object[] { CLUSTER_ID },
             new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>()
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+
+        verifyNotFoundException(assertThrows(WebApplicationException.class, () -> resource.remove()));
     }
 
     @Test
@@ -140,12 +128,8 @@ public class BackendClusterNetworkResourceTest
                 success
             )
         );
-        try {
-            resource.remove();
-            fail("expected WebApplicationException");
-        } catch(WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+
+        verifyFault(assertThrows(WebApplicationException.class, resource::remove), detail);
     }
 
     protected Cluster setUpClusterExpectations(Guid id) {

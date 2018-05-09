@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,11 +68,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
                 false);
         StorageConnection connection = new StorageConnection();
         connection.setId(GUIDS[3].toString());
-       try {
-            Response response = collection.add(connection);
-        } catch (WebApplicationException wae) {
-           verifyBadRequest(wae);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> collection.add(connection)));
     }
 
     @Override

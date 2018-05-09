@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -139,12 +139,7 @@ public class BackendClustersResourceTest extends
         org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setId(GUIDS[1].toString());
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -211,12 +206,7 @@ public class BackendClustersResourceTest extends
         org.ovirt.engine.api.model.Cluster model = getModel(0);
         model.getDataCenter().setName(NAMES[1]);
 
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), detail);
     }
 
     @Test
@@ -224,12 +214,9 @@ public class BackendClustersResourceTest extends
         org.ovirt.engine.api.model.Cluster model = new org.ovirt.engine.api.model.Cluster();
         model.setName(NAMES[0]);
         setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Cluster", "add", "dataCenter.name|id");
-        }
+        verifyIncompleteException(
+                assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                "Cluster", "add", "dataCenter.name|id");
     }
 
     protected StoragePool setUpStoragePool(int index) {

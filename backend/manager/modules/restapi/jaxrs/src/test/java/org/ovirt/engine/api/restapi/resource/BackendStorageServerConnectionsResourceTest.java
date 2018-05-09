@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -188,12 +189,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
                 new Object[] { GUIDS[0].toString() },
                 getEntity(0));
 
-        Response response = null;
-        try {
-            response = collection.add(getModel(0));
-        } catch (WebApplicationException e) {
-            verifyBadRequest(e);
-        }
+        verifyBadRequest(assertThrows(WebApplicationException.class, () -> collection.add(getModel(0))));
     }
 
     protected void verifyModel(StorageConnection model, int index) {
