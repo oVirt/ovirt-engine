@@ -178,8 +178,6 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        } finally {
-            locales.clear();
         }
     }
 

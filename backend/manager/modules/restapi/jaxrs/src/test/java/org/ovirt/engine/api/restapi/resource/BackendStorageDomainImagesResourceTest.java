@@ -105,8 +105,6 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, new RuntimeException(FAILURE));
-        } finally {
-            locales.clear();
         }
     }
 
