@@ -79,7 +79,7 @@ public class BackendRolesResourceTest
             Response response = collection.add(model);
             fail("expected WebApplicationException");
         } catch(WebApplicationException wae) {
-            assertEquals(BAD_REQUEST, wae.getResponse().getStatus());
+            verifyBadRequest(wae);
             assertEquals("1234 is not a valid permit ID.", wae.getResponse().getEntity());
         }
     }

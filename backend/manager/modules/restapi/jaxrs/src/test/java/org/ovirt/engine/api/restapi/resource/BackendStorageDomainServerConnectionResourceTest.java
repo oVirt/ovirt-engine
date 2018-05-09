@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -52,8 +51,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
         try {
             Response response = resource.remove();
         } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(400, wae.getResponse().getStatus());
+            verifyBadRequest(wae);
         }
     }
 

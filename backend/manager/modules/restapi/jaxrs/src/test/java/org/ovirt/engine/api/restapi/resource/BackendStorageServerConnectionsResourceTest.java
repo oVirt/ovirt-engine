@@ -192,8 +192,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         try {
             response = collection.add(getModel(0));
         } catch (WebApplicationException e) {
-            assertNotNull(e.getResponse());
-            assertEquals(400, e.getResponse().getStatus());
+            verifyBadRequest(e);
         }
     }
 

@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -94,8 +93,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         try {
             update(false, false, 1);
         } catch (WebApplicationException e) {
-            assertNotNull(e.getResponse());
-            assertEquals(400, e.getResponse().getStatus());
+            verifyBadRequest(e);
         }
     }
 
@@ -104,8 +102,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         try {
             update(true, false, 1);
         } catch (WebApplicationException e) {
-            assertNotNull(e.getResponse());
-            assertEquals(400, e.getResponse().getStatus());
+            verifyBadRequest(e);
         }
     }
 
@@ -179,8 +176,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         try {
             resource.remove();
         } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(400, wae.getResponse().getStatus());
+            verifyBadRequest(wae);
         }
     }
 

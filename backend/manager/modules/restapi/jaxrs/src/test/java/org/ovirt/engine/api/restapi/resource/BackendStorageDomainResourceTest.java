@@ -208,7 +208,7 @@ public class BackendStorageDomainResourceTest
             resource.remove();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertEquals(400, wae.getResponse().getStatus());
+            verifyBadRequest(wae);
         }
     }
 

@@ -70,8 +70,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
        try {
             Response response = collection.add(connection);
         } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(400, wae.getResponse().getStatus());
+           verifyBadRequest(wae);
         }
     }
 

@@ -213,8 +213,7 @@ public class BackendTemplatesResourceTest
             collection.add(t);
             fail("Should have failed with 400 error due to a missing base template");
         } catch (WebApplicationException e) {
-            assertNotNull(e.getResponse());
-            assertEquals(400, e.getResponse().getStatus());
+            verifyBadRequest(e);
         }
     }
 

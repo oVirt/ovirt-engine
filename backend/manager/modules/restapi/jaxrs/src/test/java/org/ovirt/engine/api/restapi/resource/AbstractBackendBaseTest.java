@@ -623,6 +623,11 @@ public abstract class AbstractBackendBaseTest {
         assertEquals(404, wae.getResponse().getStatus());
     }
 
+    protected void verifyBadRequest(WebApplicationException wae) {
+        assertNotNull(wae.getResponse());
+        assertEquals(BAD_REQUEST, wae.getResponse().getStatus());
+    }
+
     protected <T> ArrayList<T> asList(T element) {
         ArrayList<T> list = new ArrayList<>();
         list.add(element);

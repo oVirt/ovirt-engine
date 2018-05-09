@@ -237,8 +237,7 @@ public class BackendGroupsResourceTest
            collection.add(model);
            fail("expected WebApplicationException");
         } catch(WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(400, wae.getResponse().getStatus());
+            verifyBadRequest(wae);
         }
     }
 
