@@ -85,6 +85,7 @@ public final class Cloner {
         vm.setBootSequence(instance.getBootSequence());
         vm.setClientIp(instance.getClientIp());
         vm.setCpuPerSocket(instance.getCpuPerSocket());
+        vm.setThreadsPerCpu(instance.getThreadsPerCpu());
         vm.setCpuSys(instance.getCpuSys());
         vm.setCpuUser(instance.getCpuUser());
         vm.setDedicatedVmForVdsList(instance.getDedicatedVmForVdsList());
