@@ -344,7 +344,7 @@ public enum ActionType {
     GlusterStorageGeoRepSyncInternal(1037, QuotaDependency.NONE),
     ScheduleGlusterStorageSync(1038, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     FenceVolumeJob(1039, QuotaDependency.STORAGE),
-    ReduceImage(1046, QuotaDependency.STORAGE),
+    ReduceImage(1046, ActionGroup.REDUCE_DISK, QuotaDependency.NONE),
 
     // Leases
     AddVmLease(1040, QuotaDependency.NONE),

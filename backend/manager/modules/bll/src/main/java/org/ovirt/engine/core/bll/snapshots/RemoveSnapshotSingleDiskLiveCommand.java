@@ -14,13 +14,14 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
-import org.ovirt.engine.core.common.action.ReduceImageCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
@@ -133,8 +134,19 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.REDUCE_IMAGE);
             break;
         case REDUCE_IMAGE:
-            nextCommand = buildReduceImageCommand();
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
+            Pair<ActionType, ? extends ActionParametersBase> reduceImageCommand =
+                    buildReduceImageCommand();
+            ActionReturnValue returnValue = CommandHelper.validate(reduceImageCommand.getFirst(),
+                    reduceImageCommand.getSecond(), getContext().clone());
+            if (returnValue.isValid()) {
+                nextCommand = reduceImageCommand;
+                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
+            } else {
+                // Couldn't validate reduce image command for execution, however, we don't
+                // want to fail the remove snapshot command as this step isn't mandatory.
+                log.warn("Couldn't validate reduce image command, skipping its execution.");
+                setCommandStatus(CommandStatus.SUCCEEDED);
+            }
             break;
         case COMPLETE:
             setCommandStatus(CommandStatus.SUCCEEDED);
@@ -183,15 +195,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         return parameters;
     }
 
-    private Pair<ActionType, ReduceImageCommandParameters> buildReduceImageCommand() {
-        ReduceImageCommandParameters parameters = new ReduceImageCommandParameters(getStoragePool().getSpmVdsId(),
-                getVdsId(),
-                getDiskImage().getStoragePoolId(),
-                getDiskImage().getStorageIds().get(0),
-                getActiveDiskImage().getId(),
-                getDiskImage().getImageId(),
-                getActiveDiskImage(),
-                true);
+    private Pair<ActionType, ImagesActionsParametersBase> buildReduceImageCommand() {
+        ImagesActionsParametersBase parameters = new ImagesActionsParametersBase(getDiskImage().getImageId());
         parameters.setParentCommand(ActionType.RemoveSnapshotSingleDiskLive);
         parameters.setParentParameters(getParameters());
         return new Pair<>(ActionType.ReduceImage, parameters);
