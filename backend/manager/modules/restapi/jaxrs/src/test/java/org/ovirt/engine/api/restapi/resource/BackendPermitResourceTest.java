@@ -44,7 +44,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
             resource.get();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertEquals(404, wae.getResponse().getStatus());
+            verifyNotFoundException(wae);
         }
     }
 

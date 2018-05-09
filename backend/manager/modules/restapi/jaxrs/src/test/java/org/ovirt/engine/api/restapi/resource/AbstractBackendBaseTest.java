@@ -619,6 +619,7 @@ public abstract class AbstractBackendBaseTest {
     }
 
     protected void verifyNotFoundException(WebApplicationException wae) {
+        assertNotNull(wae.getResponse());
         assertEquals(404, wae.getResponse().getStatus());
     }
 

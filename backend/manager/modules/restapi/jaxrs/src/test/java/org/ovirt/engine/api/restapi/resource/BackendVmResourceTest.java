@@ -1130,8 +1130,7 @@ public class BackendVmResourceTest
             resource.remove();
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
+            verifyNotFoundException(wae);
         }
     }
 

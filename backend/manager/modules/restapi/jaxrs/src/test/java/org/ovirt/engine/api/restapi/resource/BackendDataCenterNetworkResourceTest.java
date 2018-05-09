@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResourceTest.getModel;
 
@@ -185,8 +183,7 @@ public class BackendDataCenterNetworkResourceTest
             resource.remove();
             fail("expected WebApplicationException");
         } catch(WebApplicationException wae) {
-            assertNotNull(wae.getResponse());
-            assertEquals(404, wae.getResponse().getStatus());
+            verifyNotFoundException(wae);
         }
     }
 
