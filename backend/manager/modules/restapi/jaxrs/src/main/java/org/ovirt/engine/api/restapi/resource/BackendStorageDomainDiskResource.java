@@ -111,6 +111,11 @@ public class BackendStorageDomainDiskResource
         return getDelegate().sparsify(action);
     }
 
+    @Override
+    public Response reduce(Action action) {
+        return getDelegate().reduce(action);
+    }
+
     private DiskResource getDelegate() {
         return BackendApiResource.getInstance().getDisksResource().getDiskResource(id);
     }

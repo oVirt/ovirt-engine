@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -170,6 +171,14 @@ public class BackendDiskResource
         }
 
         return doAction(ActionType.MoveOrCopyDisk, params, action);
+    }
+
+    @Override
+    public Response reduce(Action action) {
+        Disk disk = get();
+        Guid imageId = getDiskImageId(disk.getImageId());
+        ImagesActionsParametersBase params = new ImagesActionsParametersBase(imageId);
+        return doAction(ActionType.ReduceImage, params, action);
     }
 
     @Override
