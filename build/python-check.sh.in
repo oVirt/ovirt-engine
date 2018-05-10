@@ -9,7 +9,7 @@ cd "${SRCDIR}"
 
 ret=0
 FILES="$(
-	find build packaging -name '*.py' | while read f; do
+	find build packaging -name '*.py' -a ! -name 'yum_obsoleted_fix.py' | while read f; do
 		[ -e "${f}.in" ] || echo "${f}"
 	done
 )"
