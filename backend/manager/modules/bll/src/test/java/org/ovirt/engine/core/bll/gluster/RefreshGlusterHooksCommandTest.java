@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -71,13 +71,9 @@ public class RefreshGlusterHooksCommandTest extends BaseCommandTest {
     public void executeCommandWhenFailed() {
         setupMocks();
         doThrow(new EngineException(EngineError.GlusterHookListException)).when(hookSyncJob).refreshHooksInCluster(getCluster(), true);
-        try {
-            cmd.executeCommand();
-            fail("Expected EngineException");
-        } catch (EngineException e) {
-            assertEquals(EngineError.GlusterHookListException, e.getErrorCode());
-            assertEquals(AuditLogType.GLUSTER_HOOK_REFRESH_FAILED, cmd.getAuditLogTypeValue());
-        }
+        EngineException e = assertThrows(EngineException.class, cmd::executeCommand);
+        assertEquals(EngineError.GlusterHookListException, e.getErrorCode());
+        assertEquals(AuditLogType.GLUSTER_HOOK_REFRESH_FAILED, cmd.getAuditLogTypeValue());
     }
 
     @Test
