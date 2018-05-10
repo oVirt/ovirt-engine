@@ -84,6 +84,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -141,6 +142,7 @@ public class VmInfoBuildUtils {
     private final VdsNumaNodeDao vdsNumaNodeDao;
     private final VdsStatisticsDao vdsStatisticsDao;
     private final HostDeviceDao hostDeviceDao;
+    private final DiskVmElementDao diskVmElementDao;
     private final VmDevicesMonitoring vmDevicesMonitoring;
     private final VmSerialNumberBuilder vmSerialNumberBuilder;
 
@@ -171,6 +173,7 @@ public class VmInfoBuildUtils {
             VdsStatisticsDao vdsStatisticsDao,
             HostDeviceDao hostDeviceDao,
             VmSerialNumberBuilder vmSerialNumberBuilder,
+            DiskVmElementDao diskVmElementDao,
             VmDevicesMonitoring vmDevicesMonitoring) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
@@ -190,6 +193,7 @@ public class VmInfoBuildUtils {
         this.vdsStatisticsDao = Objects.requireNonNull(vdsStatisticsDao);
         this.hostDeviceDao = Objects.requireNonNull(hostDeviceDao);
         this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
+        this.diskVmElementDao = Objects.requireNonNull(diskVmElementDao);
         this.vmDevicesMonitoring = Objects.requireNonNull(vmDevicesMonitoring);
     }
 
@@ -1240,6 +1244,17 @@ public class VmInfoBuildUtils {
         // disk 2 -> iothread 1
         // disk 3 -> iothread 2
         return vm.getNumOfIoThreads() != 0 ? pinnedDriveIndex % vm.getNumOfIoThreads() + 1 : 0;
+    }
+
+    public int nextIoThreadToPinTo(VM vm) {
+        if (vm.getNumOfIoThreads() == 0) {
+            return 0;
+        }
+        List<DiskVmElement> diskVmElements = diskVmElementDao.getAllPluggedToVm(vm.getId());
+        int numOfAttachedVirtioInterfaces = (int) diskVmElements.stream()
+                .filter(dve -> dve.getDiskInterface() == DiskInterface.VirtIO)
+                .count();
+        return pinToIoThreads(vm, numOfAttachedVirtioInterfaces);
     }
 
     public void calculateAddressForScsiDisk(VM vm,

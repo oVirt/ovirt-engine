@@ -106,6 +106,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
         }
         Map<String, String> diskAddressMap = getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
+        disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
                 getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface(),
                 getDiskVmElement().isPassDiscard()));
