@@ -67,12 +67,9 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             }
 
             List<DiskVmElement> diskVmElements = diskVmElementDao.getAllPluggedToVm(getParameters().getVmId());
-            int numOfAttachedVirtioInterfaces = 0;
-            for (DiskVmElement dve : diskVmElements) {
-                if (dve.getDiskInterface() == DiskInterface.VirtIO) {
-                    numOfAttachedVirtioInterfaces ++;
-                }
-            }
+            int numOfAttachedVirtioInterfaces = (int) diskVmElements.stream()
+                    .filter(dve -> dve.getDiskInterface() == DiskInterface.VirtIO)
+                    .count();
 
             int pinToIoThread = numOfAttachedVirtioInterfaces % numOfIoThreads + 1;
             vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinToIoThread);
