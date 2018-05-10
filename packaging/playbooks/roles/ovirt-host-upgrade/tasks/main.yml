@@ -14,7 +14,7 @@
     - updatecheck
 
 - name: Update system
-  yum:
+  yum_obsoleted_fix:
     name: '*'
     state: latest
     update_cache: yes
