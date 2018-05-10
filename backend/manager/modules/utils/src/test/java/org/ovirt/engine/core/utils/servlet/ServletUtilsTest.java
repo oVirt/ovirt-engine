@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -253,11 +252,8 @@ public class ServletUtilsTest {
     private File createTempPng() throws IOException {
         File file = File.createTempFile("favicon", ".png");
         file.deleteOnExit();
-        BufferedImage img = new BufferedImage(256, 256,
-                BufferedImage.TYPE_INT_RGB);
-        if (!ImageIO.write(img, "PNG", file)) {
-            fail("Unable to write temporary image file");
-        }
+        BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        assertTrue(ImageIO.write(img, "PNG", file), "Unable to write temporary image file");
         return file;
     }
 
