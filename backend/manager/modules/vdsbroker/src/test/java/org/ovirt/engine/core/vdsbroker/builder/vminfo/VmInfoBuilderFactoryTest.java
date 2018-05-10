@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -36,6 +37,8 @@ public class VmInfoBuilderFactoryTest {
     private VmDeviceDao vmDeviceDao;
     @Mock
     private VmNumaNodeDao vmNumaNodeDao;
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
     @Mock
     private VmInfoBuildUtils vmInfoBuildUtils;
     @Mock

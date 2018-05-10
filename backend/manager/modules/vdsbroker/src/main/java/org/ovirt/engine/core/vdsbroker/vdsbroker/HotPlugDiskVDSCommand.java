@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -13,23 +12,19 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.utils.XmlUtils;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
 
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
-    @Inject
-    private DiskVmElementDao diskVmElementDao;
-
-    protected Map<String, Object> sendInfo = new HashMap<>();
 
     public HotPlugDiskVDSCommand(P parameters) {
         super(parameters);
@@ -37,14 +32,19 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
 
     @Override
     protected void executeVdsBrokerCommand() {
-        buildSendDataToVdsm();
-        status = getBroker().hotplugDisk(sendInfo);
+        status = getBroker().hotplugDisk(buildSendDataToVdsm());
         proceedProxyReturnValue();
     }
 
-    protected void buildSendDataToVdsm() {
+    protected Map<String, Object> buildSendDataToVdsm() {
+        Map<String, Object> sendInfo = new HashMap<>();
         sendInfo.put("vmId", getParameters().getVmId().toString());
-        sendInfo.put("drive", initDriveData());
+        if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
+            sendInfo.put(VdsProperties.engineXml, generateDomainXml());
+        } else {
+            sendInfo.put("drive", initDriveData());
+        }
+        return sendInfo;
     }
 
     private Map<String, Object> initDriveData() {
@@ -65,18 +65,11 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             if (vmDevice.getSpecParams() == null) {
                 vmDevice.setSpecParams(new HashMap<>());
             }
-
-            List<DiskVmElement> diskVmElements = diskVmElementDao.getAllPluggedToVm(getParameters().getVmId());
-            int numOfAttachedVirtioInterfaces = (int) diskVmElements.stream()
-                    .filter(dve -> dve.getDiskInterface() == DiskInterface.VirtIO)
-                    .count();
-
-            int pinToIoThread = numOfAttachedVirtioInterfaces % numOfIoThreads + 1;
+            int pinToIoThread = vmInfoBuildUtils.nextIoThreadToPinTo(getParameters().getVm());
             vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinToIoThread);
         }
-        drive.put(VdsProperties.Shareable,
-                (vmDevice.getSnapshotId() != null)
-                        ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
+        drive.put(VdsProperties.Shareable, vmDevice.getSnapshotId() != null ?
+                VdsProperties.Transient : String.valueOf(disk.isShareable()));
         drive.put(VdsProperties.Optional, Boolean.FALSE.toString());
         drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getReadOnly()));
         drive.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
@@ -106,21 +99,16 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 // set device type as 'lun' (instead of 'disk') and set the specified SGIO
                 boolean isVirtioScsi = getParameters().getDiskInterface() == DiskInterface.VirtIO_SCSI;
                 boolean isScsiPassthrough = getParameters().getDisk().isScsiPassthrough();
-                if (isVirtioScsi) {
-                    if (isScsiPassthrough) {
-                        drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
-                        drive.put(VdsProperties.Sgio, getParameters().getDisk().getSgio().toString().toLowerCase());
-                    } else {
-                        drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
-                    }
+                if (isVirtioScsi && isScsiPassthrough) {
+                    drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+                    drive.put(VdsProperties.Sgio, getParameters().getDisk().getSgio().toString().toLowerCase());
                 } else {
                     drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
                 }
 
                 drive.put(VdsProperties.Guid, lunDisk.getLun().getLUNId());
                 drive.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
-                drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
-                        .toLowerCase());
+                drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString().toLowerCase());
                 break;
             case CINDER:
                 CinderDisk cinderDisk = (CinderDisk) disk;
@@ -130,5 +118,20 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         }
 
         return drive;
+    }
+
+    private String generateDomainXml() {
+        LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
+                getParameters().getVm(),
+                getVds().getId(),
+                getParameters().getDisk(),
+                getParameters().getVmDevice(),
+                vmInfoBuildUtils);
+        String libvirtXml = builder.buildHotplugDisk();
+        String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
+        if (prettyLibvirtXml != null) {
+            log.info("Disk hot-plug: {}", prettyLibvirtXml);
+        }
+        return libvirtXml;
     }
 }

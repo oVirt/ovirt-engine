@@ -133,6 +133,7 @@ public class LibvirtVmXmlBuilder {
 
     /** Hot-set fields */
     private VmNic nic;
+    private Disk disk;
     private VmDevice device;
 
     /**
@@ -167,6 +168,20 @@ public class LibvirtVmXmlBuilder {
             Map<Guid, String> passthroughVnicToVfMap) {
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         this.nic = nic;
+        this.device = device;
+        init(vm, vmInfoBuildUtils, hostId);
+    }
+
+    /**
+     * This constructor is meant for building a partial XML for hot-plugging disk.
+     */
+    public LibvirtVmXmlBuilder(
+            VM vm,
+            Guid hostId,
+            Disk disk,
+            VmDevice device,
+            VmInfoBuildUtils vmInfoBuildUtils) {
+        this.disk = disk;
         this.device = device;
         init(vm, vmInfoBuildUtils, hostId);
     }
@@ -255,6 +270,30 @@ public class LibvirtVmXmlBuilder {
         writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
         writer.writeStartElement(OVIRT_VM_URI, "vm");
         writeNetworkInterfaceMetadata();
+        writer.writeEndElement();
+        writer.writeEndElement();
+
+        return writer.getStringXML();
+    }
+
+    public String buildHotplugDisk() {
+        writer.writeStartDocument(false);
+        writer.writeStartElement("hotplug");
+
+        writer.writeStartElement("devices");
+        DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
+        DiskInterface iface = dve.getDiskInterface();
+        // The device name serves just as an hint to libvirt
+        String dev = vmInfoBuildUtils.makeDiskName(iface.getName(), 0);
+        int pinToIoThread = iface == DiskInterface.VirtIO ? vmInfoBuildUtils.nextIoThreadToPinTo(vm) : 0;
+        writeDisk(device, disk, dve, dev, pinToIoThread);
+        writer.writeEndElement();
+
+        writer.writeStartElement("metadata");
+        writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writer.writeStartElement(OVIRT_VM_URI, "vm");
+        writeDiskMetadata();
         writer.writeEndElement();
         writer.writeEndElement();
 

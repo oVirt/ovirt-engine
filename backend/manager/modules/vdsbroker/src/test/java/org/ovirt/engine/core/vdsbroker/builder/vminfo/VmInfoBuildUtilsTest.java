@@ -50,6 +50,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -125,6 +126,8 @@ public class VmInfoBuildUtilsTest {
     private VdsStatisticsDao vdsStatisticsDao;
     @Mock
     private HostDeviceDao hostDeviceDao;
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
     @Mock
     private VmDevicesMonitoring vmDevicesMonitoring;
     @Mock
