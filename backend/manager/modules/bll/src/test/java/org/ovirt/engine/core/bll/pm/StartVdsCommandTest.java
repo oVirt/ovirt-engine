@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.pm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -132,13 +132,8 @@ public class StartVdsCommandTest extends BaseCommandTest {
     @Test
     public void onFailureResetInitialStatus() {
         mockExecutor(false);
-        try {
-            command.executeCommand();
-        } catch (EngineException exception) {
-            verify(vdsBrokerFrontend).runVdsCommand(eq(VDSCommandType.SetVdsStatus), any());
-            return;
-        }
-        fail();
+        assertThrows(EngineException.class, command::executeCommand);
+        verify(vdsBrokerFrontend).runVdsCommand(eq(VDSCommandType.SetVdsStatus), any());
     }
 
     /**
@@ -183,11 +178,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
     @Test
     public void onFailureAlertShown() {
         mockExecutor(false);
-        try {
-            command.executeCommand();
-            fail();
-        } catch (EngineException ex) {
-            verify(auditLogDirector, times(3)).log(any(), any());
-        }
+        assertThrows(EngineException.class, command::executeCommand);
+        verify(auditLogDirector, times(3)).log(any(), any());
     }
 }
