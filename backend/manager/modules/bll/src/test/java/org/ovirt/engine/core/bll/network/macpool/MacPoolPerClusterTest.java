@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -156,12 +155,10 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
         mockUsedMacsInSystem(getMacPool(cluster.getId()).getId(), allocatedMac, MAC_FROM);
 
         assertThat(allocatedMac, is(macAddress1));
-        try {
-            allocateMac(cluster);
-            fail("this allocation should not succeed, MAC should be full.");
-        } catch (EngineException e) {
-            //ok, this exception should occur.
-        }
+        assertThrows(
+                EngineException.class,
+                () -> allocateMac(cluster),
+                "This allocation should not succeed, MAC should be full.");
 
         macPool.setAllowDuplicateMacAddresses(true);
         final MacRange macRange = new MacRange();
@@ -213,12 +210,10 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     public void testRemoveOfInexistentMacPool() {
         macPoolPerCluster.initialize();
 
-        try {
-            getMacPool(cluster.getId());
-            fail("pool for given data center should not exist");
-        } catch (IllegalStateException e) {
-            //ignore this exception.
-        }
+        assertThrows(
+                IllegalStateException.class,
+                () -> getMacPool(cluster.getId()),
+                "pool for given data center should not exist");
 
         macPoolPerCluster.removePool(macPool.getId());
         //nothing to test, should not fail.
