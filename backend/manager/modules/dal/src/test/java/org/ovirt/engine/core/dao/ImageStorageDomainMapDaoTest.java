@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -86,9 +85,8 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDo
         ImageStorageDomainMap imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         Guid quotaId = imageStorageDomainMap.getQuotaId();
         // test that the current quota doesn't equal with the new quota
-        if (quotaId.equals(FixturesTool.DEFAULT_QUOTA_GENERAL)) {
-            fail("Same source and dest quota id, cannot perform test");
-        }
+        assertNotEquals
+                (FixturesTool.DEFAULT_QUOTA_GENERAL, quotaId, "Same source and dest quota id, cannot perform test");
         // change quota to the new quota 91
         dao.updateQuotaForImageAndSnapshots(FixturesTool.IMAGE_GROUP_ID, FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DEFAULT_QUOTA_GENERAL);
         // fetch the image again
