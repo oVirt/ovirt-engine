@@ -1034,7 +1034,7 @@ public class GlusterSyncJob extends GlusterJob {
                     brickProperties.setConfirmedFreeSize(
                             localVolumeInfo.get(brick.getServerId())
                                     .getAvailableThinSizeForDevice(brickProperties.getDevice())
-                                    .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElseGet(null)
+                                    .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElse(null)
                     );
                 }
                 if (brickProperties.getStatus() != brick.getStatus()) {
@@ -1111,7 +1111,7 @@ public class GlusterSyncJob extends GlusterJob {
 
         switch (volume.getVolumeType()) {
         case REPLICATE:
-            return brickSizes.map(Double::longValue).min(Long::compare).orElseGet(null);
+            return brickSizes.map(Double::longValue).min(Long::compare).orElse(null);
         case DISTRIBUTE:
         case DISTRIBUTED_REPLICATE:
         case STRIPE:
