@@ -2,12 +2,18 @@ package org.ovirt.engine.core.bll.validator;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -29,6 +35,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
+import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -83,9 +91,10 @@ public class VmValidatorTest extends BaseCommandTest {
     public VnicProfileDao vnicProfileDao;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws InitializationException {
         vm = createVm();
-        validator = new VmValidator(vm);
+        validator = spy(new VmValidator(vm));
+        mockVmPropertiesUtils();
     }
 
     private VM createVm() {
@@ -99,6 +108,21 @@ public class VmValidatorTest extends BaseCommandTest {
         vm.setNumOfSockets(numOfSockets);
         vm.setCpuPerSocket(cpuPerSocket);
         vm.setThreadsPerCpu(threadsPerCpu);
+    }
+
+    private void mockVmPropertiesUtils() throws InitializationException {
+        VmPropertiesUtils utils = spy(new VmPropertiesUtils());
+        doReturn("mdev_type=^.*$").
+                when(utils)
+                .getPredefinedVMProperties(any());
+        doReturn("").
+                when(utils)
+                .getUserDefinedVMProperties(any());
+        doReturn(new HashSet<>(Arrays.asList(Version.v4_0, Version.v4_1, Version.v4_2))).
+                when(utils)
+                .getSupportedClusterLevels();
+        doReturn(utils).when(validator).getVmPropertiesUtils();
+        utils.init();
     }
 
     @Test
@@ -203,6 +227,20 @@ public class VmValidatorTest extends BaseCommandTest {
         setVmCpuValues(1, 1, -2);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU));
+    }
+
+    @Test
+    public void testVmNotUsingMdevTypeHook() {
+        assertNotNull(VmPropertiesUtils.getInstance());
+        assertThat(validator.vmNotUsingMdevTypeHook(), isValid());
+    }
+
+    @Test
+    public void testVmUsingMdevTypeHook() {
+        vm.setCustomProperties("mdev_type=Test");
+        assertNotNull(VmPropertiesUtils.getInstance());
+        assertThat(validator.vmNotUsingMdevTypeHook(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK));
     }
 
     private void validateVMPluggedDisksWithReservationStatus(boolean vmHasDisksPluggedWithReservation) {

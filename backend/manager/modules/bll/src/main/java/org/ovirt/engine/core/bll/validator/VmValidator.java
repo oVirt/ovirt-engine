@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
@@ -55,6 +56,10 @@ public class VmValidator {
 
     public VmValidator(VM vm) {
         this.vm = vm;
+    }
+
+    protected VmPropertiesUtils getVmPropertiesUtils() {
+        return VmPropertiesUtils.getInstance();
     }
 
     /** @return Validation result that indicates if the VM is during migration or not. */
@@ -237,6 +242,18 @@ public class VmValidator {
         if (getHostDeviceManager().checkVmNeedsPciDevices(vm.getId())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
         }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult vmNotUsingMdevTypeHook() {
+        Map<String, String> properties = getVmPropertiesUtils().getVMProperties(
+                vm.getCompatibilityVersion(),
+                vm.getStaticData());
+        String mdevType = properties.get("mdev_type");
+        if (!StringUtils.isEmpty(mdevType)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK);
+        }
+
         return ValidationResult.VALID;
     }
 

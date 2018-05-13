@@ -179,6 +179,14 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testVmUsesMdevTypeHook() {
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK)).when(vmValidator)
+                .vmNotUsingMdevTypeHook();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK);
+    }
+
+    @Test
     public void testVmRunningStateless() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
                 .vmNotRunningStateless();
