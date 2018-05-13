@@ -300,6 +300,21 @@ public class LibvirtVmXmlBuilder {
         return writer.getStringXML();
     }
 
+    public String buildHotunplugDisk() {
+        writer.writeStartDocument(false);
+        writer.writeStartElement("hotunplug");
+
+        writer.writeStartElement("devices");
+        writer.writeStartElement("disk");
+        writer.writeStartElement("alias");
+        writer.writeAttributeString("name", device.getAlias());
+        writer.writeEndElement();
+        writer.writeEndElement();
+        writer.writeEndElement();
+
+        return writer.getStringXML();
+    }
+
     private void writeHeader() {
         writer.setPrefix(OVIRT_TUNE_PREFIX, OVIRT_TUNE_URI);
         writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);

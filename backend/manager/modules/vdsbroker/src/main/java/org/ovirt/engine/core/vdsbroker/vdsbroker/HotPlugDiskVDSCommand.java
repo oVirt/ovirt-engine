@@ -120,7 +120,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         return drive;
     }
 
-    private String generateDomainXml() {
+    protected String generateDomainXml() {
         LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
                 getParameters().getVm(),
                 getVds().getId(),
