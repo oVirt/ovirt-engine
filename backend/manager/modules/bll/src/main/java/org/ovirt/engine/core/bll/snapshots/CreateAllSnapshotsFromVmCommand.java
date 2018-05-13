@@ -726,7 +726,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 && validate(vmValidator.vmNotDuringMigration())
                 && validate(vmValidator.vmNotRunningStateless())
-                && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingPciPassthroughDevices())))) {
+                && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingPciPassthroughDevices()))
+                && validate(vmValidator.vmNotUsingMdevTypeHook()))) {
             return false;
         }
 

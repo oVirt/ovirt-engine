@@ -1,14 +1,20 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -29,6 +35,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
+import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -71,9 +79,10 @@ public class VmValidatorTest extends DbDependentTestBase {
     VnicProfileDao vnicProfileDao;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InitializationException {
         vm = createVm();
-        validator = new VmValidator(vm);
+        validator = spy(new VmValidator(vm));
+        mockVmPropertiesUtils();
 
         when(DbFacade.getInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDao);
         when(DbFacade.getInstance().getVnicProfileDao()).thenReturn(vnicProfileDao);
@@ -90,6 +99,21 @@ public class VmValidatorTest extends DbDependentTestBase {
         vm.setNumOfSockets(numOfSockets);
         vm.setCpuPerSocket(cpuPerSocket);
         vm.setThreadsPerCpu(threadsPerCpu);
+    }
+
+    private void mockVmPropertiesUtils() throws InitializationException {
+        VmPropertiesUtils utils = spy(new VmPropertiesUtils());
+        doReturn("mdev_type=^.*$").
+                when(utils)
+                .getPredefinedVMProperties(any());
+        doReturn("").
+                when(utils)
+                .getUserDefinedVMProperties(any());
+        doReturn(new HashSet<>(Arrays.asList(Version.v4_0, Version.v4_1, Version.v4_2))).
+                when(utils)
+                .getSupportedClusterLevels();
+        doReturn(utils).when(validator).getVmPropertiesUtils();
+        utils.init();
     }
 
     @Test
@@ -194,6 +218,20 @@ public class VmValidatorTest extends DbDependentTestBase {
         setVmCpuValues(1, 1, -2);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU));
+    }
+
+    @Test
+    public void testVmNotUsingMdevTypeHook() {
+        assertNotNull(VmPropertiesUtils.getInstance());
+        assertThat(validator.vmNotUsingMdevTypeHook(), isValid());
+    }
+
+    @Test
+    public void testVmUsingMdevTypeHook() {
+        vm.setCustomProperties("mdev_type=Test");
+        assertNotNull(VmPropertiesUtils.getInstance());
+        assertThat(validator.vmNotUsingMdevTypeHook(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK));
     }
 
     private void validateVMPluggedDisksWithReservationStatus(boolean vmHasDisksPluggedWithReservation) {
