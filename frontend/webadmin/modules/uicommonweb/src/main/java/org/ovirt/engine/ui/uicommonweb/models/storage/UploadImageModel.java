@@ -220,17 +220,16 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public void initialize() {
         getDiskModel().initialize();
         imageInfoModel.getEntityChangedEvent().addListener((ev, sender, args) -> {
+            getDiskModel().getSize().setIsChangeable(false);
             if (imageInfoModel.getContentType() == DiskContentType.ISO) {
                 getDiskModel().getAlias().setEntity(imageInfoModel.getFileName());
                 getDiskModel().getDescription().setEntity(imageInfoModel.getFileName());
                 getDiskModel().getSize().setEntity(imageInfoModel.getActualSize());
-                getDiskModel().getSize().setIsChangeable(false);
-            }
-            else {
+            } else {
                 getDiskModel().getAlias().setEntity(null);
                 getDiskModel().getDescription().setEntity(null);
-                getDiskModel().getSize().setEntity(null);
-                getDiskModel().getSize().setIsChangeable(true);
+                getDiskModel().getSize().setEntity(
+                        ((NewDiskModel) getDiskModel()).getMinimumDiskSize());
             }
         });
     }

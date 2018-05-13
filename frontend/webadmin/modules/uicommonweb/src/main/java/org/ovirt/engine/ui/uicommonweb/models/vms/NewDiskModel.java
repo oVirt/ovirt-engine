@@ -213,7 +213,7 @@ public class NewDiskModel extends AbstractDiskModel {
         return super.validate() && getSize().getIsValid() && getStorageDomain().getIsValid();
     }
 
-    protected int getMinimumDiskSize() {
+    public int getMinimumDiskSize() {
         return 1;
     }
 
