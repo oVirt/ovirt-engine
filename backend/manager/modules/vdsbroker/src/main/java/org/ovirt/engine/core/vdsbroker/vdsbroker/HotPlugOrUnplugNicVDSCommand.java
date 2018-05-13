@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.utils.StringMapUtils;
-import org.ovirt.engine.core.utils.XmlUtils;
-import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
@@ -31,7 +29,12 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
         Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
         if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
-            struct.put(VdsProperties.engineXml, generateDomainXml());
+            try {
+                struct.put(VdsProperties.engineXml, generateDomainXml());
+            } catch (JAXBException e) {
+                log.error("failed to create xml for hot-(un)plug", e);
+                throw new RuntimeException(e);
+            }
         } else {
             struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
         }
@@ -68,24 +71,5 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
         return map;
     }
 
-    private String generateDomainXml() {
-        VmNic nic = getParameters().getNic();
-        VmDevice vmDevice = getParameters().getVmDevice();
-        LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
-                getParameters().getVm(),
-                getVds().getId(),
-                nic,
-                vmDevice,
-                vmInfoBuildUtils,
-                nic.isPassthrough() ?
-                        Collections.singletonMap(nic.getId(), vmDevice.getHostDevice())
-                        : Collections.emptyMap());
-        String libvirtXml = builder.buildHotplugNic();
-        String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
-        if (prettyLibvirtXml != null) {
-            log.info("NIC hot-set: {}", prettyLibvirtXml);
-        }
-        return libvirtXml;
-    }
-
+    protected abstract String generateDomainXml() throws JAXBException;
 }
