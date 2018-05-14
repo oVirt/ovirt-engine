@@ -45,14 +45,16 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-AT_MOST_EXPECTED = _('{key} required to be at most {expected}')
-AT_LEAST_EXPECTED = _('{key} required to be at least {expected}')
+AT_MOST_EXPECTED = _("It is required to be at most '{expected}'")
+AT_LEAST_EXPECTED = _("It is required to be at least '{expected}'")
 PG_CONF_MSG = _(
-    "Please set:\n"
+    "\nPlease note the following required changes in postgresql.conf on "
+    "'{pg_host}':\n"
     "{keys}\n"
-    "in postgresql.conf on '{pg_host}'. "
-    "Its location is usually /var/lib/pgsql/data , or "
-    "somewhere under /etc/postgresql* ."
+    "postgresql.conf is usually in /var/lib/pgsql/data, "
+    "/var/opt/rh/rh-postgresql95/lib/pgsql/data, or "
+    "somewhere under /etc/postgresql* . You have to restart PostgreSQL "
+    "after making these changes."
 )
 RE_KEY_VALUE = re.compile(
     flags=re.VERBOSE,
@@ -84,11 +86,26 @@ def _ind_env(inst, keykey):
 
 
 def getInvalidConfigItemsMessage(invalid_config_items):
-    return PG_CONF_MSG.format(
+    return '\n'.join(
+        [
+            e['format_str'].format(**e)
+            for e in invalid_config_items
+            if not e['needed_on_create'] and e['format_str']
+        ]
+    ) + PG_CONF_MSG.format(
         keys='\n'.join(
             [
-                ' {key} = {expected}'.format(**e)
+                (
+                    _("  '{key}' is currently '{current}'.") + (
+                        ' {s}.'.format(s=e['format_str'])
+                        if e['format_str']
+                        else _(" .'{key}' needs to be '{expected}'.")
+                    )
+                ).format(**e)
                 for e in invalid_config_items
+                if e['needed_on_create']
+                # This is a hack. Using needed_on_create to check if the param
+                # applies to a postgresql.conf param or something else.
             ]
         ),
         pg_host=invalid_config_items[0]['pg_host'],
@@ -990,7 +1007,7 @@ class OvirtUtils(base.Base):
                 'needed_on_create': True,
                 'error_msg': '{specific}'.format(
                     specific=_(
-                        '{name} requires {key} to be {expected}. '
+                        '{name} requires {key} to be {expected}'
                     ),
                 ),
             },
@@ -1016,8 +1033,8 @@ class OvirtUtils(base.Base):
                 'needed_on_create': False,
                 'error_msg': _(
                     "Postgresql client version is '{expected}', whereas "
-                    "the version on {pg_host} is '{current}'. "
-                    "Please use a Postgresql server of version '{expected}'."
+                    "the version on '{pg_host}' is '{current}'. "
+                    "Please use a PostgreSQL server of version '{expected}'."
                 ),
             },
             {
@@ -1099,7 +1116,8 @@ class OvirtUtils(base.Base):
                     'expected': expected,
                     'format_str': item['error_msg'],
                     'name': name,
-                    'pg_host': self._environment[self._dbenvkeys[DEK.HOST]]
+                    'pg_host': environment[self._dbenvkeys[DEK.HOST]],
+                    'needed_on_create': item['needed_on_create'],
                 })
         return invalid_config_items
 
