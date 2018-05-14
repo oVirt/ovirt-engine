@@ -18,16 +18,20 @@ public class BackendAssignedAffinityLabelResource extends AbstractBackendActiona
 
     private final String parentId;
     private final BackendAssignedAffinityLabelsResource.ReferencedEntityConstructor<BusinessEntity<Guid>> constructor;
+    private BackendAssignedAffinityLabelsResource parent;
 
-    public BackendAssignedAffinityLabelResource(String parentId, BackendAssignedAffinityLabelsResource.ReferencedEntityConstructor<BusinessEntity<Guid>> constructor, String id) {
+    public BackendAssignedAffinityLabelResource(BackendAssignedAffinityLabelsResource parent, String parentId, BackendAssignedAffinityLabelsResource.ReferencedEntityConstructor<BusinessEntity<Guid>> constructor, String id) {
         super(id, AffinityLabel.class, org.ovirt.engine.core.common.businessentities.Label.class);
         this.parentId = parentId;
+        this.parent = parent;
         this.constructor = constructor;
     }
 
     @Override
     public AffinityLabel get() {
-        return addLinks(performGet(QueryType.GetLabelById, new IdQueryParameters(guid)));
+        AffinityLabel affinityLabel = addLinks(performGet(QueryType.GetLabelById, new IdQueryParameters(guid)));
+        parent.linkSubCollections(affinityLabel);
+        return affinityLabel;
     }
 
     @Override

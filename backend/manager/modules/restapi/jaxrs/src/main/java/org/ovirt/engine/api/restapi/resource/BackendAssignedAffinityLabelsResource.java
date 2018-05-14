@@ -7,9 +7,13 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.model.AffinityLabels;
+import org.ovirt.engine.api.resource.AffinityLabelResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.api.rsdl.ServiceTree;
+import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -63,14 +67,34 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
 
     @Override
     public AffinityLabels list() {
-        return mapCollection(
-                getBackendCollection(
-                        QueryType.GetLabelByEntityId, new IdQueryParameters(GuidUtils.asGuid(parentId))));
+        AffinityLabels affinityLabels = mapCollection(
+             getBackendCollection(QueryType.GetLabelByEntityId, new IdQueryParameters(GuidUtils.asGuid(parentId))));
+        for (AffinityLabel affinityLabel : affinityLabels.getAffinityLabels()) {
+            linkSubCollections(affinityLabel);
+        }
+        return affinityLabels;
+    }
+
+    /**
+     * Manually links vms, hosts sub-collections to the affinity-label attachment,
+     * same as for the affinity-label itself in the API root.
+     *
+     * (https://bugzilla.redhat.com/show_bug.cgi?id=1575596)
+     *
+     * Note: This will probably be change as part of pending link generation overhaul
+     * which will establish the general approach to attachments in the API
+     */
+    protected void linkSubCollections(AffinityLabel affinityLabel) {
+        ServiceTreeNode node = ServiceTree.getNode(AffinityLabelResource.class);
+        for (ServiceTreeNode innerNode : node.getSubServices()) {
+            String href = String.join("/", LinkHelper.getPath(affinityLabel), innerNode.getPath());
+            addOrUpdateLink(affinityLabel, innerNode.getPath(), href);
+        }
     }
 
     @Override
     public AssignedAffinityLabelResource getLabelResource(@PathParam("id") String id) {
-        return new BackendAssignedAffinityLabelResource(parentId, constructor, id);
+        return inject(new BackendAssignedAffinityLabelResource(this, parentId, constructor, id));
     }
 
     private AffinityLabels mapCollection(List<org.ovirt.engine.core.common.businessentities.Label> entities) {
