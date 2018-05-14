@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,24 +29,31 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -62,6 +70,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private List<String> missingUsers = new ArrayList<>();
     private List<String> missingRoles = new ArrayList<>();
     private List<String> missingVnicMappings = new ArrayList<>();
+    private Collection<DiskImage> templateDisksToAttach;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -80,6 +89,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private DrMappingHelper drMappingHelper;
     @Inject
     private RoleDao roleDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -104,16 +117,18 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     protected boolean validate() {
-        initVmTemplate();
         if (!super.validate()) {
             return false;
         }
-        ArrayList<DiskImage> disks = new ArrayList<>(getVmTemplate().getDiskTemplateMap().values());
-        setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
-        getVmTemplate().setImages(disks);
-        if (getParameters().isImagesExistOnTargetStorageDomain() &&
-                !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
-            return false;
+
+        if (templateDisksToAttach == null) {
+            ArrayList<DiskImage> disks = new ArrayList<>(getVmTemplate().getDiskTemplateMap().values());
+            setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
+            getVmTemplate().setImages(disks);
+            if (getParameters().isImagesExistOnTargetStorageDomain() &&
+                    !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
+                return false;
+            }
         }
 
         removeInvalidUsers(getImportValidator());
@@ -121,9 +136,24 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         return true;
     }
 
+    @Override
+    protected boolean validateSourceStorageDomain() {
+        return templateDisksToAttach == null ? super.validateSourceStorageDomain() : true;
+    }
+
+    @Override
+    protected boolean validateSpaceRequirements(Collection<DiskImage> diskImages) {
+        return templateDisksToAttach == null ? super.validateSpaceRequirements(diskImages) : true;
+    }
+
     private void updateVnicsFromMapping() {
-        missingVnicMappings = drMappingHelper.updateVnicsFromMappings(getParameters().getClusterId(), getParameters().getVmTemplate().getName(),
-                vmTemplateFromConfiguration.getInterfaces(), getParameters().getExternalVnicProfileMappings());
+        if (templateDisksToAttach == null) {
+            missingVnicMappings = drMappingHelper.updateVnicsFromMappings(
+                    getParameters().getClusterId(),
+                    getParameters().getVmTemplate().getName(),
+                    vmTemplateFromConfiguration.getInterfaces(),
+                    getParameters().getExternalVnicProfileMappings());
+        }
     }
 
     private boolean validateUnregisteredEntity(VmTemplate entityFromConfiguration, OvfEntityData ovfEntityData) {
@@ -196,7 +226,37 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         diskImages.forEach(diskImage -> diskImage.setStoragePoolId(storagePoolId));
     }
 
-    private void initVmTemplate() {
+    @Override
+    public void init() {
+        VmTemplate templateFromConfiguration = getParameters().getVmTemplate();
+        if (templateFromConfiguration != null) {
+            templateFromConfiguration.setClusterId(getParameters().getClusterId());
+            getParameters().setContainerId(templateFromConfiguration.getId());
+            getParameters().setImagesExistOnTargetStorageDomain(true);
+            setDisksToBeAttached(templateFromConfiguration);
+        } else {
+            initUnregisteredTemplate();
+        }
+        setClusterId(getParameters().getClusterId());
+        if (getCluster() != null) {
+            setStoragePoolId(getCluster().getStoragePoolId());
+        }
+        super.init();
+    }
+
+    private void setDisksToBeAttached(VmTemplate templateFromConfiguration) {
+        templateDisksToAttach = templateFromConfiguration.getDiskTemplateMap().values();
+        clearVmDisks(templateFromConfiguration);
+        getParameters().setCopyCollapse(true);
+    }
+
+    private static void clearVmDisks(VmTemplate template) {
+        template.setDiskImageMap(new HashMap<>());
+        template.getImages().clear();
+        template.getDiskList().clear();
+    }
+
+    private void initUnregisteredTemplate() {
         List<OvfEntityData> ovfEntityList =
                 unregisteredOVFDataDao.getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());
@@ -243,10 +303,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 log.debug("Exception", e);
             }
         }
-        setClusterId(getParameters().getClusterId());
-        if (getCluster() != null) {
-            setStoragePoolId(getCluster().getStoragePoolId());
-        }
     }
 
     private void mapCluster(FullEntityOvfData fullEntityOvfData) {
@@ -261,11 +317,13 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     protected void addPermissionsToDB() {
-        drMappingHelper.addPermissions(getParameters().getDbUsers(),
-                getParameters().getUserToRoles(),
-                getVmTemplateId(),
-                VdcObjectType.VmTemplate,
-                getParameters().getRoleMap());
+        if (templateDisksToAttach == null) {
+            drMappingHelper.addPermissions(getParameters().getDbUsers(),
+                    getParameters().getUserToRoles(),
+                    getVmTemplateId(),
+                    VdcObjectType.VmTemplate,
+                    getParameters().getRoleMap());
+        }
     }
 
     @Override
@@ -282,7 +340,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         updateVnicsFromMapping();
         super.executeCommand();
         addAuditLogForPartialVMs();
-        if (getParameters().isImagesExistOnTargetStorageDomain()) {
+        if (templateDisksToAttach == null) {
             if (!getImages().isEmpty()) {
                 findAndSaveDiskCopies();
                 getImages().stream().map(DiskImage::getId).forEach(this::initQcowVersionForDisks);
@@ -292,6 +350,37 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         setActionReturnValue(getVmTemplate().getId());
         setSucceeded(true);
+    }
+
+    @Override
+    protected void addDisksToDb() {
+        if (templateDisksToAttach == null) {
+            super.addDisksToDb();
+        } else {
+            // TODO: compensation
+            templateDisksToAttach.stream().map(disk -> disk.getDiskVmElements().iterator().next()).forEach(dve -> {
+                VmDevice device = createVmDevice(dve);
+                vmDeviceDao.save(device);
+                getCompensationContext().snapshotNewEntity(device);
+                diskVmElementDao.save(dve);
+                getCompensationContext().snapshotNewEntity(dve);
+            });
+        }
+    }
+
+    protected VmDevice createVmDevice(DiskVmElement dve) {
+        return new VmDevice(new VmDeviceId(dve.getDiskId(), getVmTemplateId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.DISK.getName(),
+                "",
+                null,
+                true,
+                dve.isPlugged(),
+                dve.isReadOnly(),
+                "",
+                null,
+                null,
+                null);
     }
 
     private void addAuditLogForPartialVMs() {
