@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -412,6 +413,17 @@ public class DisksViewColumns {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskDescription();
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final AbstractTextColumn<Disk> getContentColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, DiskContentType>() {
+            @Override
+            protected DiskContentType getRawValue(Disk object) {
+                return object.getContentType();
             }
         };
 
