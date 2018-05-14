@@ -66,6 +66,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     private static AbstractTextColumn<Disk> qoutaColumn;
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
+    private static AbstractTextColumn<Disk> contentTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
     private static DiskContainersColumn diskContainersColumn;
@@ -218,6 +219,10 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 diskStorageTypeColumn, constants.typeDisk(), all, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
+                contentTypeColumn, constants.contentDisk(), images,
+                "80px"); //$NON-NLS-1$
+
+        getTable().ensureColumnVisible(
                 descriptionColumn, constants.descriptionDisk(), all || images || luns || cinder,
                 "90px"); //$NON-NLS-1$
     }
@@ -251,6 +256,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         qoutaColumn = DisksViewColumns.getQoutaColumn(DiskConditionFieldAutoCompleter.QUOTA);
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
+        contentTypeColumn = DisksViewColumns.getContentColumn(DiskConditionFieldAutoCompleter.DISK_CONTENT_TYPE);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
         diskContainersColumn = DisksViewColumns.getdiskContainersColumn(null);
