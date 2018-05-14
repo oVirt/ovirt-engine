@@ -99,7 +99,7 @@
                 <b:Row>
                     <b:Column size="SM_6">
                         <b:Row>
-                            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPolicyNameLabel}" usePatternFly="true" labelColSize="SM_2" widgetColSize="SM_10" />
+                            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.clusterPolicyNameLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                         </b:Row>
                     </b:Column>
                     <b:Column size="SM_6">
