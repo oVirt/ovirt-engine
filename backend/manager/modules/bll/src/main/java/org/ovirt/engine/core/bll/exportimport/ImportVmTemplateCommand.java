@@ -185,8 +185,71 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
         // set the source domain and check that it is ImportExport type and active
         setSourceDomainId(getParameters().getSourceDomainId());
-        StorageDomainValidator sourceDomainValidator = new StorageDomainValidator(getSourceDomain());
-        if (!validate(sourceDomainValidator.isDomainExistAndActive())) {
+        if (!validateSourceStorageDomain()) {
+            return false;
+        }
+
+        sourceTemplateId = getVmTemplateId();
+        if (getParameters().isImportAsNewEntity()) {
+            initImportClonedTemplate();
+        }
+
+        VmTemplate duplicateTemplate = vmTemplateDao.get(getParameters().getVmTemplate().getId());
+        // check that the template does not exists in the target domain
+        if (duplicateTemplate != null) {
+            return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS,
+                    String.format("$TemplateName %1$s", duplicateTemplate.getName()));
+        }
+        if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
+            return failValidation(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
+        }
+
+        if (!validateNoDuplicateDiskImages(getImages())) {
+            return false;
+        }
+
+        if (getImages() != null && !getImages().isEmpty() && !getParameters().isImagesExistOnTargetStorageDomain()) {
+            if (!validateSpaceRequirements(getImages())) {
+                return false;
+            }
+        }
+
+        List<VmNetworkInterface> vmNetworkInterfaces = getVmTemplate().getInterfaces();
+        vmNicMacsUtils.replaceInvalidEmptyStringMacAddressesWithNull(vmNetworkInterfaces);
+        if (!validate(vmNicMacsUtils.validateMacAddress(vmNetworkInterfaces))) {
+            return false;
+        }
+
+        // if this is a template version, check base template exist
+        if (!getVmTemplate().isBaseTemplate()) {
+            VmTemplate baseTemplate = vmTemplateDao.get(getVmTemplate().getBaseTemplateId());
+            if (baseTemplate == null) {
+                return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
+            }
+        }
+
+        if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
+
+        if (!setAndValidateCpuProfile()) {
+            return false;
+        }
+
+        if (!validate(vmHandler.validateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion()))) {
+            return false;
+        }
+
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getVmTemplate().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
+        }
+
+        return true;
+    }
+
+    protected boolean validateSourceStorageDomain() {
+        if (!validate(new StorageDomainValidator(getSourceDomain()).isDomainExistAndActive())) {
             return false;
         }
 
@@ -244,62 +307,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
                 imageMap.put(image.getImageId(), image);
             }
             getVmTemplate().setDiskImageMap(imageMap);
-        }
-
-        sourceTemplateId = getVmTemplateId();
-        if (getParameters().isImportAsNewEntity()) {
-            initImportClonedTemplate();
-        }
-
-        VmTemplate duplicateTemplate = vmTemplateDao.get(getParameters().getVmTemplate().getId());
-        // check that the template does not exists in the target domain
-        if (duplicateTemplate != null) {
-            return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS,
-                    String.format("$TemplateName %1$s", duplicateTemplate.getName()));
-        }
-        if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
-            return failValidation(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
-        }
-
-        if (!validateNoDuplicateDiskImages(getImages())) {
-            return false;
-        }
-
-        if (getImages() != null && !getImages().isEmpty() && !getParameters().isImagesExistOnTargetStorageDomain()) {
-            if (!validateSpaceRequirements(getImages())) {
-                return false;
-            }
-        }
-
-        List<VmNetworkInterface> vmNetworkInterfaces = getVmTemplate().getInterfaces();
-        vmNicMacsUtils.replaceInvalidEmptyStringMacAddressesWithNull(vmNetworkInterfaces);
-        if (!validate(vmNicMacsUtils.validateMacAddress(vmNetworkInterfaces))) {
-            return false;
-        }
-
-        // if this is a template version, check base template exist
-        if (!getVmTemplate().isBaseTemplate()) {
-            VmTemplate baseTemplate = vmTemplateDao.get(getVmTemplate().getBaseTemplateId());
-            if (baseTemplate == null) {
-                return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
-            }
-        }
-
-        if (!setAndValidateDiskProfiles()) {
-            return false;
-        }
-
-        if (!setAndValidateCpuProfile()) {
-            return false;
-        }
-
-        if (!validate(vmHandler.validateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion()))) {
-            return false;
-        }
-
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getVmTemplate().getVmInit());
-        if (!CollectionUtils.isEmpty(msgs)) {
-            return failValidation(msgs);
         }
 
         return true;
@@ -507,6 +514,10 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         vmHandler.autoSelectResumeBehavior(getVmTemplate(), getCluster());
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
+        addDisksToDb();
+    }
+
+    protected void addDisksToDb() {
         int count = 1;
         for (DiskImage image : getImages()) {
             image.setActive(true);
