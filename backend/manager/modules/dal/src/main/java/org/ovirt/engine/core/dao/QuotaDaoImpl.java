@@ -562,6 +562,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
     @Override
     public List<Integer> getNonCountableQutoaVmStatuses() {
         return getCallsHandler().executeReadList
-                ("getNonCountableQutoaVmStatuses", SingleColumnRowMapper.newInstance(Integer.class), null);
+                ("getNonCountableQutoaVmStatuses", SingleColumnRowMapper.newInstance(Integer.class),
+                        getCustomMapSqlParameterSource());
     }
 }
