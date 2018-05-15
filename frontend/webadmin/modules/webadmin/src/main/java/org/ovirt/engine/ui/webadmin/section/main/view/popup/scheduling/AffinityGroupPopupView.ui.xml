@@ -53,28 +53,28 @@
                     <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.affinityDescriptionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_3">
+                    <b:Column size="SM_6">
                         <g:Label text="{constants.vmAffinityRuleLabel}" addStyleNames="{style.floatLeft} {style.affinityRuleLabel}" />
                         <d:InfoIcon ui:field="vmAffinityRuleEditorInfoIcon" addStyleNames="{style.infoIcon} {style.patternFlyRadio}"/>
                     </b:Column>
                     <b:Column size="SM_3">
                         <e:ListModelListBoxEditor ui:field="vmAffinityRuleEditor" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_3">
                         <ge:EntityModelCheckBoxEditor ui:field="vmAffinityEnforcingEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
                         <l:EnableableFormLabel ui:field="vmAffinityEnforcingEditorLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.affinityGroupEnforceTypeLabel}" />
                         <d:InfoIcon ui:field="vmAffinityEnforcingEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_3" paddingRight="10">
+                    <b:Column size="SM_6" paddingRight="10">
                         <g:Label text="{constants.hostAffinityRuleLabel}" addStyleNames="{style.floatLeft} {style.affinityRuleLabel}" />
                         <d:InfoIcon ui:field="hostAffinityRuleEditorInfoIcon" addStyleNames="{style.infoIcon} {style.patternFlyRadio}"/>
                     </b:Column>
                     <b:Column size="SM_3">
                         <e:ListModelListBoxEditor ui:field="hostAffinityRuleEditor" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_3">
                         <ge:EntityModelCheckBoxEditor ui:field="hostAffinityEnforcingEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
                         <l:EnableableFormLabel ui:field="hostAffinityEnforcingEditorLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.affinityGroupEnforceTypeLabel}" />
                         <d:InfoIcon ui:field="hostAffinityEnforcingEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
