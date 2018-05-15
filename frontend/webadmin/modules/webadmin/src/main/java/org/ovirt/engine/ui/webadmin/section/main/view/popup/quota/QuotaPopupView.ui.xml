@@ -86,7 +86,7 @@
                     <b:Column size="SM_6">
                         <b:Row addStyleNames="{style.narrowColumns}">
                             <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameQuotaPopup}"
-                                usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+                                usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                         </b:Row>
                     </b:Column>
                     <b:Column size="SM_6">
@@ -100,7 +100,7 @@
                     <b:Column size="SM_6">
                         <b:Row addStyleNames="{style.narrowColumns}">
                             <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterQuotaPopup}"
-                                usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+                                usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                         </b:Row>
                     </b:Column>
                 </b:Row>
