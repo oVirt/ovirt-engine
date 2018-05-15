@@ -33,7 +33,7 @@
                 <e:IntegerEntityModelTextBoxOnlyEditor ui:field="inboundPeakEditor" usePatternFly="true" unitString="{constants.mbpsLabelQoSPopup}" />
             </b:Column>
             <b:Column size="SM_4">
-                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="inboundBurstEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="inboundBurstEditor" usePatternFly="true" unitString="{constants.mbLabelQoSPopup}" />
             </b:Column>
         </b:Row>
         <b:Row>
@@ -60,7 +60,7 @@
                 <e:IntegerEntityModelTextBoxOnlyEditor ui:field="outboundPeakEditor" usePatternFly="true" unitString="{constants.mbpsLabelQoSPopup}" />
             </b:Column>
             <b:Column size="SM_4">
-                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="outboundBurstEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="outboundBurstEditor" usePatternFly="true" unitString="{constants.mbLabelQoSPopup}" />
             </b:Column>
         </b:Row>
     </g:FlowPanel>
