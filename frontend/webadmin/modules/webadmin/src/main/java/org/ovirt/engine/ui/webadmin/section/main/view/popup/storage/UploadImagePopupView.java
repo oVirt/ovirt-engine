@@ -219,13 +219,17 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         } else {
             messagePanel.setType(AlertPanel.Type.WARNING);
             messagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(
-                    messages.testImageIOProxyConnectionFailure(
-                            Window.Location.getProtocol() + "//" + Window.Location.getHost()))); //$NON-NLS-1$
+                    messages.testImageIOProxyConnectionFailure(getProxyLocation())));
         }
     }
 
     @Override
     public void showTestCommand(boolean show) {
         testButton.setVisible(show);
+    }
+
+    @Override
+    public String getProxyLocation() {
+        return Window.Location.getProtocol() + "//" + Window.Location.getHost(); //$NON-NLS-1$
     }
 }

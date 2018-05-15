@@ -44,9 +44,11 @@ public class UploadImageManager {
      * @param transferDiskImageParameters
      *            transfer parameters
      */
-    public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters) {
+    public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
+            String proxyLocation) {
         startUpload(fileUploadElement,
                 transferDiskImageParameters,
+                proxyLocation,
                 0,
                 transferDiskImageParameters.getTransferSize());
     }
@@ -64,8 +66,8 @@ public class UploadImageManager {
      *            end offset
      */
     public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
-                            long startByte, long endByte) {
-        UploadImageHandler uploadImageHandler = createUploadImageHandler(fileUploadElement);
+            String proxyLocation, long startByte, long endByte) {
+        UploadImageHandler uploadImageHandler = createUploadImageHandler(fileUploadElement, proxyLocation);
         uploadImageHandlers.add(uploadImageHandler);
         uploadImageHandler.start(transferDiskImageParameters, startByte, endByte);
     }
@@ -81,11 +83,11 @@ public class UploadImageManager {
      *            callback to invoke
      */
     public void resumeUpload(Element fileUploadElement, TransferImageStatusParameters transferImageStatusParameters,
-                             AsyncQuery<String> asyncQuery) {
+            String proxyLocation, AsyncQuery<String> asyncQuery) {
         Optional<UploadImageHandler> uploadImageHandlerOptional =
             getUploadImageHandler(transferImageStatusParameters.getDiskId());
         UploadImageHandler uploadImageHandler =
-            uploadImageHandlerOptional.orElseGet(() -> createUploadImageHandler(fileUploadElement));
+            uploadImageHandlerOptional.orElseGet(() -> createUploadImageHandler(fileUploadElement, proxyLocation));
         uploadImageHandler.resetUploadState();
         uploadImageHandlers.add(uploadImageHandler);
         uploadImageHandler.resume(transferImageStatusParameters, asyncQuery);
@@ -103,8 +105,8 @@ public class UploadImageManager {
         return uploadImageHandlerOptional.isPresent();
     }
 
-    private UploadImageHandler createUploadImageHandler(Element fileUploadElement) {
-        final UploadImageHandler uploadImageHandler = new UploadImageHandler(fileUploadElement);
+    private UploadImageHandler createUploadImageHandler(Element fileUploadElement, String proxyLocation) {
+        final UploadImageHandler uploadImageHandler = new UploadImageHandler(fileUploadElement, proxyLocation);
         uploadImageHandler.getUploadFinishedEvent().addListener((ev, sender, args) -> {
             uploadImageHandlers.remove(uploadImageHandler);
             log.info("Removed upload handler for disk: " //$NON-NLS-1$

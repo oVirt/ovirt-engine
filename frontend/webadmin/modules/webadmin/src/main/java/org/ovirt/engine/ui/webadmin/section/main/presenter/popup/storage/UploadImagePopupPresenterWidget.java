@@ -14,6 +14,7 @@ public class UploadImagePopupPresenterWidget extends AbstractModelBoundPopupPres
         HasUiCommandClickHandlers getTestButton();
         void updateTestResult(boolean succeeded);
         void showTestCommand(boolean show);
+        String getProxyLocation();
     }
 
     @Inject
@@ -24,6 +25,8 @@ public class UploadImagePopupPresenterWidget extends AbstractModelBoundPopupPres
     @Override
     public void init(final UploadImageModel model) {
         super.init(model);
+
+        model.setProxyLocation(getView().getProxyLocation());
 
         // Add click handler for the test connection button
         registerHandler(getView().getTestButton().addClickHandler(event -> model.getTestCommand().execute()));

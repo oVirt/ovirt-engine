@@ -76,6 +76,7 @@ public class UploadImageHandler {
     private long bytesSent;
     private long bytesEndOffset;
     private String progressStr;
+    private String proxyLocation;
     private UploadState uploadState;
     private boolean continuePolling;
     private AuditLogType auditLogType;
@@ -225,9 +226,10 @@ public class UploadImageHandler {
      * @param fileUploadElement
      *            the file upload html element
      */
-    public UploadImageHandler(Element fileUploadElement) {
+    public UploadImageHandler(Element fileUploadElement, String proxyLocation) {
         resetUploadState();
         setFileUploadElement(fileUploadElement);
+        this.proxyLocation = proxyLocation;
     }
 
     public void resetUploadState() {
@@ -410,6 +412,7 @@ public class UploadImageHandler {
             statusParameters.getUpdates().setPhase(ImageTransferPhase.PAUSED_SYSTEM);
             statusParameters.setDiskId(getDiskId());
             statusParameters.setAuditLogType(auditLogType);
+            statusParameters.setProxyLocation(proxyLocation);
         } else {
             setProgressStr("Finalizing failure..."); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.FINALIZING_FAILURE);

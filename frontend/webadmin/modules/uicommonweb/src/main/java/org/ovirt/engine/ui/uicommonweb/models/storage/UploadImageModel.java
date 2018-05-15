@@ -63,6 +63,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private boolean isResumeUpload;
     private Element imageFileUploadElement;
     private boolean browserSupportsUpload;
+    private String proxyLocation;
     private ImageInfoModel imageInfoModel;
     private EntityModel<Response> testResponse;
 
@@ -137,6 +138,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     public void setBrowserSupportsUpload(boolean browserSupportsUpload) {
         this.browserSupportsUpload = browserSupportsUpload;
+    }
+
+    public String getProxyLocation() {
+        return proxyLocation;
+    }
+
+    public void setProxyLocation(String proxyLocation) {
+        this.proxyLocation = proxyLocation;
     }
 
     public EntityModel<Response> getTestResponse() {
@@ -342,7 +351,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     private void initiateNewUpload() {
-        UploadImageManager.getInstance().startUpload(getImageFileUploadElement(), createInitParams());
+        UploadImageManager.getInstance().startUpload(getImageFileUploadElement(), createInitParams(),
+                getProxyLocation());
 
         // Close dialog
         getCancelCommand().execute();
@@ -353,7 +363,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         parameters.setDiskId(getDiskModel().getDisk().getId());
         startProgress();
         final UploadImageModel model = this;
-        UploadImageManager.getInstance().resumeUpload(getImageFileUploadElement(), parameters,
+        UploadImageManager.getInstance().resumeUpload(getImageFileUploadElement(), parameters, getProxyLocation(),
             new AsyncQuery<>(errorMessage -> {
                 model.stopProgress();
                 if (errorMessage != null) {
@@ -368,7 +378,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private void initiateSilentResumeUpload() {
         TransferImageStatusParameters parameters = new TransferImageStatusParameters();
         parameters.setDiskId(getDiskModel().getDisk().getId());
-        UploadImageManager.getInstance().resumeUpload(null, parameters,
+        UploadImageManager.getInstance().resumeUpload(null, parameters, getProxyLocation(),
                 new AsyncQuery<>(errorMessage -> {
                     if (errorMessage != null) {
                         getLogger().error(errorMessage, null);

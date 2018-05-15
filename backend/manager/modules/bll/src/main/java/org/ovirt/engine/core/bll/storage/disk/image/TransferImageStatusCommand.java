@@ -98,6 +98,7 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
         // An AuditLogType message is appended to the params when an error occurs.
         if (getParameters().getAuditLogType() != null) {
             addCustomValue("DiskId", getParameters().getDiskId().toString());
+            addCustomValue("EngineUrl", getParameters().getProxyLocation());
             return getParameters().getAuditLogType();
         } else {
             return super.getAuditLogTypeValue();

@@ -10,6 +10,7 @@ public class TransferImageStatusParameters extends ActionParametersBase {
     private Guid diskId;
     private ImageTransfer updates;
     private AuditLogType auditLogType;
+    private String proxyLocation;
 
     public TransferImageStatusParameters(Guid transferImageCommandId, ImageTransfer updates) {
         this.transferImageCommandId = transferImageCommandId;
@@ -53,5 +54,13 @@ public class TransferImageStatusParameters extends ActionParametersBase {
 
     public AuditLogType getAuditLogType() {
         return auditLogType;
+    }
+
+    public String getProxyLocation() {
+        return proxyLocation;
+    }
+
+    public void setProxyLocation(String proxyLocation) {
+        this.proxyLocation = proxyLocation;
     }
 }
