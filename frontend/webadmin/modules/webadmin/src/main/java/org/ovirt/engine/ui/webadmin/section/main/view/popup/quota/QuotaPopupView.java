@@ -259,7 +259,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         };
         editColumn.setFieldUpdater((index, object, value) -> model.editQuotaStorage(object));
 
-        quotaStorageTable.addColumn(editColumn, constants.empty(), "50px"); //$NON-NLS-1$
+        quotaStorageTable.addColumn(editColumn, constants.empty(), "100px"); //$NON-NLS-1$
     }
 
     private void initQuotaClusterTable() {
@@ -348,7 +348,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         };
 
-        quotaClusterTable.addColumn(editColumn, constants.empty(), "50px"); //$NON-NLS-1$
+        quotaClusterTable.addColumn(editColumn, constants.empty(), "100px"); //$NON-NLS-1$
         editColumn.setFieldUpdater((index, object, value) -> model.editQuotaCluster(object));
     }
 
