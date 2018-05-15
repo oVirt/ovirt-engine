@@ -4,7 +4,6 @@ import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -32,13 +31,12 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     @UiField
     Alert warningMessage;
 
+    @UiField
+    Alert dynamicWarningMessage;
+
     @UiField(provided = true)
     @Ignore
     DisksAllocationView disksAllocationView;
-
-    @UiField
-    @Path(value = "dynamicWarning.entity")
-    StringEntityModelTextAreaLabelEditor dynamicWarningLabel;
 
     DisksAllocationModel disksAllocationModel;
 
@@ -65,8 +63,13 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
             String propName = ((PropertyChangedEventArgs) args).propertyName;
 
             if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
-                warningMessage.setVisible(ownerModel.getIsAvailable());
+                dynamicWarningMessage.setVisible(ownerModel.getIsAvailable());
             }
+        });
+
+        object.getDynamicWarning().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            EntityModel ownerModel = (EntityModel) sender;
+            dynamicWarningMessage.setText((String) ownerModel.getEntity());
         });
     }
 
@@ -94,7 +97,5 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
 
     interface WidgetStyle extends CssResource {
         String messagePanel();
-
-        String dynamicWarningTextArea();
     }
 }

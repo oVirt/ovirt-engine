@@ -2,9 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder
     xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
@@ -26,7 +24,7 @@
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
-                        <ge:StringEntityModelTextAreaLabelEditor ui:field="dynamicWarningLabel" usePatternFly="true" />
+                        <b:Alert type="WARNING" ui:field="dynamicWarningMessage" visible="false" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
