@@ -143,6 +143,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return false;
         }
 
+        // A new array is being initialized to avoid ConcurrentModificationException when
+        // invalid images are being removed from the images list.
         for (DiskImage image : new ArrayList<>(getImages())) {
             DiskImage fromIrs = null;
             Guid storageDomainId = image.getStorageIds().get(0);
@@ -168,7 +170,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
         }
-        for (DiskImage image : getImages()) {
+
+        // A new array is being initialized to avoid ConcurrentModificationException when
+        // invalid images are being removed from the images list.
+        for (DiskImage image : new ArrayList<>(getImages())) {
             StorageDomain sd = storageDomainDao.getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
             if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
