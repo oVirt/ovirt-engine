@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 public class ValidationUtils {
 
     public static final String NO_SPECIAL_CHARACTERS_EXTRA_I18N = "^[\\p{L}0-9._\\+-]*$";
+    public static final String CUSTOM_CPU_NAME = "^[\\p{L}0-9._\\+\\-,]*$";
     public static final String NO_SPECIAL_CHARACTERS_I18N = "^[\\p{L}0-9._-]*$";
     public static final String NO_SPECIAL_CHARACTERS = "[0-9a-zA-Z_-]+";
     public static final String ONLY_I18N_ASCII_OR_NONE = "[\\p{ASCII}\\p{L}]*";
