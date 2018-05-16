@@ -5,7 +5,8 @@ services:
   - postgresql
 install: true
 before_script:
-  - psql -d template1 -c "create database engine_dao_tests owner postgres;" -U postgres
+  - psql -U postgres -d template1 -c "create database engine_dao_tests owner postgres;"
+  - psql -U postgres -c "create extension \"uuid-ossp\";"
   - sudo rm -rf /etc/securetty # Work around ServletUtilsTest test
 script:
   - "./packaging/dbscripts/schema.sh -d engine_dao_tests -u postgres -c apply"
