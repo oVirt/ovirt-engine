@@ -338,19 +338,18 @@ public class LibvirtVmXmlBuilder {
                 writer.writeAttributeString("mode", "host-model");
                 break;
             default:
-                writer.writeStartElement("model");
-                writer.writeRaw(cpuType);
-                // TODO: features
-                writer.writeEndElement();
+                String[] typeAndFlags = cpuType.split(",");
+                writer.writeElement("model", typeAndFlags[0]);
+                writeFlags(typeAndFlags);
                 break;
             }
             break;
         case ppc:
             writer.writeAttributeString("mode", "host-model");
-            writer.writeStartElement("model");
+            String[] typeAndFlags = cpuType.split(",");
             // needs to be lowercase for libvirt
-            writer.writeRaw(cpuType.toLowerCase());
-            writer.writeEndElement();
+            writer.writeElement("model", typeAndFlags[0].toLowerCase());
+            writeFlags(typeAndFlags);
         }
 
         if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
@@ -380,6 +379,31 @@ public class LibvirtVmXmlBuilder {
         }
 
         writer.writeEndElement();
+    }
+
+    private void writeFlags(String[] typeAndFlags) {
+        Stream.of(typeAndFlags).skip(1).forEach(flag -> {
+            if (StringUtils.isNotEmpty(flag)) {
+                String policy = null;
+                if (flag.startsWith("+")) {
+                    policy = "require";
+                } else if (flag.startsWith("-")) {
+                    policy = "disable";
+                }
+
+                String actualFlag = flag;
+                writer.writeStartElement("feature");
+                if (StringUtils.isNotEmpty(policy)) {
+                    writer.writeAttributeString("policy", policy);
+                    // remove the +/- since it is not part of the name of the flag
+                    actualFlag = flag.substring(1);
+                }
+
+                writer.writeAttributeString("name", actualFlag);
+                writer.writeEndElement();
+            }
+
+        });
     }
 
     private void writeCpuTune(boolean numaEnabled) {

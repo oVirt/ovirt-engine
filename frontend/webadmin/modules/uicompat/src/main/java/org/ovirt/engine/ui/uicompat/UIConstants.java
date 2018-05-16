@@ -631,6 +631,8 @@ public interface UIConstants extends Constants {
 
     String i18NExtraNameOrNoneValidation();
 
+    String cpuNameValidation();
+
     String nonUtfValidationMsg();
 
     String youHavntConfigPmMsg();
