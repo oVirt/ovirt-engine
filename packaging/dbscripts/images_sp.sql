@@ -186,6 +186,7 @@ BEGIN
            repo_image_name
     FROM iso_disks_as_repo_images
     WHERE storage_pool_id = v_storage_pool_id
-        AND status = 3;  -- The status of an active storage domain is 3
+        AND status = 3  -- The status of an active storage domain is 3
+    ORDER BY repo_image_name;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
