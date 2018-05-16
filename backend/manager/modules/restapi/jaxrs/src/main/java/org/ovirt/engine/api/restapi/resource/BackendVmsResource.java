@@ -327,6 +327,7 @@ public class BackendVmsResource extends
                         new GetVmFromConfigurationQueryParameters(VmMapper.map(config.getType(), null), config.getData().trim()),
                         "");
 
+        vm.setInitialization(null); // if configuration is provided, the initialization parameters cannot be overridden
         VmMapper.map(vm, vmConfiguration.getStaticData());
 
         Guid clusterId = namedCluster(vm) ? getCluster(vm).getId() : asGuid(vm.getCluster().getId());

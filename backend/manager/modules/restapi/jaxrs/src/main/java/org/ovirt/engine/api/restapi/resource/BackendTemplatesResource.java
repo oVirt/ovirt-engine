@@ -165,6 +165,7 @@ public class BackendTemplatesResource
                         new GetVmFromConfigurationQueryParameters(VmMapper.map(config.getType(), null), config.getData().trim()),
                         "");
 
+        template.setInitialization(null); // if configuration is provided, the initialization parameters cannot be overridden
         TemplateMapper.map(template, templateConfiguration);
 
         Guid clusterId = namedCluster(template) ? getClusterId(template) : asGuid(template.getCluster().getId());
