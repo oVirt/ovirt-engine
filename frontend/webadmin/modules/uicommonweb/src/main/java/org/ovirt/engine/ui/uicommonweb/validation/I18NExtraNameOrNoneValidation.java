@@ -10,6 +10,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  */
 public class I18NExtraNameOrNoneValidation extends I18NNameValidation {
 
+    public I18NExtraNameOrNoneValidation(String message) {
+        super(message);
+    }
+
     public I18NExtraNameOrNoneValidation() {
         super(ConstantsManager.getInstance().getConstants().i18NExtraNameOrNoneValidation());
     }
