@@ -66,7 +66,7 @@ public class MacRangeModel extends Model {
 
         String from = getLeftBound().getEntity();
         String to = getRightBound().getEntity();
-        Long count = MacRangeValidation.macToLong(to) - MacRangeValidation.macToLong(from);
+        Long count = MacRangeValidation.macToLong(to) - MacRangeValidation.macToLong(from) + 1;
         getMacsCount().setEntity(count.intValue());
     }
 }
