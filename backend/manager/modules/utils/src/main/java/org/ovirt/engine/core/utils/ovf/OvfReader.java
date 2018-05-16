@@ -586,7 +586,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 val -> vmBase.setMigrationSupport(MigrationSupport.forValue(Integer.parseInt(val))));
 
         // TODO dedicated to multiple hosts
-        readDedicatedHostsList();
+        readDedicatedHostsList(content);
 
         consumeReadProperty(content,
                 SERIAL_NUMBER_POLICY,
@@ -656,11 +656,9 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    private void readDedicatedHostsList() {
+    private void readDedicatedHostsList(XmlNode content) {
         vmBase.setDedicatedVmForVdsList(new LinkedList<>()); // initialize to empty list
-        // search all dedicated hosts with xPath
-        XmlNodeList hostsList = selectNodes(_document, "//*/Content/" + DEDICATED_VM_FOR_VDS);
-        for (XmlNode hostNode : hostsList) {
+        for (XmlNode hostNode : selectNodes(content, DEDICATED_VM_FOR_VDS)) {
             if (hostNode != null && StringUtils.isNotEmpty(hostNode.innerText)) {
                 vmBase.getDedicatedVmForVdsList().add(Guid.createGuidFromString(hostNode.innerText));
             }
