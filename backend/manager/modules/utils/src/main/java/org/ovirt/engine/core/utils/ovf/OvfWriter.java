@@ -270,11 +270,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
 
         // TODO dedicated to multiple hosts - are we breaking any standard here?
-        if (vmBase.getDedicatedVmForVdsList().size() > 0) {
-            for (Guid hostId : vmBase.getDedicatedVmForVdsList()) {
-                _writer.writeElement(DEDICATED_VM_FOR_VDS, String.valueOf(hostId));
-            }
-        }
+        vmBase.getDedicatedVmForVdsList().forEach(d -> _writer.writeElement(DEDICATED_VM_FOR_VDS, String.valueOf(d)));
 
         if (vmBase.getSerialNumberPolicy() != null) {
             _writer.writeElement(SERIAL_NUMBER_POLICY, String.valueOf(vmBase.getSerialNumberPolicy().getValue()));
