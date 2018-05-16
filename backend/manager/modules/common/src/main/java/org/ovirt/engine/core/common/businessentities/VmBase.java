@@ -1248,12 +1248,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.migrationSupport = migrationSupport;
     }
 
-    public Guid fetchDedicatedVmForSingleHost(){
-        if(getDedicatedVmForVdsList().size() == 0){
-            return null;
-        }
-        return getDedicatedVmForVdsList().get(0);
-    }
     public List<Guid> getDedicatedVmForVdsList() {
         if (dedicatedVmForVdsList == null){
             dedicatedVmForVdsList = new LinkedList<>();

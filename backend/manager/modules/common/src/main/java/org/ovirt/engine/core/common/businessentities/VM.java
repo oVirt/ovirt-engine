@@ -337,10 +337,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatic.setAutoStartup(value);
     }
 
-    public Guid fetchDedicatedVmForSingleHost(){
-        return vmStatic.fetchDedicatedVmForSingleHost();
-    }
-
     public List<Guid> getDedicatedVmForVdsList() {
         return vmStatic.getDedicatedVmForVdsList();
     }
