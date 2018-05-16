@@ -12,6 +12,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 public class AbstractDynamicUrlContentView extends AbstractView {
 
@@ -28,6 +29,8 @@ public class AbstractDynamicUrlContentView extends AbstractView {
 
     @UiField
     Frame frame;
+
+    private HandlerRegistration setUnloadHandlerReg;
 
     @Inject
     public AbstractDynamicUrlContentView() {
@@ -60,9 +63,27 @@ public class AbstractDynamicUrlContentView extends AbstractView {
     }
 
     public void setUnloadHandler(JavaScriptObject unloadHandler) {
-        setUnloadHandlerImpl(frame.getElement(), unloadHandler);
+        if (frame.isAttached()) {
+            setUnloadHandlerImpl(frame.getElement(), unloadHandler);
+        } else {
+            // New unload handler overrides the previous one.
+            if (setUnloadHandlerReg != null) {
+                setUnloadHandlerReg.removeHandler();
+            }
+
+            // Apply unload handler once the iframe element gets attached.
+            setUnloadHandlerReg = frame.addAttachHandler(event -> {
+                setUnloadHandlerImpl(frame.getElement(), unloadHandler);
+                setUnloadHandlerReg.removeHandler();
+                setUnloadHandlerReg = null;
+            });
+        }
     }
 
+    /**
+     * Callers should ensure that {@code frameElement} is attached,
+     * otherwise {@code frameElement.contentWindow} won't be available.
+     */
     private native void setUnloadHandlerImpl(Element frameElement, JavaScriptObject unloadHandler) /*-{
         frameElement.contentWindow.onunload = function() {
             if (typeof unloadHandler === 'function') {
