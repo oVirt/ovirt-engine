@@ -1032,7 +1032,7 @@ public class GlusterSyncJob extends GlusterJob {
         for (GlusterBrickEntity brick : volume.getBricks()) {
             BrickProperties brickProperties = brickPropertiesMap.get(brick.getId());
             if (brickProperties != null) {
-                if (brickProperties.getDevice() != null) {
+                if (brickProperties.getDevice() != null && localVolumeInfo.get(brick.getServerId()) != null) {
                     brickProperties.setConfirmedFreeSize(
                             localVolumeInfo.get(brick.getServerId())
                                     .getAvailableThinSizeForDevice(brickProperties.getDevice())
