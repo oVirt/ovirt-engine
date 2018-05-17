@@ -63,6 +63,10 @@ public class OvfVmWriter extends OvfOvirtWriter {
             _writer.writeElement(ORIGINAL_TEMPLATE_NAME, vm.getOriginalTemplateName());
         }
 
+        if (vm.getCpuPinning() != null) {
+            _writer.writeElement(CPU_PINNING, vm.getCpuPinning());
+        }
+
         _writer.writeElement(USE_HOST_CPU, String.valueOf(vm.isUseHostCpuFlags()));
         _writer.writeElement(USE_LATEST_VERSION, String.valueOf(vm.isUseLatestVersion()));
 

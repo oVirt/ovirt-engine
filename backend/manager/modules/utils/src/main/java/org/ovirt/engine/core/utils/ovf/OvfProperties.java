@@ -92,6 +92,7 @@ public interface OvfProperties {
     String BOOT_TIME = "BootTime";
     String DOWNTIME = "Downtime";
     String ENGINE_XML = "EngineXml";
+    String CPU_PINNING = "CpuPinning";
 
     // Luns
     String LUN_ID = "lun_id";

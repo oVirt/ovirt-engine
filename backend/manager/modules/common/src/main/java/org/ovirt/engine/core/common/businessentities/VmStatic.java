@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
-import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
@@ -24,7 +23,6 @@ public class VmStatic extends VmBase {
     private Guid originalTemplateGuid;
 
     @EditableVmField
-    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String cpuPinning;
 

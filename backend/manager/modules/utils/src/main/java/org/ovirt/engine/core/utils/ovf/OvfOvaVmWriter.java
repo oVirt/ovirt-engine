@@ -57,6 +57,10 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
             _writer.writeElement(BOOT_TIME, OvfParser.localDateToUtcDateString(vm.getBootTime()));
             _writer.writeElement(DOWNTIME, String.valueOf(vm.getDowntime()));
         }
+
+        if (vm.getCpuPinning() != null) {
+            _writer.writeElement(CPU_PINNING, vm.getCpuPinning());
+        }
     }
 
     @Override

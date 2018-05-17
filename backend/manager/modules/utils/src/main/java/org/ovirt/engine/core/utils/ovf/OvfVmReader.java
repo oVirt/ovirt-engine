@@ -53,7 +53,8 @@ public class OvfVmReader extends OvfOvirtReader {
         consumeReadProperty(content, INSTANCE_TYPE_ID, val -> _vm.setInstanceTypeId(new Guid(val)));
         consumeReadProperty(content, IMAGE_TYPE_ID, val -> _vm.setImageTypeId(new Guid(val)));
         consumeReadProperty(content, IS_INITIALIZED, val -> _vm.setInitialized(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, QUOTA_ID, val -> _vm.getStaticData().setQuotaId(new Guid(val)));
+        consumeReadProperty(content, QUOTA_ID, val -> _vm.setQuotaId(new Guid(val)));
+        consumeReadProperty(content, CPU_PINNING, _vm::setCpuPinning);
 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a list of all the aliases of the fields that should be logged in
