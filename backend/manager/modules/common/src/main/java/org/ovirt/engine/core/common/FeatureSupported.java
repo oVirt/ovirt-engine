@@ -301,4 +301,13 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, version);
     }
 
+    /**
+     * Checks if BIOS Type configuration supported
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean isBiosTypeSupported(Version version) {
+        return supportedInConfig(ConfigValues.BiosTypeSupported, version);
+    }
+
 }

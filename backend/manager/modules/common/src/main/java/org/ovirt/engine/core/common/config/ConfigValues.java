@@ -1595,6 +1595,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     EnableKASLRDump,
 
+    @TypeConverterAttribute(Boolean.class)
+    BiosTypeSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

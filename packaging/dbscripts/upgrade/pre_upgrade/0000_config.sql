@@ -697,6 +697,10 @@ select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
 select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'true', '4.3');
 
+-- BIOS Type
+select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'false', '4.2');
+select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4.3');
+
 -- engine-backup
 -- not in ConfigValues enum, used on python side, do not delete
 select fn_db_add_config_value('DbJustRestored','0','general');
