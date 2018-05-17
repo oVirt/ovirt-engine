@@ -3607,7 +3607,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The given emulated machine contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.', '+' are allowed.")
     String ACTION_TYPE_FAILED_EMULATED_MACHINE_MAY_NOT_CONTAIN_SPECIAL_CHARS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The given CPU name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.', '+' are allowed.")
+    @DefaultStringValue("Cannot ${action} ${type}. The given CPU name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.', '+', ',' are allowed.")
     String ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS();
 
     @DefaultStringValue("$detailMessage it did not match positive affinity rules ${affinityRules}")

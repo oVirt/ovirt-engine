@@ -888,6 +888,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Name can contain only alphanumeric, '.', '_', '+' or '-' characters.")
     String I18NExtraNameOrNoneValidation();
 
+    @DefaultStringValue("CPU name can contain only alphanumeric, '.', '_', '+', '-' or ',' characters.")
+    String cpuNameValidation();
+
     @DefaultStringValue("UTF characters are not allowed.")
     String nonUtfValidationMsg();
 

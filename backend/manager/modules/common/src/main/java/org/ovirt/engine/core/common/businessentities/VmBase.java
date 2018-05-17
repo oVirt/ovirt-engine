@@ -142,8 +142,11 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     @EditableOnVmStatusField
     @EditableOnTemplate
     @Size(max = BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)
-    @ValidI18NExtraName(message = "ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
-            groups = { CreateEntity.class, UpdateEntity.class })
+
+    @Pattern(regexp = ValidationUtils.CUSTOM_CPU_NAME,
+            flags = {Pattern.Flag.CASE_INSENSITIVE}, message = "ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
+            groups = { CreateEntity.class, UpdateEntity.class }
+    )
     private String customCpuName; // overrides cluster cpu. (holds the actual vdsVerb)
 
     @CopyOnNewVersion
