@@ -1337,10 +1337,15 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         hostSetupNetworksParametersData.setNetworkIdToExistingAttachmentId(networkIdToExistingAttachmentId);
     }
 
+    public boolean isVfsMapEmpty() {
+        return vfMap.isEmpty();
+    }
+
     @Override
     public void cleanup() {
         cleanupEvents(getNicsChangedEvent(),
-                getOperationCandidateEvent());
+                getOperationCandidateEvent(),
+                getLldpChangedEvent());
         super.cleanup();
     }
 }

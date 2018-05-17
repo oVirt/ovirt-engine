@@ -360,6 +360,9 @@
                                                           label="{constants.showVfLabel}"
                                                           usePatternFly="true"/>
                         </b:Column>
+                        <b:Column size="SM_1">
+                            <d:InfoIcon ui:field="showVfInfo"/>
+                        </b:Column>
                     </b:Row>
                 </g:FlowPanel>
             </b:Container>

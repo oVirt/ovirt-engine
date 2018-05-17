@@ -104,6 +104,9 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @UiField
     ScrollPanel nicScrollPanel;
 
+    @UiField(provided = true)
+    InfoIcon showVfInfo;
+
     private final Driver driver = GWT.create(Driver.class);
     private final EventBus eventBus;
 
@@ -126,6 +129,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()));
         checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()));
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()));
+        showVfInfo = new InfoIcon(templates.italicText(constants.showVfInfo()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initStatusPanel();
@@ -177,6 +181,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
             nicScrollPanel.setVerticalScrollPosition(scrollPosition);
             // mark as rendered
             rendered = true;
+            showVf.setVisible(!uicommonModel.isVfsMapEmpty());
+            showVfInfo.setVisible(!uicommonModel.isVfsMapEmpty());
         });
 
         uicommonModel.getOperationCandidateEvent().addListener((ev, sender, args) -> {
