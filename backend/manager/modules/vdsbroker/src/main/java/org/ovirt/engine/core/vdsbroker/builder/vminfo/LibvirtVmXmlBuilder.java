@@ -340,7 +340,7 @@ public class LibvirtVmXmlBuilder {
             default:
                 String[] typeAndFlags = cpuType.split(",");
                 writer.writeElement("model", typeAndFlags[0]);
-                writeFlags(typeAndFlags);
+                writeCpuFlags(typeAndFlags);
                 break;
             }
             break;
@@ -349,7 +349,7 @@ public class LibvirtVmXmlBuilder {
             // needs to be lowercase for libvirt
             String[] typeAndFlags = cpuType.split(",");
             writer.writeElement("model", typeAndFlags[0].toLowerCase());
-            writeFlags(typeAndFlags);
+            writeCpuFlags(typeAndFlags);
         }
 
         if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
@@ -381,28 +381,22 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeFlags(String[] typeAndFlags) {
-        Stream.of(typeAndFlags).skip(1).forEach(flag -> {
-            if (StringUtils.isNotEmpty(flag)) {
-                String policy = null;
-                if (flag.startsWith("+")) {
-                    policy = "require";
-                } else if (flag.startsWith("-")) {
-                    policy = "disable";
-                }
-
-                String actualFlag = flag;
-                writer.writeStartElement("feature");
-                if (StringUtils.isNotEmpty(policy)) {
-                    writer.writeAttributeString("policy", policy);
-                    // remove the +/- since it is not part of the name of the flag
-                    actualFlag = flag.substring(1);
-                }
-
-                writer.writeAttributeString("name", actualFlag);
-                writer.writeEndElement();
+    private void writeCpuFlags(String[] typeAndFlags) {
+        Stream.of(typeAndFlags).skip(1).filter(StringUtils::isNotEmpty).forEach(flag -> {
+            writer.writeStartElement("feature");
+            switch(flag.charAt(0)) {
+            case '+':
+                writer.writeAttributeString("name", flag.substring(1));
+                writer.writeAttributeString("policy", "require");
+                break;
+            case '-':
+                writer.writeAttributeString("name", flag.substring(1));
+                writer.writeAttributeString("policy", "disable");
+                break;
+            default:
+                writer.writeAttributeString("name", flag);
             }
-
+            writer.writeEndElement();
         });
     }
 
