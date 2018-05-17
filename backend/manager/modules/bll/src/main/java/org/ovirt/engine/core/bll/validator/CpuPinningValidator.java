@@ -36,12 +36,11 @@ public class CpuPinningValidator {
      * @return if the given cpuPinning is valid
      */
     public static ValidationResult isCpuPinningValid(final String cpuPinning, VmStatic vmStatic) {
-
         if (StringUtils.isEmpty(cpuPinning)) {
             return ValidationResult.VALID;
         }
 
-        if (!CpuPinningValidator.isValidCpuPinningSyntax(cpuPinning)) {
+        if (!isValidCpuPinningSyntax(cpuPinning)) {
             return new ValidationResult(EngineMessage.VM_PINNING_FORMAT_INVALID);
         }
 
