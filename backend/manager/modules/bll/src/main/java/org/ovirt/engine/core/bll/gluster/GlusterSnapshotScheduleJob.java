@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -23,6 +22,7 @@ import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,22 +33,27 @@ public class GlusterSnapshotScheduleJob implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(GlusterSnapshotScheduleJob.class);
 
-    @Inject
-    private GlusterAuditLogUtil logUtil;
+    private final GlusterAuditLogUtil logUtil;
 
-    @Inject
-    private GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
+    private final GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
 
-    @Inject
-    private GlusterVolumeDao glusterVolumeDao;
+    private final GlusterVolumeDao glusterVolumeDao;
 
-    @Inject
-    private BackendInternal backend;
+    private final BackendInternal backend;
 
-    @Inject
-    private GlusterUtil glusterUtil;
+    private final GlusterUtil glusterUtil;
 
     public GlusterSnapshotScheduleJob() {
+        super();
+        // The @Inject annotation does not work when the GlusterSnapshotScheduleJob
+        // is instantiated as part of Quartz trigger - even when the class passed to
+        // quartz is instantiated using Injector.injectMembers.
+        // TBD - change when quartz classes use CDI too
+        backend = Injector.get(BackendInternal.class);
+        glusterVolumeDao = Injector.get(GlusterVolumeDao.class);
+        glusterUtil = Injector.get(GlusterUtil.class);
+        glusterVolumeSnapshotScheduleDao = Injector.get(GlusterVolumeSnapshotScheduleDao.class);
+        logUtil = Injector.get(GlusterAuditLogUtil.class);
     }
 
     @OnTimerMethodAnnotation("onTimer")
