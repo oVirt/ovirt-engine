@@ -1430,6 +1430,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String warningLowSpaceIndicatorUnits();
 
+    String warningLowConfirmedSpaceIndicatorUnits();
+
     String criticalSpaceActionBlockerUnits();
 
     String warningLowSpaceIndicator();

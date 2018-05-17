@@ -73,6 +73,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         props.remove("wipeAfterDelete");
         props.remove("discardAfterDelete");
         props.remove("warningLowSpaceIndicator");
+        props.remove("warningLowConfirmedSpaceIndicator");
         props.remove("criticalSpaceActionBlocker");
         props.remove("backup");
         if (!props.isEmpty()) {

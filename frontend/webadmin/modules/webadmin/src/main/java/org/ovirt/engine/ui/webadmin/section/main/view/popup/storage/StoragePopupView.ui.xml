@@ -104,6 +104,9 @@
                                     <ge:IntegerEntityModelTextBoxEditor ui:field="criticalSpaceActionBlockerEditor" label="{constants.criticalSpaceActionBlockerUnits}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="warningLowConfirmedSpaceIndicatorEditor" label="{constants.warningLowConfirmedSpaceIndicatorUnits}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <e:ListModelListBoxEditor ui:field="formatListEditor" label="{constants.storagePopupFormatTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
