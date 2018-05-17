@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -21,11 +23,13 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -44,6 +48,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
@@ -87,6 +93,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         persistCommandIfNeeded();
         newDiskImage = cloneDiskImage(getDestinationImageId());
         newDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(getDestinationStorageDomainId())));
+        getParameters().setStorageDomainId(getDestinationStorageDomainId());
+        getParameters().setImageId(getDestinationImageId());
+        getParameters().setImageGroupID(getImageGroupId());
         setStoragePoolId(newDiskImage.getStoragePoolId() != null ? newDiskImage.getStoragePoolId()
                 : Guid.Empty);
         getParameters().setStoragePoolId(getStoragePoolId());
@@ -179,8 +188,22 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                     imageDao.update(previousSnapshot.getImage());
                 }
             }
+
+            // Remove the image from the storage
+            runVdsCommand(VDSCommandType.DestroyImage, createDestroyImageParameters());
         }
 
         super.endWithFailure();
+    }
+
+    public DestroyImageVDSCommandParameters createDestroyImageParameters() {
+        StorageDomain storageDomain = storageDomainDao.get(getParameters().getStorageDomainId());
+        return new DestroyImageVDSCommandParameters(getStoragePoolId(),
+                getParameters().getStorageDomainId(),
+                getParameters().getImageGroupID(),
+                Collections.singletonList(getParameters().getImageId()),
+                getDiskImage().isWipeAfterDelete(),
+                storageDomain.getDiscardAfterDelete(),
+                true);
     }
 }
