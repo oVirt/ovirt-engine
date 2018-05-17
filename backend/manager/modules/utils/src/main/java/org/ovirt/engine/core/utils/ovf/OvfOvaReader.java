@@ -64,18 +64,6 @@ public abstract class OvfOvaReader extends OvfReader {
     }
 
     @Override
-    protected void readCpuItem(XmlNode node) {
-        XmlNode virtualQuantity = selectSingleNode(node, "rasd:VirtualQuantity", _xmlNS);
-        if (virtualQuantity != null) {
-            vm.setNumOfSockets(Integer.parseInt(virtualQuantity.innerText));
-            vm.setCpuPerSocket(1);
-            vm.setThreadsPerCpu(1);
-        } else {
-            super.readCpuItem(node);
-        }
-    }
-
-    @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
         return VM_DEFAULT_DISPLAY_TYPE;
     }
