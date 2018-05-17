@@ -52,7 +52,7 @@ def write_disk(ova_path, disk_path, disk_size):
 
     try:
         fd = os.open(ova_path, os.O_RDWR | os.O_DIRECT | os.O_APPEND)
-    except:
+    except OSError:
         fd = os.open(ova_path, os.O_RDWR | os.O_APPEND)
 
     with io.FileIO(fd, "a+", closefd=True) as ova_file:
