@@ -58,7 +58,9 @@ public class MacsUsedAcrossWholeSystem {
                 .map(VM::getId);
 
         Stream<VM> statelessSnapshotsOfRunningVMs =
-                idsOfRunningStatelessVMs.map(snapshotsManager::getVmConfigurationInStatelessSnapshotOfVm)
+                idsOfRunningStatelessVMs
+                        .parallel()
+                        .map(snapshotsManager::getVmConfigurationInStatelessSnapshotOfVm)
                         .filter(Optional::isPresent)
                         .map(Optional::get);
 
