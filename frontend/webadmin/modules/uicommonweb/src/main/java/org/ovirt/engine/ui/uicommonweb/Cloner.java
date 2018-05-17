@@ -410,6 +410,7 @@ public final class Cloner {
         obj.setDiscardAfterDelete(instance.getDiscardAfterDelete());
         obj.setWarningLowSpaceIndicator(instance.getWarningLowSpaceIndicator());
         obj.setCriticalSpaceActionBlocker(instance.getCriticalSpaceActionBlocker());
+        obj.setWarningLowConfirmedSpaceIndicator(instance.getWarningLowConfirmedSpaceIndicator());
         obj.setBackup(instance.isBackup());
 
         return obj;

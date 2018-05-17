@@ -356,6 +356,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 ConstantsManager.getInstance().getMessages().bracketsWithGB(storage.getWarningLowSpaceSize()));
         model.getWarningLowSpaceSize().setIsAvailable(true);
         model.getCriticalSpaceActionBlocker().setEntity(storage.getCriticalSpaceActionBlocker());
+        model.getWarningLowConfirmedSpaceIndicator().setEntity(storage.getWarningLowConfirmedSpaceIndicator());
 
         IStorageModel item = prepareStorageForEdit(storage, model);
 
@@ -1041,6 +1042,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         storageDomainStatic.setDiscardAfterDelete(model.getDiscardAfterDelete().getEntity());
         storageDomainStatic.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator().getEntity());
         storageDomainStatic.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker().getEntity());
+        storageDomainStatic.setWarningLowConfirmedSpaceIndicator(model.getWarningLowConfirmedSpaceIndicator().getEntity());
         storageDomainStatic.setBackup(model.getBackup().getEntity());
     }
 

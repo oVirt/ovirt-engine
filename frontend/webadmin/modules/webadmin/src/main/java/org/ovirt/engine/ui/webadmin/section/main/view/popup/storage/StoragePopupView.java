@@ -105,6 +105,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     IntegerEntityModelTextBoxEditor warningLowSpaceIndicatorEditor;
 
     @UiField
+    @Path(value = "warningLowConfirmedSpaceIndicator.entity")
+    @WithElementId("warningLowConfirmedSpaceIndicatorEditor")
+    IntegerEntityModelTextBoxEditor warningLowConfirmedSpaceIndicatorEditor;
+
+    @UiField
     @Path(value = "warningLowSpaceSize.entity")
     @WithElementId("warningLowSpaceSizeLabel")
     Label warningLowSpaceSizeLabel;

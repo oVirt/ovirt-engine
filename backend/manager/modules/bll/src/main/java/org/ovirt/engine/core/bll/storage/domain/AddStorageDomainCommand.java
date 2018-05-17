@@ -39,7 +39,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -52,8 +51,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
-    @Inject
-    private StoragePoolDao storagePoolDao;
+
 
     protected AddStorageDomainCommand(Guid commandId) {
         super(commandId);
@@ -85,6 +83,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     private void updateSpaceThresholds() {
         if(getStorageDomain().getWarningLowSpaceIndicator() == null) {
             getStorageDomain().setWarningLowSpaceIndicator(Config.<Integer>getValue(ConfigValues.WarningLowSpaceIndicator));
+        }
+        if(getStorageDomain().getWarningLowConfirmedSpaceIndicator() == null) {
+            getStorageDomain().getStorageStaticData().setWarningLowConfirmedSpaceIndicator(
+                    Config.<Integer>getValue(ConfigValues.WarningLowSpaceIndicator));
         }
         if(getStorageDomain().getCriticalSpaceActionBlocker() == null) {
             getStorageDomain().setCriticalSpaceActionBlocker(Config.<Integer>getValue(ConfigValues.CriticalSpaceActionBlocker));

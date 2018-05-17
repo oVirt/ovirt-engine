@@ -213,6 +213,16 @@ public class StorageModel extends Model {
         this.criticalSpaceActionBlocker = criticalSpaceActionBlocker;
     }
 
+    private EntityModel<Integer> warningLowConfirmedSpaceIndicator;
+
+    public EntityModel<Integer> getWarningLowConfirmedSpaceIndicator() {
+        return warningLowConfirmedSpaceIndicator;
+    }
+
+    public void setWarningLowConfirmedSpaceIndicator(EntityModel<Integer> warningLowConfirmedSpaceIndicator) {
+        this.warningLowConfirmedSpaceIndicator = warningLowConfirmedSpaceIndicator;
+    }
+
     private EntityModel<Boolean> activateDomain;
 
     public EntityModel<Boolean> getActivateDomain() {
@@ -277,6 +287,8 @@ public class StorageModel extends Model {
         getWarningLowSpaceSize().setIsAvailable(false);
         setCriticalSpaceActionBlocker(new EntityModel<>());
         getCriticalSpaceActionBlocker().setEntity(getCriticalSpaceThresholdValue());
+        setWarningLowConfirmedSpaceIndicator(new EntityModel<>());
+        getWarningLowConfirmedSpaceIndicator().setEntity(getWarningLowConfirmedSpaceIndicatorValue());
         setActivateDomain(new EntityModel<>(true));
         getActivateDomain().setIsAvailable(false);
         setWipeAfterDelete(new EntityModel<>(false));
@@ -669,6 +681,10 @@ public class StorageModel extends Model {
                 new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE)
         });
 
+        getWarningLowConfirmedSpaceIndicator().validateEntity(new IValidation[]{
+                new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
+        });
+
         validateDiscardAfterDelete();
 
         return getName().getIsValid()
@@ -679,6 +695,7 @@ public class StorageModel extends Model {
                 && getComment().getIsValid()
                 && getWarningLowSpaceIndicator().getIsValid()
                 && getCriticalSpaceActionBlocker().getIsValid()
+                && getWarningLowConfirmedSpaceIndicator().getIsValid()
                 && getDiscardAfterDelete().getIsValid()
                 && getBackup().getIsValid();
     }
@@ -733,6 +750,13 @@ public class StorageModel extends Model {
             return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.CriticalSpaceActionBlocker);
         }
         return getStorage().getCriticalSpaceActionBlocker();
+    }
+
+    private int getWarningLowConfirmedSpaceIndicatorValue() {
+        if (isNewStorage()) {
+            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WarningLowSpaceIndicator);
+        }
+        return getStorage().getWarningLowConfirmedSpaceIndicator();
     }
 
     public void updateCurrentStorageItem() {
