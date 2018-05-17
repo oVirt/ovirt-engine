@@ -218,8 +218,11 @@ public class NewDiskModel extends AbstractDiskModel {
 
     @Override
     protected void updateVolumeType(StorageType storageType) {
-        getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
-        volumeType_SelectedItemChanged();
+        // In case the user didn't select any specific allocation policy, it will be change according to the storage
+        // domain type
+        if (!isUserSelectedVolumeType) {
+            getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
+        }
     }
 
     @Override

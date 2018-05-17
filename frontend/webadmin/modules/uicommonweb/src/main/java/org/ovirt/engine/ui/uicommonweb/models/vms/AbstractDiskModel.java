@@ -83,6 +83,8 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     private SanStorageModelBase sanStorageModelBase;
     private boolean previousIsQuotaAvailable;
+    protected boolean isInStorageDomainUpdate;
+    protected boolean isUserSelectedVolumeType;
 
     private UICommand cancelCommand;
 
@@ -690,6 +692,10 @@ public abstract class AbstractDiskModel extends DiskModel {
             return;
         }
 
+        if (!isInStorageDomainUpdate) {
+            isUserSelectedVolumeType = true;
+        }
+
         VolumeType volumeType = getVolumeType().getSelectedItem();
         StorageType storageType = getStorageDomain().getSelectedItem().getStorageType();
 
@@ -948,7 +954,9 @@ public abstract class AbstractDiskModel extends DiskModel {
     private void storageDomain_SelectedItemChanged() {
         StorageDomain selectedStorage = getStorageDomain().getSelectedItem();
         if (selectedStorage != null) {
+            isInStorageDomainUpdate = true;
             updateVolumeType(selectedStorage.getStorageType());
+            isInStorageDomainUpdate = false;
             if (getIsNew()) {
                 getIsWipeAfterDelete().setEntity(selectedStorage.getWipeAfterDelete());
             }
