@@ -7,7 +7,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 
 public class NetworkQosMapper {
 
-    private static final int MEGABITS_TO_KILOBYTES = 128;
+    // Megabit = 1000 *1000 bits, KiloBytes = 1000 bytes
+    private static final int MEGABITS_TO_KILOBYTES = 125;
     private static final int MEGABYTES_TO_KILOBYTES = 1024;
 
     private final Map<String, Object> map;
