@@ -71,7 +71,10 @@ def nti(s):
 
 
 def extract_disks(ova_path, image_paths):
-    fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
+    try:
+        fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
+    except OSError:
+        fd = os.open(ova_path, os.O_RDONLY)
     buf = mmap.mmap(-1, TAR_BLOCK_SIZE)
     with io.FileIO(fd, "r", closefd=True) as ova_file, \
             closing(buf):
