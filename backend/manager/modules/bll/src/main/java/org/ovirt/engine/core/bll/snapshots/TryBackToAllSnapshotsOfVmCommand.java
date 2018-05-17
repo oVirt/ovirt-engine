@@ -591,7 +591,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           // verify lease storage domain status
           if (getParameters().getDstLeaseDomainId() != null) {
               storageIds.add(getParameters().getDstLeaseDomainId());
-          } else if (getDstSnapshot().getVmConfiguration() != null) {
+          } else if (getDstSnapshot().getVmConfiguration() != null && getParameters().isRestoreLease()) {
               Guid leaseDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
               if (leaseDomainId != null) {
                   storageIds.add(leaseDomainId);
