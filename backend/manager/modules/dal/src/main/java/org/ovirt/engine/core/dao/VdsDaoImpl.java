@@ -230,7 +230,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
 
     @Override
     public List<VDS> listFailedAutorecoverables() {
-        return getCallsHandler().executeReadList("GetFailingVdss", vdsRowMapper, null);
+        return getCallsHandler().executeReadList("GetFailingVdss", vdsRowMapper, getCustomMapSqlParameterSource());
     }
 
     @Override
