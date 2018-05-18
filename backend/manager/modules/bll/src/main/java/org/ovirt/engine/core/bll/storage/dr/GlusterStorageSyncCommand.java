@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
 @NonTransactiveCommandAttribute
@@ -59,6 +60,8 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     private GlusterGeoRepSession geoRepSession;
 
@@ -127,8 +130,9 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
 
     @Override
     protected void endWithFailure() {
+        getParameters().setTaskGroupSuccess(false);
+        setSucceeded(false);
         removeDRSnapshots();
-        super.endWithFailure();
     }
 
     private void removeDRSnapshots() {
@@ -184,14 +188,13 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
         }
         switch (getParameters().getNextStep()) {
         case GEO_REP:
-            GlusterVolumeGeoRepSessionParameters parameters =
-                    new GlusterVolumeGeoRepSessionParameters(getSession().getMasterVolumeId(),
-                            getSession().getId());
-            parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            parameters.setParentCommand(getActionType());
-            parameters.setParentParameters(getParameters());
+            GlusterVolumeGeoRepSessionParameters parameters = getGeoRepParameters();
             getParameters().setNextStep(DRStep.REMOVE_TMP_SNAPSHOTS);
-            runInternalActionWithTasksContext(ActionType.GlusterStorageGeoRepSyncInternal, parameters);
+            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(ActionType.GlusterStorageGeoRepSyncInternal, parameters);
+            if (!vdcRetValue.getSucceeded()) {
+                auditLogDirector.log(this, AuditLogType.GLUSTER_VOLUME_GEO_REP_START_FAILED_EXCEPTION);
+                endWithFailure();
+            }
             persistCommandIfNeeded();
             break;
         case REMOVE_TMP_SNAPSHOTS:
@@ -201,6 +204,16 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
             break;
         }
         return true;
+    }
+
+    private GlusterVolumeGeoRepSessionParameters getGeoRepParameters() {
+        GlusterVolumeGeoRepSessionParameters parameters =
+                new GlusterVolumeGeoRepSessionParameters(getSession().getMasterVolumeId(),
+                        getSession().getId());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        return parameters;
     }
 
     @Override
