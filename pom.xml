@@ -598,6 +598,19 @@
                                 <ignore/>
                             </action>
                         </pluginExecution>
+                        <pluginExecution>
+                            <pluginExecutionFilter>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>javacc-maven-plugin</artifactId>
+                                <versionRange>[${javacc.version},)</versionRange>
+                                <goals>
+                                    <goal>javacc</goal>
+                                </goals>
+                            </pluginExecutionFilter>
+                            <action>
+                                <execute />
+                            </action>
+                        </pluginExecution>
                     </pluginExecutions>
                 </lifecycleMappingMetadata>
             </configuration>
