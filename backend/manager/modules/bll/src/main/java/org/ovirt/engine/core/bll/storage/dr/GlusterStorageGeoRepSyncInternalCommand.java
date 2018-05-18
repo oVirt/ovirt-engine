@@ -23,6 +23,8 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionPar
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
@@ -68,12 +70,13 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
             try {
                 result = geoRepCmd.get();
                 if (!result.getSucceeded()) {
-                    propagateFailure(result);
-                    return;
+                    handleFailure(result);
+                    throw new EngineException(EngineError.GlusterVolumeGeoRepSessionStartFailed, "Failed to start geo-replication session!");
                 }
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Exception", e);
-                return;
+                handleFailure(null);
+                throw new EngineException(EngineError.GlusterVolumeGeoRepSessionStartFailed, "Failed to start geo-replication session!");
             }
         }
 
@@ -85,10 +88,18 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
                         GlusterConstants.GEOREP_CHECKPOINT_VALUE);
         ActionReturnValue result = runInternalAction(ActionType.SetGeoRepConfig, configParams);
         if (!result.getSucceeded()) {
-            propagateFailure(result);
+            handleFailure(result);
             return;
         }
         setSucceeded(true);
+    }
+
+    private void handleFailure(ActionReturnValue result) {
+        if (result != null) {
+            propagateFailure(result);
+        }
+        setSucceeded(false);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
     }
 
     @Override
