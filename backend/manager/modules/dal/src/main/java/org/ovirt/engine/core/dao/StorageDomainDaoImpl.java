@@ -196,7 +196,9 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
 
     @Override
     public List<StorageDomain> listFailedAutorecoverables() {
-        return getCallsHandler().executeReadList("GetFailingStorage_domains", storageDomainRowMapper, null);
+        return getCallsHandler().executeReadList("GetFailingStorage_domains",
+                storageDomainRowMapper,
+                getCustomMapSqlParameterSource());
     }
 
     @Override
