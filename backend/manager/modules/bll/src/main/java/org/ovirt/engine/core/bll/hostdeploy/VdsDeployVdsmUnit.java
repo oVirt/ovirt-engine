@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -25,6 +26,12 @@ import org.slf4j.LoggerFactory;
 public class VdsDeployVdsmUnit implements VdsDeployUnit {
 
     private static final Logger log = LoggerFactory.getLogger(VdsDeployVdsmUnit.class);
+
+    private Version clusterVersion;
+
+    public VdsDeployVdsmUnit(Version clusterVersion) {
+        this.clusterVersion = clusterVersion;
+    }
 
     private void handleNodeType(String nodeType, VDSType hostType) throws Exception {
         if ((Boolean) _deploy.getParser().cliEnvironmentGet(nodeType)) {
@@ -57,6 +64,18 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
                 ),
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString()
             );
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
+            if (Version.v4_1.lessOrEquals(clusterVersion)) {
+                _deploy.getParser().cliEnvironmentSet(
+                        String.format(
+                                "%svars/ssl_excludes",
+                                VdsmEnv.CONFIG_PREFIX
+                        ),
+                        "OP_NO_TLSv1,OP_NO_TLSv1_1"
+                );
+            }
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
