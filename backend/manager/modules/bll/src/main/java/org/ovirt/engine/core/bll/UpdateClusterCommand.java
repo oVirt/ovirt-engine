@@ -629,14 +629,14 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 if (!VersionSupport.checkClusterVersionSupported(
                         getCluster().getCompatibilityVersion(), vds)) {
                     result = false;
-                    addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
-                    break;
+                    addValidationMessageVariable("host", vds.getName());
+                    return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
                 } else if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
-                    addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
-                    result = false;
-                    break;
+                    addValidationMessageVariable("host", vds.getName());
+                    return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
                 }
                 if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
+                    addValidationMessageVariable("host", vds.getName());
                     return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
                 }
             }
