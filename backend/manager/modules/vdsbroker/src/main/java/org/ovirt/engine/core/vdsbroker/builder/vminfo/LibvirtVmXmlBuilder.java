@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.updateVmDevicesBootOrder;
-import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.ioTuneListFrom;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.ioTuneMapFrom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1664,7 +1664,7 @@ public class LibvirtVmXmlBuilder {
             return;
         }
         writer.writeStartElement("iotune");
-        ioTuneListFrom(storageQos).forEach(pair -> writer.writeElement(pair.getFirst(), pair.getSecond().toString()));
+        ioTuneMapFrom(storageQos).forEach((key, val) -> writer.writeElement(key, val.toString()));
         writer.writeEndElement();
     }
 
