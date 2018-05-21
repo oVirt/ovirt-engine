@@ -149,10 +149,6 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         dropdownButton.addClickHandler(event -> listPanel.scrollToSelected());
     }
 
-    public void setDropdownWidth(String width) {
-        listPanel.setWidth(width);
-    }
-
     public void setDropdownHeight(String height) {
         listPanel.getElement().getStyle().setProperty("maxHeight", height); //$NON-NLS-1$
     }
@@ -276,10 +272,6 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
 
     public void setChanging(boolean value) {
         changing = value;
-    }
-
-    public boolean getChaging() {
-        return changing;
     }
 
     @Override
