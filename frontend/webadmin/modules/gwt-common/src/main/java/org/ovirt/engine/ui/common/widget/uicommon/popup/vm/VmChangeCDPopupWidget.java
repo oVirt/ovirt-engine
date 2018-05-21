@@ -54,6 +54,7 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
                 return object.getRepoImageName();
             }
         });
+        isoImageEditor.asListBox().setDropdownHeight("300px"); //$NON-NLS-1$
     }
 
     @Override
