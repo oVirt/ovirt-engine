@@ -153,6 +153,10 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         listPanel.setWidth(width);
     }
 
+    public void setDropdownHeight(String height) {
+        listPanel.getElement().getStyle().setProperty("maxHeight", height); //$NON-NLS-1$
+    }
+
     protected UnorderedListPanel getListPanel() {
         return new UnorderedListPanel();
     }
