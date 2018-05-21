@@ -124,9 +124,11 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             T parameters = getParameters();
             deploy.setCorrelationId(getCorrelationId());
 
+            Cluster hostCluster = clusterDao.get(getClusterId());
+
             deploy.addUnit(
                 new VdsDeployMiscUnit(),
-                new VdsDeployVdsmUnit(),
+                new VdsDeployVdsmUnit(hostCluster.getCompatibilityVersion()),
                 new VdsDeployPKIUnit(),
                 new VdsDeployKdumpUnit(),
                 new VdsDeployKernelUnit()
@@ -146,7 +148,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 }
             }
 
-            Cluster hostCluster = clusterDao.get(getClusterId());
             FirewallType hostFirewallType = hostCluster.getFirewallType();
             if (parameters.getOverrideFirewall()) {
                 switch (getVds().getVdsType()) {
