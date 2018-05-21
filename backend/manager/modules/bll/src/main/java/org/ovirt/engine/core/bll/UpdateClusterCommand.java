@@ -596,12 +596,15 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         for (VDS vds : upVdss) {
             if (!VersionSupport.checkClusterVersionSupported(
                     getCluster().getCompatibilityVersion(), vds)) {
+                addValidationMessageVariable("host", vds.getName());
                 return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
             }
             if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
+                addValidationMessageVariable("host", vds.getName());
                 return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
             }
             if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
+                addValidationMessageVariable("host", vds.getName());
                 return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
             }
         }
