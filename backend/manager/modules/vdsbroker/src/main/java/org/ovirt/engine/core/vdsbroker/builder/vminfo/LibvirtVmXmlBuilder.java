@@ -1686,7 +1686,7 @@ public class LibvirtVmXmlBuilder {
             return;
         }
         writer.writeStartElement("iotune");
-        ioTuneListFrom(storageQos).forEach(pair -> writer.writeAttributeString(pair.getFirst(), pair.getSecond().toString()));
+        ioTuneListFrom(storageQos).forEach(pair -> writer.writeElement(pair.getFirst(), pair.getSecond().toString()));
         writer.writeEndElement();
     }
 
