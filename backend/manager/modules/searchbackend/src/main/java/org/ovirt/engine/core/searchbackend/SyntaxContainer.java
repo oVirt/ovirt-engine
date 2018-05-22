@@ -20,9 +20,16 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     private long searchFrom = 0;
     private boolean caseSensitive=true;
 
+    /**
+     * Some of the searches needs to combine view table which holds tags.
+     * For a search on users it is even more than tags, it is also VMs, because the view contains
+     * also a foreign vm_guid that belongs to a user. This is to support searching for both tags and/or vms
+     * on a certain user. Infact the name vdc_users_with_tags is a bit misleading.
+     * @return
+     */
     public boolean isSearchUsingTags() {
         return origText.contains("tag")
-                || (getSearchObjectStr() != null && getSearchObjectStr().equals(SearchObjects.VDC_USER_OBJ_NAME))
+                || isUserSearchUsingTags()
                 || getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)
                 || getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
     }
@@ -261,5 +268,11 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     @Override
     public Iterator<SyntaxObject> iterator() {
         return objList.iterator();
+    }
+
+
+    private boolean isUserSearchUsingTags() {
+        return SearchObjects.VDC_USER_OBJ_NAME.equals(getSearchObjectStr())
+                && origText.contains("vm");
     }
 }
