@@ -246,22 +246,34 @@ public class SyntaxCheckerTest {
     @Test
     public void testUser() {
         testValidSql("User:",
-                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT distinct vdc_users.* FROM  vdc_users  )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
 
         testValidSql("User: host.name=\"host1\"",
-                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   LEFT OUTER JOIN vms_with_tags ON vdc_users_with_tags.vm_guid=vms_with_tags.vm_guid    LEFT OUTER JOIN vds_with_tags ON vms_with_tags.run_on_vds=vds_with_tags.vds_id    WHERE  vds_with_tags.vds_name LIKE host1 ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT distinct vdc_users.* FROM  vdc_users   LEFT OUTER JOIN vms_with_tags ON vdc_users.vm_guid=vms_with_tags.vm_guid    LEFT OUTER JOIN vds_with_tags ON vms.run_on_vds=vds_with_tags.vds_id    WHERE  vds_with_tags.vds_name LIKE host1 )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
     public void testUsers() {
         testValidSql("Users:",
-                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT distinct vdc_users.* FROM  vdc_users  )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
     public void testUsersTypeUser() {
         testValidSql("Users:type=user",
-                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   WHERE  vdc_users.user_group = user ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT distinct vdc_users.* FROM  vdc_users   WHERE  vdc_users.user_group = user )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
+    public void testUsersWithTags() {
+        testValidSql("Users:type=user tag=foo",
+                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   WHERE  vdc_users.user_group = user  AND  vdc_users_with_tags.tag_name IN ('tag1','all') ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
+    public void testUsersWithVms() {
+        testValidSql("Users:type=user vm.id=foo",
+                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   LEFT OUTER JOIN vms_with_tags ON vdc_users_with_tags.vm_guid=vms_with_tags.vm_guid    WHERE  vdc_users.user_group = user  AND  vms_with_tags.vm_guid = foo ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test

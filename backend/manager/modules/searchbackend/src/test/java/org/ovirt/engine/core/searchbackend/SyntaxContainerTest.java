@@ -26,11 +26,11 @@ public class SyntaxContainerTest {
     @Parameterized.Parameters
     public static Collection<Object[]> searchTexts() {
         return Arrays.asList(new Object[][]{
-                {USING_TAGS, "Users: type=user"},
-                {USING_TAGS, "Users: type=group"},
                 {USING_TAGS, "Users: type=user and vm.id=12345678-1234-1234-1234-1234-123456789012"},
                 {USING_TAGS, "Users: type=user and tag = foo"},
                 {USING_TAGS, "Hosts: tag=foo"},
+                {NOT_USING_TAGS, "Users: type=user"},
+                {NOT_USING_TAGS, "Users: type=group"},
                 {NOT_USING_TAGS, "Hosts:"},
                 {NOT_USING_TAGS, "Vms:"},
                 {NOT_USING_TAGS, "Datacenters:"},
