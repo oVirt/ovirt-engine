@@ -2,45 +2,32 @@
 
 == Overview
 
-ovirt-engine supports a manual package for context sensitive help within the
-application. Manual package is not provided by base package and should be
-added externally.
+ovirt-engine supports installing an additional documentation and context-sensitive
+help package. Only simple static HTML (including images and CSS) are supported.
+The files are be served by DocsServlet.
 
 == Preparations
 
-Provided the manual package name is `DOC_PACKAGE` the following steps should
-be followed.
-
-. Prepare manual which are static html files.
-
-. Create manual configuration file at manual.properties within root of
-  manual and create lookup index files to map between help tag and URI,
-  see format below.
+Using a docs package name of `DOC_PACKAGE` consisting of static HTML:
 
 . Package manual pages at `DOC_PACKAGE` to be installed into filesystem, for
   example:
 
-  /usr/share/doc/DOC_PACKAGE/manual
+  /usr/share/doc/DOC_PACKAGE/manual/LOCALE
 
-. Tell engine where manual is, for example,
-  `/etc/ovirt-engine/engine.conf.d/20-DOC_PACKAGE.conf`:
+  Locales are supported, so you can have English content in /en-US and Spanish
+  in /es-ES, for example.
+
+. Set ENGINE_MANUAL for ovirt-engine:
+  `/etc/ovirt-engine/engine.conf.d/10-DOC_PACKAGE.conf`:
 
   ENGINE_MANUAL="/usr/share/doc/DOC_PACKAGE/manual"
 
-== Manual configuration file
+. Create a JSON mapping file. In /usr/share/doc/DOC_PACKAGE/manual/LOCALE, create
+  csh.conf.d/10-webadmin-LOCALE.json for each locale you want to support.
 
-ovirt-engine will read the `manual.properties` located at the root of
-the manual content.
-
-The format of this file is:
-
-  helptags.webadmin = [index1.json[, index2.json[, ....]]]
-
-The value is list of json files relative to configuration file that map between
-help tag and URI. Their content is merged left to right, last wins.
-
-The format of index mapping file is a JSON object. Key is help tag and value
-is uri relative to the package, for example:
+  The JSON is a simple mapping from dialog 'helptag' (see the code in various
+  models) to URL:
 
 [source,json]
 ----
@@ -49,6 +36,3 @@ is uri relative to the package, for example:
   "delete_vm": "delvm.html",
 }
 ----
-
-The index file can be generated out of source code or compared to source
-code using `build/helptag.py` tool available within engine source repository.
