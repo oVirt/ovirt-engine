@@ -29,13 +29,12 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
 
     protected Map<String, Object> createParametersStruct() {
         Map<String, Object> struct = new HashMap<>();
-
         struct.put(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
-        struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
         if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
             struct.put(VdsProperties.engineXml, generateDomainXml());
+        } else {
+            struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
         }
-
         return struct;
     }
 
