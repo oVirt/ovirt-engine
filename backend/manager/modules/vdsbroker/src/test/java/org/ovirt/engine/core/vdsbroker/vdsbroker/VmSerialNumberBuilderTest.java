@@ -1,24 +1,31 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
 
-@ExtendWith(MockConfigExtension.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmSerialNumberBuilderTest {
 
     private static final Guid VM_ID = Guid.newGuid();
@@ -26,9 +33,14 @@ public class VmSerialNumberBuilderTest {
     private static final String CUSTOM_CUSTER_SERIAL = "custom CLUSTER serial";
     private static final String CUSTOM_CONFIG_SERIAL = "custom CONFIG serial";
 
+    @Mock
+    private ClusterDao clusterDao;
+
+    @InjectMocks
+    private VmSerialNumberBuilder vmSerialNumberBuilder;
+
     VM vm;
     Cluster cluster;
-    Map<String, Object> creationInfo;
 
     @BeforeEach
     public void setUp() {
@@ -36,7 +48,7 @@ public class VmSerialNumberBuilderTest {
         vm.setId(VM_ID);
 
         cluster = new Cluster();
-        creationInfo = new HashMap<>();
+        when(clusterDao.get(any())).thenReturn(cluster);
     }
 
     @Test
@@ -127,9 +139,7 @@ public class VmSerialNumberBuilderTest {
     }
 
     private void assertSerialNumber(String serialNumber) {
-        new VmSerialNumberBuilder(vm, cluster, creationInfo).buildVmSerialNumber();
-
-        assertEquals(serialNumber, creationInfo.get(VdsProperties.SERIAL_NUMBER));
+        assertEquals(serialNumber, vmSerialNumberBuilder.buildVmSerialNumber(vm));
     }
 
     private void setupVmWithSerialNumber(SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {

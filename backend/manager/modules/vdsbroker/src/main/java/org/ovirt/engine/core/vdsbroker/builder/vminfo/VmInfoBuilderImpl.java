@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -48,7 +47,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -72,7 +70,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     private final VmInfoBuildUtils vmInfoBuildUtils;
     private final VmDeviceDao vmDeviceDao;
-    private final ClusterDao clusterDao;
+    private final VmSerialNumberBuilder vmSerialNumberBuilder;
 
     private final List<Map<String, Object>> devices = new ArrayList<>();
     private final Map<String, Object> createInfo;
@@ -81,23 +79,21 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     private OsRepository osRepository;
     private List<VmDevice> bootableDevices = null;
     private Guid vdsId;
-    private Cluster cluster;
     private int numOfReservedScsiIndexes = 0;
 
     VmInfoBuilderImpl(
             VM vm,
             Guid vdsId,
             Map<String, Object> createInfo,
-            ClusterDao clusterDao,
             NetworkDao networkDao,
             VmDeviceDao vmDeviceDao,
             VmInfoBuildUtils vmInfoBuildUtils,
+            VmSerialNumberBuilder vmSerialNumberBuilder,
             OsRepository osRepository) {
-        this.clusterDao = Objects.requireNonNull(clusterDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
         this.osRepository = Objects.requireNonNull(osRepository);
-
+        this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
         this.vdsId = vdsId;
         this.vm = vm;
         this.createInfo = createInfo;
@@ -757,7 +753,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmSerialNumber() {
-        new VmSerialNumberBuilder(vm, getCluster(), createInfo).buildVmSerialNumber();
+        String serialNumber = vmSerialNumberBuilder.buildVmSerialNumber(vm);
+        if (serialNumber != null) {
+            createInfo.put(VdsProperties.SERIAL_NUMBER, serialNumber);
+        }
     }
 
     @Override
@@ -1043,13 +1042,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     private void logUnsupportedInterfaceType() {
         log.error("Unsupported interface type, ISCSI interface type is not supported.");
-    }
-
-    private Cluster getCluster() {
-        if (cluster == null) {
-            cluster = clusterDao.get(vm.getClusterId());
-        }
-        return cluster;
     }
 
     /**

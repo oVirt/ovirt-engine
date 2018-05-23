@@ -19,24 +19,27 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
 
 @ExtendWith(MockitoExtension.class)
 public class VmInfoBuilderFactoryTest {
 
     @Mock
-    private  ClusterDao clusterDao;
+    private ClusterDao clusterDao;
     @Mock
-    private  NetworkClusterDao networkClusterDao;
+    private NetworkClusterDao networkClusterDao;
     @Mock
-    private  NetworkDao networkDao;
+    private NetworkDao networkDao;
     @Mock
-    private  VdsNumaNodeDao vdsNumaNodeDao;
+    private VdsNumaNodeDao vdsNumaNodeDao;
     @Mock
-    private  VmDeviceDao vmDeviceDao;
+    private VmDeviceDao vmDeviceDao;
     @Mock
-    private  VmNumaNodeDao vmNumaNodeDao;
+    private VmNumaNodeDao vmNumaNodeDao;
     @Mock
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Mock
+    private VmSerialNumberBuilder vmSerialNumberBuilder;
     @Mock
     private OsRepository osRepository;
 

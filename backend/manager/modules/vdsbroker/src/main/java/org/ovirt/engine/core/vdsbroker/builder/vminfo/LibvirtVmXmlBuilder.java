@@ -474,7 +474,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "serial");
-        writer.writeRaw("HOST-SERIAL:");
+        writer.writeRaw(vmInfoBuildUtils.getVmSerialNumber(vm, "HOST-SERIAL:"));
         writer.writeEndElement();
 
         writer.writeStartElement("entry");
