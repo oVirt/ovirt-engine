@@ -24,8 +24,8 @@ import time
 
 from async_tasks_map import ASYNC_TASKS_MAP
 
-from otopi import constants as otopicons
 from otopi import base
+from otopi import constants as otopicons
 from otopi import plugin
 from otopi import util
 

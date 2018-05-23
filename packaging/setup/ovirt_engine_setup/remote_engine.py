@@ -25,8 +25,8 @@ from M2Crypto import EVP
 from M2Crypto import RSA
 from M2Crypto import X509
 
-from otopi import constants as otopicons
 from otopi import base
+from otopi import constants as otopicons
 from otopi import filetransaction
 from otopi import util
 

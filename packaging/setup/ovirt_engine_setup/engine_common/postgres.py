@@ -25,8 +25,8 @@ import re
 import shutil
 import time
 
-from otopi import constants as otopicons
 from otopi import base
+from otopi import constants as otopicons
 from otopi import filetransaction
 from otopi import transaction
 from otopi import util

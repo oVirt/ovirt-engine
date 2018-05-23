@@ -24,8 +24,6 @@ import gettext
 import os
 import time
 
-from six.moves.urllib.request import urlopen
-
 from otopi import constants as otopicons
 from otopi import filetransaction
 from otopi import plugin
@@ -36,6 +34,8 @@ from ovirt_engine_setup import remote_engine
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.websocket_proxy import constants as owspcons
+
+from six.moves.urllib.request import urlopen
 
 
 def _(m):

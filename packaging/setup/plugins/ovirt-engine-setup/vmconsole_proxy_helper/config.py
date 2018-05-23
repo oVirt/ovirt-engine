@@ -30,8 +30,8 @@ from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
 
-from ovirt_setup_lib import hostname as osetuphostname
 from ovirt_setup_lib import dialog
+from ovirt_setup_lib import hostname as osetuphostname
 
 
 def _(m):
