@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
@@ -7,10 +9,14 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.VmSessionResource;
 import org.ovirt.engine.api.resource.VmSessionsResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
+import org.ovirt.engine.api.resource.aaa.UsersResource;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUserResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.api.rsdl.ServiceTree;
+import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
@@ -100,10 +106,24 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
 
         // Map the database user to model user:
         if (entity != null) {
-            User user = BackendApiResource.getInstance()
-                .getUsersResource()
-                .getUserResource(entity.getId().toString())
-                .get();
+            User user = null;
+            try {
+                user = BackendApiResource.getInstance()
+                    .getUsersResource()
+                    .getUserResource(entity.getId().toString())
+                    .get();
+            } catch (WebApplicationException e) {
+                //in case of failure settle for providing a link to the user
+                //and not the user information (better practice anyway, but
+                //won't be changed due to backwards compatibility).
+                //
+                //An example of a failure is when this query is run by a non-admin
+                //user. The list of users returned will be filtered and thus empty.
+                //
+                //(https://bugzilla.redhat.com/1568669)
+                addLinkToUser(session);
+                return;
+            }
             /**
              * TODO: It's enough to set user ID and href, we don't have to set also domain, please consider this
              * when moving to API version 5.
@@ -115,6 +135,12 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
                 session.getUser().getDomain().setHref(user.getDomain().getHref());
             }
         }
+    }
+
+    private void addLinkToUser(Session session) {
+         ServiceTreeNode node = ServiceTree.getNode(UsersResource.class);
+         String href = CurrentManager.get().getAbsolutePath(node.getPath(), session.getUser().getId());
+         session.getUser().setHref(href);
     }
 
     private BackendUserResource getUserResource() {
