@@ -287,17 +287,6 @@ class Const(object):
     EXIT_CODE_PROVISIONING_NOT_SUPPORTED = 12
     EXIT_CODE_PROVISIONING_EXISTING_RESOURCES_FOUND = 13
 
-    DWH_DOC_URI = (
-        '/docs/manual/en_US/html/Installation_Guide/'
-        'chap-History_and_Reports.html'
-    )
-    DWH_DOC_URL = 'http://www.ovirt.org/Ovirt_DWH'
-    REPORTS_DOC_URI = (
-        '/docs/manual/en_US/html/Installation_Guide/'
-        'chap-History_and_Reports.html'
-    )
-    REPORTS_DOC_URL = 'http://www.ovirt.org/Ovirt_Reports'
-
 
 @util.export
 @util.codegen
