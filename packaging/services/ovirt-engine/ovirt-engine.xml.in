@@ -504,8 +504,7 @@
       </cache-container>
       <cache-container
           name="ovirt-engine"
-          default-cache="timeout-base"
-          jndi-name="java:jboss/infinispan/ovirt-engine">
+          default-cache="timeout-base">
         <local-cache name="timeout-base">
           <transaction mode="NONE"/>
           <eviction max-entries="10000"/>

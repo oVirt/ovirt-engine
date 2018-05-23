@@ -64,7 +64,7 @@ public class DashboardDataServlet extends HttpServlet {
     private boolean dwhAvailable = false;
     private boolean enableBackgroundCacheUpdate = false;
 
-    @Resource(lookup = "java:jboss/infinispan/ovirt-engine")
+    @Resource(lookup = "java:jboss/infinispan/container/ovirt-engine")
     private CacheContainer cacheContainer;
 
     private Cache<String, Dashboard> dashboardCache;
