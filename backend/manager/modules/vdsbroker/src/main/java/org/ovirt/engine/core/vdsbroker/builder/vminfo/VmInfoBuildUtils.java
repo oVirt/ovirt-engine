@@ -108,6 +108,7 @@ import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,6 +142,7 @@ public class VmInfoBuildUtils {
     private final VdsStatisticsDao vdsStatisticsDao;
     private final HostDeviceDao hostDeviceDao;
     private final VmDevicesMonitoring vmDevicesMonitoring;
+    private final VmSerialNumberBuilder vmSerialNumberBuilder;
 
     private static final String BLOCK_DOMAIN_DISK_PATH = "/rhev/data-center/mnt/blockSD/%s/images/%s/%s";
     private static final String FILE_DOMAIN_DISK_PATH = "/rhev/data-center/%s/%s/images/%s/%s";
@@ -168,6 +170,7 @@ public class VmInfoBuildUtils {
             VdsNumaNodeDao vdsNumaNodeDao,
             VdsStatisticsDao vdsStatisticsDao,
             HostDeviceDao hostDeviceDao,
+            VmSerialNumberBuilder vmSerialNumberBuilder,
             VmDevicesMonitoring vmDevicesMonitoring) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
@@ -186,6 +189,7 @@ public class VmInfoBuildUtils {
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vdsStatisticsDao = Objects.requireNonNull(vdsStatisticsDao);
         this.hostDeviceDao = Objects.requireNonNull(hostDeviceDao);
+        this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
         this.vmDevicesMonitoring = Objects.requireNonNull(vmDevicesMonitoring);
     }
 
@@ -1318,5 +1322,10 @@ public class VmInfoBuildUtils {
         default:
             return DEFAULT_HUGEPAGESIZE_X86_64;
         }
+    }
+
+    public String getVmSerialNumber(VM vm, String defaultValue) {
+        String uuid = vmSerialNumberBuilder.buildVmSerialNumber(vm);
+        return uuid != null ? uuid : defaultValue;
     }
 }

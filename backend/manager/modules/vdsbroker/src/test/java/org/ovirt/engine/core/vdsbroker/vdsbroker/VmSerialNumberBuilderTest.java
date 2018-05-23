@@ -1,20 +1,22 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -25,9 +27,14 @@ public class VmSerialNumberBuilderTest {
     private static final String CUSTOM_CUSTER_SERIAL = "custom CLUSTER serial";
     private static final String CUSTOM_CONFIG_SERIAL = "custom CONFIG serial";
 
+    @Mock
+    private ClusterDao clusterDao;
+
+    @InjectMocks
+    private VmSerialNumberBuilder vmSerialNumberBuilder;
+
     VM vm;
     Cluster cluster;
-    Map<String, Object> creationInfo;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
@@ -38,7 +45,7 @@ public class VmSerialNumberBuilderTest {
         vm.setId(VM_ID);
 
         cluster = new Cluster();
-        creationInfo = new HashMap<>();
+        when(clusterDao.get(any())).thenReturn(cluster);
     }
 
     @Test
@@ -117,9 +124,7 @@ public class VmSerialNumberBuilderTest {
     }
 
     private void assertSerialNumber(String serialNumber) {
-        new VmSerialNumberBuilder(vm, cluster, creationInfo).buildVmSerialNumber();
-
-        assertEquals(serialNumber, creationInfo.get(VdsProperties.SERIAL_NUMBER));
+        assertEquals(serialNumber, vmSerialNumberBuilder.buildVmSerialNumber(vm));
     }
 
     private void setupVmWithSerialNumber(SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
