@@ -1202,6 +1202,9 @@ public class VmMapper extends VmBaseMapper {
             consoleUser.setUserName(userName);
             consoleUser.setDomain(new Domain());
             consoleUser.getDomain().setName(domainName);
+            if (vm.getConsoleUserId()!=null) {
+                consoleUser.setId(vm.getConsoleUserId().toString());
+            }
             Session consoleSession = new Session();
             consoleSession.setUser(consoleUser);
             if (vm.getClientIp()!=null && !vm.getClientIp().isEmpty()) {
