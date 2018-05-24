@@ -68,6 +68,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         templateType = VmEntityType.TEMPLATE;
         baseTemplateId = Guid.Empty;
         setTemplateVersionNumber(BASE_VERSION_NUMBER);
+        setDescription(this.getDescription());
     }
 
     @EditableVmTemplateField
@@ -179,6 +180,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setBaseTemplateId(baseTemplateId);
         setTemplateVersionNumber(BASE_VERSION_NUMBER);
         setTemplateVersionName(templateVersionName);
+        setDescription(this.getDescription());
     }
 
     public VmTemplate(VmTemplate template) {
@@ -194,6 +196,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setTemplateVersionName(template.getTemplateVersionName());
         setTemplateVersionNumber(template.getTemplateVersionNumber());
         setDisabled(template.isDisabled());
+        setDescription(this.getDescription());
     }
 
     public ArchitectureType getClusterArch() {
