@@ -65,7 +65,7 @@
     <dozer.version>5.2.0</dozer.version>
     <cxf.version>2.2.7</cxf.version>
     <sshd-core.version>0.12.0</sshd-core.version>
-    <otopi.version>1.7.6</otopi.version>
+    <otopi.version>1.7.8</otopi.version>
     <ovirt-host-deploy.version>1.7.3</ovirt-host-deploy.version>
     <vdsm-jsonrpc-java.version>1.4.13</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
