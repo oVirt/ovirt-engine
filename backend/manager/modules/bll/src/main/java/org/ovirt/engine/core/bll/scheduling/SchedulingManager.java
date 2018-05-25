@@ -28,6 +28,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.HostLocking;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
@@ -67,7 +68,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -95,7 +95,7 @@ public class SchedulingManager implements BackendService {
     @Inject
     private VdsDao vdsDao;
     @Inject
-    private VmStatisticsDao vmStatisticsDao;
+    private VmHandler vmHandler;
     @Inject
     private ClusterDao clusterDao;
     @Inject
@@ -842,7 +842,11 @@ public class SchedulingManager implements BackendService {
             return;
         }
 
-        vm.setStatisticsData(vmStatisticsDao.get(vm.getId()));
+        vmHandler.updateVmStatistics(vm);
+        // There may be no statistics for the VM, if it was started recently
+        if (vm.getStatisticsData() == null) {
+            return;
+        }
 
         // Subtract cpu load
         int hostCpus = SlaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
