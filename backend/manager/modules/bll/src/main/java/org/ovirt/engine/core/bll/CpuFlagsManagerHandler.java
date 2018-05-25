@@ -43,9 +43,18 @@ public final class CpuFlagsManagerHandler {
 
     public static String getCpuNameByCpuId(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.getCpuNameByCpuId(name);
+        String cpuName = cpuFlagsManager != null ? cpuFlagsManager.getCpuNameByCpuId(name) : null;
+
+        if (StringUtils.isNotEmpty(cpuName)) {
+            return cpuName;
         }
+
+        // hack to workaround a problem that the IBRS CPUs have been modified in vdc_options->ServerCPUList but some VMs
+        // might have been started by them already. This can be removed once we stop supporting <=4.2 CL or drop IBRS CPUs
+        if (name.endsWith("-IBRS")) {
+            return cpuFlagsManager != null ? cpuFlagsManager.getCpuNameByCpuId(name.replace("-IBRS", ",+spec-ctrl")) : null;
+        }
+
         return null;
     }
 
