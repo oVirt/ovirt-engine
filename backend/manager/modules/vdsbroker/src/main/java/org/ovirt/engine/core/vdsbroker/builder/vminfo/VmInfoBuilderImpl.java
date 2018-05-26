@@ -57,7 +57,6 @@ import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.architecture.MemoryUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +69,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     private final VmInfoBuildUtils vmInfoBuildUtils;
     private final VmDeviceDao vmDeviceDao;
-    private final VmSerialNumberBuilder vmSerialNumberBuilder;
 
     private final List<Map<String, Object>> devices = new ArrayList<>();
     private final Map<String, Object> createInfo;
@@ -88,12 +86,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             NetworkDao networkDao,
             VmDeviceDao vmDeviceDao,
             VmInfoBuildUtils vmInfoBuildUtils,
-            VmSerialNumberBuilder vmSerialNumberBuilder,
             OsRepository osRepository) {
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
         this.osRepository = Objects.requireNonNull(osRepository);
-        this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
         this.vdsId = vdsId;
         this.vm = vm;
         this.createInfo = createInfo;
@@ -753,7 +749,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmSerialNumber() {
-        String serialNumber = vmSerialNumberBuilder.buildVmSerialNumber(vm);
+        String serialNumber = vmInfoBuildUtils.getVmSerialNumber(vm, null);
         if (serialNumber != null) {
             createInfo.put(VdsProperties.SERIAL_NUMBER, serialNumber);
         }

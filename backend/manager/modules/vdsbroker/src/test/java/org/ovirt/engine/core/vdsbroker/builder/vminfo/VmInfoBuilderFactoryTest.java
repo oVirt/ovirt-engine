@@ -20,7 +20,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
 
 @ExtendWith(MockitoExtension.class)
 public class VmInfoBuilderFactoryTest {
@@ -41,8 +40,6 @@ public class VmInfoBuilderFactoryTest {
     private DiskVmElementDao diskVmElementDao;
     @Mock
     private VmInfoBuildUtils vmInfoBuildUtils;
-    @Mock
-    private VmSerialNumberBuilder vmSerialNumberBuilder;
     @Mock
     private OsRepository osRepository;
 
