@@ -798,6 +798,10 @@ verifyArgs() {
 	[ -n "${FILE}" ] || die "--file is missing"
 	[ -n "${LOG}" ] || die "--log is missing"
 	[ -d "${TMPDIR}" ] || die "Temporary directory ${TMPDIR} is missing or not a directory"
+	if [ "${FILE}" == "${LOG}" ]; then
+		die "--file and --log can not be the same"
+	fi
+
 	if [ "${MODE}" == "restore" ] ; then
 		[ -e "${FILE}" ] || die "${FILE} does not exist"
 	fi
