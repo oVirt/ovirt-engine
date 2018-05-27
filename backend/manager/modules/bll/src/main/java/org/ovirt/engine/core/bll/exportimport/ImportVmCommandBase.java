@@ -68,6 +68,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
+import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
+import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -718,6 +720,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return getVm().getMemSizeMb();
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        if (getParameters().isImportAsNewEntity()) {
+            return addValidationGroup(ImportClonedEntity.class);
+        }
+        return addValidationGroup(ImportEntity.class);
     }
 
     @Override
