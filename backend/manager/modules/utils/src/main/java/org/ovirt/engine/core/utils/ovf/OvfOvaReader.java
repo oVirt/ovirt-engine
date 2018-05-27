@@ -196,22 +196,26 @@ public abstract class OvfOvaReader extends OvfReader {
             image.setId(Guid.newGuid());
         }
         XmlAttribute description = node.attributes.get("ovf:description");
-        if (description != null) {
-            image.setDescription(description.getValue());
-        } else {
-            image.setDescription(diskId);
+        image.setDescription(description != null ? description.getValue() : diskId);
+        XmlAttribute capacity = node.attributes.get("ovf:capacity");
+        XmlAttribute capacityUnits = node.attributes.get("ovf:capacityAllocationUnits");
+        boolean capacityInBytes = capacityUnits == null || "byte".equals(capacityUnits.getValue());
+        long virtualSize = Long.parseLong(capacity.getValue());
+        if (!capacityInBytes) {
+            virtualSize = convertGigabyteToBytes(virtualSize); // TODO: support different capacity units
         }
-        XmlAttribute virtualSize = node.attributes.get("ovf:capacity");
-        if (virtualSize != null) {
-            // TODO take ovf:capacityAllocationUnits into account
-            image.setSize(convertGigabyteToBytes(Long.parseLong(virtualSize.getValue())));
-        }
+        image.setSize(virtualSize);
         XmlAttribute populatedSize = node.attributes.get("ovf:populatedSize");
         if (populatedSize != null) {
             image.setActualSizeInBytes(Long.parseLong(populatedSize.getValue()));
         } else {
-            Long actualSize = Long.parseLong(fileIdToFileAttributes.get(fileRef).get("ovf:size").getValue());
-            image.setActualSizeInBytes(actualSize);
+            XmlAttribute actualSize = fileIdToFileAttributes.get(fileRef).get("ovf:size");
+            if (actualSize != null) {
+                image.setActualSizeInBytes(Long.parseLong(actualSize.getValue()));
+            } else {
+                log.warn("didn't find disk provisioned size thus allocating the virtual size");
+                image.setActualSizeInBytes(virtualSize);
+            }
         }
 
         super.readDisk(node, image);
