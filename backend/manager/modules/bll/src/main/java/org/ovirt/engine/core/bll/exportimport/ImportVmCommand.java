@@ -99,8 +99,6 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
-import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
-import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
@@ -1429,14 +1427,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void removeVmNetworkInterfaces() {
         new VmInterfaceManager(getMacPool()).removeAllAndReleaseMacAddresses(getVmId());
-    }
-
-    @Override
-    protected List<Class<?>> getValidationGroups() {
-        if (getParameters().isImportAsNewEntity()) {
-            return addValidationGroup(ImportClonedEntity.class);
-        }
-        return addValidationGroup(ImportEntity.class);
     }
 
     @Override
