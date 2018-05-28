@@ -1781,6 +1781,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ERROR_CANNOT_FIND_ISO_IMAGE_PATH();
 
+    String ERROR_ISO_IMAGE_STATUS_ILLEGAL();
+
     String ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH();
 
     String VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP();
