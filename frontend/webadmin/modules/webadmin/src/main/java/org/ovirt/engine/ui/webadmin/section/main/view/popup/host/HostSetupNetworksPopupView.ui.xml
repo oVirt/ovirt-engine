@@ -193,10 +193,11 @@
             margin-bottom: 0px;
         }
 
-        .allNicsPanel{
+        .allNicsPanel {
             background-color: #F6F6F6;
             border-spacing: 10px;
             border-collapse: separate;
+            width: 100%;
         }
 
         .errorPanel{
