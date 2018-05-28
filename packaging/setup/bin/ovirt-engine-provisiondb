@@ -33,7 +33,7 @@ __EOF__
 script="$(readlink -f "$0")"
 scriptdir="$(dirname "${script}")"
 . "${scriptdir}/ovirt-engine-setup.env"
-baseenv="\"APPEND:BASE/pluginPath=str:${scriptdir}/../plugins\" APPEND:BASE/pluginGroups=str:ovirt-engine-provisiondb"
+baseenv="\"APPEND:BASE/pluginPath=str:${scriptdir}/../plugins\" APPEND:BASE/pluginGroups=str:ovirt-engine-common:ovirt-engine-provisiondb"
 otopienv=""
 environment=""
 

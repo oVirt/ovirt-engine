@@ -56,6 +56,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION,
             False
         )
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.FQDN_IS_NEEDED,
+            True
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -67,6 +71,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
+        condition=lambda self: self.environment[
+            osetupcons.ConfigEnv.FQDN_IS_NEEDED
+        ],
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
         ),

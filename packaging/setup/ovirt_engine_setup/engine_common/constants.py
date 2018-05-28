@@ -286,6 +286,7 @@ class ConfigEnv(object):
     FENCE_KDUMP_LISTENER_STOP_NEEDED = \
         'OVESETUP_CONFIG/fenceKdumpListenerStopNeeded'
     FORCE_INVALID_PG_CONF = 'OVESETUP_CONFIG/forceInvalidPGConf'
+    NEED_COMMON_TITLES = 'OVESETUP_CONFIG/needCommonTitles'
 
 
 @util.export

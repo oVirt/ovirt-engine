@@ -25,6 +25,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -44,8 +45,20 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup_common_titles(self):
+        self.environment.setdefault(
+            oengcommcons.ConfigEnv.NEED_COMMON_TITLES,
+            True
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.NEED_COMMON_TITLES
+        ],
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         )
@@ -58,6 +71,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.NEED_COMMON_TITLES
+        ],
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
         ),
@@ -68,6 +84,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.NEED_COMMON_TITLES
+        ],
     )
     def _title_s_summary(self):
         self._title(
@@ -77,6 +96,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
+        condition=lambda self: self.environment[
+            oengcommcons.ConfigEnv.NEED_COMMON_TITLES
+        ],
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
