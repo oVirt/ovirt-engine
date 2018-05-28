@@ -419,7 +419,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             ActionParametersBase params = getParameters().getImagesParameters().get(0);
 
             // If this command failed the children should be marked as failed too
-            if (!getSucceeded()) {
+            if (!getParameters().getTaskGroupSuccess()) {
                 params.setTaskGroupSuccess(false);
             }
 
