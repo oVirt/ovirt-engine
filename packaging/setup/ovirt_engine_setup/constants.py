@@ -426,6 +426,8 @@ class ConfigEnv(object):
     def FQDN(self):
         return 'OVESETUP_CONFIG/fqdn'
 
+    FQDN_IS_NEEDED = 'OVESETUP_CONFIG/fqdnIsNeeded'
+
     @osetupattrs(
         answerfile=True,
         summary=True,

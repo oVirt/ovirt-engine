@@ -114,39 +114,15 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES,
             []
         )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLEANUP,
-    )
-    def _cleanup(self):
-        self.dialog.note(
-            text=_('Log file is located at {path}').format(
-                path=self.environment[
-                    otopicons.CoreEnv.LOG_FILE_NAME
-                ],
-            ),
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_TERMINATE,
-    )
-    def _terminate(self):
-        if self.environment[otopicons.BaseEnv.ERROR]:
-            self.logger.error(
-                _('Execution of {action} failed').format(
-                    action=self.environment[
-                        osetupcons.CoreEnv.ACTION
-                    ],
-                ),
-            )
-        else:
-            self.logger.info(
-                _('Execution of {action} completed successfully').format(
-                    action=self.environment[
-                        osetupcons.CoreEnv.ACTION
-                    ],
-                ),
-            )
+        self.environment[osetupcons.ConfigEnv.FQDN_IS_NEEDED] = False
+        self.environment[osetupcons.CoreEnv.GENERATE_POSTINSTALL] = False
+        self.environment[
+            osetupcons.CoreEnv.GENERATE_STANDARD_ANSWERFILE
+        ] = False
+        self.environment[oengcommcons.ConfigEnv.NEED_COMMON_TITLES] = False
+        self.environment[
+            oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED
+        ] = False
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
