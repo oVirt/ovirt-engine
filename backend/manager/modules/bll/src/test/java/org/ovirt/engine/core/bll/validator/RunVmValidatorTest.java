@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -168,16 +169,33 @@ public class RunVmValidatorTest {
         VM vm = new VM();
         vm.setStoragePoolId(Guid.newGuid());
         vm.setBootSequence(BootSequence.CD);
+        DiskImage diskImage = mockIsoDisk(ImageStatus.OK);
+        when(storagePoolIsoMapDao.get(new StoragePoolIsoMapId(diskImage.getStorageIds().get(0), vm.getStoragePoolId()))).thenReturn(null);
+        validateResult(runVmValidator.validateIsoPath(vm, Guid.newGuid().toString(), null , null),
+                false,
+                EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+    }
+
+    @Test
+    public void testIsoDiskStatusIllegal() {
+        VM vm = new VM();
+        vm.setStoragePoolId(Guid.newGuid());
+        vm.setBootSequence(BootSequence.CD);
+        DiskImage diskImage = mockIsoDisk(ImageStatus.ILLEGAL);
+        validateResult(runVmValidator.validateIsoPath(vm, Guid.newGuid().toString(), null , null),
+                false,
+                EngineMessage.ERROR_ISO_IMAGE_STATUS_ILLEGAL);
+    }
+
+    private DiskImage mockIsoDisk(ImageStatus imageStatus) {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(Guid.newGuid());
         DiskImage diskImage = new DiskImage();
         diskImage.setStorageIds(Collections.singletonList(storageDomain.getId()));
         diskImage.setContentType(DiskContentType.ISO);
+        diskImage.setImageStatus(imageStatus);
         when(diskDao.get(any(Guid.class))).thenReturn(diskImage);
-        when(storagePoolIsoMapDao.get(new StoragePoolIsoMapId(storageDomain.getId(), vm.getStoragePoolId()))).thenReturn(null);
-        validateResult(runVmValidator.validateIsoPath(vm, Guid.newGuid().toString(), null , null),
-                false,
-                EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+        return diskImage;
     }
 
     @Test

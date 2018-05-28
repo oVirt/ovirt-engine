@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -420,6 +421,11 @@ public class RunVmValidator {
                 BaseDisk disk = diskDao.get(Guid.createGuidFromString(effectiveIsoPath));
                 if (disk == null || disk.getContentType() != DiskContentType.ISO) {
                     return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+                }
+                ImageStatus imageStatus = ((DiskImage) disk).getImageStatus(); // ISO disks are always images
+                if (imageStatus != ImageStatus.OK) {
+                    return new ValidationResult(EngineMessage.ERROR_ISO_IMAGE_STATUS_ILLEGAL,
+                            String.format("$status %s", imageStatus.toString()));
                 }
                 Guid domainId = ((DiskImage) disk).getStorageIds().get(0);
                 StoragePoolIsoMap spim = storagePoolIsoMapDao.get(new StoragePoolIsoMapId(domainId, vm.getStoragePoolId()));
