@@ -594,12 +594,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private void handleFinalizingSuccess(final StateContext context) {
         log.info("Finalizing successful transfer for {}", getTransferDescription());
 
+        ImageStatus nextImageStatus = ImageStatus.OK;
+
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
             // Verify image is relevant only on upload
             if (getParameters().getTransferType() == TransferType.Download) {
-                unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
                 setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
             } else if (verifyImage(transferingVdsId)) {
@@ -614,16 +615,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                             transferingVdsId);
                     imageDao.update(getDiskImage().getImage());
                 }
-                unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
                 setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
             } else {
-                setImageStatus(ImageStatus.ILLEGAL);
+                nextImageStatus = ImageStatus.ILLEGAL;
                 updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
             }
 
             // Finished using the image, tear it down.
             tearDownImage(context.entity.getVdsId());
+
+            // Moves Image status to OK or ILLEGAL
+            setImageStatus(nextImageStatus);
         }
     }
 
