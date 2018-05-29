@@ -19,7 +19,7 @@ public enum VolumeType implements Identifiable {
         }
     }
 
-    private VolumeType(int value) {
+    VolumeType(int value) {
         intValue = value;
     }
 
