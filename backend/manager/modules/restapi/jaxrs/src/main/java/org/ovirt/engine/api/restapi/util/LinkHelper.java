@@ -238,6 +238,8 @@ import org.ovirt.engine.api.resource.StatisticResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.StepResource;
 import org.ovirt.engine.api.resource.StepsResource;
+import org.ovirt.engine.api.resource.StorageDomainDiskResource;
+import org.ovirt.engine.api.resource.StorageDomainDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplatesResource;
@@ -476,6 +478,7 @@ public class LinkHelper {
         map = new LocationByParentMap(DiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, Vm.class);
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
+        map.add(StorageDomainDiskResource.class, StorageDomainDisksResource.class, StorageDomain.class);
         TYPES.put(Disk.class, map);
 
         map = new LocationByParentMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);
