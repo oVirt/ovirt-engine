@@ -190,7 +190,7 @@ here. Please create new partials when it makes sense.
 }
 
 .status-icon .fa {
-    font-size: 1em
+    font-size: 1em !important;
 }
 
 .vm-nic-info-heading {
@@ -217,11 +217,11 @@ here. Please create new partials when it makes sense.
 }
 
 .network-list-item .list-group-item-heading {
-    width: 100%;
-    font-size: 20px;
+    width: 100% !important;
+    font-size: 20px !important;
 }
 
 .network-list-item .list-view-pf-additional-info > .container {
-    margin-left: 0px;
+    margin-left: 0;
     width: 100%;
 }
