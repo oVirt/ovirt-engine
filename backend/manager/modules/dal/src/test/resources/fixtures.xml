@@ -205,7 +205,7 @@
 
   <network_cluster network_id="58d5c1c6-cb15-4832-b2a4-023770607188" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" status="1" is_display="0" required="0" migration="0" management="0" is_gluster="0" default_route="0"/>
   <network_cluster network_id="58d5c1c6-cb15-4832-b2a4-023770607189" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" status="1" is_display="0" required="0" migration="1" management="0" is_gluster="0" default_route="0"/>
-  <network_cluster network_id="58d5c1c6-cb15-4832-b2a4-1234567890ab" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" status="1" is_display="0" required="0" migration="0" management="1" is_gluster="0" default_route="1"/>
+  <network_cluster network_id="58d5c1c6-cb15-4832-b2a4-1234567890ab" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" status="1" is_display="0" required="1" migration="0" management="1" is_gluster="0" default_route="1"/>
   <network_cluster network_id="58d5c1c6-cb15-4832-b2a4-023770607189" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d2" status="1" is_display="0" required="0" migration="0" management="0" is_gluster="0" default_route="0"/>
 
   <vm_pools vm_pool_id="103cfd1d-18b1-4790-8a0c-1e52621b0076" vm_pool_name="fedora13-pool" vm_pool_description="" vm_pool_type="0" parameters="" prestarted_vms="0" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" max_assigned_vms_per_user="1" is_being_destroyed="false" is_auto_storage_select="false"/>

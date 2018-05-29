@@ -95,6 +95,7 @@ public enum QueryType implements Serializable {
     GetAllUnmanagedNetworksByHostId,
     GetUnmanagedNetworkByHostIdAndName,
     GetNetworksByDataCenterId(QueryAuthType.User),
+    GetRequiredNetworksByDataCenterId,
     GetAllNetworksByQosId,
     GetManagementInterfaceAddressByVmId(QueryAuthType.User),
     GetInterfacesByLabelForNetwork,

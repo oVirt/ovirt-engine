@@ -422,4 +422,13 @@ public class NetworkDaoTest extends BaseDaoTestCase<NetworkDao> {
         List<Network> linkedNetworks = dao.getAllExternalNetworksLinkedToPhysicalNetwork(FixturesTool.NETWORK_ENGINE);
         assertTrue(linkedNetworks.isEmpty());
     }
+
+    /**
+     * Ensures a list of required networks is returned for a given data-center.
+     */
+    @Test
+    public void testGetRequiredNetworksByDataCenterId() {
+        List<Network> result = dao.getRequiredNetworksByDataCenterId(FixturesTool.DATA_CENTER);
+        assertEquals(1, result.size());
+    }
 }

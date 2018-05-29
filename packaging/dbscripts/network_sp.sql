@@ -410,6 +410,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetRequiredNetworksByDataCenterId (v_data_center_id UUID)
+RETURNS SETOF network STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT network.*
+    FROM network
+    INNER JOIN network_cluster
+        ON network.id = network_cluster.network_id
+    WHERE network_cluster.required;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 --The GetByFK stored procedure cannot be created because the [network] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 ----------------------------------------------------------------
 -- [vds_interface] Table

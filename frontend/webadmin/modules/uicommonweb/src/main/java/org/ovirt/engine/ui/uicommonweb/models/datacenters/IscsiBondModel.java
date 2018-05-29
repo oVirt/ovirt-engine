@@ -69,6 +69,17 @@ public class IscsiBondModel extends Model {
             List<Network> selected =
                     networks.stream().filter(n -> iscsiBonded.contains(n.getId())).collect(Collectors.toList());
 
+            filterNonRequiredNetworks(networks, selected);
+
+        }), getStoragePool().getId());
+    }
+
+    private void filterNonRequiredNetworks(List<Network> networks, List<Network> selected) {
+        AsyncDataProvider.getInstance().getRequiredNetworksByDataCenterId(new AsyncQuery<>(reqNetworks -> {
+
+            // Filter non-required networks
+            networks.removeAll(reqNetworks);
+
             getNetworks().setItems(networks);
             getNetworks().setSelectedItems(selected);
         }), getStoragePool().getId());

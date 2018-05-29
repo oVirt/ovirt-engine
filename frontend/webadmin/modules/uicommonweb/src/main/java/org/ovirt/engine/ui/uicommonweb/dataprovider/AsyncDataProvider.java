@@ -2120,6 +2120,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetNetworksByDataCenterId, params, aQuery);
     }
 
+    public void getRequiredNetworksByDataCenterId(AsyncQuery<List<Network>> aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new ListConverter<>();
+        IdQueryParameters params = new IdQueryParameters(storagePoolId);
+        Frontend.getInstance().runQuery(QueryType.GetRequiredNetworksByDataCenterId, params, aQuery);
+    }
+
     public void getManagementNetworkCandidates(AsyncQuery<List<Network>> aQuery, Guid storagePoolId) {
         aQuery.converterCallback = new ListConverter<>();
         IdQueryParameters params = new IdQueryParameters(storagePoolId);
