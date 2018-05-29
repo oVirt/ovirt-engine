@@ -207,7 +207,7 @@ here. Please create new partials when it makes sense.
     display: flex;
 }
 
-.vm-nic-info-column sub  .vm-nic-info-column sub {
+.network-data-row sub, .vm-nic-info-column sub {
     bottom: 0px;
 }
 
