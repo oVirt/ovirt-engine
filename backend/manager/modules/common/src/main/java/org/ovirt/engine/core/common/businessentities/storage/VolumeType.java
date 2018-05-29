@@ -2,7 +2,9 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
 
-public enum VolumeType {
+import org.ovirt.engine.core.common.businessentities.Identifiable;
+
+public enum VolumeType implements Identifiable {
     Unassigned(0),
     Preallocated(1),
     Sparse(2);
@@ -20,6 +22,7 @@ public enum VolumeType {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

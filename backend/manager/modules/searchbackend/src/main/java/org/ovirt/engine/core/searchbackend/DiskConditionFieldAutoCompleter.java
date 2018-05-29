@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -22,6 +23,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String STATUS = "STATUS";
     public static final String DISK_TYPE = "DISK_TYPE";
     public static final String DISK_CONTENT_TYPE = "DISK_CONTENT_TYPE";
+    public static final String ALLOCATION_POLICY = "ALLOCATION_POLICY";
     public static final String NUMBER_OF_VMS = "NUMBER_OF_VMS";
     public static final String VM_NAMES = "VM_NAMES";
     public static final String QUOTA = "QUOTA";
@@ -41,6 +43,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         verbs.add(STATUS);
         verbs.add(DISK_TYPE);
         verbs.add(DISK_CONTENT_TYPE);
+        verbs.add(ALLOCATION_POLICY);
         verbs.add(NUMBER_OF_VMS);
         verbs.add(VM_NAMES);
         verbs.add(QUOTA);
@@ -62,6 +65,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(STATUS, ImageStatus.class);
         getTypeDictionary().put(DISK_TYPE, DiskStorageType.class);
         getTypeDictionary().put(DISK_CONTENT_TYPE, DiskContentType.class);
+        getTypeDictionary().put(ALLOCATION_POLICY, VolumeType.class);
         getTypeDictionary().put(NUMBER_OF_VMS, Integer.class);
         getTypeDictionary().put(VM_NAMES, String.class);
         getTypeDictionary().put(QUOTA, String.class);
@@ -80,6 +84,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(STATUS, "imageStatus");
         columnNameDict.put(DISK_TYPE, "disk_storage_type");
         columnNameDict.put(DISK_CONTENT_TYPE, "disk_content_type");
+        columnNameDict.put(ALLOCATION_POLICY, "volume_type");
         columnNameDict.put(NUMBER_OF_VMS, "number_of_vms");
         columnNameDict.put(VM_NAMES, "vm_names");
         columnNameDict.put(QUOTA, "quota_name");
@@ -112,6 +117,8 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
             return new EnumValueAutoCompleter(DiskStorageType.class);
         } else if (DISK_CONTENT_TYPE.equals(fieldName)) {
             return new EnumValueAutoCompleter(DiskContentType.class);
+        } else if (ALLOCATION_POLICY.equals(fieldName)) {
+            return new EnumValueAutoCompleter(VolumeType.class);
         } else if (SHAREABLE.equals(fieldName) ||
                 WIPE_AFTER_DELETE.equals(fieldName)) {
             return new BitValueAutoCompleter();
