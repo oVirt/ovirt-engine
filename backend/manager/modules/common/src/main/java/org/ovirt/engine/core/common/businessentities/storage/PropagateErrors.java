@@ -17,7 +17,7 @@ public enum PropagateErrors {
         }
     }
 
-    private PropagateErrors(int value) {
+    PropagateErrors(int value) {
         intValue = value;
     }
 

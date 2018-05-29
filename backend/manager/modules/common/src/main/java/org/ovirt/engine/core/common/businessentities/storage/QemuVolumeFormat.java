@@ -16,7 +16,7 @@ public enum QemuVolumeFormat {
         }
     }
 
-    private QemuVolumeFormat(String value) {
+    QemuVolumeFormat(String value) {
         this.value = value;
     }
 

@@ -29,7 +29,7 @@ public enum ImageTransferPhase implements Identifiable {
         }
     }
 
-    private ImageTransferPhase(int value, String description) {
+    ImageTransferPhase(int value, String description) {
         this.value = value;
         this.description = description;
     }

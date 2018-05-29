@@ -20,7 +20,7 @@ public enum ImageFileType {
         }
     }
 
-    private ImageFileType(int value) {
+    ImageFileType(int value) {
         intValue = value;
     }
 

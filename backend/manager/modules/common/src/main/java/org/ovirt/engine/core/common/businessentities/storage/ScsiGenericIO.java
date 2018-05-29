@@ -17,7 +17,7 @@ public enum ScsiGenericIO {
         }
     }
 
-    private ScsiGenericIO(int value) {
+    ScsiGenericIO(int value) {
         intValue = value;
     }
 

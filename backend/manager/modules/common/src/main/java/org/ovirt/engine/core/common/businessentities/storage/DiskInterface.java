@@ -10,7 +10,7 @@ public enum DiskInterface {
 
     private String name;
 
-    private DiskInterface(String name) {
+    DiskInterface(String name) {
         this.name = name;
     }
 

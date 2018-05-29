@@ -30,7 +30,7 @@ public enum StorageType implements Identifiable {
         }
     }
 
-    private StorageType(int value, Subtype subtype) {
+    StorageType(int value, Subtype subtype) {
         this.value = value;
         this.subtype = subtype;
     }

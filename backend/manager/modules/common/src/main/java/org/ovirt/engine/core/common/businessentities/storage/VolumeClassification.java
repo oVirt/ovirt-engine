@@ -18,7 +18,7 @@ public enum VolumeClassification {
         }
     }
 
-    private VolumeClassification(int value) {
+    VolumeClassification(int value) {
         intValue = value;
     }
 

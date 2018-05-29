@@ -17,7 +17,7 @@ public enum CopyVolumeType {
         }
     }
 
-    private CopyVolumeType(int value) {
+    CopyVolumeType(int value) {
         intValue = value;
     }
 

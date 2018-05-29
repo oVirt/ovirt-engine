@@ -29,7 +29,7 @@ public enum CinderVolumeStatus implements Nameable {
         }
     }
 
-    private CinderVolumeStatus(String name) {
+    CinderVolumeStatus(String name) {
         this.name = name;
     }
 

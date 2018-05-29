@@ -19,7 +19,7 @@ public enum VolumeFormat {
         }
     }
 
-    private VolumeFormat(int value) {
+    VolumeFormat(int value) {
         intValue = value;
     }
 

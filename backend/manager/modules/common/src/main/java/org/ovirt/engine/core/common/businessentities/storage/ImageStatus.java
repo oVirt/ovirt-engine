@@ -20,7 +20,7 @@ public enum ImageStatus implements Identifiable {
         }
     }
 
-    private ImageStatus(int value) {
+    ImageStatus(int value) {
         intValue = value;
     }
 
