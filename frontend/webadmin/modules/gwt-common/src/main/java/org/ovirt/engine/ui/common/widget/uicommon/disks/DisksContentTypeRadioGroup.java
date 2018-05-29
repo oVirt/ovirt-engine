@@ -47,6 +47,7 @@ public class DisksContentTypeRadioGroup extends FlowPanel {
         RadioButton allButton = new RadioButton(BUTTON_GROUP_NAME); //$NON-NLS-1$
         buttonToType.put(allButton, null);
         allButton.setText(constants.allDisksLabel());
+        allButton.setActive(true);
 
         for (DiskContentType contentType : DiskContentType.values()) {
             RadioButton button = new RadioButton(BUTTON_GROUP_NAME); //$NON-NLS-1$
