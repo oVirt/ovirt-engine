@@ -86,13 +86,6 @@ public class DiskModule extends AbstractGinModule {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }
                     }
-
-                    @Override
-                    public void onMainViewSelected() {
-                        super.onMainViewSelected();
-                        getModel().getDiskViewType().setEntity(null);
-                        getModel().getDiskContentType().setEntity(null);
-                    }
                 };
         result.setModelProvider(modelProvider);
         return result;
