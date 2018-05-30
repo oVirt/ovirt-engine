@@ -42,8 +42,7 @@ public class UpdateNetworkValidatorTest {
         externalNetwork.setName("aaa");
         network.setName("bbb");
 
-        assertThat(validator.externalNetworkDetailsUnchanged(externalNetwork),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED));
+        assertThat(validator.externalNetworkDetailsUnchanged(externalNetwork), isValid());
     }
 
     @Test
