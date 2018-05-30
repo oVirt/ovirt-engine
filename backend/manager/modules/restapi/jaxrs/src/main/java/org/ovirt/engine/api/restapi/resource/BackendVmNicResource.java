@@ -118,7 +118,7 @@ public class BackendVmNicResource
 
     @Override
     public VmReportedDevicesResource getReportedDevicesResource() {
-        return inject(new BackendVmReportedDevicesResource(guid));
+        return inject(new BackendVmReportedDevicesResource(vmId));
     }
 
     @Override
