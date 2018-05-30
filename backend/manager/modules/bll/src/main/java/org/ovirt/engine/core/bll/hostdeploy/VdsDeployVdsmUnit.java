@@ -67,6 +67,21 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
+            if (Version.v4_1.lessOrEquals(clusterVersion)) {
+                _deploy.getParser().cliEnvironmentSet(
+                        String.format(
+                                "%svars/ssl_excludes",
+                                VdsmEnv.CONFIG_PREFIX
+                        ),
+                        "OP_NO_TLSv1,OP_NO_TLSv1_1"
+                );
+            } else {
+                // send noop when the variable is not sent as ovirt host deploy is waiting for engine to send something
+                _deploy.getParser().cliNoop();
+            }
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _deploy.getParser().cliEnvironmentSet(
                 String.format(
                     "%saddresses/management_port",
