@@ -669,9 +669,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 availableDiskStorageDomains.sort(new NameableComparator());
                 diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
 
+                diskModel.getStorageDomain().setIsChangeable(!availableDiskStorageDomains.isEmpty());
                 diskModel.getStorageDomain().setChangeProhibitionReason(
                         constants.noActiveTargetStorageDomainAvailableMsg());
-                diskModel.getStorageDomain().setIsChangeable(!availableDiskStorageDomains.isEmpty());
             }
             List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
             Collection<StorageDomain> cinderStorageDomains =
@@ -828,10 +828,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 hasCpuPinning = false;
             }
 
+            getModel().getCpuPinning().setIsChangeable(hasCpuPinning);
             if (!hasCpuPinning) {
                 getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
             }
-            getModel().getCpuPinning().setIsChangeable(hasCpuPinning);
         }
     }
 

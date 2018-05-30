@@ -71,12 +71,12 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
         // Plug should be the last one updated, cause it controls the changeability of the other editor
         getPlugged().setEntity(getNic().isPlugged());
+        getPlugged().setIsChangeable(allowPlug());
         if (!allowPlug()) {
             getPlugged().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getMessages()
                     .nicHotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }
-        getPlugged().setIsChangeable(allowPlug());
 
         initCommands();
     }

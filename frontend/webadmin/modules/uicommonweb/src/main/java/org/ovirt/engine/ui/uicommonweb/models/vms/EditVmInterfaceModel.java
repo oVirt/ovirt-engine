@@ -60,6 +60,10 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         Boolean plug = isPluggedBeforeAndAfterEdit();
 
+        getNicType().setIsChangeable(!plug);
+        getEnableMac().setIsChangeable(!plug);
+        getMAC().setIsChangeable(getEnableMac().getEntity() && !plug);
+
         if (plug) {
             getNicType().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
@@ -73,10 +77,6 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             initMAC();
 
         }
-
-        getNicType().setIsChangeable(!plug);
-        getEnableMac().setIsChangeable(!plug);
-        getMAC().setIsChangeable(getEnableMac().getEntity() && !plug);
 
         updateProfileChangability();
         updateLinkChangability();

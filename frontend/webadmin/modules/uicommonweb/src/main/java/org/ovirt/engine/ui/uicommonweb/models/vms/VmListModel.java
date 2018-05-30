@@ -844,10 +844,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             String changeProhibitionReason) {
 
         model.setEntity(deleteDisks);
+        model.setIsChangeable(isChangable);
         if (!isChangable && changeProhibitionReason != null) {
             model.setChangeProhibitionReason(changeProhibitionReason);
         }
-        model.setIsChangeable(isChangable);
     }
 
     private void initRemoveDisksCheckboxes(final Map<Guid, EntityModel> vmsMap) {

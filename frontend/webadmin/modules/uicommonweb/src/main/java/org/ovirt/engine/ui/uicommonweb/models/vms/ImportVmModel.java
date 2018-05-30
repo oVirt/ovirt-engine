@@ -150,10 +150,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                         if (vmsFromDB.contains(vm)) {
                             vmData.setExistsInSystem(true);
                             vmData.getClone().setEntity(true);
+                            vmData.getClone().setIsChangeable(false);
                             vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
                                     .getConstants()
                                     .importVMThatExistsInSystemMustClone());
-                            vmData.getClone().setIsChangeable(false);
                         }
 
                         vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));

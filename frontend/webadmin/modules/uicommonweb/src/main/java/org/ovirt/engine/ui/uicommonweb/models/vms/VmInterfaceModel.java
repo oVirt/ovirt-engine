@@ -472,10 +472,10 @@ public abstract class VmInterfaceModel extends Model {
         if (VmInterfaceType.pciPassthrough.equals(getNicType().getSelectedItem())
         || getProfile().getSelectedItem().isPassthrough()) {
             getLinked().setEntity(true);
+            getLinked().setIsChangeable(false);
             getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
                     .linkStateUpdateNotSupportedForPassthroughVnic());
-            getLinked().setIsChangeable(false);
             return;
         }
         getLinked().setIsChangeable(true);

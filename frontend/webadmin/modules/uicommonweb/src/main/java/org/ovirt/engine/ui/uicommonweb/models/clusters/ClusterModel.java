@@ -1260,10 +1260,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         setManagementNetwork(new ListModel<>());
         if (isEdit && !isClusterDetached()) {
+            getManagementNetwork().setIsChangeable(false);
             getManagementNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
                     .prohibitManagementNetworkChangeInEditClusterInfoMessage());
-            getManagementNetwork().setIsChangeable(false);
         }
 
         setCPU(new FilteredListModel<>());
@@ -1742,8 +1742,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }), version);
 
         getVersionSupportsCpuThreads().setEntity(true);
-        getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
         getEnableBallooning().setIsChangeable(true);
+        getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
 
         setRngSourcesCheckboxes(version);
 

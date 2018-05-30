@@ -166,11 +166,11 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                         ((ImportVmData) item).setWarning(ConstantsManager.getInstance().getConstants()
                                 .importSparseDiskToBlockDeviceMustCollapseSnapshots());
                         ((ImportVmData) item).getCollapseSnapshots().setEntity(true);
+                        ((ImportVmData) item).getCollapseSnapshots().setIsChangeable(false);
                         ((ImportVmData) item).getCollapseSnapshots()
                                 .setChangeProhibitionReason(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importSparseDiskToBlockDeviceMustCollapseSnapshots());
-                        ((ImportVmData) item).getCollapseSnapshots().setIsChangeable(false);
 
                         onPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
                     }

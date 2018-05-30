@@ -66,13 +66,13 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         getName().setEntity(AsyncDataProvider.getInstance().getNewNicName(getVmNicList()));
         initMAC();
 
+        getPlugged().setIsChangeable(allowPlug());
+        getPlugged().setEntity(allowPlug());
         if (!allowPlug()) {
             getPlugged().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getMessages()
                     .nicHotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }
-        getPlugged().setIsChangeable(allowPlug());
-        getPlugged().setEntity(allowPlug());
 
         initLinked();
 
