@@ -89,13 +89,15 @@ public class MergeStatusCommand<T extends MergeParameters>
             return;
         }
 
-        Set<Guid> imagesToRemove = getImagesToRemove();
-        images.retainAll(imagesToRemove);
-        if (images.size() != 1) {
-            log.error("Failed to live merge, still in volume chain: {}", images);
+        Guid topImage = getParameters().getTopImage().getImageId();
+        if (images.contains(topImage)) {
+            // If the top volume is found in qemu chain, it means that the top volume wasn't deleted,
+            // thus we have to fail live merge, reporting that the top volume is still in the chain.
+            log.error("Failed to live merge. Top volume {} is still in qemu chain {}", topImage, images);
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
+
         if (!images.contains(getParameters().getBaseImage().getImageId())) {
             // If the base image isn't found in qemu chain, it means that the image was already deleted.
             // In this case, we will not allow PULL merge but rather ask the user to check if the parent
@@ -108,13 +110,13 @@ public class MergeStatusCommand<T extends MergeParameters>
             return;
         }
 
-        imagesToRemove.removeAll(images);
-        log.info("Successfully removed volume(s): {}", imagesToRemove);
+        log.info("Successfully removed volume {} from the chain", topImage);
 
         // For now, only COMMIT type is supported
         log.info("Volume merge type '{}'", VmBlockJobType.COMMIT.name());
 
-        MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT, imagesToRemove);
+        MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT,
+                Collections.singleton(topImage));
         getReturnValue().setActionReturnValue(returnValue);
         setSucceeded(true);
         persistCommand(getParameters().getParentCommand(), true);
@@ -202,25 +204,6 @@ public class MergeStatusCommand<T extends MergeParameters>
             log.error("Unable to retrieve volume list during Live Merge recovery", e);
             return null;
         }
-    }
-
-    /**
-     * Returns the set of images which may be merged/removed in the live merge operation
-     * on this disk.  We don't know whether VDSM will choose a forward or backward merge
-     * so we return both the top and bottom images here; the caller will need to figure
-     * out the merge direction and preserve the appropriate image.
-     *
-     * @return  Set of Guids representing the images which may be removed
-     */
-    public Set<Guid> getImagesToRemove() {
-        Set<Guid> imagesToRemove = new HashSet<>();
-        DiskImage curr = getParameters().getTopImage();
-        imagesToRemove.add(curr.getImageId());
-        while (!curr.getParentId().equals(getParameters().getBaseImage().getParentId())) {
-            curr = diskImageDao.getSnapshotById(curr.getParentId());
-            imagesToRemove.add(curr.getImageId());
-        }
-        return imagesToRemove;
     }
 
     @Override
