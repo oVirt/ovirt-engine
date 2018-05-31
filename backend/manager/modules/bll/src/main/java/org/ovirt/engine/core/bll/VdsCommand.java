@@ -182,6 +182,13 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * Alerts if power management operation skipped.
      */
     protected void alertIfPowerManagementOperationSkipped() {
+        alert(AuditLogType.VDS_ALERT_NO_PM_CONFIG_FENCE_OPERATION_SKIPPED);
+    }
+
+    /**
+     * Alerts if fence operation skipped.
+     */
+    protected void alertIfFenceOperationSkipped() {
         alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED);
     }
 
