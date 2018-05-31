@@ -85,6 +85,21 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
+            if (Version.v4_2.lessOrEquals(clusterVersion)) {
+                _deploy.getParser().cliEnvironmentSet(
+                        String.format(
+                                "%svars/ssl_ciphers",
+                                VdsmEnv.CONFIG_PREFIX
+                        ),
+                        "HIGH"
+                );
+            } else {
+                // send noop when the variable is not sent as ovirt host deploy is waiting for engine to send something
+                _deploy.getParser().cliNoop();
+            }
+            return true;
+        }},
+        new Callable<Boolean>() { public Boolean call() throws Exception {
             _deploy.getParser().cliEnvironmentSet(
                 String.format(
                     "%saddresses/management_port",
