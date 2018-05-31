@@ -260,14 +260,14 @@ Requires:	rubygem-fluent-plugin-collectd-nest
 Requires:	rubygem-fluent-plugin-viaq_data_model
 Requires:	rubygem-fluent-plugin-elasticsearch
 
-%if 0%{?rhel}
-# JDBC drivers newer than 9.2 break engine DAL, so we cannot depend on it
-# until fixed:
-# https://github.com/pgjdbc/pgjdbc/issues/838
-# https://bugzilla.redhat.com/1459502
-Requires:	postgresql-jdbc >= 9.2.1002
-Conflicts:	postgresql-jdbc >= 9.3
+%if 0%{?fedora}
+# On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
+# Unfortunately this package is not available on EL7, so we are going to
+# bundle it within engine until available.
+Requires:	postgresql-jdbc >= 42.2.2
+%endif
 
+%if 0%{?rhel}
 Requires:	yum-plugin-versionlock
 %endif
 
@@ -835,11 +835,10 @@ tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
 
-%if 0%{?rhel}
-# JDBC drivers newer than 9.2 break engine DAL, so we cannot depend on it
-# until fixed:
-# https://github.com/pgjdbc/pgjdbc/issues/838
-# https://bugzilla.redhat.com/1459502
+%if 0%{?fedora}
+# On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
+# Unfortunately this package is not available on EL7, so we are going to
+# bundle it within engine until available.
 common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 %endif
 
