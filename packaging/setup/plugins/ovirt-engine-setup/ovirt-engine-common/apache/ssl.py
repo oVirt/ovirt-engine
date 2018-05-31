@@ -56,6 +56,29 @@ def _apply_logging(lines):
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
+_HTTPD_CONF_PARAMS_DB = (
+    {
+        'name': 'SSLCertificateFile',
+        'value': oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
+        'only_if_unconfigured': True,
+    },
+    {
+        'name': 'SSLCertificateKeyFile',
+        'value': oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+        'only_if_unconfigured': True,
+    },
+    {
+        'name': 'SSLCACertificateFile',
+        'value': oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
+        'only_if_unconfigured': True,
+    },
+    {
+        'name': 'SSLProtocol',
+        'value': oengcommcons.Const.HTTPD_SSL_PROTOCOLS,
+        'only_if_unconfigured': False,
+    },
+)
+
 
 @util.export
 class Plugin(plugin.PluginBase):
@@ -69,20 +92,7 @@ class Plugin(plugin.PluginBase):
         self._new_content = None
         self._missing_params = None
         self._changed_lines = []
-        self._params = {
-            'SSLCertificateFile': (
-                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT
-            ),
-            'SSLCertificateKeyFile': (
-                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
-            ),
-            'SSLCACertificateFile': (
-                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
-            ),
-            'SSLProtocol': (
-                oengcommcons.Const.HTTPD_SSL_PROTOCOLS
-            ),
-        }
+        self._params = {}
 
     def _read_and_process_file(self):
         with open(
@@ -91,16 +101,21 @@ class Plugin(plugin.PluginBase):
             ],
             'r'
         ) as f:
-            self._current_content = f.read()
+            self._current_content = f.read().splitlines()
 
         self._missing_params = []
         self._new_content = osetuputil.editConfigContent(
-            content=_apply_logging(self._current_content.splitlines()),
+            content=_apply_logging(self._current_content),
             params=self._params,
             changed_lines=self._changed_lines,
             separator_re='\s+',
             new_line_tpl='{spaces}{param} {value}',
             added_params=self._missing_params,
+        )
+        self.logger.debug(
+            '_read_and_process_file: changed_lines: {changed_lines}'.format(
+                changed_lines=self._changed_lines,
+            )
         )
 
     @plugin.event(
@@ -115,6 +130,11 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ApacheEnv.CONFIGURE_SSL,
             None
         )
+        for item in _HTTPD_CONF_PARAMS_DB:
+            if not self.environment[
+                oengcommcons.ApacheEnv.CONFIGURED
+            ] or not item['only_if_unconfigured']:
+                self._params[item['name']] = item['value']
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -220,8 +240,8 @@ class Plugin(plugin.PluginBase):
                 'Configure again? (@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
-            true=_('Automatic'),
-            false=_('Manual'),
+            true=_('Yes'),
+            false=_('No'),
             default=True,
         )
 
