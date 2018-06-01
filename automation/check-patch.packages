@@ -16,3 +16,4 @@ python2-pytest
 python-devel
 python-isort
 python-pep8
+python-futures
