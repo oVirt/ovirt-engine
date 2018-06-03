@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 
 public class TransferImageStatusCommand<T extends TransferImageStatusParameters> extends CommandBase<T> {
@@ -26,39 +27,35 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
     @Inject
     private ImageTransferUpdater imageTransferUpdater;
 
+    private ImageTransfer entity;
+
     public TransferImageStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
     @Override
     protected boolean validate() {
-        return true;
-    }
-
-    @Override
-    protected void executeCommand() {
         if (getParameters().getTransferImageCommandId() == null
                 && getParameters().getDiskId() == null) {
-            log.error("Invalid parameters: command or disk id must be specified");
-            setSucceeded(false);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_TRANSFER_IMAGE_STATUS_MISSING_PARAM);
         }
 
-        ImageTransfer entity;
         if (getParameters().getTransferImageCommandId() != null) {
             entity = imageTransferDao.get(getParameters().getTransferImageCommandId());
         } else {
             entity = imageTransferDao.getByDiskId(getParameters().getDiskId());
         }
 
+        if (entity != null && entity.getType() == TransferType.Download &&
+                getParameters().getUpdates().getPhase() != null && getParameters().getUpdates().getPhase().isPaused()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_PAUSE_IMAGE_DOWNLOAD);
+        }
+        return true;
+    }
+
+    @Override
+    protected void executeCommand() {
         if (entity != null) {
-            if (entity.getType() == TransferType.Download && getParameters().getUpdates().getPhase() != null &&
-                    getParameters().getUpdates().getPhase().isPaused()) {
-                log.error("Invalid parameters: cannot move an image download to any kind of a paused state as the " +
-                        "download is handled by the client and cannot be paused. Note that a download can be " +
-                        "canceled if you wish to stop it.");
-                setSucceeded(false);
-                return;
-            }
             // Always update; this serves as a keepalive
             entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId(), false);
         } else {
