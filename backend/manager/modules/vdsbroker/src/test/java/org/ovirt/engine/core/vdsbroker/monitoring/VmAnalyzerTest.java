@@ -180,6 +180,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.dbVm() != null);
         assumeTrue(data.vdsmVm() != null);
         assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
+        assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingTo);
         assumeTrue(Objects.equals(data.vdsmVm().getVmDynamic().getRunOnVds(), data.dbVm().getRunOnVds()));
         //then
         verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());

@@ -129,8 +129,7 @@ public class VmAnalyzer {
     }
 
     /**
-     * update the internals of this VM
-     * against its match
+     * update the internals of this VM against its match
      * this method shouldn't throw exception but fail in isolated way.
      * TODO consider throwing a checked exception or catching one inside
      */
@@ -155,8 +154,7 @@ public class VmAnalyzer {
             return;
         }
 
-        proceedWatchdogEvents();
-        proceedVmReportedOnTheSameHost();
+        proceedVmReportedOnExpectedHost();
     }
 
     private boolean isVmStoppedBeingReported() {
@@ -479,8 +477,13 @@ public class VmAnalyzer {
     }
 
     private void proceedWatchdogEvents() {
-        VmDynamic vmDynamic = vdsmVm.getVmDynamic();
-        if (isNewWatchdogEvent(vmDynamic, dbVm)) {
+        Long lastWatchdogEvent = vdsmVm.getVmDynamic().getLastWatchdogEvent();
+        if (lastWatchdogEvent == null) {
+            // no watchdog event is reported
+            return;
+        }
+        if (dbVm.getLastWatchdogEvent() == null || dbVm.getLastWatchdogEvent() < lastWatchdogEvent) {
+            VmDynamic vmDynamic = vdsmVm.getVmDynamic();
             AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
             auditLogable.setVmId(vmDynamic.getId());
             auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
@@ -488,12 +491,6 @@ public class VmAnalyzer {
             auditLogable.addCustomValue("wdevent", new Date(vmDynamic.getLastWatchdogEvent() * 1000).toString());
             auditLog(auditLogable, AuditLogType.WATCHDOG_EVENT);
         }
-    }
-
-    protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VmDynamic vmTo) {
-        Long lastWatchdogEvent = vmDynamic.getLastWatchdogEvent();
-        return lastWatchdogEvent != null
-                && (vmTo.getLastWatchdogEvent() == null || vmTo.getLastWatchdogEvent() < lastWatchdogEvent);
     }
 
     private void proceedBalloonCheck() {
@@ -559,12 +556,14 @@ public class VmAnalyzer {
     }
 
 
-    private void proceedVmReportedOnTheSameHost() {
+    private void proceedVmReportedOnExpectedHost() {
         if (vdsmVm.getVmDynamic().getStatus() == VMStatus.MigratingTo) {
             log.info("VM '{}' is migrating to VDS '{}'({}) ignoring it in the refresh until migration is done",
                     vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
             return;
         }
+
+        proceedWatchdogEvents();
 
         VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
 
@@ -625,7 +624,7 @@ public class VmAnalyzer {
         if (vdsmVmDynamic.getStatus() == VMStatus.Paused) {
             if (vdsmVmDynamic.getPauseStatus() == VmPauseStatus.POSTCOPY) {
                 handOverVm();
-                // no need to do anything else besides the hand-over
+                // no need to do anything else besides handing over the VM
                 return;
             }
 
