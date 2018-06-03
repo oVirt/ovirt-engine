@@ -48,7 +48,7 @@ def nts(s, encoding, errors):
     p = s.find(NUL)
     if p != -1:
         s = s[:p]
-    return s.decode(encoding, errors)
+    return (s if python2 else s.decode(encoding, errors))
 
 
 def nti(s):
