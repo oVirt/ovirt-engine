@@ -1129,6 +1129,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_HAVING_NAME_NOT_EXISTS();
 
+    String NETWORK_IS_NOT_EXTERNAL();
+
     String ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS();
 
     String ACTION_TYPE_FAILED_NETWORK_ATTACHMENT_CONTAINS_DUPLICATES();
