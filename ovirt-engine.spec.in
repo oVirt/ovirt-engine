@@ -253,12 +253,16 @@ Requires:	collectd
 Requires:	collectd-postgresql
 Requires:	collectd-disk
 Requires:	collectd-write_http
+
+%if 0%{?rhel}
+#Keeping fluentd on el7 until we remove ansible code requiring it in ovirt-engine-metrics
 Requires:	fluentd
 Requires:	rubygem-fluent-plugin-rewrite-tag-filter
 Requires:	rubygem-fluent-plugin-secure-forward
 Requires:	rubygem-fluent-plugin-collectd-nest
 Requires:	rubygem-fluent-plugin-viaq_data_model
 Requires:	rubygem-fluent-plugin-elasticsearch
+%endif
 
 %if 0%{?fedora}
 # On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
