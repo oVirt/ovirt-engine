@@ -14,6 +14,7 @@ import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -63,6 +64,13 @@ public class BackendStorageDomainTemplatesResource
                                                          params,
                                                          "Templates under storage domain id : " + storageDomainId.toString());
         return ret.keySet();
+    }
+
+    @Override
+    protected Collection<VmTemplate> getEntitiesFromDataDomain() {
+        GetVmTemplatesFromStorageDomainParameters params =
+                new GetVmTemplatesFromStorageDomainParameters(storageDomainId, false);
+        return getBackendCollection(QueryType.GetVmTemplatesFromStorageDomain, params);
     }
 
     @Override
