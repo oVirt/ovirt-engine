@@ -91,6 +91,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
         switch (storageDomainType) {
         case Data:
         case Master:
+            entities = getEntitiesFromDataDomain();
             break;
         case ImportExport:
             entities = getEntitiesFromExportDomain();
@@ -107,4 +108,6 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     protected abstract Collection<Q> getEntitiesFromExportDomain();
+
+    protected abstract Collection<Q> getEntitiesFromDataDomain();
 }

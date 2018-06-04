@@ -57,6 +57,12 @@ public class BackendStorageDomainVmsResource
     }
 
     @Override
+    protected Collection<org.ovirt.engine.core.common.businessentities.VM> getEntitiesFromDataDomain() {
+        IdQueryParameters params = new IdQueryParameters(storageDomainId);
+        return getBackendCollection(QueryType.GetVmsByStorageDomain, params);
+    }
+
+    @Override
     public StorageDomainVmResource getVmResource(String id) {
         return inject(new BackendStorageDomainVmResource(this, id));
     }
