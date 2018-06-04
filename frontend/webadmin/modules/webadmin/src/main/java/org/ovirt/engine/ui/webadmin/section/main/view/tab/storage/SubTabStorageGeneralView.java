@@ -41,6 +41,9 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     }
 
     @Ignore
+    StringValueLabel storageDomainId = new StringValueLabel();
+
+    @Ignore
     StorageSizeLabel<Integer> totalSize = new StorageSizeLabel<>();
 
     @Ignore
@@ -103,13 +106,14 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 14);
+        formBuilder = new FormBuilder(formPanel, 1, 15);
         formBuilder.setRelativeColumnWidth(0, 12);
-        formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.usedStorageGeneral(), usedSize, 2, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.allocatedStorageGeneral(), allocatedSize, 3, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.overAllocRatioStorageGeneral(), overAllocationRatio, 4, 0) {
+        formBuilder.addFormItem(new FormItem(constants.storageDomainIdGeneral(), storageDomainId, 0, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 1, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 2, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.usedStorageGeneral(), usedSize, 3, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.allocatedStorageGeneral(), allocatedSize, 4, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.overAllocRatioStorageGeneral(), overAllocationRatio, 5, 0) {
             @Override
             public boolean getIsAvailable() {
                 StorageDomain entity = getDetailModel().getEntity();
@@ -118,48 +122,48 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
                         && !StorageDomainType.ImportExport.equals(storageDomainType);
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(5, 0), 2, 10); // empty cell
-        formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 6, 0) {
+        formBuilder.addFormItem(new FormItem(6, 0), 2, 10); // empty cell
+        formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 7, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getPath() != null;
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 7, 0) {
+        formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 8, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsPosix() && getDetailModel().getVfsType() != null
                         && !getDetailModel().getVfsType().isEmpty();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 8, 0) {
+        formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 9, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsPosix() && getDetailModel().getMountOptions() != null
                         && !getDetailModel().getMountOptions().isEmpty();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 9, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 10, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getNfsVersion() != null;
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 10, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 11, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getRetransmissions() != null;
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 11, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 12, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getTimeout() != null;
             }
         }, 2, 10);
 
-        formBuilder.addFormItem(new FormItem(constants.warningLowSpaceIndicator(), warningLowSpaceIndicator, 12, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.criticalSpaceActionBlocker(), criticalSpaceActionBlocker, 13, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.warningLowSpaceIndicator(), warningLowSpaceIndicator, 13, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.criticalSpaceActionBlocker(), criticalSpaceActionBlocker, 14, 0), 2, 10);
     }
 
     @Override
@@ -174,6 +178,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         // Required because of StorageGeneralModel.getEntity() returning Object
         StorageDomain entity = getDetailModel().getEntity();
         if (entity != null) {
+            storageDomainId.setValue(entity.getId().toString());
             totalSize.setValue(entity.getTotalDiskSize());
             availableSize.setValue(entity.getAvailableDiskSize());
             usedSize.setValue(entity.getUsedDiskSize());

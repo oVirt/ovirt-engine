@@ -1392,6 +1392,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clickToEdit();
 
+    String storageDomainIdGeneral();
+
     String sizeStorageGeneral();
 
     String availableStorageGeneral();
