@@ -593,7 +593,10 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         cpuEditor = new ListModelListBoxEditor<>(new AbstractRenderer<ServerCpu>() {
             @Override
             public String render(ServerCpu object) {
-                return object != null ? object.getCpuName() : constants.autoDetect();
+                return object != null && object.getCpuName().length() > 0
+                        ?
+                        object.getCpuName()
+                        : constants.autoDetect();
             }
         });
 
