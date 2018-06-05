@@ -98,6 +98,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         name=oengcommcons.Stages.DB_CONNECTION_SETUP,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.ACTION
+        ] != osetupcons.Const.ACTION_PROVISIONDB,
     )
     def _setup(self):
         dbovirtutils = database.OvirtUtils(
