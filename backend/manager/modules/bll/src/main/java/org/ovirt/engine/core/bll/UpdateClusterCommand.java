@@ -550,7 +550,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
         // Validate the cpu only if the cluster supports Virt
         if (result && getCluster().supportsVirtService()
-                && (oldCluster.getCpuName() != null || getCluster().getCpuName() != null)) {
+                && (! "".equals(oldCluster.getCpuName()) || ! "".equals(getCluster().getCpuName()))) {
             // Check that cpu exist
             if (!checkIfCpusExist()) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND);

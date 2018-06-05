@@ -163,6 +163,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
+        cpuName = "";
     }
 
     @Override
