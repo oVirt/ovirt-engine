@@ -64,6 +64,9 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     @Ignore
     StorageSizeLabel<Integer> criticalSpaceActionBlocker = new StorageSizeLabel<>();
 
+    @Path("numOfImages")
+    StringValueLabel numOfImages = new StringValueLabel();
+
     @Path("path")
     StringValueLabel path = new StringValueLabel();
 
@@ -106,7 +109,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 15);
+        formBuilder = new FormBuilder(formPanel, 1, 16);
         formBuilder.setRelativeColumnWidth(0, 12);
         formBuilder.addFormItem(new FormItem(constants.storageDomainIdGeneral(), storageDomainId, 0, 0), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 1, 0), 2, 10);
@@ -122,48 +125,55 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
                         && !StorageDomainType.ImportExport.equals(storageDomainType);
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(6, 0), 2, 10); // empty cell
-        formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 7, 0) {
+        formBuilder.addFormItem(new FormItem(constants.numberOfImagesStorageGeneral(), numOfImages, 6, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                StorageDomain entity = getDetailModel().getEntity();
+                return entity != null && entity.getStorageDomainType().isDataDomain();
+            }
+        }, 2, 10);
+        formBuilder.addFormItem(new FormItem(7, 0), 2, 10); // empty cell
+        formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 8, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getPath() != null;
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 8, 0) {
+        formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 9, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsPosix() && getDetailModel().getVfsType() != null
                         && !getDetailModel().getVfsType().isEmpty();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 9, 0) {
+        formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 10, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsPosix() && getDetailModel().getMountOptions() != null
                         && !getDetailModel().getMountOptions().isEmpty();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 10, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 11, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getNfsVersion() != null;
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 11, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 12, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getRetransmissions() != null;
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 12, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 13, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getTimeout() != null;
             }
         }, 2, 10);
 
-        formBuilder.addFormItem(new FormItem(constants.warningLowSpaceIndicator(), warningLowSpaceIndicator, 13, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.criticalSpaceActionBlocker(), criticalSpaceActionBlocker, 14, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.warningLowSpaceIndicator(), warningLowSpaceIndicator, 14, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.criticalSpaceActionBlocker(), criticalSpaceActionBlocker, 15, 0), 2, 10);
     }
 
     @Override
