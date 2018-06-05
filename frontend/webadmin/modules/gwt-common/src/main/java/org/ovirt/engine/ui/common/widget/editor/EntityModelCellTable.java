@@ -348,8 +348,14 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                     if (event.getColumn() == 0) {
                         return;
                     }
-                    getSelectionModel().setSelected(event.getValue(),
-                            !getSelectionModel().isSelected(event.getValue()));
+                    if (getSelectionModel() instanceof MultiSelectionModel) {
+                        getSelectionModel().setSelected(event.getValue(),
+                                !getSelectionModel().isSelected(event.getValue()));
+                    } else if (getSelectionModel() instanceof SingleSelectionModel) {
+                        // Setting the value only here is fine as we clear all the values in the selection change
+                        // handler
+                        getSelectionModel().setSelected(event.getValue(), true);
+                    }
                 }
             });
         }
