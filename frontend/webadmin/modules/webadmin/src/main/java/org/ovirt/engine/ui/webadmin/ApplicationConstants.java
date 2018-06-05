@@ -1404,6 +1404,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String overAllocRatioStorageGeneral();
 
+    String numberOfImagesStorageGeneral();
+
     String pathStorageGeneral();
 
     String vfsTypeStorageGeneral();

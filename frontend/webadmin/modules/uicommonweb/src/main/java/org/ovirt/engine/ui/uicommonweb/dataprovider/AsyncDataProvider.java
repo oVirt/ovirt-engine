@@ -1624,6 +1624,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetStorageServerConnectionById, params, aQuery);
     }
 
+    public void getNumberOfImagesOnStorageDomain(AsyncQuery<Long> aQuery, Guid storageDomainId) {
+        aQuery.converterCallback = source -> (Long) source;
+        IdQueryParameters params = new IdQueryParameters(storageDomainId);
+        Frontend.getInstance().runQuery(QueryType.GetNumberOfImagesByStorageDomainId, params, aQuery);
+    }
+
     public void getDataCentersByStorageDomain(AsyncQuery<List<StoragePool>> aQuery, Guid storageDomainId) {
         aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(QueryType.GetStoragePoolsByStorageDomainId,

@@ -144,6 +144,19 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
         }
     }
 
+    private String numOfImages;
+
+    public String getNumOfImages() {
+        return numOfImages;
+    }
+
+    public void setNumOfImages(String numOfImages) {
+        if (!Objects.equals(this.numOfImages, numOfImages)) {
+            this.numOfImages = numOfImages;
+            onPropertyChanged(new PropertyChangedEventArgs("NumOfImages")); //$NON-NLS-1$
+        }
+    }
+
     public StorageGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
@@ -161,6 +174,11 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
             setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);
             setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
             setIsGlusterfs(storageDomain.getStorageType() == StorageType.GLUSTERFS);
+
+            if (getEntity().getStorageDomainType().isDataDomain()) {
+                AsyncDataProvider.getInstance().getNumberOfImagesOnStorageDomain(
+                        new AsyncQuery<>(num -> setNumOfImages(num.toString())), storageDomain.getId());
+            }
 
             if (getIsNfs() || getIsLocalS() || getIsPosix() || getIsGlusterfs()) {
                 AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(connection -> {
