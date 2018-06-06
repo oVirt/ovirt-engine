@@ -3444,5 +3444,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String showVfInfo();
 
     String ovsVersionGeneral();
+
+    String enabledVirtualFunctions();
+
+    String freeVirtualFunctions();
 }
 

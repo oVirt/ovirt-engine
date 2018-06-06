@@ -1341,6 +1341,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return vfMap.isEmpty();
     }
 
+    public HostNicVfsConfig getVfConfig(Guid nicId) {
+        return nicToVfsConfig.get(nicId);
+    }
+
     @Override
     public void cleanup() {
         cleanupEvents(getNicsChangedEvent(),

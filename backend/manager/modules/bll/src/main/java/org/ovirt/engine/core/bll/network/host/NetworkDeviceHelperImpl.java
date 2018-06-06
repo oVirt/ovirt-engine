@@ -122,6 +122,11 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
         hostNicVfsConfig.setMaxNumOfVfs(getMaxNumOfVfs(pciDevice));
         hostNicVfsConfig.setNumOfVfs(getNumOfVfs(pciDevice, deviceList));
+        hostNicVfsConfig.setNumOfFreeVfs(getNumOfFreeVfs(pciDevice, deviceList));
+    }
+
+    private int getNumOfFreeVfs(HostDevice pciDevice, List<HostDevice> deviceList) {
+        return getVfs(pciDevice, deviceList).stream().filter(this::isVfFree).mapToInt(device -> 1).sum();
     }
 
     private HostDevice getPciDeviceByNic(final VdsNetworkInterface nic, List<HostDevice> deviceList) {
