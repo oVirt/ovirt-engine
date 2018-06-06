@@ -145,6 +145,7 @@ public class VmInfoBuildUtils {
     private final DiskVmElementDao diskVmElementDao;
     private final VmDevicesMonitoring vmDevicesMonitoring;
     private final VmSerialNumberBuilder vmSerialNumberBuilder;
+    private final MultiQueueUtils multiQueueUtils;
 
     private static final String BLOCK_DOMAIN_DISK_PATH = "/rhev/data-center/mnt/blockSD/%s/images/%s/%s";
     private static final String FILE_DOMAIN_DISK_PATH = "/rhev/data-center/%s/%s/images/%s/%s";
@@ -174,7 +175,8 @@ public class VmInfoBuildUtils {
             HostDeviceDao hostDeviceDao,
             VmSerialNumberBuilder vmSerialNumberBuilder,
             DiskVmElementDao diskVmElementDao,
-            VmDevicesMonitoring vmDevicesMonitoring) {
+            VmDevicesMonitoring vmDevicesMonitoring,
+            MultiQueueUtils multiQueueUtils) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -195,6 +197,7 @@ public class VmInfoBuildUtils {
         this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
         this.diskVmElementDao = Objects.requireNonNull(diskVmElementDao);
         this.vmDevicesMonitoring = Objects.requireNonNull(vmDevicesMonitoring);
+        this.multiQueueUtils = Objects.requireNonNull(multiQueueUtils);
     }
 
     @SuppressWarnings("unchecked")
@@ -306,23 +309,30 @@ public class VmInfoBuildUtils {
             VmDevice vmDevice,
             VmNic nic) {
         VnicProfile vnicProfile = null;
+        if (nic.getVnicProfileId() != null) {
+            vnicProfile = getVnicProfile(nic.getVnicProfileId());
+        }
+        addProfileDataToNic(struct, vm, vmDevice, nic, vnicProfile);
+    }
+    public void addProfileDataToNic(Map<String, Object> struct,
+            VM vm,
+            VmDevice vmDevice,
+            VmNic nic,
+            VnicProfile vnicProfile) {
         Network network = null;
         String networkName = "";
         String vdsmName = "";
         List<VnicProfileProperties> unsupportedFeatures = new ArrayList<>();
-        if (nic.getVnicProfileId() != null) {
-            vnicProfile = getVnicProfile(nic.getVnicProfileId());
-            if (vnicProfile != null) {
-                network = getNetwork(vnicProfile.getNetworkId());
-                networkName = network.getName();
-                vdsmName = network.getVdsmName();
-                log.debug("VNIC '{}' is using profile '{}' on network '{}' with vdsmName '{}'",
-                        nic.getName(),
-                        vnicProfile,
-                        networkName,
-                        vdsmName);
-                addQosForDevice(struct, vnicProfile);
-            }
+        if (vnicProfile != null) {
+            network = getNetwork(vnicProfile.getNetworkId());
+            networkName = network.getName();
+            vdsmName = network.getVdsmName();
+            log.debug("VNIC '{}' is using profile '{}' on network '{}' with vdsmName '{}'",
+                    nic.getName(),
+                    vnicProfile,
+                    networkName,
+                    vdsmName);
+            addQosForDevice(struct, vnicProfile);
         }
 
         struct.put(VdsProperties.NETWORK, vdsmName);
@@ -1345,5 +1355,13 @@ public class VmInfoBuildUtils {
     public String getVmSerialNumber(VM vm, String defaultValue) {
         String uuid = vmSerialNumberBuilder.buildVmSerialNumber(vm);
         return uuid != null ? uuid : defaultValue;
+    }
+
+    public int getOptimalNumOfQueuesPerVnic(int numOfCpus) {
+        return multiQueueUtils.getOptimalNumOfQueuesPerVnic(numOfCpus);
+    }
+
+    public boolean isInterfaceQueuable(VmDevice vmDevice, VmNic vmNic) {
+        return multiQueueUtils.isInterfaceQueuable(vmDevice, vmNic);
     }
 }
