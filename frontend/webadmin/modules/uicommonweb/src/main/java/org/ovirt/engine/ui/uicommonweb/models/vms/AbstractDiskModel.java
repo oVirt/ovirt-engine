@@ -500,8 +500,20 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     private void updateShareableDiskEnabled() {
-        getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupported());
-        getIsShareable().setIsChangeable(isEditEnabled());
+        StorageDomain storageDomain = getStorageDomain().getSelectedItem();
+        if (storageDomain != null && StorageType.GLUSTERFS == storageDomain.getStorageType()) {
+            getIsShareable().setEntity(false);
+            getIsShareable().setIsChangeable(false);
+            getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupported());
+        } else if (getVolumeType().getSelectedItem() == VolumeType.Sparse && storageDomain != null
+                && storageDomain.getStorageType().isBlockDomain()) {
+            getIsShareable().setEntity(false);
+            getIsShareable().setIsChangeable(false);
+            getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupportedByConfiguration());
+        } else {
+            getIsShareable().setIsChangeable(isEditEnabled());
+            getIsShareable().setChangeProhibitionReason(null);
+        }
     }
 
     private void updateDirectLunDiskEnabled() {
@@ -512,16 +524,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsDirectLunDiskAvaialable().setEntity(true);
         setMessage(""); //$NON-NLS-1$
         getIsModelDisabled().setEntity(false);
-    }
-
-    private void updateShareable(VolumeType volumeType, StorageType storageType) {
-        if (storageType.isBlockDomain() && volumeType == VolumeType.Sparse) {
-            getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupportedByConfiguration());
-            getIsShareable().setIsChangeable(false);
-            getIsShareable().setEntity(false);
-        } else {
-            getIsShareable().setIsChangeable(isEditEnabled());
-        }
     }
 
     public void updateInterface(final Version clusterVersion) {
@@ -695,11 +697,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         if (!isInStorageDomainUpdate) {
             isUserSelectedVolumeType = true;
         }
-
-        VolumeType volumeType = getVolumeType().getSelectedItem();
-        StorageType storageType = getStorageDomain().getSelectedItem().getStorageType();
-
-        updateShareable(volumeType, storageType);
+        updateShareableDiskEnabled();
     }
 
     private void DiskInterface_SelectedItemChanged() {
@@ -933,7 +931,6 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         setMessage(null);
         getIsModelDisabled().setEntity(false);
-        updateShareableDiskEnabled();
         updateDirectLunDiskEnabled();
         updateInterface(isInVm ? getVm().getCompatibilityVersion() : null);
 
@@ -967,6 +964,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         updatePassDiscardAvailability();
         updatePassDiscardChangeability();
         updateWipeAfterDeleteChangeability();
+        updateShareableDiskEnabled();
     }
 
     public boolean validate() {
