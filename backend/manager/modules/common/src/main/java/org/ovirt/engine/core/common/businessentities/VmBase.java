@@ -378,6 +378,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private VmResumeBehavior resumeBehavior;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
+    private boolean multiQueuesEnabled;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -408,6 +413,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         biosType = BiosType.I440FX_SEA_BIOS;
         description = "";
         comment = "";
+        multiQueuesEnabled = true;
     }
 
     @EditableVmField
@@ -591,7 +597,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getCustomCompatibilityVersion(),
                 vmBase.getMigrationPolicyId(),
                 vmBase.getLeaseStorageDomainId(),
-                vmBase.getResumeBehavior());
+                vmBase.getResumeBehavior(),
+                vmBase.isMultiQueuesEnabled());
     }
 
     public VmBase(
@@ -661,7 +668,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             Version customCompatibilityVersion,
             Guid migrationPolicyId,
             Guid leaseStorageDomainId,
-            VmResumeBehavior resumeBehavior) {
+            VmResumeBehavior resumeBehavior,
+            boolean multiQueuesEnabled) {
         this();
         this.name = name;
         this.id = id;
@@ -730,6 +738,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.migrationPolicyId = migrationPolicyId;
         this.leaseStorageDomainId = leaseStorageDomainId;
         this.resumeBehavior = resumeBehavior;
+        this.multiQueuesEnabled = multiQueuesEnabled;
     }
 
     @Override
@@ -1085,6 +1094,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.clusterCompatibilityVersionOrigin = value;
     }
 
+    public boolean isMultiQueuesEnabled() {
+        return multiQueuesEnabled;
+    }
+
+    public void setMultiQueuesEnabled(boolean multiQueuesEnabled) {
+        this.multiQueuesEnabled = multiQueuesEnabled;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1143,7 +1160,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 largeIconId,
                 consoleDisconnectAction,
                 customCompatibilityVersion,
-                resumeBehavior
+                resumeBehavior,
+                multiQueuesEnabled
         );
     }
 
@@ -1212,7 +1230,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(largeIconId, other.largeIconId)
                 && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction)
                 && Objects.equals(resumeBehavior, other.resumeBehavior)
-                && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion);
+                && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion)
+                && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled);
     }
 
     public Guid getQuotaId() {
