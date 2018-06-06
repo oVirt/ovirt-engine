@@ -29,8 +29,6 @@ from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup.engine_common import postgres
 from ovirt_engine_setup.engine_common.constants import ProvisioningEnv
 
-from ovirt_setup_lib import dialog
-
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -55,9 +53,13 @@ class Plugin(plugin.PluginBase):
         return self.environment[oenginecons.EngineDBEnv.HOST] == 'localhost'
 
     def _suggestAutoFixing(self):
-        autofix_approved = dialog.queryBoolean(
-            dialog=self.dialog,
+        validValues = (_('Yes'), _('No'))
+        if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            validValues = validValues + (_('Ignore'),)
+        autofix_approved = self.dialog.queryString(
             name='UPGRADE_PG_CONF_ENGINE',
+            validValues=validValues,
+            caseSensitive=False,
             note=_(
                 'The database requires these configurations values to be '
                 'changed. Setup can fix them for you or abort.'
@@ -65,13 +67,13 @@ class Plugin(plugin.PluginBase):
                 '@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
-            default=True,
+            default=_("Yes"),
         )
-        if autofix_approved:
+        if autofix_approved.upper() == _("Yes").upper():
             self.environment[
                 oenginecons.EngineDBEnv.FIX_DB_CONFIGURATION
             ] = True
-        else:
+        elif autofix_approved.upper() == _("No").upper():
             raise RuntimeError(_('Aborted by user'))
 
     def _pg_conf_items(self):
