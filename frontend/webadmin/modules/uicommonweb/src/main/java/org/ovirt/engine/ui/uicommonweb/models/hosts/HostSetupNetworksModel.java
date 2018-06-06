@@ -1337,6 +1337,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         hostSetupNetworksParametersData.setNetworkIdToExistingAttachmentId(networkIdToExistingAttachmentId);
     }
 
+    public HostNicVfsConfig getVfConfig(Guid nicId) {
+        return nicToVfsConfig.get(nicId);
+    }
     @Override
     public void cleanup() {
         cleanupEvents(getNicsChangedEvent(),

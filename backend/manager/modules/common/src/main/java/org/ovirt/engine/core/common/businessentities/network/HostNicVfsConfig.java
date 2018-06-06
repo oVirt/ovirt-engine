@@ -27,6 +27,11 @@ public class HostNicVfsConfig implements Queryable, BusinessEntity<Guid> {
      */
     private int numOfVfs;
 
+    /**
+     * The actual number of free virtual functions are on the nic
+     */
+    private int numOfFreeVfs;
+
     private boolean allNetworksAllowed;
 
     private Set<Guid> networks;
@@ -43,6 +48,7 @@ public class HostNicVfsConfig implements Queryable, BusinessEntity<Guid> {
         setNicId(vfsConfig.getNicId());
         setMaxNumOfVfs(vfsConfig.getMaxNumOfVfs());
         setNumOfVfs(vfsConfig.getNumOfVfs());
+        setNumOfFreeVfs(vfsConfig.getNumOfFreeVfs());
 
         setAllNetworksAllowed(vfsConfig.isAllNetworksAllowed());
 
@@ -109,6 +115,14 @@ public class HostNicVfsConfig implements Queryable, BusinessEntity<Guid> {
         this.networkLabels = networkLabels;
     }
 
+    public int getNumOfFreeVfs() {
+        return numOfFreeVfs;
+    }
+
+    public void setNumOfFreeVfs(int numOfFreeVfs) {
+        this.numOfFreeVfs = numOfFreeVfs;
+    }
+
     @Override
     public Guid getId() {
         return this.id;
@@ -151,6 +165,7 @@ public class HostNicVfsConfig implements Queryable, BusinessEntity<Guid> {
                 .append("numOfVfs", getNumOfVfs())
                 .append("networks", getNetworks())
                 .append("networkLabels", getNetworkLabels())
+                .append("NumOfFreeVfs", getNumOfFreeVfs())
                 .build();
     }
 

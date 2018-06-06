@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
+import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
@@ -251,6 +252,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         }
         if (nic.isVf()) {
             addRow(constants.physicalFunction(), nic.getPhysicalFunction());
+        }
+
+        HostNicVfsConfig vfsConfig = nic.getSetupModel().getVfConfig(nic.getOriginalIface().getId());
+        if (nic.isSriovEnabled()) {
+            addNonNullOrEmptyValueRow(constants.enabledVirtualFunctions(), String.valueOf(vfsConfig.getNumOfVfs()));
+            addNonNullOrEmptyValueRow(constants.freeVirtualFunctions(), String.valueOf(vfsConfig.getNumOfFreeVfs()));
         }
     }
 
