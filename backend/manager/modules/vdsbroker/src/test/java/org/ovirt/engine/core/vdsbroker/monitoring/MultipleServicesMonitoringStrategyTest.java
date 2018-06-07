@@ -9,20 +9,39 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class MultipleServicesMonitoringStrategyTest {
+    private Guid vdsId = Guid.newGuid();
+    private Guid vdsId2 = Guid.newGuid();
     VirtMonitoringStrategy virtStrategy;
     GlusterMonitoringStrategy glusterStrategy;
     MultipleServicesMonitoringStrategy strategy;
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.MaintenanceVdsIgnoreExternalVms, true));
+    }
+
     public MultipleServicesMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), null));
+        virtStrategy =
+                spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), mockVmDao(), null, null));
         doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any());
         glusterStrategy = spy(new GlusterMonitoringStrategy());
         doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());
@@ -35,7 +54,7 @@ public class MultipleServicesMonitoringStrategyTest {
     public void testCanMoveVdsToMaintenanceFalse() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.PreparingForMaintenance);
-        vds.setVmCount(1);
+        vds.setId(vdsId);
         assertFalse(strategy.canMoveToMaintenance(vds));
     }
 
@@ -43,7 +62,7 @@ public class MultipleServicesMonitoringStrategyTest {
     public void testCanMoveVdsToMaintenanceTrue() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.PreparingForMaintenance);
-        vds.setVmCount(0);
+        vds.setId(vdsId2);
         assertTrue(strategy.canMoveToMaintenance(vds));
     }
 
@@ -77,5 +96,17 @@ public class MultipleServicesMonitoringStrategyTest {
         doThrow(new RuntimeException()).when(virtStrategy).processHardwareCapabilities(any());
         VDS vds = new VDS();
         assertThrows(RuntimeException.class, () -> strategy.processHardwareCapabilities(vds));
+    }
+
+    private VmDao mockVmDao() {
+        VmDao mock = mock(VmDao.class);
+        VM vm = mock(VM.class);
+        when(vm.isExternalVm()).thenReturn(Boolean.FALSE);
+        when(mock.getAllRunningForVds(vdsId)).thenReturn(Collections.singletonList(vm));
+
+        VM externalVm = mock(VM.class);
+        when(externalVm.isExternalVm()).thenReturn(Boolean.TRUE);
+        when(mock.getAllRunningForVds(vdsId2)).thenReturn(Collections.singletonList(externalVm));
+        return mock;
     }
 }

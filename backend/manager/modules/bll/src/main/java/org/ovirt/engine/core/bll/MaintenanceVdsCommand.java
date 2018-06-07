@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -27,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -99,6 +102,9 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     protected void orderListOfRunningVmsOnVds(Guid vdsId) {
         vms = vmDao.getAllRunningForVds(vdsId);
+        if (Config.<Boolean>getValue(ConfigValues.MaintenanceVdsIgnoreExternalVms)) {
+            vms = vms.stream().filter(vm -> !vm.isExternalVm()).collect(Collectors.toList());
+        }
         vms.sort(new VmsComparer().reversed());
     }
 
