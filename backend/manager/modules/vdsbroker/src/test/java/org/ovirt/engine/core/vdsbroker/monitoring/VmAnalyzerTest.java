@@ -188,21 +188,6 @@ public class VmAnalyzerTest {
 
     @ParameterizedTest
     @EnumSource(VmTestPairs.class)
-    public void proceedBalloonCheck(VmTestPairs data) {
-        //given
-        initMocks(data, true);
-        //when
-        assumeTrue(data.dbVm() != null);
-        assumeTrue(data.vdsmVm() != null);
-        assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
-        assumeTrue(Objects.equals(data.vdsmVm().getVmDynamic().getRunOnVds(), data.dbVm().getRunOnVds()));
-        //then
-        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
-        assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
-    }
-
-    @ParameterizedTest
-    @EnumSource(VmTestPairs.class)
     public void vmNotRunningOnHostWithBalloonEnabled(VmTestPairs data) {
         //given
         initMocks(data, false);
