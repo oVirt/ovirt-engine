@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.vdsbroker.libvirt;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class DomainXmlUtils {
 
@@ -72,5 +75,36 @@ public class DomainXmlUtils {
             return attr.getValue();
         }
         return "";
+    }
+
+    public static Map<String, String> parseMaxMemSize(XmlNode node) {
+        return node != null ?
+                Collections.singletonMap(VdsProperties.maxMemSize, node.innerText)
+                : Collections.emptyMap();
+    }
+
+    public static String parseNicNetwork(XmlNode node) {
+        XmlNode videoModelNode = node.selectSingleNode("source");
+        return videoModelNode.attributes.get("bridge").getValue();
+    }
+
+    public static String parseNicType(XmlNode node) {
+        XmlNode videoModelNode = node.selectSingleNode("model");
+        return videoModelNode.attributes.get("type").getValue();
+    }
+
+    public static String parseDiskDriver(XmlNode node) {
+        XmlNode videoModelNode = node.selectSingleNode("driver");
+        return videoModelNode.attributes.get("type").getValue();
+    }
+
+    public static String parseDiskBus(XmlNode node) {
+        XmlNode videoModelNode = node.selectSingleNode("target");
+        return videoModelNode.attributes.get("bus").getValue();
+    }
+
+    public static String parseEmulatedMachine(XmlNode node) {
+        XmlNode osTypeNode = node.selectSingleNode("type");
+        return osTypeNode.attributes.get("machine").getValue();
     }
 }

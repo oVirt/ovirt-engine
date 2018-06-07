@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -148,7 +149,7 @@ public class VmDevicesMonitoringTest {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(new Map[] { getDumpXmls(VM_ID, deviceInfos) });
         returnValue.setSucceeded(true);
-        doReturn(returnValue).when(fullListAdapter).getVmFullList(any(), any());
+        doReturn(returnValue).when(fullListAdapter).getVmFullList(any(), any(), anyBoolean());
     }
 
     @Test
@@ -162,7 +163,7 @@ public class VmDevicesMonitoringTest {
         change.updateVm(VM_ID, NEW_HASH);
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -180,7 +181,7 @@ public class VmDevicesMonitoringTest {
         change.updateVm(VM_ID, INITIAL_HASH);
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -255,7 +256,7 @@ public class VmDevicesMonitoringTest {
         change.updateVm(VM_ID, INITIAL_HASH);
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -288,7 +289,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true));
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -308,7 +309,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(device);
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, times(1)).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -328,7 +329,7 @@ public class VmDevicesMonitoringTest {
         change.removeDevice(new VmDeviceId(CDROM_DEVICE_ID, VM_ID));
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, times(1)).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -353,7 +354,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(device);
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, times(1)).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -378,7 +379,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(device);
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -398,7 +399,7 @@ public class VmDevicesMonitoringTest {
         change.removeDevice(new VmDeviceId(CDROM_DEVICE_ID, VM_ID));
         change.flush();
 
-        verify(fullListAdapter, never()).getVmFullList(any(), any());
+        verify(fullListAdapter, never()).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -431,7 +432,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(controller);
         change.flush();
 
-        verify(fullListAdapter, times(1)).getVmFullList(any(), any());
+        verify(fullListAdapter, times(1)).getVmFullList(any(), any(), anyBoolean());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, times(1)).removeAll(any());
         verify(vmDeviceDao, times(2)).saveAll(any());

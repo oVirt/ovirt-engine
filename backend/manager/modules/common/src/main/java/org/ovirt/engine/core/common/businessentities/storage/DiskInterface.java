@@ -28,7 +28,7 @@ public enum DiskInterface {
         return name;
     }
 
-    public static DiskInterface forValue(String name) {
+    public static DiskInterface forName(String name) {
         return mappings.get(name);
     }
 }
