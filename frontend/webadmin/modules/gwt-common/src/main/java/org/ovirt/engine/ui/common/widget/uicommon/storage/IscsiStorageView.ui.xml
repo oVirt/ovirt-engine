@@ -8,12 +8,24 @@
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView.WidgetStyle">
         .errorMessageLabel {
             color: red;
         }
 
-        .bar {
+        .barEditDomain {
+            width: 50px;
+            top: 260px;
+            height: 424px;
+        }
+
+        .barNewDomain {
+            width: 50px;
+            top: 213px;
+            height: 426px;
+        }
+
+        .barNewDisk {
             width: 50px;
             top: 230px;
             height: 376px;
@@ -29,8 +41,8 @@
 
         .dialogTab {
             height: 50%;
-            top: 58px;
-            left: 70px;
+            top: 76px;
+            left: 79px;
             background-color: transparent !important;
             -webkit-transform: rotate(-90deg);
             -moz-transform: rotate(-90deg);
@@ -46,7 +58,7 @@
         }
 
         .labelWidth {
-            width: 188px !important;
+            width: 215px !important;
         }
 
         .mainLabel {
@@ -73,7 +85,7 @@
             </b:Column>
         </b:Row>
         <b:Row>
-            <t:DialogTabPanel ui:field="dialogTabPanel" barStyle="{style.bar}" contentStyle="{style.content}" navStyle="{style.maxHeight}" addStyleNames="{style.tabPanel}" height="306px" width="100%">
+            <t:DialogTabPanel ui:field="dialogTabPanel" contentStyle="{style.content}" navStyle="{style.maxHeight}" addStyleNames="{style.tabPanel}" height="306px" width="100%">
                 <t:tab>
                     <t:DialogTab ui:field="targetsToLunTab" tabLabelStyle="{style.dialogTab}" tabAnchorStyle="{style.labelWidth}">
                         <t:content>

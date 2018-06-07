@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -27,6 +28,9 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     interface ViewUiBinder extends UiBinder<Widget, IscsiStorageView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    @UiField
+    WidgetStyle style;
 
     @UiField
     @Path(value = "getLUNsFailure")
@@ -65,10 +69,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     Label subLabel;
 
-    private double treeCollapsedHeight = 206;
-    private double treeExpandedHeight = 305;
-    private double lunsTreeHeight = 342;
-    private double tabContentHeight = 376;
+    private double treeCollapsedHeight = 245;
+    private double treeExpandedHeight = 355;
+    private double lunsTreeHeight = 405;
+    private double tabContentHeight = 430;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -146,6 +150,12 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
                 break;
             }
         }
+
+        if (object.getContainer().isNewStorage()) {
+            dialogTabPanel.setBarStyle(multiSelection ? style.barNewDomain() : style.barNewDisk());
+        } else {
+            dialogTabPanel.setBarStyle(style.barEditDomain());
+        }
     }
 
     void initLists(IscsiStorageModel object) {
@@ -217,6 +227,14 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @Override
     public void focus() {
+    }
+
+    interface WidgetStyle extends CssResource {
+        String barEditDomain();
+
+        String barNewDomain();
+
+        String barNewDisk();
     }
 
 }
