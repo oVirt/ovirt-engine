@@ -1,5 +1,20 @@
 ---
 - block:
+  - name: Install ovs
+    yum:
+        name: openvswitch
+        state: present
+
+  - name: Ensure Open vSwitch is started
+    service:
+        name: openvswitch
+        state: started
+        enabled: yes
+
+  when:
+    - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr and ovn_engine_cluster_version is version_compare('4.2', '>='))
+
+- block:
   - name: Install ovirt-provider-ovn-driver
     yum:
         name: ovirt-provider-ovn-driver
@@ -8,12 +23,6 @@
   - name: Ensure ovn-controller is started
     service:
         name: ovn-controller
-        state: started
-        enabled: yes
-
-  - name: Ensure Open vSwitch is started
-    service:
-        name: openvswitch
         state: started
         enabled: yes
 
