@@ -9,25 +9,39 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
+import java.util.Collections;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class VirtMonitoringStrategyTest {
     private Guid vdsId = Guid.newGuid();
+    private Guid vdsId2 = Guid.newGuid();
     private Guid clusterId = Guid.newGuid();
 
     private VDS vdsFromDb;
     private Cluster cluster;
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MaintenanceVdsIgnoreExternalVms, true)
+    );
 
     @Before
     public void setUp() {
@@ -35,7 +49,7 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setId(vdsId);
         vdsFromDb.setClusterId(clusterId);
 
-        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), null));
+        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), mockVmDao(), null, null));
         doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());
     }
 
@@ -45,14 +59,13 @@ public class VirtMonitoringStrategyTest {
     public void testVirtCanMoveToMaintenance() {
         VDS vds = new VDS();
         vds.setStatus(VDSStatus.PreparingForMaintenance);
-        vds.setVmCount(1);
         vds.setId(vdsId);
         vds.setClusterId(clusterId);
         assertFalse(virtStrategy.canMoveToMaintenance(vds));
-        vds.setVmCount(0);
-        doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(vdsId);
+        vds.setId(vdsId2);
+        doReturn(false).when(virtStrategy).isAnyNonExternalVmRunningOnVds(vds);
         assertTrue(virtStrategy.canMoveToMaintenance(vds));
-        doReturn(true).when(virtStrategy).isAnyVmRunOnVdsInDb(vdsId);
+        doReturn(true).when(virtStrategy).isAnyNonExternalVmRunningOnVds(vds);
         assertFalse(virtStrategy.canMoveToMaintenance(vds));
     }
 
@@ -172,4 +185,17 @@ public class VirtMonitoringStrategyTest {
         when(mock.getFirstUpRhelForCluster(clusterId)).thenReturn(vdsFromDb);
         return mock;
     }
+
+    private VmDao mockVmDao() {
+        VmDao mock = mock(VmDao.class);
+        VM vm = mock(VM.class);
+        when(vm.isExternalVm()).thenReturn(Boolean.FALSE);
+        when(mock.getAllRunningForVds(vdsId)).thenReturn(Collections.singletonList(vm));
+
+        VM externalVm = mock(VM.class);
+        when(externalVm.isExternalVm()).thenReturn(Boolean.TRUE);
+        when(mock.getAllRunningForVds(vdsId2)).thenReturn(Collections.singletonList(externalVm));
+        return mock;
+    }
+
 }

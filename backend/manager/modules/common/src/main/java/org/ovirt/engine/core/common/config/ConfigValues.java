@@ -123,6 +123,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     FenceProxyDefaultPreferences(ClientAccessLevel.Admin),
     @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    MaintenanceVdsIgnoreExternalVms,
+    @Reloadable
     @TypeConverterAttribute(String.class)
     oVirtUploadPath,
     @Reloadable

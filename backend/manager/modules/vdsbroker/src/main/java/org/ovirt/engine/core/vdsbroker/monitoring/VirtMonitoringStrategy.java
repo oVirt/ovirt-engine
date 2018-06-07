@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.inject.Instance;
@@ -17,13 +18,16 @@ import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
@@ -33,22 +37,43 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private final ClusterDao clusterDao;
     private final VdsDao vdsDao;
+    private final VmDao vmDao;
     private final VmDynamicDao vmDynamicDao;
+    private final VmStaticDao vmStaticDao;
 
     @Inject
     private Instance<IVdsEventListener> eventListener;
 
     @Inject
-    public VirtMonitoringStrategy(ClusterDao clusterDao, VdsDao vdsDao, VmDynamicDao vmDynamicDao) {
+    public VirtMonitoringStrategy(ClusterDao clusterDao,
+            VdsDao vdsDao,
+            VmDao vmDao,
+            VmDynamicDao vmDynamicDao,
+            VmStaticDao vmStaticDao) {
         this.clusterDao = clusterDao;
         this.vdsDao = vdsDao;
+        this.vmDao = vmDao;
         this.vmDynamicDao = vmDynamicDao;
+        this.vmStaticDao = vmStaticDao;
     }
 
     @Override
     public boolean canMoveToMaintenance(VDS vds) {
-        // We can only move to maintenance in case no VMs are running on the host
-        return vds.getVmCount() == 0 && !isAnyVmRunOnVdsInDb(vds.getId());
+        if (!Config.<Boolean>getValue(ConfigValues.MaintenanceVdsIgnoreExternalVms)) {
+            // We can only move to maintenance in case no VMs are running on the host
+            return vds.getVmCount() == 0 && !isAnyVmRunOnVdsInDb(vds.getId());
+        }
+
+        // We can only move to maintenance in case no managed VMs are running on the host ignoring all external VMs
+        return !isAnyNonExternalVmRunningOnVds(vds);
+    }
+
+    protected boolean isAnyNonExternalVmRunningOnVds(VDS vds) {
+        Optional<VM> runningVm = vmDao.getAllRunningForVds(vds.getId())
+                .stream()
+                .filter(vm -> !vm.isExternalVm())
+                .findFirst();
+        return runningVm.isPresent();
     }
 
     protected IVdsEventListener getEventListener() {

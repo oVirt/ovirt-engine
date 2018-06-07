@@ -63,6 +63,7 @@ select fn_db_add_config_value('CoCoLifeInMinutes','3000','general');
 select fn_db_add_config_value('CoCoWaitForEventInMinutes','300','general');
 select fn_db_add_config_value('CommandEntityAgingThreshold','30','general');
 select fn_db_add_config_value('CommandEntityCleanupTime','03:35:35','general');
+select fn_db_add_config_value('MaintenanceVdsIgnoreExternalVms','false','general');
 select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','false','general');
 select fn_db_add_config_value_for_versions_up_to('BackupSupported','true','general');
 select fn_db_add_config_value('RepeatEndMethodsOnFailMaxRetries','5','general');
