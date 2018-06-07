@@ -20,7 +20,7 @@ public class UnsupportedVmCpuClusterEditChecker implements ClusterEditChecker<VM
     public boolean isApplicable(Cluster oldCluster, Cluster newCluster) {
         newCpuName = newCluster.getCpuName();
         final String oldCpuName = oldCluster.getCpuName();
-        return newCpuName != null && !newCpuName.equals(oldCpuName);
+        return StringUtils.isNotEmpty(newCpuName) && !newCpuName.equals(oldCpuName);
     }
 
     @Override

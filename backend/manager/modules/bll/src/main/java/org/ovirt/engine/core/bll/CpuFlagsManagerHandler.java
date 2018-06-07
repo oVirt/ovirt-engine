@@ -47,7 +47,7 @@ public class CpuFlagsManagerHandler implements BackendService {
 
     public String getCpuNameByCpuId(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
-        String cpuName = cpuFlagsManager != null ? cpuFlagsManager.getCpuNameByCpuId(name) : null;
+        String cpuName = cpuFlagsManager != null ? cpuFlagsManager.getCpuNameByCpuId(name) : "";
 
         if (StringUtils.isNotEmpty(cpuName)) {
             return cpuName;
@@ -141,7 +141,7 @@ public class CpuFlagsManagerHandler implements BackendService {
 
         public ServerCpu getServerCpuByName(String cpuName) {
             ServerCpu result = null;
-            if (cpuName != null) {
+            if (StringUtils.isNotEmpty(cpuName)) {
                 result = intelCpuByNameDictionary.get(cpuName);
 
                 if (result == null) {
@@ -230,7 +230,7 @@ public class CpuFlagsManagerHandler implements BackendService {
         public String getVDSVerbDataByCpuName(String name) {
             String result = null;
             ServerCpu sc = null;
-            if (name != null) {
+            if (StringUtils.isNotEmpty(name)) {
                 if ((sc = intelCpuByNameDictionary.get(name)) != null
                         || (sc = amdCpuByNameDictionary.get(name)) != null
                         || (sc = ibmCpuByNameDictionary.get(name)) != null
@@ -274,7 +274,7 @@ public class CpuFlagsManagerHandler implements BackendService {
                             : new HashSet<>(Arrays.asList(serverFlags.split("[,]", -1)));
 
             // first find cluster cpu
-            if (clusterCpuName != null
+            if ( StringUtils.isNotEmpty(clusterCpuName)
                     && ((clusterCpu = intelCpuByNameDictionary.get(clusterCpuName)) != null
                             || (clusterCpu = amdCpuByNameDictionary.get(clusterCpuName)) != null
                             || (clusterCpu = ibmCpuByNameDictionary.get(clusterCpuName)) != null
@@ -306,7 +306,7 @@ public class CpuFlagsManagerHandler implements BackendService {
          * manufacturer (intel or amd)
          */
         public boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2) {
-            if (cpuName1 == null || cpuName2 == null) {
+            if (StringUtils.isEmpty(cpuName1) || StringUtils.isEmpty(cpuName2)) {
                 return false;
             }
 
@@ -330,7 +330,7 @@ public class CpuFlagsManagerHandler implements BackendService {
         }
 
         public boolean checkIfCpusExist(String cpuName) {
-            return cpuName != null
+            return StringUtils.isNotEmpty(cpuName)
                     && (intelCpuByNameDictionary.containsKey(cpuName)
                             || amdCpuByNameDictionary.containsKey(cpuName)
                             || ibmCpuByNameDictionary.containsKey(cpuName)

@@ -991,7 +991,7 @@ public abstract class RunOnceModel extends Model {
                     cluster -> {
                         if (cluster != null) {
                             // update cpu names list
-                            if (cluster.getCpuName() != null) {
+                            if (cluster.getCpuName() != null && !"".equals(cluster.getCpuName())) {
                                 AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery<>(
                                         returnValue -> {
                                             if (returnValue != null) {

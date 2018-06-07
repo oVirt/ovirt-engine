@@ -167,6 +167,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
         description = "";
         comment = "";
+        cpuName = "";
     }
 
     @Override

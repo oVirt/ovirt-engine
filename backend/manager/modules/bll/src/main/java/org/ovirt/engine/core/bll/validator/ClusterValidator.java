@@ -58,7 +58,7 @@ public class ClusterValidator {
     }
 
     protected boolean cpuExists() {
-        return cluster.getCpuName() == null ||
+        return cluster.getCpuName() == null || "".equals(cluster.getCpuName()) ||
                 cpuFlagsManagerHandler.checkIfCpusExist(cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 

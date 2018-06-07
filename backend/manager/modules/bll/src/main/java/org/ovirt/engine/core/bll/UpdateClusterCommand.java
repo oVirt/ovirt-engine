@@ -529,7 +529,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         boolean allVdssInMaintenance = areAllVdssInMaintenance(allForCluster);
         // Validate the cpu only if the cluster supports Virt
         if (getCluster().supportsVirtService()
-                && (oldCluster.getCpuName() != null || getCluster().getCpuName() != null)) {
+                && (! "".equals(oldCluster.getCpuName()) || ! "".equals(getCluster().getCpuName()))) {
             // Check that cpu exist
             if (!checkIfCpusExist()) {
                 addValidationMessage(EngineMessage.VAR__TYPE__CLUSTER);

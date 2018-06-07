@@ -687,6 +687,7 @@ public class UpdateClusterCommandTest {
     private static Cluster createClusterWithNoCpuName() {
         Cluster group = new Cluster();
         group.setName("Default");
+        group.setCpuName("");
         group.setId(DEFAULT_CLUSTER_ID);
         group.setCompatibilityVersion(VERSION_1_1);
         group.setStoragePoolId(DC_ID1);
