@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Arrays;
+
 public enum DiskInterface {
 
     IDE("ide"),
@@ -16,5 +18,9 @@ public enum DiskInterface {
 
     public String getName() {
         return name;
+    }
+
+    public static DiskInterface forName(String name) {
+        return Arrays.stream(values()).filter(val -> val.name.equals(name)).findAny().orElse(null);
     }
 }

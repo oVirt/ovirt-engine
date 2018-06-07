@@ -61,11 +61,11 @@ public class VmDevicesConverter {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    public static final String DEVICE = "device";
     private static final String TYPE = "type";
     private static final String MODEL = "model";
     private static final String INDEX = "index";
     private static final String IO_THREAD_ID = "ioThreadId";
-    private static final String DEVICE = "device";
     private static final String NODE = "node";
     private static final String SIZE = "size";
     private static final String DEVICES_START_ELEMENT = "<devices>";
@@ -653,7 +653,7 @@ public class VmDevicesConverter {
         return pathSegments[pathSegments.length - index];
     }
 
-    String parseAlias(XmlNode node) {
+    public static String parseAlias(XmlNode node) {
         XmlNode aliasNode = node.selectSingleNode("alias");
         return aliasNode != null ? aliasNode.attributes.get("name").getValue() : "";
     }

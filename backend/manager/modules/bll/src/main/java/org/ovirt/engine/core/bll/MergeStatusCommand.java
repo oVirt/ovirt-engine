@@ -165,7 +165,8 @@ public class MergeStatusCommand<T extends MergeParameters>
     private Map[] getVms() {
         return (Map[]) fullListAdapter.getVmFullList(
                 getParameters().getVdsId(),
-                Collections.singletonList(getParameters().getVmId()))
+                Collections.singletonList(getParameters().getVmId()),
+                true)
                 .getReturnValue();
     }
 

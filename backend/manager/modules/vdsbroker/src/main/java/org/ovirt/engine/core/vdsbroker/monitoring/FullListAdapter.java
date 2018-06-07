@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.libvirt.VmConverter;
 import org.ovirt.engine.core.vdsbroker.libvirt.VmDevicesConverter;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
 import org.slf4j.Logger;
@@ -29,10 +30,13 @@ public class FullListAdapter {
     private ResourceManager resourceManager;
 
     @Inject
-    private VmDevicesConverter converter;
+    private VmDevicesConverter vmDevicesConverter;
+    @Inject
+    private VmConverter vmConverter;
 
-    public VDSReturnValue getVmFullList(Guid vdsId, List<Guid> vmIds) {
-        return isDomainXmlEnabledForVds(vdsId) ? dumpXmls(vdsId, vmIds) : fullList(vdsId, vmIds);
+
+    public VDSReturnValue getVmFullList(Guid vdsId, List<Guid> vmIds, boolean managedVms) {
+        return isDomainXmlEnabledForVds(vdsId) ? dumpXmls(vdsId, vmIds, managedVms) : fullList(vdsId, vmIds);
     }
 
     private VDSReturnValue fullList(Guid vdsId, List<Guid> vmIds) {
@@ -40,12 +44,14 @@ public class FullListAdapter {
     }
 
     @SuppressWarnings("unchecked")
-    private VDSReturnValue dumpXmls(Guid vdsId, List<Guid> vmIds) {
+    private VDSReturnValue dumpXmls(Guid vdsId, List<Guid> vmIds, boolean managedVms) {
         VDSReturnValue retVal = runVdsCommand(VDSCommandType.DumpXmls, new DumpXmlsVDSCommand.Params(vdsId, vmIds));
         if (retVal.getSucceeded()) {
             Map<Guid, String> vmIdToXml = (Map<Guid, String>) retVal.getReturnValue();
             Map<String, Object>[] devices = vmIds.stream()
-                    .map(vmId -> extractDevices(vmId, vdsId, vmIdToXml.get(vmId)))
+                    .map(vmId -> managedVms ?
+                            extractDevices(vmId, vdsId, vmIdToXml.get(vmId))
+                            : extractCoreInfo(vmId, vmIdToXml.get(vmId)))
                     .filter(Objects::nonNull)
                     .toArray(Map[]::new);
             retVal.setReturnValue(devices);
@@ -63,7 +69,7 @@ public class FullListAdapter {
 
     private Map<String, Object> extractDevices(Guid vmId, Guid vdsId, String domxml) {
         try {
-            return converter.convert(vmId, vdsId, domxml);
+            return vmDevicesConverter.convert(vmId, vdsId, domxml);
         } catch (Exception ex) {
             log.error("Failed during parsing devices of VM {} ({}) error is: {}", resourceManager.getVmManager(vmId).getName(), vmId, ex);
             log.error("Exception:", ex);
@@ -73,5 +79,15 @@ public class FullListAdapter {
 
     VdsManager getVdsManager(Guid vdsId) {
         return resourceManager.getVdsManager(vdsId);
+    }
+
+    private Map<String, Object> extractCoreInfo(Guid vmId, String domxml) {
+        try {
+            return vmConverter.convert(vmId, domxml);
+        } catch (Exception ex) {
+            log.error("Failed during parsing configuration of VM {} ({}), error is: {}", vmId, domxml, ex);
+            log.error("Exception:", ex);
+            return null;
+        }
     }
 }

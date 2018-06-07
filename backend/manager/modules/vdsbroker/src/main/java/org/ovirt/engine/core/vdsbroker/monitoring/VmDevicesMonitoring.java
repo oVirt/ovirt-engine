@@ -446,7 +446,7 @@ public class VmDevicesMonitoring {
             return null;
         }
 
-        VDSReturnValue vdsReturnValue = fullListAdapter.getVmFullList(vdsId, vmIds);
+        VDSReturnValue vdsReturnValue = fullListAdapter.getVmFullList(vdsId, vmIds, true);
         return vdsReturnValue.getSucceeded() ?
             (Map<String, Object>[]) vdsReturnValue.getReturnValue()
             : new Map[0];

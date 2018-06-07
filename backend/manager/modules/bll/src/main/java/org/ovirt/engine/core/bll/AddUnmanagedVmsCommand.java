@@ -37,8 +37,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -46,6 +44,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.FullListAdapter;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -67,6 +66,8 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     private OsRepository osRepository;
     @Inject
     private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+    @Inject
+    private FullListAdapter fullListAdapter;
 
     private Set<String> graphicsDeviceTypes = new HashSet<>(Arrays.asList(
             GraphicsType.SPICE.toString().toLowerCase(),
@@ -164,9 +165,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
      */
     @SuppressWarnings("unchecked")
     protected Map<String, Object>[] getVmsInfo() {
-        VDSReturnValue vdsReturnValue = runVdsCommand(
-                VDSCommandType.FullList,
-                new FullListVDSCommandParameters(getVdsId(), getParameters().getVmIds()));
+        VDSReturnValue vdsReturnValue = fullListAdapter.getVmFullList(getVdsId(), getParameters().getVmIds(), false);
         return vdsReturnValue.getSucceeded() ? (Map<String, Object>[]) vdsReturnValue.getReturnValue() : new Map[0];
     }
 
