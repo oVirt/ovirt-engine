@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.Step;
@@ -165,14 +164,10 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
      */
     @SuppressWarnings("unchecked")
     protected Map<String, Object>[] getVmsInfo() {
-        Map<String, Object>[] result = new Map[0];
         VDSReturnValue vdsReturnValue = runVdsCommand(
                 VDSCommandType.FullList,
                 new FullListVDSCommandParameters(getVdsId(), getParameters().getVmIds()));
-        if (vdsReturnValue.getSucceeded()) {
-            result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
-        }
-        return result;
+        return vdsReturnValue.getSucceeded() ? (Map<String, Object>[]) vdsReturnValue.getReturnValue() : new Map[0];
     }
 
     // Visible for testing
@@ -181,9 +176,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         if (vm != null) {
             vm.setImages(vdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct, vm.getId()));
             vm.setInterfaces(vdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
-            for (DiskImage diskImage : vm.getImages()) {
-                vm.getDiskMap().put(diskImage.getId(), diskImage);
-            }
+            vm.getImages().forEach(diskImage -> vm.getDiskMap().put(diskImage.getId(), diskImage));
             vm.setClusterId(getClusterId());
             vm.setRunOnVds(getVdsId());
             List<GraphicsDevice> graphicsDevices = extractGraphicsDevices(vm.getId(),
@@ -196,9 +189,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             }
             // HE VM does not support that feature, disable it
             vm.setSingleQxlPci(false);
-            for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                vm.getManagedVmDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
-            }
+            graphicsDevices.forEach(device -> vm.getManagedVmDeviceMap().put(device.getDeviceId(), device));
             VmDevice consoleDevice = vdsBrokerObjectsBuilder.buildConsoleDevice(vmStruct, vm.getId());
             if(consoleDevice != null){
                 vm.getManagedVmDeviceMap().put(consoleDevice.getDeviceId(), consoleDevice);

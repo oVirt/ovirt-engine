@@ -152,12 +152,8 @@ public class VdsBrokerObjectsBuilder {
             return null;
         }
 
-        VmDynamic vmDynamic = buildVMDynamicDataFromList(struct);
-
-        VM vm = new VM(vmStatic, vmDynamic, new VmStatistics());
-        for (DiskImage image : vm.getImages()) {
-            vm.getDiskMap().put(Guid.newGuid(), image);
-        }
+        VM vm = new VM(vmStatic, buildVMDynamicDataFromList(struct), new VmStatistics());
+        vm.getImages().forEach(image -> vm.getDiskMap().put(Guid.newGuid(), image));
 
         try {
             vm.setClusterArch(parseArchitecture(struct));
