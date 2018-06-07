@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -832,12 +833,18 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected boolean amendDiskRequested() {
-        if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+        // if the updated disk is the base snapshot, no amend operation needed;
+        if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE && !isBaseSnapshotDisk()) {
             QcowCompat qcowCompat = ((DiskImage) getNewDisk()).getQcowCompat();
             return getDiskImages(getOldDisk().getId()).stream().anyMatch(disk -> disk.isQcowFormat()
                     && disk.getQcowCompat() != qcowCompat);
         }
         return false;
+    }
+
+    private boolean isBaseSnapshotDisk() {
+        return getNewDisk().isDiskSnapshot()
+                && ((DiskImage) getNewDisk()).getImage().getVolumeFormat() != VolumeFormat.COW;
     }
 
     private List<DiskImage> getDiskImages(Guid diskId) {
