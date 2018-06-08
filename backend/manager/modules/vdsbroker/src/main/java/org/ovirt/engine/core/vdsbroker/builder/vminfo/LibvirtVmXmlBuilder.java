@@ -283,7 +283,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("devices");
         writer.writeStartElement("interface");
         writer.writeStartElement("alias");
-        writer.writeAttributeString("name", String.format("ua-%s", device.getId().getDeviceId()));
+        writer.writeAttributeString("name", device.getAlias());
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();

@@ -20,7 +20,6 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
-import org.ovirt.engine.core.bll.network.macpool.MacsUsedAcrossWholeSystem;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.validator.MacAddressValidator;
@@ -110,9 +109,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Inject
     private NetworkHelper networkHelper;
-
-    @Inject
-    private MacsUsedAcrossWholeSystem macsUsedAcrossWholeSystem;
 
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -324,17 +320,18 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private void updateVmDeviceWithDataReturnedFromHost(VDSReturnValue vdsReturnValue) {
         if (vdsReturnValue.getSucceeded() && getParameters().getAction() == PlugAction.PLUG) {
             VmInfoReturn vmInfoReturn = (VmInfoReturn) vdsReturnValue.getReturnValue();
-            if (vmInfoReturn.getVmInfo() != null) {
-                Map<String, Object> vmInfo = (Map<String, Object>) vmInfoReturn.getVmInfo();
+            if (vmInfoReturn.getVmInfo() == null) {
+                log.warn("failed to retrieve the device dynamic properties");
+                return;
+            }
 
-                for (Object o : (Object[]) vmInfo.get(VdsProperties.Devices)) {
-                    Map<String, Object> vdsmDevice = (Map<String, Object>) o;
-
-                    if (vmDevice.getId().getDeviceId().toString().equals(vdsmDevice.get(VdsProperties.DeviceId))) {
-                        vmDevice.setAddress(vdsmDevice.get(VdsProperties.Address).toString());
-                        vmDevice.setAlias(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias)));
-                        break;
-                    }
+            Map<String, Object> vmInfo = (Map<String, Object>) vmInfoReturn.getVmInfo();
+            for (Object o : (Object[]) vmInfo.get(VdsProperties.Devices)) {
+                Map<String, Object> vdsmDevice = (Map<String, Object>) o;
+                String reportedMacAddress = (String) vdsmDevice.get(VdsProperties.MAC_ADDR);
+                if (StringUtils.equalsIgnoreCase(reportedMacAddress, getParameters().getNic().getMacAddress())) {
+                    vmDevice.setAlias(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias)));
+                    break;
                 }
             }
         }
