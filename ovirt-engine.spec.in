@@ -54,7 +54,7 @@
 
 #
 # Supported distributions:
-# Fedora >= 25
+# Fedora >= 28
 # EL >= 7
 #
 
@@ -375,7 +375,11 @@ Requires:	java-headless
 Requires:	logrotate
 Requires:	mailcap
 Requires:	mod_ssl
+%if 0%{?fedora} || 0%{?rhel} >= 8
+Requires:	novnc
+%else
 Requires:	novnc >= 0.5.0, novnc < 0.6.0
+%endif
 Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.4.13
 Requires:	openssl
