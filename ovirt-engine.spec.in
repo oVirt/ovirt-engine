@@ -297,7 +297,7 @@ Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 %if 0%{?fedora}
 Requires:	(yum-plugin-versionlock if yum)
 Requires:	apache-sshd
-Requires:	python-dnf-plugins-extras-versionlock
+Requires:	python2-dnf-plugins-extras-versionlock
 Requires:	python3-dnf-plugins-extras-versionlock
 Requires:	quartz
 # On Fedora slf4j package is split and we need also jdk14 and jcl-over-slf4j
