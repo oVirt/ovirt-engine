@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
@@ -75,12 +74,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     protected void setClientTokenProvider(Quantum client) {
-        String tenantName = getProvider().getAdditionalProperties().getTenantName();
-        KeystoneTokenProvider keystoneTokenProvider =
-                new KeystoneTokenProvider(getProvider().getAuthUrl(),
-                        getProvider().getUsername(),
-                        getProvider().getPassword());
-        client.setTokenProvider(keystoneTokenProvider.getProviderByTenant(tenantName));
+        client.setTokenProvider(OpenStackTokenProviderFactory.create(getProvider()));
     }
 
     @Override
