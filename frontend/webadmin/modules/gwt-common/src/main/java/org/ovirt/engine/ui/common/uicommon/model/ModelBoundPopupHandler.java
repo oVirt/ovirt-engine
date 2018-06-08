@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -29,6 +30,8 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
  * @param <M> Model type.
  */
 public class ModelBoundPopupHandler<M extends IModel> {
+
+    private static final Logger logger = Logger.getLogger(ModelBoundPopupHandler.class.getName());
 
     private final ModelBoundPopupResolver<M> popupResolver;
     private final EventBus eventBus;
@@ -56,7 +59,9 @@ public class ModelBoundPopupHandler<M extends IModel> {
      * instance should handle a specific model.
      */
     public void initDialogModelListener(M model) {
-        assert !initialized : "Trying to re-initialize dialog model listener"; //$NON-NLS-1$
+        if (initialized) {
+            logger.warning("Trying to re-initialize dialog model listener for " + model.getClass().getName()); //$NON-NLS-1$
+        }
 
         // Init property names
         windowPropertyNames.clear();

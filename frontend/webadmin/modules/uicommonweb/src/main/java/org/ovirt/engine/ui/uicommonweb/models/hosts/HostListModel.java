@@ -2099,10 +2099,14 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private boolean isHeSystem() {
         boolean isRunningHeVm = false;
-        for (VDS host : getItems()) {
-            if (host.isHostedEngineHost()) {
-                isRunningHeVm = true;
-                break;
+
+        Collection<VDS> items = getItems();
+        if (items != null) {
+            for (VDS host : items) {
+                if (host.isHostedEngineHost()) {
+                    isRunningHeVm = true;
+                    break;
+                }
             }
         }
 
