@@ -122,10 +122,10 @@ getent group %3 >/dev/null || groupadd -r -g %4 %3; \
 getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d %6 %1
 
 %global ovirt_create_user_engine \
-%_ovirt_create_user %{engine_user} %{engine_uid} %{engine_group} %{engine_gid} "%{ovirt_user_description}" %{engine_state}
+%_ovirt_create_user %{engine_user} %{engine_uid} %{engine_group} %{engine_gid} "%%{ovirt_user_description}" %{engine_state}
 
 %global ovirt_create_user_vdsm \
-%_ovirt_create_user %{vdsm_user} %{vdsm_uid} %{vdsm_group} %{vdsm_gid} "%{vdsm_description}" /var/lib/vdsm
+%_ovirt_create_user %{vdsm_user} %{vdsm_uid} %{vdsm_group} %{vdsm_gid} "%%{vdsm_description}" /var/lib/vdsm
 
 %if %{ovirt_provides_jboss}
 %global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
