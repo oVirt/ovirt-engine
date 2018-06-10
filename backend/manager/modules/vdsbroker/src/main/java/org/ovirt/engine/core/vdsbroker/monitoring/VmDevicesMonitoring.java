@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -33,9 +32,6 @@ import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -43,8 +39,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -290,7 +284,7 @@ public class VmDevicesMonitoring {
     public static final String UPDATE_HASH = "UPDATE_HASH";
 
     @Inject
-    private ResourceManager resourceManager;
+    private FullListAdapter fullListAdapter;
 
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -317,10 +311,6 @@ public class VmDevicesMonitoring {
 
     public void refreshVmDevices(Guid vmId) {
         vmDevicesStatuses.remove(vmId);
-    }
-
-    <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
-        return resourceManager.runVdsCommand(commandType, parameters);
     }
 
     VmDeviceDao getVmDeviceDao() {
@@ -456,17 +446,10 @@ public class VmDevicesMonitoring {
             return null;
         }
 
-        VDSReturnValue vdsReturnValue = isDomainXmlEnabledForVds(vdsId) ?
-                runVdsCommand(VDSCommandType.DumpXmls, new DumpXmlsVDSCommand.Params(vdsId, vmIds))
-                : runVdsCommand(VDSCommandType.FullList, new FullListVDSCommandParameters(vdsId, vmIds));
-
+        VDSReturnValue vdsReturnValue = fullListAdapter.getVmFullList(vdsId, vmIds);
         return vdsReturnValue.getSucceeded() ?
             (Map<String, Object>[]) vdsReturnValue.getReturnValue()
             : new Map[0];
-    }
-
-    private boolean isDomainXmlEnabledForVds(Guid vdsId) {
-        return FeatureSupported.isDomainXMLSupported(resourceManager.getVdsManager(vdsId).getCompatibilityVersion());
     }
 
     /**
