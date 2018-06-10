@@ -70,8 +70,6 @@ public class VmDevicesConverter {
     private static final String SIZE = "size";
     private static final String DEVICES_START_ELEMENT = "<devices>";
     private static final String DEVICES_END_ELEMENT = "</devices>";
-    private static final String USER_ALIAS_PREFIX = "ua-";
-
 
     public Map<String, Object> convert(Guid vmId, Guid hostId, String xml) throws Exception {
         String devicesXml = xml.substring(
@@ -86,7 +84,6 @@ public class VmDevicesConverter {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, Object> parseDiskMapping(XmlNode metadata) throws Exception {
         if (metadata == null) {
             return null;
@@ -99,7 +96,7 @@ public class VmDevicesConverter {
         }
         Map<String, Object> result = new HashMap<>();
         for (XmlNode node : vm.selectNodes("ovirt-vm:device", xmlNS)) {
-            if (!VmDeviceGeneralType.DISK.getValue().equals(parseAttribute(node, "devtype"))) {
+            if (!VmDeviceGeneralType.DISK.getValue().equals(DomainXmlUtils.parseAttribute(node, "devtype"))) {
                 continue;
             }
 
@@ -148,7 +145,7 @@ public class VmDevicesConverter {
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.CHANNEL)) {
-            String address = parseAddress(node);
+            String address = DomainXmlUtils.parseAddress(node);
             // Ignore channel devices without address
             if (address.isEmpty()) {
                 continue;
@@ -156,7 +153,7 @@ public class VmDevicesConverter {
 
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.CHANNEL.getValue());
-            dev.put(VdsProperties.Device, parseAttribute(node, TYPE)); // shouldn't it be VdsProperties.DeviceType?
+            dev.put(VdsProperties.Device, DomainXmlUtils.parseAttribute(node, TYPE)); // shouldn't it be VdsProperties.DeviceType?
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
 
@@ -185,11 +182,11 @@ public class VmDevicesConverter {
         dbDevices.sort((d1, d2) -> d1.getSpecParams().isEmpty() && !d2.getSpecParams().isEmpty() ? 1 : 0);
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.CONTROLLER)) {
-            String address = parseAddress(node);
-            String index = parseAttribute(node, INDEX);
-            String model = parseAttribute(node, MODEL);
-            Integer ioThreadId = parseIoThreadId(node);
-            String devType = "virtio-scsi".equals(model) ? model : parseAttribute(node, TYPE);
+            String address = DomainXmlUtils.parseAddress(node);
+            String index = DomainXmlUtils.parseAttribute(node, INDEX);
+            String model = DomainXmlUtils.parseAttribute(node, MODEL);
+            Integer ioThreadId = DomainXmlUtils.parseIoThreadId(node);
+            String devType = "virtio-scsi".equals(model) ? model : DomainXmlUtils.parseAttribute(node, TYPE);
 
             boolean devWithModelNone = model != null ? model.equals(UsbControllerModel.NONE.libvirtName) : false;
             // Ignore controller devices without address, unless it is a device with model='none'
@@ -254,7 +251,7 @@ public class VmDevicesConverter {
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.MEMORY.getValue());
             dev.put(VdsProperties.Device, VmDeviceGeneralType.MEMORY.getValue());
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             XmlNode target = node.selectSingleNode("target");
@@ -312,9 +309,9 @@ public class VmDevicesConverter {
 
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
-            String deviceType = parseAttribute(node, TYPE);
+            String deviceType = DomainXmlUtils.parseAttribute(node, TYPE);
             dev.put(VdsProperties.Device, deviceType);
             dev.put(VdsProperties.SpecParams, hostAddress);
 
@@ -356,7 +353,7 @@ public class VmDevicesConverter {
             }
 
             Map<String, Object> dev = new HashMap<>();
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
             dev.put(VdsProperties.Alias, parseAlias(node));
             dev.put(VdsProperties.Device, hostDevice.getDeviceName());
@@ -387,8 +384,8 @@ public class VmDevicesConverter {
         for (XmlNode node : document.selectNodes("//*/redirdev")) {
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.REDIR.getValue());
-            dev.put(VdsProperties.Device, parseAttribute(node, TYPE));
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Device, DomainXmlUtils.parseAttribute(node, TYPE));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
@@ -420,12 +417,12 @@ public class VmDevicesConverter {
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.DISK)) {
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.DISK.getValue());
-            String diskType = parseAttribute(node, DEVICE);
+            String diskType = DomainXmlUtils.parseAttribute(node, DEVICE);
             dev.put(VdsProperties.Device, diskType);
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            String path = parseDiskPath(node);
+            String path = DomainXmlUtils.parseDiskPath(node);
             VmDevice dbDev = correlate(dev, dbDevices,
                     device -> findDiskDeviceInDbByPath(dbDevices, diskType, path, diskToLunSupplier));
 
@@ -495,7 +492,7 @@ public class VmDevicesConverter {
         List<VmNetworkInterface> dbInterfaces = vmNetworkInterfaceDao.getAllForVm(vmId);
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.INTERFACE)) {
-            String type = parseAttribute(node, TYPE);
+            String type = DomainXmlUtils.parseAttribute(node, TYPE);
             Map<String, Object> dev = new HashMap<>();
 
             if (VmDeviceType.HOST_DEVICE.getName().equals(type)) {
@@ -504,10 +501,10 @@ public class VmDevicesConverter {
 
             dev.put(VdsProperties.Type, VmDeviceGeneralType.INTERFACE.getValue());
             dev.put(VdsProperties.Device, type);
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            String macAddress = parseMacAddress(node);
+            String macAddress = DomainXmlUtils.parseMacAddress(node);
             // MAC address is a unique identifier of network interface devices
             VmDevice dbDev = correlate(dev, dbDevices, device -> {
                 VmNetworkInterface dbInterface = dbInterfaces.stream()
@@ -550,8 +547,8 @@ public class VmDevicesConverter {
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.VIDEO)) {
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
-            dev.put(VdsProperties.Device, parseVideoType(node));
-            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Device, DomainXmlUtils.parseVideoType(node));
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             // There is supposed to be one video device of each type (spice/vnc/..)
@@ -590,8 +587,8 @@ public class VmDevicesConverter {
 
         Map<String, Object> result = new HashMap<>();
         result.put(VdsProperties.Device, devType);
-        result.put(VdsProperties.DeviceId, dbDevice.getId().getDeviceId().toString());
-        result.put(VdsProperties.Address, parseAddress(node));
+        result.put(VdsProperties.DeviceId, dbDevice.getDeviceId().toString());
+        result.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
         result.put(VdsProperties.Alias, parseAlias(node));
         result.put(VdsProperties.SpecParams, dbDevice.getSpecParams());
         return result;
@@ -610,85 +607,18 @@ public class VmDevicesConverter {
 
         Map<String, Object> result = new HashMap<>();
         result.put(VdsProperties.Device, "memballoon");
-        result.put(VdsProperties.DeviceId, dbDevice.getId().getDeviceId().toString());
-        result.put(VdsProperties.Address, parseAddress(node));
+        result.put(VdsProperties.DeviceId, dbDevice.getDeviceId().toString());
+        result.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
         result.put(VdsProperties.Alias, parseAlias(node));
         result.put(VdsProperties.SpecParams, dbDevice.getSpecParams());
         return result;
-    }
-
-    private String parseAddress(XmlNode node) {
-        String result = "";
-        XmlNode addressNode = node.selectSingleNode("address");
-        if (addressNode == null) {
-            return "";
-        }
-        XmlAttribute val = addressNode.attributes.get("type");
-        result += String.format("%s=%s", "type", val.getValue());
-        val = addressNode.attributes.get("slot");
-        if (val != null) {
-            result += String.format(", %s=%s", "slot", val.getValue());
-        }
-        val = addressNode.attributes.get("bus");
-        if (val != null) {
-            result += String.format(", %s=%s", "bus", val.getValue());
-        }
-        val = addressNode.attributes.get("domain");
-        if (val != null) {
-            result += String.format(", %s=%s", "domain", val.getValue());
-        }
-        val = addressNode.attributes.get("function");
-        if (val != null) {
-            result += String.format(", %s=%s", "function", val.getValue());
-        }
-        val = addressNode.attributes.get("controller");
-        if (val != null) {
-            result += String.format(", %s=%s", "controller", val.getValue());
-        }
-        val = addressNode.attributes.get("target");
-        if (val != null) {
-            result += String.format(", %s=%s", "target", val.getValue());
-        }
-        val = addressNode.attributes.get("unit");
-        if (val != null) {
-            result += String.format(", %s=%s", "unit", val.getValue());
-        }
-        val = addressNode.attributes.get("port");
-        if (val != null) {
-            result += String.format(", %s=%s", "port", val.getValue());
-        }
-        val = addressNode.attributes.get("multifunction");
-        if (val != null) {
-            result += String.format(", %s=%s", "multifunction", val.getValue());
-        }
-        val = addressNode.attributes.get("base");
-        if (val != null) {
-            result += String.format(", %s=%s", "base", val.getValue());
-        }
-
-        return result.isEmpty() ? result : String.format("{%s}", result);
-    }
-
-    private Integer parseIoThreadId(XmlNode node) {
-        XmlNode driverNode = node.selectSingleNode("driver");
-        if (driverNode == null) {
-            return null;
-        }
-
-        XmlAttribute val = driverNode.attributes.get("iothread");
-        return val != null ? Integer.valueOf(val.getValue()) : null;
-    }
-
-    private String parseAttribute(XmlNode node, String attribute) {
-        XmlAttribute xmlAttribute = node.attributes.get(attribute);
-        return xmlAttribute != null ? xmlAttribute.getValue() : null;
     }
 
     List<Map<String, Object>> parseVolumeChain(XmlNode xmlNode) {
         List<Map<String, Object>> chain = new ArrayList<>();
 
         while (true) {
-            String path = parseDiskPath(xmlNode);
+            String path = DomainXmlUtils.parseDiskPath(xmlNode);
 
             String volumeId = parseVolumeIdFromPath(path);
             if (!StringUtils.isEmpty(volumeId)) {
@@ -728,26 +658,6 @@ public class VmDevicesConverter {
         return aliasNode != null ? aliasNode.attributes.get("name").getValue() : "";
     }
 
-    private String parseDiskPath(XmlNode node) {
-        XmlNode sourceNode = node.selectSingleNode("source");
-        if (sourceNode == null) {
-            return "";
-        }
-        XmlAttribute attr = sourceNode.attributes.get("file");
-        if (attr != null) {
-            return attr.getValue();
-        }
-        attr = sourceNode.attributes.get("dev");
-        if (attr != null) {
-            return attr.getValue();
-        }
-        attr = sourceNode.attributes.get("name");
-        if (attr != null) {
-            return attr.getValue();
-        }
-        return "";
-    }
-
     private Map<String, String> parseHostAddress(XmlNode node) {
         XmlNode sourceNode = node.selectSingleNode("source");
         if (sourceNode == null) {
@@ -776,16 +686,6 @@ public class VmDevicesConverter {
         return address;
     }
 
-    private String parseMacAddress(XmlNode node) {
-        XmlNode macNode = node.selectSingleNode("mac");
-        return macNode.attributes.get("address").getValue();
-    }
-
-    private String parseVideoType(XmlNode node) {
-        XmlNode videoModelNode = node.selectSingleNode("model");
-        return videoModelNode.attributes.get("type").getValue();
-    }
-
     private XmlNodeList selectNodes(XmlDocument document, VmDeviceGeneralType devType) {
         return document.selectNodes("//*/" + devType.getValue());
     }
@@ -807,9 +707,9 @@ public class VmDevicesConverter {
             Function<Map<String, Object>, VmDevice> func) {
         String alias = (String) device.get(VdsProperties.Alias);
         // first try by user alias
-        if (alias.startsWith(USER_ALIAS_PREFIX)) {
+        if (alias.startsWith(DomainXmlUtils.USER_ALIAS_PREFIX)) {
             try {
-                Guid deviceId = Guid.createGuidFromString(alias.substring(USER_ALIAS_PREFIX.length()));
+                Guid deviceId = Guid.createGuidFromString(alias.substring(DomainXmlUtils.USER_ALIAS_PREFIX.length()));
                 Optional<VmDevice> result = dbDevices.stream()
                         .filter(dev -> deviceId.equals(dev.getDeviceId()))
                         .findFirst();
