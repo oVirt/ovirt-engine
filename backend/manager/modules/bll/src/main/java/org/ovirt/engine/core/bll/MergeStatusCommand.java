@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
@@ -22,18 +21,15 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
+import org.ovirt.engine.core.vdsbroker.monitoring.FullListAdapter;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +45,9 @@ public class MergeStatusCommand<T extends MergeParameters>
     @Inject
     private SnapshotDao snapshotDao;
     @Inject
-    private DiskImageDao diskImageDao;
-    @Inject
     private VmDynamicDao vmDynamicDao;
     @Inject
-    private ResourceManager resourceManager;
+    private FullListAdapter fullListAdapter;
 
     public MergeStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -123,11 +117,6 @@ public class MergeStatusCommand<T extends MergeParameters>
         setCommandStatus(CommandStatus.SUCCEEDED);
     }
 
-    private boolean isDomainXmlEnabledForVds() {
-        return FeatureSupported.isDomainXMLSupported(
-                resourceManager.getVdsManager(getParameters().getVdsId()).getCompatibilityVersion());
-    }
-
     private Set<Guid> getVolumeChain() {
         Map[] vms = null;
         try {
@@ -173,13 +162,9 @@ public class MergeStatusCommand<T extends MergeParameters>
     }
 
     private Map[] getVms() {
-        List<Guid> vmIds = Collections.singletonList(getParameters().getVmId());
-        boolean domainXml = isDomainXmlEnabledForVds();
-        return (Map[]) runVdsCommand(
-                domainXml ? VDSCommandType.DumpXmls : VDSCommandType.FullList,
-                domainXml ?
-                        new DumpXmlsVDSCommand.Params(getParameters().getVdsId(), vmIds)
-                        : new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
+        return (Map[]) fullListAdapter.getVmFullList(
+                getParameters().getVdsId(),
+                Collections.singletonList(getParameters().getVmId()))
                 .getReturnValue();
     }
 
