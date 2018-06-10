@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.queries.GetValidHostsForVmsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -112,6 +113,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     @Override
     protected Host doPopulate(Host model, VDS entity) {
         Host host = addHostedEngineIfConfigured(model, entity);
+        reportNetworkOperationInProgress(host, entity);
         return host;
     }
 
@@ -158,5 +160,11 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
             host.setHostedEngine(hostedEngine);
         }
         return host;
+    }
+
+    void reportNetworkOperationInProgress(Host host, VDS entity) {
+        QueryReturnValue queryReturnValue = runQuery(QueryType.IsHostLockedOnNetworkOperation, new IdQueryParameters(entity.getId()));
+        boolean inProgress = queryReturnValue != null && Boolean.TRUE.equals(queryReturnValue.getReturnValue());
+        host.setNetworkOperationInProgress(inProgress);
     }
 }
