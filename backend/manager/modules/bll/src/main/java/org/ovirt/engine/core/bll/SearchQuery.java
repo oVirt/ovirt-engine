@@ -82,6 +82,8 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> queriesCache = new HashMap<>();
@@ -158,6 +160,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Inject
     private DcSingleMacPoolFinder dcSingleMacPoolFinder;
+
+    @Inject
+    private LockManager lockManager;
+    @Inject
+    private HostLocking hostLocking;
 
     public SearchQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -261,8 +268,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         for (VDS vds : data) {
             vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     vds.getClusterCompatibilityVersion()));
+            setNetworkOperationInProgressOnVds(vds);
         }
         return data;
+    }
+
+    private void setNetworkOperationInProgressOnVds(VDS vds) {
+        vds.setNetworkOperationInProgress(lockManager.isExclusivelyLocked(new EngineLock(hostLocking.getSetupNetworksLock(vds.getId()))));
     }
 
     private List<DirectoryUser> searchDirectoryUsers() {

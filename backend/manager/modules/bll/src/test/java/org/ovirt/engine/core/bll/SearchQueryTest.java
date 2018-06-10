@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.CommonConstants;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.lock.LockManager;
 
 public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQuery<SearchParameters>> {
 
@@ -79,6 +82,10 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     private GlusterVolumeDao glusterVolumeDao;
     @Mock
     private NetworkViewDao networkViewDao;
+    @Mock
+    private LockManager lockManager;
+    @Mock
+    private HostLocking hostLocking;
 
     List<Disk> diskImageResultList = new ArrayList<>();
     List<Quota> quotaResultList = new ArrayList<>();
@@ -177,6 +184,12 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
                 .thenReturn(networkResultList);
     }
 
+    @Before
+    public void mockLockManager() {
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
+        when(lockManager.isExclusivelyLocked(any())).thenReturn(Boolean.TRUE);
+    }
+
     /**
      * Regex string which contains all of the disk image properties.
      */
@@ -205,6 +218,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
         when(vdsDao.getAllWithQuery(matches(getVdsRegexString(search))))
                 .thenReturn(vdsResultList);
         VDS vds = new VDS();
+        vds.setId(Guid.Empty);
         vds.setCpuFlags("flag");
         vds.setClusterCompatibilityVersion(Version.getLast());
         vdsResultList.add(vds);
@@ -406,6 +420,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
         assertEquals(vdsResultList, getQuery().getQueryReturnValue().getReturnValue());
         assertEquals(1, vdsResultList.size());
         assertEquals("cpu", vdsResultList.get(0).getCpuName().getCpuName());
+        assertEquals(true, vdsResultList.get(0).isNetworkOperationInProgress());
     }
 
     @Test
@@ -416,6 +431,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
         assertEquals(vdsResultList, getQuery().getQueryReturnValue().getReturnValue());
         assertEquals(1, vdsResultList.size());
         assertEquals("cpu", vdsResultList.get(0).getCpuName().getCpuName());
+        assertEquals(true, vdsResultList.get(0).isNetworkOperationInProgress());
     }
 
     @Test

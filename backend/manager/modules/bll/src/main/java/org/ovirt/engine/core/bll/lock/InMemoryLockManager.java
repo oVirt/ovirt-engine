@@ -321,6 +321,13 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         return new LockInfo(internalLockView.getExclusive(), messages);
     }
 
+    @Override
+    public boolean isExclusivelyLocked(EngineLock lock) {
+        return lock.getExclusiveLocks() != null &&
+            lock.getExclusiveLocks().entrySet().stream()
+                .anyMatch(entry -> getLockInfo(buildHashMapKey(entry)) != null);
+    }
+
     /**
      * The following class represents different locks which are kept inside InMemoryLockManager
      */
