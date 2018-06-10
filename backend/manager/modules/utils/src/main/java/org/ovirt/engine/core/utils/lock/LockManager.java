@@ -40,4 +40,11 @@ public interface LockManager {
      * @return lock for the given key, null if does not exist
      */
     LockInfo getLockInfo(String key);
+
+    /**
+     * Query whether the given lock is found in the {@code LockManager}
+     * @param lock - lock to search in the {@code LockManager}
+     * @return true if a lock was found, false otherwise
+     */
+    boolean isExclusivelyLocked(EngineLock lock);
 }

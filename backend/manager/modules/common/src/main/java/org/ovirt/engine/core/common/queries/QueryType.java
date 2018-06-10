@@ -102,6 +102,7 @@ public enum QueryType implements Serializable {
     GetInterfacesByLabelForNetwork,
     GetAllVfsConfigByHostId,
     GetVfToPfMapByHostId,
+    IsHostLockedOnNetworkOperation,
 
     // Vm Network
     GetVmInterfacesByVmId(QueryAuthType.User),

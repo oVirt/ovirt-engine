@@ -60,6 +60,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
      */
     private Map<String, Long> localDisksUsage;
+    private boolean networkOperationInProgress;
 
     public VDS() {
         vdsStatic = new VdsStatic();
@@ -1635,5 +1636,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setOpenstackBindingHostIds(Map<String, Object> openstackBindingHostIds) {
         vdsDynamic.setOpenstackBindingHostIds(openstackBindingHostIds);
+    }
+
+    public boolean isNetworkOperationInProgress() {
+        return this.networkOperationInProgress;
+    }
+
+    public void setNetworkOperationInProgress(boolean networkOperationInProgress) {
+        this.networkOperationInProgress = networkOperationInProgress;
     }
 }
