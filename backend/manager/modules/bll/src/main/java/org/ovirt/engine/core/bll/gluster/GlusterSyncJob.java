@@ -1098,7 +1098,11 @@ public class GlusterSyncJob extends GlusterJob {
 
             sdId.stream().map(i -> storageDomainDynamicDao.get(i))
                     .forEach(d -> {
-                        d.setConfirmedAvailableDiskSize((int) (confirmedFreeSize / SizeConverter.BYTES_IN_GB));
+                        int confirmedFreeSizeInGb = (int) (confirmedFreeSize / SizeConverter.BYTES_IN_GB);
+                        if (confirmedFreeSizeInGb > d.getAvailableDiskSize()) {
+                            confirmedFreeSizeInGb = d.getAvailableDiskSize();
+                        }
+                        d.setConfirmedAvailableDiskSize(confirmedFreeSizeInGb);
                         storageDomainDynamicDao.updateConfirmedSize(d);
                     });
 
