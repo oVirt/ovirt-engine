@@ -900,6 +900,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.memoryBalloonDeviceEnabled = memoryBalloonDeviceEnabled;
     }
 
+    private EntityModel<Boolean> multiQueues;
+
+    public EntityModel<Boolean> getMultiQueues() {
+        return multiQueues;
+    }
+
+    public void setMultiQueues(EntityModel<Boolean> multiQueues) {
+        this.multiQueues = multiQueues;
+    }
+
     private NotChangableForVmInPoolListModel<DisplayType> displayType;
 
     public ListModel<DisplayType> getDisplayType() {
@@ -1577,6 +1587,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMemoryBalloonDeviceEnabled().setEntity(true);
         getMemoryBalloonDeviceEnabled().setIsAvailable(false);
 
+        setMultiQueues(new EntityModel<Boolean>(true));
+
         setSpiceProxyEnabled(new EntityModel<>(false));
         setSpiceProxy(new EntityModel<String>());
 
@@ -2068,6 +2080,20 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         dataCenterWithClusterSelectedItemChanged(sender, args);
         updateDisplayAndGraphics();
         initUsbPolicy();
+        updateMultiQueues();
+    }
+
+    private void updateMultiQueues() {
+        Version compatibilityVersion = getCompatibilityVersion();
+
+        if (compatibilityVersion == null) {
+            return;
+        }
+
+        Boolean isMultiQueuesSupported =
+                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.DomainXML,
+                        compatibilityVersion.getValue());
+        getMultiQueues().setIsAvailable(isMultiQueuesSupported);
     }
 
     private void vmInitEnabledChanged() {

@@ -61,6 +61,8 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         spiceProxyEditor.setEnabled(model.getSpiceProxyEnabled().getEntity());
 
         templateWithVersionEditor.setEnabled(true);
+
+        multiQueues.setEnabled(true);
     }
 
     @Override

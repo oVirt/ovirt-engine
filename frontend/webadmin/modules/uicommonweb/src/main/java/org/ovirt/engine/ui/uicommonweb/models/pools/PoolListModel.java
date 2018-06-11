@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CpuProfileUnitToVmBaseBuilder
 import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
@@ -486,7 +487,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
                               new MigrationOptionsUnitToVmBaseBuilder(),
                               new DedicatedVmForVdsUnitToVmBaseBuilder(),
                               new UsbPolicyUnitToVmBaseBuilder(),
-                              new CpuProfileUnitToVmBaseBuilder());
+                              new CpuProfileUnitToVmBaseBuilder(),
+                              new MultiQueuesVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
         return vm;
     }

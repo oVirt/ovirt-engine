@@ -543,6 +543,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String memAllocVmPopup();
 
+    String multiQueuesVmPopup();
+
     String ioThreadsVmPopup();
 
     String cpuAllocVmPopup();
@@ -1101,7 +1103,11 @@ public interface CommonApplicationConstants extends Constants {
 
     String cpuPinningLabel();
 
+    String multiQueuesLabel();
+
     String cpuPinningLabelExplanation();
+
+    String multiQueuesLabelExplanation();
 
     String monitors();
 

@@ -586,6 +586,17 @@
                     <ge:EntityModelDetachableWidget ui:field="isIoThreadsEnabledDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
+                <b:Row>
+                  <b:Column size="SM_12">
+                    <g:Label ui:field="multiQueuesLabel" text="{constants.multiQueuesVmPopup}" addStyleNames="{style.sectionLabel}" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="SM_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="multiQueues" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.multiQueuesLabel}" />
+                    <d:InfoIcon ui:field="multiQueuesInfo" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                </b:Row>
                 <g:FlowPanel ui:field="storageAllocationPanel">
                   <b:Row>
                     <b:Column size="SM_12">
