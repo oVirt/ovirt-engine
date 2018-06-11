@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingVmInstanceTypeManager;
@@ -203,7 +204,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         new BuilderExecutor<>(callback,
                               new NameAndDescriptionVmBaseToUnitBuilder(),
                               new CommentVmBaseToUnitBuilder(),
-                              new CommonVmBaseToUnitBuilder())
+                              new CommonVmBaseToUnitBuilder(),
+                              new MultiQueuesVmBaseToUnitBuilder())
                 .build(vm, getModel());
     }
 

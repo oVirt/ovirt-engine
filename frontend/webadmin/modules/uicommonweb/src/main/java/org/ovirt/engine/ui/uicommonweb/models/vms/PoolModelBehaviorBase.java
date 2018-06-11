@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
@@ -178,7 +179,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     protected void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
-        new BuilderExecutor<>(callback, new CoreVmBaseToUnitBuilder())
+        new BuilderExecutor<>(callback, new CoreVmBaseToUnitBuilder(), new MultiQueuesVmBaseToUnitBuilder())
                 .build(vmBase, getModel());
     }
 

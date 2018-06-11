@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -273,7 +274,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     protected void buildModel(VmBase vmBase,
                               BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
         new BuilderExecutor<>(callback,
-                              new CommonVmBaseToUnitBuilder())
+                              new CommonVmBaseToUnitBuilder(),
+                              new MultiQueuesVmBaseToUnitBuilder())
                 .build(vmBase, getModel());
     }
 

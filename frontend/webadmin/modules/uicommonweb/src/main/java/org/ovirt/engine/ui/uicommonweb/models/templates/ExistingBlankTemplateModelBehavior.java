@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -54,7 +55,8 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
                         new CoreVmBaseToUnitBuilder(
                                 new KernelParamsVmBaseToUnitBuilder(),
                                 new SerialNumberPolicyVmBaseToUnitBuilder()
-                        )))
+                        )),
+                new MultiQueuesVmBaseToUnitBuilder())
                 .build(vmBase, getModel());
     }
 

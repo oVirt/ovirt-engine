@@ -475,6 +475,7 @@ public final class Cloner {
         obj.setSmallIconId(instance.getSmallIconId());
         obj.setLargeIconId(instance.getLargeIconId());
         obj.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
+        obj.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
 
         return obj;
     }
@@ -530,6 +531,7 @@ public final class Cloner {
         obj.setProviderId(instance.getProviderId());
         obj.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
         obj.setVmInit(instance.getVmInit());
+        obj.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
         return obj;
     }
 

@@ -711,9 +711,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     InfoIcon cpuPinningInfo;
 
     @UiField(provided = true)
+    InfoIcon multiQueuesInfo;
+
+    @UiField
+    @Ignore
+    Label multiQueuesLabel;
+
+    @UiField(provided = true)
     @Path(value = "cpuPinning.entity")
     @WithElementId("cpuPinning")
     public StringEntityModelTextBoxOnlyEditor cpuPinning;
+
+    @UiField(provided = true)
+    @Path(value = "multiQueues.entity")
+    @WithElementId("multiQueues")
+    public EntityModelCheckBoxEditor multiQueues;
 
     @UiField(provided = true)
     @Path(value = "cpuSharesAmountSelection.selectedItem")
@@ -1010,6 +1022,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
         cpuPinningInfo.setTooltipMaxWidth(TooltipWidth.W420);
+        multiQueuesInfo = new InfoIcon(templates.italicText(constants.multiQueuesLabelExplanation()));
         isHeadlessModeEnabledInfoIcon =
                 new InfoIcon(SafeHtmlUtils.fromTrustedString(constants.headlessModeExplanation()));
         isVirtioScsiEnabledInfoIcon =
@@ -1032,6 +1045,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         disksAllocationView = new DisksAllocationView();
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        multiQueues = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         initPoolSpecificWidgets();
         initTextBoxEditors();
@@ -1653,6 +1667,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         affinityLabelSelectionWidget.init(object.getLabelList());
+
+        object.getMultiQueues().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                multiQueuesLabel.setVisible(object.getMultiQueues().getIsAvailable());
+                multiQueuesInfo.setVisible(object.getMultiQueues().getIsAvailable());
+            }
+        });
     }
 
     private void updateUrandomLabel(UnitVmModel model) {
@@ -1933,6 +1954,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);
         cpuSharesAmountEditor.setTabIndex(nextTabIndex++);
+        multiQueues.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
 
         // ==Boot Options Tab==

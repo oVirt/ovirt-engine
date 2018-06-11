@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
@@ -156,7 +157,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         new BuilderExecutor<>(callback,
                 new NameAndDescriptionVmBaseToUnitBuilder(),
                 new CommentVmBaseToUnitBuilder(),
-                new CommonVmBaseToUnitBuilder())
+                new CommonVmBaseToUnitBuilder(),
+                new MultiQueuesVmBaseToUnitBuilder())
                 .build(vmBase, getModel());
     }
 

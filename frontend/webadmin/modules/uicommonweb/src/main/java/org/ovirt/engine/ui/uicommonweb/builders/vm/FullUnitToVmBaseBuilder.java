@@ -21,7 +21,8 @@ public class FullUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBuil
                 new KernelParamsUnitToVmBaseBuilder(),
                 new MigrationOptionsUnitToVmBaseBuilder(),
                 new NameUnitToVmBaseBuilder(),
-                new UsbPolicyUnitToVmBaseBuilder()
+                new UsbPolicyUnitToVmBaseBuilder(),
+                new MultiQueuesVmBaseBuilder()
         );
     }
 }
