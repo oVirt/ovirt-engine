@@ -447,6 +447,7 @@ LANGUAGE plpgsql;
         SELECT 'DROP VIEW if exists ' || table_name || ' CASCADE;'
         FROM information_schema.VIEWS
         WHERE table_schema = 'public'
+        AND table_name NOT ILIKE 'pg_%'
         ORDER BY table_name;
     END;$PROCEDURE$
 
