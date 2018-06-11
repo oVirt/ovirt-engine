@@ -8,19 +8,17 @@ import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.BrowserEvents;
-import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
-    private static final String CHECKBOX_HEADER_STYLE = "position: relative; top: 3px;"; //$NON-NLS-1$
 
     private static final SafeHtml INPUT_CHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" tabindex=\"-1\" checked style=\"" + CHECKBOX_HEADER_STYLE + "\"/>"); //$NON-NLS-1$ $NON-NLS-2$
+            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" tabindex=\"-1\" checked />"); //$NON-NLS-1$
 
     private static final SafeHtml INPUT_UNCHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" style=\"" + CHECKBOX_HEADER_STYLE + "\"/>"); //$NON-NLS-1$ $NON-NLS-2$
+            "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" />"); //$NON-NLS-1$
 
     public AbstractCheckboxHeader() {
         super(new CheckboxCell(true, false) {
@@ -49,8 +47,6 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
         if (getLabel() != null) {
             ((CheckboxCell) getCell()).setLabel(SafeHtmlUtils.fromString(getLabel()));
         }
-
-        ((CheckboxCell) getCell()).setAdditionalStyles(SafeStylesUtils.fromTrustedString(CHECKBOX_HEADER_STYLE));
     }
 
     /**
