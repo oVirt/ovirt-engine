@@ -1445,10 +1445,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     private void updateSwitchTypeUponVersionChange(Version version) {
         ListModel<SwitchType> switchType = getSwitchType();
 
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+
         boolean ovsSupported = isOvsSupported(version);
-        switchType.setIsChangeable(ovsSupported && !getIsEdit());
+        switchType.setIsChangeable(ovsSupported && !getIsEdit(), constants.clusterSwitchChangeDisabled());
         if (!ovsSupported && switchType.getSelectedItem().equals(SwitchType.OVS)) {
             switchType.setSelectedItem(SwitchType.LEGACY);
+            switchType.setChangeProhibitionReason(null);
         }
     }
 

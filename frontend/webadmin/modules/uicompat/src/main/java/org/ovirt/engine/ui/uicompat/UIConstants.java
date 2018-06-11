@@ -2132,5 +2132,7 @@ public interface UIConstants extends Constants {
     String resetBrickTitle();
 
     String resetBrickMessage();
+
+    String clusterSwitchChangeDisabled();
 }
 
