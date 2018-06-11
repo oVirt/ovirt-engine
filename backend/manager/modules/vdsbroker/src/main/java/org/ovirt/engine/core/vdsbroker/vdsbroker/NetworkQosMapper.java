@@ -9,7 +9,7 @@ public class NetworkQosMapper {
 
     // Megabit = 1000 *1000 bits, KiloBytes = 1000 bytes
     private static final int MEGABITS_TO_KILOBYTES = 125;
-    private static final int MEGABYTES_TO_KILOBYTES = 1024;
+    private static final int MEGABYTES_TO_KILOBYTES = 1000;
 
     private final Map<String, Object> map;
     private final String inboundEntry;
