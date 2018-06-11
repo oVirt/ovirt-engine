@@ -273,8 +273,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
 
         @Override
-        public String getLabel() {
-            return constants.requiredAll();
+        public void render(Context context, SafeHtmlBuilder sb) {
+            super.render(context, sb);
+            sb.append(templates.textForCheckBox(constants.requiredAll()));
         }
     }
 
@@ -344,10 +345,10 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
 
         @Override
-        public String getLabel() {
-            return constants.assignAll();
+        public void render(Context context, SafeHtmlBuilder sb) {
+            super.render(context, sb);
+            sb.append(templates.textForCheckBox(constants.assignAll()));
         }
-
     }
 
     private static final class MigrationNetworkIndicatorCheckboxColumn extends InitiallySetNetworkRoleIndicatorCheckboxColumn {
