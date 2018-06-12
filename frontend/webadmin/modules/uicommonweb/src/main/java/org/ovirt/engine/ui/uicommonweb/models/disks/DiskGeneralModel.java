@@ -107,6 +107,32 @@ public class DiskGeneralModel extends EntityModel<Disk> {
         }
     }
 
+    private long virtualSize;
+
+    public long getVirtualSize() {
+        return virtualSize;
+    }
+
+    public void setVirtualSize(long virtualSize) {
+        if (this.virtualSize != virtualSize) {
+            this.virtualSize = virtualSize;
+            onPropertyChanged(new PropertyChangedEventArgs("virtualSize")); //$NON-NLS-1$
+        }
+    }
+
+    private double actualSize;
+
+    public double getActualSize() {
+        return actualSize;
+    }
+
+    public void setActualSize(double actualSize) {
+        if (this.actualSize != actualSize) {
+            this.actualSize = actualSize;
+            onPropertyChanged(new PropertyChangedEventArgs("actualSize")); //$NON-NLS-1$
+        }
+    }
+
     private String privateDiskProfileName;
 
     public String getDiskProfileName() {
@@ -204,10 +230,13 @@ public class DiskGeneralModel extends EntityModel<Disk> {
             setAlignment(disk.getAlignment().toString());
         }
 
+        setVirtualSize(disk.getSize());
         setWipeAfterDelete(disk.isWipeAfterDelete());
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
+            setVirtualSize(diskImage.getSizeInGigabytes());
+            setActualSize(diskImage.getActualSize());
             setDiskProfileName(StringHelper.nullSafeJoin(",", diskImage.getDiskProfileNames())); //$NON-NLS-1$
             setQuotaName(StringHelper.nullSafeJoin(",", diskImage.getQuotaNames())); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));

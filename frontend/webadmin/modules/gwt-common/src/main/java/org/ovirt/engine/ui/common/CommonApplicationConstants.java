@@ -779,6 +779,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String descriptionDisk();
 
+    String diskVirtualSize();
+
+    String diskActualSize();
+
     String formatDisk();
 
     String copyDisk();

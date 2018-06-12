@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -12,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
+import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -46,6 +48,8 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     StringValueLabel quotaName = new StringValueLabel();
     StringValueLabel alignment = new StringValueLabel();
     BooleanLabel wipeAfterDelete = new BooleanLabel(constants.yes(), constants.no());
+    DiskSizeLabel<Long> virtualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.GiB);
+    DiskSizeLabel<Double> actualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.GiB);
 
     @UiField(provided = true)
     @WithElementId
@@ -70,7 +74,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 8);
+        formBuilder = new FormBuilder(formPanel, 1, 10);
 
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0), 2, 10);
@@ -100,7 +104,13 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
                 return getDetailModel().isImage();
             }
         }, 2, 10);
-
+        formBuilder.addFormItem(new FormItem(constants.diskVirtualSize(), virtualSize, 7, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.diskActualSize(), actualSize, 8, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return getDetailModel().isImage();
+            }
+        }, 2, 10);
         formBuilder.setRelativeColumnWidth(0, 12);
     }
 
