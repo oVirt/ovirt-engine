@@ -1,0 +1,93 @@
+#
+# ovirt-engine-setup -- ovirt engine setup
+#
+# Copyright oVirt Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+
+"""OVN plugin."""
+
+
+import gettext
+
+from otopi import constants as otopicons
+from otopi import filetransaction
+from otopi import plugin
+from otopi import util
+
+from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+@util.export
+class Plugin(plugin.PluginBase):
+    """OVN plugin."""
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+        self._config = (
+            oenginecons.OvnFileLocations.
+            OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment[
+            osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
+        ].append(self._config)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+    )
+    def _misc(self):
+        uninstall_files = []
+
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='ovirt-provider-ovn',
+            description='ovirt-provider-ovn configuration files',
+            optional=True,
+        ).addFiles(
+            group='ovirt-provider-ovn',
+            fileList=uninstall_files,
+        )
+        with open(self._config, 'r') as f:
+            content = []
+            for line in f:
+                line = line.rstrip('\n')
+                if line.startswith('ovirt-host='):
+                    line = (
+                        'ovirt-host=https://{fqdn}:{port}'
+                    ).format(
+                        fqdn=self.environment[osetupcons.RenameEnv.FQDN],
+                        port=self.environment[
+                            oengcommcons.ConfigEnv.PUBLIC_HTTPS_PORT
+                        ],
+                    )
+                elif line.startswith('provider-host='):
+                    line = (
+                        'provider-host={fqdn}'
+                    ).format(
+                        fqdn=self.environment[osetupcons.RenameEnv.FQDN],
+                    )
+                content.append(line)
+
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=self._config,
+                content=content,
+                modifiedList=uninstall_files,
+            )
+        )
+
+
+# vim: expandtab tabstop=4 shiftwidth=4

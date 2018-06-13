@@ -15,6 +15,7 @@ from otopi import util
 from . import database
 from . import engine
 from . import misc
+from . import ovn
 from . import pki
 from . import protocols
 from . import sso
@@ -27,6 +28,7 @@ def createPlugins(context):
     database.Plugin(context=context)
     engine.Plugin(context=context)
     misc.Plugin(context=context)
+    ovn.Plugin(context=context)
     pki.Plugin(context=context)
     protocols.Plugin(context=context)
     sso.Plugin(context=context)
