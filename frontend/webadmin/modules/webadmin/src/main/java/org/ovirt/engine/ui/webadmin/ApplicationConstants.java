@@ -290,9 +290,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String assign();
 
-    String requiredAll();
+    String requireAll();
 
-    String required();
+    String require();
 
     String storagePopupNameLabel();
 
