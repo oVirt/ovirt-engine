@@ -2134,5 +2134,7 @@ public interface UIConstants extends Constants {
     String resetBrickMessage();
 
     String clusterSwitchChangeDisabled();
+
+    String externalNetworkInfo();
 }
 
