@@ -46,7 +46,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     private boolean liveSnapshotSucceeded;
 
-    private CreateSnapshotStage createSnapshotStage = CreateSnapshotStage.CREATE_VOLUME;
+    private CreateSnapshotStage createSnapshotStage = CreateSnapshotStage.CREATE_VOLUME_STARTED;
 
     public CreateSnapshotForVmParameters() {
         needsLocking = true;
@@ -162,7 +162,8 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
     }
 
     public enum CreateSnapshotStage {
-        CREATE_VOLUME,
+        CREATE_VOLUME_STARTED,
+        CREATE_VOLUME_FINISHED,
         CREATE_SNAPSHOT_STARTED,
         CREATE_SNAPSHOT_COMPLETED,
     }
