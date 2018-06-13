@@ -1249,7 +1249,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateCustomCpu() {
         Cluster cluster = getModel().getSelectedCluster();
 
-        if (cluster == null || cluster.getCpuName() == null || "".equals(cluster.getCpuName())) {
+        if (cluster == null || cluster.getCpuName() == null) {
             return;
         }
 
