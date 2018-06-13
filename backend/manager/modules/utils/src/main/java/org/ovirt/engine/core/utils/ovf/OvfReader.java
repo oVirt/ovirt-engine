@@ -627,6 +627,10 @@ public abstract class OvfReader implements IOvfBuilder {
 
         consumeReadProperty(content, VM_LEASE, val -> vmBase.setLeaseStorageDomainId(new Guid(val)));
 
+        consumeReadProperty(content,
+                MULTI_QUEUES_ENABLED,
+                val -> vmBase.setMultiQueuesEnabled(Boolean.parseBoolean(val)));
+
         readVmInit(content);
     }
 
