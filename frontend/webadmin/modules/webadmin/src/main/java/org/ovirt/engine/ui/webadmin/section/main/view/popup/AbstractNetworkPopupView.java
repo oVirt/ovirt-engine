@@ -369,7 +369,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             @Override
             public void render(Context context, SafeHtmlBuilder sb) {
                 super.render(context, sb);
-                sb.append(templates.textForCheckBox(constants.requiredAll()));
+                sb.append(templates.textForCheckBox(constants.requireAll()));
             }
         };
 
@@ -419,7 +419,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             @Override
             public void render(Context context, NetworkClusterModel object, SafeHtmlBuilder sb) {
                 super.render(context, object, sb);
-                sb.append(templates.textForCheckBox(constants.required()));
+                sb.append(templates.textForCheckBox(constants.require()));
             }
 
         }, requiredAllHeader, "150px"); //$NON-NLS-1$

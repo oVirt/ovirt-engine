@@ -225,7 +225,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         @Override
         public void render(Context context, ClusterNetworkModel object, SafeHtmlBuilder sb) {
             super.render(context, object, sb);
-            sb.append(templates.textForCheckBox(constants.required()));
+            sb.append(templates.textForCheckBox(constants.require()));
         }
     }
 
@@ -275,7 +275,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         @Override
         public void render(Context context, SafeHtmlBuilder sb) {
             super.render(context, sb);
-            sb.append(templates.textForCheckBox(constants.requiredAll()));
+            sb.append(templates.textForCheckBox(constants.requireAll()));
         }
     }
 
