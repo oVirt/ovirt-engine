@@ -312,6 +312,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         if (vmBase.getLeaseStorageDomainId() != null) {
             _writer.writeElement(VM_LEASE, vmBase.getLeaseStorageDomainId().toString());
         }
+
+        _writer.writeElement(MULTI_QUEUES_ENABLED, String.valueOf(vmBase.isMultiQueuesEnabled()));
     }
 
     protected void writeCustomEmulatedMachine() {

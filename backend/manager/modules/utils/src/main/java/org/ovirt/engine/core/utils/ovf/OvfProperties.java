@@ -93,6 +93,7 @@ public interface OvfProperties {
     String DOWNTIME = "Downtime";
     String ENGINE_XML = "EngineXml";
     String CPU_PINNING = "CpuPinning";
+    String MULTI_QUEUES_ENABLED = "MultiQueuesEnabled";
 
     // Luns
     String LUN_ID = "lun_id";
