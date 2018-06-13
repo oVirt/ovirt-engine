@@ -49,6 +49,7 @@ dbfunc_common_restore_permissions() {
 }
 
 dbfunc_common_schema_apply() {
+        dbfunc_common_check_uuid_extension_installation
 	# check database connection
 	dbfunc_psql_die --command="select 1;" > /dev/null
 
@@ -90,6 +91,21 @@ dbfunc_common_schema_recreate() {
 	dbfunc_common_schema_apply
 }
 
+dbfunc_common_check_uuid_extension_installation() {
+        if [ "$(dbfunc_psql_statement_parsable "
+                select count(*)
+                from pg_available_extensions
+                where
+                    name = 'uuid-ossp' and
+                    installed_version IS NOT NULL
+        ")" -eq 0 ]; then
+                echo "uuid-ossp extension is missing"
+                echo "Please install uuid-ossp extension in the database by running:"
+                echo "'CREATE EXTENSION \"uuid-ossp\";'"
+                exit 1
+        fi
+}
+
 # gets the configuration value of the given option name and version.
 # usage: <some variable>=get_config_value <name> <version>
 dbfunc_common_config_get_value() {
@@ -127,11 +143,14 @@ _dbfunc_common_schema_refresh_drop() {
 }
 
 _dbfunc_common_schema_refresh_create() {
+        dbfunc_common_check_uuid_extension_installation
 	dbfunc_common_hook_views_refresh
 	_dbfunc_common_sps_refresh
 }
 
 _dbfunc_common_schema_create() {
+
+        dbfunc_common_check_uuid_extension_installation
 
 	_dbfunc_common_language_create "plpgsql"
 
@@ -156,6 +175,7 @@ _dbfunc_common_schema_create() {
 
 _dbfunc_common_schema_upgrade() {
 
+        dbfunc_common_check_uuid_extension_installation
 	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/04_00_0000_set_version.sql" > /dev/null
 
 	local files="$(_dbfunc_common_get_files "upgrade" 1)"
