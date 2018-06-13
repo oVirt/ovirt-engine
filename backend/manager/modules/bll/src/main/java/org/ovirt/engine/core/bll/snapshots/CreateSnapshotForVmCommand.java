@@ -152,13 +152,14 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             memoryImageBuilder.build();
             addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
             fastForwardDisksToActiveSnapshot();
+            getParameters().setCreateSnapshotStage(CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_VOLUME_FINISHED);
             setSucceeded(true);
         }
     }
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        if (getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_VOLUME) {
+        if (getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_VOLUME_FINISHED) {
             getParameters().setCreateSnapshotStage(CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_STARTED);
             Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
             // if the snapshot was not created in the DB
@@ -398,23 +399,27 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         return sortedList;
     }
 
+    private boolean isSnapshotCreated() {
+        return getParameters().getCreatedSnapshotId() != null &&
+                getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_VOLUME_FINISHED ||
+                getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_COMPLETED;
+    }
+
     @Override
     protected void endVmCommand() {
-        if (!getParameters().getTaskGroupSuccess())  {
+        if (!getParameters().getTaskGroupSuccess()) {
             Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
-            if (getParameters().getCreatedSnapshotId() != null &&
-                    getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_STARTED ||
-                    getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_COMPLETED) {
+            if (!isSnapshotCreated()) {
+                log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
+            } else {
                 revertToActiveSnapshot(createdSnapshot.getId());
                 // If the removed snapshot contained memory, remove the memory volumes
                 // Note that the memory volumes might not have been created
                 if (snapshotWithMemory(createdSnapshot)) {
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
-            } else {
-                log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
-            }
 
+            }
         }
 
         // In case of failure the memory disks will remain on the storage but not on the engine
