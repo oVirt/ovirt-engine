@@ -127,6 +127,7 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, String>> diskMetadata;
+    private Map<String, Map<String, String>> mdevMetadata;
     private Pair<String, VmPayload> payloadMetadata;
 
     private List<Pair<Guid, Guid>> volumeLeases = Collections.emptyList();
@@ -204,6 +205,7 @@ public class LibvirtVmXmlBuilder {
         cdRomIndex = -1;
         vnicMetadata = new HashMap<>();
         diskMetadata = new HashMap<>();
+        mdevMetadata = new HashMap<>();
         hypervEnabled = vmInfoBuildUtils.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
         emulatedMachine = vm.getEmulatedMachine() != null ?
                 vm.getEmulatedMachine()
@@ -253,7 +255,7 @@ public class LibvirtVmXmlBuilder {
         // note that this must be called after writeDevices to get the serial console, if exists
         writeOs();
         writeMemoryBacking();
-        writeMetadata();
+        writeMetadata(); // must remain the last call!
         return writer.getStringXML();
     }
 
@@ -835,6 +837,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement(OVIRT_VM_URI, "vm");
         writeMinGuaranteedMemoryMetadata();
         writeClusterVersionMetadata();
+        writeMDevMetadata();
         writeVmCustomMetadata();
         writeNetworkInterfaceMetadata();
         writeDiskMetadata();
@@ -842,6 +845,16 @@ public class LibvirtVmXmlBuilder {
         writePayloadMetadata();
         writeResumeBehaviorMetadata();
         writer.writeEndElement();
+    }
+
+    private void writeMDevMetadata() {
+        mdevMetadata.forEach((address, data) -> {
+            writer.writeStartElement(OVIRT_VM_URI, "device");
+            writer.writeAttributeString("devtype", "hostdev");
+            writer.writeAttributeString("uuid", address);
+            data.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value.toString()));
+            writer.writeEndElement();
+        });
     }
 
     private void writeResumeBehaviorMetadata() {
@@ -1034,6 +1047,8 @@ public class LibvirtVmXmlBuilder {
         writeDisks(diskDevices);
         writeLeases();
 
+        writeVGpu();
+
         writer.writeEndElement();
     }
 
@@ -1109,6 +1124,26 @@ public class LibvirtVmXmlBuilder {
                 managedAndPluggedBootableDevices,
                 vm.getInterfaces(),
                 VmDeviceCommonUtils.extractDiskVmElements(vm));
+    }
+
+    private void writeVGpu() {
+        String mdevType = vmCustomProperties.remove("mdev_type");
+        if (mdevType != null) {
+            writer.writeStartElement("hostdev");
+            writer.writeAttributeString("mode", "subsystem");
+            writer.writeAttributeString("type", "mdev");
+            writer.writeAttributeString("model", "vfio-pci");
+
+            writer.writeStartElement("source");
+            String address = Guid.newGuid().toString();
+            writer.writeStartElement("address");
+            writer.writeAttributeString("uuid", address);
+            writer.writeEndElement();
+            writer.writeEndElement();
+
+            writer.writeEndElement();
+            mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevType));
+        }
     }
 
     private void writeLeases() {
