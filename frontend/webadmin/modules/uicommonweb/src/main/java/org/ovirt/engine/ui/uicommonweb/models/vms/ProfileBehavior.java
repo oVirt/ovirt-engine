@@ -16,6 +16,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class ProfileBehavior {
 
@@ -46,6 +48,7 @@ public abstract class ProfileBehavior {
                     Network network = findNetworkById(vnicProfile.getNetworkId());
                     if (network != null) {
                         vnicProfiles.add(vnicProfile);
+                        updateDescriptionForExternalNetwork(network, vnicProfile);
                     }
 
                 }
@@ -76,5 +79,16 @@ public abstract class ProfileBehavior {
 
     protected String getManagementNetworkName() {
         return managementNetworkName;
+    }
+
+    private void updateDescriptionForExternalNetwork(Network network, VnicProfileView vnicProfileView) {
+        if (network.isExternal()) {
+            UIConstants constants = ConstantsManager.getInstance().getConstants();
+            String description = vnicProfileView.getDescription();
+            vnicProfileView.setDescription(
+                    description != null ?
+                            description + constants.externalNetworkInfo() :
+                            constants.externalNetworkInfo());
+        }
     }
 }
