@@ -614,6 +614,7 @@ class Plugin(plugin.PluginBase):
                 content=content,
                 visibleButUnsafe=True,
                 modifiedList=uninstall_files,
+                mode=0o600
             )
         )
 
