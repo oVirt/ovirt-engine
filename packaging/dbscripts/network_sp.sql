@@ -419,7 +419,8 @@ BEGIN
     FROM network
     INNER JOIN network_cluster
         ON network.id = network_cluster.network_id
-    WHERE network_cluster.required;
+    WHERE network_cluster.required
+        AND network.storage_pool_id = v_data_center_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
