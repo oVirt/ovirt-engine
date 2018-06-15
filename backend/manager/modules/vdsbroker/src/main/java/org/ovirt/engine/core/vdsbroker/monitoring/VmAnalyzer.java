@@ -339,10 +339,10 @@ public class VmAnalyzer {
             case Normal:
                 boolean powerOff = System.nanoTime() - getVmManager().getPowerOffTimeout() < 0;
                 auditVmOnDownNormal(powerOff);
+                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
                 clearVm(vdsmVm.getVmDynamic().getExitStatus(),
                         powerOff ? getPowerOffExitMessage() : vdsmVm.getVmDynamic().getExitMessage(),
                         vdsmVm.getVmDynamic().getExitReason());
-                resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
 
                 if (getVmManager().isColdReboot() || vdsmVm.getVmDynamic().getExitReason() == VmExitReason.DestroyedOnReboot) {
                     setColdRebootFlag();
@@ -798,10 +798,10 @@ public class VmAnalyzer {
     private void proceedDisappearedVm() {
         if (System.nanoTime() - getVmManager().getPowerOffTimeout() < 0) {
             auditVmOnDownNormal(true);
+            resourceManager.removeAsyncRunningVm(dbVm.getId());
             clearVm(VmExitStatus.Normal,
                     getPowerOffExitMessage(),
                     VmExitReason.Success);
-            resourceManager.removeAsyncRunningVm(dbVm.getId());
             return;
         }
 
