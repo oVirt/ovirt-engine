@@ -706,17 +706,6 @@ public class LibvirtVmXmlBuilder {
             return;
         }
 
-        // Currently only
-        // <features>
-        //   <acpi/>
-        // <features/>
-        // for hyperv:
-        // <features>
-        //   <acpi/>
-        //   <hyperv>
-        //     <relaxed state='on'/>
-        //   </hyperv>
-        // <features/>
         boolean acpiEnabled = vm.getAcpiEnable();
         boolean kaslr = vmInfoBuildUtils.isKASLRDumpEnabled(vm.getVmOsId());
         if (!acpiEnabled && !hypervEnabled && !kaslr) {
@@ -726,8 +715,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("features");
 
         if (acpiEnabled) {
-            writer.writeStartElement("acpi");
-            writer.writeEndElement();
+            writer.writeElement("acpi");
         }
 
         if (hypervEnabled) {
