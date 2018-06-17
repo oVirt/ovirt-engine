@@ -9,13 +9,17 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateAllOvaDisksParameters extends ActionParametersBase {
 
     private Guid entityId;
-    private Map<DiskImage, DiskImage> diskInfoDestinationMap = new HashMap<>();
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
 
-    public Map<DiskImage, DiskImage> getDiskInfoDestinationMap() {
+    public CreateAllOvaDisksParameters() {
+        diskInfoDestinationMap = new HashMap<>();
+    }
+
+    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
         return diskInfoDestinationMap;
     }
 
-    public void setDiskInfoDestinationMap(Map<DiskImage, DiskImage> diskInfoDestinationMap) {
+    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 

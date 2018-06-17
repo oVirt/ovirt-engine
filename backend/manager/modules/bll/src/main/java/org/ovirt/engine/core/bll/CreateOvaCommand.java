@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -64,6 +65,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private VmDao vmDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public static final String CREATE_OVA_LOG_DIRECTORY = "ova";
 
@@ -79,7 +82,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     @Override
     protected void executeCommand() {
-        Map<DiskImage, DiskImage> diskMappings = getParameters().getDiskInfoDestinationMap();
+        Map<Guid, DiskImage> diskMappings = getParameters().getDiskInfoDestinationMap();
         Collection<DiskImage> disks = diskMappings.values();
         Map<Guid, String> diskIdToPath = prepareImages(disks);
         fillDiskApparentSize(disks);
@@ -90,7 +93,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         setSucceeded(succeeded);
     }
 
-    private String createOvf(Collection<DiskImage> disks, Map<DiskImage, DiskImage> diskMappings) {
+    private String createOvf(Collection<DiskImage> disks, Map<Guid, DiskImage> diskMappings) {
         switch(getParameters().getEntityType()) {
         case TEMPLATE:
             VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
@@ -117,9 +120,13 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             return ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion());
         }
     }
-    private void fixDiskDevices(VmBase vmBase, Map<DiskImage, DiskImage> diskMappings) {
+
+    private void fixDiskDevices(VmBase vmBase, Map<Guid, DiskImage> diskMappings) {
         Map<Guid, Guid> diskIdMappings = new HashMap<>();
-        diskMappings.forEach((source, destination) -> diskIdMappings.put(source.getId(), destination.getId()));
+        diskMappings.forEach((imageId, destination) -> {
+            DiskImage source = diskImageDao.get(imageId);
+            diskIdMappings.put(source.getId(), destination.getId());
+        });
 
         List<VmDevice> diskDevices = vmBase.getManagedDeviceMap().values().stream()
                 .filter(VmDeviceCommonUtils::isDisk)

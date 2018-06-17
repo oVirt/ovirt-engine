@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 
 @DisableInPrepareMode
@@ -41,6 +42,8 @@ public class CreateAllOvaDisksCommand<T extends CreateAllOvaDisksParameters> ext
     private BaseDiskDao baseDiskDao;
     @Inject
     private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private DiskImageDao diskImageDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -66,7 +69,8 @@ public class CreateAllOvaDisksCommand<T extends CreateAllOvaDisksParameters> ext
         setSucceeded(true);
     }
 
-    private void copy(DiskImage source, DiskImage destination) {
+    private void copy(Guid imageId, DiskImage destination) {
+        DiskImage source = diskImageDao.get(imageId);
         ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                 ActionType.CopyImageGroup,
                 buildMoveOrCopyImageGroupParametersForDisk(source, destination));

@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
@@ -71,6 +72,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     private DiskDao diskDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private DiskImageDao diskImageDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -97,8 +100,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
         if (getParameters().getDiskInfoDestinationMap() == null) {
             // TODO: map to different storage domains
             List<DiskImage> disks = getDisks();
-            Map<DiskImage, DiskImage> disksMapping = disks.stream()
-                    .collect(Collectors.toMap(d -> d, this::map));
+            Map<Guid, DiskImage> disksMapping = disks.stream()
+                    .collect(Collectors.toMap(DiskImage::getImageId, this::map));
             getParameters().setDiskInfoDestinationMap(disksMapping);
         }
     }
@@ -298,9 +301,11 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
         CreateOvaParameters parameters = new CreateOvaParameters();
         parameters.setEntityType(getParameters().getEntityType());
         parameters.setEntityId(getParameters().getEntityId());
-        getParameters().getDiskInfoDestinationMap().forEach((source, destination) -> {
+        getParameters().getDiskInfoDestinationMap().forEach((imageId, disk) -> {
             // same as the disk<->vm element for the original disk
-            destination.setDiskVmElements(Collections.singleton(diskVmElementDao.get(new VmDeviceId(source.getId(), getParameters().getEntityId()))));
+            Guid diskId = diskImageDao.get(imageId).getId();
+            disk.setDiskVmElements(Collections.singleton(
+                    diskVmElementDao.get(new VmDeviceId(diskId, getParameters().getEntityId()))));
         });
         parameters.setDiskInfoDestinationMap(getParameters().getDiskInfoDestinationMap());
         parameters.setProxyHostId(getParameters().getProxyHostId());
