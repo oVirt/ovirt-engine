@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateOvaParameters extends ActionParametersBase {
 
     private VM vm;
-    private Map<DiskImage, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
     private Guid proxyHostId;
     private String directory;
     private String name;
@@ -22,11 +22,11 @@ public class CreateOvaParameters extends ActionParametersBase {
         this.vm = vm;
     }
 
-    public Map<DiskImage, DiskImage> getDiskInfoDestinationMap() {
+    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
         return diskInfoDestinationMap;
     }
 
-    public void setDiskInfoDestinationMap(Map<DiskImage, DiskImage> diskInfoDestinationMap) {
+    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 

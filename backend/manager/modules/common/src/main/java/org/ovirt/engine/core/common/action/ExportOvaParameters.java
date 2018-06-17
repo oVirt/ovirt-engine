@@ -21,7 +21,7 @@ public class ExportOvaParameters extends ActionParametersBase {
     private VmEntityType entityType;
     private Guid entityId;
     private Phase phase = Phase.CREATE_DISKS;
-    private Map<DiskImage, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
     private Guid proxyHostId;
     @NotNull
     private String directory;
@@ -55,11 +55,11 @@ public class ExportOvaParameters extends ActionParametersBase {
         this.phase = phase;
     }
 
-    public Map<DiskImage, DiskImage> getDiskInfoDestinationMap() {
+    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
         return diskInfoDestinationMap;
     }
 
-    public void setDiskInfoDestinationMap(Map<DiskImage, DiskImage> diskInfoDestinationMap) {
+    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 
