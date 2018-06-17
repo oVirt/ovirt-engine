@@ -273,6 +273,10 @@ public class VmBaseMapper {
         if (model.isSetLease()) {
             entity.setLeaseStorageDomainId(StorageDomainLeaseMapper.map(model.getLease()));
         }
+
+        if (model.isSetMultiQueuesEnabled()) {
+            entity.setMultiQueuesEnabled(model.isMultiQueuesEnabled());
+        }
     }
 
     /**
@@ -441,6 +445,8 @@ public class VmBaseMapper {
         }
 
         model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));
+
+        model.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
     }
 
     @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)
