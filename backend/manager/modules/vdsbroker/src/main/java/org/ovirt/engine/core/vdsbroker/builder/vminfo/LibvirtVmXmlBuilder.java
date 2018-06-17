@@ -276,21 +276,6 @@ public class LibvirtVmXmlBuilder {
         return writer.getStringXML();
     }
 
-    public String buildHotunplugNic() {
-        writer.writeStartDocument(false);
-        writer.writeStartElement("hotunplug");
-
-        writer.writeStartElement("devices");
-        writer.writeStartElement("interface");
-        writer.writeStartElement("alias");
-        writer.writeAttributeString("name", device.getAlias());
-        writer.writeEndElement();
-        writer.writeEndElement();
-        writer.writeEndElement();
-
-        return writer.getStringXML();
-    }
-
     public String buildHotplugDisk() {
         writer.writeStartDocument(false);
         writer.writeStartElement("hotplug");
@@ -309,21 +294,6 @@ public class LibvirtVmXmlBuilder {
         writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
         writer.writeStartElement(OVIRT_VM_URI, "vm");
         writeDiskMetadata();
-        writer.writeEndElement();
-        writer.writeEndElement();
-
-        return writer.getStringXML();
-    }
-
-    public String buildHotunplugDisk() {
-        writer.writeStartDocument(false);
-        writer.writeStartElement("hotunplug");
-
-        writer.writeStartElement("devices");
-        writer.writeStartElement("disk");
-        writer.writeStartElement("alias");
-        writer.writeAttributeString("name", device.getAlias());
-        writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
 

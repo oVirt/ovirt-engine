@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -40,7 +41,12 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         Map<String, Object> sendInfo = new HashMap<>();
         sendInfo.put("vmId", getParameters().getVmId().toString());
         if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
-            sendInfo.put(VdsProperties.engineXml, generateDomainXml());
+            try {
+                sendInfo.put(VdsProperties.engineXml, generateDomainXml());
+            } catch (JAXBException e) {
+                log.error("failed to create xml for hot-(un)plug", e);
+                throw new RuntimeException(e);
+            }
         } else {
             sendInfo.put("drive", initDriveData());
         }
@@ -120,7 +126,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         return drive;
     }
 
-    protected String generateDomainXml() {
+    protected String generateDomainXml() throws JAXBException {
         LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
                 getParameters().getVm(),
                 getVds().getId(),

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -28,7 +29,12 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
         Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
         if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
-            struct.put(VdsProperties.engineXml, generateDomainXml());
+            try {
+                struct.put(VdsProperties.engineXml, generateDomainXml());
+            } catch (JAXBException e) {
+                log.error("failed to create xml for hot-(un)plug", e);
+                throw new RuntimeException(e);
+            }
         } else {
             struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
         }
@@ -65,5 +71,5 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
         return map;
     }
 
-    protected abstract String generateDomainXml();
+    protected abstract String generateDomainXml() throws JAXBException;
 }
