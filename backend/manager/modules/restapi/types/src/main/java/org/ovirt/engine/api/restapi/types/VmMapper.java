@@ -123,6 +123,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setLargeIconId(entity.getLargeIconId());
         staticVm.setQuotaId(entity.getQuotaId());
         staticVm.setBootMenuEnabled(entity.isBootMenuEnabled());
+        staticVm.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 

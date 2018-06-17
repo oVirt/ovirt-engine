@@ -131,6 +131,7 @@ public class BackendVmPoolResource
                 vm.getStaticData().setOsId(template.getOsId());
                 vm.getStaticData().setDefaultDisplayType(template.getDefaultDisplayType());
                 vm.getStaticData().setMigrationSupport(template.getMigrationSupport());
+                vm.getStaticData().setMultiQueuesEnabled(template.isMultiQueuesEnabled());
                 if (vm.getVmInit() == null) {
                     vm.setVmInit(template.getVmInit());
                 }
