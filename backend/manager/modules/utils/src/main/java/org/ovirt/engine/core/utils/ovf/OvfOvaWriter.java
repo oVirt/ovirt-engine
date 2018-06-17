@@ -176,6 +176,6 @@ public abstract class OvfOvaWriter extends OvfWriter {
 
     @Override
     protected String getDriveHostResource(DiskImage image) {
-        return String.format("ovf:disk/%s", image.getId());
+        return String.format("ovf:/disk/%s", image.getId());
     }
 }
