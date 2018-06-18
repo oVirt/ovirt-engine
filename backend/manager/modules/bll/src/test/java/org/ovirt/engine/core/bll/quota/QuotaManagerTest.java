@@ -25,6 +25,7 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -105,12 +106,12 @@ public class QuotaManagerTest {
         assertTrue(validationMessages.isEmpty(), EXPECTED_EMPTY_VALIDATE_MESSAGE);
     }
 
-    private void assertAuditLogWritten() {
-        verify(quotaManagerAuditLogger).auditLog(any(), any());
+    private void assertAuditLogWritten(AuditLogType type) {
+        verify(quotaManagerAuditLogger).auditLog(eq(type), any());
     }
 
     private void assertAuditLogNotWritten() {
-        verify(quotaManagerAuditLogger).auditLog(eq(null), any());
+        assertAuditLogWritten(null);
     }
 
     private boolean consumeForStorageQuota(double requestedStorageGB) {
@@ -140,7 +141,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
     }
 
     @Test
@@ -149,7 +150,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
     }
 
     @Test
@@ -158,7 +159,7 @@ public class QuotaManagerTest {
 
         assertFalse(consumeForStorageQuota(1d));
         assertNotEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT);
     }
 
     @Test
@@ -176,7 +177,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
     }
 
     @Test
@@ -185,7 +186,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
     }
 
     @Test
@@ -194,7 +195,7 @@ public class QuotaManagerTest {
 
         assertFalse(consumeForStorageQuota(1d));
         assertNotEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT);
     }
 
     @Test
@@ -231,7 +232,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
     }
 
     @Test
@@ -240,7 +241,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
     }
 
     @Test
@@ -249,7 +250,7 @@ public class QuotaManagerTest {
 
         assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT);
     }
 
     @Test
@@ -267,7 +268,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
     }
 
     @Test
@@ -276,7 +277,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
     }
 
     @Test
@@ -285,7 +286,7 @@ public class QuotaManagerTest {
 
         assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT);
     }
 
     @Test
@@ -303,7 +304,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
     }
 
     @Test
@@ -312,7 +313,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
     }
 
     @Test
@@ -321,7 +322,7 @@ public class QuotaManagerTest {
 
         assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT);
     }
 
     @Test
@@ -339,7 +340,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
     }
 
     @Test
@@ -348,7 +349,7 @@ public class QuotaManagerTest {
 
         assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
     }
 
     @Test
@@ -357,7 +358,7 @@ public class QuotaManagerTest {
 
         assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
-        assertAuditLogWritten();
+        assertAuditLogWritten(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT);
     }
 
     @Test
