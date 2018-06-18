@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
+import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
+import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
@@ -311,6 +313,13 @@ public class PluginUiFunctions implements HasHandlers {
      */
     public void showAlert(final AlertPanel.Type type, final String message, final AlertOptions options) {
         Scheduler.get().scheduleDeferred(() -> alertManager.showAlert(type, SafeHtmlUtils.fromString(message), options.getAutoHideMs().intValue()));
+    }
+
+    /**
+     * Shows a toast notification.
+     */
+    public void showToast(String toastType, String message) {
+        Scheduler.get().scheduleDeferred(() -> ToastNotification.createNotification(message, NotificationStatus.from(toastType)));
     }
 
     /**

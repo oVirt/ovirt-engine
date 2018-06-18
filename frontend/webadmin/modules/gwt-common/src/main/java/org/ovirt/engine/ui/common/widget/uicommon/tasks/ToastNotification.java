@@ -6,7 +6,6 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -30,7 +29,7 @@ public class ToastNotification extends Composite {
         private final String styleName;
         private final String iconStyleName;
 
-        private NotificationStatus(String styleName, String iconStyleName) {
+        NotificationStatus(String styleName, String iconStyleName) {
             this.styleName = styleName;
             this.iconStyleName = iconStyleName;
         }
@@ -42,6 +41,14 @@ public class ToastNotification extends Composite {
         public String getIconStyleName() {
             return iconStyleName;
         }
+
+        public static NotificationStatus from(String name) {
+            try {
+                return NotificationStatus.valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return INFO;
+            }
+        }
     }
 
     public interface Style extends CssResource {
@@ -52,12 +59,34 @@ public class ToastNotification extends Composite {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    // auto-close each notification after this delay (in milliseconds)
     private static final int CLOSE_DELAY = 8000;
 
-    private static FlowPanel container = new FlowPanel();
+    // top-level div element used to contain all toast notifications
+    private static FlowPanel container;
 
     static {
-        RootPanel.get().add(container);
+        container = new FlowPanel();
+        container.getElement().setAttribute("role", "toast-container"); // $NON-NLS-1$ $NON-NLS-2$
+    }
+
+    private static void addToContainer(ToastNotification toast) {
+        container.addStyleName(toast.getStyle().container());
+        container.add(toast);
+
+        // ensure the container is attached
+        if (!container.isAttached()) {
+            RootPanel.get().add(container);
+        }
+    }
+
+    private static void removeFromContainer(ToastNotification toast) {
+        container.remove(toast);
+
+        // ensure the container is detached, unless it's not empty
+        if (container.isAttached() && container.getWidgetCount() == 0) {
+            RootPanel.get().remove(container);
+        }
     }
 
     @UiField
@@ -77,28 +106,19 @@ public class ToastNotification extends Composite {
     @UiField
     Style style;
 
-    private ToastNotification(String text) {
+    private ToastNotification(String text, NotificationStatus status) {
         super();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         configureCloseButton();
         label.getElement().setInnerText(text);
-        setStatus(NotificationStatus.INFO);
-        clickRegistration = closeButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                cleanup();
-            }
-
-        });
+        setStatus(status);
+        clickRegistration = closeButton.addClickHandler(event -> cleanup());
 
         Timer closeTimer = new Timer() {
-
             @Override
             public void run() {
                 cleanup();
             }
-
         };
         closeTimer.schedule(CLOSE_DELAY);
     }
@@ -114,10 +134,7 @@ public class ToastNotification extends Composite {
     private void cleanup() {
         // Clean myself up.
         clickRegistration.removeHandler();
-        ToastNotification.this.removeFromParent();
-        if (container.getWidgetCount() == 0) {
-            container.setVisible(false);
-        }
+        removeFromContainer(this);
     }
 
     public HandlerRegistration addClickHandler(ClickHandler handler) {
@@ -138,12 +155,10 @@ public class ToastNotification extends Composite {
         return style;
     }
 
-    public static ToastNotification createNotification(String text) {
-        ToastNotification result = new ToastNotification(text);
-        container.addStyleName(result.getStyle().container());
-        container.add(result);
-        container.setVisible(true);
-        return result;
+    public static ToastNotification createNotification(String text, NotificationStatus status) {
+        ToastNotification toast = new ToastNotification(text, status);
+        addToContainer(toast);
+        return toast;
     }
 
 }

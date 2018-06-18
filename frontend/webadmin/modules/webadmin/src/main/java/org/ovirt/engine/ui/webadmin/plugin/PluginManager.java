@@ -563,6 +563,11 @@ public class PluginManager implements HasHandlers {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showAlert(Lorg/ovirt/engine/ui/common/widget/panel/AlertPanel$Type;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/AlertOptions;)(getAlertType(alertTypeName),message,sanitizeObject(options));
                 }
             },
+            showToast: function(toastType, message) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showToast(Ljava/lang/String;Ljava/lang/String;)(toastType,message);
+                }
+            },
             revealPlace: function(historyToken) {
                 if (validatePluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::revealPlace(Ljava/lang/String;)(historyToken);

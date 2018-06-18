@@ -74,9 +74,9 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
                         if (runningTasks.contains(id) ||
                                 (ACTION_TYPE_WHITELIST.contains(job.getActionType()) &&
                                         job.getEndTime().after(lastNotificationDate))) {
-                            ToastNotification notification = ToastNotification.createNotification(
-                                    getPrefixText(job.getStatus()) + " " + job.getDescription());//$NON-NLS-1$
-                            notification.setStatus(getNotificationStatus(job.getStatus()));
+                            ToastNotification.createNotification(
+                                    getPrefixText(job.getStatus()) + " " + job.getDescription(), //$NON-NLS-1$
+                                    getNotificationStatus(job.getStatus()));
                         }
                         runningTasks.remove(id);
                     }
@@ -107,4 +107,5 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
             return NotificationStatus.INFO;
         }
     }
+
 }
