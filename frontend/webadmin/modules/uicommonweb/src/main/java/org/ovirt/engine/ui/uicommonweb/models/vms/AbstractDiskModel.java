@@ -507,7 +507,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             getIsShareable().setEntity(false);
             getIsShareable().setIsChangeable(false, constants.shareableDiskNotSupportedByConfiguration());
         } else {
-            getIsShareable().setIsChangeable(isEditEnabled(), null);
+            getIsShareable().setIsChangeable(isEditEnabled(), constants.shareableDiskNotSupportedOnRunningVM());
         }
     }
 

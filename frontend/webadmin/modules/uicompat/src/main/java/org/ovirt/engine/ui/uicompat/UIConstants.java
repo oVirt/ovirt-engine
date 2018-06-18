@@ -1435,6 +1435,8 @@ public interface UIConstants extends Constants {
 
     String shareableDiskNotSupported();
 
+    String shareableDiskNotSupportedOnRunningVM();
+
     String shareableDiskNotSupportedByConfiguration();
 
     String cannotRemoveBricksReplicateVolume();
