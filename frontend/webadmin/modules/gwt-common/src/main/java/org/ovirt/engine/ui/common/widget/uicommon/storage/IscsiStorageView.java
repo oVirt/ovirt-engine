@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -9,11 +10,13 @@ import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -34,7 +37,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @UiField
     @Path(value = "selectedLunWarning")
-    Label warning;
+    AlertPanel warning;
 
     @UiField
     DialogTab lunToTargetsTab;
@@ -147,6 +150,17 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
                 break;
             }
         }
+
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if (propName.equals("SelectedLunWarning")) { //$NON-NLS-1$
+                String warningText = object.getSelectedLunWarning();
+                warning.clearMessages();
+                warning.setType(AlertPanel.Type.WARNING);
+                warning.addMessage(SafeHtmlUtils.fromString(warningText));
+                warning.setVisible(!StringHelper.isNullOrEmpty(warningText));
+            }
+        });
     }
 
     void initLists(IscsiStorageModel object) {

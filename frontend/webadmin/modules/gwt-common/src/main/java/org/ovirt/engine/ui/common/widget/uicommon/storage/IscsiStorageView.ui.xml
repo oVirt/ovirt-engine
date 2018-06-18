@@ -6,6 +6,7 @@
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:pa="urn:import:org.ovirt.engine.ui.common.widget.panel"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style>
@@ -69,7 +70,7 @@
                 <g:Label ui:field="message"/>
             </b:Column>
             <b:Column size="SM_12">
-                <g:Label ui:field="warning" />
+                <pa:AlertPanel ui:field="warning" visible="false" />
             </b:Column>
         </b:Row>
         <b:Row>
