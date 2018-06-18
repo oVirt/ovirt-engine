@@ -46,6 +46,10 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
             entity = imageTransferDao.getByDiskId(getParameters().getDiskId());
         }
 
+        if (getParameters().getUpdates().getPhase() == ImageTransferPhase.RESUMING && !entity.getPhase().isPaused()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESUME_IMAGE_TRANSFER);
+        }
+
         if (entity != null && entity.getType() == TransferType.Download &&
                 getParameters().getUpdates().getPhase() != null && getParameters().getUpdates().getPhase().isPaused()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_PAUSE_IMAGE_DOWNLOAD);
