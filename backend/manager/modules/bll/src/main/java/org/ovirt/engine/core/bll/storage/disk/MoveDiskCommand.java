@@ -86,7 +86,8 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
         // which both action types use.
         DiskVmElement diskVmElement = diskVmElements.get(0);
         VM vm = vmDao.get(diskVmElement.getVmId());
-        if (vm.isDown() || !diskVmElement.isPlugged()) {
+        // If the VM is null the operation is for a template disk
+        if (vm == null || vm.isDown() || !diskVmElement.isPlugged()) {
             return ActionType.MoveOrCopyDisk;
         }
 
