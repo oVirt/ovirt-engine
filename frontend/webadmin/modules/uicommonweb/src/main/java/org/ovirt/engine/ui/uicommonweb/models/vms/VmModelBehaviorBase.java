@@ -1309,10 +1309,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         getModel().getAllowConsoleReconnect().setEntity(vmType == VmType.Server);
+        getModel().getIoThreadsEnabled().setEntity(vmType == VmType.Server || vmType == VmType.HighPerformance);
 
         // High Performance
-        if(vmType == VmType.HighPerformance) {
-            // Conosole tab
+        if (vmType == VmType.HighPerformance) {
+            // Console tab
             getModel().getIsHeadlessModeEnabled().setEntity(true);
             getModel().getIsConsoleDeviceEnabled().setEntity(true);
             getModel().getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
@@ -1331,9 +1332,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getHostCpu().setEntity(true);
             }
 
-            // Resouce allocation tab
+            // Resource allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
-            getModel().getIoThreadsEnabled().setEntity(true);
         }
     }
 
