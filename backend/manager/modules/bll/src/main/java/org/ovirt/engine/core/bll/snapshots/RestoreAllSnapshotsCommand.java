@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
@@ -368,10 +369,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             // Cinder volumes might not have correlated snapshot.
             if (snap != null) {
                 if (snap.containsMemory() && snapshotDao.getNumOfSnapshotsByDisks(snap) == 1) {
-                    boolean succeed = removeMemoryDisks(snap);
-                    if (!succeed) {
-                        log.error("Failed to remove memory of snapshot '{}'", snapshotId);
-                    }
+                    // Best effort to remove memory disks
+                    RemoveMemoryVolumesParameters params = new RemoveMemoryVolumesParameters(snap, getVmId(), true);
+                    params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+                    commandCoordinatorUtil.executeAsyncCommand(
+                            ActionType.RemoveMemoryVolumes,
+                            withRootCommandInfo(params),
+                            cloneContextAndDetachFromParent());
                 }
                 snapshotDao.remove(snapshotId);
             }
