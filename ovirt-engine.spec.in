@@ -1191,6 +1191,7 @@ fi
 %{engine_data}/playbooks/ovirt-ova-export.yml
 %{engine_data}/playbooks/ovirt-ova-import.yml
 %{engine_data}/playbooks/ovirt-ova-query.yml
+%{engine_data}/playbooks/ovirt-image-measure.yml
 %{engine_data}/playbooks/ovirt-provider-ovn-driver.yml
 %{engine_data}/playbooks/roles/
 %{engine_data}/services/ovirt-engine-notifier

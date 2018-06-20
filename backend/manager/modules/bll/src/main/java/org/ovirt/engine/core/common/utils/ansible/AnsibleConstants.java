@@ -61,6 +61,11 @@ public class AnsibleConstants {
     public static final String EXPORT_OVA_PLAYBOOK = "ovirt-ova-export.yml";
 
     /**
+     * This is name of file which executes the image-measure via Ansible.
+     */
+    public static final String IMAGE_MEASURE_PLAYBOOK = "ovirt-image-measure.yml";
+
+    /**
      * This is name of file which executes the ova-query via Ansible.
      */
     public static final String QUERY_OVA_PLAYBOOK = "ovirt-ova-query.yml";
@@ -74,6 +79,11 @@ public class AnsibleConstants {
      * This is name of callback plugin which is used to get OVF from an OVA.
      */
     public static final String OVA_QUERY_CALLBACK_PLUGIN = "ovaqueryplugin";
+
+    /**
+     * This is name of callback plugin which is used to get the measured size of an image.
+     */
+    public static final String IMAGE_MEASURE_CALLBACK_PLUGIN = "imagemeasureplugin";
 
     /**
      * This is name of file which executes the lvmcache via Ansible.
