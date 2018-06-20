@@ -24,7 +24,6 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         implements IsEditor<WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>>>, PatternFlyCompatible {
 
     private static final String CBE_LABEL_PFLY_FIX = "cbe_label_pfly_fix"; //$NON-NLS-1$
-    private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
 
     private final WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>> editor;
 
@@ -77,7 +76,6 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
             getCheckboxWidgetLabel().getStyle().setPaddingLeft(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPaddingRight(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPosition(Position.RELATIVE);
-            getCheckboxWidgetLabel().getStyle().setProperty(MAX_WIDTH, "94%"); //$NON-NLS-1$
             noPaddingNoFixes();
         }
     }
