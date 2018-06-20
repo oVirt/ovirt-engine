@@ -1,11 +1,18 @@
 package org.ovirt.engine.core.vdsbroker.libvirt;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 
 public class DomainXmlUtils {
 
     public static final String USER_ALIAS_PREFIX = "ua-";
+    private static final List<String> ADDRESS_PROPERTIES = Arrays.asList(
+            "type", "slot", "bus", "domain", "function", "controller", "target", "unit", "port", "multifunction", "base");
 
     public static  String parseMacAddress(XmlNode node) {
         XmlNode macNode = node.selectSingleNode("mac");
@@ -18,54 +25,17 @@ public class DomainXmlUtils {
     }
 
     public static String parseAddress(XmlNode node) {
-        String result = "";
         XmlNode addressNode = node.selectSingleNode("address");
         if (addressNode == null) {
             return "";
         }
-        XmlAttribute val = addressNode.attributes.get("type");
-        result += String.format("%s=%s", "type", val.getValue());
-        val = addressNode.attributes.get("slot");
-        if (val != null) {
-            result += String.format(", %s=%s", "slot", val.getValue());
-        }
-        val = addressNode.attributes.get("bus");
-        if (val != null) {
-            result += String.format(", %s=%s", "bus", val.getValue());
-        }
-        val = addressNode.attributes.get("domain");
-        if (val != null) {
-            result += String.format(", %s=%s", "domain", val.getValue());
-        }
-        val = addressNode.attributes.get("function");
-        if (val != null) {
-            result += String.format(", %s=%s", "function", val.getValue());
-        }
-        val = addressNode.attributes.get("controller");
-        if (val != null) {
-            result += String.format(", %s=%s", "controller", val.getValue());
-        }
-        val = addressNode.attributes.get("target");
-        if (val != null) {
-            result += String.format(", %s=%s", "target", val.getValue());
-        }
-        val = addressNode.attributes.get("unit");
-        if (val != null) {
-            result += String.format(", %s=%s", "unit", val.getValue());
-        }
-        val = addressNode.attributes.get("port");
-        if (val != null) {
-            result += String.format(", %s=%s", "port", val.getValue());
-        }
-        val = addressNode.attributes.get("multifunction");
-        if (val != null) {
-            result += String.format(", %s=%s", "multifunction", val.getValue());
-        }
-        val = addressNode.attributes.get("base");
-        if (val != null) {
-            result += String.format(", %s=%s", "base", val.getValue());
-        }
-
+        String result = ADDRESS_PROPERTIES.stream()
+                .map(property -> {
+                    XmlAttribute val = addressNode.attributes.get(property);
+                    return val != null ? String.format("%s=%s", property, val.getValue()) : null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
         return result.isEmpty() ? result : String.format("{%s}", result);
     }
 
