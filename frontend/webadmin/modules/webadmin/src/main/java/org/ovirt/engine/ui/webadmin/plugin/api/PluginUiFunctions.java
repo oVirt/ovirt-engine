@@ -88,7 +88,8 @@ public class PluginUiFunctions implements HasHandlers {
     @Deprecated
     public void addMainTab(String label, String historyToken,
             String contentUrl, TabOptions options) {
-        addMainContentView(label, historyToken, contentUrl, options.getPriority().intValue(),
+        addMainContentView(label, historyToken, contentUrl, options.getIcon(),
+                options.getPriority().intValue(),
                 options.getDefaultPlace().booleanValue());
     }
 
@@ -96,8 +97,8 @@ public class PluginUiFunctions implements HasHandlers {
      * Adds new dynamic main content view that shows contents of the given URL.
      */
     public void addMainContentView(String label, String historyToken,
-            String contentUrl, int priority, boolean defaultPlace) {
-        menuPresenterWidget.addMenuItem(priority, label, historyToken);
+            String contentUrl, String iconCssName, int priority, boolean defaultPlace) {
+        menuPresenterWidget.addMenuItem(priority, label, historyToken, iconCssName);
         // Not interested in the actual proxy, it will register itself.
         dynamicUrlContentProxyFactory.create(historyToken, contentUrl);
         placeManager.setDefaultPlace(historyToken);

@@ -9,10 +9,10 @@ import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.ListGroup;
 import org.gwtbootstrap3.client.ui.ListGroupItem;
 import org.gwtbootstrap3.client.ui.constants.Attributes;
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -228,16 +228,17 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     }
 
     @Override
-    public void addMenuItem(int index, String label, String href) {
+    public void addMenuItem(int index, String label, String href, String iconCssName) {
         ListGroupItem newMenuItem = new ListGroupItem();
         Anchor menuAnchor = new Anchor(hashifyString(href));
-        Span iconSpan = new Span();
-        // HACK, TODO: implement ability for UI plugins to pass an icon.
         if (index < 0) {
-            iconSpan.addStyleName(Styles.FONT_AWESOME_BASE);
-            iconSpan.addStyleName(IconType.TACHOMETER.getCssName());
-            newMenuItem.addStyleName(Styles.ACTIVE);
             index = 0;
+        }
+        Span iconSpan = new Span();
+        if (iconCssName != null) {
+            iconSpan.addStyleName(determineCssIconBase(iconCssName));
+            iconSpan.addStyleName(iconCssName);
+            newMenuItem.addStyleName(Styles.ACTIVE);
         }
         menuAnchor.add(iconSpan);
         Span labelSpan = new Span();
@@ -248,6 +249,13 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         // Insert the new menu item into the map.
         hrefToGroupLabelMap.put(href, newMenuItem);
         menuListGroup.insert(newMenuItem, index);
+    }
+
+    private String determineCssIconBase(String iconCssName) {
+        if (iconCssName != null && iconCssName.startsWith(PatternflyConstants.PFICON)) {
+            return PatternflyConstants.PFICON;
+        }
+        return Styles.FONT_AWESOME_BASE;
     }
 
     private void populateHrefToGroupMap(ApplicationMode applicationMode) {

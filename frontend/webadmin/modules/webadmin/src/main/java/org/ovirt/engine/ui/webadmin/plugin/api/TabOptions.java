@@ -46,4 +46,13 @@ public final class TabOptions extends JsObjectWithProperties {
         return getValueAsString("searchPrefix", null); //$NON-NLS-1$
     }
 
+    /**
+     * Returns the icon as a css class name. The acceptable icons are either font awesome icons or patternfly
+     * icons. For example fa-user for the user icon.
+     * @return A string representing the name of the icon css class name.
+     */
+    public String getIcon() {
+        return getValueAsString("icon", null); //$NON-NLS-1$
+    }
+
 }

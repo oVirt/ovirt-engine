@@ -16,7 +16,7 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
 
     public interface ViewDef extends View {
         HasClickHandlers getConfigureItem();
-        void addMenuItem(int index, String label, String href);
+        void addMenuItem(int index, String label, String href, String iconCssName);
         String getLabelFromHref(String href);
         void setMenuActive(String href);
     }
@@ -37,8 +37,8 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
             RevealRootPopupContentEvent.fire(MenuPresenterWidget.this, configurePopupProvider.get())));
     }
 
-    public void addMenuItem(int index, String label, String historyToken) {
-        getView().addMenuItem(index, label, historyToken);
+    public void addMenuItem(int index, String label, String historyToken, String iconCssName) {
+        getView().addMenuItem(index, label, historyToken, iconCssName);
     }
 
     @Override
