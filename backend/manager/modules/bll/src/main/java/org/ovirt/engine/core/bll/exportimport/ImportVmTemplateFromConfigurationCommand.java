@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -194,26 +195,13 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         // A new array is being initialized to avoid ConcurrentModificationException when
         // invalid images are being removed from the images list.
         for (DiskImage image : new ArrayList<>(getImages())) {
-            DiskImage fromIrs = null;
-            Guid storageDomainId = image.getStorageIds().get(0);
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
-            try {
-                fromIrs = (DiskImage) runVdsCommand(VDSCommandType.GetImageInfo,
-                        new GetImageInfoVDSCommandParameters(getStoragePool().getId(),
-                                storageDomainId,
-                                imageGroupId,
-                                image.getImageId())).getReturnValue();
-            } catch (Exception e) {
-                log.debug("Unable to get image info from storage", e);
-            }
-            if (fromIrs == null) {
+            if (!validateImageAvailability(image, imageGroupId)) {
                 if (!getParameters().isAllowPartialImport()) {
                     return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
                 }
-                log.warn("Disk image '{}/{}' doesn't exist on storage domain '{}'. Ignoring since force flag in on",
-                        imageGroupId,
-                        image.getImageId(),
-                        storageDomainId);
+                log.warn("Disk image '{}/{}' doesn't exist on any of its storage domains. " +
+                                "Ignoring since the 'Allow Partial' flag is on", imageGroupId, image.getImageId());
                 getImages().remove(image);
                 failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
@@ -221,22 +209,61 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         return true;
     }
 
+    /**
+     * Returns true iff the image is contained in at least
+     * one storage domain among image.getStorageIds().
+     */
+    private boolean validateImageAvailability(DiskImage image, Guid imageGroupId) {
+        boolean imageAvailable = false;
+        for (Guid storageDomainId : image.getStorageIds()) {
+            DiskImage fromIrs = null;
+            try {
+                log.info("Validating that image '{}/{}' is available in storage domain {}.", imageGroupId,
+                        image.getImageId(), storageDomainId);
+                fromIrs = (DiskImage) runVdsCommand(VDSCommandType.GetImageInfo,
+                        new GetImageInfoVDSCommandParameters(getStoragePoolId(), storageDomainId,
+                                imageGroupId, image.getImageId())).getReturnValue();
+            } catch (Exception e) {
+                log.debug("Unable to get image info from storage", e);
+            }
+            if (fromIrs == null) {
+                log.warn("Disk image '{}/{}' doesn't exist on storage domain '{}'", imageGroupId,
+                        image.getImageId(), storageDomainId);
+            } else if (!imageAvailable) {
+                imageAvailable = true;
+            }
+        }
+        return imageAvailable;
+    }
+
     private boolean validateSourceStorageDomainsAvailability() {
         // A new array is being initialized to avoid ConcurrentModificationException when
         // invalid images are being removed from the images list.
         for (DiskImage image : new ArrayList<>(getImages())) {
-            StorageDomain sd = storageDomainDao.getForStoragePool(
-                    image.getStorageIds().get(0), getStoragePool().getId());
-            ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
-            if (!result.isValid()) {
-                if (!getParameters().isAllowPartialImport()) {
-                    return validate(result);
-                } else {
-                    log.warn("storage domain '{}' does not exists. Ignoring since force flag in on",
-                            image.getStorageIds().get(0));
-                    getImages().remove(image);
-                    failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
+            // True iff at least one SD among image.getStorageIds() exists and is active.
+            boolean storageDomainAvailable = false;
+            Iterator<Guid> iterator = image.getStorageIds().iterator();
+            while (iterator.hasNext()) {
+                Guid storageDomainId = iterator.next();
+                StorageDomain sd = storageDomainDao.getForStoragePool(storageDomainId, getStoragePool().getId());
+                ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
+                if (!result.isValid()) {
+                    log.warn("Storage domain '{}' does not exist.", storageDomainId);
+                    iterator.remove();
+                } else if (!storageDomainAvailable) {
+                    storageDomainAvailable = true;
                 }
+            }
+            if (!storageDomainAvailable) {
+                if (!getParameters().isAllowPartialImport()) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_FIND_DISK_IMAGE_IN_ACTIVE_DOMAINS,
+                            String.format("$diskImageId %1$s", image.getId()),
+                            String.format("$imageId %1$s", image.getImageId()));
+                }
+                log.warn("No active storage domain that contains the image {}/{} exists. " +
+                        "Ignoring since the 'Allow Partial' flag is on.", image.getId(), image.getImageId());
+                getImages().remove(image);
+                failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
         }
         return true;
@@ -431,12 +458,25 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private void findAndSaveDiskCopies() {
         List<OvfEntityData> ovfEntityDataList =
                 unregisteredOVFDataDao.getByEntityIdAndStorageDomain(ovfEntityData.getEntityId(), null);
+        removeIrrelevantOvfs(ovfEntityDataList, getImages());
         List<ImageStorageDomainMap> copiedTemplateDisks = new LinkedList<>();
         ovfEntityDataList.forEach(ovfEntityData -> populateDisksCopies(
                 copiedTemplateDisks,
                 getImages(),
                 ovfEntityData.getStorageDomainId()));
         saveImageStorageDomainMapList(copiedTemplateDisks);
+    }
+
+    /**
+     * Removes from ovfEntityDataList objects that belong to
+     * storage domains that don't contain any image from diskImages.
+     */
+    private void removeIrrelevantOvfs(List<OvfEntityData> ovfEntityDataList, List<DiskImage> diskImages) {
+        Set<Guid> relevantSDGuids = getImages().stream()
+                .map(DiskImage::getStorageIds)
+                .flatMap(List::stream)
+                .collect(Collectors.toSet());
+        ovfEntityDataList.removeIf(ovfEntityData -> !relevantSDGuids.contains(ovfEntityData.getStorageDomainId()));
     }
 
     private void populateDisksCopies(List<ImageStorageDomainMap> copiedTemplateDisks,

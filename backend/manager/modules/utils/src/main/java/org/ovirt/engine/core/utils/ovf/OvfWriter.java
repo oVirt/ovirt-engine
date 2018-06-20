@@ -533,7 +533,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeElement(RASD_URI, "Template", image.getImageTemplateId().toString());
             _writer.writeElement(RASD_URI, "ApplicationList", image.getAppList());
             if (image.getStorageIds() != null && image.getStorageIds().size() > 0) {
-                _writer.writeElement(RASD_URI, "StorageId", image.getStorageIds().get(0).toString());
+                image.getStorageIds().forEach(guid ->
+                        _writer.writeElement(RASD_URI, "StorageId", guid.toString()));
             }
             if (image.getStoragePoolId() != null) {
                 _writer.writeElement(RASD_URI, "StoragePoolId", image.getStoragePoolId().toString());

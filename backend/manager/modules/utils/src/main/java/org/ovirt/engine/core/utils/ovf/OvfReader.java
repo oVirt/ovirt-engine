@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -412,9 +410,16 @@ public abstract class OvfReader implements IOvfBuilder {
             image.setAppList(applicationsNode.innerText);
         }
 
-        XmlNode storageNode = selectSingleNode(node, "rasd:StorageId", _xmlNS);
-        if (storageNode != null && StringUtils.isNotEmpty(storageNode.innerText)) {
-            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(storageNode.innerText))));
+        XmlNodeList storageNodes = selectNodes(node, "rasd:StorageId", _xmlNS);
+        if (storageNodes.iterator().hasNext()) {
+            for (XmlNode storageIdNode : storageNodes) {
+                if (storageIdNode != null && StringUtils.isNotEmpty(storageIdNode.innerText)) {
+                    if (image.getStorageIds() == null) {
+                        image.setStorageIds(new LinkedList<>());
+                    }
+                    image.getStorageIds().add(new Guid(storageIdNode.innerText));
+                }
+            }
         }
 
         XmlNode storagePoolNode = selectSingleNode(node, "rasd:StoragePoolId", _xmlNS);
@@ -924,6 +929,11 @@ public abstract class OvfReader implements IOvfBuilder {
     protected XmlNodeList selectNodes(XmlNode node, String pattern) {
         this.lastReadEntry = pattern;
         return node.selectNodes(pattern);
+    }
+
+    protected XmlNodeList selectNodes(XmlNode node, String pattern, XmlNamespaceManager ns) {
+        this.lastReadEntry = pattern;
+        return node.selectNodes(pattern, ns);
     }
 
     public String getLastReadEntry() {

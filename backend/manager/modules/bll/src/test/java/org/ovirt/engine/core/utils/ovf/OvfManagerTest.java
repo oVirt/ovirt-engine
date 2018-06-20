@@ -364,6 +364,7 @@ public class OvfManagerTest {
         disk.setDiskAlias(generateRandomName());
         disk.setDescription(generateRandomName());
         disk.setImageId(Guid.newGuid());
+        disk.setStorageIds(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
         disk.setStoragePoolId(Guid.newGuid());
         disk.setPlugged(true);
         disk.setAppList(rnd.nextPropertyString(100));
