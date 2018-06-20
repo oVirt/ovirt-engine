@@ -66,6 +66,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -795,6 +796,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmStaticData().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
+        }
+
+        if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
+                && vmFromParams.getBiosType() != BiosType.I440FX_SEA_BIOS
+                && getCluster().getArchitecture() != ArchitectureType.undefined
+                && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
+            return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
         return true;

@@ -46,6 +46,8 @@ import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -984,6 +986,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (!validate(runVmValidator.validateUsbDevices(getVm().getStaticData()))) {
             return false;
+        }
+
+        if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
+                && getVm().getBiosType() != BiosType.I440FX_SEA_BIOS
+                && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
+            return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
         return true;

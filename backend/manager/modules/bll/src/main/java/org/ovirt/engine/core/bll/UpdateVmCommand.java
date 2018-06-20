@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -1171,6 +1172,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                                 getParameters().isMemoryHotUnplugEnabled()))
                 ) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_HOT_SET_NOT_SUPPORTED_FOR_HUGE_PAGES);
+        }
+
+        if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
+                && vmFromParams.getBiosType() != BiosType.I440FX_SEA_BIOS
+                && getCluster().getArchitecture() != ArchitectureType.undefined
+                && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
+            return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
         return true;

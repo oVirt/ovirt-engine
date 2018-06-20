@@ -162,7 +162,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, version, 16),
                 MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
                 MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),
-                MockConfigDescriptor.of(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576)
+                MockConfigDescriptor.of(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576),
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, version, true)
         );
     }
 

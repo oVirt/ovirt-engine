@@ -41,6 +41,7 @@ import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -61,11 +63,14 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RunVmCommandTest extends BaseCommandTest {
@@ -122,6 +127,11 @@ public class RunVmCommandTest extends BaseCommandTest {
         setCreateVmVDSMethod();
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.getLast(), true)
+        );
+    }
     /**
      * Set create VM to return VM with status Up.
      */
@@ -320,6 +330,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testValidate() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
@@ -328,7 +339,10 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any());
         doReturn(ValidationResult.VALID).when(command).checkDisksInBackupStorage();
-        command.setCluster(new Cluster());
+        Cluster cluster = new Cluster();
+        cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setCompatibilityVersion(Version.getLast());
+        command.setCluster(cluster);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
