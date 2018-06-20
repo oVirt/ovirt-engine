@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -144,10 +145,13 @@ public class AnsibleExecutor {
     private Path createInventoryFile(AnsibleCommandBuilder command) throws IOException {
         Path inventoryFile = null;
         if (command.inventoryFile() == null) {
-            log.debug("Inventory hosts: {}", command.hostnames());
-            inventoryFile = Files.createTempFile("ansible-inventory", "");
-            Files.write(inventoryFile, StringUtils.join(command.hostnames(), System.lineSeparator()).getBytes());
-            command.inventoryFile(inventoryFile);
+            // If hostnames are empty we just don't pass any inventory file:
+            if (CollectionUtils.isNotEmpty(command.hostnames())) {
+                log.debug("Inventory hosts: {}", command.hostnames());
+                inventoryFile = Files.createTempFile("ansible-inventory", "");
+                Files.write(inventoryFile, StringUtils.join(command.hostnames(), System.lineSeparator()).getBytes());
+                command.inventoryFile(inventoryFile);
+            }
         }
 
         return inventoryFile;

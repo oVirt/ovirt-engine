@@ -53,6 +53,7 @@ public class AnsibleCommandBuilder {
     private String cluster;
     private List<String> hostnames;
     private List<String> variables;
+    private String variableFilePath;
     private String limit;
     private Path inventoryFile;
     private String playbook;
@@ -158,6 +159,11 @@ public class AnsibleCommandBuilder {
 
     public AnsibleCommandBuilder playbook(String playbook) {
         this.playbook = Paths.get(playbookDir.toString(), playbook).toString();
+        return this;
+    }
+
+    public AnsibleCommandBuilder variableFilePath(String variableFilePath) {
+        this.variableFilePath = variableFilePath;
         return this;
     }
 
@@ -269,6 +275,10 @@ public class AnsibleCommandBuilder {
             variables.stream()
                 .map(v -> String.format("--extra-vars=%1$s", v))
                 .forEach(ansibleCommand::add);
+        }
+
+        if (variableFilePath != null) {
+            ansibleCommand.add(String.format("--extra-vars=@%s", variableFilePath));
         }
 
         if (logFile == null && enableLogging) {

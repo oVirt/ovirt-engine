@@ -24,6 +24,7 @@
     <filter>
         <filter-name>LocaleFilter</filter-name>
         <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>LocaleFilter</filter-name>
@@ -35,24 +36,29 @@
     <filter>
         <filter-name>SsoRestApiAuthFilter</filter-name>
         <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiAuthFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>SsoRestApiAuthFilter</filter-name>
         <url-pattern>/hystrix.stream</url-pattern>
+        <url-pattern>/ansible</url-pattern>
     </filter-mapping>
 
     <filter>
         <filter-name>SsoRestApiNegotiationFilter</filter-name>
         <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiNegotiationFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>SsoRestApiNegotiationFilter</filter-name>
         <url-pattern>/hystrix.stream</url-pattern>
+        <url-pattern>/ansible</url-pattern>
     </filter-mapping>
 
     <filter>
         <filter-name>EnforceAuthFilter</filter-name>
         <filter-class>org.ovirt.engine.core.aaa.filters.EnforceAuthFilter</filter-class>
+        <async-supported>true</async-supported>
         <init-param>
             <param-name>scheme.basic_auth</param-name>
             <param-value>Basic realm="RESTAPI"</param-value>
@@ -61,12 +67,14 @@
     <filter-mapping>
         <filter-name>EnforceAuthFilter</filter-name>
         <url-pattern>/hystrix.stream</url-pattern>
+        <url-pattern>/ansible</url-pattern>
     </filter-mapping>
 
     <!-- Branding Filter, passes branding information to jsps -->
     <filter>
         <filter-name>BrandingFilter</filter-name>
         <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>BrandingFilter</filter-name>
@@ -223,6 +231,16 @@
     <servlet-mapping>
       <servlet-name>glusterevent-webhook</servlet-name>
       <url-pattern>/glusterevents</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ansible</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.AnsibleServlet</servlet-class>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ansible</servlet-name>
+        <url-pattern>/ansible</url-pattern>
     </servlet-mapping>
 
     <!-- Go to the index when a page is not found (preserving the
