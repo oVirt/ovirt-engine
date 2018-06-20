@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -10,17 +10,17 @@ public class CreateOvaParameters extends ActionParametersBase {
 
     private VmEntityType entityType;
     private Guid entityId;
-    private Map<Guid, DiskImage> diskInfoDestinationMap;
+    private List<DiskImage> disks;
     private Guid proxyHostId;
     private String directory;
     private String name;
 
-    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
-        return diskInfoDestinationMap;
+    public List<DiskImage> getDisks() {
+        return disks;
     }
 
-    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
-        this.diskInfoDestinationMap = diskInfoDestinationMap;
+    public void setDisks(List<DiskImage> disks) {
+        this.disks = disks;
     }
 
     public Guid getProxyHostId() {

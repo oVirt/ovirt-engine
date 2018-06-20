@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.action.ExportOvaParameters;
+import org.ovirt.engine.core.common.action.ExportVmToOvaParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLock;
@@ -1154,9 +1153,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
-            ExportOvaParameters parameters = new ExportOvaParameters();
+            ExportVmToOvaParameters parameters = new ExportVmToOvaParameters();
             parameters.setEntityId(vm.getId());
-            parameters.setEntityType(VmEntityType.VM);
             parameters.setProxyHostId(model.getProxy().getSelectedItem().getId());
             parameters.setDirectory(model.getPath().getEntity());
             parameters.setName(model.getName().getEntity());

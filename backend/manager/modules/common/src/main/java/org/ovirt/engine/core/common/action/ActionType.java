@@ -195,7 +195,6 @@ public enum ActionType {
     CreateAllTemplateDisksFromSnapshot(251, QuotaDependency.NONE),
     UpdateVolume(253, QuotaDependency.NONE),
     UpdateAllTemplateDisks(254, QuotaDependency.NONE),
-    CreateAllOvaDisks(255, QuotaDependency.NONE),
     CreateSnapshotDisk(256, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
 
     // VmPoolCommands
