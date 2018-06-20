@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -615,6 +616,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 MIGRATION_POLICY_ID,
                 val -> vmBase.setMigrationPolicyId(Guid.createGuidFromString(val)));
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
+        consumeReadProperty(content, BIOS_TYPE, val -> vmBase.setBiosType(BiosType.forValue(Integer.parseInt(val))));
         consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
         consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> vmBase.setPredefinedProperties(val));
         consumeReadProperty(content, USER_DEFINED_PROPERTIES, val -> vmBase.setUserDefinedProperties(val));

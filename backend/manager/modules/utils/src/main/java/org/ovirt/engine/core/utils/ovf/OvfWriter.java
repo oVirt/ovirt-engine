@@ -299,6 +299,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
 
         writeCustomEmulatedMachine();
+        _writer.writeElement(BIOS_TYPE, String.valueOf(vmBase.getBiosType().getValue()));
         writeCustomCpuName();
 
         _writer.writeElement(PREDEFINED_PROPERTIES, vmBase.getPredefinedProperties());
