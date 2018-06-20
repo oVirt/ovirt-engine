@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.GraphicsConsole;
 import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.ProxyTicket;
@@ -57,7 +58,10 @@ public class BackendVmGraphicsConsoleResource
             new ConfigureConsoleOptionsParams(consoleOptions, true)
         );
         if (!configuredOptionsReturnValue.getSucceeded()) {
-            throw new Exception(configuredOptionsReturnValue.getExceptionString());
+            QueryReturnValue returnValue = new QueryReturnValue();
+            returnValue.setSucceeded(false);
+            returnValue.setExceptionString(configuredOptionsReturnValue.getExceptionString());
+            return returnValue;
         }
 
         return runQuery(
@@ -82,7 +86,9 @@ public class BackendVmGraphicsConsoleResource
                 builder = Response.ok(((String) consoleDescriptorReturnValue.getReturnValue())
                         .getBytes(StandardCharsets.UTF_8), ApiMediaType.APPLICATION_X_VIRT_VIEWER);
             } else {
-                builder = Response.noContent();
+                Fault fault = new Fault();
+                fault.setReason(consoleDescriptorReturnValue.getExceptionString());
+                builder = Response.status(Response.Status.CONFLICT).type(ApiMediaType.APPLICATION_XML).entity(fault);
             }
             return builder.build();
         } catch (Exception ex) {
