@@ -112,6 +112,8 @@ public enum HelpTag {
 
     delete_snapshot("delete_snapshot", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Tabs > Delete Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    commit_snapshot("commit_snapshot", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Tabs > Commit Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
+
     destroy_storage_domain("destroy_storage_domain", HelpTagType.WEBADMIN, "Storage Tab > Destroy Storage Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
     detach_gluster_hosts("detach_gluster_hosts", HelpTagType.WEBADMIN, "[gluster] 'Detach Gluster Host' dialog (Clusters main tab -> General sub-tab)"), //$NON-NLS-1$ //$NON-NLS-2$

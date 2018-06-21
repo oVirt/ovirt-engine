@@ -537,6 +537,8 @@ public interface UIConstants extends Constants {
 
     String previewPartialSnapshotTitle();
 
+    String commitSnapshotTitle();
+
     String preserveActiveDisks();
 
     String excludeActiveDisks();

@@ -328,7 +328,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         }
     }
 
-    private void commit() {
+    private void onCommit() {
         VM vm = getEntity();
         if (vm != null) {
             Frontend.getInstance().runAction(ActionType.RestoreAllSnapshots,
@@ -336,6 +336,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     null,
                     null);
         }
+        cancel();
     }
 
     private void preview() {
@@ -480,6 +481,28 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 disks,
                 !(isSnapshotsContainsLeases && selectedSnapshotLeaseDomainId == null),
                 selectedSnapshotLeaseDomainId);
+    }
+
+    private void commit() {
+        if (getEntity() != null) {
+            if (getWindow() != null) {
+                return;
+            }
+
+            Snapshot snapshot = getSelectedItem();
+            ConfirmationModel model = new ConfirmationModel();
+            setWindow(model);
+            model.setTitle(ConstantsManager.getInstance().getConstants().commitSnapshotTitle());
+            model.setHelpTag(HelpTag.commit_snapshot);
+            model.setHashName("commit_snapshot"); //$NON-NLS-1$
+            model.setMessage(ConstantsManager.getInstance()
+                    .getMessages()
+                    .areYouSureYouWantToCommitSnapshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
+                            snapshot.getDescription()));
+
+            model.getCommands().add(UICommand.createDefaultOkUiCommand("OnCommit", this)); //$NON-NLS-1$
+            model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
+        }
     }
 
     private void runTryBackToAllSnapshotsOfVm(final Model model,
@@ -823,6 +846,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             onPreview();
         } else if ("OnCustomPreview".equals(command.getName())) { //$NON-NLS-1$
             onCustomPreview();
+        } else if ("OnCommit".equals(command.getName())) { //$NON-NLS-1$
+            onCommit();
         }
     }
 
