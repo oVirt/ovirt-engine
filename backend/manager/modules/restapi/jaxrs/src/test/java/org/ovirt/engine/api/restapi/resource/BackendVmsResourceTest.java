@@ -12,6 +12,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -1393,6 +1394,10 @@ public class BackendVmsResourceTest
         entity.setGuestMemoryFree(5120L);
         entity.setGuestMemoryBuffered(2048L);
         entity.setGuestMemoryCached(1024L);
+        entity.setUsageNetworkPercent(10);
+        entity.setCpuUsageHistory(Arrays.asList(1, 2, 3));
+        entity.setMemoryUsageHistory(Arrays.asList(4, 5, 6));
+        entity.setNetworkUsageHistory(Arrays.asList(7, 8, 9));
         return entity;
     }
 
