@@ -61,4 +61,9 @@ public class GetCapabilitiesAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParam
             }
         }
     }
+
+    @Override
+    protected String getCommandName() {
+        return "Get Host Capabilities";
+    }
 }

@@ -59,4 +59,9 @@ public class GetStatsAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
             }
         }
     }
+
+    @Override
+    protected String getCommandName() {
+        return "Get Host Statistics";
+    }
 }

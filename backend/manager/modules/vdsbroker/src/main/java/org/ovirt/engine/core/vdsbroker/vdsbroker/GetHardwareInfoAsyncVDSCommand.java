@@ -52,4 +52,9 @@ public class GetHardwareInfoAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParam
             }
         }
     }
+
+    @Override
+    protected String getCommandName() {
+        return "Get Host Hardware Info";
+    }
 }
