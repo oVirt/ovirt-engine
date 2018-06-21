@@ -7,37 +7,25 @@ import sys
 
 
 from contextlib import closing
+from subprocess import call
+from subprocess import check_output
 
 import six
 
 NUL = b"\0"
-BUF_SIZE = 8 * 1024**2
 TAR_BLOCK_SIZE = 512
 
 python2 = sys.version_info < (3, 0)
 
 
-def extract_disk(ova_file, disk_size, image_path):
-    fd = os.open(image_path, os.O_RDWR | os.O_DIRECT)
-    buf = mmap.mmap(-1, BUF_SIZE)
-    with closing(buf), io.FileIO(fd, "r+", closefd=True) as image:
-        copied = 0
-        while copied < disk_size:
-            read = ova_file.readinto(buf)
-            remaining = disk_size - copied
-            if remaining < read:
-                # read too much (disk size is not aligned
-                # with BUF_SIZE), thus need to go back
-                ova_file.seek(remaining - read, 1)
-                read = remaining
-            written = 0
-            while written < read:
-                if python2:
-                    wbuf = buffer(buf, written, read - written)
-                else:
-                    wbuf = memoryview(buf)[written:read - written]
-                written += image.write(wbuf)
-            copied += written
+def extract_disk(ova_path, offset, image_path):
+    output = check_output(['losetup', '--find', '--show', '-o', str(offset),
+                           ova_path])
+    loop = output.splitlines()[0]
+    try:
+        call(['qemu-img', 'convert', '-O', 'qcow2', loop, image_path])
+    finally:
+        call(['losetup', '-d', loop])
 
 
 def nts(s, encoding, errors):
@@ -105,7 +93,8 @@ def extract_disks(ova_path, image_paths):
             else:
                 for image_path in image_paths:
                     if name in image_path:
-                        extract_disk(ova_file, size, image_path)
+                        extract_disk(ova_path, ova_file.tell(), image_path)
+                        ova_file.seek(size, 1)
                         break
 
 
