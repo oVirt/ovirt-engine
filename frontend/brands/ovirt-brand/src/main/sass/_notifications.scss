@@ -1,0 +1,78 @@
+/***************************************
+Notifications
+****************************************/
+
+.notif_span {
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 0;
+  display: inline-block;
+}
+
+.notif_angleIcon {
+    font-size: 1.4em;
+    top: 2px;
+    position: relative;
+    padding-left: 4px;
+}
+
+.notif_bellIcon {
+    font-size: 1.2em;
+}
+
+.notif_closeIcon {
+    box-shadow: none;
+}
+
+.notif_dismissIcon {
+    font-size: 1.4em;
+    position: relative;
+    top: 3px;
+}
+
+.notif_dismissButton {
+    padding: 10px;
+    display: inline-block;
+}
+
+.notif_doNotDisturbButton {
+    padding-top: 10px;
+    padding-right: 0;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.notif_doNotDisturbDropDownMenu {
+    top: auto;
+    right: 0;
+    left: inherit;
+}
+
+.notif_buttonContainer {
+    background-color: #f5f5f5;
+    text-align: right;
+    background-image: linear-gradient(to bottom,#fafafa 0,#ededed 100%);
+    border: 1px solid #bbbbbb;
+}
+
+.notif_notificationsPanel {
+    z-index: 2000;
+    position: absolute;
+    top: 67px;
+    right: 10px;
+    width: 450px;
+}
+
+.notif_notificationsPanel .alert {
+    margin-bottom: 5px;
+}
+
+.notif_inline {
+    display: inline;
+}
+
+.notif_toast {
+    width: 450px;
+}

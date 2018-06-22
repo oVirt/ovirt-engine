@@ -23,17 +23,21 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
     public static final PermanentSlot<MenuPresenterWidget> TYPE_SetMenu = new PermanentSlot<>();
 
+    public static final PermanentSlot<MenuPresenterWidget> TYPE_SetNotifications = new PermanentSlot<>();
+
     public static final NestedSlot TYPE_SetMainContent = new NestedSlot();
 
     private final HeaderPresenterWidget header;
     private final MenuPresenterWidget menu;
+    private final NotificationPresenterWidget notifications;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HeaderPresenterWidget header, MenuPresenterWidget menu) {
+            HeaderPresenterWidget header, MenuPresenterWidget menu, NotificationPresenterWidget notifications) {
         super(eventBus, view, proxy, RevealType.Root);
         this.header = header;
         this.menu = menu;
+        this.notifications = notifications;
     }
 
     @Override
@@ -42,6 +46,7 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         setInSlot(TYPE_SetHeader, header);
         setInSlot(TYPE_SetMenu, menu);
+        setInSlot(TYPE_SetNotifications, notifications);
 
         // Remove the loading page placeholder
         removeHostPagePlaceholder();

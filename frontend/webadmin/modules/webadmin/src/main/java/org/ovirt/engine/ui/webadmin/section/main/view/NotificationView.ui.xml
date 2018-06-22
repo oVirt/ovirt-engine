@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
+    <g:FlowPanel ui:field="notificationsPanel" addStyleNames="notif_notificationsPanel">
+        <g:FlowPanel ui:field="buttonContainer" addStyleNames="notif_buttonContainer">
+            <g:FlowPanel addStyleNames="notif_inline">
+                <b:html.Span addStyleNames="pficon pficon-close notif_dismissIcon" />
+                <b:Anchor ui:field="dismissAllButton" addStyleNames="notif_dismissButton">
+                    <ui:text from="{constants.notifDismissAll}" />
+                </b:Anchor>
+            </g:FlowPanel>
+            <b:html.Span addStyleNames="notif_span">|</b:html.Span>
+            <g:FlowPanel addStyleNames="notif_inline">
+                <b:html.Span addStyleNames="fa fa-bell-slash notif_bellIcon" />
+                <b:Anchor ui:field="doNotDisturbButton" dataToggle="DROPDOWN" addStyleNames="notif_doNotDisturbButton">
+                    <ui:text from="{constants.notifDoNotDisturb}" />
+                </b:Anchor>
+                <b:DropDownMenu addStyleNames="notif_doNotDisturbDropDownMenu">
+                    <b:AnchorListItem ui:field="doNotDisturb10Minutes"><ui:text from="{constants.notifDoNotDisturb10Minutes}" /></b:AnchorListItem>
+                    <b:AnchorListItem ui:field="doNotDisturb1Hour"><ui:text from="{constants.notifDoNotDisturb1Hour}" /></b:AnchorListItem>
+                    <b:AnchorListItem ui:field="doNotDisturb1Day"><ui:text from="{constants.notifDoNotDisturb1Day}" /></b:AnchorListItem>
+                    <b:AnchorListItem ui:field="doNotDisturbNextLogin"><ui:text from="{constants.notifDoNotDisturbNextLogin}" /></b:AnchorListItem>
+                </b:DropDownMenu>
+                <b:html.Span addStyleNames="fa fa-angle-down notif_angleIcon notif_span" />
+            </g:FlowPanel>
+        </g:FlowPanel>
+        <g:FlowPanel ui:field="toastsContainer" ></g:FlowPanel>
+    </g:FlowPanel>
+
+</ui:UiBinder>

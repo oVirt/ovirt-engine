@@ -12,6 +12,7 @@
 
     <g:FlowPanel addStyleNames="{style.mainContainer}">
         <g:SimplePanel ui:field="headerPanel" />
+        <g:SimplePanel ui:field="notificationsPanel" />
         <g:SimplePanel ui:field="menuPanel" />
         <g:FlowPanel ui:field="mainContentPanel" addStyleNames="container-pf-nav-pf-vertical" />
     </g:FlowPanel>

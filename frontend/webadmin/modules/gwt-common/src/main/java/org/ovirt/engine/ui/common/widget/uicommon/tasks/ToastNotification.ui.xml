@@ -5,21 +5,10 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.Style">
-        .container {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            /* To match boostrap */
-            z-index: 1060;
-            display: inline-grid;
-        }
-    </ui:style>
-
-    <g:FlowPanel ui:field="widgetWrapper" addStyleNames="alert alert-dismissable">
-        <b:Button ui:field="closeButton" addStyleNames="close" />
-        <g:HTMLPanel tag="SPAN" ui:field="icon" addStyleNames="pficon pficon-ok" />
-        <g:HTMLPanel tag="SPAN" ui:field="label" />
+    <g:FlowPanel ui:field="widgetWrapper" addStyleNames="toast-pf notif_toast alert alert-dismissable">
+        <b:Button ui:field="closeButton" addStyleNames="close notif_closeIcon" />
+        <b:html.Span ui:field="icon" addStyleNames="pficon pficon-ok" />
+        <b:html.Span ui:field="label" />
     </g:FlowPanel>
 
 </ui:UiBinder>

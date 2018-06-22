@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
-import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
@@ -22,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.NotificationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentUrlEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabUnloadHandlerEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
@@ -61,6 +61,7 @@ public class PluginUiFunctions implements HasHandlers {
     private final WebAdminPlaceManager placeManager;
     private final AlertManager alertManager;
     private final MenuPresenterWidget menuPresenterWidget;
+    private final NotificationPresenterWidget notificationPresenterWidget;
 
     @Inject
     public PluginUiFunctions(EventBus eventBus,
@@ -70,6 +71,7 @@ public class PluginUiFunctions implements HasHandlers {
             WebAdminPlaceManager placeManager,
             AlertManager alertManager,
             MenuPresenterWidget menuPresenterWidget,
+            NotificationPresenterWidget notificationPresenterWidget,
             TagModelProvider tagModelProvider) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
@@ -79,6 +81,7 @@ public class PluginUiFunctions implements HasHandlers {
         this.placeManager = placeManager;
         this.alertManager = alertManager;
         this.menuPresenterWidget = menuPresenterWidget;
+        this.notificationPresenterWidget = notificationPresenterWidget;
     }
 
     @Override
@@ -319,7 +322,7 @@ public class PluginUiFunctions implements HasHandlers {
      * Shows a toast notification.
      */
     public void showToast(String toastType, String message) {
-        Scheduler.get().scheduleDeferred(() -> ToastNotification.createNotification(message, NotificationStatus.from(toastType)));
+        Scheduler.get().scheduleDeferred(() -> notificationPresenterWidget.createNotification(message, NotificationStatus.from(toastType)));
     }
 
     /**

@@ -11,11 +11,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ToastNotification extends Composite {
@@ -59,35 +56,6 @@ public class ToastNotification extends Composite {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    // auto-close each notification after this delay (in milliseconds)
-    private static final int CLOSE_DELAY = 8000;
-
-    // top-level div element used to contain all toast notifications
-    private static FlowPanel container;
-
-    static {
-        container = new FlowPanel();
-        container.getElement().setAttribute("role", "toast-container"); // $NON-NLS-1$ $NON-NLS-2$
-    }
-
-    private static void addToContainer(ToastNotification toast) {
-        container.addStyleName(toast.getStyle().container());
-        container.add(toast);
-
-        // ensure the container is attached
-        if (!container.isAttached()) {
-            RootPanel.get().add(container);
-        }
-    }
-
-    private static void removeFromContainer(ToastNotification toast) {
-        container.remove(toast);
-
-        // ensure the container is detached, unless it's not empty
-        if (container.isAttached() && container.getWidgetCount() == 0) {
-            RootPanel.get().remove(container);
-        }
-    }
 
     @UiField
     FlowPanel widgetWrapper;
@@ -96,31 +64,19 @@ public class ToastNotification extends Composite {
     Button closeButton;
 
     @UiField
-    HTMLPanel label;
+    Span label;
 
     @UiField
-    HTMLPanel icon;
+    Span icon;
 
-    HandlerRegistration clickRegistration;
-
-    @UiField
-    Style style;
-
-    private ToastNotification(String text, NotificationStatus status) {
+    public ToastNotification(String text, NotificationStatus status) {
         super();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
         configureCloseButton();
+
         label.getElement().setInnerText(text);
         setStatus(status);
-        clickRegistration = closeButton.addClickHandler(event -> cleanup());
-
-        Timer closeTimer = new Timer() {
-            @Override
-            public void run() {
-                cleanup();
-            }
-        };
-        closeTimer.schedule(CLOSE_DELAY);
     }
 
     private void configureCloseButton() {
@@ -131,34 +87,18 @@ public class ToastNotification extends Composite {
         closeButton.add(closeButtonSpan);
     }
 
-    private void cleanup() {
-        // Clean myself up.
-        clickRegistration.removeHandler();
-        removeFromContainer(this);
-    }
-
-    public HandlerRegistration addClickHandler(ClickHandler handler) {
+    public HandlerRegistration addCloseClickHandler(ClickHandler handler) {
         return closeButton.addClickHandler(handler);
     }
 
     public void setStatus(NotificationStatus status) {
         // Remove existing status first.
-        for (NotificationStatus loopStatus : NotificationStatus.values()) {
-            widgetWrapper.removeStyleName(loopStatus.getStyleName());
-            icon.removeStyleName(loopStatus.getIconStyleName());
+        for (NotificationStatus s : NotificationStatus.values()) {
+            widgetWrapper.removeStyleName(s.getStyleName());
+            icon.removeStyleName(s.getIconStyleName());
         }
         widgetWrapper.addStyleName(status.getStyleName());
         icon.addStyleName(status.getIconStyleName());
-    }
-
-    private Style getStyle() {
-        return style;
-    }
-
-    public static ToastNotification createNotification(String text, NotificationStatus status) {
-        ToastNotification toast = new ToastNotification(text, status);
-        addToContainer(toast);
-        return toast;
     }
 
 }

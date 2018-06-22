@@ -116,6 +116,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVirtualMachinePre
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVnicProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.NotificationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenterWidget;
@@ -398,6 +399,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.MainVirtualMachineView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainVnicProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MenuView;
+import org.ovirt.engine.ui.webadmin.section.main.view.NotificationView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.overlay.BookmarkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.overlay.TagsView;
@@ -678,7 +680,7 @@ public class PresenterModule extends BasePresenterModule {
         // Common stuff
         bindCommonPresenters();
 
-        //Menu
+        // Menu
         bindSingletonPresenterWidget(MenuPresenterWidget.class,
                 MenuPresenterWidget.ViewDef.class,
                 MenuView.class);
@@ -696,6 +698,9 @@ public class PresenterModule extends BasePresenterModule {
         bindSingletonPresenterWidget(HeaderPresenterWidget.class,
                 HeaderPresenterWidget.ViewDef.class,
                 HeaderView.class);
+        bindSingletonPresenterWidget(NotificationPresenterWidget.class,
+                NotificationPresenterWidget.ViewDef.class,
+               NotificationView.class);
         bindPresenterWidget(AboutPopupPresenterWidget.class,
                 AboutPopupPresenterWidget.ViewDef.class,
                 AboutPopupView.class);

@@ -11,7 +11,6 @@ import java.util.Set;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -19,6 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.NotificationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 
 import com.google.inject.Inject;
@@ -32,6 +32,8 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
 
     private final TaskModelProvider taskModelProvider;
 
+    private final NotificationPresenterWidget notificationPresenterWidget;
+
     private Set<String> runningTasks = new HashSet<>();
 
     private static final List<ActionType> ACTION_TYPE_WHITELIST = Collections.unmodifiableList(Arrays.asList(
@@ -41,9 +43,11 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
     private static Date lastNotificationDate = new Date();
 
     @Inject
-    public TasksPresenterWidget(EventBus eventBus, ViewDef view, TaskModelProvider taskModelProvider) {
+    public TasksPresenterWidget(EventBus eventBus, ViewDef view, TaskModelProvider taskModelProvider,
+                                NotificationPresenterWidget notificationPresenterWidget) {
         super(eventBus, view);
         this.taskModelProvider = taskModelProvider;
+        this.notificationPresenterWidget = notificationPresenterWidget;
     }
 
     @Override
@@ -74,7 +78,7 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
                         if (runningTasks.contains(id) ||
                                 (ACTION_TYPE_WHITELIST.contains(job.getActionType()) &&
                                         job.getEndTime().after(lastNotificationDate))) {
-                            ToastNotification.createNotification(
+                            notificationPresenterWidget.createNotification(
                                     getPrefixText(job.getStatus()) + " " + job.getDescription(), //$NON-NLS-1$
                                     getNotificationStatus(job.getStatus()));
                         }
