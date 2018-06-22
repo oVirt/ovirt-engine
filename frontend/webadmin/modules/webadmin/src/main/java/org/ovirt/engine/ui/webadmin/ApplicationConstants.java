@@ -3446,5 +3446,17 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String enabledVirtualFunctions();
 
     String freeVirtualFunctions();
-}
 
+    String notifDismissAll();
+
+    String notifDoNotDisturb();
+
+    String notifDoNotDisturb10Minutes();
+
+    String notifDoNotDisturb1Hour();
+
+    String notifDoNotDisturb1Day();
+
+    String notifDoNotDisturbNextLogin();
+
+}

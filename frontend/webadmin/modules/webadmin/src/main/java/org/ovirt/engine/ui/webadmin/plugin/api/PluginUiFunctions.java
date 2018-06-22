@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.NotificationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentUrlEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
@@ -57,6 +58,7 @@ public class PluginUiFunctions implements HasHandlers {
     private final WebAdminPlaceManager placeManager;
     private final AlertManager alertManager;
     private final MenuPresenterWidget menuPresenterWidget;
+    private final NotificationPresenterWidget notificationPresenterWidget;
 
     @Inject
     public PluginUiFunctions(EventBus eventBus,
@@ -66,6 +68,7 @@ public class PluginUiFunctions implements HasHandlers {
             WebAdminPlaceManager placeManager,
             AlertManager alertManager,
             MenuPresenterWidget menuPresenterWidget,
+            NotificationPresenterWidget notificationPresenterWidget,
             TagModelProvider tagModelProvider) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
@@ -75,6 +78,7 @@ public class PluginUiFunctions implements HasHandlers {
         this.placeManager = placeManager;
         this.alertManager = alertManager;
         this.menuPresenterWidget = menuPresenterWidget;
+        this.notificationPresenterWidget = notificationPresenterWidget;
     }
 
     @Override
