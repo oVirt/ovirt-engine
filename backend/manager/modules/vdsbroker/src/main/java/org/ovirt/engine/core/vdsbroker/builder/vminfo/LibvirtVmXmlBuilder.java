@@ -2353,19 +2353,12 @@ public class LibvirtVmXmlBuilder {
     private void writeInput() {
         writer.writeStartElement("input");
 
-        boolean tabletEnable =
-                vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
-                && vm.getGraphicsInfos().size() == 1
-                && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
-        if (tabletEnable) {
+        if (vmInfoBuildUtils.isTabletEnabled(vm)) {
             writer.writeAttributeString("type", "tablet");
             writer.writeAttributeString("bus", "usb");
-        } else if (vm.getClusterArch().getFamily() == ArchitectureType.x86) {
-            writer.writeAttributeString("type", "mouse");
-            writer.writeAttributeString("bus", "ps2");
         } else {
             writer.writeAttributeString("type", "mouse");
-            writer.writeAttributeString("bus", "usb");
+            writer.writeAttributeString("bus", vm.getClusterArch().getFamily() == ArchitectureType.x86 ? "ps2" :"usb");
         }
 
         writer.writeEndElement();

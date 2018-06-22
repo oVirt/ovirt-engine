@@ -1364,4 +1364,10 @@ public class VmInfoBuildUtils {
     public boolean isInterfaceQueuable(VmDevice vmDevice, VmNic vmNic) {
         return multiQueueUtils.isInterfaceQueuable(vmDevice, vmNic);
     }
+
+    public boolean isTabletEnabled(VM vm) {
+        return vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
+                && vm.getGraphicsInfos().size() == 1
+                && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
+    }
 }
