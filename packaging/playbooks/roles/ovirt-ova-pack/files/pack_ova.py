@@ -1,20 +1,19 @@
 #!/usr/bin/python
 
 import io
-import mmap
 import os
 import sys
 import tarfile
 import time
 
 
-from contextlib import closing
+from subprocess import call
+from subprocess import check_output
 
 TAR_BLOCK_SIZE = 512
 NUL = b"\0"
-BUF_SIZE = 8 * 1024**2
 
-python2 = sys.version_info < (3, 0)
+path_to_offset = {}
 
 
 def create_tar_info(name, size):
@@ -31,62 +30,46 @@ def pad_to_block_size(file):
         file.write(NUL * padding_size)
 
 
-def write_ovf(ova_path, ovf):
+def write_ovf(ova_file, ovf):
     print ("writing ovf: %s" % ovf)
-    with io.open(ova_path, "r+b") as ova_file:
-        tar_info = create_tar_info("vm.ovf", len(ovf))
-        ova_file.write(tar_info.tobuf())
-        ova_file.write(ovf)
-        pad_to_block_size(ova_file)
-        os.fsync(ova_file.fileno())
+    tar_info = create_tar_info("vm.ovf", len(ovf))
+    ova_file.write(tar_info.tobuf())
+    ova_file.write(ovf)
+    pad_to_block_size(ova_file)
+    os.fsync(ova_file.fileno())
 
 
-def write_disk(ova_path, disk_path, disk_size):
-    print ("writing disk: path=%s size=%d" % (disk_path, disk_size))
-    disk_name = os.path.basename(disk_path)
-    tar_info = create_tar_info(disk_name, disk_size)
-    with io.open(ova_path, "a+b") as ova_file:
-        # write tar info
-        ova_file.write(tar_info.tobuf())
-        os.fsync(ova_file.fileno())
-
-    try:
-        fd = os.open(ova_path, os.O_RDWR | os.O_DIRECT | os.O_APPEND)
-    except OSError:
-        fd = os.open(ova_path, os.O_RDWR | os.O_APPEND)
-
-    with io.FileIO(fd, "a+", closefd=True) as ova_file:
-        # write the disk content
-        buf = mmap.mmap(-1, BUF_SIZE)
-        fd = os.open(disk_path, os.O_RDONLY | os.O_DIRECT)
-        with closing(buf), \
-                io.FileIO(fd, "r", closefd=True) as image:
-            while True:
-                read = image.readinto(buf)
-                if read == 0:
-                    break  # done
-                written = 0
-                while written < read:
-                    if python2:
-                        wbuf = buffer(buf, written, read - written)
-                    else:
-                        wbuf = memoryview(buf)[written:read - written]
-                    written += ova_file.write(wbuf)
-        os.fsync(ova_file.fileno())
+def convert_disks(ova_path):
+    for path, offset in path_to_offset.iteritems():
+        print ("converting disk: %s, offset %s" % (path, offset))
+        output = check_output(['losetup', '--find', '--show', '-o', offset,
+                               ova_path])
+        loop = output.splitlines()[0]
+        try:
+            call(['qemu-img', 'convert', '-T', 'none', '-O', 'qcow2', path,
+                  loop])
+        finally:
+            call(['losetup', '-d', loop])
 
 
-def write_disks(ova_path, disks_info):
+def write_disk_headers(ova_file, disks_info):
     for disk_info in disks_info:
         # disk_info is of the following structure: <full path>::<size in bytes>
         idx = disk_info.index('::')
         disk_path = disk_info[:idx]
         disk_size = int(disk_info[idx+2:])
-        write_disk(ova_path, disk_path, disk_size)
+        print ("skipping disk: path=%s size=%d" % (disk_path, disk_size))
+        disk_name = os.path.basename(disk_path)
+        tar_info = create_tar_info(disk_name, disk_size)
+        # write tar info
+        ova_file.write(tar_info.tobuf())
+        path_to_offset[disk_path] = str(ova_file.tell())
+        ova_file.seek(disk_size, 1)
+    os.fsync(ova_file.fileno())
 
 
 def write_null_blocks(ova_file):
-    with io.open(ova_path, "a+b") as ova_file:
-        ova_file.write(NUL * 2 * TAR_BLOCK_SIZE)
+    ova_file.write(NUL * 2 * TAR_BLOCK_SIZE)
 
 
 if len(sys.argv) < 3:
@@ -95,9 +78,11 @@ if len(sys.argv) < 3:
 
 ova_path = sys.argv[1]
 ovf = sys.argv[2]
-write_ovf(ova_path, ovf)
-if len(sys.argv) > 3:
-    disks_info = sys.argv[3]
-    write_disks(ova_path, disks_info.split('+'))
-# write two null blocks at the end of the file
-write_null_blocks(ova_path)
+with io.open(ova_path, "wb") as ova_file:
+    write_ovf(ova_file, ovf)
+    if len(sys.argv) > 3:
+        disks_info = sys.argv[3]
+        write_disk_headers(ova_file, disks_info.split('+'))
+    # write two null blocks at the end of the file
+    write_null_blocks(ova_file)
+convert_disks(ova_path)

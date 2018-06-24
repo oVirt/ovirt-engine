@@ -25,7 +25,11 @@
     state: absent
   when: validate_only is not defined
 
-- name: Prepare temporary path for the OVA file
+- name: Allocating the temporary path for the OVA file
+  command: xfs_mkfile -n "{{ ova_size }}" "{{ target_directory }}/{{ ova_name }}.tmp"
+  when: validate_only is not defined
+
+- name: Retrieving the temporary path for the OVA file
   file:
     path: "{{ target_directory }}/{{ ova_name }}.tmp"
     state: touch
