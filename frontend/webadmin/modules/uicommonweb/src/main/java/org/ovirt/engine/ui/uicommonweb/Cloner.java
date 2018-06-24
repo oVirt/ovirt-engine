@@ -159,6 +159,7 @@ public final class Cloner {
         vm.setVmDescription(instance.getVmDescription());
         vm.setComment(instance.getComment());
         vm.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
+        vm.setBiosType(instance.getBiosType());
         vm.setCustomCpuName(instance.getCustomCpuName());
         vm.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         vm.setId(instance.getId());
