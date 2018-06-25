@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfigur
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -281,10 +282,13 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
          * @return A valid result iff the details that shouldn't be changed remained unchanged, An error otherwise.
          */
         public ValidationResult externalNetworkDetailsUnchanged(Network newNetwork) {
+            ProviderNetwork providerNetwork = network.getProvidedBy();
+            ProviderNetwork newProviderNetwork = newNetwork.getProvidedBy();
             return Objects.equals(network.getVlanId(), newNetwork.getVlanId())
                     && network.getStp() == newNetwork.getStp()
                     && network.isVmNetwork() == newNetwork.isVmNetwork()
-                    && Objects.equals(network.getProvidedBy(), newNetwork.getProvidedBy())
+                    && Objects.equals(providerNetwork.getProviderId(), newProviderNetwork.getProviderId())
+                    && Objects.equals(providerNetwork.getExternalId(), newProviderNetwork.getExternalId())
                     ? ValidationResult.VALID
                     : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED);
         }

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
@@ -41,6 +42,9 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
     @Inject
     private NetworkLocking networkLocking;
 
+    @Inject
+    private NetworkHelper networkHelper;
+
     private Provider<?> provider;
     private Network network;
 
@@ -68,10 +72,7 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
         if (network == null) {
             NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
             String networkId = getParameters().getNetworkExternalId();
-            network = proxy.getAll().stream()
-                    .filter(network -> networkId.equals(network.getProvidedBy().getExternalId()))
-                    .findFirst()
-                    .orElse(null);
+            network = proxy.get(networkId);
         }
         return network;
     }
@@ -93,6 +94,7 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
 
     @Override
     protected void executeCommand() {
+        networkHelper.mapPhysicalNetworkIdIfApplicable(network.getProvidedBy(), getParameters().getDataCenterId());
         InternalImportExternalNetworkParameters parameters = new InternalImportExternalNetworkParameters(
                 getProvider().getName(), getNetwork(), getParameters().getDataCenterId(),
                 getParameters().isPublicUse(), getParameters().isAttachToAllClusters());

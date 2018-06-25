@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.Config;
@@ -213,5 +214,21 @@ public class NetworkHelper {
                     networkCluster.setRequired(false);
                     return networkCluster;
                 }).collect(Collectors.toList());
+    }
+
+    public void mapPhysicalNetworkIdIfApplicable(ProviderNetwork providerNetwork, Guid dataCenterId) {
+        Objects.requireNonNull(providerNetwork, "Provider network cannot be null");
+        if (isSupportedExternalType(providerNetwork)) {
+            Network network =
+                    networkDao.getNetworkByVdsmNameAndDataCenterId(providerNetwork.getCustomPhysicalNetworkName(),
+                            dataCenterId);
+            if (network != null && Objects.equals(network.getVlanId(), providerNetwork.getExternalVlanId())) {
+                providerNetwork.setPhysicalNetworkId(network.getId());
+            }
+        }
+    }
+
+    private boolean isSupportedExternalType(ProviderNetwork providerNetwork) {
+        return providerNetwork.isProviderNetworkFlat() || providerNetwork.isProviderNetworkVlan();
     }
 }

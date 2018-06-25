@@ -4,11 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +18,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.openstack.ExternalNetworkProviderProxy;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -52,6 +51,9 @@ public class ImportExternalNetworkCommandTest extends BaseCommandTest {
     @Mock
     private ExternalNetworkProviderProxy providerProxy;
 
+    @Mock
+    private NetworkHelper networkHelper;
+
     @InjectMocks
     private ImportExternalNetworkCommand<ImportExternalNetworkParameters> command =
             new ImportExternalNetworkCommand<>(new ImportExternalNetworkParameters(PROVIDER_ID, EXTERNAL_ID,
@@ -64,7 +66,8 @@ public class ImportExternalNetworkCommandTest extends BaseCommandTest {
         provider.setType(ProviderType.EXTERNAL_NETWORK);
         when(providerDao.get(PROVIDER_ID)).thenReturn(provider);
         when(providerProxyFactory.create(provider)).thenReturn(providerProxy);
-        when(providerProxy.getAll()).thenReturn(getProviderNetworks());
+        when(providerProxy.get(EXTERNAL_ID)).thenReturn(getProviderNetwork());
+        doNothing().when(networkHelper).mapPhysicalNetworkIdIfApplicable(any(), eq(DATACENTER_ID));
 
         ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setSucceeded(true);
@@ -84,22 +87,22 @@ public class ImportExternalNetworkCommandTest extends BaseCommandTest {
     @Test
     public void testInvalidProvider() {
         provider.setType(ProviderType.OPENSTACK_IMAGE);
-        when(providerProxy.getAll()).thenReturn(Collections.emptyList());
+        when(providerProxy.get(any())).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NOT_NETWORK);
     }
 
     @Test
     public void testInvalidExternalId() {
-        when(providerProxy.getAll()).thenReturn(Collections.emptyList());
+        when(providerProxy.get(any())).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS);
     }
 
-    private List<Network> getProviderNetworks() {
+    private Network getProviderNetwork() {
         ProviderNetwork providerNetwork = new ProviderNetwork();
         providerNetwork.setExternalId(EXTERNAL_ID);
         providerNetwork.setProviderId(PROVIDER_ID);
         Network network = new Network();
         network.setProvidedBy(providerNetwork);
-        return Collections.singletonList(network);
+        return network;
     }
 }

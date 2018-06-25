@@ -16,6 +16,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 @ExtendWith(MockitoExtension.class)
 public class UpdateNetworkValidatorTest {
+
+    private static final String EXTERNAL_NETWORK_ID = "52d5c1c6-cb15-4832-b2a4-023770607200";
+
     private Network network;
 
     private UpdateNetworkValidator validator;
@@ -29,6 +32,7 @@ public class UpdateNetworkValidatorTest {
     private Network createExternalNetwork() {
         Network externalNetwork = new Network();
         ProviderNetwork providerNetwork = createProviderNetwork(Guid.newGuid());
+        providerNetwork.setExternalId(EXTERNAL_NETWORK_ID);
         network.setProvidedBy(providerNetwork);
         externalNetwork.setProvidedBy(providerNetwork);
 
@@ -91,7 +95,7 @@ public class UpdateNetworkValidatorTest {
     }
 
     @Test
-    public void externalNetworkProvidedByChanged() {
+    public void externalNetworkProviderIdChanged() {
         Network externalNetwork = createExternalNetwork();
         externalNetwork.setProvidedBy(createProviderNetwork(Guid.newGuid()));
 
@@ -99,9 +103,25 @@ public class UpdateNetworkValidatorTest {
     }
 
     @Test
-    public void internalNetworkProvidedByChanged() {
+    public void externalNetworkExternalIdChanged() {
         Network externalNetwork = createExternalNetwork();
-        network.setProvidedBy(null);
+        externalNetwork.setProvidedBy(createProviderNetwork(network.getProvidedBy().getProviderId()));
+
+        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
+    }
+
+    @Test
+    public void internalNetworkProvidedIdChanged() {
+        Network externalNetwork = createExternalNetwork();
+        network.setProvidedBy(createProviderNetwork(Guid.newGuid()));
+
+        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
+    }
+
+    @Test
+    public void internalNetworkExternalIdChanged() {
+        Network externalNetwork = createExternalNetwork();
+        network.setProvidedBy(createProviderNetwork(externalNetwork.getProvidedBy().getProviderId()));
 
         assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
     }
