@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -174,6 +175,7 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
             for (Network network : providedNetworks) {
                 Network networkInDataCenter = providerNetworksInDataCenter.get(
                         network.getProvidedBy().getExternalId());
+                networkHelper.mapPhysicalNetworkIdIfApplicable(network.getProvidedBy(), dataCenterId);
                 List<Guid> clusterIds = network.getProvidedBy().isLinkedToPhysicalNetwork() ?
                         clustersWithOvsSwitchTypeIds :
                         allClustersInDataCenterIds;
@@ -226,6 +228,14 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
 
         if (networkInDataCenter.getMtu() != externalNetwork.getMtu()) {
             networkInDataCenter.setMtu(externalNetwork.getMtu());
+            changed = true;
+        }
+
+        ProviderNetwork externalProviderNetwork = externalNetwork.getProvidedBy();
+        ProviderNetwork dataCenterProviderNetwork = networkInDataCenter.getProvidedBy();
+        if (!Objects.equals(dataCenterProviderNetwork.getPhysicalNetworkId(),
+                externalProviderNetwork.getPhysicalNetworkId())) {
+            dataCenterProviderNetwork.setPhysicalNetworkId(externalProviderNetwork.getPhysicalNetworkId());
             changed = true;
         }
 
