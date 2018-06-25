@@ -306,6 +306,7 @@ Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
 Requires:	nimbus-jose-jwt >= 5.12
+Requires:	json-smart >= 2.2
 %endif
 
 # We can't require exactly the same version and release of the
@@ -855,7 +856,8 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
-common/com/nimbusds/main/nimbus-jose-jwt.jar nimbus-jose-jwt.jar
+common/com/nimbusds/main/nimbus-jose-jwt.jar nimbus-jose-jwt/nimbus-jose-jwt.jar
+common/net/minidev/main/json-smart.jar json-smart.jar
 %endif
 __EOF__
 
