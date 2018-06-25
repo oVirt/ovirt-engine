@@ -174,11 +174,11 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return false;
         }
 
-        if (!validateImagesAvailability()) {
+        if (!validateSourceStorageDomainsAvailability()) {
             return false;
         }
 
-        if (!validateSourceStorageDomainsAvailability()) {
+        if (!validateImagesAvailability()) {
             return false;
         }
 
