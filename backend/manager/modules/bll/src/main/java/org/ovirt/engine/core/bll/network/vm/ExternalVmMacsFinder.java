@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -32,7 +33,7 @@ public class ExternalVmMacsFinder {
         return interfaces
                 .stream()
                 .map(VmNetworkInterface::getMacAddress)
-                .filter(Objects::nonNull)
+                .filter(StringUtils::isNotEmpty)
                 .filter(((Predicate<String>) readMacPool::isMacInRange).negate())
                 .collect(Collectors.toSet());
     }
