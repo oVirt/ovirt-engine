@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -156,24 +157,35 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
                     .filter(network -> !providedNetworkIds.contains(network.getProvidedBy().getExternalId()))
                     .forEach(network -> removeNetwork(network.getId()));
 
-            List<Guid> clusterInDataCenterIds = clusters.stream()
+            List<Cluster> idsOfClustersInDataCenter = clusters.stream()
                     .filter(cluster -> dataCenterId.equals(cluster.getStoragePoolId()))
+                    .collect(Collectors.toList());
+
+            List<Guid> allClustersInDataCenterIds =
+                    idsOfClustersInDataCenter.stream()
+                            .map(Cluster::getId)
+                            .collect(Collectors.toList());
+
+            List<Guid> clustersWithOvsSwitchTypeIds = idsOfClustersInDataCenter.stream()
+                    .filter(cluster -> cluster.hasRequiredSwitchType(SwitchType.OVS))
                     .map(Cluster::getId)
                     .collect(Collectors.toList());
 
             for (Network network : providedNetworks) {
                 Network networkInDataCenter = providerNetworksInDataCenter.get(
                         network.getProvidedBy().getExternalId());
+                List<Guid> clusterIds = network.getProvidedBy().isLinkedToPhysicalNetwork() ?
+                        clustersWithOvsSwitchTypeIds :
+                        allClustersInDataCenterIds;
                 if (networkInDataCenter == null) {
                     ActionReturnValue importReturnValue = importNetwork(dataCenterId, network);
                     if (importReturnValue.getSucceeded()) {
                         network.setId(importReturnValue.getActionReturnValue());
-                        propagateReturnValue(networkHelper.attachNetworkToClusters(network.getId(),
-                                clusterInDataCenterIds));
+                        propagateReturnValue(networkHelper.attachNetworkToClusters(network.getId(), clusterIds));
                     }
                 } else {
                     updateNetwork(dataCenterId, network, networkInDataCenter);
-                    updateNetworkClusters(clusterInDataCenterIds, network, networkInDataCenter);
+                    updateNetworkClusters(clusterIds, network, networkInDataCenter);
                 }
             }
         }
