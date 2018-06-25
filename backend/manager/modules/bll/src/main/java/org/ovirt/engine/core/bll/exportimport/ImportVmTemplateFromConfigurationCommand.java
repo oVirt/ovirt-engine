@@ -174,6 +174,23 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return false;
         }
 
+        if (!validateImagesAvailability()) {
+            return false;
+        }
+
+        if (!validateSourceStorageDomainsAvailability()) {
+            return false;
+        }
+
+        if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
+                    String.format("$domainId %1$s", getParameters().getStorageDomainId()),
+                    String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
+        }
+        return true;
+    }
+
+    private boolean validateImagesAvailability() {
         // A new array is being initialized to avoid ConcurrentModificationException when
         // invalid images are being removed from the images list.
         for (DiskImage image : new ArrayList<>(getImages())) {
@@ -201,7 +218,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
         }
+        return true;
+    }
 
+    private boolean validateSourceStorageDomainsAvailability() {
         // A new array is being initialized to avoid ConcurrentModificationException when
         // invalid images are being removed from the images list.
         for (DiskImage image : new ArrayList<>(getImages())) {
@@ -218,11 +238,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                     failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
                 }
             }
-        }
-        if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED,
-                    String.format("$domainId %1$s", getParameters().getStorageDomainId()),
-                    String.format("$domainType %1$s", getStorageDomain().getStorageDomainType()));
         }
         return true;
     }
