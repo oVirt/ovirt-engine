@@ -41,6 +41,6 @@ public final class ServerConnectionStatusReturn extends StatusReturn {
 
     public Map<String, String> convertToStatusList() {
         return Arrays.stream(statusList)
-                .collect(Collectors.toMap(s -> s.get("id").toString(), s -> s.get("status").toString()));
+            .collect(Collectors.toMap(s -> s.get("id").toString(), s -> s.get("status").toString(), (v1, v2) -> v2));
     }
 }
