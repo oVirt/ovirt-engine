@@ -21,6 +21,7 @@ public class VmActionByVmOriginTypeValidator {
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(ActionType.RemoveVm);
         COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(ActionType.RebootVm);
 
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.BalanceVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.MigrateVm);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.MigrateVmToServer);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.CancelMigrateVm);
