@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
@@ -45,7 +46,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
             }
         });
 
-        getView().toggleSubnetVisibility(model.getExternal().getEntity());
+        getView().toggleSubnetVisibility(isSubnetVisible(model));
         model.getExternal().getEntityChangedEvent().addListener((ev, sender, args) ->
                 getView().toggleSubnetVisibility(isSubnetVisible(model)));
         model.getExternalProviders().getSelectedItemChangedEvent().addListener((ev, sender, args) ->
@@ -65,7 +66,11 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
     }
 
     private boolean isSubnetVisible(final T model) {
-        return model.getExternal().getEntity() && !model.getExternalProviders().getSelectedItem().getIsUnmanaged();
+        Provider<?> selectedProvider = model.getExternalProviders().getSelectedItem();
+        return model.getExternal().getEntity()
+                && model.getExternal().getIsChangable()
+                && selectedProvider != null
+                && !selectedProvider.getIsUnmanaged();
     }
 
     @Override
