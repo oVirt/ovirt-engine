@@ -29,10 +29,8 @@ public class OvfOvaTemplateReader extends OvfOvaReader {
         consumeReadProperty(content,
                 BASE_TEMPLATE_ID,
                 val -> template.setBaseTemplateId(Guid.createGuidFromString(val)),
-                () -> {
-                    // in case base template is missing, we assume it is a base template
-                    template.setBaseTemplateId(template.getId());
-                });
+                // in case base template is missing, we assume it is a base template
+                () -> template.setBaseTemplateId(template.getId()));
         consumeReadProperty(content,
                 TEMPLATE_VERSION_NUMBER,
                 val -> template.setTemplateVersionNumber(Integer.parseInt(val)));

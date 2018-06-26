@@ -4,8 +4,8 @@ import os
 import sys
 import tarfile
 
-if len(sys.argv) < 3:
-    print ("Usage: query_ova.py ova_path list_directory")
+if len(sys.argv) < 4:
+    print ("Usage: query_ova.py <vm/template> ova_path list_directory")
     sys.exit(2)
 
 
@@ -13,10 +13,23 @@ def is_ovf(filename):
     return filename.lower().endswith('.ovf')
 
 
-def get_ovf_from_ova_file(ova_path):
+def is_ova(filename):
+    return filename.lower().endswith('.ova')
+
+
+def match_entity(filename, templates):
+    template_ovf = filename == "template.ovf"
+    return template_ovf if templates else not template_ovf
+
+
+def get_ovf_from_ova_file(ova_path, templates=None):
     with tarfile.open(ova_path) as ova_file:
         for ova_entry in ova_file.getmembers():
-            if is_ovf(ova_entry.name):
+            name = ova_entry.name
+            if is_ovf(name):
+                if templates is not None and not match_entity(name,
+                                                              templates):
+                    raise Exception('Not the entity we look for')
                 ovf_file = ova_file.extractfile(ova_entry)
                 ovf = ovf_file.read()
                 break
@@ -25,7 +38,7 @@ def get_ovf_from_ova_file(ova_path):
     return ovf
 
 
-def get_ovf_from_dir(ova_path, list_directory):
+def get_ovf_from_dir(ova_path, list_directory, templates):
     files = os.listdir(ova_path)
     for filename in files:
         if is_ovf(filename):
@@ -37,10 +50,13 @@ def get_ovf_from_dir(ova_path, list_directory):
 
         ova_to_ovf = {}
         for filename in files:
+            if not is_ova(filename):
+                continue
             file_path = os.path.join(ova_path, filename)
             if os.path.isfile(file_path) and tarfile.is_tarfile(file_path):
                 try:
-                    ova_to_ovf[filename] = get_ovf_from_ova_file(file_path)
+                    ova_to_ovf[filename] = get_ovf_from_ova_file(file_path,
+                                                                 templates)
                 except Exception:
                     pass
 
@@ -52,10 +68,11 @@ def get_ovf_from_dir(ova_path, list_directory):
             raise Exception('Failed to find OVF in dir %s' % ova_path)
 
 
-ova_path = sys.argv[1]
+ova_path = sys.argv[2]
 if os.path.isfile(ova_path):
     ovf = get_ovf_from_ova_file(ova_path)
 else:
-    ovf = get_ovf_from_dir(ova_path, sys.argv[2])
+    templates = sys.argv[1] == "template"
+    ovf = get_ovf_from_dir(ova_path, sys.argv[3], templates)
 
 print (ovf)

@@ -193,6 +193,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .hostnames(getVds().getHostName())
                 .variables(
                     new Pair<>("target_directory", getParameters().getDirectory()),
+                    new Pair<>("entity_type", getParameters().getEntityType().name().toLowerCase()),
                     new Pair<>("ova_name", getParameters().getName()),
                     new Pair<>("ovirt_ova_pack_ovf", genOvfParameter(ovf)),
                     new Pair<>("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))

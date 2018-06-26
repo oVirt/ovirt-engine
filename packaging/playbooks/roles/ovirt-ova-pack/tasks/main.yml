@@ -2,6 +2,7 @@
 - name: Run packing script
   script: >
     pack_ova.py
+    "{{ entity_type }}"
     "{{ ova_file.dest }}"
     "{{ ovirt_ova_pack_ovf }}"
     "{{ ovirt_ova_pack_disks }}"

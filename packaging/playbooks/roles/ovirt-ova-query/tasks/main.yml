@@ -2,6 +2,7 @@
 - name: Run query script
   script: >
     query_ova.py
+    "{{ entity_type }}"
     "{{ ovirt_query_ova_path }}"
     "{{ list_directory }}"
   register: extraction_result
