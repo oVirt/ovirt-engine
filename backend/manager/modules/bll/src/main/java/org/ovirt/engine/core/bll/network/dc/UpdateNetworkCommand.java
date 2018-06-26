@@ -282,7 +282,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
          */
         public ValidationResult externalNetworkDetailsUnchanged(Network newNetwork) {
             return Objects.equals(network.getVlanId(), newNetwork.getVlanId())
-                    && network.getMtu() == newNetwork.getMtu()
                     && network.getStp() == newNetwork.getStp()
                     && network.isVmNetwork() == newNetwork.isVmNetwork()
                     && Objects.equals(network.getProvidedBy(), newNetwork.getProvidedBy())
