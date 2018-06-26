@@ -176,12 +176,12 @@ public class NumaValidatorTest {
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
 
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+                EngineMessage.ACTION_TYPE_FAILED_VM_NUMA_CANNOT_BE_AUTO_MIGRATABLE);
     }
 
     @Test
     public void shouldNotDoWithoutPinnedHost() {
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
 
         vm.setDedicatedVmForVdsList(new ArrayList<>());
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()), EngineMessage

@@ -62,6 +62,11 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     }
 
     @Override
+    protected boolean isMigrationRestrictedDueToHostSpecificSettings() {
+        return false;
+    }
+
+    @Override
     protected AuditLogType getAuditLogForMigrationFailure() {
         return AuditLogType.VM_MIGRATION_TO_SERVER_FAILED;
     }

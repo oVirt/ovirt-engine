@@ -157,7 +157,7 @@ public final class ActionUtils {
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
-                        ActionType.RemoveVmInterface, ActionType.CancelMigrateVm,
+                        ActionType.RemoveVmInterface, ActionType.MigrateVm, ActionType.CancelMigrateVm,
                         ActionType.ExtendImageSize, ActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Up,

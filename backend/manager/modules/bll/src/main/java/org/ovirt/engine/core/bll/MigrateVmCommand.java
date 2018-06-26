@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -73,6 +74,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -104,6 +106,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private DiskDao diskDao;
     @Inject
     private HostNetworkQosDao hostNetworkQosDao;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -790,6 +794,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
         }
 
+        // TODO remove this limitation once automatic + manual migration will be supported for all VM types (including HP VMs)
+        // Till then, HP VMs and non HP pinned VMs can be manually migrated only if destination host is manually selected.
+        if (isMigrationRestrictedDueToHostSpecificSettings()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PINNED_HP_VM_MIGRATABLE_ONLY_WHEN_HOST_SELECTED);
+        }
+
         switch (vm.getStatus()) {
         case MigratingFrom:
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
@@ -838,6 +848,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsBlackList(),
                         getVdsWhiteList(),
                         getReturnValue().getValidationMessages()).isEmpty();
+    }
+
+    protected boolean isMigrationRestrictedDueToHostSpecificSettings() {
+        return getVm().getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE &&
+                (getVm().isUseHostCpuFlags() || getVm().getVmType() == VmType.HighPerformance ||
+                !vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId()).isEmpty());
     }
 
     @Override
