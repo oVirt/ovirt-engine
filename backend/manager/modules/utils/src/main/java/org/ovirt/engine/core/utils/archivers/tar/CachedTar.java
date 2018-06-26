@@ -29,11 +29,24 @@ public class CachedTar {
     private void create() throws IOException {
         // must create within same directory
         // so rename be atomic
-        File temp = File.createTempFile(
-            this.archive.getName(),
-            "tmp",
-            this.archive.getParentFile()
-        );
+        File temp = null;
+        try {
+            temp = File.createTempFile(
+                this.archive.getName(),
+                "tmp",
+                this.archive.getParentFile()
+            );
+        } catch (IOException e) {
+            throw new IOException(
+                String.format(
+                    "Cannot create file under directory '%1$s', make sure directory exists and has suitable permissions"
+                            + " (error: '%2$s')",
+                    this.archive.getParentFile(),
+                    e.getMessage()
+                ), e
+            );
+        }
+
         try {
             try (OutputStream os = new FileOutputStream(temp)) {
                 Tar.doTar(os, this.dir);
