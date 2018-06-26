@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
 public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
@@ -78,7 +81,8 @@ public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private AutodefineExternalNetworkCommand<IdParameters> command = new AutodefineExternalNetworkCommand<>(
-            new IdParameters(PHYSICAL_NETWORK_ID), CommandContext.createContext("context"));
+            new IdParameters(PHYSICAL_NETWORK_ID),
+            CommandContext.createContext("context"));
 
     private Network physicalNetwork;
     private Cluster cluster;
@@ -103,6 +107,10 @@ public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
         doReturn(engineLock).when(command).acquireLockForProvider(eq(CLUSTER_DEFAULT_PROVIDER_ID));
         doNothing().when(engineLock).close();
     }
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            MockConfigRule.mockConfig(ConfigValues.DefaultMTU, 1500));
 
     @Test
     public void testCommandSuccessLongName() {

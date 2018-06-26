@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
 @NonTransactiveCommandAttribute
@@ -150,6 +151,7 @@ public class AutodefineExternalNetworkCommand<T extends IdParameters> extends Co
         externalNetwork.setName(name);
         externalNetwork.setDescription(EXTERNAL_DESCRIPTION);
         externalNetwork.setDataCenterId(network.getDataCenterId());
+        externalNetwork.setMtu(NetworkUtils.getHostMtuActualValue(network));
 
         ProviderNetwork providerNetwork = new ProviderNetwork();
         providerNetwork.setProviderId(providerId);
