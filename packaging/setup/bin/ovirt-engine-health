@@ -39,7 +39,7 @@ Usage: $0
         Automatically use default answers in questions that have them.
 
 __EOF__
-	exit 1
+	exit 0
 }
 
 script="$(readlink -f "$0")"
