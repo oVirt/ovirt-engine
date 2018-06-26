@@ -102,13 +102,13 @@ public class AddVmNumaNodesCommandTest
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+                EngineMessage.ACTION_TYPE_FAILED_VM_NUMA_CANNOT_BE_AUTO_MIGRATABLE);
     }
 
     @Test
     public void canNotDoWithoutPinnedHost() {
         mockCommandWithVmFromDb();
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
 
         vm.setDedicatedVmForVdsList(new ArrayList<>());
         ValidateTestUtils.runAndAssertValidateFailure(command,

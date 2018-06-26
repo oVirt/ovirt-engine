@@ -299,7 +299,9 @@ public class NumaValidator {
     }
 
     /**
-     * Check if the VM pinning to the host is valid. By default this means a single host where it is pinned to
+     * Check if the VM pinning to the host and migration mode are valid.
+     * By default this means a manual migration mode or non migration allowed
+     * and a single host where it is pinned to.
      *
      * @param vm to check
      * @return validation result
@@ -307,9 +309,11 @@ public class NumaValidator {
     public ValidationResult validateVmPinning(final VM vm) {
 
         //TODO Proper validation for multiple hosts for SupportNumaMigration was never implemented. Implement it.
-        // validate - pinning is mandatory, since migration is not allowed
-        if (vm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST || vm.getDedicatedVmForVdsList()
-                .isEmpty()) {
+        // validate - host pinning is mandatory
+        if (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NUMA_CANNOT_BE_AUTO_MIGRATABLE);
+        }
+        if (vm.getDedicatedVmForVdsList().isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
         }
         if (vm.getDedicatedVmForVdsList().size() > 1) {
@@ -338,6 +342,8 @@ public class NumaValidator {
 
         //TODO Proper validation for multiple host pinning
         //TODO Numa sheduling policy
+        //TODO This config parameter will be removed once there will be
+        // a full support for NUMA automatic migration
         if (Config.<Boolean>getValue(ConfigValues.SupportNUMAMigration)) {
             return ValidationResult.VALID;
         }

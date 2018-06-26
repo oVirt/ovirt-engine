@@ -686,8 +686,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (vmFromParams.isUseHostCpuFlags()
-                && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            return failValidation(EngineMessage.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
+                && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_HOSTCPU_CANNOT_BE_AUTO_MIGRATABLE);
         }
 
         if (vmFromParams.isUseHostCpuFlags() && (ArchitectureType.ppc == getCluster().getArchitecture().getFamily())) {
