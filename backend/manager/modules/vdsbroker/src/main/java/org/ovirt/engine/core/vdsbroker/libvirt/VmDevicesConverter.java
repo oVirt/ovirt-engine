@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
@@ -455,8 +456,10 @@ public class VmDevicesConverter {
                         if (!diskType.equals(d.getDevice())) {
                             return false;
                         }
-                        String devicePath = (String) d.getSpecParams().get("path");
-                        return devicePath == null || path.contains(devicePath);
+                        // payload and vm-init reside in /var/run/vdsm/payload while other images
+                        // are mounted as the primary, single and managed, CD-ROM device of the VM
+                        boolean payload = VmPayload.isPayload(d.getSpecParams());
+                        return !path.startsWith("/var/run/vdsm/payload/") ? d.isManaged() && !payload : payload;
                     case "floppy":
                         return diskType.equals(d.getDevice());
                     default:
