@@ -131,6 +131,8 @@ public class VmInfoBuildUtilsTest {
     private VmDevicesMonitoring vmDevicesMonitoring;
     @Mock
     private VmSerialNumberBuilder vmSerialNumberBuilder;
+    @Mock
+    private MultiQueueUtils multiQueueUtils;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;

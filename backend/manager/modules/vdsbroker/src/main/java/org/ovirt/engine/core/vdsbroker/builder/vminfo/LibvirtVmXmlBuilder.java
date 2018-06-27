@@ -2132,7 +2132,15 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("bridge", !networkless ? network.getVdsmName() : ";vdsmdummy;");
             writer.writeEndElement();
 
-            String queues = vnicProfile != null ? vnicProfile.getCustomProperties().remove("queues") : null;
+            String queues = null;
+            if (vnicProfile != null) {
+                queues = vnicProfile.getCustomProperties().remove("queues");
+            }
+
+            if (queues == null && vmInfoBuildUtils.isInterfaceQueuable(device, nic)) {
+                queues = String.valueOf(vmInfoBuildUtils.getOptimalNumOfQueuesPerVnic(vm.getNumOfCpus()));
+            }
+
             String driverName = getDriverNameForNetwork(!networkless ? network.getName() : "");
             if (queues != null || driverName != null) {
                 writer.writeStartElement("driver");
@@ -2207,7 +2215,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         Map<String, Object> profileData = new HashMap<>();
-        vmInfoBuildUtils.addProfileDataToNic(profileData, vm, device, nic);
+        vmInfoBuildUtils.addProfileDataToNic(profileData, vm, device, nic, vnicProfile);
 
         List<String> portMirroring = (List<String>) profileData.get(VdsProperties.PORT_MIRRORING);
         if (portMirroring != null && !portMirroring.isEmpty()) {
