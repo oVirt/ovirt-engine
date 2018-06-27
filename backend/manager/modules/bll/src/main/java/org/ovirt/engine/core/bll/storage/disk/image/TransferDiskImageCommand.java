@@ -473,8 +473,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // TransferSize is only set by the webadmin
             return getParameters().getTransferSize();
         }
-        boolean isBlockDomain = getDiskImage().getStorageTypes().get(0).isBlockDomain();
-        return isBlockDomain ? getDiskImage().getActualSizeInBytes() : image.getSize();
+        boolean isBlockDomain = image.getStorageTypes().get(0).isBlockDomain();
+        return isBlockDomain ? image.getActualSizeInBytes() : image.getSize();
     }
 
     private void handleResuming(final StateContext context) {
