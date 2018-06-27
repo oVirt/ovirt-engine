@@ -539,6 +539,7 @@ Requires:	ovirt-engine-metrics >= 1.1.2
 Requires:	java-headless
 Requires:	logrotate
 Requires:	python-dateutil
+Requires:	python-netaddr
 Requires:	python-psycopg2
 Requires:	python-six
 Requires:	gdeploy
