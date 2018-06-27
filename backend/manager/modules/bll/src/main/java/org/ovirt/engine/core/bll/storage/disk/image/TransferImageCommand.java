@@ -107,7 +107,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         entity.setType(getParameters().getTransferType());
         entity.setActive(false);
         entity.setLastUpdated(new Date());
-        entity.setBytesTotal(getParameters().getTransferSize());
+        entity.setBytesTotal(isImageProvided() ? getTransferSize() : getParameters().getTransferSize());
         entity.setClientInactivityTimeout(getParameters().getClientInactivityTimeout() != null ?
                 getParameters().getClientInactivityTimeout() :
                 getTransferImageClientInactivityTimeoutInSeconds());
@@ -238,7 +238,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         getParameters().setDestinationImageId(image.getImageId());
 
         // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
-        getParameters().setTransferSize(getTransferSize(image, domainId));
+        getParameters().setTransferSize(getTransferSize());
 
         persistCommand(getParameters().getParentCommand(), true);
         setImage(image);
@@ -263,11 +263,18 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         resetPeriodicPauseLogTime(0);
     }
 
-    private long getTransferSize(DiskImage image, Guid domainId) {
+    private long getTransferSize() {
+        DiskImage image = getDiskImage();
+        Guid domainId = image.getStorageIds().get(0);
+
         if (getParameters().getTransferType() == TransferType.Download) {
-            DiskImage imageInfoFromVdsm = imagesHandler.getVolumeInfoFromVdsm(
-                    image.getStoragePoolId(), domainId, image.getId(), image.getImageId());
-            return imageInfoFromVdsm.getApparentSizeInBytes();
+            if (image.getVolumeFormat() == VolumeFormat.COW) {
+                DiskImage imageInfoFromVdsm = imagesHandler.getVolumeInfoFromVdsm(
+                        image.getStoragePoolId(), domainId, image.getId(), image.getImageId());
+                return imageInfoFromVdsm.getApparentSizeInBytes();
+            } else { // RAW
+                return image.getSize();
+            }
         }
         // Upload
         if (getParameters().getTransferSize() != 0) {

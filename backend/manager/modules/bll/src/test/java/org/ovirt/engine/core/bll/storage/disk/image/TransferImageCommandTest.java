@@ -140,23 +140,8 @@ public class TransferImageCommandTest extends BaseCommandTest{
     }
 
     @Test
-    public void testNotCreatingImageIfSupplied() {
-        Guid suppliedImageId = Guid.newGuid();
-        doNothing().when(transferImageCommand).handleImageIsReadyForTransfer();
-        transferImageCommand.getParameters().setImageId(suppliedImageId);
-        transferImageCommand.executeCommand();
-
-        // Make sure no image is created if an image Guid is supplied.
-        verify(transferImageCommand, never()).createImage();
-
-        // Make sure that a transfer session will start.
-        verify(transferImageCommand, times(1)).handleImageIsReadyForTransfer();
-    }
-
-    @Test
     public void testFailsDownloadExecutionWithoutImage() {
         transferImageCommand.getParameters().setTransferType(TransferType.Download);
-        transferImageCommand.executeCommand();
 
         ValidateTestUtils.runAndAssertValidateFailure(transferImageCommand,
                 EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);

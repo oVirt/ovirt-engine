@@ -3,7 +3,11 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -162,6 +166,19 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
                 new PermissionSubject(getCommand().getParameters().getImageId(),
                         VdcObjectType.Storage,
                         ActionGroup.CREATE_DISK));
+    }
+
+    @Test
+    public void testNotCreatingImageIfSupplied() {
+        initializeSuppliedImage();
+        doNothing().when(getCommand()).handleImageIsReadyForTransfer();
+        getCommand().executeCommand();
+
+        // Make sure no image is created if an image Guid is supplied.
+        verify(getCommand(), never()).createImage();
+
+        // Make sure that a transfer session will start.
+        verify(getCommand(), times(1)).handleImageIsReadyForTransfer();
     }
 
     private TransferDiskImageCommand<TransferDiskImageParameters> getCommand() {
