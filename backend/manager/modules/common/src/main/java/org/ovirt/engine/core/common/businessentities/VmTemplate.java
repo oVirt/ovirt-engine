@@ -100,7 +100,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       ConsoleDisconnectAction consoleDisconnectAction,
                       Version customCompatibilityVersion, Guid migrationPolicyId,
                       Guid leaseStorageDomainId,
-                      VmResumeBehavior resumeBehavior) {
+                      VmResumeBehavior resumeBehavior,
+                      boolean multiQueuesEnabled) {
         super(name,
                 vmtGuid,
                 clusterId,
@@ -166,7 +167,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 customCompatibilityVersion,
                 migrationPolicyId,
                 leaseStorageDomainId,
-                resumeBehavior);
+                resumeBehavior,
+                multiQueuesEnabled);
 
         diskTemplateMap = new HashMap<>();
         diskImageMap = new HashMap<>();
