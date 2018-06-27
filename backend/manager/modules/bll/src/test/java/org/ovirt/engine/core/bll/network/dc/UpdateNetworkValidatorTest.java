@@ -70,16 +70,6 @@ public class UpdateNetworkValidatorTest {
     }
 
     @Test
-    public void externalNetworkMtuChanged() {
-        Network externalNetwork = createExternalNetwork();
-
-        externalNetwork.setMtu(0);
-        network.setMtu(1);
-
-        assertThatExternalNetworkDetailsUnchangedFails(externalNetwork);
-    }
-
-    @Test
     public void externalNetworkStpChanged() {
         Network externalNetwork = createExternalNetwork();
 

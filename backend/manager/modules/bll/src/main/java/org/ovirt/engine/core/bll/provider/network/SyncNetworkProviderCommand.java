@@ -205,8 +205,19 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
     }
 
     private void updateNetwork(Guid dataCenterId, Network externalNetwork, Network networkInDataCenter) {
+        boolean changed = false;
+
         if (!networkInDataCenter.getName().equals(externalNetwork.getName())) {
             networkInDataCenter.setName(externalNetwork.getName());
+            changed = true;
+        }
+
+        if (networkInDataCenter.getMtu() != externalNetwork.getMtu()) {
+            networkInDataCenter.setMtu(externalNetwork.getMtu());
+            changed = true;
+        }
+
+        if (changed) {
             AddNetworkStoragePoolParameters parameters =
                     new AddNetworkStoragePoolParameters(dataCenterId, networkInDataCenter);
             propagateReturnValue(runInternalAction(ActionType.UpdateNetwork, parameters,
