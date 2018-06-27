@@ -25,8 +25,8 @@
 
         .isPluggedEditor {
             float: right;
-            margin-top: -8px;
             width: 180px;
+            text-align: right;
         }
 
         .attachDiskPanel {
@@ -41,7 +41,7 @@
     <g:FlowPanel addStyleNames="{style.container}">
         <g:FlowPanel addStyleNames="{style.header}">
             <w:RadioButtonPanel ui:field="diskTypePanel" name="diskTypePanel" dataToggle="BUTTONS" />
-            <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" label="{constants.activateVmDiskPopup}" widgetTooltip="{constants.activateVmDiskPopupToolTip}" />
+            <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" label="{constants.activateVmDiskPopup}" widgetTooltip="{constants.activateVmDiskPopupToolTip}" usePatternFly="true" />
         </g:FlowPanel>
         <g:FlowPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
             <w:ValidatedPanelWidget ui:field="attachDiskPanel" />
