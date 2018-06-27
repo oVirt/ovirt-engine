@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -218,10 +220,24 @@ public class NetworkHelper {
 
     public void mapPhysicalNetworkIdIfApplicable(ProviderNetwork providerNetwork, Guid dataCenterId) {
         Objects.requireNonNull(providerNetwork, "Provider network cannot be null");
+
+        Network network = networkDao.getNetworkByVdsmNameAndDataCenterId(providerNetwork.getCustomPhysicalNetworkName(),
+                dataCenterId);
+        Map<String, Network> dataCenterNetworkByName;
+        if (network != null) {
+            dataCenterNetworkByName = Collections.singletonMap(network.getName(), network);
+        } else {
+            dataCenterNetworkByName = Collections.emptyMap();
+        }
+        mapPhysicalNetworkIdIfApplicable(providerNetwork, dataCenterNetworkByName);
+    }
+
+    public void mapPhysicalNetworkIdIfApplicable(ProviderNetwork providerNetwork,
+            Map<String, Network> dataCenterNetworkByName) {
+        Objects.requireNonNull(providerNetwork, "Provider network cannot be null");
         if (isSupportedExternalType(providerNetwork)) {
-            Network network =
-                    networkDao.getNetworkByVdsmNameAndDataCenterId(providerNetwork.getCustomPhysicalNetworkName(),
-                            dataCenterId);
+            Network network = dataCenterNetworkByName.get(providerNetwork.getCustomPhysicalNetworkName());
+
             if (network != null && Objects.equals(network.getVlanId(), providerNetwork.getExternalVlanId())) {
                 providerNetwork.setPhysicalNetworkId(network.getId());
             }

@@ -172,10 +172,14 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
                     .map(Cluster::getId)
                     .collect(Collectors.toList());
 
+            Map<String, Network> networkByName = networkDao.getAllForDataCenter(dataCenterId)
+                    .stream()
+                    .collect(Collectors.toMap(Network::getName, Function.identity()));
+
             for (Network network : providedNetworks) {
-                Network networkInDataCenter = providerNetworksInDataCenter.get(
-                        network.getProvidedBy().getExternalId());
-                networkHelper.mapPhysicalNetworkIdIfApplicable(network.getProvidedBy(), dataCenterId);
+                ProviderNetwork providerNetwork = network.getProvidedBy();
+                Network networkInDataCenter = providerNetworksInDataCenter.get(providerNetwork.getExternalId());
+                networkHelper.mapPhysicalNetworkIdIfApplicable(providerNetwork, networkByName);
                 List<Guid> clusterIds = network.getProvidedBy().isLinkedToPhysicalNetwork() ?
                         clustersWithOvsSwitchTypeIds :
                         allClustersInDataCenterIds;
