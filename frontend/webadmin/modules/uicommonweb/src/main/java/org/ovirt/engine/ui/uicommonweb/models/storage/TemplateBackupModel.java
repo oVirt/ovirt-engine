@@ -37,7 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -58,8 +58,8 @@ import com.google.inject.Provider;
 public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     private List<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
     private StoragePool pool;
-    protected ImportTemplateModel importModel;
-    protected Provider<? extends ImportTemplateModel> importModelProvider;
+    protected ImportTemplateFromExportDomainModel importModel;
+    protected Provider<? extends ImportTemplateFromExportDomainModel> importModelProvider;
 
     /** used to save the names that were assigned for VMs which are going
      *  to be created using import in case of choosing multiple VM imports */
@@ -71,7 +71,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     private static UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     @Inject
-    public TemplateBackupModel(Provider<ImportTemplateModel> importModelProvider) {
+    public TemplateBackupModel(Provider<ImportTemplateFromExportDomainModel> importModelProvider) {
         this.importModelProvider = importModelProvider;
         setTitle(constants.templateImportTitle());
         setHelpTag(HelpTag.template_import);
@@ -221,7 +221,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     protected void executeImport() {
-        ImportTemplateModel model = (ImportTemplateModel) getWindow();
+        ImportTemplateFromExportDomainModel model = (ImportTemplateFromExportDomainModel) getWindow();
 
         if (model.getProgress() != null) {
             return;
@@ -363,7 +363,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             return;
         }
 
-        ImportTemplateModel model = importModelProvider.get();
+        ImportTemplateFromExportDomainModel model = importModelProvider.get();
         model.setEntity(getEntity().getId());
         setWindow(model);
         model.startProgress();
@@ -379,7 +379,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         .setIsDefault(true)
         .setIsCancel(true)
         );
-        ((TemplateImportDiskListModel) ((ImportTemplateModel) getWindow()).getImportDiskListModel()).setExtendedItems(extendedItems);
+        ((TemplateImportDiskListModel) ((ImportTemplateFromExportDomainModel) getWindow()).getImportDiskListModel()).setExtendedItems(extendedItems);
     }
 
     @Override
@@ -469,7 +469,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     public void onRestore() {
-        importModel = (ImportTemplateModel) getWindow();
+        importModel = (ImportTemplateFromExportDomainModel) getWindow();
 
         if (importModel.getProgress() != null) {
             return;

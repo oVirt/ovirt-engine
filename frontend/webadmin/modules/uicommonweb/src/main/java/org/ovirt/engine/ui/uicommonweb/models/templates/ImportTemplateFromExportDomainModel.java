@@ -29,12 +29,12 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class ImportTemplateModel extends ImportVmFromExportDomainModel {
+public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomainModel {
 
     private final TemplateImportDiskListModel templateImportDiskListModel;
 
     @Inject
-    public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
+    public ImportTemplateFromExportDomainModel(final VmImportDiskListModel vmImportDiskListModel,
             final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
             final TemplateImportGeneralModel templateImportGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
