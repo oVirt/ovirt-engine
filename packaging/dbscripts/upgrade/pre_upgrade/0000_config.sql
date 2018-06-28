@@ -1032,6 +1032,9 @@ select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds', '10',
 -- Increase default value of UploadImageXhrTimeoutInSeconds
 select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds','120', '300', 'general', false);
 
+-- Increase default value of UploadImageXhrTimeoutInSeconds
+select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds','300', '600', 'general', false);
+
 -- Increase default value of UploadImageChunkSizeKB
 select fn_db_update_default_config_value('UploadImageChunkSizeKB','8192', '102400', 'general', false);
 
