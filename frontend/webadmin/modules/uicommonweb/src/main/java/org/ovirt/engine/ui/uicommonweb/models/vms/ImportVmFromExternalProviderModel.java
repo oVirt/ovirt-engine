@@ -49,7 +49,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private final Map<String, ImportDiskData> diskImportDataMap = new HashMap<>();
     private final VmImportGeneralModel vmImportGeneralModel;
     private VmImportDiskListModel importDiskListModel;
-    private VmImportInterfaceListModel importInterfaceListModel;
+    protected VmImportInterfaceListModel importInterfaceListModel;
     private List<VnicProfileView> networkProfiles;
     private ListModel<RepoImage> iso;
     private EntityModel<Boolean> attachDrivers;
@@ -68,11 +68,9 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         sourceIsNotKvm = true;
         setIso(new ListModel<>());
         setAttachDrivers(new EntityModel<>(false));
-
         vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateWindowsWarningMessage());
-
         getClusterQuota().setIsAvailable(false);
-        setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel);
+        setDetailList(vmImportGeneralModel, importInterfaceListModel, importDiskListModel);
     }
 
     private void updateWindowsWarningMessage() {
@@ -220,9 +218,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         for (Object item : getItems()) {
             ImportVmData importVmData = (ImportVmData) item;
             VM vm = importVmData.getVm();
-            for (VmNetworkInterface iface : vm.getInterfaces()) {
-                addNetworkImportData(iface);
-            }
+            vm.getInterfaces().forEach(this::addNetworkImportData);
         }
     }
 
@@ -353,8 +349,8 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         this.attachDrivers = attachTools;
     }
 
-    protected void updateNetworkInterfacesForVm(VM vm) {
-        for (VmNetworkInterface iface : vm.getInterfaces()) {
+    protected void updateNetworkInterfacesForVm(List<VmNetworkInterface> interfaces) {
+        for (VmNetworkInterface iface : interfaces) {
             ImportNetworkData importNetworkData = getNetworkImportData(iface);
             VnicProfileView profile = importNetworkData.getSelectedNetworkProfile();
             if (profile != null) {

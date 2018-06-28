@@ -31,6 +31,12 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
 
     @Override
     protected void initializeButtons() {
+        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getImportTemplateCommand();
+            }
+        });
         addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override
             protected UICommand resolveCommand() {

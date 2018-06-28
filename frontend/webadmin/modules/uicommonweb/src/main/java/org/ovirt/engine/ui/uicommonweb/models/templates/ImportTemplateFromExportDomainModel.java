@@ -62,7 +62,7 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
         setDetailModels(list);
     }
 
-    private String createSearchPattern(Collection<VmTemplate> templates) {
+    protected String createSearchPattern(Collection<VmTemplate> templates) {
         String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
         StringBuilder searchPattern = new StringBuilder();
@@ -177,6 +177,7 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
                             Guid.Empty,
                             getCluster().getSelectedItem().getId(),
                             template);
+
             if (getClusterQuota().getSelectedItem() != null && getClusterQuota().getIsAvailable()) {
                 importVmTemplateParameters.setQuotaId(getClusterQuota().getSelectedItem().getId());
             }

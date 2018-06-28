@@ -19,9 +19,14 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateFromOvaModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplatesModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
@@ -31,10 +36,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportTemplatesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ova.ExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.ImportTemplateFromOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
@@ -66,6 +75,10 @@ public class TemplateModule extends AbstractGinModule {
             final Provider<VmPopupPresenterWidget> createVmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<TemplateListModel> modelProvider,
+            final Provider<ImportTemplatesPopupPresenterWidget> importTemplatesProvider,
+            final Provider<ImportTemplatePopupPresenterWidget> importTemplateFromExportDomainPopupProvider,
+            final Provider<ImportTemplateFromOvaPopupPresenterWidget> importTemplateFromOvaPopupProvider,
+            final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
             final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
             final Provider<VmHighPerformanceConfigurationPresenterWidget> highPerformanceConfigurationProvider) {
@@ -83,6 +96,9 @@ public class TemplateModule extends AbstractGinModule {
                             return exportPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportOvaCommand()) {
                             return exportOvaPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getImportTemplateCommand()
+                                || windowModel instanceof ImportTemplatesModel) {
+                            return importTemplatesProvider.get();
                         } else if (lastExecutedCommand == getModel().getCreateVmFromTemplateCommand()) {
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();
@@ -91,6 +107,10 @@ public class TemplateModule extends AbstractGinModule {
                             } else {
                                 return createVmPopupProvider.get();
                             }
+                        } else if (windowModel instanceof ImportTemplateFromExportDomainModel) {
+                            return importTemplateFromExportDomainPopupProvider.get();
+                        } else if (windowModel instanceof ImportTemplateFromOvaModel) {
+                            return importTemplateFromOvaPopupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }
@@ -106,6 +126,8 @@ public class TemplateModule extends AbstractGinModule {
                         } else if ("OnSaveVm".equals(lastExecutedCommand.getName()) //$NON-NLS-1$
                                 && source.getConfirmWindow() instanceof VmHighPerformanceConfigurationModel) {
                             return highPerformanceConfigurationProvider.get();
+                        } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
+                            return importClonePopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }
@@ -254,6 +276,8 @@ public class TemplateModule extends AbstractGinModule {
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<TemplateListModel, TemplateGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<TemplateListModel, TemplateGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<ImportTemplatesModel, TemplateImportGeneralModel>>(){})
+        .to(new TypeLiteral<DetailTabModelProvider<ImportTemplatesModel, TemplateImportGeneralModel>>(){}).in(Singleton.class);
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel>>(){})
            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>>(){})

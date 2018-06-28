@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplatesModel;
 
 public class ImportCloneModel extends ConfirmationModel {
 
@@ -13,6 +14,16 @@ public class ImportCloneModel extends ConfirmationModel {
     EntityModel<String> name;
 
     private Object entity;
+
+    private ImportTemplatesModel importTemplatesModel;
+
+    public ImportTemplatesModel getImportTemplatesModel() {
+        return importTemplatesModel;
+    }
+
+    public void setImportTemplatesModel(ImportTemplatesModel importTemplatesModel) {
+        this.importTemplatesModel = importTemplatesModel;
+    }
 
     public EntityModel<Boolean> getNoClone() {
         return noClone;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +23,9 @@ import com.google.inject.Inject;
 
 public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
 
-    private String ovaPath;
-    private Guid hostId;
-    private Map<String, String> vmNameToOva;
+    protected String ovaPath;
+    protected Guid hostId;
+    protected Map<String, String> vmNameToOva;
 
     @Inject
     protected ImportVmFromOvaModel(VmImportGeneralModel vmImportGeneralModel,
@@ -64,56 +64,59 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
     }
 
     private List<ActionParametersBase> buildImportVmFromOvaParameters() {
-        ImportVmData importVmData = (ImportVmData) getItems().iterator().next();
-        VM vm = importVmData.getVm();
+        List<ActionParametersBase> prms = new ArrayList<>();
+        for (Object item : getItems()) {
+            ImportVmData importVmData = (ImportVmData) item;
+            VM vm = importVmData.getVm();
 
-        ImportVmFromOvaParameters prm = new ImportVmFromOvaParameters(
-                vm,
-                getStorage().getSelectedItem().getId(),
-                getStoragePool().getId(),
-                getCluster().getSelectedItem().getId());
-        String ovaFilename = vmNameToOva.get(importVmData.getName());
-        prm.setOvaPath(ovaFilename == null ? ovaPath : ovaPath + "/" + ovaFilename); //$NON-NLS-1$
-        prm.setProxyHostId(hostId);
-        prm.setVirtioIsoName(getIso().getIsChangable() && getIso().getSelectedItem() != null ?
-                getIso().getSelectedItem().getRepoImageId() : null);
-        prm.setExternalName(importVmData.getName());
+            ImportVmFromOvaParameters prm = new ImportVmFromOvaParameters(
+                    vm,
+                    getStorage().getSelectedItem().getId(),
+                    getStoragePool().getId(),
+                    getCluster().getSelectedItem().getId());
+            String ovaFilename = vmNameToOva.get(importVmData.getName());
+            prm.setOvaPath(ovaFilename == null ? ovaPath : ovaPath + "/" + ovaFilename); //$NON-NLS-1$
+            prm.setProxyHostId(hostId);
+            prm.setVirtioIsoName(getIso().getIsChangable() && getIso().getSelectedItem() != null ?
+                    getIso().getSelectedItem().getRepoImageId() : null);
+            prm.setExternalName(importVmData.getName());
 
-        if (getClusterQuota().getSelectedItem() != null &&
-                getClusterQuota().getIsAvailable()) {
-            prm.setQuotaId(getClusterQuota().getSelectedItem().getId());
-        }
-
-        CpuProfile cpuProfile = getCpuProfiles().getSelectedItem();
-        if (cpuProfile != null) {
-            prm.setCpuProfileId(cpuProfile.getId());
-        }
-
-        prm.setForceOverride(true);
-        prm.setCopyCollapse(importVmData.getCollapseSnapshots().getEntity());
-
-        for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
-            DiskImage disk = (DiskImage) entry.getValue();
-            ImportDiskData importDiskData = getDiskImportData(disk.getDiskAlias());
-            disk.setVolumeType(getAllocation().getSelectedItem());
-            disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                    disk.getVolumeType(),
-                    getStorage().getSelectedItem().getStorageType()));
-
-            if (getDiskImportData(disk.getDiskAlias()).getSelectedQuota() != null) {
-                disk.setQuotaId(importDiskData.getSelectedQuota().getId());
+            if (getClusterQuota().getSelectedItem() != null &&
+                    getClusterQuota().getIsAvailable()) {
+                prm.setQuotaId(getClusterQuota().getSelectedItem().getId());
             }
+
+            CpuProfile cpuProfile = getCpuProfiles().getSelectedItem();
+            if (cpuProfile != null) {
+                prm.setCpuProfileId(cpuProfile.getId());
+            }
+
+            prm.setForceOverride(true);
+            prm.setCopyCollapse(importVmData.getCollapseSnapshots().getEntity());
+
+            for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
+                DiskImage disk = (DiskImage) entry.getValue();
+                ImportDiskData importDiskData = getDiskImportData(disk.getDiskAlias());
+                disk.setVolumeType(getAllocation().getSelectedItem());
+                disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                        disk.getVolumeType(),
+                        getStorage().getSelectedItem().getStorageType()));
+
+                if (getDiskImportData(disk.getDiskAlias()).getSelectedQuota() != null) {
+                    disk.setQuotaId(importDiskData.getSelectedQuota().getId());
+                }
+            }
+
+            updateNetworkInterfacesForVm(vm.getInterfaces());
+
+            if (importVmData.isExistsInSystem() || importVmData.getClone().getEntity()) {
+                prm.setImportAsNewEntity(true);
+                prm.setCopyCollapse(true);
+            }
+
+            prms.add(prm);
         }
-
-        updateNetworkInterfacesForVm(vm);
-
-        if (importVmData.isExistsInSystem() ||
-                importVmData.getClone().getEntity()) {
-            prm.setImportAsNewEntity(true);
-            prm.setCopyCollapse(true);
-        }
-
-        return Collections.singletonList(prm);
+        return prms;
     }
 
 }

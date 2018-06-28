@@ -103,7 +103,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
 
     @UiField(provided = true)
     @Path(value = "allocation.selectedItem")
-    ListModelListBoxEditor<VolumeType> disksAllocationEditor;
+    protected ListModelListBoxEditor<VolumeType> disksAllocationEditor;
 
     @UiField(provided = true)
     @Path(value = "iso.selectedItem")
@@ -278,7 +278,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         attachDriversEditor.setLabel(constants.attachVirtioDrivers());
     }
 
-    private void initListBoxEditors() {
+    protected void initListBoxEditors() {
         destClusterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Cluster>() {
             @Override
             public String renderNullSafe(Cluster object) {

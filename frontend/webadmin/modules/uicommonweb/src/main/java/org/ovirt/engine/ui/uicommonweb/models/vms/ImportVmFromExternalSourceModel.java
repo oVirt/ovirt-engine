@@ -156,7 +156,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
                 }
             }
 
-            updateNetworkInterfacesForVm(vm);
+            updateNetworkInterfacesForVm(vm.getInterfaces());
 
             if (importVmData.isExistsInSystem() ||
                     importVmData.getClone().getEntity()) {

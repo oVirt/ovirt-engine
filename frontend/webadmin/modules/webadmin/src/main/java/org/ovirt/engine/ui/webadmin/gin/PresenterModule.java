@@ -125,6 +125,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportTemplatesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -224,6 +225,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.ImportTemplateFromOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
@@ -406,6 +408,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.overlay.TagsView;
 import org.ovirt.engine.ui.webadmin.section.main.view.overlay.TasksView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.HostErrataListWithDetailsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportTemplatesPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
@@ -507,6 +510,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.Impor
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmFromExportDomainPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.ImportTemplateFromOvaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
@@ -1673,6 +1677,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ImportTemplatePopupPresenterWidget.class,
                 ImportTemplatePopupPresenterWidget.ViewDef.class,
                 ImportTemplatePopupView.class);
+        bindPresenterWidget(ImportTemplateFromOvaPopupPresenterWidget.class,
+                ImportTemplateFromOvaPopupPresenterWidget.ViewDef.class,
+                ImportTemplateFromOvaPopupView.class);
         bindPresenterWidget(RegisterVmPopupPresenterWidget.class,
                 RegisterVmPopupPresenterWidget.ViewDef.class,
                 RegisterVmPopupView.class);
@@ -1819,6 +1826,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(TemplateEditPresenterWidget.class,
                 TemplateEditPresenterWidget.ViewDef.class,
                 TemplateEditPopupView.class);
+
+        // Import Template
+        bindPresenterWidget(ImportTemplatesPopupPresenterWidget.class,
+                ImportTemplatesPopupPresenterWidget.ViewDef.class,
+                ImportTemplatesPopupView.class);
 
         // Instance Types
         bindPresenterWidget(InstanceTypesPopupPresenterWidget.class,

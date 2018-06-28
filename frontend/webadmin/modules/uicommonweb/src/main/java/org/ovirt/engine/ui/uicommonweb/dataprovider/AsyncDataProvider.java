@@ -725,6 +725,11 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getTemplateList(String searchPattern, AsyncQuery<QueryReturnValue> aQuery) {
+        SearchParameters params = new SearchParameters(searchPattern, SearchType.VmTemplate);
+        Frontend.getInstance().runQuery(QueryType.Search, params, aQuery);
+    }
+
     public void getDataCenterList(AsyncQuery<List<StoragePool>> aQuery) {
         getDataCenterList(aQuery, true);
     }
@@ -2021,6 +2026,16 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(
                 QueryType.GetVmFromConfiguration,
                 new GetVmFromConfigurationQueryParameters(ConfigurationType.OVA, ovf),
+                aQuery);
+    }
+
+    public void getTemplateFromOva(AsyncQuery<QueryReturnValue> aQuery, Guid vdsId, String path) {
+        aQuery.setHandleFailure(true);
+        GetVmFromOvaQueryParameters params = new GetVmFromOvaQueryParameters(vdsId, path);
+        params.setListDirectory(true);
+        Frontend.getInstance().runQuery(
+                QueryType.GetVmTemplateFromOva,
+                params,
                 aQuery);
     }
 

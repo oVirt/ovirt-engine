@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.ImportVmTemplateFromOvaParameters.Pha
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -86,9 +87,15 @@ implements SerialChildExecutingCommand {
         return actionReturnValue.getActionReturnValue();
     }
 
+    @Override
+    protected void updateManagedDeviceMap(DiskImage disk, Map<Guid, VmDevice> managedDeviceMap) {
+        // no-op
+    }
+
     protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
         AddDiskParameters diskParameters = new AddDiskParameters(image.getDiskVmElementForVm(getVmTemplateId()), image);
-        diskParameters.setStorageDomainId(getParameters().getImageToDestinationDomainMap().get(image.getId()));
+        Guid originalId = getNewDiskIdForDisk(image.getId()).getId();
+        diskParameters.setStorageDomainId(getParameters().getImageToDestinationDomainMap().get(originalId));
         diskParameters.setParentCommand(getActionType());
         diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
