@@ -2137,7 +2137,8 @@ public class LibvirtVmXmlBuilder {
                 queues = vnicProfile.getCustomProperties().remove("queues");
             }
 
-            if (queues == null && vmInfoBuildUtils.isInterfaceQueuable(device, nic)) {
+            if (queues == null && vm.getStaticData().isMultiQueuesEnabled()
+                    && vmInfoBuildUtils.isInterfaceQueuable(device, nic)) {
                 queues = String.valueOf(vmInfoBuildUtils.getOptimalNumOfQueuesPerVnic(vm.getNumOfCpus()));
             }
 
