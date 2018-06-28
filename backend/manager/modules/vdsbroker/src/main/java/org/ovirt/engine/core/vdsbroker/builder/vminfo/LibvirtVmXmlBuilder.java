@@ -2108,9 +2108,10 @@ public class LibvirtVmXmlBuilder {
             }
 
             String driverName = getDriverNameForNetwork(!networkless ? network.getName() : "");
-            if (queues != null || driverName != null) {
+            boolean nonDefaultQueues = queues != null && Integer.parseInt(queues) != 1;
+            if (nonDefaultQueues || driverName != null) {
                 writer.writeStartElement("driver");
-                if (queues != null) {
+                if (nonDefaultQueues) {
                     writer.writeAttributeString("queues", queues);
                     if (driverName == null) {
                         driverName = "vhost";
