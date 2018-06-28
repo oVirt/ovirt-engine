@@ -104,8 +104,8 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
                 return getDetailModel().isImage();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.diskVirtualSize(), virtualSize, 7, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.diskActualSize(), actualSize, 8, 0) {
+        formBuilder.addFormItem(new FormItem(constants.diskVirtualSize(), virtualSize, 8, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.diskActualSize(), actualSize, 9, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isImage();
