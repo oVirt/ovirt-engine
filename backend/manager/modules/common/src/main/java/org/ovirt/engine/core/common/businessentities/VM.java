@@ -1790,4 +1790,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setResumeBehavior(VmResumeBehavior resumeBehavior) {
         vmStatic.setResumeBehavior(resumeBehavior);
     }
+
+    public boolean isMultiQueuesEnabled() {
+        return vmStatic.isMultiQueuesEnabled();
+    }
+
+    public void setMultiQueuesEnabled(boolean multiQueuesEnabled) {
+        vmStatic.setMultiQueuesEnabled(multiQueuesEnabled);
+    }
 }
