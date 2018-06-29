@@ -706,7 +706,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         updateVmGuestAgentVersion();
 
         // update dynamic cluster-parameters
-        if (getVm().getCpuName() == null) { // no run-once data -> use static field or inherit from cluster
+
+        // Record the used CPU name, but
+        // - wait when cpu flags passthrough is used as we need
+        //   to select the host first in that case
+        // - keep run-once selection if present
+        if (!getVm().isUsingCpuPassthrough()
+                && getVm().getCpuName() == null) {
             if (getVm().getCustomCpuName() != null) {
                 getVm().setCpuName(getVm().getCustomCpuName());
             } else {
@@ -716,6 +722,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getVm().getCompatibilityVersion()));
             }
         }
+
+
         if (getVm().getEmulatedMachine() == null) {
             getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
         }
@@ -829,6 +837,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             log.error("VmHandler::{}: {}", getClass().getName(), outEx.getMessage());
             return false;
         }
+
+        // CPU flags passthrough is special and does not use
+        // the cpuName so we can store the flags used for
+        // starting the VM here (scheduler needs those for
+        // checking migration compatibility in the future)
+        if (getVm().isUsingCpuPassthrough()) {
+            getVm().setCpuName(getVds().getCpuFlags());
+            getVm().setUseHostCpuFlags(true);
+        }
+
         return true;
     }
 

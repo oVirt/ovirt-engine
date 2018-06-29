@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -43,8 +48,41 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         List<VDS> hostsToRunOn = new ArrayList<>();
+
+        // CPU passthrough VM can be started everywhere
+        if (vm.getRunOnVds() == null && vm.isUsingCpuPassthrough()) {
+            hostsToRunOn.addAll(hosts);
+            return hostsToRunOn;
+        }
+
         String customCpu; // full name of the vm cpu
         Version latestVer = cpuFlagsManagerHandler.getLatestDictionaryVersion();
+
+        // Migration checks for a VM with CPU passthrough
+        // TODO figure out how to handle hostModel
+        if (vm.isUsingCpuPassthrough()
+                && Objects.nonNull(vm.getCpuName())) {
+            log.info("VM uses CPU flags passthrough, checking flag compatiblity with {}", vm.getCpuName());
+            Set<String> requiredFlags = Arrays.stream(vm.getCpuName().split(","))
+                    .collect(Collectors.toSet());
+
+            for (VDS host : hosts) {
+                Set<String> providedFlags = Arrays.stream(host.getCpuFlags().split(","))
+                        .collect(Collectors.toSet());
+                Set<String> missingFlags = new HashSet<>(requiredFlags);
+                missingFlags.removeAll(providedFlags);
+
+                log.info("Host {} provides flags {}", host.getName(), String.join(", ", providedFlags));
+
+                if (missingFlags.isEmpty()) {
+                    hostsToRunOn.add(host);
+                } else {
+                    log.info("Host {} can't host the VM, flags are missing: {}",
+                            host.getName(), String.join(", ", missingFlags));
+                }
+            }
+            return hostsToRunOn;
+        }
 
         /* get required cpu name */
         if (StringUtils.isNotEmpty(vm.getCpuName())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster

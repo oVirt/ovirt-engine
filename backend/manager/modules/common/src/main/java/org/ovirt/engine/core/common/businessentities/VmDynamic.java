@@ -61,8 +61,17 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private boolean runOnce;
     @UnchangeableByVdsm
     private boolean volatileRun;
+
+    /**
+     * cpuName contains one of two possible values:
+     *
+     * - CpuId VDSM verb for standard VMs (model + extra flags)
+     * - List of host CPU flags present on the host where
+     *   the VM was started for VMs with CPU flag passthrough
+     */
     @UnchangeableByVdsm
     private String cpuName;
+
     @UnchangeableByVdsm
     private GuestAgentStatus guestAgentStatus;
     @UnchangeableByVdsm

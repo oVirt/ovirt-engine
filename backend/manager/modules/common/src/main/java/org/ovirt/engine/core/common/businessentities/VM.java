@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.Valid;
 
@@ -1805,5 +1806,9 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public void setRuntimeName(String runtimeName) {
         vmDynamic.setRuntimeName(runtimeName);
+    }
+
+    public boolean isUsingCpuPassthrough() {
+        return isUseHostCpuFlags() || Objects.equals(getCustomCpuName(), "hostPassthrough");
     }
 }

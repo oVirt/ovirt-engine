@@ -56,8 +56,16 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         super.init();
-        if (getParameters().getCustomCpuName() != null) {
-            getVm().setCpuName(getParameters().getCustomCpuName());
+        String vmClusterCpuName = getCpuFlagsManagerHandler().getCpuId(getVm().getClusterCpuName(), getVm().getCompatibilityVersion());
+        if (getParameters().getCustomCpuName() != null && !getParameters().getCustomCpuName().equals(
+                getVm().getCustomCpuName() != null ?
+                        getVm().getCustomCpuName() :
+                        vmClusterCpuName)) {
+            // The user overrode CPU name, drop the CPU passthrough flags
+            // and do what the user wanted.
+            getVm().setUseHostCpuFlags(false);
+
+            getVm().setCustomCpuName(getParameters().getCustomCpuName());
         }
         if (getParameters().getCustomEmulatedMachine() != null) {
             getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
