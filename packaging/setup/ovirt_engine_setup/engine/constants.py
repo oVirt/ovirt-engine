@@ -363,7 +363,7 @@ class Defaults(object):
         'ovirt-host-deploy'
         ',ovirt-engine-cli'
         ',ovirt-iso-uploader'
-        ',ovirt-engine-dashboard'
+        ',ovirt-engine-ui-extensions'
         ',ovirt-web-ui'
     )
 

@@ -265,7 +265,7 @@ class Const(object):
             '-tools',
             '-tools-backup',
             '-webadmin-portal',
-            '-dashboard',
+            '-ui-extensions',
         )
 
     FILE_GROUP_SECTION_PREFIX = 'file_group_'
