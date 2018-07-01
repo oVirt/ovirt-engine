@@ -84,6 +84,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private List<GuestContainer> guestContainers;
     @UnchangeableByVdsm
     private Map<String, String> leaseInfo;
+    @UnchangeableByVdsm
+    private String runtimeName;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
 
@@ -683,6 +685,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setLeaseInfo(Map<String, String> leaseInfo) {
         this.leaseInfo = leaseInfo;
+    }
+
+    public String getRuntimeName() {
+        return runtimeName;
+    }
+
+    public void setRuntimeName(String runtimeName) {
+        this.runtimeName = runtimeName;
     }
 
     /**

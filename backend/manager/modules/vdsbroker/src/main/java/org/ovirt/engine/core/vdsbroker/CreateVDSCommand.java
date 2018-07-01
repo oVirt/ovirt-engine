@@ -50,6 +50,7 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
                 if (vmIsBooting) {
                     vm.setBootTime(now);
                     vm.setDowntime(0);
+                    vm.setRuntimeName(vm.getName());
                 } else {
                     vm.setDowntime(vm.getDowntime() + now.getTime() - getParameters().getDownSince().getTime());
                 }

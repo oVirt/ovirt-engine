@@ -1786,4 +1786,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setResumeBehavior(VmResumeBehavior resumeBehavior) {
         vmStatic.setResumeBehavior(resumeBehavior);
     }
+
+    public String getRuntimeName() {
+        return vmDynamic.getRuntimeName();
+    }
+
+    public void setRuntimeName(String runtimeName) {
+        vmDynamic.setRuntimeName(runtimeName);
+    }
 }

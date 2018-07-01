@@ -302,6 +302,7 @@ public class ResourceManager implements BackendService {
                 if (status == VMStatus.Down) {
                     vm.setBootTime(null);
                     vm.setDowntime(0);
+                    vm.setRuntimeName(null);
                 }
             }
         }
