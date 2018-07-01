@@ -111,5 +111,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String testImageIOProxyConnectionFailure(String location);
 
     String clusterDefaultRouteCompatibility(String version);
+
+    String vmRunsWithDifferentName(String runtimeName);
 }
 
