@@ -179,7 +179,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
     }
 
     protected void executeImport() {
-        importModel.importVms(
+        importModel.executeImport(
                 result -> {
 
                     getWindow().stopProgress();

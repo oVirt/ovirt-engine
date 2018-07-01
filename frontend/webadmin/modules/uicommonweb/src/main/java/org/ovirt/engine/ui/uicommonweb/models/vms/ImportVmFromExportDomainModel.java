@@ -404,7 +404,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 && getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED;
     }
 
-    public void importVms(IFrontendMultipleActionAsyncCallback callback) {
+    public void executeImport(IFrontendMultipleActionAsyncCallback callback) {
         startProgress();
         Frontend.getInstance().runMultipleAction(
                 ActionType.ImportVm,

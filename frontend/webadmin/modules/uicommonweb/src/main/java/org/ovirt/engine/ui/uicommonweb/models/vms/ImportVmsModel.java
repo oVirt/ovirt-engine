@@ -1005,7 +1005,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             return;
         }
 
-        selectedImportVmModel.importVms(callback);
+        selectedImportVmModel.executeImport(callback);
     }
 
     public EntityModel<String> getEsx() {

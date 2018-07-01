@@ -51,7 +51,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private UICommand closeCommand;
     private List<VM> vmsFromDB;
 
-    public abstract void importVms(IFrontendMultipleActionAsyncCallback callback);
+    public abstract void executeImport(IFrontendMultipleActionAsyncCallback callback);
     public abstract boolean validate();
     public abstract void init(final List<VM> externalVms, final Guid dataCenterId);
     protected final IEventListener<EventArgs> clusterChangedListener = new IEventListener<EventArgs>() {

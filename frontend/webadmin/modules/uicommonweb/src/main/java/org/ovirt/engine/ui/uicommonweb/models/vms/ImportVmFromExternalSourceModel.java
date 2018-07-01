@@ -97,7 +97,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
     }
 
     @Override
-    public void importVms(IFrontendMultipleActionAsyncCallback callback) {
+    public void executeImport(IFrontendMultipleActionAsyncCallback callback) {
         Frontend.getInstance().runMultipleAction(
                 ActionType.ImportVmFromExternalProvider,
                 buildImportVmFromExternalProviderParameters(),

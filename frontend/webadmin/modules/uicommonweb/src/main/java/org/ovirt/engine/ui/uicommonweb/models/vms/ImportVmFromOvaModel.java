@@ -54,7 +54,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
     }
 
     @Override
-    public void importVms(IFrontendMultipleActionAsyncCallback callback) {
+    public void executeImport(IFrontendMultipleActionAsyncCallback callback) {
         Frontend.getInstance().runMultipleAction(
                 ActionType.ImportVmFromOva,
                 buildImportVmFromOvaParameters(),
