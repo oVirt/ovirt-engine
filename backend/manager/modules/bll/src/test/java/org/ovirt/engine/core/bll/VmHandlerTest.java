@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,19 +31,6 @@ public class VmHandlerTest {
     @BeforeEach
     public void setUp() {
         vmHandler.init();
-    }
-
-    @Test
-    public void testUpdateFieldsNameInStatusUp() {
-        VmStatic src = new VmStatic();
-        src.setName(RandomUtils.instance().nextString(10));
-        src.setInterfaces(new ArrayList<>(2));
-
-        VmStatic dest = new VmStatic();
-        dest.setName(RandomUtils.instance().nextString(10));
-
-        assertFalse(
-                vmHandler.isUpdateValid(src, dest), "Update should not be valid for different names");
     }
 
     @Test

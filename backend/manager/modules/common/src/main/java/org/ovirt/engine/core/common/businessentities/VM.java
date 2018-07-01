@@ -1798,4 +1798,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setMultiQueuesEnabled(boolean multiQueuesEnabled) {
         vmStatic.setMultiQueuesEnabled(multiQueuesEnabled);
     }
+
+    public String getRuntimeName() {
+        return vmDynamic.getRuntimeName();
+    }
+
+    public void setRuntimeName(String runtimeName) {
+        vmDynamic.setRuntimeName(runtimeName);
+    }
 }

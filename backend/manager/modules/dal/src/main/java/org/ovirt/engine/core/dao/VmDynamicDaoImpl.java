@@ -166,6 +166,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("app_list", vm.getAppList())
                 .addValue("guest_cur_user_name", vm.getGuestCurrentUserName())
                 .addValue("console_cur_user_name", vm.getConsoleCurrentUserName())
+                .addValue("runtime_name", vm.getRuntimeName())
                 .addValue("console_user_id", vm.getConsoleUserId())
                 .addValue("guest_os", vm.getGuestOs())
                 .addValue("migrating_to_vds", vm.getMigratingToVds())
@@ -244,6 +245,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setAppList(rs.getString("app_list"));
         entity.setGuestCurrentUserName(rs.getString("guest_cur_user_name"));
         entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));
+        entity.setRuntimeName(rs.getString("runtime_name"));
         entity.setConsoleUserId(getGuid(rs, "console_user_id"));
         entity.setGuestOs(rs.getString("guest_os"));
         entity.setMigratingToVds(getGuid(rs, "migrating_to_vds"));
