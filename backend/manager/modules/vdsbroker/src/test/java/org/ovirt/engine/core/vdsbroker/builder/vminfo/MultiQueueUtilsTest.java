@@ -39,19 +39,17 @@ public class MultiQueueUtilsTest {
         // Plugged, interface + birdge, pv
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(Guid.newGuid(), Guid.newGuid()));
-        assertTrue(underTest.isInterfaceQueuable(createVmDevice(/*plugged*/true, /*bridge*/true), createVmNic(/*type*/VmInterfaceType.pv)));
-        assertFalse(underTest.isInterfaceQueuable(createVmDevice(/*plugged*/false, /*bridge*/true), createVmNic(/*type*/VmInterfaceType.pv)));
-        assertFalse(underTest.isInterfaceQueuable(createVmDevice(/*plugged*/true, /*bridge*/false), createVmNic(/*type*/VmInterfaceType.pciPassthrough)));
-        assertFalse(underTest.isInterfaceQueuable(createVmDevice(/*plugged*/true, /*bridge*/true), createVmNic(/*type*/VmInterfaceType.e1000)));
+        assertTrue(underTest.isInterfaceQueuable(createVmDevice(/*bridge*/true), createVmNic(/*type*/VmInterfaceType.pv)));
+        assertFalse(underTest.isInterfaceQueuable(createVmDevice(/*bridge*/false), createVmNic(/*type*/VmInterfaceType.pciPassthrough)));
+        assertFalse(underTest.isInterfaceQueuable(createVmDevice(/*bridge*/true), createVmNic(/*type*/VmInterfaceType.e1000)));
     }
 
     private Guid nicId;
 
-    private VmDevice createVmDevice(boolean plugged, boolean bridge) {
+    private VmDevice createVmDevice(boolean bridge) {
         VmDevice vmDevice = new VmDevice();
         nicId = Guid.newGuid();
         vmDevice.setId(new VmDeviceId(Guid.newGuid(), nicId));
-        vmDevice.setPlugged(plugged);
         vmDevice.setType(VmDeviceGeneralType.INTERFACE);
         vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
         return vmDevice;

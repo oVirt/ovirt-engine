@@ -13,7 +13,7 @@ public class MultiQueueUtils {
     private static final int OPTIMAL_NUM_OF_QUEUES_PER_VNIC = 4;
 
     public boolean isInterfaceQueuable(VmDevice vmDevice, VmNic vmNic) {
-        return vmDevice.isPlugged() && VmDeviceCommonUtils.isBridge(vmDevice) && vmNic.getType() != null
+        return VmDeviceCommonUtils.isBridge(vmDevice) && vmNic.getType() != null
                 && VmInterfaceType.forValue(vmNic.getType()) == VmInterfaceType.pv;
     }
 
