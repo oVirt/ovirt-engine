@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VmStatusCell;
 
@@ -28,7 +29,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public VmStatusColumn() {
         super(new VmStatusCell());
@@ -94,6 +95,10 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
                     tooltip += "<br/><br/>" + constants.guestAgentNotAvailable(); //$NON-NLS-1$
                 }
             }
+
+            if (isNameChanged(vm)) {
+                tooltip += "<br/><br/>" + messages.vmRunsWithDifferentName(vm.getRuntimeName()); //$NON-NLS-1$
+            }
         }
 
         if (tooltip != null) {
@@ -112,7 +117,7 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
         if (vm.getStatus() == VMStatus.Up) {
             alertRequired = !hasGuestAgent(vm) || hasDifferentTimezone(vm) || hasDifferentOSType(vm);
         }
-        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm)  || hasIllegalImages(vm);
+        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm)  || hasIllegalImages(vm) || isNameChanged(vm);
     }
 
     private static boolean hasDifferentOSType(VM vm) {
@@ -138,6 +143,10 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
             }
         }
         return false;
+    }
+
+    private static boolean isNameChanged(VM vm) {
+        return vm.getRuntimeName() != null && !vm.getRuntimeName().equals(vm.getName());
     }
 
     private static boolean isUpdateNeeded(VM vm) {
