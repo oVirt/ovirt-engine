@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,19 +27,15 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalLogicalVolume;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalPhysicalVolume;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalVolumeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVDOVolume;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
@@ -54,7 +47,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
-import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -69,9 +61,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
-import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -97,9 +86,7 @@ public class GlusterSyncJob extends GlusterJob {
     @Inject
     private AlertDirector alertDirector;
     @Inject
-    private StorageDomainDynamicDao storageDomainDynamicDao;
-    @Inject
-    private StorageServerConnectionDao storageServerConnectionDao;
+    private GlusterThinDeviceService thinDeviceService;
 
     @Override
     public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
@@ -972,44 +959,8 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private Map<Guid, GlusterLocalVolumeInfo> getLocalVolumeInfo(Guid clusterId) {
-        Map<Guid, GlusterLocalVolumeInfo> localVolumeInfoMap = new HashMap<>();
-        for (VDS vds : vdsDao.getAllForCluster(clusterId)) {
-            if (vds.getStatus() != VDSStatus.Up) {
-                continue;
-            }
-            try {
-                log.debug("Getting LVM/VDO information for the host {}", vds.getName());
-                GlusterLocalVolumeInfo localVolumeInfo = new GlusterLocalVolumeInfo();
-                VDSReturnValue
-                        logicalVolumesResult = runVdsCommand(
-                        VDSCommandType.GetGlusterLocalLogicalVolumeList,
-                        new VdsIdVDSCommandParametersBase(vds.getId()));
-                if (logicalVolumesResult.getSucceeded()) {
-                    localVolumeInfo.setLogicalVolumes((List<GlusterLocalLogicalVolume>) logicalVolumesResult.getReturnValue());
-                }
-                VDSReturnValue physicalVolumesResult = runVdsCommand(
-                        VDSCommandType.GetGlusterLocalPhysicalVolumeList,
-                        new VdsIdVDSCommandParametersBase(vds.getId()));
-                if (physicalVolumesResult.getSucceeded()) {
-                    localVolumeInfo.setPhysicalVolumes((List<GlusterLocalPhysicalVolume>) physicalVolumesResult.getReturnValue());
-                }
-                VDSReturnValue vdoVolumesResult = runVdsCommand(
-                        VDSCommandType.GetGlusterVDOVolumeList,
-                        new VdsIdVDSCommandParametersBase(vds.getId()));
-                if (vdoVolumesResult.getSucceeded()) {
-                    localVolumeInfo.setVdoVolumes((List<GlusterVDOVolume>) vdoVolumesResult.getReturnValue());
-                }
-                localVolumeInfoMap.put(vds.getId(), localVolumeInfo);
-            } catch (Exception ex) {
-                log.debug("Getting VDSM/VDO information failed at host {}, old vdsm?", vds.getName());
-            }
-        }
-        return localVolumeInfoMap;
-    }
-
     public void refreshVolumeDetails(VDS upServer, GlusterVolumeEntity volume) {
-        Map<Guid, GlusterLocalVolumeInfo> localVolumeInfo = getLocalVolumeInfo(upServer.getClusterId());
+        Map<Guid, GlusterLocalVolumeInfo> localVolumeInfo = thinDeviceService.getLocalVolumeInfo(upServer.getClusterId());
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName());
         if (volumeAdvancedDetails == null) {
             log.error("Error while refreshing brick statuses for volume '{}'. Failed to get volume advanced details ",
@@ -1032,19 +983,7 @@ public class GlusterSyncJob extends GlusterJob {
         for (GlusterBrickEntity brick : volume.getBricks()) {
             BrickProperties brickProperties = brickPropertiesMap.get(brick.getId());
             if (brickProperties != null) {
-                if (brickProperties.getDevice() != null && localVolumeInfo.get(brick.getServerId()) != null) {
-                    brickProperties.setConfirmedFreeSize(
-                            localVolumeInfo.get(brick.getServerId())
-                                    .getAvailableThinSizeForDevice(brickProperties.getDevice())
-                                    .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElse(null)
-                    );
-
-                    brickProperties.setConfirmedTotalSize(
-                            localVolumeInfo.get(brick.getServerId())
-                                    .getTotalThinSizeForDevice(brickProperties.getDevice())
-                                    .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElse(null)
-                    );
-                }
+                brickProperties = thinDeviceService.setConfirmedSize(localVolumeInfo, brick, brickProperties);
                 if (brickProperties.getStatus() != brick.getStatus()) {
                     logBrickStatusChange(volume, brick, brickProperties.getStatus());
                     brick.setStatus(brickProperties.getStatus());
@@ -1077,7 +1016,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshVolumeCapacity(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
-        Long confirmedFreeSize = calculateConfirmedVolumeCapacity(volume);
+        Long confirmedFreeSize = thinDeviceService.calculateConfirmedVolumeCapacity(volume);
         if (volume.getAdvancedDetails().getCapacityInfo() == null) {
             volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         } else {
@@ -1085,83 +1024,11 @@ public class GlusterSyncJob extends GlusterJob {
             volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         }
         if (confirmedFreeSize != null) {
-            Long confirmedTotalSize = calculateConfirmedVolumeTotal(volume);
-            Double percentUsedSize = (1-(confirmedFreeSize.doubleValue() / confirmedTotalSize)) * 100;
-
-            List<Guid> sdId = storageDomainStaticDao.getAllForStoragePool(clusterDao.get(volume.getClusterId()).getStoragePoolId())
-                    .stream()
-                    .map(StorageDomainStatic::getId)
-                    .filter(sd -> storageServerConnectionDao.getAllForDomain(sd)
-                            .stream()
-                            .anyMatch(c -> volume.getId().equals(c.getGlusterVolumeId())))
-                    .collect(Collectors.toList());
-
-            sdId.stream().map(i -> storageDomainDynamicDao.get(i))
-                    .forEach(d -> {
-                        int confirmedFreeSizeInGb = (int) (confirmedFreeSize / SizeConverter.BYTES_IN_GB);
-                        if (confirmedFreeSizeInGb > d.getAvailableDiskSize()) {
-                            confirmedFreeSizeInGb = d.getAvailableDiskSize();
-                        }
-                        d.setConfirmedAvailableDiskSize(confirmedFreeSizeInGb);
-                        storageDomainDynamicDao.updateConfirmedSize(d);
-                    });
-
-            sdId.stream()
-                    .map(storageDomainStaticDao::get)
-                    .filter(s -> s.getWarningLowConfirmedSpaceIndicator() != null)
-                    .filter(s -> s.getWarningLowConfirmedSpaceIndicator() < percentUsedSize)
-                    .forEach(sd -> {
-                        AuditLogable event = new AuditLogableImpl();
-                        event.setStorageDomainId(sd.getId());
-                        event.setStorageDomainName(sd.getName());
-                        event.setRepeatable(true);
-                        event.addCustomValue("DiskSpace", String.valueOf(confirmedFreeSize / SizeConverter.BYTES_IN_GB));
-
-                        auditLogDirector.log(event, AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW);
-                    });
+            List<Guid> sdId = thinDeviceService.getVolumeStorageDomains(volume);
+            thinDeviceService.setDomainConfirmedFreeSize(confirmedFreeSize, sdId);
+            thinDeviceService.sendLowConfirmedSpaceEvent(confirmedFreeSize, volume, sdId);
 
         }
-    }
-
-    private Long calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, Double> field) {
-        List<BrickProperties> bricks = volume.getBricks().stream()
-                .map(GlusterBrickEntity::getId)
-                .map(b -> brickDao.getById(b))
-                .filter(Objects::nonNull)
-                .map(GlusterBrickEntity::getBrickProperties)
-                .collect(Collectors.toList());
-
-        if (bricks.stream().map(BrickProperties::getConfirmedFreeSize).anyMatch(Objects::isNull)) {
-            //If we have bricks missing confirmed size, we can't calculate it for the volume.
-            log.info("Volume {} have non-thin bricks, skipping confirmed free size calculation", volume.getName());
-            return null;
-        }
-
-        Stream<Double> brickSizes = bricks.stream()
-                .map(field)
-                .map(v -> v*1024*1024);
-
-        switch (volume.getVolumeType()) {
-        case REPLICATE:
-            return brickSizes.map(Double::longValue).min(Long::compare).orElse(null);
-        case DISTRIBUTE:
-        case DISTRIBUTED_REPLICATE:
-        case STRIPE:
-        case DISTRIBUTED_STRIPE:
-        case STRIPED_REPLICATE:
-        case DISTRIBUTED_STRIPED_REPLICATE:
-        case DISPERSE:
-        default:
-            return brickSizes.mapToLong(Double::longValue).sum();
-        }
-    }
-
-    private Long calculateConfirmedVolumeCapacity(GlusterVolumeEntity volume) {
-        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedFreeSize);
-    }
-
-    private Long calculateConfirmedVolumeTotal(GlusterVolumeEntity volume) {
-        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedTotalSize);
     }
 
     private void logBrickStatusChange(GlusterVolumeEntity volume, final GlusterBrickEntity brick, final GlusterStatus fetchedStatus) {
