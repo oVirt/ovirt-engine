@@ -140,6 +140,7 @@ public class GlusterThinDeviceService {
             brickProperties.setConfirmedTotalSize(localVolumeInfo.getTotalThinSizeForDevice(brickProperties.getDevice())
                             .map(this::toMB).orElse(null)
             );
+            brickProperties.setVdoSavings(localVolumeInfo.getSavingsForDevice(brickProperties.getDevice()).orElse(null));
         }
         return brickProperties;
     }

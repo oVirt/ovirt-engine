@@ -58,6 +58,7 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
         brickProperties.setConfirmedTotalSize(
                 (rs.getObject("confirmed_total_space") != null) ?
                         rs.getDouble("confirmed_total_space") / SizeConverter.BYTES_IN_MB : null);
+        brickProperties.setVdoSavings(rs.getInt("vdo_savings"));
         return brickProperties;
     };
 
@@ -336,7 +337,8 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                         (brickProperties.getTotalSize() - brickProperties.getFreeSize()) * SizeConverter.BYTES_IN_MB)
                 .addValue("free_space", brickProperties.getFreeSize() * SizeConverter.BYTES_IN_MB)
                 .addValue("confirmed_free_space", confirmedFreeSize)
-                .addValue("confirmed_total_space", confirmedTotalSize);
+                .addValue("confirmed_total_space", confirmedTotalSize)
+                .addValue("vdo_savings", brickProperties.getVdoSavings());
     }
 
     private MapSqlParameterSource createBrickIdParams(Guid brickId) {
