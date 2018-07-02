@@ -233,6 +233,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         newVmStatic = getParameters().getVmStaticData();
         if (isRunningConfigurationNeeded()) {
+            logNameChange();
             vmHandler.createNextRunSnapshot(
                     getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
             vmHandler.setVmDestroyOnReboot(getVm());
@@ -301,6 +302,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         checkTrustedService();
         liveUpdateCpuProfile();
         setSucceeded(true);
+    }
+
+    private void logNameChange() {
+        String runtimeName = vmDynamicDao.get(getVmId()).getRuntimeName();
+        String newName = newVmStatic.getName();
+        if (!newName.equals(oldVm.getName()) && !newName.equals(runtimeName)) {
+            log.info("changing the name of a vm that started as {} to {}", runtimeName, newName);
+        }
     }
 
     private boolean updateVmLease() {
