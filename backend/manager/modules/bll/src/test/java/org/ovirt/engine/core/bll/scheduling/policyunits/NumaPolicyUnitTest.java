@@ -1,0 +1,255 @@
+package org.ovirt.engine.core.bll.scheduling.policyunits;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.scheduling.PerHostMessages;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class NumaPolicyUnitTest {
+
+    private static long NODE_SIZE = 1024;
+
+    @Mock
+    public VmNumaNodeDao vmNumaNodeDao;
+
+    @Mock
+    public VdsNumaNodeDao vdsNumaNodeDao;
+
+    public VM vm;
+
+    public VDS hostWithoutNuma;
+    public VDS hostTwoNodes;
+    public VDS hostFourNodes;
+
+    public List<VDS> hosts;
+
+    public PendingResourceManager pendingResourceManager = new PendingResourceManager();
+
+    @InjectMocks
+    public NumaPolicyUnit unit = new NumaPolicyUnit(null, pendingResourceManager);
+
+    @BeforeEach
+    public void setUp() {
+        vm = new VM();
+        vm.setId(Guid.newGuid());
+        vm.setNumaTuneMode(NumaTuneMode.STRICT);
+        vm.setvNumaNodeList(new ArrayList<>());
+
+        doAnswer(arg -> vm.getvNumaNodeList()).when(vmNumaNodeDao).getAllVmNumaNodeByVmId(any(Guid.class));
+
+        hostWithoutNuma = createHost(0, NODE_SIZE);
+        hostTwoNodes = createHost(2, NODE_SIZE);
+        hostFourNodes = createHost(4, NODE_SIZE);
+
+        hosts = Arrays.asList(hostWithoutNuma, hostTwoNodes, hostFourNodes);
+
+        doAnswer(invocation -> hosts.stream()
+                .filter(h -> h.getId().equals((Guid) invocation.getArgument(0)))
+                .findAny()
+                .map(VDS::getNumaNodeList).orElse(Collections.emptyList())
+        ).when(vdsNumaNodeDao).getAllVdsNumaNodeByVdsId(any(Guid.class));
+    }
+
+    @Test
+    public void testNoNumaNodes() {
+        vm.setvNumaNodeList(Collections.emptyList());
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostWithoutNuma, hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
+    public void testInterleaveMode() {
+        vm.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE, 0, Arrays.asList(0))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostWithoutNuma, hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
+    public void testNumaNodesWithoutPinning() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE, 0, Collections.emptyList()),
+                createVmNode(NODE_SIZE, 1, Collections.emptyList())
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostWithoutNuma, hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
+    public void testNodePinnedToFirst() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE, 0, Arrays.asList(0))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
+    public void testNodePinnedToFourth() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE, 0, Arrays.asList(3))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostFourNodes);
+    }
+
+    @Test
+    public void testThreeNodes() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE, 0, Arrays.asList(0)),
+                createVmNode(NODE_SIZE, 1, Arrays.asList(1)),
+                createVmNode(NODE_SIZE, 2, Arrays.asList(2))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostFourNodes);
+    }
+
+    @Test
+    public void testSmallNodesPinnedToOne() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE / 4, 0, Arrays.asList(0)),
+                createVmNode(NODE_SIZE / 4, 1, Arrays.asList(0)),
+                createVmNode(NODE_SIZE / 4, 2, Arrays.asList(0))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
+    public void testSmallNodesPinnedToOneFail() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE / 4, 0, Arrays.asList(0)),
+                createVmNode(NODE_SIZE / 4, 1, Arrays.asList(0)),
+                createVmNode(NODE_SIZE / 4, 2, Arrays.asList(0)),
+
+                createVmNode(NODE_SIZE / 4, 3, Arrays.asList(0)),
+                createVmNode(NODE_SIZE / 4, 3, Arrays.asList(0)),
+                createVmNode(NODE_SIZE / 4, 4, Arrays.asList(0))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).isEmpty();
+    }
+
+    @Test
+    public void testSmallNodesPinnedToTwo() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE / 4, 0, Arrays.asList(0, 1)),
+                createVmNode(NODE_SIZE / 4, 1, Arrays.asList(0, 1)),
+                createVmNode(NODE_SIZE / 4, 2, Arrays.asList(0, 1)),
+
+                createVmNode(NODE_SIZE / 4, 3, Arrays.asList(0, 1)),
+                createVmNode(NODE_SIZE / 4, 4, Arrays.asList(0, 1)),
+                createVmNode(NODE_SIZE / 4, 5, Arrays.asList(0, 1))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
+    public void testSmallNodesPinnedToFour() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE / 4, 0, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 1, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 2, Arrays.asList(0, 1, 2, 3)),
+
+                createVmNode(NODE_SIZE / 4, 3, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 4, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 5, Arrays.asList(0, 1, 2, 3))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostFourNodes);
+    }
+
+    @Test
+    public void testManySmallNodesPinnedToFour() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE / 4, 0, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 1, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 2, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 3, Arrays.asList(0, 1, 2, 3)),
+
+                createVmNode(NODE_SIZE / 4, 4, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 5, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 6, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 7, Arrays.asList(0, 1, 2, 3)),
+
+                createVmNode(NODE_SIZE / 4, 8, Arrays.asList(0, 1, 2, 3)),
+                createVmNode(NODE_SIZE / 4, 9, Arrays.asList(0, 1, 2, 3))
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostFourNodes);
+    }
+
+    private List<VDS> filter() {
+        return unit.filter(null, hosts, vm, null, new PerHostMessages());
+    }
+
+    private VmNumaNode createVmNode(long size, int index, List<Integer> pinnedList) {
+        VmNumaNode node = new VmNumaNode();
+        node.setId(Guid.newGuid());
+        node.setIndex(index);
+        node.setMemTotal(size);
+        node.setVdsNumaNodeList(pinnedList);
+        return node;
+    }
+
+    private VDS createHost(int nodeCount, long nodeSize) {
+        VDS host = new VDS();
+        host.setId(Guid.newGuid());
+        host.setNumaNodeList(new ArrayList<>());
+        host.setNumaSupport(nodeCount > 0);
+
+        for (int i = 0; i < nodeCount; ++i) {
+            VdsNumaNode node = new VdsNumaNode();
+            node.setId(Guid.newGuid());
+            node.setIndex(i);
+            node.setMemTotal(nodeSize);
+
+            node.setNumaNodeStatistics(new NumaNodeStatistics());
+            node.getNumaNodeStatistics().setMemFree(nodeSize);
+
+            host.getNumaNodeList().add(node);
+        }
+
+        return host;
+    }
+}

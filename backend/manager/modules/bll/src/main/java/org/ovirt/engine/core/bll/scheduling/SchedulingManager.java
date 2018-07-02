@@ -38,17 +38,22 @@ import org.ovirt.engine.core.bll.scheduling.external.WeightResultEntry;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingNumaMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
+import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -68,6 +73,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -112,6 +119,10 @@ public class SchedulingManager implements BackendService {
     private ExternalSchedulerBroker externalBroker;
     @Inject
     private VfScheduler vfScheduler;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
@@ -348,19 +359,7 @@ public class SchedulingManager implements BackendService {
             Optional<Guid> bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
             if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
                 Guid bestHostId = bestHost.get();
-                getPendingResourceManager().addPending(new PendingCpuCores(bestHostId, vm, vm.getNumOfCpus()));
-                getPendingResourceManager().addPending(new PendingMemory(bestHostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
-                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
-                getPendingResourceManager().addPending(new PendingVM(bestHostId, vm));
-
-                // Add pending records for all specified hugepage sizes
-                for (Map.Entry<Integer, Integer> hugepage: HugePageUtils.getHugePages(vm.getStaticData()).entrySet()) {
-                    getPendingResourceManager().addPending(new PendingHugePages(bestHostId, vm,
-                            hugepage.getKey(), hugepage.getValue()));
-                }
-
-                getPendingResourceManager().notifyHostManagers(bestHostId);
-
+                addPendingResources(vm, bestHostId);
                 markVfsAsUsedByVm(vm, bestHostId);
             }
 
@@ -373,6 +372,60 @@ public class SchedulingManager implements BackendService {
             releaseCluster(cluster.getId());
 
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
+        }
+    }
+
+    private void addPendingResources(VM vm, Guid hostId) {
+        getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, vm.getNumOfCpus()));
+        getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
+        getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
+        getPendingResourceManager().addPending(new PendingVM(hostId, vm));
+
+        addPendingNumaMemory(vm, hostId);
+
+        // Add pending records for all specified hugepage sizes
+        for (Map.Entry<Integer, Integer> hugepage: HugePageUtils.getHugePages(vm.getStaticData()).entrySet()) {
+            getPendingResourceManager().addPending(new PendingHugePages(hostId, vm,
+                    hugepage.getKey(), hugepage.getValue()));
+        }
+
+        getPendingResourceManager().notifyHostManagers(hostId);
+    }
+
+    /**
+     * Adds NUMA node assignment to pending resources.
+     *
+     * The assignment is only one of the possible assignments.
+     * The real one used by libvirt can be different, but the engine does not know it.
+     *
+     * When starting many VMs with NUMA pinning, it may happen that some of them will
+     * not pass scheduling, even if they could fit on the host.
+     */
+    private void addPendingNumaMemory(VM vm, Guid hostId) {
+        if (vm.getNumaTuneMode() != NumaTuneMode.STRICT) {
+            return;
+        }
+
+        List<VmNumaNode> vmNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
+        List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(hostId);
+
+        Optional<Map<Integer, Integer>> nodeAssignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
+        if (!nodeAssignment.isPresent()) {
+            return;
+        }
+
+        Map<Integer, Long> hostNodePending = new HashMap<>(hostNodes.size());
+        for (VmNumaNode vmNode: vmNodes) {
+            int hostNodeIndex = nodeAssignment.get().get(vmNode.getIndex());
+            long vmNodeMem = vmNode.getMemTotal();
+
+            hostNodePending.compute(hostNodeIndex, (key, val) -> (val == null) ? vmNodeMem : val + vmNodeMem);
+        }
+
+        for (Map.Entry<Integer, Long> entry: hostNodePending.entrySet()) {
+            int hostNodeIndex = entry.getKey();
+            long pendingMemory = entry.getValue();
+            getPendingResourceManager().addPending(new PendingNumaMemory(hostId, vm, hostNodeIndex, pendingMemory));
         }
     }
 

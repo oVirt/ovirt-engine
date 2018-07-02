@@ -2593,6 +2593,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__NOT_ENOUGH_MEMORY();
 
+    String VAR__DETAIL__NUMA_NOT_SUPPORTED();
+
     String VAR__DETAIL__NOT_MEMORY_PINNED_NUMA();
 
     String VAR__DETAIL__NOT_ENOUGH_CORES();

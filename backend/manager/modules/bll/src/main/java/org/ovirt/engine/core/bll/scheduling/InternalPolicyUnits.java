@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.NumaPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingCPUWeightPolicyUnit;
@@ -70,6 +71,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(HostedEngineMemoryReservationFilterPolicyUnit.class);
         enabledUnits.add(HugePagesFilterPolicyUnit.class);
         enabledUnits.add(MemoryPolicyUnit.class);
+        enabledUnits.add(NumaPolicyUnit.class);
         enabledUnits.add(MigrationPolicyUnit.class);
         enabledUnits.add(NetworkPolicyUnit.class);
         enabledUnits.add(NoneBalancePolicyUnit.class);
