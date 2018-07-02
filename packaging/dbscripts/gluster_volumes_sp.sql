@@ -119,7 +119,8 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeBrickDetails (
     v_used_space BIGINT,
     v_free_space BIGINT,
     v_confirmed_free_space BIGINT,
-    v_confirmed_total_space BIGINT
+    v_confirmed_total_space BIGINT,
+    v_vdo_savings INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -130,6 +131,7 @@ BEGIN
         free_space,
         confirmed_free_space,
         confirmed_total_space,
+        vdo_savings,
         _update_date
         )
     VALUES (
@@ -139,6 +141,7 @@ BEGIN
         v_free_space,
         v_confirmed_free_space,
         v_confirmed_total_space,
+        v_vdo_savings,
         LOCALTIMESTAMP
         );
 END;$PROCEDURE$
@@ -670,7 +673,8 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeBrickDetails (
     v_used_space BIGINT,
     v_free_space BIGINT,
     v_confirmed_free_space BIGINT,
-    v_confirmed_total_space BIGINT
+    v_confirmed_total_space BIGINT,
+    v_vdo_savings INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -680,6 +684,7 @@ BEGIN
         free_space = v_free_space,
         confirmed_free_space = v_confirmed_free_space,
         confirmed_total_space = v_confirmed_total_space,
+        vdo_savings = v_vdo_savings,
         _update_date = LOCALTIMESTAMP
     WHERE brick_id = v_brick_id;
 END;$PROCEDURE$

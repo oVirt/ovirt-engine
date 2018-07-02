@@ -29,6 +29,8 @@ public class BrickProperties implements Serializable {
 
     private Double confirmedTotalSize;
 
+    private Integer vdoSavings;
+
     private String device;
 
     private int blockSize;
@@ -101,6 +103,14 @@ public class BrickProperties implements Serializable {
 
     public void setConfirmedTotalSize(Double confirmedTotalSize) {
         this.confirmedTotalSize = confirmedTotalSize;
+    }
+
+    public Integer getVdoSavings() {
+        return vdoSavings;
+    }
+
+    public void setVdoSavings(Integer vdoSavings) {
+        this.vdoSavings = vdoSavings;
     }
 
     public String getDevice() {
