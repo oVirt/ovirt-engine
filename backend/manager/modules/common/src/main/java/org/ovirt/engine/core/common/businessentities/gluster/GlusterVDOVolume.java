@@ -9,6 +9,8 @@ public class GlusterVDOVolume implements Serializable {
     private String device;
     private Long size;
     private Long free;
+    private Long logicalBlocks;
+    private Long physicalBlocks;
 
     public GlusterVDOVolume() { }
 
@@ -42,5 +44,21 @@ public class GlusterVDOVolume implements Serializable {
 
     public void setFree(Number free) {
         this.free = free.longValue();
+    }
+
+    public Long getLogicalBlocks() {
+        return logicalBlocks;
+    }
+
+    public void setLogicalBlocks(Number logicalBlocks) {
+        this.logicalBlocks = logicalBlocks.longValue();
+    }
+
+    public Long getPhysicalBlocks() {
+        return physicalBlocks;
+    }
+
+    public void setPhysicalBlocks(Number physicalBlocks) {
+        this.physicalBlocks = physicalBlocks.longValue();
     }
 }
