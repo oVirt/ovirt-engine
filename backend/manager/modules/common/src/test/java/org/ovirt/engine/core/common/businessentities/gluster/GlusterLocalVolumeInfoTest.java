@@ -63,24 +63,28 @@ public class GlusterLocalVolumeInfoTest {
     public void testThinLvm() {
         assertTrue(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vg0-iso").isPresent());
         assertThat(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vg0-iso").get(), is(19391777341L));
+        assertThat(volumeInfo.getSavingsForDevice("/dev/mapper/vg0-iso").get(), is(0));
     }
 
     @Test
     public void testVdo() {
         assertTrue(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vdophysical").isPresent());
         assertThat(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vdophysical").get(), is(6483109092L));
+        assertThat(volumeInfo.getSavingsForDevice("/dev/mapper/vdophysical").get(), is(64));
     }
 
     @Test
     public void testThinLvmVdo() {
         assertTrue(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vdonext").isPresent());
         assertThat(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vdonext").get(), is(6438100992L));
+        assertThat(volumeInfo.getSavingsForDevice("/dev/mapper/vdonext").get(), is(66));
     }
 
     @Test
     public void testThinLvmVdoThinLvm() {
         assertTrue(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/INTERNAL-vdoreplica").isPresent());
         assertThat(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/INTERNAL-vdoreplica").get(), is(6415818752L));
+        assertThat(volumeInfo.getSavingsForDevice("/dev/mapper/INTERNAL-vdoreplica").get(), is(50));
     }
 
     private List<GlusterLocalLogicalVolume> getLogicalVolumes() {
@@ -165,18 +169,24 @@ public class GlusterLocalVolumeInfoTest {
         dataVdo.setDevice("/dev/vg0/vdobase");
         dataVdo.setSize(10737428240L);
         dataVdo.setFree(6415818752L);
+        dataVdo.setPhysicalBlocks(37);
+        dataVdo.setLogicalBlocks(75);
 
         GlusterVDOVolume nextVdo = new GlusterVDOVolume();
         nextVdo.setName("/dev/mapper/vdonext");
         nextVdo.setDevice("/dev/vg0/vdosecond");
         nextVdo.setSize(10737418240L);
         nextVdo.setFree(6438100992L);
+        nextVdo.setPhysicalBlocks(33);
+        nextVdo.setLogicalBlocks(99);
 
         GlusterVDOVolume physicalVdo = new GlusterVDOVolume();
         physicalVdo.setName("/dev/mapper/vdophysical");
         physicalVdo.setDevice("/dev/sdc1");
         physicalVdo.setSize(10737418240L);
         physicalVdo.setFree(6483109092L);
+        physicalVdo.setPhysicalBlocks(14);
+        physicalVdo.setLogicalBlocks(39);
 
         List<GlusterVDOVolume> vdoVolumeList = new ArrayList<>();
         vdoVolumeList.add(dataVdo);
