@@ -12,9 +12,11 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -37,6 +39,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     @Inject
     private VmHandler vmHandler;
     @Inject
+    private VmTemplateHandler templateHandler;
+    @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
@@ -52,12 +56,15 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         setClusterId(getParameters().getClusterId());
         setStoragePoolId(getParameters().getStoragePoolId());
         setStorageDomainId(getParameters().getStorageDomainId());
+        if (getParameters().getVmEntityType() == VmEntityType.TEMPLATE) {
+            setVmTemplateId(getParameters().getVmId());
+        }
     }
 
     @Override
     protected void executeVmCommand() {
         try {
-            vmHandler.updateDisksFromDb(getVm());
+            updateDisksFromDb();
             List<String> diskPaths = prepareImages();
             boolean succeeded = runAnsibleImportOvaPlaybook(diskPaths);
             teardownImages();
@@ -70,6 +77,14 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         } catch(EngineException e) {
             log.error("Failed to extract OVA file", e);
             setCommandStatus(CommandStatus.FAILED);
+        }
+    }
+
+    private void updateDisksFromDb() {
+        if (getParameters().getVmEntityType() == VmEntityType.TEMPLATE) {
+            templateHandler.updateDisksFromDb(getVmTemplate());
+        } else {
+            vmHandler.updateDisksFromDb(getVm());
         }
     }
 
@@ -108,10 +123,16 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
      * @return a list with the corresponding mounted paths
      */
     private List<String> prepareImages() {
-        return getVm().getDiskList().stream()
+        return getDiskList().stream()
                 .map(this::prepareImage)
                 .map(PrepareImageReturn::getImagePath)
                 .collect(Collectors.toList());
+    }
+
+    private List<DiskImage> getDiskList() {
+        return getParameters().getVmEntityType() == VmEntityType.TEMPLATE ?
+                getVmTemplate().getDiskList()
+                : getVm().getDiskList();
     }
 
     private PrepareImageReturn prepareImage(DiskImage image) {
@@ -125,7 +146,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     private void teardownImages() {
-        getVm().getDiskList().forEach(this::teardownImage);
+        getDiskList().forEach(this::teardownImage);
     }
 
     private void teardownImage(DiskImage image) {

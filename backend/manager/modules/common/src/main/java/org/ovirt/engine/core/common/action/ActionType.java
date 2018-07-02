@@ -51,6 +51,8 @@ public enum ActionType {
     RemoveVmFromImportExport(37, ActionGroup.DELETE_VM, QuotaDependency.NONE),
     RemoveVmTemplateFromImportExport(38, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),
     ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
+    ImportVmTemplateFromOva(64, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
+    AddDiskToTemplate(65, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
     ActivateDeactivateVmNic(42, QuotaDependency.NONE),

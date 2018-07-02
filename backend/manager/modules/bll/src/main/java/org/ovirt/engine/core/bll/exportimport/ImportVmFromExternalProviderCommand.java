@@ -440,9 +440,9 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        switch(getParameters().getPhase()) {
+        switch(getParameters().getImportPhase()) {
         case CREATE_DISKS:
-            getParameters().setPhase(Phase.CONVERT);
+            getParameters().setImportPhase(Phase.CONVERT);
             if (getParameters().getProxyHostId() == null) {
                 getParameters().setProxyHostId(selectProxyHost());
             }
@@ -453,7 +453,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
                 return false;
             }
 
-            getParameters().setPhase(Phase.POST_CONVERT);
+            getParameters().setImportPhase(Phase.POST_CONVERT);
             break;
 
         case POST_CONVERT:
@@ -469,7 +469,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @SuppressWarnings("incomplete-switch")
     private void executeNextOperation() {
-        switch (getParameters().getPhase()) {
+        switch (getParameters().getImportPhase()) {
             case CONVERT:
                 convert();
                 break;

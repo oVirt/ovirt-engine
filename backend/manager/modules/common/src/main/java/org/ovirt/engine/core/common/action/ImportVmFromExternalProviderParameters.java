@@ -21,7 +21,7 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private ArrayList<Guid> disks;
     private String virtioIsoName;
     private String externalName;
-    private Phase phase = Phase.CREATE_DISKS;
+    private Phase importPhase = Phase.CREATE_DISKS;
 
     public ImportVmFromExternalProviderParameters() {
     }
@@ -86,11 +86,11 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
         this.externalName = externalName;
     }
 
-    public Phase getPhase() {
-        return phase;
+    public Phase getImportPhase() {
+        return importPhase;
     }
 
-    public void setPhase(Phase phase) {
-        this.phase = phase;
+    public void setImportPhase(Phase phase) {
+        this.importPhase = phase;
     }
 }
