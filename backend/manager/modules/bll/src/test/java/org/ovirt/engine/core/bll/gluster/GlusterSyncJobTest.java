@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -501,28 +500,8 @@ public class GlusterSyncJobTest {
         // acquire lock on the cluster
         inOrder.verify(glusterManager, mode).acquireLock(CLUSTER_ID);
 
-        // get volume advance details
-        inOrder.verify(glusterManager, mode).getVolumeAdvancedDetails(existingServer1,
-                CLUSTER_ID,
-                existingDistVol.getName());
-
         // acquire lock on the cluster for repl volume
         inOrder.verify(glusterManager, mode).acquireLock(CLUSTER_ID);
-
-        // get volume advance details of repl volume
-        inOrder.verify(glusterManager, mode).getVolumeAdvancedDetails(existingServer1,
-                CLUSTER_ID,
-                existingReplVol.getName());
-
-        // Add Capacity Info
-        inOrder.verify(brickDao, mode).addBrickProperties(anyList());
-
-        // update brick status
-        inOrder.verify(brickDao, mode).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
-
-        // Add Capacity Info
-        inOrder.verify(volumeDao, mode)
-                .addVolumeCapacityInfo(getVolumeAdvancedDetails(existingReplVol).getCapacityInfo());
 
         // release lock on the cluster
         inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
