@@ -839,9 +839,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
+        boolean vmIsHp = getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
         boolean vmIsNonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
 
-        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && vmIsNonMigratable) {
+        // TODO CPU Pass-Through better sheduling policy
+        // TODO This high performance limitation will be removed once there will be
+        // a full support for CPU Pass-Through automatic migration
+        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && (vmIsNonMigratable || vmIsHp)) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
@@ -919,8 +923,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
-        getModel().getMigrationMode().setIsChangeable(getModel().getVmType().getSelectedItem() == VmType.HighPerformance ?
-                false :
+        getModel().getMigrationMode().setIsChangeable(
                 !haHost
                 || (isAutoAssign && presentHosts.size() >= 2)
                 || pinToHostSize >= 2
@@ -1326,16 +1329,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getIsRngEnabled().setEntity(true);
 
             // Host tab
-            getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
+            getModel().getMigrationMode().setItems(Arrays.asList(MigrationSupport.IMPLICITLY_NON_MIGRATABLE, MigrationSupport.PINNED_TO_HOST));
+            getModel().getMigrationMode().setSelectedItem(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
             if (!clusterHasPpcArchitecture()) {
                 getModel().getHostCpu().setEntity(true);
             }
 
             // Resource allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
-            if (getModel().getMultiQueues().getIsAvailable()) {
-                getModel().getMultiQueues().setEntity(true);
-            }
+        } else {
+            getModel().getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
         }
     }
 
@@ -1513,7 +1516,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getModel().getIsAutoAssign().getEntity() == null) {
             return;
         }
-        if (getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST ||
+
+        boolean vmIsHpType = getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
+        boolean vmIsMigratable = getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST;
+
+        if ((vmIsMigratable && !vmIsHpType) ||
                 getModel().getIsAutoAssign().getEntity() ||
                 getModel().getDefaultHost().getSelectedItem() == null ||
                 getModel().getDefaultHost().getSelectedItems().stream().filter(x -> !x.isNumaSupport()).count() > 0) {

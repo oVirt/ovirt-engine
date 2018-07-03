@@ -2234,8 +2234,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         Boolean isMigrationSupported =
                 AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(), version);
 
-        if (isMigrationSupported && getVmType().getSelectedItem() != VmType.HighPerformance) {
-            getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
+        if (isMigrationSupported) {
+            getMigrationMode().setItems(getVmType().getSelectedItem() == VmType.HighPerformance ?
+                    Arrays.asList(MigrationSupport.IMPLICITLY_NON_MIGRATABLE, MigrationSupport.PINNED_TO_HOST) :
+                    Arrays.asList(MigrationSupport.values()));
         } else {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));
         }
@@ -2303,7 +2305,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void initMigrationMode() {
-        getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
+        getMigrationMode().setItems(getVmType().getSelectedItem() == VmType.HighPerformance ?
+                Arrays.asList(MigrationSupport.IMPLICITLY_NON_MIGRATABLE, MigrationSupport.PINNED_TO_HOST) :
+                Arrays.asList(MigrationSupport.values()));
     }
 
     private void initVncKeyboardLayout() {
