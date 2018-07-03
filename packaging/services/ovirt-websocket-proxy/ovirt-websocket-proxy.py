@@ -46,6 +46,37 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine')
 
 
+try:
+    SSL_VERSIONS_TO_FLAGS = {
+        'TLSv1.2':
+            ssl.PROTOCOL_TLSv1_2 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 |
+            ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1,
+        'TLSv1.3':
+            ssl.PROTOCOL_TLS | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 |
+            ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_TLSv1_2,
+    }
+except AttributeError:
+    # Older Python versions (incl. 2.7) do not support TLS 1.3
+    SSL_VERSIONS_TO_FLAGS = {
+        'TLSv1.2':
+            ssl.PROTOCOL_TLSv1_2 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 |
+            ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1,
+    }
+
+
+def get_ssl_options(conf, logger):
+    "Turn SSL_MIN_VERSION into a set of SSL options."
+
+    min_version = conf.get('SSL_MIN_VERSION', 'TLSv1.2').strip()
+    options = SSL_VERSIONS_TO_FLAGS.get(min_version)
+    if options is None:
+        fallback = 'TLSv1.2'
+        logger.warn("%s not supported, falling back to %s",
+                    min_version, fallback)
+        options = SSL_VERSIONS_TO_FLAGS.get(fallback)
+    return options
+
+
 class VenCryptSocket(object):
     """
     Wrapper around a socket.socket. It takes over the negotiation of VNC
@@ -397,33 +428,54 @@ class Daemon(service.Daemon):
         else:
             kwargs = {'target_cfg': '/dummy'}
 
-        OvirtWebSocketProxy(
-            listen_host=self._config.get('PROXY_HOST'),
-            listen_port=self._config.get('PROXY_PORT'),
-            source_is_ipv6=self._config.getboolean('SOURCE_IS_IPV6'),
-            verbose=self.debug,
-            ticketDecoder=ticket.TicketDecoder(
-                ca=None,
-                eku=None,
-                peer=peer,
-            ),
-            logger=self._logger,
-            cert=self._config.get('SSL_CERTIFICATE'),
-            key=self._config.get('SSL_KEY'),
-            ssl_only=self._config.getboolean('SSL_ONLY'),
-            daemon=False,
-            record=(
-                None if not self._config.getboolean('TRACE_ENABLE')
-                else self._config.get('TRACE_FILE')
-            ),
-            web=None,
-            target_host=None,
-            target_port=None,
-            wrap_mode='exit',
-            wrap_cmd=None,
-            RequestHandlerClass=OvirtProxyRequestHandler,
-            **kwargs
-        ).start_server()
+        if self._config.get('SSL_CIPHERS', '').strip():
+            self._logger.info(
+                "Using the following ciphers: %s",
+                self._config.get('SSL_CIPHERS')
+            )
+        self._logger.info(
+            "Minimum SSL version requested: %s",
+            self._config.get('SSL_MIN_VERSION')
+        )
+        kwargs['listen_host'] = self._config.get('PROXY_HOST')
+        kwargs['listen_port'] = self._config.get('PROXY_PORT')
+        kwargs['source_is_ipv6'] = self._config.getboolean('SOURCE_IS_IPV6')
+        kwargs['verbose'] = self.debug
+        kwargs['ticketDecoder'] = ticket.TicketDecoder(
+            ca=None,
+            eku=None,
+            peer=peer,
+        )
+        kwargs['logger'] = self._logger
+        kwargs['cert'] = self._config.get('SSL_CERTIFICATE')
+        kwargs['key'] = self._config.get('SSL_KEY')
+        kwargs['ssl_only'] = self._config.getboolean('SSL_ONLY')
+        kwargs['daemon'] = False
+        kwargs['record'] = (
+            None if not self._config.getboolean('TRACE_ENABLE')
+            else self._config.get('TRACE_FILE')
+        )
+        kwargs['web'] = None
+        kwargs['target_host'] = None
+        kwargs['target_port'] = None
+        kwargs['wrap_mode'] = 'exit'
+        kwargs['wrap_cmd'] = None
+        kwargs['RequestHandlerClass'] = OvirtProxyRequestHandler
+        kwargs['ssl_ciphers'] = (
+            # Treat empty string the same as no option, ie. unconfigured
+            self._config.get('SSL_CIPHERS', '').strip() or None
+        )
+        kwargs['ssl_options'] = get_ssl_options(self._config, self._logger)
+        try:
+            proxy = OvirtWebSocketProxy(**kwargs)
+        except TypeError:
+            self._logger.warn(
+                "websockify does not support minimum SSL version"
+            )
+            del kwargs['ssl_ciphers']
+            del kwargs['ssl_options']
+            proxy = OvirtWebSocketProxy(**kwargs)
+        proxy.start_server()
 
 
 if __name__ == '__main__':

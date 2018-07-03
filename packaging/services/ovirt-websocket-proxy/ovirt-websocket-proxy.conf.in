@@ -16,8 +16,15 @@ PROXY_PORT=6100
 SOURCE_IS_IPV6=False
 SSL_CERTIFICATE=
 SSL_KEY=
+# Available values for SSL_MIN_VERSION:
+# TLSv1.2, TLSv1.3
+SSL_MIN_VERSION="TLSv1.2"
 CERT_FOR_DATA_VERIFICATION=
 SSL_ONLY=False
 TRACE_ENABLE=False
 TRACE_FILE=
 ENGINE_USR="@ENGINE_USR@"
+
+# SSL_CIPHERS contain a list of ciphers allowed for connection.
+# For a list of supported ciphers run `openssl ciphers`
+SSL_CIPHERS="HIGH:!aNULL"
