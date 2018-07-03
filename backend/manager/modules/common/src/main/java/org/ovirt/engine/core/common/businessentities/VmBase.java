@@ -395,6 +395,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         numOfSockets = 1;
         cpuPerSocket = 1;
         threadsPerCpu = 1;
+        numOfIoThreads = 1;
         usbPolicy = UsbPolicy.DISABLED;
         isoPath = "";
         defaultBootSequence = BootSequence.C;
