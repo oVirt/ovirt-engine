@@ -55,7 +55,8 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeDetails (
     v_total_space BIGINT,
     v_used_space BIGINT,
     v_free_space BIGINT,
-    v_confirmed_free_space BIGINT
+    v_confirmed_free_space BIGINT,
+    v_vdo_savings INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -65,6 +66,7 @@ BEGIN
         used_space,
         free_space,
         confirmed_free_space,
+        vdo_savings,
         _update_date
         )
     VALUES (
@@ -73,6 +75,7 @@ BEGIN
         v_used_space,
         v_free_space,
         v_confirmed_free_space,
+        v_vdo_savings,
         LOCALTIMESTAMP
         );
 END;$PROCEDURE$
@@ -628,7 +631,8 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeDetails (
     v_total_space BIGINT,
     v_used_space BIGINT,
     v_free_space BIGINT,
-    v_confirmed_free_space BIGINT
+    v_confirmed_free_space BIGINT,
+    v_vdo_savings INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -637,6 +641,7 @@ BEGIN
         used_space = v_used_space,
         free_space = v_free_space,
         confirmed_free_space = v_confirmed_free_space,
+        vdo_savings = v_vdo_savings,
         _update_date = LOCALTIMESTAMP
     WHERE volume_id = v_volume_id;
 END;$PROCEDURE$

@@ -16,6 +16,8 @@ public class GlusterVolumeSizeInfo implements Serializable {
 
     private Long confirmedFreeSize;
 
+    private Integer vdoSavings;
+
     private Long usedSize;
 
     public GlusterVolumeSizeInfo() {
@@ -59,6 +61,14 @@ public class GlusterVolumeSizeInfo implements Serializable {
         this.confirmedFreeSize = confirmedFreeSize;
     }
 
+    public Integer getVdoSavings() {
+        return vdoSavings;
+    }
+
+    public void setVdoSavings(Integer vdoSavings) {
+        this.vdoSavings = vdoSavings;
+    }
+
     public Long getUsedSize() {
         return usedSize;
     }
@@ -73,6 +83,8 @@ public class GlusterVolumeSizeInfo implements Serializable {
                 volumeId,
                 totalSize,
                 freeSize,
+                confirmedFreeSize,
+                vdoSavings,
                 usedSize
         );
     }
@@ -89,6 +101,8 @@ public class GlusterVolumeSizeInfo implements Serializable {
         return Objects.equals(volumeId, other.volumeId)
                 && Objects.equals(totalSize, other.totalSize)
                 && Objects.equals(freeSize, other.freeSize)
-                && Objects.equals(usedSize, other.usedSize);
+                && Objects.equals(usedSize, other.usedSize)
+                && Objects.equals(confirmedFreeSize, other.confirmedFreeSize)
+                && Objects.equals(vdoSavings, other.vdoSavings);
     }
 }
