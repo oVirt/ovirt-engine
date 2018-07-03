@@ -63,6 +63,7 @@ public class StorageDomainDynamicDaoImpl extends BaseDao implements StorageDomai
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("confirmed_available_disk_size",
                         domain.getConfirmedAvailableDiskSize())
+                .addValue("vdo_savings", domain.getVdoSavings())
                 .addValue("id", domain.getId());
 
         getCallsHandler().executeModification("UpdateStorageDomainConfirmedSize", parameterSource);

@@ -20,6 +20,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
 
     private Integer availableDiskSize;
     private Integer confirmedAvailableDiskSize;
+    private Integer vdoSavings;
     private  ExternalStatus externalStatus;
     private boolean containsUnregisteredEntities;
 
@@ -45,6 +46,14 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
 
     public void setConfirmedAvailableDiskSize(Integer confirmedAvailableDiskSize) {
         this.confirmedAvailableDiskSize = confirmedAvailableDiskSize;
+    }
+
+    public Integer getVdoSavings() {
+        return vdoSavings;
+    }
+
+    public void setVdoSavings(Integer vdoSavings) {
+        this.vdoSavings = vdoSavings;
     }
 
     private Guid id;
