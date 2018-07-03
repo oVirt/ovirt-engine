@@ -211,6 +211,10 @@ public class GlusterThinDeviceService {
         };
     }
 
+    private Integer reduceBricksToSavings(List<Stream<Integer>> data) {
+        return data.stream().flatMap(Function.identity()).collect(Collectors.averagingInt(Integer::intValue)).intValue();
+    }
+
     /**
      * Calculates confirmed free size for a specified volume.
      * @param volume volume to calculate for.
@@ -227,6 +231,10 @@ public class GlusterThinDeviceService {
      */
     public Long calculateConfirmedVolumeTotal(GlusterVolumeEntity volume) {
         return calculateConfirmedVolume(volume, BrickProperties::getConfirmedTotalSize, reduceBricksToSize(volume));
+    }
+
+    public Integer calculateVolumeSavings(GlusterVolumeEntity volume) {
+        return calculateConfirmedVolume(volume, BrickProperties::getVdoSavings, this::reduceBricksToSavings);
     }
 
     /**

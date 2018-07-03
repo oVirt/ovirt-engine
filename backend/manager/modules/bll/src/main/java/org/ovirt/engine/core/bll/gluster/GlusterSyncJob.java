@@ -1021,6 +1021,7 @@ public class GlusterSyncJob extends GlusterJob {
             volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         } else {
             volumeAdvancedDetails.getCapacityInfo().setConfirmedFreeSize(confirmedFreeSize);
+            volumeAdvancedDetails.getCapacityInfo().setVdoSavings(thinDeviceService.calculateVolumeSavings(volume));
             volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         }
         if (confirmedFreeSize != null) {
