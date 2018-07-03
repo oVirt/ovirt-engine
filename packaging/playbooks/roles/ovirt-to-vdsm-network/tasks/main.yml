@@ -1,0 +1,11 @@
+---
+- fail:
+    msg: "'ovirt_network' or 'ovn_tunneling_interface' can not both be defined."
+  when: ovirt_network is defined and ovn_tunneling_interface is defined
+
+
+- name: Map ovirt network name to vdsm network name
+  script: ovirt-to-vdsm-network {{ playbook_dir }} {{ ovirt_network }} {{ cluster_name }}
+  register: vdsm_network_name
+  when: ovirt_network is defined
+  failed_when: vdsm_network_name['stdout'] is not defined
