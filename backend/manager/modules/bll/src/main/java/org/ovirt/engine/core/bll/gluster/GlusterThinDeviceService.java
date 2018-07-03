@@ -257,7 +257,7 @@ public class GlusterThinDeviceService {
      * @param confirmedFreeSize value to set.
      * @param sdId List of storage domain ID's to update.
      */
-    public void setDomainConfirmedFreeSize(Long confirmedFreeSize, List<Guid> sdId) {
+    public void setDomainConfirmedFreeSize(Long confirmedFreeSize, Integer vdoSavings, List<Guid> sdId) {
         sdId.stream().map(i -> storageDomainDynamicDao.get(i))
                 .forEach(d -> {
                     int confirmedFreeSizeInGb = (int) (confirmedFreeSize / SizeConverter.BYTES_IN_GB);
@@ -265,6 +265,7 @@ public class GlusterThinDeviceService {
                         confirmedFreeSizeInGb = d.getAvailableDiskSize();
                     }
                     d.setConfirmedAvailableDiskSize(confirmedFreeSizeInGb);
+                    d.setVdoSavings(vdoSavings);
                     storageDomainDynamicDao.updateConfirmedSize(d);
                 });
     }

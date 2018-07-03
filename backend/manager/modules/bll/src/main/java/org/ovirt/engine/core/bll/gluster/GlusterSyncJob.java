@@ -1017,16 +1017,17 @@ public class GlusterSyncJob extends GlusterJob {
 
     private void refreshVolumeCapacity(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
         Long confirmedFreeSize = thinDeviceService.calculateConfirmedVolumeCapacity(volume);
+        Integer vdoSavings = thinDeviceService.calculateVolumeSavings(volume);
         if (volume.getAdvancedDetails().getCapacityInfo() == null) {
             volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         } else {
             volumeAdvancedDetails.getCapacityInfo().setConfirmedFreeSize(confirmedFreeSize);
-            volumeAdvancedDetails.getCapacityInfo().setVdoSavings(thinDeviceService.calculateVolumeSavings(volume));
+            volumeAdvancedDetails.getCapacityInfo().setVdoSavings(vdoSavings);
             volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         }
         if (confirmedFreeSize != null) {
             List<Guid> sdId = thinDeviceService.getVolumeStorageDomains(volume);
-            thinDeviceService.setDomainConfirmedFreeSize(confirmedFreeSize, sdId);
+            thinDeviceService.setDomainConfirmedFreeSize(confirmedFreeSize, vdoSavings, sdId);
             thinDeviceService.sendLowConfirmedSpaceEvent(confirmedFreeSize, volume, sdId);
 
         }

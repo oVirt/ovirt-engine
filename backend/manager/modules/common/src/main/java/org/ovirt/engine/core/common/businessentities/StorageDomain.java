@@ -211,6 +211,14 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
         getStorageDynamicData().setConfirmedAvailableDiskSize(confirmedAvailableDiskSize);
     }
 
+    public Integer getVdoSavings() {
+        return getStorageDynamicData().getVdoSavings();
+    }
+
+    public void setVdoSavings(Integer vdoSavings) {
+        getStorageDynamicData().setVdoSavings(vdoSavings);
+    }
+
     private void updateOverCommitPercent() {
         if (getAvailableDiskSize() == null || getAvailableDiskSize() == 0) {
             setStorageDomainOverCommitPercent(0);

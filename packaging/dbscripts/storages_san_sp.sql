@@ -176,6 +176,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageDomainConfirmedSize (
     v_confirmed_available_disk_size INT,
+    v_vdo_savings INT,
     v_id UUID
     )
 RETURNS VOID
@@ -184,6 +185,7 @@ RETURNS VOID
 BEGIN
     UPDATE storage_domain_dynamic
     SET confirmed_available_disk_size = v_confirmed_available_disk_size,
+        vdo_savings = v_vdo_savings,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
 END;$PROCEDURE$
