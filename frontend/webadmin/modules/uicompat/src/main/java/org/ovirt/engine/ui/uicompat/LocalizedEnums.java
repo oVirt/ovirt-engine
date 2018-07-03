@@ -1550,6 +1550,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String Ipv6BootProtocol___AUTOCONF();
 
+    String Ipv6BootProtocol___POLY_DHCP_AUTOCONF();
+
     String VmEntityType___VM();
 
     String VmEntityType___TEMPLATE();

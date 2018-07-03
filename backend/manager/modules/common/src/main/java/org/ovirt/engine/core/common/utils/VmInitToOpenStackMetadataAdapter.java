@@ -224,7 +224,7 @@ public class VmInitToOpenStackMetadataAdapter {
     }
 
     private boolean isAutoConfIPv6(VmInitNetwork vmInitNetwork) {
-        return vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.AUTOCONF;
+        return vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.AUTOCONF || vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.POLY_DHCP_AUTOCONF;
     }
 
     private boolean isStaticIPv4AndAddressMissing(VmInitNetwork vmInitNetwork) {

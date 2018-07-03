@@ -33,4 +33,9 @@ class NoCfgIpv6InfoFetcher implements Ipv6InfoFetcher {
         // TODO: YZ - to be revised once is implemented on VDSM side.
         return Boolean.TRUE.equals(nicProperties.get("ipv6autoconf"));
     }
+
+    @Override
+    public boolean isPolyDhcpAutoconfBootProtocol() {
+        return isBootProtocolDhcp() && isBootProtocolAutoconf();
+    }
 }

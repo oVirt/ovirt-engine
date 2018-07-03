@@ -1,10 +1,16 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol.AUTOCONF;
+import static org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol.DHCP;
+import static org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol.POLY_DHCP_AUTOCONF;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +33,8 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
     private static final String DEFAULT_ROUTE = "defaultRoute";
+    private static final Set<Ipv6BootProtocol> IPV6_AUTOCONF_PROTOCOL_SET = EnumSet.of(AUTOCONF, POLY_DHCP_AUTOCONF);
+    private static final Set<Ipv6BootProtocol> IPV6_DHCP_PROTOCOL_SET = EnumSet.of(DHCP, POLY_DHCP_AUTOCONF);
 
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
 
@@ -115,8 +123,8 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
 
     private void addIpv6BootProtocol(Map<String, Object> opts, HostNetwork attachment) {
         final Ipv6BootProtocol ipv6BootProtocol = attachment.getIpv6BootProtocol();
-        opts.put(DHCPV6_BOOT_PROTOCOL, Ipv6BootProtocol.DHCP == ipv6BootProtocol);
-        opts.put(DHCPV6_AUTOCONF, Ipv6BootProtocol.AUTOCONF == ipv6BootProtocol);
+        opts.put(DHCPV6_BOOT_PROTOCOL, IPV6_DHCP_PROTOCOL_SET.contains(ipv6BootProtocol));
+        opts.put(DHCPV6_AUTOCONF, IPV6_AUTOCONF_PROTOCOL_SET.contains(ipv6BootProtocol));
         if (Ipv6BootProtocol.STATIC_IP == ipv6BootProtocol) {
             putIfNotEmpty(opts, "ipv6addr", getIpv6Address(attachment));
             putIfNotEmpty(opts, "ipv6gateway", attachment.getIpv6Gateway());

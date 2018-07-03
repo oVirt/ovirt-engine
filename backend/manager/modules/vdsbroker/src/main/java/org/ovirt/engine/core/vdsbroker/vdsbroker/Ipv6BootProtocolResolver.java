@@ -10,7 +10,9 @@ class Ipv6BootProtocolResolver implements BootProtocolResolver<Ipv6BootProtocol,
 
     @Override
     public Ipv6BootProtocol resolve(Ipv6InfoFetcher ipInfoFetcher) {
-        if (ipInfoFetcher.isBootProtocolDhcp()) {
+        if (ipInfoFetcher.isPolyDhcpAutoconfBootProtocol()) {
+            return Ipv6BootProtocol.POLY_DHCP_AUTOCONF;
+        } else if (ipInfoFetcher.isBootProtocolDhcp()) {
             return Ipv6BootProtocol.DHCP;
         } else if (ipInfoFetcher.isBootProtocolAutoconf()) {
             return Ipv6BootProtocol.AUTOCONF;
