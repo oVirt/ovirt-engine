@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -298,6 +300,12 @@ public interface InterfacePropertiesAccessor {
     class FromNetworkAttachmentForModel extends FromNetworkAttachment {
 
         VdsNetworkInterface nic;
+        private static final Set<Ipv6BootProtocol> IPV6_NON_STATIC_PROTOCOL_SET = EnumSet.of(
+                Ipv6BootProtocol.DHCP,
+                Ipv6BootProtocol.AUTOCONF,
+                Ipv6BootProtocol.POLY_DHCP_AUTOCONF
+        );
+
 
         public FromNetworkAttachmentForModel(NetworkAttachment networkAttachment,
                 HostNetworkQos networkQos,
@@ -344,8 +352,7 @@ public interface InterfacePropertiesAccessor {
         }
 
         private boolean shouldTakeIpv6DataFromNic() {
-            if ((Ipv6BootProtocol.DHCP == getIpv6BootProtocol() || Ipv6BootProtocol.AUTOCONF == getIpv6BootProtocol())
-                    && nic != null) {
+            if (IPV6_NON_STATIC_PROTOCOL_SET.contains(getIpv6BootProtocol()) && nic != null) {
                 return true;
             }
             return false;
