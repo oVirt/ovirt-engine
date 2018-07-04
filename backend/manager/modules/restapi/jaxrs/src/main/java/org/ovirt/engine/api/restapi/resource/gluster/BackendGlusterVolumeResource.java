@@ -116,7 +116,7 @@ public class BackendGlusterVolumeResource
     private Response resetOption(Action action, String optionName, String optionValue, boolean force) {
         return doAction(ActionType.ResetGlusterVolumeOptions,
                 new ResetGlusterVolumeOptionsParameters(guid,
-                        new GlusterVolumeOptionEntity(guid, optionName, optionValue),
+                        optionName == null ? null : new GlusterVolumeOptionEntity(guid, optionName, optionValue),
                         force), action);
     }
 
