@@ -13,6 +13,7 @@ Install the following system components:
 - bind-utils
 - postgresql-server >= 9.5 / rh-postgresql95-postgresql-server
 - postgresql >= 9.5 / rh-postgresql95-postgresql-server
+- postgresql-contrib >= 9.5 / rh-postgresql95-postgresql-contrib
 - python-dateutil / dateutil
 - python-m2crypto / m2crypto
 - python-psycopg2 / psycopg
