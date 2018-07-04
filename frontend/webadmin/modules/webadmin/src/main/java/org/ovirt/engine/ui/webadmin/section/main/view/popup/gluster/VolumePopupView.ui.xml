@@ -100,7 +100,7 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <ge:EntityModelCheckBoxEditor ui:field="optimizeForVirtStoreEditor" label="{constants.optimizeForVirtStoreVolume}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <ge:EntityModelCheckBoxEditor ui:field="optimizeForVirtStoreEditor" label="{constants.optimizeForVirtStoreVolume}" usePatternFly="true" labelColSize="SM_12" widgetColSize="SM_12" />
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
