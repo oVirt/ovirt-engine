@@ -34,7 +34,6 @@ DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
 DEV_BUILD_SCL_POSTGRESQL=0
-JS_DEPS_DIR=/usr/share/ovirt-js-dependencies
 VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
 VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 
@@ -510,9 +509,6 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 	ln -s "$(DATA_DIR)/brands/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
-
-	-rm -f "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand/ovirt-js-dependencies"
-	ln -s "$(JS_DEPS_DIR)" "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand/ovirt-js-dependencies"
 
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 

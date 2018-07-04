@@ -22,7 +22,6 @@ Install the following system components:
 - python-daemon
 - otopi >= 1.1.0
 - ovirt-host-deploy >= 1.1.0
-- ovirt-js-dependencies
 - ovirt-setup-lib
 - maven-3
 - ansible >= 2.4
@@ -161,9 +160,6 @@ The following `Makefile` environment variables are available for build
 customization:
 
 PREFIX:: Installation root directory. Default is `/usr/local`.
-
-JS_DEPS_DIR:: The loaction of the ovirt-js-dependencies installation.
-Default is `/usr/share/ovirt-js-dependencies`.
 
 BUILD_GWT:: Build GWT. Default is `1`.
 

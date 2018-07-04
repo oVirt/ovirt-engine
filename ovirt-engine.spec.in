@@ -285,7 +285,6 @@ Requires:	ovirt-ansible-roles >= 1.1.2
 Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
-Requires:	ovirt-js-dependencies
 Requires:	ovirt-engine-api-explorer
 
 # Metrics stuff
