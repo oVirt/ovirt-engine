@@ -370,6 +370,9 @@ Requires:	openvswitch-ovn-central
 Requires:	%{required_python_lib_openvswitch}
 Requires:	ovirt-provider-ovn >= 1.2.1
 
+# JavaScript and CSS libraries are currently bundled
+Provides:	 bundled(js-jquery) = 3.2.1
+
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
@@ -575,8 +578,8 @@ Database scripts for %{ovirt_product_name_short}
 Summary:	Web Admin Portal of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
-License:	ASL 2.0 and GPLv2+ with exceptions
-
+# Bundled JavaScript and CSS libraries use MIT license.
+License:    ASL 2.0 and GPLv2+ with exceptions and MIT
 
 %description webadmin-portal
 The web administration interface to %{ovirt_product_name_short}
