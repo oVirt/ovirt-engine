@@ -12,7 +12,6 @@ import org.gwtbootstrap3.client.ui.constants.Styles;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -27,13 +26,6 @@ public class DialogTabPanel extends Composite {
     interface WidgetUiBinder extends UiBinder<Widget, DialogTabPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
-
-    interface DialogTabStyle extends CssResource {
-        String headerSeparator();
-    }
-
-    @UiField
-    DialogTabStyle style;
 
     @UiField
     NavTabs navTabs;
@@ -65,7 +57,7 @@ public class DialogTabPanel extends Composite {
     public void setHeader(Widget widget) {
         tabHeaderContainer.getElement().getStyle().setDisplay(Display.BLOCK);
         tabHeaderContainer.setWidget(widget);
-        tabHeaderContainer.addStyleName(style.headerSeparator());
+        tabHeaderContainer.addStyleName("dialog_headerSeparator"); //$NON-NLS-1$
     }
 
     @UiChild(tagname = "tab")

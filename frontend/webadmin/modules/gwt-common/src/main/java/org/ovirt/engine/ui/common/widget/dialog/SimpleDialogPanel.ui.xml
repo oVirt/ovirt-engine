@@ -22,21 +22,23 @@
         }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="modal-content">
-        <g:FlowPanel ui:field="header" addStyleNames="modal-header">
-            <t:WidgetTooltip ui:field="helpIconButtonTooltip">
-                <b:Anchor ui:field="infoAnchor" icon="QUESTION_CIRCLE" addStyleNames="{style.iconPosition}" visible="false" />
-            </t:WidgetTooltip>
-            <g:Button ui:field="closeButton" addStyleNames="close"><span class="pficon pficon-close" /></g:Button>
+    <g:FlowPanel addStyleNames="modal-dialog wizard-pf">
+        <g:FlowPanel addStyleNames="modal-content">
+            <g:FlowPanel ui:field="header" addStyleNames="modal-header">
+                <t:WidgetTooltip ui:field="helpIconButtonTooltip">
+                    <b:Anchor ui:field="infoAnchor" icon="QUESTION_CIRCLE" addStyleNames="{style.iconPosition}" visible="false" />
+                </t:WidgetTooltip>
+                <g:Button ui:field="closeButton" addStyleNames="close"><span class="pficon pficon-close" /></g:Button>
+            </g:FlowPanel>
+            <g:ScrollPanel ui:field="contentScrollPanel">
+                <g:SimplePanel ui:field="contentPanel" addStyleNames="modal-body wizard-pf-body clearfix" />
+            </g:ScrollPanel>
+            <g:HTMLPanel addStyleNames="modal-footer wizard-pf-footer">
+                <g:FlowPanel ui:field="footerButtonPanel" />
+                <g:FlowPanel ui:field="footerStatusPanel" />
+                <div style="clear: both;" />
+            </g:HTMLPanel>
         </g:FlowPanel>
-        <g:ScrollPanel ui:field="contentScrollPanel">
-            <g:SimplePanel ui:field="contentPanel" addStyleNames="modal-body" />
-        </g:ScrollPanel>
-        <g:HTMLPanel addStyleNames="modal-footer wizard-pf-footer">
-            <g:FlowPanel ui:field="footerButtonPanel" />
-            <g:FlowPanel ui:field="footerStatusPanel" />
-            <div style="clear: both;" />
-        </g:HTMLPanel>
     </g:FlowPanel>
 
 </ui:UiBinder>

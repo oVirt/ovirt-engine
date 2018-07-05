@@ -1,0 +1,23 @@
+/***************************************
+Dialogs
+****************************************/
+
+.dialog_noOverflow {
+    overflow: hidden;
+}
+
+.dialog_content {
+    padding: 0;
+    margin-left: 238px;
+    margin-right: -15px;
+    overflow: visible;
+}
+
+.dialog_headerSeparator {
+    border-bottom: 1px solid #D1D1D1;
+}
+
+.dialog_noMax {
+    height: initial;
+    max-height: initial;
+}
