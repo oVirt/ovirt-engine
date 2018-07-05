@@ -124,6 +124,12 @@ public class BackendVmPoolsResourceTest extends
         setUpGetRngDeviceExpectations(0);
         addCommonAddExpectations();
 
+        setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new ArrayList<>());
+
         setUpCreationExpectations(ActionType.AddVmPool,
              VmPoolParametersBase.class,
              new String[] { "StorageDomainId" },
@@ -172,6 +178,12 @@ public class BackendVmPoolsResourceTest extends
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
+                new ArrayList<>());
+
+        setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
                 new ArrayList<>());
 
         addCommonAddExpectations();

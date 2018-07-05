@@ -145,6 +145,7 @@ public class BackendVmPoolsResource
         VM vmModel = getVM(pool);
         if (vmModel != null) {
             Vm vm = VmMapper.map(vmModel, new Vm());
+            DisplayHelper.adjustDisplayData(this, vm, false);
             BackendVmDeviceHelper.setPayload(this, vm);
             MemoryPolicyHelper.setupMemoryBalloon(vm, this);
             BackendVmDeviceHelper.setConsoleDevice(this, vm);
