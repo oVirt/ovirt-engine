@@ -287,7 +287,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         final List<Guid> oldIconIds = iconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
         resourceManager.getVmManager(getVmId()).update(newVmStatic);
-        if (getVm().isNotRunning()) {
+        // Hosted Engine doesn't use next-run snapshots. Instead it requires the configuration
+        // for next run to be stored in vm_static table.
+        if (getVm().isNotRunning() || getVm().isHostedEngine()) {
             updateVmPayload();
             getVmDeviceUtils().updateVmDevices(getParameters(), oldVm);
             updateWatchdog();
