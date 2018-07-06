@@ -1,15 +1,22 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -19,6 +26,11 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
 
     public SyncStorageDevicesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution).withWait(false);
     }
 
     @Override
@@ -69,5 +81,12 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.SYNC_STORAGE_DEVICES_IN_HOST
                 : AuditLogType.SYNC_STORAGE_DEVICES_IN_HOST_FAILED;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getVdsId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.HOST_STORAGE_DEVICES,
+                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_DEVICE_LOCKED));
     }
 }
