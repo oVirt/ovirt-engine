@@ -214,7 +214,7 @@ BuildRequires:	javapackages-local
 
 Requires(pre):	shadow-utils
 
-Requires:	%{jboss} >= 11.0.1
+Requires:	%{jboss} >= 13.0.0
 
 Requires:	%{name}-backend = %{version}-%{release}
 Requires:	%{name}-cli >= 3.6.2.0
