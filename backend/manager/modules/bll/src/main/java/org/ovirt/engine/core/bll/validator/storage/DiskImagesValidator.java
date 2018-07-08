@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -313,6 +315,21 @@ public class DiskImagesValidator {
                                         .map(DiskImage::getDescription)
                                         .collect(Collectors.joining(", "))));
             }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult snapshotAlreadyExists(Map<Guid, Guid> diskToImageIds) {
+        Set<Guid> diskIds = diskImages.stream()
+                .flatMap(diskImage -> getDiskImageDao().getAllSnapshotsForImageGroup(diskImage.getId()).stream())
+                .map(DiskImage::getImageId)
+                .collect(Collectors.toSet());
+        Set<Guid> providedImageIds = new HashSet(diskToImageIds.values());
+        Set<Guid> existingGuids = providedImageIds.stream().filter(diskIds::contains).collect(Collectors.toSet());
+        if (!existingGuids.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_IMAGE_ALREADY_EXISTS,
+                    ReplacementUtils.replaceWith("ImageIds", existingGuids));
         }
 
         return ValidationResult.VALID;
