@@ -727,12 +727,22 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void plugDiskToVmIfNeeded() {
-        if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null &&  getVm().getStatus() != VMStatus.Down)    {
-            VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(getParameters().getDiskInfo().getId(), getVmId()));
-            params.setShouldBeLogged(false);
-            ActionReturnValue returnValue = runInternalAction(ActionType.HotPlugDiskToVm, params);
-            if (!returnValue.getSucceeded()) {
-                auditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
+        if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null) {
+            if (!getVm().getStatus().isUpOrPaused()) {
+                log.warn("Disk id - '{}' wasn't plug to VM - '{}'({}) because the VM status is - '{}'",
+                        getParameters().getDiskInfo().getId(),
+                        getVmId(),
+                        getVmName(),
+                        getVm().getStatus());
+            } else {
+                VmDiskOperationParameterBase params =
+                        new VmDiskOperationParameterBase(new DiskVmElement(getParameters().getDiskInfo().getId(),
+                                getVmId()));
+                params.setShouldBeLogged(false);
+                ActionReturnValue returnValue = runInternalAction(ActionType.HotPlugDiskToVm, params);
+                if (!returnValue.getSucceeded()) {
+                    auditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
+                }
             }
         }
     }
