@@ -414,12 +414,12 @@ ENGINE_API_DEFAULT_VERSION="4"
 #   3:4.0:4.2
 #
 # Means that version 3 of the API was deprecated in version 4.0 of the
-# engine and will be removed in version 4.2 of the engine.
+# engine and will be removed in version 4.4 of the engine.
 #
 # When the engine detects a request that is using a deprecated version
 # of the API it will send a message to the audit log explaining it.
 #
-ENGINE_API_DEPRECATED_VERSIONS="3:4.0:4.3"
+ENGINE_API_DEPRECATED_VERSIONS="3:4.0:4.4"
 
 #
 # This flags indicates if 'filtering' should be enabled by default for
