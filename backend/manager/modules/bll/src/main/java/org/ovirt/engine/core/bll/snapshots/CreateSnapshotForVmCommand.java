@@ -307,7 +307,8 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);
             if (!(validate(diskImagesValidator.diskImagesNotLocked())
                     && validate(diskImagesValidator.diskImagesNotIllegal())
-                    && validate(vmValidator.vmWithoutLocalDiskUserProperty()))) {
+                    && validate(vmValidator.vmWithoutLocalDiskUserProperty())
+                    && validate(diskImagesValidator.snapshotAlreadyExists(getParameters().getDiskToImageIds())))) {
                 return false;
             }
         }

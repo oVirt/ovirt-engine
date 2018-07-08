@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -306,6 +307,14 @@ public class DiskImagesValidatorTest {
         sp.setStoragePoolFormatType(StorageFormatType.V3);
         when(storagePoolDao.get(any())).thenReturn(sp);
         assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
+    }
+
+    @Test
+    public void testSnapshotAlreadyExists() {
+        when(diskImageDao.getAllSnapshotsForImageGroup(disk1.getId())).thenReturn(Collections.singletonList(disk2));
+        Map<Guid, Guid> diskToImageIds = Collections.singletonMap(disk2.getId(), disk2.getImageId());
+        assertThat(validator.snapshotAlreadyExists(diskToImageIds),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_IMAGE_ALREADY_EXISTS));
     }
 
     private VmDevice createVmDeviceForDisk(DiskImage disk) {
