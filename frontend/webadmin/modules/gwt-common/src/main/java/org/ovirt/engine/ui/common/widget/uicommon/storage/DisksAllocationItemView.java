@@ -15,9 +15,9 @@ import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -68,7 +68,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     @UiField
     @Path(value = "sourceStorageDomainName.entity")
     @WithElementId
-    StringEntityModelLabelEditor sourceStorageLabel;
+    LabelWithTextTruncation sourceStorageLabel;
 
     @UiField(provided = true)
     @Path(value = "volumeType.selectedItem")
@@ -191,7 +191,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         diskSizeLabel.setText(new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
                 object.getSize().getEntity()));
 
-        sourceStorageLabel.setLabel(object.getSourceStorageDomainName().getEntity());
+        sourceStorageLabel.setText(object.getSourceStorageDomainName().getEntity());
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
         object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
