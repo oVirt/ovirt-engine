@@ -16,7 +16,7 @@
 
 - block:
   - name: Install ovirt-provider-ovn-driver
-    yum:
+    package:
         name: ovirt-provider-ovn-driver
         state: present
 
