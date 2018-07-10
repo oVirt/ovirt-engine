@@ -169,6 +169,9 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
                 if (properties != null) {
                     double confirmedFreeSize = properties.getConfirmedFreeSize() == null ? properties.getFreeSize() : properties.getConfirmedFreeSize();
                     b.getBrickProperties().setConfirmedFreeSize(confirmedFreeSize);
+
+                    Integer vdoSavings = properties.getVdoSavings() == null ? 0 : properties.getVdoSavings();
+                    b.getBrickProperties().setVdoSavings(vdoSavings);
                 } else {
                     b.getBrickProperties().setConfirmedFreeSize(b.getBrickProperties().getFreeSize());
                 }

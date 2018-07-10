@@ -92,6 +92,11 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     DoubleEntityModelLabelEditor confirmedFreeSizeEditor;
 
     @UiField
+    @Path(value = "brickProperties.vdoSavings.entity")
+    @WithElementId
+    IntegerEntityModelLabelEditor vdoSavingsEditor;
+
+    @UiField
     @Path(value = "brickProperties.device.entity")
     @WithElementId
     StringEntityModelLabelEditor deviceEditor;
