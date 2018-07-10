@@ -2394,6 +2394,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String confirmedFreeSizeBrickAdvancedLabel();
 
+    String vdoSavingsBrickAdvancedLabel();
+
     String deviceBrickAdvancedLabel();
 
     String blockSizeBrickAdvancedLabel();

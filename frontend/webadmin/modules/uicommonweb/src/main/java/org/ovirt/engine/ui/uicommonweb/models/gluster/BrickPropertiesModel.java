@@ -13,6 +13,7 @@ public class BrickPropertiesModel extends Model {
     private EntityModel<Double> totalSize;
     private EntityModel<Double> freeSize;
     private EntityModel<Double> confirmedFreeSize;
+    private EntityModel<Integer> vdoSavings;
     private EntityModel<String> device;
     private EntityModel<Integer> blockSize;
     private EntityModel<String> mountOptions;
@@ -26,6 +27,7 @@ public class BrickPropertiesModel extends Model {
         setTotalSize(new EntityModel<Double>());
         setFreeSize(new EntityModel<Double>());
         setConfirmedFreeSize(new EntityModel<>());
+        setVdoSavings(new EntityModel<>());
         setDevice(new EntityModel<String>());
         setBlockSize(new EntityModel<Integer>());
         setMountOptions(new EntityModel<String>());
@@ -40,6 +42,7 @@ public class BrickPropertiesModel extends Model {
         getTotalSize().setEntity(brickProperties.getTotalSize());
         getFreeSize().setEntity(brickProperties.getFreeSize());
         getConfirmedFreeSize().setEntity(brickProperties.getConfirmedFreeSize());
+        getVdoSavings().setEntity(brickProperties.getVdoSavings());
         getDevice().setEntity(brickProperties.getDevice());
         getBlockSize().setEntity(brickProperties.getBlockSize());
         getMountOptions().setEntity(brickProperties.getMntOptions());
@@ -99,6 +102,14 @@ public class BrickPropertiesModel extends Model {
 
     public EntityModel<String> getDevice() {
         return device;
+    }
+
+    public EntityModel<Integer> getVdoSavings() {
+        return vdoSavings;
+    }
+
+    public void setVdoSavings(EntityModel<Integer> vdoSavings) {
+        this.vdoSavings = vdoSavings;
     }
 
     public void setDevice(EntityModel<String> device) {
