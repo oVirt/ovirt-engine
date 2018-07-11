@@ -50,7 +50,6 @@ select fn_db_add_config_value('AffinityRulesEnforcementManagerRegularInterval', 
 
 select fn_db_add_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
 select fn_db_add_config_value('AllowClusterWithVirtGlusterEnabled','true','general');
-select fn_db_add_config_value('AllowDuplicateMacAddresses','false','general');
 select fn_db_add_config_value('ApplicationMode','255','general');
 select fn_db_add_config_value('AsyncCommandPollingLoopInSeconds','1','general');
 select fn_db_add_config_value('AsyncCommandPollingRateInSeconds','10','general');
@@ -178,14 +177,14 @@ select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
-select fn_db_add_config_value('HotPlugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '3.6');
-select fn_db_add_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"false"}', '4.0');
-select fn_db_add_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
-select fn_db_add_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.2');
-select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '4.0');
-select fn_db_add_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
-select fn_db_add_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.2');
-select fn_db_add_config_value('HotPlugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '3.6');
+select fn_db_add_config_value('HotPlugCpuSupported', '{"x86":"false","ppc":"false"}', '3.6');
+select fn_db_add_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"false"}', '4.0');
+select fn_db_add_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
+select fn_db_add_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true"}', '4.2');
+select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86":"false","ppc":"false"}', '4.0');
+select fn_db_add_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
+select fn_db_add_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true"}', '4.2');
+select fn_db_add_config_value('HotPlugMemorySupported', '{"x86":"true","ppc":"false"}', '3.6');
 select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86":"true","ppc":"true"}', '4.2');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
@@ -193,8 +192,8 @@ select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'fals
 select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('AgentChannelNamingSupported', 'false', '4.1');
 select fn_db_add_config_value('AgentChannelNamingSupported', 'true', '4.2');
-select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86_64":"false","ppc64":"false"}', '4.0');
-select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '4.1');
+select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.0');
+select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.1');
 select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86":"true","ppc":"true"}', '4.2');
 select fn_db_add_config_value('ReduceVolumeSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ReduceVolumeSupported', 'false', '4.1');
@@ -208,11 +207,11 @@ select fn_db_add_config_value_for_versions_up_to('MemoryDisksOnDifferentDomainsS
 select fn_db_add_config_value('MemoryDisksOnDifferentDomainsSupported', 'true', '4.2');
 
 -- migration support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.2');
 -- snapshot support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.2');
 -- suspend support per architecture
-select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.2');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
@@ -224,8 +223,8 @@ select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled',
 select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'true', '4.2');
 
--- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')
-select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', 'RANDOM', '4.2');
+-- default requirement for rng sources (empty string by default, additional legal value is 'HWRNG')
+select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', '', '4.2');
 
 select fn_db_add_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'general');
 
@@ -369,12 +368,10 @@ select fn_db_add_config_value('LogSwapMemoryThresholdInMB','1024','general');
 --Handling Log XML-RPC Data
 select fn_db_add_config_value('LowUtilizationForEvenlyDistribute','0','general');
 select fn_db_add_config_value('LowUtilizationForPowerSave','20','general');
-select fn_db_add_config_value('MacPoolRanges','00:1A:4A:16:01:51-00:1A:4A:16:01:e6','general');
 select fn_db_add_config_value('ManagedDevicesWhiteList','','general');
 select fn_db_add_config_value('DefaultManagementNetwork','ovirtmgmt','general');
 select fn_db_add_config_value('MaxAuditLogMessageLength','10000','general');
 select fn_db_add_config_value('MaxBlockDiskSize','8192','general');
-select fn_db_add_config_value('MaxMacsCountInPool','100000','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '16', '4.2');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfThreadsPerCpu', '8', '4.2');
@@ -927,28 +924,28 @@ select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','3.6');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','4.0');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
-select fn_db_update_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"false"}', '3.6');
-select fn_db_update_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
-select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
+select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"false"}', '3.6');
+select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
+select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
 select fn_db_update_config_value('DataOperationsByHSM','true','4.1');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true", "s390x" : "true"}','4.2');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','3.6');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.0');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','3.6');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.0');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','3.6');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.0');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
 
 -- s390x architecture support
-select fn_db_update_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true","s390x":"true"}', '4.2');
-select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true","s390x":"false"}', '4.2');
+select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true","s390x":"true"}', '4.2');
+select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
 
 select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','3.6');
 select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli,collectd,collectd-disk,collectd-netlink,collectd-write_http,fluentd,rubygem-fluent-plugin-rewrite-tag-filter,rubygem-fluent-plugin-secure-forward,rubygem-fluent-plugin-collectd-nest,rubygem-fluent-plugin-viaq_data_model','4.1');
@@ -961,6 +958,7 @@ select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|fal
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.0');
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.1');
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
+select fn_db_update_config_value('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.1');
 select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
 select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.1');
