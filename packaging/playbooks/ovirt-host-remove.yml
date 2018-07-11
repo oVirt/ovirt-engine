@@ -3,6 +3,10 @@
   vars:
       hosted_engine_config_file: "/etc/ovirt-hosted-engine/hosted-engine.conf"
 
+  roles:
+    - role: ovirt-provider-ovn-driver
+      ovn_state: unconfigured
+
   tasks:
     - name: Checks hosted engine configuration file
       stat:
