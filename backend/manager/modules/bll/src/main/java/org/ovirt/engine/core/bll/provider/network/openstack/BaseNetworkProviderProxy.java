@@ -218,11 +218,12 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     private void mapPhysicalNetworkParameters(com.woorea.openstack.quantum.model.Network externalNetwork,
             Network network) {
         String providerNetworkType = externalNetwork.getProviderNetworkType();
-        network.getProvidedBy().setExternalVlanId(VLAN_NETWORK.equals(providerNetworkType) ?
+        ProviderNetwork providerNetwork = network.getProvidedBy();
+        providerNetwork.setExternalVlanId(VLAN_NETWORK.equals(providerNetworkType) ?
                 externalNetwork.getProviderSegmentationId() :
                 null);
-        network.getProvidedBy().setCustomPhysicalNetworkName(externalNetwork.getProviderPhysicalNetwork());
-        network.getProvidedBy().setProviderNetworkType(providerNetworkType);
+        providerNetwork.setCustomPhysicalNetworkName(externalNetwork.getProviderPhysicalNetwork());
+        providerNetwork.setProviderNetworkType(providerNetworkType);
     }
 
     @Override
