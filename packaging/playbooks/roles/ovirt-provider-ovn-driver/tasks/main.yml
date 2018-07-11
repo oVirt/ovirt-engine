@@ -1,36 +1,10 @@
 ---
-- block:
-  - name: Install ovs
-    yum:
-        name: openvswitch
-        state: present
-
-  - name: Ensure Open vSwitch is started
-    service:
-        name: openvswitch
-        state: started
-        enabled: yes
-
+- name: Import the configure ovn-provider-ovn file
+  import_tasks: configure.yml
   when:
-    - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr and ovn_engine_cluster_version is version_compare('4.2', '>='))
+    - ovn_state == "configured"
 
-- block:
-  - name: Install ovirt-provider-ovn-driver
-    package:
-        name: ovirt-provider-ovn-driver
-        state: present
-
-  - name: Ensure ovn-controller is started
-    service:
-        name: ovn-controller
-        state: started
-        enabled: yes
-
-  - name: Configure OVN for oVirt
-    command: >
-        vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }}
-
+- name: Import the unconfigure ovn-provider-ovn file
+  import_tasks: unconfigure.yml
   when:
-    - ovn_central is defined
-    - ovn_central | ipaddr
-    - ovn_engine_cluster_version is version_compare('4.2', '>=')
+    - ovn_state == "unconfigured"

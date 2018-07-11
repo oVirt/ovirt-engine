@@ -1,0 +1,23 @@
+---
+- block:
+  - name: Check if ovirt-provider-ovn-driver is installed
+    package:
+        name: ovirt-provider-ovn-driver
+        state: present
+    check_mode: true
+    register: ovn_packages
+
+  - name: Fetch ovirt-provider-ovn-driver version
+    command: "rpm -q ovirt-provider-ovn-driver --qf '%{VERSION}'"
+    register: driver_version
+    args:
+      warn: no
+
+  - name: Unconfigure the OVN chassis
+    command: vdsm-tool ovn-unconfigure
+    when:
+      - not ovn_packages.changed
+      - driver_version.stdout is version_compare('1.2.14', '>=')
+
+  when:
+    - ovn_engine_cluster_version is version_compare('4.2', '>=')
