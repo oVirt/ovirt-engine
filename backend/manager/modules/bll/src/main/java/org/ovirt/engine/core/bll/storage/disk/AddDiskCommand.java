@@ -367,19 +367,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return false;
     }
 
-    /**
-     * @return The id of the storage domain where the first encountered VM image disk reside, if the vm doesn't have no
-     *         image disks then Guid.Empty will be returned.
-     */
-    private Guid getDisksStorageDomainId() {
-        for (Disk disk : getVm().getDiskMap().values()) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                return ((DiskImage) disk).getStorageIds().get(0);
-            }
-        }
-        return Guid.Empty;
-    }
-
     @Override
     public Guid getStorageDomainId() {
         if (super.getStorageDomainId() == null) {
