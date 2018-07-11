@@ -144,7 +144,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean validate() {
-        if (!isFloatingDisk() && (!validate(new VmValidator(getVm()).isVmExists()) || !validateDiskVmData())) {
+        if (!isFloatingDisk() && (!validateVm() || !validateDiskVmData())) {
             return false;
         }
 
@@ -213,6 +213,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         return true;
+    }
+
+    protected boolean validateVm() {
+        return validate(new VmValidator(getVm()).isVmExists());
     }
 
     protected boolean checkIfLunDiskCanBeAdded(DiskValidator diskValidator) {
@@ -386,12 +390,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> listPermissionSubjects;
-        if (isFloatingDisk()) {
-            listPermissionSubjects = new ArrayList<>();
-        } else {
-            listPermissionSubjects = super.getPermissionCheckSubjects();
-        }
+        List<PermissionSubject> listPermissionSubjects = getVmPermissionSubject();
         // If the storage domain ID is empty/null, it means we are going to create an external disk
         // In order to do that we need CREATE_DISK permissions on System level
         if (getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId())) {
@@ -411,6 +410,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return listPermissionSubjects;
     }
 
+    protected List<PermissionSubject> getVmPermissionSubject() {
+        return isFloatingDisk() ? new ArrayList<>() : super.getPermissionCheckSubjects();
+    }
+
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__ADD);
@@ -421,7 +424,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected void executeVmCommand() {
         createNewDiskId();
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskInfo().getId()));
-        ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
+        setDiskAlias();
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
                 createDiskBasedOnImage();
@@ -433,6 +436,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 createDiskBasedOnCinder();
                 break;
         }
+    }
+
+    protected void setDiskAlias() {
+        ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
     }
 
     private void createNewDiskId() {
@@ -528,13 +535,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setLock(null);
         getTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
 
-        if (getVm() != null) {
-            // The disk VM element has to be added before the VM device since as a part of the VM device creation the
-            // boot order is determined so the VM device creation depends on the existence of the disk VM element
-            getCompensationContext().snapshotEntity(addDiskVmElementForDisk(getDiskVmElement()));
-            getCompensationContext().snapshotNewEntity(addManagedDeviceForDisk(getParameters().getDiskInfo().getId()));
-            getCompensationContext().stateChanged();
-        }
+        attachImage();
 
         if (tmpRetValue.getActionReturnValue() != null) {
             DiskImage diskImage = tmpRetValue.getActionReturnValue();
@@ -543,6 +544,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
+    }
+
+    protected void attachImage() {
+        if (getVm() != null) {
+            // The disk VM element has to be added before the VM device since as a part of the VM device creation the
+            // boot order is determined so the VM device creation depends on the existence of the disk VM element
+            getCompensationContext().snapshotEntity(addDiskVmElementForDisk(getDiskVmElement()));
+            getCompensationContext().snapshotNewEntity(addManagedDeviceForDisk(getParameters().getDiskInfo().getId()));
+            getCompensationContext().stateChanged();
+        }
     }
 
     @Override
