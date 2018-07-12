@@ -190,7 +190,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return this.tags;
     }
 
-    private boolean caseSensitiveSearch = true;
+    private boolean caseSensitiveSearch = false;
 
     public boolean isCaseSensitiveSearch() {
         return caseSensitiveSearch;
