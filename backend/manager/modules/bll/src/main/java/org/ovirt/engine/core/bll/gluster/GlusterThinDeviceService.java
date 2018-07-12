@@ -148,15 +148,18 @@ public class GlusterThinDeviceService {
         return bytes.doubleValue() / SizeConverter.BYTES_IN_MB;
     }
 
+    private <T> Stream<T> extractBrickData(List<GlusterBrickEntity> bricks, Function<BrickProperties, T> field) {
+        return bricks.stream().filter(b -> !b.getIsArbiter()).map(GlusterBrickEntity::getBrickProperties).map(field);
+    }
+
     private <T, R> R calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, T> field, Function<List<Stream<T>>, R> reduce) {
-        List<BrickProperties> bricks = volume.getBricks().stream()
+        List<GlusterBrickEntity> bricks = volume.getBricks().stream()
                 .map(GlusterBrickEntity::getId)
                 .map(b -> brickDao.getById(b))
                 .filter(Objects::nonNull)
-                .map(GlusterBrickEntity::getBrickProperties)
                 .collect(Collectors.toList());
 
-        if (bricks.stream().map(field).anyMatch(Objects::isNull)) {
+        if (extractBrickData(bricks, field).anyMatch(Objects::isNull)) {
             //If we have bricks missing confirmed size, we can't calculate it for the volume.
             log.info("Volume {} have non-thin bricks, skipping confirmed free size calculation", volume.getName());
             return null;
@@ -168,17 +171,17 @@ public class GlusterThinDeviceService {
             case DISTRIBUTED_REPLICATE:
                 while (!bricks.isEmpty()) {
                     int replicaCounter = 0;
-                    List<BrickProperties> set = new ArrayList<>();
+                    List<GlusterBrickEntity> set = new ArrayList<>();
                     while(replicaCounter < volume.getReplicaCount() && !bricks.isEmpty()) {
                         set.add(bricks.get(0));
                         bricks.remove(0);
                         replicaCounter++;
                     }
-                    replicaSets.add(set.stream().map(field));
+                    replicaSets.add(extractBrickData(set, field));
                 }
                 break;
             default:
-                replicaSets = Collections.singletonList(bricks.stream().map(field));
+                replicaSets = Collections.singletonList(extractBrickData(bricks, field));
                 break;
         }
         return reduce.apply(replicaSets);
