@@ -1333,6 +1333,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             // Resource allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
+            if (getModel().getMultiQueues().getIsAvailable()) {
+                getModel().getMultiQueues().setEntity(true);
+            }
         }
     }
 
