@@ -56,10 +56,10 @@ public class GlusterThinDeviceService {
     private AuditLogDirector auditLogDirector;
 
     @Inject
-    protected GlusterBrickDao brickDao;
+    private GlusterBrickDao brickDao;
 
     @Inject
-    protected ClusterDao clusterDao;
+    private ClusterDao clusterDao;
 
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
@@ -68,10 +68,10 @@ public class GlusterThinDeviceService {
     private StorageDomainDynamicDao storageDomainDynamicDao;
 
     @Inject
-    protected StorageDomainStaticDao storageDomainStaticDao;
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Inject
-    protected VdsDao vdsDao;
+    private VdsDao vdsDao;
 
     @Inject
     private VDSBrokerFrontend resourceManager;
@@ -146,7 +146,7 @@ public class GlusterThinDeviceService {
         return bytes.doubleValue() / SizeConverter.BYTES_IN_MB;
     }
 
-    private Long calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, Double> field) {
+    private <T, R> R calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, T> field, Function<Stream<T>, R> reduce) {
         List<BrickProperties> bricks = volume.getBricks().stream()
                 .map(GlusterBrickEntity::getId)
                 .map(b -> brickDao.getById(b))
@@ -154,29 +154,34 @@ public class GlusterThinDeviceService {
                 .map(GlusterBrickEntity::getBrickProperties)
                 .collect(Collectors.toList());
 
-        if (bricks.stream().map(BrickProperties::getConfirmedFreeSize).anyMatch(Objects::isNull)) {
+        if (bricks.stream().map(field).anyMatch(Objects::isNull)) {
             //If we have bricks missing confirmed size, we can't calculate it for the volume.
             log.info("Volume {} have non-thin bricks, skipping confirmed free size calculation", volume.getName());
             return null;
         }
 
-        Stream<Double> brickSizes = bricks.stream()
-                .map(field)
-                .map(v -> v * SizeConverter.BYTES_IN_MB);
+        Stream<T> data = bricks.stream().map(field);
+        return reduce.apply(data);
+    }
 
-        switch (volume.getVolumeType()) {
-            case REPLICATE:
-                return brickSizes.map(Double::longValue).min(Long::compare).orElse(null);
-            case DISTRIBUTE:
-            case DISTRIBUTED_REPLICATE:
-            case STRIPE:
-            case DISTRIBUTED_STRIPE:
-            case STRIPED_REPLICATE:
-            case DISTRIBUTED_STRIPED_REPLICATE:
-            case DISPERSE:
-            default:
-                return brickSizes.mapToLong(Double::longValue).sum();
-        }
+    private Function<Stream<Double>, Long> reduceBricksToSize(GlusterVolumeEntity volume) {
+        return (Stream<Double> data) -> {
+            Stream<Double> brickSizes = data.map(v -> v * SizeConverter.BYTES_IN_MB);
+
+            switch (volume.getVolumeType()) {
+                case REPLICATE:
+                    return brickSizes.map(Double::longValue).min(Long::compare).orElse(null);
+                case DISTRIBUTE:
+                case DISTRIBUTED_REPLICATE:
+                case STRIPE:
+                case DISTRIBUTED_STRIPE:
+                case STRIPED_REPLICATE:
+                case DISTRIBUTED_STRIPED_REPLICATE:
+                case DISPERSE:
+                default:
+                    return brickSizes.mapToLong(Double::longValue).sum();
+            }
+        };
     }
 
     /**
@@ -185,7 +190,7 @@ public class GlusterThinDeviceService {
      * @return confirmed free size value in bytes.
      */
     public Long calculateConfirmedVolumeCapacity(GlusterVolumeEntity volume) {
-        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedFreeSize);
+        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedFreeSize, reduceBricksToSize(volume));
     }
 
     /**
@@ -194,7 +199,7 @@ public class GlusterThinDeviceService {
      * @return confirmed total size value in bytes.
      */
     public Long calculateConfirmedVolumeTotal(GlusterVolumeEntity volume) {
-        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedTotalSize);
+        return calculateConfirmedVolume(volume, BrickProperties::getConfirmedTotalSize, reduceBricksToSize(volume));
     }
 
     /**
