@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +148,7 @@ public class GlusterThinDeviceService {
         return bytes.doubleValue() / SizeConverter.BYTES_IN_MB;
     }
 
-    private <T, R> R calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, T> field, Function<Stream<T>, R> reduce) {
+    private <T, R> R calculateConfirmedVolume(GlusterVolumeEntity volume, Function<BrickProperties, T> field, Function<List<Stream<T>>, R> reduce) {
         List<BrickProperties> bricks = volume.getBricks().stream()
                 .map(GlusterBrickEntity::getId)
                 .map(b -> brickDao.getById(b))
@@ -160,26 +162,47 @@ public class GlusterThinDeviceService {
             return null;
         }
 
-        Stream<T> data = bricks.stream().map(field);
-        return reduce.apply(data);
+        List<Stream<T>> replicaSets = new ArrayList<>();
+        switch (volume.getVolumeType()) {
+            case REPLICATE:
+            case DISTRIBUTED_REPLICATE:
+                while (!bricks.isEmpty()) {
+                    int replicaCounter = 0;
+                    List<BrickProperties> set = new ArrayList<>();
+                    while(replicaCounter < volume.getReplicaCount() && !bricks.isEmpty()) {
+                        set.add(bricks.get(0));
+                        bricks.remove(0);
+                        replicaCounter++;
+                    }
+                    replicaSets.add(set.stream().map(field));
+                }
+                break;
+            default:
+                replicaSets = Collections.singletonList(bricks.stream().map(field));
+                break;
+        }
+        return reduce.apply(replicaSets);
     }
 
-    private Function<Stream<Double>, Long> reduceBricksToSize(GlusterVolumeEntity volume) {
-        return (Stream<Double> data) -> {
-            Stream<Double> brickSizes = data.map(v -> v * SizeConverter.BYTES_IN_MB);
-
+    private Function<List<Stream<Double>>, Long> reduceBricksToSize(GlusterVolumeEntity volume) {
+        return (List<Stream<Double>> data) -> {
             switch (volume.getVolumeType()) {
                 case REPLICATE:
-                    return brickSizes.map(Double::longValue).min(Long::compare).orElse(null);
-                case DISTRIBUTE:
+                    return data.stream().flatMap(Function.identity()).map(v -> v * SizeConverter.BYTES_IN_MB).map(Double::longValue).min(Long::compare).orElse(null);
                 case DISTRIBUTED_REPLICATE:
+                    return data.stream()
+                            .map(b -> b.map(v -> v * SizeConverter.BYTES_IN_MB).map(Double::longValue).min(Long::compare).orElse(null))
+                            .filter(Objects::nonNull)
+                            .mapToLong(s-> s)
+                            .sum();
+                case DISTRIBUTE:
                 case STRIPE:
                 case DISTRIBUTED_STRIPE:
                 case STRIPED_REPLICATE:
                 case DISTRIBUTED_STRIPED_REPLICATE:
                 case DISPERSE:
                 default:
-                    return brickSizes.mapToLong(Double::longValue).sum();
+                    return data.stream().flatMap(Function.identity()).map(v -> v * SizeConverter.BYTES_IN_MB).mapToLong(Double::longValue).sum();
             }
         };
     }

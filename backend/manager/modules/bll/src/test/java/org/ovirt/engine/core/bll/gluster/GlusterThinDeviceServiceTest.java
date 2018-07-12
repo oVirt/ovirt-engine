@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalVolumeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -95,6 +96,7 @@ public class GlusterThinDeviceServiceTest {
     public void testConfirmedVolumeCapacity() {
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
         volumeEntity.addBrick(brick);
+        volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
 
         when(brickDao.getById(brickId)).thenReturn(brick);
 
