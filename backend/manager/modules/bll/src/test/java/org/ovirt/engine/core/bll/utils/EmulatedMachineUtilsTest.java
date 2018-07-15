@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -58,14 +59,16 @@ public class EmulatedMachineUtilsTest {
         String original = "pc-i440fx-rhel7.3.0";
         String bestMatch = "pc-i440fx-rhel7.2.0";
         List<String> candidates = Arrays.asList("pc-i440fx-2.1", bestMatch, "pseries-rhel7.2.0");
-        assertEquals(bestMatch, EmulatedMachineUtils.findBestMatchForEmulatedMachine(original, candidates));
+        assertEquals(bestMatch,
+                EmulatedMachineUtils.findBestMatchForEmulatedMachine(ChipsetType.I440FX, original, candidates));
     }
 
     @Test
     public void testFindBestMatchForEmulateMachineKeepsCurrent() {
         String original = "pc-i440fx-rhel7.3.0";
         List<String> candidates = Arrays.asList("pc-i440fx-2.1", original, "pseries-rhel7.2.0");
-        assertEquals(original, EmulatedMachineUtils.findBestMatchForEmulatedMachine(original, candidates));
+        assertEquals(original,
+                EmulatedMachineUtils.findBestMatchForEmulatedMachine(ChipsetType.I440FX, original, candidates));
     }
 
 }
