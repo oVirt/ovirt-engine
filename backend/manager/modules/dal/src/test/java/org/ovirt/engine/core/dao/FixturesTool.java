@@ -918,7 +918,9 @@ public class FixturesTool {
     public static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     public static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
 
-    public static final Guid IMAGE_TRANSFER_ID = new Guid("8f9cd9f6-5f64-4568-8acb-0008659a2d57");
+
+    public static final Guid IMAGE_TRANSFER_ID = new Guid("340fd52b-3400-4cdd-8d3f-c9d03704b0a1");
+    public static final Guid EXISTING_IMAGE_TRANSFER_ID = new Guid("340fd52b-3400-4cdd-8d3f-c9d03704b0a2");
 
     public static final Guid PROVIDER_BINDING_HOST_ID_HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8");
     public static final String PROVIDER_BINDING_HOST_ID_PLUGIN_TYPE = "OVIRT_PROVIDER_OVN";
