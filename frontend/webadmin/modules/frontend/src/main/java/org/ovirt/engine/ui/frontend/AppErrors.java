@@ -1289,7 +1289,45 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER();
 
-    String NETWORKS_NOT_IN_SYNC();
+    String NETWORK_NOT_IN_SYNC();
+
+    String MTU();
+
+    String BRIDGED();
+
+    String VLAN();
+
+    String IPV4_BOOT_PROTOCOL();
+
+    String IPV4_ADDRESS();
+
+    String IPV4_NETMASK();
+
+    String IPV4_GATEWAY();
+
+    String IPV6_BOOT_PROTOCOL();
+
+    String IPV6_ADDRESS();
+
+    String IPV6_PREFIX();
+
+    String IPV6_GATEWAY();
+
+    String OUT_AVERAGE_LINK_SHARE();
+
+    String OUT_AVERAGE_UPPER_LIMIT();
+
+    String OUT_AVERAGE_REAL_TIME();
+
+    String SWITCH_TYPE();
+
+    String DNS_CONFIGURATION();
+
+    String DEFAULT_ROUTE();
+
+    String HOST_OUT_OF_SYNC();
+
+    String DC_OUT_OF_SYNC();
 
     String NETWORK_INTERFACES_ALREADY_SPECIFIED();
 
