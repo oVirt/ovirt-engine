@@ -6,6 +6,8 @@ import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandPa
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
+import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.config.Config;
@@ -168,6 +171,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private InterfaceDao interfaceDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private ReportedConfigurationsFiller reportedConfigurationsFiller;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -421,11 +427,31 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
             NetworkImplementationDetails networkImplementationDetails = nic.getNetworkImplementationDetails();
             boolean networkIsNotInSync = networkImplementationDetails != null && !networkImplementationDetails.isInSync();
+            reportedConfigurationsFiller.fillReportedConfiguration(existingNetworkAttachment, getVdsId());
 
             if (networkIsNotInSync) {
-                return new ValidationResult(EngineMessage.NETWORKS_NOT_IN_SYNC,
-                    ReplacementUtils.createSetVariableString("NETWORK_NOT_IN_SYNC",
-                        existingNetworkAttachment.getNetworkName()));
+                List<String> errors = new ArrayList<>();
+                List<ReportedConfiguration> reportedConfigurations =
+                        existingNetworkAttachment.getReportedConfigurations().getReportedConfigurationList();
+                List<ReportedConfiguration> outOfSyncReportedConfigurations =
+                        reportedConfigurations.stream().filter(config -> !config.isInSync()).collect(
+                                Collectors.toList());
+
+                Collections.sort(outOfSyncReportedConfigurations, Comparator.comparing(r -> r.getType().getName()));
+
+                outOfSyncReportedConfigurations.stream().forEach(reportedConfiguration -> {
+                    // The format of the message is for example - "${MTU} ${HOST_OT_OF_SYNC} - 5, ${DC_OUT_OF_SYNC} - 4"
+                    errors.add(String.format("${%s} ${HOST_OUT_OF_SYNC} - %s, ${DC_OUT_OF_SYNC} - %s", reportedConfiguration.getType().getName().toUpperCase(), reportedConfiguration.getActualValue(), reportedConfiguration.getExpectedValue()));
+                    addValidationMessage(reportedConfiguration.getType().getName().toUpperCase());
+                });
+
+                addValidationMessage(EngineMessage.HOST_OUT_OF_SYNC);
+                addValidationMessage(EngineMessage.DC_OUT_OF_SYNC);
+                addValidationMessageVariable("OUT_OF_SYNC_VALUES",
+                        StringUtils.join(errors, "; "));
+                return new ValidationResult(EngineMessage.NETWORK_NOT_IN_SYNC,
+                        ReplacementUtils.createSetVariableString("NETWORK_NOT_IN_SYNC",
+                                existingNetworkAttachment.getNetworkName()));
             }
         }
 
