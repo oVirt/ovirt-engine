@@ -221,6 +221,11 @@ public class UploadImageModel extends Model implements ICommandTarget {
         getDiskModel().initialize();
         imageInfoModel.getEntityChangedEvent().addListener((ev, sender, args) -> {
             getDiskModel().getSize().setIsChangeable(false);
+            if (!(getDiskModel() instanceof NewDiskModel)) {
+                // Setting attributes is relevant only for a new transfer;
+                // resume should use the existing attributes.
+                return;
+            }
             if (imageInfoModel.getContentType() == DiskContentType.ISO) {
                 getDiskModel().getAlias().setEntity(imageInfoModel.getFileName());
                 getDiskModel().getDescription().setEntity(imageInfoModel.getFileName());
