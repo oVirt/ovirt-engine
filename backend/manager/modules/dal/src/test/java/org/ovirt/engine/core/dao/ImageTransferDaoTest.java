@@ -29,7 +29,7 @@ public class ImageTransferDaoTest extends BaseGenericDaoTestCase<Guid, ImageTran
 
     @Override
     protected Guid getExistingEntityId() {
-        return FixturesTool.IMAGE_TRANSFER_ID;
+        return FixturesTool.EXISTING_IMAGE_TRANSFER_ID;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ImageTransferDaoTest extends BaseGenericDaoTestCase<Guid, ImageTran
 
     @Override
     protected ImageTransfer generateNewEntity() {
-        ImageTransfer imageTransfer = new ImageTransfer(Guid.newGuid());
+        ImageTransfer imageTransfer = new ImageTransfer(FixturesTool.IMAGE_TRANSFER_ID);
         imageTransfer.setCommandType(ActionType.TransferDiskImage);
         imageTransfer.setPhase(ImageTransferPhase.TRANSFERRING);
         imageTransfer.setType(TransferType.Upload);
