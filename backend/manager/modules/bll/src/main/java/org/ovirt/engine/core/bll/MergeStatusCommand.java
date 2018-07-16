@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -158,7 +159,7 @@ public class MergeStatusCommand<T extends MergeParameters>
         DiskImage activeDiskImage = getParameters().getActiveImage();
         for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
             Map device = (Map<String, Object>) o;
-            if (VdsProperties.Disk.equals(device.get(VdsProperties.Type))
+            if (VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))
                     && activeDiskImage.getId().equals(Guid.createGuidFromString(
                     (String) device.get(VdsProperties.ImageId)))) {
                 Object[] volumeChain = (Object[]) device.get(VdsProperties.VolumeChain);
