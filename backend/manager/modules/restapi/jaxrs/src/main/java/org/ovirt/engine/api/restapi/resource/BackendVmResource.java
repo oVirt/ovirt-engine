@@ -432,19 +432,25 @@ public class BackendVmResource
             params.setRunAndPause(true);
         }
 
-        boolean useSysprep = action.isSetUseSysprep() && action.isUseSysprep();
-        boolean useCloudInit = action.isSetUseCloudInit() && action.isUseCloudInit();
-        if (useSysprep && useCloudInit) {
+        boolean sysPrepSet = action.isSetUseSysprep();
+        boolean useSysPrep = sysPrepSet && action.isUseSysprep();
+        boolean cloudInitSet = action.isSetUseCloudInit();
+        boolean useCloudInit = cloudInitSet && action.isUseCloudInit();
+        if (useSysPrep && useCloudInit) {
             Fault fault = new Fault();
             fault.setReason(localize(Messages.CANT_USE_SYSPREP_AND_CLOUD_INIT_SIMULTANEOUSLY));
             return Response.status(Response.Status.CONFLICT).entity(fault).build();
         }
-        if (useSysprep) {
+        if (useSysPrep) {
             params.setInitializationType(InitializationType.Sysprep);
         } else if (useCloudInit) {
             params.setInitializationType(InitializationType.CloudInit);
-        } else {
+        } else if ((sysPrepSet && !useSysPrep) || (cloudInitSet && !useCloudInit)) {
+            //if sysprep or cloud-init were explicitly set to false, this indicates
+            //that the user wants no initialization
             params.setInitializationType(InitializationType.None);
+        } else {
+            params.setInitializationType(null); //Engine will decide based on VM properties
         }
         return doAction(actionType, params, action);
     }
