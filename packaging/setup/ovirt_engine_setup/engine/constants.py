@@ -364,6 +364,7 @@ class Defaults(object):
         ',ovirt-engine-cli'
         ',ovirt-iso-uploader'
         ',ovirt-engine-dashboard'
+        ',ovirt-web-ui'
     )
 
     DEFAULT_OVN_FIREWALLD_SERVICES = (
