@@ -2,9 +2,13 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -16,10 +20,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -29,6 +36,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.di.InjectorRule;
@@ -37,12 +47,20 @@ import org.ovirt.engine.core.di.InjectorRule;
 public class GlusterThinDeviceServiceTest {
     private static final Guid serverId = new Guid("e03104a4-399f-44e0-b61b-73bac390e49c");
     private static final Guid brickId = new Guid("929fa2ed-54a3-4500-bc34-666833797be3");
+    private static final Guid sdId = new Guid("4d43b701-a689-45cf-b390-f64e5f883682");
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     protected GlusterBrickDao brickDao;
+
+    @Mock
+    protected StorageDomainStaticDao storageDomainStaticDao;
+
     @Mock
     protected VdsDao vdsDao;
 
@@ -57,7 +75,7 @@ public class GlusterThinDeviceServiceTest {
 
     @Before
     public void setUp() {
-        brick = getBrick(brickId, "test", 100.500, 500.100);
+        brick = getBrick(brickId, "test", 5000.100, 1000.500);
     }
 
     private GlusterBrickEntity getBrick(Guid id, String device, Double confirmedTotalSize,
@@ -86,8 +104,8 @@ public class GlusterThinDeviceServiceTest {
 
         BrickProperties brickProperties =
                 thinDeviceService.setConfirmedSize(Collections.emptyMap(), brick, brick.getBrickProperties());
-        assertThat(brickProperties.getConfirmedTotalSize(), closeTo(100.500, 0.001));
-        assertThat(brickProperties.getConfirmedFreeSize(), closeTo(500.100, 0.001));
+        assertThat(brickProperties.getConfirmedTotalSize(), closeTo(5000.100, 0.001));
+        assertThat(brickProperties.getConfirmedFreeSize(), closeTo(1000.500, 0.001));
     }
 
     @Test
@@ -157,5 +175,45 @@ public class GlusterThinDeviceServiceTest {
         long volumeConfirmedCapacity = thinDeviceService.calculateConfirmedVolumeCapacity(volumeEntity);
         long expectedValue = (long) (200.2 * SizeConverter.BYTES_IN_MB + 300.2 * SizeConverter.BYTES_IN_MB);
         assertEquals(expectedValue, volumeConfirmedCapacity);
+    }
+
+    @Test
+    public void testSendLowConfirmedSpaceEvent() {
+
+        StorageDomainStatic sd = new StorageDomainStatic();
+        sd.setId(sdId);
+        sd.setWarningLowConfirmedSpaceIndicator(70);
+        doReturn(sd).when(storageDomainStaticDao).get(sdId);
+
+        GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
+        volumeEntity.addBrick(brick);
+        volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        doReturn(brick).when(brickDao).getById(brickId);
+
+        thinDeviceService.sendLowConfirmedSpaceEvent(SizeConverter.BYTES_IN_MB * 3400, volumeEntity, Collections.singletonList(sdId));
+
+        ArgumentCaptor<AuditLogable> event = ArgumentCaptor.forClass(AuditLogable.class);
+        verify(auditLogDirector, times(1)).log(event.capture(), eq(AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW));
+
+        assertThat(event.getValue().getCustomValues().get("diskspace"), is("3"));
+    }
+
+    @Test
+    public void testDontSendLowConfirmedSpaceEvent() {
+
+        StorageDomainStatic sd = new StorageDomainStatic();
+        sd.setId(sdId);
+        sd.setWarningLowConfirmedSpaceIndicator(70);
+        doReturn(sd).when(storageDomainStaticDao).get(sdId);
+
+        GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
+        volumeEntity.addBrick(brick);
+        volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        doReturn(brick).when(brickDao).getById(brickId);
+
+        thinDeviceService.sendLowConfirmedSpaceEvent(SizeConverter.BYTES_IN_MB * 3750, volumeEntity, Collections.singletonList(sdId));
+
+        ArgumentCaptor<AuditLogable> event = ArgumentCaptor.forClass(AuditLogable.class);
+        verify(auditLogDirector, times(0)).log(event.capture(), eq(AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW));
     }
 }

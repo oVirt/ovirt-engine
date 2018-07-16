@@ -268,11 +268,11 @@ public class GlusterThinDeviceService {
      */
     public void sendLowConfirmedSpaceEvent(Long confirmedFreeSize, GlusterVolumeEntity volume, List<Guid> sdId) {
         Long confirmedTotalSize = this.calculateConfirmedVolumeTotal(volume);
-        Double percentUsedSize = (1-(confirmedFreeSize.doubleValue() / confirmedTotalSize)) * 100;
+        Double percentFreeSize = (confirmedFreeSize.doubleValue() / confirmedTotalSize) * 100;
         sdId.stream()
                 .map(storageDomainStaticDao::get)
                 .filter(s -> s.getWarningLowConfirmedSpaceIndicator() != null)
-                .filter(s -> s.getWarningLowConfirmedSpaceIndicator() < percentUsedSize)
+                .filter(s -> s.getWarningLowConfirmedSpaceIndicator() > percentFreeSize)
                 .forEach(sd -> {
                     AuditLogable event = new AuditLogableImpl();
                     event.setStorageDomainId(sd.getId());
