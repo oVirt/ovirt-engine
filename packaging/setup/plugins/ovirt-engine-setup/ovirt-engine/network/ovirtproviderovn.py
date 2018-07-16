@@ -661,8 +661,8 @@ class Plugin(plugin.PluginBase):
                         engine_port
                     ),
                 'ovirt-ca-file':
-                    oenginecons.FileLocations.
-                    OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                    oengcommcons.FileLocations.
+                    OVIRT_ENGINE_PKI_APACHE_CA_CERT,
             },
         }
         return self._format_config_file_content(parameters)
