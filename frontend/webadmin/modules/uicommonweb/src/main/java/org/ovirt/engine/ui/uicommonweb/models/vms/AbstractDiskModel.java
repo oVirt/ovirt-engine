@@ -418,6 +418,9 @@ public abstract class AbstractDiskModel extends DiskModel {
             }
             Collections.sort(filteredHosts, new NameableComparator());
             getHost().setItems(filteredHosts);
+            if (getSanStorageModelBase() != null) {
+                getSanStorageModelBase().clearSanStorageModel();
+            }
         }), datacenter.getId());
     }
 

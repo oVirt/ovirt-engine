@@ -1171,4 +1171,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }));
     }
 
+    public void clearSanStorageModel() {
+        if (getStorageDomain() == null) {
+            setItems(null);
+        }
+    }
 }
