@@ -1423,8 +1423,10 @@ verifyEngineDb() {
 	fi | \
 		awk '/^COPY vdc_options/,/^\\./' > "${vdc_options_dump}"
 
-	cat "${pgrestorelog}" >> "${LOG}"  2>&1 \
-		|| logdie "Failed to append pg log to restore log"
+	if [ "${format}" != "plain" ]; then
+		cat "${pgrestorelog}" >> "${LOG}"  2>&1 \
+			|| logdie "Failed to append pg log to restore log"
+	fi
 
 	[ -z "$(awk '$2=="DomainName" {print $3}' < ${vdc_options_dump})" ] || \
 		logdie "legacy kerberos/ldap directory integration was in use. Please migrate to ovirt-engine-extension-aaa-ldap and backup/restore again"
