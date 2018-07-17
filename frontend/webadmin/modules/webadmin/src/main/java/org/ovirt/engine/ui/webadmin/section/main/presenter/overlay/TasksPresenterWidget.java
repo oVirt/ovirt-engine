@@ -44,7 +44,7 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
 
     @Inject
     public TasksPresenterWidget(EventBus eventBus, ViewDef view, TaskModelProvider taskModelProvider,
-                                NotificationPresenterWidget notificationPresenterWidget) {
+            NotificationPresenterWidget notificationPresenterWidget) {
         super(eventBus, view);
         this.taskModelProvider = taskModelProvider;
         this.notificationPresenterWidget = notificationPresenterWidget;

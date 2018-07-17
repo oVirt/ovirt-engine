@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
+import java.util.LinkedList;
+
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -9,6 +11,7 @@ import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
 
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -40,21 +43,26 @@ public class AlertManager {
     private static final CommonApplicationConstants CONSTANTS = AssetProvider.getConstants();
     private static final CommonApplicationMessages MESSAGES = AssetProvider.getMessages();
 
-    // TODO(vs) why are we holding reference to a specific instance?
+    private boolean canShowAlerts = false;
+    private final LinkedList<ScheduledCommand> pendingAlerts = new LinkedList<>();
+
+    // Alert message currently shown to the user. If another alert message occurs
+    // while this one is still visible, it will be updated to contain the new message,
+    // as well as bumping the "badge" number (denoting the number of alerts that have
+    // occurred since the current one became visible).
     private AlertPanel alert;
 
     /**
      * Informs the user about an uncaught exception.
      */
     public void showUncaughtExceptionAlert(Throwable t) {
-        SafeHtmlBuilder alertMessage = new SafeHtmlBuilder()
-                .appendHtmlConstant(MESSAGES.uncaughtExceptionAlertMessage(RELOAD_LINK));
+        SafeHtmlBuilder alertMessage = new SafeHtmlBuilder().appendHtmlConstant(
+                MESSAGES.uncaughtExceptionAlertMessage(RELOAD_LINK));
 
         String errorDetails = t.getMessage();
         if (StringHelper.isNotNullOrEmpty(errorDetails)) {
             alertMessage.appendEscaped(CONSTANTS.space());
             alertMessage.appendEscaped(MESSAGES.uncaughtExceptionAlertMessageDetails(errorDetails));
-            // new line
             alertMessage.appendHtmlConstant("<br />"); //$NON-NLS-1$
             alertMessage.appendEscaped(CONSTANTS.checkUiLogs());
         }
@@ -73,28 +81,45 @@ public class AlertManager {
      * Displays an application-wide alert message that auto-hides automatically.
      */
     public void showAlert(Type type, SafeHtml message, int autoHideMs) {
-        if (alert == null) {
-            alert = createAlert(type, message);
-            attachAlert(alert);
-        } else {
-            alert.incCount();
-            updateAlert(type, message, alert);
-        }
+        ScheduledCommand command = () -> {
+            if (alert == null) {
+                alert = createAlert(type, message);
+                attachAlert(alert);
+            } else {
+                alert.incCount();
+                updateAlert(alert, type, message);
+            }
 
-        if (autoHideMs > 0) {
-            final Timer timer = new Timer() {
-                @Override
-                public void run() {
-                    detachAlert(alert);
-                }
-            };
-            alert.getWidget().addCloseHandler(evt -> {
-                timer.cancel();
-                alert = null;
-            });
-            timer.schedule(autoHideMs);
+            if (autoHideMs > 0) {
+                final Timer timer = new Timer() {
+                    @Override
+                    public void run() {
+                        alert.getWidget().close();
+                    }
+                };
+                alert.getWidget().addCloseHandler(evt -> {
+                    timer.cancel();
+                    alert = null;
+                });
+                timer.schedule(autoHideMs);
+            } else {
+                alert.getWidget().addCloseHandler(evt -> alert = null);
+            }
+        };
+
+        if (canShowAlerts) {
+            command.execute();
         } else {
-            alert.getWidget().addCloseHandler(evt -> alert = null);
+            pendingAlerts.add(command);
+        }
+    }
+
+    public void setCanShowAlerts(boolean canShowAlerts) {
+        this.canShowAlerts = canShowAlerts;
+
+        if (canShowAlerts) {
+            pendingAlerts.forEach(ScheduledCommand::execute);
+            pendingAlerts.clear();
         }
     }
 
@@ -110,17 +135,13 @@ public class AlertManager {
         }
     }
 
-    void detachAlert(AlertPanel alertPanel) {
-        RootPanel.get().remove(alertPanel);
-    }
-
     AlertPanel createAlert(Type type, SafeHtml message) {
         AlertPanel alertPanel = new AlertPanel();
-        updateAlert(type, message, alertPanel);
+        updateAlert(alertPanel, type, message);
         return alertPanel;
     }
 
-    private void updateAlert(Type type, SafeHtml message, AlertPanel alertPanel) {
+    private void updateAlert(AlertPanel alertPanel, Type type, SafeHtml message) {
         alertPanel.clearMessages();
         alertPanel.setType(type);
         alertPanel.setWidgetColumnSize(null);

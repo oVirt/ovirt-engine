@@ -18,7 +18,7 @@
             <b:html.Span addStyleNames="notif_span">|</b:html.Span>
             <g:FlowPanel addStyleNames="notif_inline">
                 <b:html.Span addStyleNames="fa fa-bell-slash notif_bellIcon" />
-                <b:Anchor ui:field="doNotDisturbButton" dataToggle="DROPDOWN" addStyleNames="notif_doNotDisturbButton">
+                <b:Anchor dataToggle="DROPDOWN" addStyleNames="notif_doNotDisturbButton">
                     <ui:text from="{constants.notifDoNotDisturb}" />
                 </b:Anchor>
                 <b:DropDownMenu addStyleNames="notif_doNotDisturbDropDownMenu">

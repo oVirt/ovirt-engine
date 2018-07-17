@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
+import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Timer;
@@ -44,7 +45,7 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
     private String DO_NOT_DISTURB = "_doNotDisturb"; //$NON-NLS-1$
 
     @Inject
-    public NotificationPresenterWidget(ClientStorage clientStorage, EventBus eventBus, NotificationPresenterWidget.ViewDef view) {
+    public NotificationPresenterWidget(ClientStorage clientStorage, EventBus eventBus, ViewDef view) {
         super(eventBus, view);
         this.clientStorage = clientStorage;
         getView().hide();
@@ -64,11 +65,11 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
     }
 
     private boolean isDoNotDisturb() {
-        try {
-            if (sessionDoNotDisturb) {
-                return true;
-            }
+        if (sessionDoNotDisturb) {
+            return true;
+        }
 
+        try {
             String clientDoNotDisturb = clientStorage.getLocalItem(DO_NOT_DISTURB);
             if (clientDoNotDisturb != null && !clientDoNotDisturb.isEmpty()) {
                 Double clientDoNotDisturbExpires = Double.parseDouble(clientDoNotDisturb);
@@ -85,7 +86,7 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
         return false;
     }
 
-    public ToastNotification createNotification(String text, ToastNotification.NotificationStatus status) {
+    public ToastNotification createNotification(String text, NotificationStatus status) {
         ToastNotification notification = new ToastNotification(text, status);
 
         if (isDoNotDisturb()) {

@@ -34,9 +34,6 @@ public class NotificationView extends AbstractView implements NotificationPresen
     FlowPanel buttonContainer;
 
     @UiField
-    Anchor doNotDisturbButton;
-
-    @UiField
     AnchorListItem doNotDisturb10Minutes;
 
     @UiField

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.widget.AlertManager;
+
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -20,24 +22,24 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     }
 
     public static final PermanentSlot<HeaderPresenterWidget> TYPE_SetHeader = new PermanentSlot<>();
-
     public static final PermanentSlot<MenuPresenterWidget> TYPE_SetMenu = new PermanentSlot<>();
-
-    public static final PermanentSlot<MenuPresenterWidget> TYPE_SetNotifications = new PermanentSlot<>();
-
+    public static final PermanentSlot<NotificationPresenterWidget> TYPE_SetNotifications = new PermanentSlot<>();
     public static final NestedSlot TYPE_SetMainContent = new NestedSlot();
 
     private final HeaderPresenterWidget header;
     private final MenuPresenterWidget menu;
     private final NotificationPresenterWidget notifications;
+    private final AlertManager alertManager;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HeaderPresenterWidget header, MenuPresenterWidget menu, NotificationPresenterWidget notifications) {
+            HeaderPresenterWidget header, MenuPresenterWidget menu,
+            NotificationPresenterWidget notifications, AlertManager alertManager) {
         super(eventBus, view, proxy, RevealType.Root);
         this.header = header;
         this.menu = menu;
         this.notifications = notifications;
+        this.alertManager = alertManager;
     }
 
     @Override
@@ -50,6 +52,9 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         // Remove the loading page placeholder
         removeHostPagePlaceholder();
+
+        // At this point, GWTP application is loaded and ready
+        alertManager.setCanShowAlerts(true);
     }
 
     protected void removeHostPagePlaceholder() {
