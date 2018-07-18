@@ -502,6 +502,10 @@ public class JsonRpcVdsServer implements IVdsServer {
             }
             return this.map.isDone();
         }
+
+        public boolean isCallableInvoked() {
+            return map != null;
+        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -528,7 +532,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                             }
                             return true;
                         }
-                        return false;
+                        return !callable.isCallableInvoked() && super.isDone();
                     }
                 };
         ThreadPoolUtil.execute(future);
