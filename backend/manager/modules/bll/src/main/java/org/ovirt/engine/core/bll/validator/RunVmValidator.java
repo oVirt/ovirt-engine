@@ -173,10 +173,7 @@ public class RunVmValidator {
                    validate(validateVmStatusUsingMatrix(vm), messages) &&
                    validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                    validate(vmDuringInitialization(vm), messages) &&
-                    validate(validateStorageDomains(vm,
-                            isInternalExecution,
-                            filterReadOnlyAndPreallocatedDisks(getVmImageDisks())), messages)
-                    &&
+                   validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    validate(validateDisksPassDiscard(vm), messages) &&
                    !schedulingManager.canSchedule(cluster, vm, vdsBlackList, vdsWhiteList, messages).isEmpty();
@@ -194,10 +191,7 @@ public class RunVmValidator {
                 validate(vmDuringInitialization(vm), messages) &&
                 validate(validateStatelessVm(vm, runVmParam.getRunAsStateless()), messages) &&
                 validate(validateFloppy(), messages) &&
-                validate(validateStorageDomains(vm,
-                        isInternalExecution,
-                        filterReadOnlyAndPreallocatedDisks(getVmImageDisks())), messages)
-                &&
+                validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
@@ -354,6 +348,7 @@ public class RunVmValidator {
         }
 
         if (!vm.isAutoStartup() || !isInternalExecution) {
+            // In order to check the storage domains statuses we need a set of all the VM images
             Set<Guid> storageDomainIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageDomainValidator =
                     new MultipleStorageDomainsValidator(vm.getStoragePoolId(), storageDomainIds);
@@ -362,8 +357,14 @@ public class RunVmValidator {
             if (!result.isValid()) {
                 return result;
             }
+            // In order to check the storage domain thresholds we need a set of
+            // non-preallocated and non read-only images
+            Set<Guid> filteredStorageDomainIds =
+                    ImagesHandler.getAllStorageIdsForImageIds(filterReadOnlyAndPreallocatedDisks(vmImages));
+            MultipleStorageDomainsValidator filteredStorageDomainValidator =
+                    new MultipleStorageDomainsValidator(vm.getStoragePoolId(), filteredStorageDomainIds);
 
-            result = !vm.isAutoStartup() ? storageDomainValidator.allDomainsWithinThresholds()
+            result = !vm.isAutoStartup() ? filteredStorageDomainValidator.allDomainsWithinThresholds()
                     : ValidationResult.VALID;
             if (!result.isValid()) {
                 return result;
