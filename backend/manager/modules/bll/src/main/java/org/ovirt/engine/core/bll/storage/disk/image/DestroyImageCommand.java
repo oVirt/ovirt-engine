@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
@@ -66,8 +67,9 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
             Guid result = createTask(taskId, vdsReturnValue.getCreationInfo(), getParameters().getParentCommand(),
                     VdcObjectType.Storage, getParameters().getStorageDomainId());
             getTaskIdList().add(result);
-            log.info("Successfully started task to remove orphaned volumes resulting from live merge");
-        } else {
+            getReturnValue().getVdsmTaskIdList().add(result);
+            log.info("Successfully started task to remove orphaned volumes");
+        } else if (isMerge(getParentParameters().getParentCommand())) {
             log.info("Retrying deleting image {}/{}", getParameters().getImageGroupId(),
                     getParameters().getImageList().stream().findFirst().get());
             MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT,
@@ -81,6 +83,11 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
         setSucceeded(true);
         setCommandStatus(CommandStatus.SUCCEEDED);
+    }
+
+    private boolean isMerge(ActionType actionType) {
+        return ActionType.RemoveSnapshotSingleDisk == actionType ||
+                ActionType.RemoveSnapshotSingleDiskLive == actionType;
     }
 
     private VDSParametersBase createVDSParameters() {

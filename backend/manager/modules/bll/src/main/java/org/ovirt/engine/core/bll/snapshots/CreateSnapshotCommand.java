@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -13,9 +14,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -23,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -190,20 +192,28 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             }
 
             // Remove the image from the storage
-            runVdsCommand(VDSCommandType.DestroyImage, createDestroyImageParameters());
+            runInternalAction(ActionType.DestroyImage,
+                    buildDestroyImageParameters(getParameters().getImageGroupID(),
+                            Collections.singletonList(getParameters().getImageId()),
+                                    getActionType()));
         }
 
         super.endWithFailure();
     }
 
-    public DestroyImageVDSCommandParameters createDestroyImageParameters() {
-        StorageDomain storageDomain = storageDomainDao.get(getParameters().getStorageDomainId());
-        return new DestroyImageVDSCommandParameters(getStoragePoolId(),
-                getParameters().getStorageDomainId(),
-                getParameters().getImageGroupID(),
-                Collections.singletonList(getParameters().getImageId()),
+    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, ActionType actionType) {
+        DestroyImageParameters parameters = new DestroyImageParameters(
+                getVdsId(),
+                getVmId(),
+                getDiskImage().getStoragePoolId(),
+                getDiskImage().getStorageIds().get(0),
+                imageGroupId,
+                imageList,
                 getDiskImage().isWipeAfterDelete(),
-                storageDomain.getDiscardAfterDelete(),
-                true);
+                false);
+        parameters.setParentCommand(actionType);
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        parameters.setParentParameters(getParameters());
+        return parameters;
     }
 }
