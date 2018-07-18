@@ -27,13 +27,6 @@ public class AuthnMessageMapper {
     }
 
     public static final String mapMessageErrorCode(
-            HttpServletRequest request,
-            String profile,
-            ExtMap outputMap) {
-        return mapMessageErrorCode(null, request, profile, outputMap);
-    }
-
-    public static final String mapMessageErrorCode(
             SsoContext ssoContext,
             HttpServletRequest request,
             String profile,

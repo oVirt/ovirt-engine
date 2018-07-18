@@ -124,6 +124,7 @@ public class AuthenticationUtils {
                 }
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
                 String loginErrMsg = AuthnMessageMapper.mapMessageErrorCode(
+                        ssoContext,
                         request,
                         credentials.getProfile(),
                         outputMap);
