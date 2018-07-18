@@ -168,20 +168,26 @@ public class QuotaManager implements BackendService {
 
         // for global quota
         if (quota.getGlobalQuotaStorage() != null) {
-            if (quota.getGlobalQuotaStorage().getStorageSizeGB() != null
-                    && !quota.getGlobalQuotaStorage().getStorageSizeGB().equals(QuotaStorage.UNLIMITED)
-                    && quota.getGlobalQuotaStorage().getStorageSizeGB()
-                    < quota.getGlobalQuotaStorage().getStorageSizeGBUsage()) {
-                return true;
-            }
-        } else if (quota.getQuotaStorages() != null) { // for specific quota
-            for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                if (quotaStorage.getStorageSizeGB() < quotaStorage.getStorageSizeGBUsage()) {
-                    return true;
-                }
-            }
+            return quotaStorageExceeded(quota.getGlobalQuotaStorage());
         }
+
+        // for specific quota
+        if (quota.getQuotaStorages() != null) {
+            return quota.getQuotaStorages().stream()
+                    .anyMatch(this::quotaStorageExceeded);
+        }
+
         return false;
+    }
+
+    private boolean quotaStorageExceeded(QuotaStorage quotaStorage) {
+        // Treating null limit as unlimited
+        if (quotaStorage.getStorageSizeGB() == null) {
+            return false;
+        }
+
+        return !quotaStorage.getStorageSizeGB().equals(QuotaStorage.UNLIMITED)
+                && quotaStorage.getStorageSizeGB() < quotaStorage.getStorageSizeGBUsage();
     }
 
     /**
