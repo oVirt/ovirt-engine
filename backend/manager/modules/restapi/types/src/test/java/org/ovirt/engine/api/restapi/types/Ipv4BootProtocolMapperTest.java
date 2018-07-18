@@ -32,7 +32,11 @@ public class Ipv4BootProtocolMapperTest {
 
     @Test
     public void testUnmappedModelValue() {
-        for (BootProtocol value : EnumSet.complementOf(EnumSet.of(BootProtocol.AUTOCONF))) {
+        for (
+            BootProtocol value : EnumSet.complementOf(
+                EnumSet.of(BootProtocol.AUTOCONF, BootProtocol.POLY_DHCP_AUTOCONF)
+            )
+        ) {
             assertThat(String.format("%s.%s is not mapped", BootProtocol.class.getName(), value),
                     Ipv4BootProtocolMapper.map(value),
                     Matchers.notNullValue());

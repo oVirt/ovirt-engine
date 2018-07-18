@@ -57,7 +57,7 @@ public class TemplateMapperTest
         from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         for (NicConfiguration nicConfiguration : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
-            nicConfiguration.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF));
+            nicConfiguration.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF, BootProtocol.POLY_DHCP_AUTOCONF));
         }
         return from;
     }

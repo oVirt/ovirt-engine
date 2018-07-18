@@ -102,7 +102,7 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNic, Vd
         qos.setName(null);
         qos.setDataCenter(null);
 
-        model.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF));
+        model.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF, BootProtocol.POLY_DHCP_AUTOCONF));
 
         return hostNIC;
     }
