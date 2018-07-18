@@ -105,7 +105,7 @@ public class VmMapperTest extends
         from.setPlacementPolicy(createPlacementPolicy(Guid.EVERYONE, Guid.SYSTEM));
         // Guest Nics configurations
         for (NicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
-            guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF));
+            guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF, BootProtocol.POLY_DHCP_AUTOCONF));
         }
         from.getDisplay().setType(DisplayType.SPICE);
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);

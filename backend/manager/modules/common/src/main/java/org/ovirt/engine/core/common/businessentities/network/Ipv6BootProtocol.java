@@ -7,7 +7,8 @@ public enum Ipv6BootProtocol {
     NONE(0),
     DHCP(1),
     AUTOCONF(2),
-    STATIC_IP(3, "static");
+    POLY_DHCP_AUTOCONF(3, "poly dhcp autoconf"),
+    STATIC_IP(4, "static");
 
     private static Map<Integer, Ipv6BootProtocol> mappings;
 
