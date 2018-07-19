@@ -204,7 +204,8 @@ public class FenceAgent implements BusinessEntity<Guid> {
                 .append("user", getUser())
                 .appendFiltered("password", getPassword())
                 .append("encryptOptions", getEncryptOptions())
-                .append("options", getOptions().replace("\n", ", ")) // options are separated by NEWLINE when sent to VDSM
+                // options are separated by NEWLINE when sent to VDSM, but NEWLINE shouldn't be used in logs
+                .append("options", getOptions() == null ? "" : getOptions().replace("\n", ", "))
                 .build();
     }
 
