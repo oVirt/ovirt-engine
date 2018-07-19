@@ -335,6 +335,7 @@ class OvirtUtils(base.Base):
         self.command.detect('pg_dump')
         self.command.detect('pg_restore')
         self.command.detect('psql')
+        self.command.detect('semanage')
 
     def createPgPass(self):
 
@@ -1556,6 +1557,45 @@ class OvirtUtils(base.Base):
             )
         )
 
+    def _verify_selinux_file_contexts(self):
+        # This is a hack. See also https://bugzilla.redhat.com/1518599 .
+        # Under certain conditions, something which should add file context
+        # equivalency rules to scl postgres, does not, and files are then
+        # created later with wrong labels, eventually causing the postgres
+        # service to fail.
+
+        # TODO:
+        # 1. Make this optional? So that if selinux is disabled or not
+        # enforcing, we do not fail?
+        # 2. Make the version (9.5) and location (/var/opt...) parametric
+        self.logger.info(_('Verifying PostgreSQL SELinux file context rules'))
+        rc, stdout, stderr = self._plugin.execute(
+            (
+                self.command.get('semanage'),
+                'fcontext',
+                '--list',
+            ),
+            raiseOnError=False,
+        )
+        # Only fail if the command succeded but didn't include the expected
+        # line. This way it should also work in developer mode, also probably
+        # if selinux is disabled or permissive.
+        if rc == 0 and '/var/opt/rh/rh-postgresql95 = /var' not in stdout:
+            self.logger.error(_(
+                'SELinux file context rules for PostgreSQL are missing\n'
+            ))
+            self.dialog.note(_(
+                'SELinux file context rules for PostgreSQL are missing.\n'
+                'For more information, see: '
+                'https://bugzilla.redhat.com/1518599 .\n'
+                'You can try fixing this by running this command:\n\n'
+                '# yum reinstall rh-postgresql95-runtime\n\n'
+                'Then you can try running Setup again.\n'
+            ))
+            raise RuntimeError(_(
+                'SELinux file context rules for PostgreSQL are missing'
+            ))
+
     def DBMSUpgradeCustomizationHelper(self, which_db):
         upgrade_approved_inplace = False
         upgrade_approved_cleanupold = False
@@ -1598,6 +1638,7 @@ class OvirtUtils(base.Base):
                 )
             )
 
+        self._verify_selinux_file_contexts()
         newpath = os.path.dirname(
             self.environment[
                 oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
