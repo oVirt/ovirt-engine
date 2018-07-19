@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SelectedQuotaValidation;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -366,7 +367,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 isValid &= diskModel.getQuota().getIsValid();
             }
 
-            diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+            diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation(),
+                    new LengthValidation(255)});
             isValid &= diskModel.getAlias().getIsValid();
 
         }
