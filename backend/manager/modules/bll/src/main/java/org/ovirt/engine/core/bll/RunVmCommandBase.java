@@ -364,9 +364,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 .mapToLong(vdsId -> resourceManager.getVdsManager(vdsId).getLastUpdateElapsed())
                 .max().getAsLong();
 
-          long maxWaitTime = Math.min(
+        long maxWaitTime = Math.min(
                 Math.max(maxUpdateElapsed,
-                        TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(VdsRefreshRate))),
+                        TimeUnit.SECONDS.toMillis(Config.<Long> getValue(VdsRefreshRate))),
                 Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis));
 
         long endTime = System.currentTimeMillis() + maxWaitTime;
