@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -376,7 +377,8 @@ public class DisksAllocationModel extends EntityModel {
                 diskModel.getStorageDomain().setIsValid(false);
                 isModelValid = false;
             }
-            diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+            diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation(),
+                    new LengthValidation(255)});
             isModelValid = isModelValid && diskModel.getAlias().getIsValid();
         }
         setIsValid(isModelValid);
