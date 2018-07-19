@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Bios;
+import org.ovirt.engine.api.model.BiosType;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.Cluster;
@@ -186,6 +187,9 @@ public class VmBaseMapper {
         if (model.isSetBios()) {
             if (model.getBios().isSetBootMenu()) {
                 entity.setBootMenuEnabled(model.getBios().getBootMenu().isEnabled());
+            }
+            if (model.getBios().isSetType()) {
+                entity.setBiosType(map(model.getBios().getType(), null));
             }
         }
         if (model.isSetCpuShares()) {
@@ -388,6 +392,10 @@ public class VmBaseMapper {
         model.setBios(new Bios());
         model.getBios().setBootMenu(new BootMenu());
         model.getBios().getBootMenu().setEnabled(entity.isBootMenuEnabled());
+
+        if (entity.getBiosType() != null) {
+            model.getBios().setType(map(entity.getBiosType(), null));
+        }
 
         if(entity.getTimeZone() != null) {
             model.setTimeZone(new TimeZone());
@@ -594,4 +602,37 @@ public class VmBaseMapper {
         }
         return null;
     }
+
+    @Mapping(from = BiosType.class, to = org.ovirt.engine.core.common.businessentities.BiosType.class)
+    public static org.ovirt.engine.core.common.businessentities.BiosType map(BiosType biosType, org.ovirt.engine.core.common.businessentities.BiosType template) {
+        switch (biosType) {
+            case I440FX_SEA_BIOS:
+                return org.ovirt.engine.core.common.businessentities.BiosType.I440FX_SEA_BIOS;
+            case Q35_SEA_BIOS:
+                return org.ovirt.engine.core.common.businessentities.BiosType.Q35_SEA_BIOS;
+            case Q35_OVMF:
+                return org.ovirt.engine.core.common.businessentities.BiosType.Q35_OVMF;
+            case Q35_SECURE_BOOT:
+                return org.ovirt.engine.core.common.businessentities.BiosType.Q35_SECURE_BOOT;
+            default:
+                return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.BiosType.class, to = BiosType.class)
+    public static BiosType map(org.ovirt.engine.core.common.businessentities.BiosType biosType, org.ovirt.engine.api.model.BiosType template) {
+        switch (biosType) {
+            case I440FX_SEA_BIOS:
+                return BiosType.I440FX_SEA_BIOS;
+            case Q35_SEA_BIOS:
+                return BiosType.Q35_SEA_BIOS;
+            case Q35_OVMF:
+                return BiosType.Q35_OVMF;
+            case Q35_SECURE_BOOT:
+                return BiosType.Q35_SECURE_BOOT;
+            default:
+                return null;
+        }
+    }
+
 }
