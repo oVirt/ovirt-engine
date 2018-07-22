@@ -112,6 +112,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String clusterDefaultRouteCompatibility(String version);
 
-    String vmRunsWithDifferentName(String runtimeName);
+    String vmStartedWithDifferentName(String runtimeName);
 }
 

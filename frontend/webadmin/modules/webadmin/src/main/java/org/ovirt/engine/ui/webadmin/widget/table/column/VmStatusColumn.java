@@ -98,7 +98,7 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
             }
 
             if (isNameChanged(vm)) {
-                tooltip += "<br/><br/>" + messages.vmRunsWithDifferentName(vm.getRuntimeName()); //$NON-NLS-1$
+                tooltip += "<br/><br/>" + messages.vmStartedWithDifferentName(vm.getRuntimeName()); //$NON-NLS-1$
             }
         }
 
