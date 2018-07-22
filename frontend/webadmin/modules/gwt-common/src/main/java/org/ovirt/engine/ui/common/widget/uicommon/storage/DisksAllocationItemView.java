@@ -192,6 +192,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
                 object.getSize().getEntity()));
 
         sourceStorageLabel.setText(object.getSourceStorageDomainName().getEntity());
+        sourceStorageLabel.setVisible(object.getSourceStorageDomainName().getIsAvailable());
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
         object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
