@@ -7,12 +7,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -37,6 +35,8 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final String NETWORKS_UPDATING = " - " + constants.networksUpdating() //$NON-NLS-1$
+            + "..."; //$NON-NLS-1$
 
     @Inject
     public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider) {
@@ -83,14 +83,17 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
         hostColumn.makeSortable();
         getTable().addColumn(hostColumn, constants.hostIpClusterHost(), "220px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VDS> statusColumn = new AbstractEnumColumn<VDS, VDSStatus>() {
+        AbstractTextColumn<VDS> statusColumn = new AbstractTextColumn<VDS>() {
             @Override
-            public VDSStatus getRawValue(VDS object) {
-                return object.getStatus();
+            public String getValue(VDS object) {
+                return object.getStatus() + networkState(object);
+            }
+            private String networkState(VDS vds) {
+                return vds.isNetworkOperationInProgress() ? NETWORKS_UPDATING : "";
             }
         };
         statusColumn.makeSortable();
-        getTable().addColumn(statusColumn, constants.statusClusterHost(), "120px"); //$NON-NLS-1$
+        getTable().addColumn(statusColumn, constants.statusClusterHost(), "220px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
             AbstractTextColumn<VDS> loadColumn = new AbstractTextColumn<VDS>() {

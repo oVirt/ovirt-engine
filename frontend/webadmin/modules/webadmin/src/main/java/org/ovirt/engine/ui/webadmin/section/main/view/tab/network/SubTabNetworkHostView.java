@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -120,14 +119,30 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    AbstractImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>> nicStatusColumn = new AbstractImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>>(){
+    AbstractSafeHtmlColumn<PairQueryable<VdsNetworkInterface, VDS>> nicStatusColumn = new AbstractSafeHtmlColumn<PairQueryable<VdsNetworkInterface, VDS>>(){
 
         @Override
-        public ImageResource getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            if (object.getFirst() != null){
-                return InterfaceStatusImage.getResource(object.getFirst().getStatistics().getStatus());
+        public SafeHtml getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+            ImageResource imageResource = InterfaceStatusImage.getResource(object.getFirst().getStatistics().getStatus());
+            SafeHtml nicStatus = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(imageResource).getHTML());
+            if (object.getFirst() != null && isNetworkUpdating(object)) {
+                return templates.networkDeviceStatusImgAndNetworkOperationInProgress(nicStatus, constants.networksUpdating());
+            } else if (object.getFirst() != null && !isNetworkUpdating(object)) {
+                return templates.networkDeviceStatusImg(nicStatus);
+            } else if (object.getFirst() == null && isNetworkUpdating(object)) {
+                return templates.networkOperationInProgressDiv(constants.networksUpdating());
+            } else {
+                return null;
             }
-            return null;
+        }
+
+        @Override
+        public SafeHtml getTooltip(PairQueryable<VdsNetworkInterface, VDS> object) {
+            return isNetworkUpdating(object) ? SafeHtmlUtils.fromTrustedString(constants.networksUpdating()) : null;
+        }
+
+        private boolean isNetworkUpdating(PairQueryable<VdsNetworkInterface, VDS> object) {
+            return object.getSecond() != null && object.getSecond().isNetworkOperationInProgress();
         }
     };
 
@@ -278,7 +293,8 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
-        nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<>(nicStatusColumn));
+        nicStatusColumn.makeSortable(Comparator.comparing(
+            (PairQueryable<VdsNetworkInterface, VDS> p) -> p.getFirst(), Comparator.comparing(i -> i.getStatistics().getStatus())));
         nicColumn.makeSortable(Comparator.comparing(o -> o.getFirst() == null ? null : o.getFirst().getName(),
                 new LexoNumericComparator()));
 

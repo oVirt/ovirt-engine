@@ -1466,6 +1466,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String migrationProgress();
 
+    String networksUpdating();
+
+    String networkUpdating();
+
     String graphicsVm();
 
     String statusVm();

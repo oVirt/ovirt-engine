@@ -204,4 +204,16 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("{0} {1} {2}")
     SafeHtml hostOutOfSyncPreviewSentence(SafeHtml host, SafeHtml outOfsyncSentence, SafeHtml dc);
+
+    @Template("<div class='talign-center'>{0}</div>")
+    SafeHtml networkDeviceStatusImg(SafeHtml imgHtml);
+
+    @Template("<div class='talign-center'><span class='spinner spinner-xs spinner-inline valign-middle'></span>{0}...</div>")
+    SafeHtml networkOperationInProgressDiv(String progressText);
+
+    @Template("<div class='talign-center'>{0}&nbsp;&nbsp;&nbsp;<span class='spinner spinner-xs spinner-inline valign-middle'></span> {1}...</div>")
+    SafeHtml networkDeviceStatusImgAndNetworkOperationInProgress(SafeHtml imgHtml, String progressText);
+
+    @Template("&nbsp;&nbsp;&nbsp;<span class='spinner spinner-xs spinner-inline valign-middle'></span> {0}...")
+    SafeHtml networkOperationInProgressSpinner(String progressText);
 }

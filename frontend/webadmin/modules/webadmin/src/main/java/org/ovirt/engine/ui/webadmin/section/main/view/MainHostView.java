@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.VdsConditionFieldAutoCompleter;
@@ -17,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -54,6 +52,8 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
     int defaultSpmPriority;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final String NETWORKS_UPDATING = " - " + constants.networksUpdating() //$NON-NLS-1$
+            + "..."; //$NON-NLS-1$
 
     @Inject
     public MainHostView(MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
@@ -165,10 +165,14 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
             getTable().addColumn(dcColumn, constants.dcHost(), "150px"); //$NON-NLS-1$
         }
 
-        AbstractTextColumn<VDS> statusColumn = new AbstractEnumColumn<VDS, VDSStatus>() {
+        AbstractTextColumn<VDS> statusColumn = new AbstractTextColumn<VDS>() {
             @Override
-            public VDSStatus getRawValue(VDS object) {
-                return object.getStatus();
+            public String getValue(VDS object) {
+                return object.getStatus() + networkState(object);
+            }
+
+            private String networkState(VDS vds) {
+                return vds.isNetworkOperationInProgress() ? NETWORKS_UPDATING : "";
             }
         };
 
@@ -204,7 +208,7 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
         };
 
         statusTextColumn.makeSortable(VdsConditionFieldAutoCompleter.STATUS);
-        getTable().addColumn(statusTextColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(statusTextColumn, constants.statusHost(), "220px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             VmCountColumn vmCountColumn = new VmCountColumn();
