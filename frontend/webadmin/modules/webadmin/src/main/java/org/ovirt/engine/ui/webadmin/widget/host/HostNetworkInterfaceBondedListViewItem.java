@@ -54,10 +54,10 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
 
     public HostNetworkInterfaceBondedListViewItem(HostInterfaceLineModel entity, VDS host) {
         // Since this is a bond entity.getInterface() will not be null.
-        super(entity.getInterface().getName(), entity);
+        super(entity.getInterface().getName(), entity, host);
         expansionLinkContainer.add(createSlavesAdditionalInfo());
         checkBoxPanel.clear();
-        checkBoxPanel.add(createBondInterfaceStatusPanel(isInterfaceUp(), host));
+        checkBoxPanel.add(createBondInterfaceStatusPanel(isInterfaceUp()));
         slavesContainer = createSlavesContainer();
         slavesExpand.setDetails(slavesContainer);
         listGroupItem.add(slavesContainer);
@@ -194,9 +194,9 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         return iconPanel;
     }
 
-    protected IsWidget createBondInterfaceStatusPanel(boolean isUp, VDS host) {
+    protected IsWidget createBondInterfaceStatusPanel(boolean isUp) {
         Bond bond = (Bond) getEntity().getInterface();
-        if(!isAdPartnerMacValid(bond, host)) {
+        if(!isAdPartnerMacValid(bond)) {
             WidgetTooltip tooltip = new WidgetTooltip(new IconStatusPanel(PatternflyConstants.PFICON_WARNING_TRIANGLE_O,
                     PatternflyConstants.PFICON));
             tooltip.setHtml(templates.italicWordWrapMaxWidth(constants.bondInMode4HasNoPartnerMac()));
@@ -259,7 +259,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         return String.join("\n", bondProperties);//$NON-NLS-1$
     }
 
-    private boolean isAdPartnerMacValid(Bond bond, VDS vds){
+    private boolean isAdPartnerMacValid(Bond bond){
         String partnerMac = bond.getAdPartnerMac();
         boolean isAdPartnerMacEmpty = partnerMac == null || partnerMac.isEmpty() || partnerMac.equals(INVALID_AD_PARTNER_MAC);
         boolean isIfcUp = InterfaceStatus.UP.equals(bond.getStatistics().getStatus());

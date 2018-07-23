@@ -12,11 +12,11 @@ import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.gwtbootstrap3.client.ui.html.Span;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.ui.common.CellTablePopupTableResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.renderer.HostVLanNameRenderer;
 
@@ -51,7 +52,7 @@ import com.google.gwt.view.client.ListDataProvider;
 public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<HostInterfaceLineModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     protected static final RxTxRateRenderer rateRenderer = new RxTxRateRenderer();
@@ -70,9 +71,11 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private Container detailedInfoContainer;
     protected FlowPanel expansionLinkContainer = new FlowPanel();
     protected Span interfaceIconSpan;
+    protected VDS vds;
 
-    public HostNetworkInterfaceListViewItem(String name, HostInterfaceLineModel entity) {
+    public HostNetworkInterfaceListViewItem(String name, HostInterfaceLineModel entity, VDS vds) {
         super(name, entity);
+        this.vds = vds;
         applyHostInterfaceSpecificStyles();
         expansionLinkContainer.add(createDetailAdditionalInfo());
         listGroupItem.add(expansionLinkContainer);
@@ -239,6 +242,9 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         }
         if (containsOutOfSync(logicalNetworks)) {
             icons.add(createNeedsSyncStatusPanel());
+        }
+        if (vds.isNetworkOperationInProgress()){
+            icons.add(createNetworkUpdatingStatusPanel());
         }
         String logicalNetworksText = logicalNetworks.size() == 1 ? constants.logicalNetwork() :
             messages.logicalNetworks(logicalNetworks.size());
@@ -426,6 +432,14 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         outOfSync.setColor(RED);
         WidgetTooltip tooltip = new WidgetTooltip(outOfSync);
         tooltip.setText(constants.hostOutOfSync());
+        return tooltip;
+    }
+
+    protected IsWidget createNetworkUpdatingStatusPanel() {
+        Span span = new Span();
+        span.getElement().setInnerSafeHtml(templates.networkOperationInProgressSpinner(constants.networkUpdating()));
+        WidgetTooltip tooltip = new WidgetTooltip(span);
+        tooltip.setText(constants.networksUpdating());
         return tooltip;
     }
 
