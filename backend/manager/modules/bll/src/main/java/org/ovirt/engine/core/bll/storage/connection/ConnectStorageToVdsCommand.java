@@ -72,6 +72,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             fault.setMessage(backend.getVdsErrorsTranslator().translateErrorTextSingle(fault.getError().toString()));
         }
         getReturnValue().setFault(fault);
+        getReturnValue().getExecuteFailedMessages().add(fault.getMessage());
     }
 
     protected Pair<Boolean, Integer> connectHostToStorage() {
