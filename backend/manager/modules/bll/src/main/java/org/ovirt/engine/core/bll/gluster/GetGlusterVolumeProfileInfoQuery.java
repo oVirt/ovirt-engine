@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -22,14 +23,16 @@ public class GetGlusterVolumeProfileInfoQuery<P extends GlusterVolumeProfilePara
 
     @Override
     protected void executeQueryCommand() {
+        GlusterVolumeEntity volumeCheck = glusterVolumeDao.getById(getParameters().getVolumeId());
+        boolean nfs = volumeCheck.isNfsEnabled() && getParameters().isNfs();
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeProfileInfo,
                 new GlusterVolumeProfileInfoVDSParameters(getParameters().getClusterId(),
                         getUpServerId(getParameters().getClusterId()),
                         getGlusterVolumeName(getParameters().getVolumeId()),
-                        getParameters().isNfs()));
+                        nfs));
 
         GlusterVolumeProfileInfo profileInfo = (GlusterVolumeProfileInfo) returnValue.getReturnValue();
-        if (!getParameters().isNfs()) {
+        if (!nfs) {
            populateBrickNames(profileInfo);
         }
         getQueryReturnValue().setReturnValue(profileInfo);

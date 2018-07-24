@@ -192,7 +192,7 @@ public class VolumeProfileStatisticsModel extends Model {
         onPropertyChanged(new PropertyChangedEventArgs("brickProfileDataWritten"));//$NON-NLS-1$
     }
 
-    public void queryBackend(final boolean isBrickSelected) {
+    public void queryBackend(final boolean isNfs) {
         startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
 
         AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery<>(returnValue -> {
@@ -200,7 +200,7 @@ public class VolumeProfileStatisticsModel extends Model {
             GlusterVolumeProfileInfo profileInfoEntity =returnValue.getReturnValue();
             if((profileInfoEntity == null) || !returnValue.getSucceeded()) {
                 setSuccessfulProfileStatsFetch(false);
-                if(!isBrickSelected) {
+                if (isNfs) {
                     showNfsProfileStats(profileInfoEntity);
                 } else {
                     showProfileStats(profileInfoEntity);
@@ -209,17 +209,17 @@ public class VolumeProfileStatisticsModel extends Model {
                 GlusterVolumeProfileInfo aggregatedProfileInfo = new GlusterVolumeProfileInfo();
                 aggregatedProfileInfo.setBrickProfileDetails((profileInfoEntity.getBrickProfileDetails() != null) ? profileInfoEntity.getBrickProfileDetails() : getProfileInfo().getBrickProfileDetails());
                 aggregatedProfileInfo.setNfsProfileDetails((profileInfoEntity.getNfsProfileDetails() != null) ? profileInfoEntity.getNfsProfileDetails() : getProfileInfo().getNfsProfileDetails());
-                setProfileExportUrl(formProfileUrl(clusterId.toString(), volumeId.toString(), isBrickSelected));
+                setProfileExportUrl(formProfileUrl(clusterId.toString(), volumeId.toString(), isNfs));
                 setProfileInfo(aggregatedProfileInfo);
                 setSuccessfulProfileStatsFetch(true);
                 setTitle(ConstantsManager.getInstance().getMessages().volumeProfilingStatsTitle(volumeName));
-                if(!isBrickSelected) {
+                if (isNfs) {
                     showNfsProfileStats(profileInfoEntity);
                 } else {
                     showProfileStats(profileInfoEntity);
                 }
             }
-        }), clusterId, volumeId, !isBrickSelected);
+        }), clusterId, volumeId, isNfs);
     }
 
     public void showProfileStats(GlusterVolumeProfileInfo entity) {

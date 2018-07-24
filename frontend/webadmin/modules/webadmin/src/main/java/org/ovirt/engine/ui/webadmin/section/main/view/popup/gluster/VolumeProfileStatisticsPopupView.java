@@ -231,11 +231,11 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         bytesWritten.setText(object.getBytesWritten());
         nfsBytesWritten.setText(object.getNfsBytesWritten());
 
-        ClickHandler brickTabClickHandler = event -> object.queryBackend(true);
+        ClickHandler brickTabClickHandler = event -> object.queryBackend(false);
 
         brickRefreshIcon.setRefreshIconClickListener(brickTabClickHandler);
 
-        ClickHandler nfsTabClickHandler = event -> object.queryBackend(false);
+        ClickHandler nfsTabClickHandler = event -> object.queryBackend(true);
 
         nfsRefreshIcon.setRefreshIconClickListener(nfsTabClickHandler);
 

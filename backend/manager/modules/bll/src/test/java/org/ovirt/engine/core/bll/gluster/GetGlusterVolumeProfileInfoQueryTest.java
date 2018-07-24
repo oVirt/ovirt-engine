@@ -21,20 +21,25 @@ import org.ovirt.engine.core.common.businessentities.gluster.BlockStats;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class GetGlusterVolumeProfileInfoQueryTest extends
         AbstractQueryTest<GlusterVolumeProfileParameters, GetGlusterVolumeProfileInfoQuery<GlusterVolumeProfileParameters>> {
 
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid VOLUME_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c943");
+    private static final String GLUSTER_VOL_ENTITY_OPTION = "nfs.disable";
+    private static final String VOLUME_NAME = "test-vol";
     private GlusterVolumeProfileInfo expectedProfileInfo;
     private GlusterVolumeProfileParameters params;
 
@@ -43,6 +48,9 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
 
     @Mock
     private GlusterBrickDao brickDao;
+
+    @Mock
+    private GlusterVolumeDao glusterVolumeDao;
 
     @BeforeEach
     @Override
@@ -69,7 +77,13 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
         return brick;
     }
 
+    private GlusterVolumeEntity getvolumeCheckOptionOnly() {
+        GlusterVolumeEntity volumeCheck = new GlusterVolumeEntity();
+        volumeCheck.setOption(GLUSTER_VOL_ENTITY_OPTION, GlusterConstants.OFF);
+        return volumeCheck;
+    }
     private void mockDependencies() {
+        doReturn(getvolumeCheckOptionOnly()).when(glusterVolumeDao).getById(VOLUME_ID);
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
         doReturn("test-vol").when(getQuery()).getGlusterVolumeName(VOLUME_ID);
         doReturn(getBrick()).when(brickDao).getById(any());
