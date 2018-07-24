@@ -402,7 +402,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         isoPath = "";
         defaultBootSequence = BootSequence.C;
         migrationSupport = MigrationSupport.MIGRATABLE;
-        vmType = VmType.Desktop;
+        vmType = VmType.Server;
         defaultDisplayType = DisplayType.qxl;
         ssoMethod = SsoMethod.GUEST_AGENT;
         singleQxlPci = true;
