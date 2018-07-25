@@ -568,6 +568,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }-*/;
 
     public static native boolean browserSupportsUploadAPIs() /*-{
-        return window.File && window.FileReader && window.Blob;
+        return window.File != null && window.FileReader != null && window.Blob != null;
     }-*/;
 }
