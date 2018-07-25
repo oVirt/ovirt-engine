@@ -228,6 +228,7 @@ class Plugin(plugin.PluginBase):
                 where
                     nsp.nspname not in ('information_schema', 'pg_catalog') and
                     nsp.nspname not like 'pg_%%' and
+                    cls.relname not like 'pg_%%' and
                     rol.rolname != %(user)s
                 order by
                     nsp.nspname,
