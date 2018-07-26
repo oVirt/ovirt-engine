@@ -166,6 +166,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     getStorageDomain().setIsChangeable(limitToStorageDomainId == null);
                     getDataCenter().setIsChangeable(limitToStorageDomainId == null);
                     getStorageType().setIsChangeable(false);
+                    getSize().setIsChangeable(false);
                 }
 
                 @Override
@@ -229,7 +230,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public void initialize() {
         getDiskModel().initialize();
         imageInfoModel.getEntityChangedEvent().addListener((ev, sender, args) -> {
-            getDiskModel().getSize().setIsChangeable(false);
             if (!(getDiskModel() instanceof NewDiskModel)) {
                 // Setting attributes is relevant only for a new transfer;
                 // resume should use the existing attributes.
