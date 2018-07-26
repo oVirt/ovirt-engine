@@ -32,6 +32,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private InstanceTypeManager instanceTypeManager;
 
     private boolean updateStatelessFlag = true;
+    private String isoPath;
 
     @Override
     public void initialize() {
@@ -119,19 +120,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             }
 
             updateStatelessFlag = true;
+            isoPath = template.getIsoPath();
 
             getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
-
-            boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
-
-            getModel().getCdImage().setIsChangeable(hasCd);
-            getModel().getCdAttached().setEntity(hasCd);
-            if (hasCd) {
-                RepoImage currentCD = getModel().getCdImage().getItems().stream()
-                        .filter(i -> i.getRepoImageId().equals(template.getIsoPath())).findFirst().orElse(null);
-                getModel().getCdImage().setSelectedItem(currentCD);
-            }
-
             updateTimeZone(template.getTimeZone());
 
             if (!template.getId().equals(Guid.Empty)) {
@@ -183,6 +174,18 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             setCustomCompatibilityVersionChangeInProgress(false);
             updateLeaseStorageDomains(template.getLeaseStorageDomainId());
         });
+    }
+
+    @Override
+    protected void postUpdateCdImages() {
+        boolean hasCd = !StringHelper.isNullOrEmpty(isoPath);
+        getModel().getCdImage().setIsChangeable(hasCd);
+        getModel().getCdAttached().setEntity(hasCd);
+        if (hasCd) {
+            RepoImage currentCD = getModel().getCdImage().getItems().stream()
+                    .filter(i -> i.getRepoImageId().equals(isoPath)).findFirst().orElse(null);
+            getModel().getCdImage().setSelectedItem(currentCD);
+        }
     }
 
     @Override
