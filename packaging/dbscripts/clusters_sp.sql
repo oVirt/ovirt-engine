@@ -50,7 +50,9 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_skip_fencing_if_gluster_bricks_up BOOLEAN,
     v_skip_fencing_if_gluster_quorum_not_met BOOLEAN,
     v_firewall_type INT,
-    v_default_network_provider_id UUID
+    v_default_network_provider_id UUID,
+    v_log_max_memory_used_threshold INT,
+    v_log_max_memory_used_threshold_type SMALLINT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -101,7 +103,9 @@ BEGIN
         skip_fencing_if_gluster_bricks_up,
         skip_fencing_if_gluster_quorum_not_met,
         firewall_type,
-        default_network_provider_id
+        default_network_provider_id,
+        log_max_memory_used_threshold,
+        log_max_memory_used_threshold_type
         )
     VALUES (
         v_cluster_id,
@@ -150,7 +154,9 @@ BEGIN
         v_skip_fencing_if_gluster_bricks_up,
         v_skip_fencing_if_gluster_quorum_not_met,
         v_firewall_type,
-        v_default_network_provider_id
+        v_default_network_provider_id,
+        v_log_max_memory_used_threshold,
+        v_log_max_memory_used_threshold_type
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -203,7 +209,9 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_skip_fencing_if_gluster_bricks_up BOOLEAN,
     v_skip_fencing_if_gluster_quorum_not_met BOOLEAN,
     v_firewall_type INT,
-    v_default_network_provider_id UUID
+    v_default_network_provider_id UUID,
+    v_log_max_memory_used_threshold INT,
+    v_log_max_memory_used_threshold_type SMALLINT
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -257,7 +265,9 @@ BEGIN
         skip_fencing_if_gluster_bricks_up = v_skip_fencing_if_gluster_bricks_up,
         skip_fencing_if_gluster_quorum_not_met = v_skip_fencing_if_gluster_quorum_not_met,
         firewall_type = v_firewall_type,
-        default_network_provider_id = v_default_network_provider_id
+        default_network_provider_id = v_default_network_provider_id,
+        log_max_memory_used_threshold = v_log_max_memory_used_threshold,
+        log_max_memory_used_threshold_type = v_log_max_memory_used_threshold_type
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

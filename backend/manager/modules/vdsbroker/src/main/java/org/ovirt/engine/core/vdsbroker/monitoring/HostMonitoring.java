@@ -13,8 +13,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -67,6 +70,7 @@ public class HostMonitoring {
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<>();
     private final ResourceManager resourceManager;
     private final AuditLogDirector auditLogDirector;
+    private final ClusterDao clusterDao;
     private final VdsDynamicDao vdsDynamicDao;
     private final InterfaceDao interfaceDao;
     private final VdsNumaNodeDao vdsNumaNodeDao;
@@ -77,6 +81,7 @@ public class HostMonitoring {
             VDS vds,
             MonitoringStrategy monitoringStrategy,
             ResourceManager resourceManager,
+            ClusterDao clusterDao,
             VdsDynamicDao vdsDynamicDao,
             InterfaceDao interfaceDao,
             VdsNumaNodeDao vdsNumaNodeDao,
@@ -87,6 +92,7 @@ public class HostMonitoring {
         firstStatus = vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
         this.resourceManager = resourceManager;
+        this.clusterDao = clusterDao;
         this.vdsDynamicDao = vdsDynamicDao;
         this.interfaceDao = interfaceDao;
         this.vdsNumaNodeDao = vdsNumaNodeDao;
@@ -260,7 +266,7 @@ public class HostMonitoring {
         if (saveVdsStatistics) {
             VdsStatistics stat = vds.getStatisticsData();
             vdsManager.updateStatisticsData(stat);
-            checkVdsMemoryThreshold(stat);
+            checkVdsMemoryThreshold(clusterDao.get(vds.getClusterId()), stat);
             checkVdsCpuThreshold(stat);
             checkVdsNetworkThreshold(stat);
             checkVdsSwapThreshold(stat);
@@ -307,30 +313,48 @@ public class HostMonitoring {
     /**
      * check if value is less than configurable threshold , if yes , generated event list message
      */
-    private void checkVdsMemoryThreshold(VdsStatistics stat) {
-
-        Integer minAvailableThreshold = Config.getValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
-        Integer maxUsedPercentageThreshold =
-                Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+    private void checkVdsMemoryThreshold(Cluster cluster, VdsStatistics stat) {
 
         if (stat.getMemFree() == null || stat.getUsageMemPercent() == null) {
             return;
         }
 
-        AuditLogType valueToLog = stat.getMemFree() < minAvailableThreshold ?
-                AuditLogType.VDS_LOW_MEM :
-                AuditLogType.VDS_HIGH_MEM_USE;
-
-        if (stat.getMemFree() < minAvailableThreshold || stat.getUsageMemPercent() > maxUsedPercentageThreshold) {
-            AuditLogable logable = createAuditLogableForHost();
-            logable.addCustomValue("HostName", vds.getName());
-            logable.addCustomValue("AvailableMemory", stat.getMemFree().toString());
-            logable.addCustomValue("UsedMemory", stat.getUsageMemPercent().toString());
-            logable.addCustomValue("Threshold", stat.getMemFree() < minAvailableThreshold ?
-                    minAvailableThreshold.toString() :
-                    maxUsedPercentageThreshold.toString());
-            auditLog(logable, valueToLog);
+        if (LogMaxMemoryUsedThresholdType.PERCENTAGE == cluster.getLogMaxMemoryUsedThresholdType()) {
+            checkVdsMemoryThresholdPercentage(cluster, stat);
+        }  else {
+            checkVdsMemoryThresholdAbsoluteValue(cluster, stat);
         }
+    }
+
+    private void checkVdsMemoryThresholdPercentage(Cluster cluster, VdsStatistics stat) {
+        Integer maxUsedPercentageThreshold = cluster.getLogMaxMemoryUsedThreshold();
+
+        if (stat.getUsageMemPercent() > maxUsedPercentageThreshold) {
+            logMemoryAuditLog(vds, cluster, stat, AuditLogType.VDS_HIGH_MEM_USE, maxUsedPercentageThreshold);
+        }
+    }
+
+    private void checkVdsMemoryThresholdAbsoluteValue(Cluster cluster, VdsStatistics stat) {
+        Integer maxUsedAbsoluteThreshold =
+                cluster.getLogMaxMemoryUsedThreshold();
+
+        if (stat.getMemFree() < maxUsedAbsoluteThreshold) {
+            logMemoryAuditLog(vds, cluster, stat, AuditLogType.VDS_LOW_MEM, maxUsedAbsoluteThreshold);
+        }
+    }
+
+    private void logMemoryAuditLog(VDS vds,
+            Cluster cluster,
+            VdsStatistics stat,
+            AuditLogType valueToLog,
+            Integer threshold) {
+        AuditLogable logable = createAuditLogableForHost();
+        logable.addCustomValue("HostName", vds.getName());
+        logable.addCustomValue("Cluster", cluster.getName());
+        logable.addCustomValue("AvailableMemory", stat.getMemFree().toString());
+        logable.addCustomValue("UsedMemory", stat.getUsageMemPercent().toString());
+        logable.addCustomValue("Threshold", threshold.toString());
+        auditLog(logable, valueToLog);
     }
 
     /**

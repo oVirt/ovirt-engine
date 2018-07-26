@@ -47,6 +47,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -101,6 +102,9 @@ public class VdsManager {
 
     @Inject
     private VdsDao vdsDao;
+
+    @Inject
+    private ClusterDao clusterDao;
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;
@@ -276,6 +280,7 @@ public class VdsManager {
                                             cachedVds,
                                             monitoringStrategy,
                                             resourceManager,
+                                            clusterDao,
                                             vdsDynamicDao,
                                             interfaceDao,
                                             vdsNumaNodeDao,

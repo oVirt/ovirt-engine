@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.network.FirewallType;
@@ -46,6 +47,8 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
         cluster.setArchitecture(ArchitectureType.x86);
         cluster.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
         cluster.setFirewallType(FirewallType.IPTABLES);
+        cluster.setLogMaxMemoryUsedThreshold(95);
+        cluster.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
 
         clusterDao.save(cluster);
 

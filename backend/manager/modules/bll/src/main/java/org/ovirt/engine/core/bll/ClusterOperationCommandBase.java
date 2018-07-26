@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -278,6 +279,14 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
             FirewallType defaultFirewallType =
                     DefaultFirewallType.getDefaultFirewallType(cluster.getCompatibilityVersion());
             cluster.setFirewallType(defaultFirewallType);
+        }
+    }
+
+    protected void setDefaultLogMaxMemoryUsedThresholdIfNeeded() {
+        Cluster cluster = getCluster();
+        if (cluster.getLogMaxMemoryUsedThresholdType() == null) {
+            cluster.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
+            cluster.setLogMaxMemoryUsedThreshold(Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage));
         }
     }
 

@@ -48,6 +48,7 @@
         <include name="common/businessentities/EventSubscriber.java" />
         <include name="common/businessentities/EventSubscriberId.java" />
         <include name="common/businessentities/BootSequence.java" />
+        <include name="common/businessentities/LogMaxMemoryUsedThresholdType.java" />
         <include name="common/businessentities/InitializationType.java" />
         <include name="common/businessentities/Nameable.java" />
         <include name="common/businessentities/Provider.java" />

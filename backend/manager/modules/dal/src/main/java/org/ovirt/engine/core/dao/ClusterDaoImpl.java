@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterHostsAndVMs;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -252,7 +253,9 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("skip_fencing_if_gluster_bricks_up", cluster.getFencingPolicy().isSkipFencingIfGlusterBricksUp())
                 .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet())
                 .addValue("firewall_type", cluster.getFirewallType())
-                .addValue("default_network_provider_id", cluster.getDefaultNetworkProviderId());
+                .addValue("default_network_provider_id", cluster.getDefaultNetworkProviderId())
+                .addValue("log_max_memory_used_threshold", cluster.getLogMaxMemoryUsedThreshold())
+                .addValue("log_max_memory_used_threshold_type", cluster.getLogMaxMemoryUsedThresholdType().getValue());
     }
 
     private static final RowMapper<ClusterHostsAndVMs> clusterHostsAndVMsRowMapper = (rs, rowNum) -> {
@@ -316,6 +319,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));
         entity.setFirewallType(FirewallType.valueOf(rs.getInt("firewall_type")));
         entity.setDefaultNetworkProviderId(getGuid(rs, "default_network_provider_id"));
+        entity.setLogMaxMemoryUsedThreshold(rs.getInt("log_max_memory_used_threshold"));
+        entity.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.forValue(rs.getInt("log_max_memory_used_threshold_type")));
 
         return entity;
     };

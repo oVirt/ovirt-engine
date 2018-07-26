@@ -93,6 +93,11 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
 
+    @Min(1)
+    private int logMaxMemoryUsedThreshold;
+
+    private LogMaxMemoryUsedThresholdType logMaxMemoryUsedThresholdType;
+
     /**
      * Currently we want all networks of sole cluster to have same switch type.
      */
@@ -165,6 +170,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
+        logMaxMemoryUsedThresholdType = LogMaxMemoryUsedThresholdType.PERCENTAGE;
         description = "";
         comment = "";
         cpuName = "";
@@ -604,6 +610,22 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         return Objects.equals(getDefaultNetworkProviderId(), providerId);
     }
 
+    public int getLogMaxMemoryUsedThreshold() {
+        return logMaxMemoryUsedThreshold;
+    }
+
+    public void setLogMaxMemoryUsedThreshold(int logMaxMemoryUsedThreshold) {
+        this.logMaxMemoryUsedThreshold = logMaxMemoryUsedThreshold;
+    }
+
+    public LogMaxMemoryUsedThresholdType getLogMaxMemoryUsedThresholdType() {
+        return logMaxMemoryUsedThresholdType;
+    }
+
+    public void setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType logMaxMemoryUsedThresholdType) {
+        this.logMaxMemoryUsedThresholdType = logMaxMemoryUsedThresholdType;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -648,7 +670,9 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 migrationPolicyId,
                 macPoolId,
                 firewallType,
-                defaultNetworkProviderId
+                defaultNetworkProviderId,
+                logMaxMemoryUsedThreshold,
+                logMaxMemoryUsedThresholdType
         );
     }
 
@@ -706,7 +730,9 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(migrationPolicyId, other.migrationPolicyId)
                 && Objects.equals(macPoolId, other.macPoolId)
                 && Objects.equals(firewallType, other.firewallType)
-                && Objects.equals(defaultNetworkProviderId, other.defaultNetworkProviderId);
+                && Objects.equals(defaultNetworkProviderId, other.defaultNetworkProviderId)
+                && logMaxMemoryUsedThreshold == other.logMaxMemoryUsedThreshold
+                && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType;
     }
 
     @Override

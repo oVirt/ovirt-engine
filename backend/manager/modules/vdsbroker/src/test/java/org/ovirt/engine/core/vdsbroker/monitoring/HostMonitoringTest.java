@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -51,6 +52,8 @@ public class HostMonitoringTest {
     private AuditLogDirector auditLogDirector;
     @Mock
     private MonitoringStrategy monitoringStrategy;
+    @Mock
+    private ClusterDao clusterDao;
     @Mock
     private VdsDynamicDao vdsDynamicDao;
     @Mock

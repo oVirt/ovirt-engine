@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -74,6 +75,8 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
         newGroup.setMigrationPolicyId(Guid.newGuid());
         newGroup.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
         newGroup.setFirewallType(FirewallType.FIREWALLD);
+        newGroup.setLogMaxMemoryUsedThreshold(95);
+        newGroup.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
     }
 
     /**

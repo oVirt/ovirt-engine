@@ -194,6 +194,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         setDefaultSwitchTypeIfNeeded();
         setDefaultFirewallTypeIfNeeded();
+        setDefaultLogMaxMemoryUsedThresholdIfNeeded();
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
