@@ -173,7 +173,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
                 @Override
                 public int getMinimumDiskSize() {
-                    return Math.max(getImageInfoModel().getActualSize(), getImageInfoModel().getVirtualSize());
+                    return getVirtualSizeInGB();
                 }
 
                 @Override
@@ -229,13 +229,11 @@ public class UploadImageModel extends Model implements ICommandTarget {
             if (imageInfoModel.getContentType() == DiskContentType.ISO) {
                 getDiskModel().getAlias().setEntity(imageInfoModel.getFileName());
                 getDiskModel().getDescription().setEntity(imageInfoModel.getFileName());
-                getDiskModel().getSize().setEntity(imageInfoModel.getActualSize());
             } else {
                 getDiskModel().getAlias().setEntity(null);
                 getDiskModel().getDescription().setEntity(null);
-                getDiskModel().getSize().setEntity(
-                        ((NewDiskModel) getDiskModel()).getMinimumDiskSize());
             }
+            getDiskModel().getSize().setEntity(getVirtualSizeInGB());
         });
     }
 
@@ -300,15 +298,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
         if (validate()) {
             diskModel.flush();
             DiskImage diskImage = (DiskImage) getDiskModel().getDisk();
-            diskImage.setActualSizeInBytes(getImageSize());
+            diskImage.setSize(getVirtualSize());
+            diskImage.setActualSizeInBytes(imageInfoModel.getActualSize());
             diskImage.setVolumeFormat(getImageInfoModel().getFormat());
             diskImage.setVolumeType(AsyncDataProvider.getInstance().getVolumeType(
                     diskImage.getVolumeFormat(),
                     getDiskModel().getStorageDomain().getSelectedItem().getStorageType()));
             diskImage.setContentType(getImageInfoModel().getContentType());
-            if (getImageInfoModel().getContentType() == DiskContentType.ISO) {
-                diskImage.setSize(getImageSize());
-            }
             return true;
         } else {
             setIsValid(false);
@@ -334,7 +330,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             } });
 
             StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
-            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType, getImageSize());
+            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType, getVirtualSize());
 
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
             getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());
@@ -393,7 +389,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         TransferDiskImageParameters parameters = new TransferDiskImageParameters(
                 diskParameters.getStorageDomainId(),
                 diskParameters);
-        parameters.setTransferSize(getImageSize());
+        parameters.setTransferSize(getVirtualSize());
         parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
 
         return parameters;
@@ -559,13 +555,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
         return imageInfoModel;
     }
 
-    private long getImageSize() {
-        return (long) getSizeOfImage(getImageFileUploadElement());
+    private long getVirtualSize() {
+        return imageInfoModel.getVirtualSize();
     }
 
-    private native double getSizeOfImage(Element fileUploadElement) /*-{
-        return !fileUploadElement.files.length ? 0 : fileUploadElement.files[0].size;
-    }-*/;
+    private int getVirtualSizeInGB() {
+        return (int) Math.ceil(getVirtualSize() / Math.pow(1024, 3));
+    }
 
     public static native boolean browserSupportsUploadAPIs() /*-{
         return window.File != null && window.FileReader != null && window.Blob != null;

@@ -20,8 +20,8 @@ public class ImageInfoModel extends EntityModel<String> {
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private VolumeFormat format;
-    private int actualSize;
-    private int virtualSize;
+    private long actualSize;
+    private long virtualSize;
     private QemuCompat qcowCompat;
     private Boolean backingFile;
     private Boolean fileLoaded = false;
@@ -36,19 +36,19 @@ public class ImageInfoModel extends EntityModel<String> {
         this.format = format;
     }
 
-    public int getActualSize() {
+    public long getActualSize() {
         return actualSize;
     }
 
-    public void setActualSize(int actualSize) {
+    public void setActualSize(long actualSize) {
         this.actualSize = actualSize;
     }
 
-    public int getVirtualSize() {
+    public long getVirtualSize() {
         return virtualSize;
     }
 
-    public void setVirtualSize(int virtualSize) {
+    public void setVirtualSize(long virtualSize) {
         this.virtualSize = virtualSize;
     }
 
@@ -112,7 +112,7 @@ public class ImageInfoModel extends EntityModel<String> {
                 var isQcow = readString(header.slice(0, 4)) == "QFI\xfb";
                 var info = {};
                 info.format = isQcow ? "COW" : "RAW";
-                info.actualSize = toGB(file.size);
+                info.actualSize = file.size;
                 info.virtualSize = 0;
                 info.backingFile = false;
                 info.fileLoaded = true;
@@ -123,15 +123,15 @@ public class ImageInfoModel extends EntityModel<String> {
                     info.qcowCompat = version == 2 ? "0.10" : version == 3 ? "1.1" : "";
                     var backingFileOffset = readUint64(header.slice(8, 16));
                     info.backingFile = backingFileOffset != 0;
-                    info.virtualSize = toGB(readUint64(header.slice(24, 32)));
+                    info.virtualSize = readUint64(header.slice(24, 32));
                 } else {
                     // An ISO file contains the literal 'CD001' in offset 8001h
                     var isISO = readString(header.slice(0x8001, 0x8001 + 5)) == "CD001";
                     if (isISO) {
                         info.contentType = 'ISO';
                         info.fileName = file.name;
-                        info.virtualSize = info.actualSize;
                     }
+                    info.virtualSize = info.actualSize;
                 }
 
                 self.@org.ovirt.engine.ui.uicommonweb.models.storage.ImageInfoModel::updateModel(*) (
@@ -159,17 +159,13 @@ public class ImageInfoModel extends EntityModel<String> {
             // There is no way to represent uint64, but double works.
             return high * 4294967296.0 + low;
         };
-
-        function toGB(size) {
-            return Math.ceil(size / Math.pow(1024, 3));
-        };
     }-*/;
 
-    public void updateModel(String format, int actualSize, int virtualSize, String qcowCompat,
+    public void updateModel(String format, double actualSize, double virtualSize, String qcowCompat,
                             boolean backingFile, boolean fileLoaded, String contentType, String fileName) {
         setFormat(VolumeFormat.valueOf(format));
-        setActualSize(actualSize);
-        setVirtualSize(virtualSize);
+        setActualSize((long) actualSize);
+        setVirtualSize((long) virtualSize);
         setQcowCompat(QemuCompat.forValue(qcowCompat));
         setBackingFile(backingFile);
         setFileLoaded(fileLoaded);
