@@ -399,6 +399,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         model.getCdImage().setItems(images);
         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
                 : Linq.firstOrNull(images));
+        postUpdateCdImages();
+    }
+
+    // This can be overridden by child behaviors to
+    // add logic after fetching cd images.
+    protected void postUpdateCdImages() {
+        // do nothing
     }
 
     public void refreshCdImages() {
