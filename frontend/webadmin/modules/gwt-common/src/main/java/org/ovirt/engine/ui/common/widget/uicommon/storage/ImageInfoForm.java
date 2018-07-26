@@ -28,8 +28,8 @@ public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> 
     private ImageInfoModel imageInfoModel;
 
     EnumTextBoxLabel<VolumeFormat> format = new EnumTextBoxLabel<>();
-    DiskSizeLabel<Integer> actualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.GiB);
-    DiskSizeLabel<Integer> virtualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.GiB);
+    DiskSizeLabel<Long> actualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.BYTES);
+    DiskSizeLabel<Long> virtualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.BYTES);
     EnumTextBoxLabel<DiskContentType> contentType = new EnumTextBoxLabel<>();
     EnumTextBoxLabel<ImageInfoModel.QemuCompat> qcowCompat = new EnumTextBoxLabel<>();
     BooleanLabel backingFile = new BooleanLabel(constants.yes(), constants.no());
