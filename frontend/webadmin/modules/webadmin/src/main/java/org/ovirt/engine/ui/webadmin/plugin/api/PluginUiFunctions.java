@@ -206,9 +206,9 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Adds new action button to standard table-based sub tab.
      */
-    public void addDetailPlaceActionButton(EntityType mainTabEntityType, EntityType subTabEntityType,
+    public void addDetailPlaceActionButton(EntityType mainTabEntityType, String detailPlaceId,
             String label, ActionButtonInterface actionButtonInterface) {
-        String historyToken = mainTabEntityType.getSubTabHistoryToken(subTabEntityType);
+        String historyToken = mainTabEntityType.getSubTabHistoryToken(detailPlaceId);
 
         if (historyToken != null) {
             ActionButtonDefinition<?> actionButton = createButtonDefinition(label, actionButtonInterface);

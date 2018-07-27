@@ -534,14 +534,14 @@ public class PluginManager implements HasHandlers {
                 logDeprecatedCall("addMainTabActionButton", "addMenuPlaceActionButton");
                 this.addMenuPlaceActionButton(entityTypeName, label, actionButtonInterface);
             },
-            addDetailPlaceActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
+            addDetailPlaceActionButton: function(mainEntityTypeName, detailPlaceId, label, actionButtonInterface) {
                 if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addDetailPlaceActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(mainTabEntityTypeName),getEntityType(subTabEntityTypeName),label,sanitizeObject(actionButtonInterface));
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addDetailPlaceActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(mainEntityTypeName),detailPlaceId,label,sanitizeObject(actionButtonInterface));
                 }
             },
-            addSubTabActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
+            addSubTabActionButton: function(mainEntityTypeName, detailPlaceId, label, actionButtonInterface) {
                 logDeprecatedCall("addSubTabActionButton", "addDetailPlaceActionButton");
-                this.addDetailPlaceActionButton(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface);
+                this.addDetailPlaceActionButton(mainEntityTypeName, detailPlaceId, label, actionButtonInterface);
             },
             showDialog: function(title, dialogToken, contentUrl, width, height, options) {
                 if (validatePluginAction(this.pluginName)) {
