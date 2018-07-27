@@ -49,7 +49,7 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
     @Override
     public void testConnection() {
         try {
-            getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, null));
+            getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "/", null, null));
         } catch (OpenStackResponseException e) {
             log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
             log.debug("Exception", e);

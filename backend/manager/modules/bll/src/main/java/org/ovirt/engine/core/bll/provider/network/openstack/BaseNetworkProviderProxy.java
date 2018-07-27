@@ -188,7 +188,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public void testConnection() {
-        execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, ApiRootResponse.class));
+        execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "/", null, ApiRootResponse.class));
     }
 
     private List<Network> map(List<com.woorea.openstack.quantum.model.Network> externalNetworks) {
