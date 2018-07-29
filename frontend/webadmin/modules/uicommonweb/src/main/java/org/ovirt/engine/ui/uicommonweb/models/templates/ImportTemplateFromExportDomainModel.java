@@ -2,9 +2,15 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -25,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
@@ -32,6 +39,7 @@ import com.google.inject.Inject;
 public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomainModel {
 
     private final TemplateImportDiskListModel templateImportDiskListModel;
+    protected Map<Guid, Object> cloneObjectMap;
 
     @Inject
     public ImportTemplateFromExportDomainModel(final VmImportDiskListModel vmImportDiskListModel,
@@ -141,5 +149,66 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
     @Override
     protected boolean validateNames() {
         return true;
+    }
+
+    public void setCloneObjectMap(Map<Guid, Object> cloneObjectMap) {
+        this.cloneObjectMap = cloneObjectMap;
+    }
+
+    @Override
+    public void executeImport(IFrontendMultipleActionAsyncCallback callback) {
+        startProgress();
+        Frontend.getInstance().runMultipleAction(
+                ActionType.ImportVmTemplate,
+                buildImportTemplateParameters(),
+                callback,
+                this);
+    }
+
+    private List<ActionParametersBase> buildImportTemplateParameters() {
+        List<ActionParametersBase> prms = new ArrayList<>();
+        for (Object object : getItems()) {
+            ImportTemplateData importData = (ImportTemplateData) object;
+            VmTemplate template = importData.getTemplate();
+
+            ImportVmTemplateParameters importVmTemplateParameters =
+                    new ImportVmTemplateParameters(getStoragePool().getId(),
+                            (Guid) getEntity(),
+                            Guid.Empty,
+                            getCluster().getSelectedItem().getId(),
+                            template);
+            if (getClusterQuota().getSelectedItem() != null && getClusterQuota().getIsAvailable()) {
+                importVmTemplateParameters.setQuotaId(getClusterQuota().getSelectedItem().getId());
+            }
+
+            CpuProfile cpuProfile = getCpuProfiles().getSelectedItem();
+            if (cpuProfile != null) {
+                importVmTemplateParameters.setCpuProfileId(cpuProfile.getId());
+            }
+
+            Map<Guid, Guid> map = new HashMap<>();
+            for (DiskImage disk : template.getDiskList()) {
+                map.put(disk.getId(), getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
+
+                if (getDiskImportData(disk.getId()).getSelectedQuota() != null) {
+                    disk.setQuotaId(getDiskImportData(disk.getId()).getSelectedQuota().getId());
+                }
+            }
+
+            importVmTemplateParameters.setImageToDestinationDomainMap(map);
+
+            if (importData.isExistsInSystem() || importData.getClone().getEntity()) {
+                if (!cloneObjectMap.containsKey(template.getId())) {
+                    continue;
+                }
+                importVmTemplateParameters.setImportAsNewEntity(true);
+                importVmTemplateParameters.getVmTemplate()
+                        .setName(((ImportTemplateData) cloneObjectMap.get(template.getId())).getTemplate().getName());
+            }
+
+            prms.add(importVmTemplateParameters);
+        }
+
+        return prms;
     }
 }

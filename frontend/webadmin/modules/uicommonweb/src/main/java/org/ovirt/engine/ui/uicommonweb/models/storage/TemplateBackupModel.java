@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
-import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -230,87 +228,41 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         if (!model.validate()) {
             return;
         }
-        List<ActionParametersBase> prms = new ArrayList<>();
-        for (Object object : importModel.getItems()) {
-            ImportTemplateData importData = (ImportTemplateData) object;
-            VmTemplate template = importData.getTemplate();
 
-            ImportVmTemplateParameters importVmTemplateParameters =
-                    new ImportVmTemplateParameters(model.getStoragePool().getId(),
-                            getEntity().getId(), Guid.Empty,
-                            model.getCluster().getSelectedItem().getId(),
-                            template);
-            if (importModel.getClusterQuota().getSelectedItem() != null &&
-                    importModel.getClusterQuota().getIsAvailable()) {
-                importVmTemplateParameters.setQuotaId(importModel.getClusterQuota().getSelectedItem().getId());
-            }
+        model.setCloneObjectMap(cloneObjectMap);
+        model.executeImport(result -> {
+            TemplateBackupModel templateBackupModel = TemplateBackupModel.this;
+            templateBackupModel.getWindow().stopProgress();
+            templateBackupModel.cancel();
+            List<ActionReturnValue> retVals = result.getReturnValue();
+            if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
 
-            CpuProfile cpuProfile = importModel.getCpuProfiles().getSelectedItem();
-            if (cpuProfile != null) {
-                importVmTemplateParameters.setCpuProfileId(cpuProfile.getId());
-            }
-
-            Map<Guid, Guid> map = new HashMap<>();
-            for (DiskImage disk : template.getDiskList()) {
-                map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
-
-                if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
-                    disk.setQuotaId(importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
+                StringBuilder importedTemplates = new StringBuilder();
+                int counter = 0;
+                boolean toShowConfirmWindow = false;
+                for (VmTemplate template : templateBackupModel.getSelectedItems()) {
+                    if (retVals.get(counter) != null && retVals.get(counter).isValid()) {
+                        importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
+                        toShowConfirmWindow = true;
+                    }
+                    counter++;
                 }
-            }
-
-            importVmTemplateParameters.setImageToDestinationDomainMap(map);
-
-            if (importData.isExistsInSystem() || importData.getClone().getEntity()) {
-                if (!cloneObjectMap.containsKey(template.getId())) {
-                    continue;
-                }
-                importVmTemplateParameters.setImportAsNewEntity(true);
-                importVmTemplateParameters.getVmTemplate()
-                        .setName(((ImportTemplateData) cloneObjectMap.get(template.getId())).getTemplate().getName());
-            }
-
-            prms.add(importVmTemplateParameters);
-        }
-
-        model.startProgress();
-
-        Frontend.getInstance().runMultipleAction(ActionType.ImportVmTemplate, prms,
-                result -> {
-
-                    TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
-                    templateBackupModel.getWindow().stopProgress();
-                    templateBackupModel.cancel();
-                    List<ActionReturnValue> retVals = result.getReturnValue();
-                    if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
-
-                        StringBuilder importedTemplates = new StringBuilder();
-                        int counter = 0;
-                        boolean toShowConfirmWindow = false;
-                        for (VmTemplate template : templateBackupModel.getSelectedItems()) {
-                            if (retVals.get(counter) != null && retVals.get(counter).isValid()) {
-                                importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
-                                toShowConfirmWindow = true;
-                            }
-                            counter++;
-                        }
-                        if (toShowConfirmWindow) {
-                            ConfirmationModel confirmModel = new ConfirmationModel();
-                            templateBackupModel.setConfirmWindow(confirmModel);
-                            confirmModel.setTitle(constants.importTemplatesTitle());
-                            confirmModel.setHelpTag(HelpTag.import_template);
-                            confirmModel.setHashName("import_template"); //$NON-NLS-1$
-                            confirmModel.setMessage(messages.importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
-                            confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, templateBackupModel) //$NON-NLS-1$
+                if (toShowConfirmWindow) {
+                    ConfirmationModel confirmModel = new ConfirmationModel();
+                    templateBackupModel.setConfirmWindow(confirmModel);
+                    confirmModel.setTitle(constants.importTemplatesTitle());
+                    confirmModel.setHelpTag(HelpTag.import_template);
+                    confirmModel.setHashName("import_template"); //$NON-NLS-1$
+                    confirmModel.setMessage(messages.importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
+                    confirmModel.getCommands().add(new UICommand(CANCEL_CONFIRMATION_COMMAND, templateBackupModel) //$NON-NLS-1$
                             .setTitle(constants.close())
                             .setIsDefault(true)
                             .setIsCancel(true)
                             );
-                        }
-                    }
+                }
+            }
 
-                },
-                this);
+        });
     }
 
     @Override
