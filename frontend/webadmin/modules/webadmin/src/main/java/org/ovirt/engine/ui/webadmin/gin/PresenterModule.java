@@ -191,6 +191,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepin
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ova.ExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
@@ -236,7 +237,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttach
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
@@ -471,6 +471,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.Instan
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.label.AffinityLabelPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.ova.ExportOvaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.CpuProfilePopupView;
@@ -520,7 +521,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopup
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskSparsifyPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportOvaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmHighPerformanceConfigurationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
@@ -1773,9 +1773,9 @@ public class PresenterModule extends BasePresenterModule {
                 VmExportPopupView.class);
 
         // OVA Export
-        bindPresenterWidget(VmExportOvaPopupPresenterWidget.class,
-                VmExportOvaPopupPresenterWidget.ViewDef.class,
-                VmExportOvaPopupView.class);
+        bindPresenterWidget(ExportOvaPopupPresenterWidget.class,
+                ExportOvaPopupPresenterWidget.ViewDef.class,
+                ExportOvaPopupView.class);
 
         // VM Remove
         bindPresenterWidget(VmRemovePopupPresenterWidget.class,

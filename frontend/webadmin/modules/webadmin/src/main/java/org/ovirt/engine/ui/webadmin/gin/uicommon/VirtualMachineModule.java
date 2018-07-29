@@ -59,6 +59,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ova.ExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
@@ -72,7 +73,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttach
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
@@ -109,7 +109,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
-            final Provider<VmExportOvaPopupPresenterWidget> exportOvaPopupProvider,
+            final Provider<ExportOvaPopupPresenterWidget> exportOvaPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createSnapshotPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<VmPopupPresenterWidget> newVmPopupProvider,

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
+package org.ovirt.engine.ui.common.widget.uicommon.popup.ova;
 
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -17,16 +17,16 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class VmExportOvaWidget extends AbstractModelBoundPopupWidget<ExportOvaModel> {
+public class ExportOvaWidget extends AbstractModelBoundPopupWidget<ExportOvaModel> {
 
-    interface Driver extends UiCommonEditorDriver<ExportOvaModel, VmExportOvaWidget> {
+    interface Driver extends UiCommonEditorDriver<ExportOvaModel, ExportOvaWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<Container, VmExportOvaWidget> {
+    interface ViewUiBinder extends UiBinder<Container, ExportOvaWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface ViewIdHandler extends ElementIdHandler<VmExportOvaWidget> {
+    interface ViewIdHandler extends ElementIdHandler<ExportOvaWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -51,7 +51,7 @@ public class VmExportOvaWidget extends AbstractModelBoundPopupWidget<ExportOvaMo
     @WithElementId("Message")
     FlowPanel messagePanel;
 
-    public VmExportOvaWidget() {
+    public ExportOvaWidget() {
         proxyEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VDS>() {
             @Override
             protected String renderNullSafe(VDS object) {
