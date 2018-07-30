@@ -133,8 +133,18 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global wildfly_overlay_modules ""
 %endif
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %global with_python3 1
+%global require_python() python%{python3_pkgversion}-%{*}, python2-%{*}
+%else
+%global with_python3 0
+%global require_python() python2-%{*}
+%endif
+
+%if 0%{?rhel} >= 8
+%global with_python2 0
+%else
+%global with_python2 1
 %endif
 
 %global make_common_opts \\\
@@ -351,16 +361,36 @@ Provides:	ovirt-engine-extensions-api-javadoc = 0
 %description extensions-api-impl-javadoc
 %{ovirt_product_name_short} extensions api documentation
 
-%package lib
+%if 0%{with_python2}
+%package -n python2-%{name}-lib
 Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
 Requires:	m2crypto
 Requires:	python-dateutil
 Requires:	python-daemon
 Conflicts:	python-daemon = 2.1.0
+Provides:	%{name}-lib = %{version}-%{release}
+Obsoletes:	%{name}-lib < %{version}-%{release}
 
-%description lib
-%{ovirt_product_name_short} library
+%{?python_provide:%python_provide python2-%{name}-lib}
+
+%description -n python2-%{name}-lib
+%{ovirt_product_name_short} library for python2
+%endif
+
+%if 0%{with_python3}
+%package -n python%{python3_pkgversion}-%{name}-lib
+Summary:	%{ovirt_product_name_short} library
+Group:		%{ovirt_product_group}
+Requires:	python3-m2crypto >= 0.28
+Requires:	python3-dateutil
+Requires:	python3-daemon >= 2.1.2
+
+%{?python_provide:%python_provide python%{python3_pkgversion}-%{name}-lib}
+
+%description -n python%{python3_pkgversion}-%{name}-lib
+%{ovirt_product_name_short} library for python3
+%endif
 
 %package backend
 Summary:	Engine core of %{ovirt_product_name_short}
@@ -368,7 +398,6 @@ Group:		%{ovirt_product_group}
 License:	ASL 2.0 and LGPLv3 and GPLv3
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
-Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	aopalliance >= 1.0
 Requires:	curl
 Requires:	ebay-cors-filter
@@ -382,6 +411,7 @@ Requires:	novnc
 %else
 Requires:	novnc >= 0.5.0, novnc < 0.6.0
 %endif
+Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
 Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.4.14
 Requires:	openssl
@@ -419,7 +449,7 @@ The RESTful API for %{ovirt_product_name_short}
 %package setup-base
 Summary:	%{ovirt_product_name_short} suite base setup components.
 Group:		%{ovirt_product_group}
-Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
 Requires:	ovirt-setup-lib >= 1.1.1
 Requires:	bind-utils
 Requires:	iproute
@@ -483,7 +513,6 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	cracklib-python
 Requires:	libselinux-python
-Requires:	m2crypto
 Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
@@ -494,9 +523,11 @@ Requires:	java-openjdk-headless >= 1:1.8.0
 Requires:	python2-dnf
 %if 0%{?with_python3}
 Requires:	python3-dnf
+Requires:	python3-m2crypto >= 0.28
 %endif
 %else
 Requires:	yum
+Requires:	m2crypto
 %endif
 
 # We can drop these conflicts when
@@ -533,7 +564,7 @@ The web administration interface to %{ovirt_product_name_short}
 Summary:	%{ovirt_product_name_short} Tools
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
 Requires:	%{name}-tools-backup = %{version}-%{release}
 Requires:	ovirt-engine-metrics >= 1.1.2
 Requires:	java-headless
@@ -586,7 +617,7 @@ Requires:	postgresql >= 9.5
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
 Group:		%{ovirt_product_group}
-Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
 Requires:	numpy
 Requires:	python-dateutil
 Requires:	python-websockify >= 0.6.0
@@ -622,7 +653,7 @@ Setup and upgrade specific plugins for websocket-proxy
 %package vmconsole-proxy-helper
 Summary:	%{ovirt_product_name_short} VMconsole Proxy Helper
 Group:		%{ovirt_product_group}
-Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	ovirt-vmconsole-proxy
 
@@ -979,11 +1010,17 @@ fi
 %{engine_doc}/ovirt-engine-extensions-api/
 %license LICENSE
 
-%files lib
+%if 0%{with_python2}
+%files -n python2-%{name}-lib
 %license LICENSE
 %{engine_data}/bin/java-home
 %{python2_sitelib}/ovirt_engine/
-%if 0%{?with_python3}
+%endif
+
+%if 0%{with_python3}
+%files -n python%{python3_pkgversion}-%{name}-lib
+%license LICENSE
+%{engine_data}/bin/java-home
 %{python3_sitelib}/ovirt_engine/
 %endif
 
