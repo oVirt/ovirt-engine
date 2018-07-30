@@ -128,6 +128,41 @@ public class SnapshotsValidator {
     }
 
     /**
+     * Checks if the given snapshot's status is OK.
+     *
+     * @param snapshotId
+     *            Snapshot ID to check.
+     * @return Snapshot status OK or not
+     */
+    public ValidationResult isSnapshotStatusOK(Guid snapshotId) {
+        return isSnapshotInStatus(snapshotId,
+                SnapshotStatus.OK,
+                EngineMessage.ACTION_TYPE_FAILED_INVALID_SNAPSHOT_STATUS);
+    }
+
+
+    /**
+     * Return whether the Snapshot is in the given status.
+     *
+     * @param snapshotId
+     *            The snapshot ID to check for.
+     * @param status
+     *            The status of the snapshot to look for
+     * @param msg
+     *            The validation error to return if the snapshot not in the required status
+     *
+     * @return Snapshot is in the required status or not
+     */
+    private ValidationResult isSnapshotInStatus(Guid snapshotId, SnapshotStatus status,  EngineMessage msg) {
+        Snapshot snap = snapshotDao.get(snapshotId);
+        if (snap != null && snap.getStatus() != status) {
+            return new ValidationResult(msg, String.format("$SnapshotStatus %1$s", snap.getStatus()));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
      * Checks if the given snapshot's VM configuration in broken.
      */
     public ValidationResult snapshotVmConfigurationBroken(Snapshot snapshot, String vmName) {

@@ -104,6 +104,29 @@ public class SnapshotsValidatorTest {
         validateValidResult(validator.snapshotExists(snapshot));
     }
 
+    @Test
+    public void validateSnapshotStatusOK() {
+        when(snapshotDao.get(snapshot.getId())).thenReturn(snapshot);
+        snapshot.setStatus(SnapshotStatus.OK);
+        validateValidResult(validator.isSnapshotStatusOK(snapshot.getId()));
+    }
+
+    @Test
+    public void validateSnapshotStatusWhenSnapshotStatusLocked() {
+        when(snapshotDao.get(snapshot.getId())).thenReturn(snapshot);
+        snapshot.setStatus(SnapshotStatus.LOCKED);
+        validateInvalidResult(validator.isSnapshotStatusOK(snapshot.getId()),
+                EngineMessage.ACTION_TYPE_FAILED_INVALID_SNAPSHOT_STATUS);
+    }
+
+    @Test
+    public void validateSnapshotStatusWhenSnapshotStatusInPreview() {
+        when(snapshotDao.get(snapshot.getId())).thenReturn(snapshot);
+        snapshot.setStatus(SnapshotStatus.IN_PREVIEW);
+        validateInvalidResult(validator.isSnapshotStatusOK(snapshot.getId()),
+                EngineMessage.ACTION_TYPE_FAILED_INVALID_SNAPSHOT_STATUS);
+    }
+
     /**
      * Validate that the given result is valid.
      *
