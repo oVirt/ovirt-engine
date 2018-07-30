@@ -109,7 +109,7 @@ public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> exten
                     break;
                 }
             }
-            if (clickedItem != null) {
+            if (clickedItem != null && !getSelectionModel().isSelected(clickedItem.getEntity())) {
                 if (!event.isControlKeyDown() && !event.isShiftKeyDown()) {
                     // A simple click.
                     getSelectionModel().clear();
