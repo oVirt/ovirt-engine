@@ -711,7 +711,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
                 VnicProfile vnicProfile = profileModel.getProfile();
                 vnicProfile.setNetworkId(networkGuid);
-                AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile, true);
+                AddVnicProfileParameters parameters =
+                        new AddVnicProfileParameters(vnicProfile, !getNetwork().isExternal());
                 parameters.setPublicUse(profileModel.getPublicUse().getEntity());
                 paramlist.add(parameters);
             }
