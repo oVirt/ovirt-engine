@@ -33,7 +33,9 @@ public class UpgradeConfirmationModel extends ConfirmationModel {
         setReboot(new EntityModel<>());
         getReboot().setEntity(true);
         getReboot().setIsAvailable(true);
-        getReboot().setIsChangeable(true);
+
+        // In case the host is oVirt node, don't allow to disable reboot:
+        getReboot().setIsChangeable(!host.isOvirNode());
     }
 
     @Override
