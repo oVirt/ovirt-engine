@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.core.client.GWT;
@@ -193,6 +194,12 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         sourceStorageLabel.setText(object.getSourceStorageDomainName().getEntity());
         sourceStorageLabel.setVisible(object.getSourceStorageDomainName().getIsAvailable());
+        object.getSourceStorageDomainName().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                EntityModel entity = (EntityModel) sender;
+                sourceStorageLabel.setVisible(entity.getIsAvailable());
+            }
+        });
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
         object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
