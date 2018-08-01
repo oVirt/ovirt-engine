@@ -5,6 +5,7 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -147,6 +148,24 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "defaultNetworkProvider.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Provider> defaultNetworkProviderEditor;
+
+    @UiField(provided = true)
+    @Path(value = "logMaxMemoryUsedThresholdType.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<LogMaxMemoryUsedThresholdType> logMaxMemoryUsedThresholdTypeEditor;
+
+    @UiField
+    @Ignore
+    Label logMaxMemoryUsedThresholdLabel;
+
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon logMaxMemoryUsedThresholdInfoIcon;
+
+    @UiField
+    @Path(value = "logMaxMemoryUsedThreshold.entity")
+    @WithElementId
+    IntegerEntityModelTextBoxEditor logMaxMemoryUsedThresholdEditor;
 
     @UiField(provided = true)
     @Path(value = "architecture.selectedItem")
@@ -520,6 +539,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
         customMigrationBandwidthLimitEditor.hideLabel();
+        logMaxMemoryUsedThresholdTypeEditor.hideLabel();
+        logMaxMemoryUsedThresholdEditor.hideLabel();
         hostsWithBrokenConnectivityThresholdEditor.hideLabel();
 
         addStyles();
@@ -609,6 +630,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         switchTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<SwitchType>());
         firewallTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<FirewallType>());
+        logMaxMemoryUsedThresholdTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<LogMaxMemoryUsedThresholdType>());
 
         defaultNetworkProviderEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Provider>() {
             @Override
@@ -724,6 +746,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfGlusterQuorumNotMetInfo.setVisible(false);
 
         isVirtioScsiEnabledInfoIcon = new InfoIcon(templates.italicText("")); //$NON-NLS-1$
+
+        logMaxMemoryUsedThresholdInfoIcon =
+                new InfoIcon(templates.italicText(constants.logMaxMemoryUsedThresholdLabelHelpMessage()));
     }
 
     @Override

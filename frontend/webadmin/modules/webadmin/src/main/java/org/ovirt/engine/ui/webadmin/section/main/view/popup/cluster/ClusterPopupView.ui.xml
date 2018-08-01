@@ -140,6 +140,18 @@
             padding-right: 4px;
         }
 
+        @external .col-sm-8;
+        .narrowGutters .col-sm-8 {
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
+        @external .col-sm-4;
+        .narrowGutters .col-sm-4 {
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
         .panelInfo {
             display: inline-block;
             margin-left: 5px;
@@ -180,7 +192,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="860px" height="560px">
+    <d:SimpleDialogPanel width="860px" height="600px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
@@ -219,6 +231,22 @@
                                 </b:Row>
                                 <b:Row>
                                     <e:ListModelListBoxEditor ui:field="defaultNetworkProviderEditor" label="{constants.clusterDefaultNetworkProviderLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                        <g:Label ui:field="logMaxMemoryUsedThresholdLabel" text="{constants.logMaxMemoryUsedThresholdLabel}" addStyleNames="{style.floatLeft} {style.inline}" />
+                                        <d:InfoIcon ui:field="logMaxMemoryUsedThresholdInfoIcon" addStyleNames="{style.panelInfo}" />
+                                    </b:Column>
+                                    <b:Column size="SM_6" >
+                                        <b:Row addStyleNames="{style.narrowGutters}">
+                                            <b:Column size="SM_8" >
+                                                <ge:IntegerEntityModelTextBoxEditor ui:field="logMaxMemoryUsedThresholdEditor" usePatternFly="true" />
+                                            </b:Column>
+                                            <b:Column size="SM_4" >
+                                                <e:ListModelListBoxEditor ui:field="logMaxMemoryUsedThresholdTypeEditor" usePatternFly="true" />
+                                            </b:Column>
+                                        </b:Row>
+                                    </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">

@@ -19,6 +19,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String loginButtonLabel();
 
+    String logMaxMemoryUsedThresholdLabel();
+
+    String logMaxMemoryUsedThresholdLabelHelpMessage();
+
     String configureLinkLabel();
 
     String logoutLinkLabel();

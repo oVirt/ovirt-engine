@@ -16,6 +16,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -207,6 +208,26 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public void setDescription(EntityModel<String> value) {
         privateDescription = value;
+    }
+
+    private EntityModel<Integer> logMaxMemoryUsedThreshold;
+
+    public EntityModel<Integer> getLogMaxMemoryUsedThreshold() {
+        return logMaxMemoryUsedThreshold;
+    }
+
+    public void setLogMaxMemoryUsedThreshold(EntityModel<Integer> value) {
+        logMaxMemoryUsedThreshold = value;
+    }
+
+    private ListModel<LogMaxMemoryUsedThresholdType> logMaxMemoryUsedThresholdType;
+
+    public ListModel<LogMaxMemoryUsedThresholdType> getLogMaxMemoryUsedThresholdType() {
+        return logMaxMemoryUsedThresholdType;
+    }
+
+    public void setLogMaxMemoryUsedThresholdType(ListModel<LogMaxMemoryUsedThresholdType> defaultNetworkProvider) {
+        this.logMaxMemoryUsedThresholdType = defaultNetworkProvider;
     }
 
     private EntityModel<String> privateComment;
@@ -985,6 +1006,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         setGlusterTunedProfile(new ListModel<>());
+        setLogMaxMemoryUsedThreshold(new EntityModel<>());
+        setLogMaxMemoryUsedThresholdType(new ListModel<>());
+        initLogMaxMemoryUsedThresholdType();
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(this::setAllowClusterWithVirtGlusterEnabled));
 
         setEnableOvirtService(new EntityModel<>());
@@ -1403,6 +1427,14 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         firewallType.setItems(Arrays.asList(FirewallType.values()));
         firewallType.setIsChangeable(true);
         firewallType.setSelectedItem(FirewallType.FIREWALLD);
+    }
+
+    private void initLogMaxMemoryUsedThresholdType() {
+        ListModel<LogMaxMemoryUsedThresholdType> logMaxMemoryUsedThresholdType = getLogMaxMemoryUsedThresholdType();
+
+        logMaxMemoryUsedThresholdType.setItems(Arrays.asList(LogMaxMemoryUsedThresholdType.values()));
+        logMaxMemoryUsedThresholdType.setIsChangeable(true);
+        logMaxMemoryUsedThresholdType.setSelectedItem(LogMaxMemoryUsedThresholdType.PERCENTAGE);
     }
 
     private void updateFirewallTypeUponVersionChange(Version version) {

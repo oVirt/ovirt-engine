@@ -1281,6 +1281,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String FirewallType___FIREWALLD();
 
+    String LogMaxMemoryUsedThresholdType___PERCENTAGE();
+
+    String LogMaxMemoryUsedThresholdType___ABSOLUTE_VALUE();
+
     String NetworkStatus___NON_OPERATIONAL();
 
     String NetworkStatus___OPERATIONAL();

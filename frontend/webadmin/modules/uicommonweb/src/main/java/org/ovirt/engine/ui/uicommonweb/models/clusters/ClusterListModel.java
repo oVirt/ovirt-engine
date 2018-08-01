@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -355,6 +357,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         clusterModel.setIsNew(true);
         clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
         clusterModel.getMigrationBandwidthLimitType().setSelectedItem(MigrationBandwidthLimitType.DEFAULT);
+        clusterModel.getLogMaxMemoryUsedThresholdType().setSelectedItem(LogMaxMemoryUsedThresholdType.PERCENTAGE);
+        clusterModel.getLogMaxMemoryUsedThreshold().setEntity((Integer) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigValues.LogMaxCpuUsedThresholdInPercentage));
         return clusterModel;
     }
 
@@ -400,6 +405,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 ? cluster.getMigrationBandwidthLimitType()
                 : MigrationBandwidthLimitType.DEFAULT);
         clusterModel.getCustomMigrationNetworkBandwidth().setEntity(cluster.getCustomMigrationNetworkBandwidth());
+        clusterModel.getLogMaxMemoryUsedThresholdType().setSelectedItem(cluster.getLogMaxMemoryUsedThresholdType());
+        clusterModel.getLogMaxMemoryUsedThreshold().setEntity(cluster.getLogMaxMemoryUsedThreshold());
 
         if (cluster.supportsTrustedService()) {
             clusterModel.getEnableGlusterService().setIsChangeable(false);
@@ -688,6 +695,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setCompatibilityVersion(version);
         cluster.setRequiredSwitchTypeForCluster(model.getSwitchType().getSelectedItem());
         cluster.setFirewallType(model.getFirewallType().getSelectedItem());
+        cluster.setLogMaxMemoryUsedThresholdType(model.getLogMaxMemoryUsedThresholdType().getSelectedItem());
+        cluster.setLogMaxMemoryUsedThreshold(model.getLogMaxMemoryUsedThreshold().getEntity());
+
         if (model.getDefaultNetworkProvider().getSelectedItem() != null) {
             cluster.setDefaultNetworkProviderId(model.getDefaultNetworkProvider().getSelectedItem().getId());
         }
