@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NoSpacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -1088,6 +1089,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
         setValidTab(TabName.CONSOLE_TAB, getConsoleAddress().getIsValid());
 
+        getKernelCmdline().validateEntity(new IValidation[] { new NoSpacesValidation() });
+        setValidTab(TabName.KERNEL_TAB, getKernelCmdline().getIsValid());
+
         getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
@@ -1113,7 +1117,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         ValidationCompleteEvent.fire(getEventBus(), this);
         return isValidTab(TabName.GENERAL_TAB) && isValidTab(TabName.POWER_MANAGEMENT_TAB)
-                && getConsoleAddress().getIsValid() && getNetworkProviderModel().getIsValid();
+                && getConsoleAddress().getIsValid() && getNetworkProviderModel().getIsValid()
+                && isValidTab(TabName.KERNEL_TAB);
     }
 
     public void updateModelFromVds(VDS vds,
