@@ -168,10 +168,7 @@ implements SerialChildExecutingCommand {
 
     @Override
     protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
-        getImages().stream()
-        .map(this::adjustDisk)
-        .map(this::createDisk)
-        .collect(Collectors.toCollection(ArrayList::new));
+        getImages().stream().map(this::adjustDisk).forEach(this::createDisk);
     }
 
     protected DiskImage adjustDisk(DiskImage image) {
