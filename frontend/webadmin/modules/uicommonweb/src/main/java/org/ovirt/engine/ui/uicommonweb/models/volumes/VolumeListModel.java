@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
@@ -57,6 +58,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConfigModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoRepActionConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoRepCreateModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel;
@@ -73,6 +76,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeSnapshotOptionModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.inject.Inject;
 
@@ -652,7 +656,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         } else if (command.equals(getStopRebalanceCommand())) {
             stopRebalance();
         } else if (command.equals(getNewGeoRepSessionCommand())) {
-            getGeoRepListModel().getNewSessionCommand().execute();
+            createNewGeoRepSession();
         } else if (command.getName().equals("onStopRebalance")) { //$NON-NLS-1$
             onStopRebalance();
         } else if (command.equals(getStatusRebalanceCommand())) {
@@ -710,6 +714,138 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             onEditSnapshotScheduleInternal();
         } else if (command.getName().equals("startVolumeWithForceOption")) {//$NON-NLS-1$
             prepareForStartVolume(false);
+        } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
+            onCreateSession();
+        }
+    }
+
+    public void createNewGeoRepSession() {
+        if (getWindow() != null) {
+            return;
+        }
+        GlusterVolumeEntity volumeEntity = getSelectedItem();
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+        final GlusterVolumeGeoRepCreateModel geoRepCreateModel =
+                new GlusterVolumeGeoRepCreateModel(volumeEntity);
+        setWindow(geoRepCreateModel);
+        geoRepCreateModel.getSlaveUserName().setEntity(constants.rootUser());
+        geoRepCreateModel.getShowEligibleVolumes().setEntity(true);
+
+        UICommand ok = new UICommand("onCreateSession", this);//$NON-NLS-1$
+        ok.setTitle(constants.ok());
+        ok.setIsDefault(true);
+        geoRepCreateModel.getCommands().add(ok);
+
+        UICommand close = new UICommand("closeWindow", this);//$NON-NLS-1$
+        close.setTitle(constants.cancel());
+        close.setIsCancel(true);
+        geoRepCreateModel.getCommands().add(close);
+    }
+
+    private void onCreateSession() {
+        final GlusterVolumeGeoRepCreateModel createModel = (GlusterVolumeGeoRepCreateModel) getWindow();
+        if (!createModel.validate()) {
+            return;
+        }
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        final UIMessages messages = ConstantsManager.getInstance().getMessages();
+        createModel.startProgress();
+        final Guid masterVolumeId = getSelectedItem().getId();
+        final String remoteVolumeName = createModel.getSlaveVolumes().getSelectedItem().getName();
+        final String remoteHostName = createModel.getSlaveHosts().getSelectedItem().getFirst();
+        String remoteUserName = createModel.getSlaveUserName().getEntity();
+        String remoteUserGroup = createModel.getSlaveUserGroupName().getEntity();
+        final Guid remoteHostId = createModel.getSlaveHosts().getSelectedItem().getSecond();
+        Frontend.getInstance()
+                .runAction(ActionType.CreateGlusterVolumeGeoRepSession,
+                        new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
+                                remoteVolumeName,
+                                remoteHostId,
+                                remoteUserName,
+                                remoteUserGroup,
+                                !createModel.getShowEligibleVolumes().getEntity()),
+                        result -> {
+                            createModel.stopProgress();
+                            if (result.getReturnValue().getSucceeded()) {
+                                setWindow(null);
+                                if (createModel.getStartSession().getEntity()) {
+                                    initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(),
+                                            HelpTag.volume_geo_rep_start_confirmation,
+                                            "volume_geo_rep_start_confirmation", //$NON-NLS-1$
+                                            constants.geoRepForceHelp(),
+                                            messages.geoRepForceTitle(constants.startGeoRep()),
+                                            "onStartGeoRepSession", //$NON-NLS-1$
+                                            getSelectedItem().getName(),
+                                            remoteVolumeName,
+                                            remoteHostName,
+                                            null);
+                                    final GlusterVolumeGeoRepActionConfirmationModel cModel =
+                                            (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
+                                    cModel.startProgress();
+                                    Frontend.getInstance()
+                                            .runAction(ActionType.StartGlusterVolumeGeoRep,
+                                                    new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
+                                                            remoteVolumeName,
+                                                            remoteHostId),
+                                                    result1 -> {
+                                                        cModel.stopProgress();
+                                                        if (!result1.getReturnValue().getSucceeded()) {
+                                                            cModel.setMessage(
+                                                                    result1.getReturnValue().getFault().getMessage());
+                                                        } else {
+                                                            setWindow(null);
+                                                        }
+                                                    },
+                                                    this,
+                                                    false);
+                                }
+                            }
+                        },
+                        this,
+                        true);
+    }
+
+    public void initializeGeoRepActionConfirmation(String title,
+            HelpTag helpTag,
+            String hashName,
+            String forceHelp,
+            String forceLabelText,
+            String commandName,
+            String masterVolumeName,
+            String slaveVolumeName,
+            String slaveHostName,
+            String message) {
+        GlusterVolumeGeoRepActionConfirmationModel cModel;
+        if (getWindow() != null) {
+            if (getWindow() instanceof GlusterVolumeGeoRepActionConfirmationModel) {
+                cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
+            } else {
+                return;
+            }
+        } else {
+            cModel = new GlusterVolumeGeoRepActionConfirmationModel();
+            cModel.setTitle(title);
+        }
+        cModel.setHelpTag(helpTag);
+        cModel.setHashName(hashName);
+
+        setWindow(cModel);
+
+        GlusterVolumeGeoRepActionConfirmationModel
+                .callInitWindow(cModel, masterVolumeName, slaveVolumeName, slaveHostName);
+
+        cModel.setActionConfirmationMessage(message);
+        cModel.setForceHelp(forceHelp);
+        cModel.setForceLabel(forceLabelText);
+
+        List<UICommand> geoRepActionCommands = Arrays.asList(UICommand.createDefaultOkUiCommand(commandName, this),
+                UICommand.createCancelUiCommand("closeWindow", this));//$NON-NLS-1$
+
+        if (cModel.getCommands().size() > 0) {
+            cModel.setCommands(geoRepActionCommands);
+        } else {
+            cModel.getCommands().addAll(geoRepActionCommands);
         }
     }
 
