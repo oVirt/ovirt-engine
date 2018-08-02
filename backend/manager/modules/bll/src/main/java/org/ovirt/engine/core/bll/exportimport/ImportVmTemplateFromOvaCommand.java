@@ -11,6 +11,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -42,7 +43,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
-@NonTransactiveCommandAttribute(forceCompensation = true)
+@NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
 public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaParameters> extends ImportVmTemplateCommand<T>
 implements SerialChildExecutingCommand {
 
