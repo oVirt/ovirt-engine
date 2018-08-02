@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
+import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.presenter.slots.Slot;
@@ -42,6 +44,13 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
 public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity,
   V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends AbstractTabPresenter<V, P> implements PlaceTransitionHandler, MainSelectedItemChangeListener<T> {
+
+    @GenEvent
+    public class DetailItemSelectionChange {
+
+        List<?> selectedItems;
+
+    }
 
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will
     // require adding new type parameter to presenter (do later as part of refactoring)
@@ -159,7 +168,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     @SuppressWarnings({ "unchecked", "rawtypes" })
     void updateDetailModelSelection() {
         if (modelProvider instanceof SearchableDetailModelProvider) {
-            ((SearchableDetailModelProvider) modelProvider).setSelectedItems(getSelectedItems());
+            List<?> selectedItems = getSelectedItems();
+            ((SearchableDetailModelProvider) modelProvider).setSelectedItems(selectedItems);
+            DetailItemSelectionChangeEvent.fire(AbstractSubTabPresenter.this,
+                    selectedItems != null ? selectedItems : new ArrayList<>());
         }
     }
 

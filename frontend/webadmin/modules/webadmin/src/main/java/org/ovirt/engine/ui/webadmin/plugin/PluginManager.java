@@ -603,6 +603,11 @@ public class PluginManager implements HasHandlers {
                     return uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::getCurrentLocale()();
                 }
             },
+            currentPlace: function() {
+                if (validateSafePluginAction(this.pluginName)) {
+                    return uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::getCurrentPlace()();
+                }
+            },
             rootTag: function() {
                 if (validateSafePluginAction(this.pluginName)) {
                     return uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::getRootTagNode()();

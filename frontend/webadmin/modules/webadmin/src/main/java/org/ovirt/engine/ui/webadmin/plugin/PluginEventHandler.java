@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
+import org.ovirt.engine.ui.common.presenter.DetailItemSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
@@ -49,7 +50,7 @@ public class PluginEventHandler {
             }
         });
 
-        // Standard main tab item selection change
+        // Main place item selection change
         eventBus.addHandler(DataCenterSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("DataCenterSelectionChange", //$NON-NLS-1$
                         EntityObject.arrayFrom(event.getSelectedItems())));
@@ -91,6 +92,13 @@ public class PluginEventHandler {
                         EntityObject.arrayFrom(event.getSelectedItems())));
         eventBus.addHandler(EventSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("EventSelectionChange", //$NON-NLS-1$
+                        EntityObject.arrayFrom(event.getSelectedItems())));
+
+        // Detail place item selection change
+        // Note: the 'DetailItemSelectionChange' event covers all detail tabs.
+        // To determine which detail tab the user is currently on, use the 'currentPlace' API function.
+        eventBus.addHandler(DetailItemSelectionChangeEvent.getType(),
+                event -> manager.invokePluginsNow("DetailItemSelectionChange", //$NON-NLS-1$
                         EntityObject.arrayFrom(event.getSelectedItems())));
 
         // Cross-window messaging

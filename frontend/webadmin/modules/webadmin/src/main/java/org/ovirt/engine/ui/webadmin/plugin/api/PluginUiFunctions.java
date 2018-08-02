@@ -332,6 +332,13 @@ public class PluginUiFunctions implements HasHandlers {
         return currentLocale;
     }
 
+    /**
+     * Returns the current application place.
+     */
+    public String getCurrentPlace() {
+        return placeManager.getCurrentPlaceRequest().getNameToken();
+    }
+
     public TagObject getRootTagNode() {
         return TagObject.from(tagModelProvider.getModel().getRootNode());
     }
