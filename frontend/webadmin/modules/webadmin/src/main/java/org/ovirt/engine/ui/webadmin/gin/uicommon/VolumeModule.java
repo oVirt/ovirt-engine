@@ -70,7 +70,8 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumeListModel> modelProvider,
             final Provider<GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget> volumeSnapshotConfigOptionsPopupProvider,
             final Provider<GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget> clusterSnapshotConfigOptionsPopupProvider,
-            final Provider<GlusterVolumeSnapshotCreatePopupPresenterWidget> snapshotPopupProvider) {
+            final Provider<GlusterVolumeSnapshotCreatePopupPresenterWidget> snapshotPopupProvider,
+            final Provider<GlusterVolumeGeoRepCreateSessionPopupPresenterWidget> createGeoRepSessionPopupProvider) {
         MainViewModelProvider<GlusterVolumeEntity, VolumeListModel> result =
                 new MainViewModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider) {
             @Override
@@ -94,10 +95,13 @@ public class VolumeModule extends AbstractGinModule {
                     return snapshotPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getEditSnapshotScheduleCommand()) {
                     return snapshotPopupProvider.get();
-                }
-                else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
+                } else if (lastExecutedCommand == getModel().getNewGeoRepSessionCommand()) {
+                    return createGeoRepSessionPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getNewGeoRepSessionCommand()) {
+                            return createGeoRepSessionPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
             }
 
             @Override

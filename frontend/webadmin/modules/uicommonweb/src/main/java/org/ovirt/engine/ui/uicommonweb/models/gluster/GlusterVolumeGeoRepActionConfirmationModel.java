@@ -79,6 +79,7 @@ public class GlusterVolumeGeoRepActionConfirmationModel extends Model {
         onPropertyChanged(new PropertyChangedEventArgs("forceHelp"));//$NON-NLS-1$
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
@@ -91,5 +92,12 @@ public class GlusterVolumeGeoRepActionConfirmationModel extends Model {
     public void setForceLabel(String forceLabel) {
         this.forceLabel = forceLabel;
         onPropertyChanged(new PropertyChangedEventArgs("forceLabel"));//$NON-NLS-1$
+    }
+
+    public static void callInitWindow(GlusterVolumeGeoRepActionConfirmationModel cmodel,
+            String masterVolume,
+            String slaveVolume,
+            String slaveHost) {
+        cmodel.initWindow(masterVolume, slaveVolume, slaveHost);
     }
 }
