@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
@@ -143,6 +144,9 @@ public class MacAddressRangeUtils {
         return true;
     }
 
+    /**
+     * convert mac pool ranges to long ranges for bll usage with union of any two overlapping ranges into one range
+     */
     public static  Collection<LongRange> macPoolToRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         final DisjointRanges disjointRanges = new DisjointRanges();
         for (MacRange macRange : macPool.getRanges()) {
@@ -150,5 +154,30 @@ public class MacAddressRangeUtils {
                     macToLong(macRange.getMacTo()));
         }
         return clipMultiCastsFromRanges(disjointRanges.getRanges());
+    }
+
+    /**
+     * convert mac pool ranges to long ranges for bll usage without union of overlapping ranges
+     */
+    public static  Collection<LongRange> toRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+        final List<LongRange> ranges = new ArrayList<>(macPool.getRanges().size());
+        for (MacRange macRange : macPool.getRanges()) {
+            ranges.add(new LongRange(macToLong(macRange.getMacFrom()), macToLong(macRange.getMacTo())));
+        }
+        return clipMultiCastsFromRanges(ranges);
+    }
+
+    /**
+     * @return ranges in this mac pool which overlap each other
+     */
+    public static Collection<LongRange> filterOverlappingRanges(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+        Collection<LongRange> longRanges = toRanges(macPool);
+        return filterOverlappingRangeSets(longRanges, longRanges);
+    }
+
+    private static Collection<LongRange> filterOverlappingRangeSets(Collection<LongRange> rangeSet1, Collection<LongRange> rangeSet2) {
+        return rangeSet1.stream()
+                .filter(range1 -> rangeSet2.stream().anyMatch(range2 -> range1 != range2 && range2.overlapsRange(range1)))
+                .collect(Collectors.toList());
     }
 }

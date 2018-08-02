@@ -22,7 +22,7 @@ public class RangeTest {
 
     @Before
     public void before() {
-        rangeOf10Macs = new Range(RANGE_FROM, RANGE_TO);
+        rangeOf10Macs = new Range(new LongRange(RANGE_FROM, RANGE_TO));
     }
 
     @Test
@@ -124,24 +124,24 @@ public class RangeTest {
 
     @Test
     public void testRangeStartAndRangeStopAreInclusive() throws Exception {
-        assertThat(new Range(MAC_FROM_RANGE, MAC_FROM_RANGE).getAvailableCount(), is(1));
+        assertThat(new Range(new LongRange(MAC_FROM_RANGE, MAC_FROM_RANGE)).getAvailableCount(), is(1));
     }
 
     @Test
     public void testRangeCanContainOnlyIntSizeNumberOfElements() throws Exception {
         LongRange longRange = MacAddressRangeUtils.clipRange(new LongRange(0, Long.MAX_VALUE));
-        Range range = new Range(longRange.getMinimumLong(), longRange.getMaximumLong());
+        Range range = new Range(new LongRange(longRange.getMinimumLong(), longRange.getMaximumLong()));
         assertThat(range.getAvailableCount(), is(Integer.MAX_VALUE));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testTooBigRange() throws Exception {
-        new Range(0, Integer.MAX_VALUE);
+        new Range(new LongRange(0, Integer.MAX_VALUE));
     }
 
     @Test
     public void testMaxSizeRange() throws Exception {
-        new Range(0, Integer.MAX_VALUE - 1);
+        new Range(new LongRange(0, Integer.MAX_VALUE - 1));
     }
 
 
@@ -152,7 +152,7 @@ public class RangeTest {
      */
     @Test
     public void testOrderOrAcquiredMACs() {
-        Range range = new Range(0, 5);
+        Range range = new Range(new LongRange(0, 5));
         List<Integer> usedMacs = Arrays.asList(0, 2, 4);
         for(int i = 0; i < 5; i++) {
             boolean usedMac = usedMacs.contains(i);

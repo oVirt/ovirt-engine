@@ -5,10 +5,10 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.math.LongRange;
 
 class Range {
-    private final long rangeStart;
-    private final long rangeEnd;
+    private final LongRange range;
     private final int numberOfMacsInRange;
 
     /**
@@ -20,11 +20,9 @@ class Range {
     private BitSet usedMacs;
     private int startingLocationWhenSearchingForUnusedMac = 0;
 
-    public Range(long rangeStart, long rangeEnd) {
-        this.rangeStart = rangeStart;
-        this.rangeEnd = rangeEnd;
-
-        long numberOfMacsLong =  (rangeEnd - rangeStart) + 1;
+    public Range(LongRange range) {
+        this.range = range;
+        long numberOfMacsLong =  (range.getMaximumLong() - range.getMinimumLong()) + 1;
         Validate.isTrue(numberOfMacsLong <= Integer.MAX_VALUE,
                 String.format("Range too big; Range shouldn't be bigger than %1$s, but passed one "
                         + "contains %2$s elements.", Integer.MAX_VALUE, numberOfMacsLong));
@@ -36,7 +34,7 @@ class Range {
     }
 
     public boolean contains(long mac) {
-        return rangeStart <= mac && rangeEnd >= mac;
+        return range.containsLong(mac);
     }
 
     public boolean containsDuplicates() {
@@ -73,7 +71,7 @@ class Range {
     }
 
     private int macToArrayIndex(long mac) {
-        return (int) (mac - rangeStart);
+        return (int) (mac - range.getMinimumLong());
     }
 
     public boolean isAllocated(long mac) {
@@ -132,7 +130,10 @@ class Range {
         }
         startingLocationWhenSearchingForUnusedMac = (index + 1) % numberOfMacsInRange;
 
-        return rangeStart + index;
+        return range.getMinimumLong() + index;
     }
 
+    boolean overlaps(Range other) {
+        return range.overlapsRange(other.range);
+    }
 }

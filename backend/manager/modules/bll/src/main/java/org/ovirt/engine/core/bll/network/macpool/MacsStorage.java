@@ -19,10 +19,6 @@ class MacsStorage {
         customMacs = new ObjectCounter<>(this.allowDuplicates);
     }
 
-    public Range addRange(long rangeStart, long rangeEnd) {
-        return addRange(new Range(rangeStart, rangeEnd));
-    }
-
     Range addRange(Range range) {
         ranges.add(range);
         return range;
@@ -143,5 +139,9 @@ class MacsStorage {
 
     boolean containsDuplicates() {
         return ranges.stream().anyMatch(range -> range.containsDuplicates()) || customMacs.containsDuplicates();
+    }
+
+    boolean overlaps(Range range) {
+        return ranges.stream().anyMatch(r -> r.overlaps(range));
     }
 }
