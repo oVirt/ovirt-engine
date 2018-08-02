@@ -18,8 +18,6 @@ import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.ExportVmToOvaParameters;
-import org.ovirt.engine.core.common.action.MigrateVmParameters;
-import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -238,16 +236,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void setCancelConvertCommand(UICommand value) {
         cancelConvertCommand = value;
-    }
-
-    private UICommand privateMigrateCommand;
-
-    public UICommand getMigrateCommand() {
-        return privateMigrateCommand;
-    }
-
-    private void setMigrateCommand(UICommand value) {
-        privateMigrateCommand = value;
     }
 
     private UICommand privateNewTemplateCommand;
@@ -534,7 +522,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setRebootCommand(new UICommand("Reboot", this)); //$NON-NLS-1$
         setEditConsoleCommand(new UICommand("EditConsoleCommand", this)); //$NON-NLS-1$
         setConsoleConnectCommand(new UICommand("ConsoleConnectCommand", this)); //$NON-NLS-1$
-        setMigrateCommand(new UICommand("Migrate", this)); //$NON-NLS-1$
         setCancelMigrateCommand(new UICommand("CancelMigration", this)); //$NON-NLS-1$
         setCancelConvertCommand(new UICommand("CancelConversion", this)); //$NON-NLS-1$
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
@@ -1342,27 +1329,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         return resultVm;
     }
 
-    private void migrate() {
-        VM vm = getSelectedItem();
-        if (vm == null) {
-            return;
-        }
-
-        if (getWindow() != null) {
-            return;
-        }
-
-        MigrateModel model = new MigrateModel(this);
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().migrateVirtualMachinesTitle());
-        model.setHelpTag(HelpTag.migrate_virtual_machine);
-        model.setHashName("migrate_virtual_machine"); //$NON-NLS-1$
-        model.setVmsOnSameCluster(true);
-        model.setIsAutoSelect(true);
-        model.setVmList(new ArrayList<>(getSelectedItems()));
-        model.initializeModel();
-    }
-
     private void cancelMigration() {
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
@@ -1382,54 +1348,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
         Frontend.getInstance().runMultipleAction(ActionType.CancelConvertVm, parameters);
-    }
-
-    private void onMigrate() {
-        MigrateModel model = (MigrateModel) getWindow();
-
-        if (model.getProgress() != null) {
-            return;
-        }
-
-        model.startProgress();
-
-        if (model.getIsAutoSelect()) {
-            ArrayList<ActionParametersBase> list = new ArrayList<>();
-            for (Object item : getSelectedItems()) {
-                VM vm = (VM) item;
-                list.add(new MigrateVmParameters(true, vm.getId(), vm.getClusterId()));
-            }
-
-            Frontend.getInstance().runMultipleAction(ActionType.MigrateVm, list,
-                    result -> {
-
-                        MigrateModel localModel = (MigrateModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-
-                    }, model);
-        } else {
-            ArrayList<ActionParametersBase> list = new ArrayList<>();
-            for (Object item : getSelectedItems()) {
-                VM vm = (VM) item;
-
-                if (vm.getRunOnVds().equals(model.getHosts().getSelectedItem().getId())) {
-                    continue;
-                }
-
-                list.add(new MigrateVmToServerParameters(true, vm.getId(), model.getHosts()
-                        .getSelectedItem().getId(), vm.getClusterId()));
-            }
-
-            Frontend.getInstance().runMultipleAction(ActionType.MigrateVmToServer, list,
-                    result -> {
-
-                        MigrateModel localModel = (MigrateModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-
-                    }, model);
-        }
     }
 
     private void powerAction(final String actionName, final String title, final String message) {
@@ -2004,8 +1922,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         getStopCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.StopVm));
         getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
-        getMigrateCommand().setIsExecutionAllowed(vmsSelected
-                && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(singleVmSelected
@@ -2119,8 +2035,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             shutdown();
         } else if (command == getRebootCommand()) {
             reboot();
-        } else if (command == getMigrateCommand()) {
-            migrate();
         } else if (command == getNewTemplateCommand()) {
             newTemplate();
         } else if (command == getRunOnceCommand()) {
@@ -2165,10 +2079,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else if ("OnRunOnce".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
-
             onNewTemplate();
-        } else if ("OnMigrate".equals(command.getName())) { //$NON-NLS-1$
-            onMigrate();
         } else if (command == getCancelMigrateCommand()) {
             cancelMigration();
         } else if (command == getCancelConvertCommand()) {
@@ -2189,7 +2100,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             if (!model.validate()) {
                 return;
             }
-
             updateExistingVm(model.getApplyLater().getEntity());
             cancelConfirmation();
         } else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$

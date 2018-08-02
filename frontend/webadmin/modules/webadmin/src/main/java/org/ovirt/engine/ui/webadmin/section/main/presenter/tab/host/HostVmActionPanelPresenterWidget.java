@@ -98,13 +98,6 @@ public class HostVmActionPanelPresenterWidget extends
 
         });
 
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getMigrateCommand();
-            }
-        });
-
         addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {

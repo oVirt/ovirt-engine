@@ -589,8 +589,6 @@ public interface UIConstants extends Constants {
 
     String newTemplateTitle();
 
-    String migrateVirtualMachinesTitle();
-
     String shutdownVirtualMachinesTitle();
 
     String stopVirtualMachinesTitle();

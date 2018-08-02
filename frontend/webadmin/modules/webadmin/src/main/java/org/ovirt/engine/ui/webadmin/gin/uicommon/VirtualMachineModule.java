@@ -77,7 +77,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
@@ -111,7 +110,6 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
             final Provider<ExportOvaPopupPresenterWidget> exportOvaPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createSnapshotPopupProvider,
-            final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<VmPopupPresenterWidget> newVmPopupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
@@ -145,8 +143,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return exportPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
                             return createSnapshotPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getMigrateCommand()) {
-                            return migratePopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditCommand() || lastExecutedCommand == getModel().getNewVmCommand() || "OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();

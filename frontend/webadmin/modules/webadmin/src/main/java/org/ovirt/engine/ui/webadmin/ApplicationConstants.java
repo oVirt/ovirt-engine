@@ -836,18 +836,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String vmExportPopupCollapseSnapshotsLabel();
 
-    String vmMigratePopupSelectHostAutomaticallyLabel();
-
-    String vmMigratePopupSelectDestinationHostLabel();
-
-    String vmMigratePopupHostsListLabel();
-
-    String vmMigrateHostDisabledVMsInServerClusters();
-
-    String vmMigrateSomeVmsAlreadyRunningOnHost();
-
-    String vmMigrateNoAvailableHost();
-
     String importVm_destCluster();
 
     String importVm_destClusterQuota();
@@ -1497,8 +1485,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String suspendVm();
 
     String consoleVm();
-
-    String migrateVm();
 
     String cancelMigrationVm();
 

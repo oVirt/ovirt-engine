@@ -126,13 +126,6 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         }, consoleOptionsSubActions);
 
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getMigrateCommand();
-            }
-        });
-
         addActionButton(new WebAdminButtonDefinition<VM>(constants.createSnapshotVM()) {
             @Override
             protected UICommand resolveCommand() {

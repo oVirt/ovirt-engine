@@ -243,7 +243,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
@@ -529,7 +528,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmHighPerformanceConfigurationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNextRunConfigurationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
@@ -1768,11 +1766,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(CloneVmPopupPresenterWidget.class,
                 CloneVmPopupPresenterWidget.ViewDef.class,
                 CloneVmPopupView.class);
-
-        // VM Migrate
-        bindPresenterWidget(VmMigratePopupPresenterWidget.class,
-                VmMigratePopupPresenterWidget.ViewDef.class,
-                VmMigratePopupView.class);
 
         // VM Export
         bindPresenterWidget(VmExportPopupPresenterWidget.class,

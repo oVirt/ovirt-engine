@@ -43,6 +43,18 @@
         UuF: Unused field (UUF_UNUSED_FIELD)
        -->
      <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter$DetailItemSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+    <!--
+     findbugs complain of unused field in class.
+     This is a GWT class and use to generate code
+
+     findbugs reason:
+     UuF: Unused field (UUF_UNUSED_FIELD)
+    -->
+     <Match>
        <Class name="org.ovirt.engine.ui.common.system.ApplicationFocusChange" />
        <Bug code="UuF"/>
      </Match>

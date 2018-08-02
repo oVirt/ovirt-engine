@@ -282,8 +282,6 @@ public enum HelpTag {
 
     manual_fence_are_you_sure("manual_fence_are_you_sure", HelpTagType.WEBADMIN, "Host Tab > Confirm Host has been Rebooted"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    migrate_virtual_machine("migrate_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Migrate Virtual Machine(s)"), //$NON-NLS-1$ //$NON-NLS-2$
-
     edit_next_run_configuration("edit_next_run_configuration", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 
     configuration_changes_for_high_performance_vm("configuration_changes_for_high_performance_vm", HelpTagType.WEBADMIN), //$NON-NLS-1$

@@ -62,7 +62,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAtt
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
@@ -228,23 +227,12 @@ public class HostModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> getHostVmListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<HostVmListModel> modelProvider) {
         SearchableDetailTabModelProvider<VM, HostListModel<Void>, HostVmListModel> result =
                 new SearchableDetailTabModelProvider<VM, HostListModel<Void>, HostVmListModel>(
                         eventBus, defaultConfirmPopupProvider) {
-
-                    @Override
-                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostVmListModel source,
-                            UICommand lastExecutedCommand, Model windowModel) {
-                        if (lastExecutedCommand == getModel().getMigrateCommand()) {
-                            return migratePopupProvider.get();
-                        }
-                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                    }
-
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(
                             HostVmListModel sourceModel,
