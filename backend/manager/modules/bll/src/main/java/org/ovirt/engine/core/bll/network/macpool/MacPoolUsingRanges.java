@@ -75,9 +75,9 @@ public final class MacPoolUsingRanges implements MacPool {
      */
     private MacsStorage createMacsStorage(Collection<LongRange> rangesBoundaries) {
         MacsStorage macsStorage = new MacsStorage(allowDuplicates);
-        for (LongRange range : rangesBoundaries) {
-            log.debug("Adding range {} to pool {}.", range, this);
-            macsStorage.addRange(range.getMinimumLong(), range.getMaximumLong());
+        for (LongRange longRange : rangesBoundaries) {
+            log.debug("Adding range {} to pool {}.", longRange, this);
+            macsStorage.addRange(new Range(longRange));
         }
 
         if (macsStorage.availableMacExist()) {
