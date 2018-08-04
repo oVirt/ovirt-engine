@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
@@ -88,6 +91,12 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         }
     }
 
+    private Map<Guid, Guid> getImageMappings() {
+        return getParameters().getImageMappings() != null ?
+                getParameters().getImageMappings()
+                : Collections.emptyMap();
+    }
+
     private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
@@ -95,7 +104,10 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                     new Pair<>("ovirt_import_ova_path", getParameters().getOvaPath()),
                     new Pair<>("ovirt_import_ova_disks", diskPaths.stream()
                             .map(path -> String.format("'%s'", path))
-                            .collect(Collectors.joining(", ", "[", "]")))
+                            .collect(Collectors.joining(", ", "[", "]"))),
+                    new Pair<>("ovirt_import_ova_image_mappings", getImageMappings().entrySet().stream()
+                            .map(e -> String.format("\"%s\": \"%s\"", e.getValue().toString(), e.getKey().toString()))
+                            .collect(Collectors.joining(", ", "'{", "}'")))
                 )
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)

@@ -65,7 +65,7 @@ def nti(s):
     return n
 
 
-def extract_disks(ova_path, image_paths):
+def extract_disks(ova_path, image_paths, image_mappings):
     try:
         fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
     except OSError:
@@ -93,15 +93,16 @@ def extract_disks(ova_path, image_paths):
                     jump += TAR_BLOCK_SIZE - remainder
                 ova_file.seek(jump, 1)
             else:
+                image_guid = image_mappings[name] if image_mappings else name
                 for image_path in image_paths:
-                    if name in image_path:
+                    if image_guid in image_path:
                         extract_disk(ova_path, ova_file.tell(), image_path)
                         ova_file.seek(size, 1)
                         break
 
 
-if len(sys.argv) < 3:
-    print ("Usage: extract_ova.py ova_path disks_paths")
+if len(sys.argv) < 4:
+    print ("Usage: extract_ova.py ova_path disks_paths image_mappings")
     sys.exit(2)
 
-extract_disks(sys.argv[1], yaml.load(sys.argv[2]))
+extract_disks(sys.argv[1], yaml.load(sys.argv[2]), yaml.load(sys.argv[3]))

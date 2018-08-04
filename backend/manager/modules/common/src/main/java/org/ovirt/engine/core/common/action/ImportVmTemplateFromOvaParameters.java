@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -13,6 +15,7 @@ public class ImportVmTemplateFromOvaParameters extends ImportVmTemplateParameter
     private String ovaPath;
     private Guid proxyHostId;
     private Phase importPhase = Phase.CREATE_DISKS;
+    private Map<Guid, Guid> imageMappings;
 
     public ImportVmTemplateFromOvaParameters() {
     }
@@ -43,5 +46,13 @@ public class ImportVmTemplateFromOvaParameters extends ImportVmTemplateParameter
 
     public void setImportPhase(Phase importPhase) {
         this.importPhase = importPhase;
+    }
+
+    public Map<Guid, Guid> getImageMappings() {
+        return imageMappings;
+    }
+
+    public void setDiskMappings(Map<Guid, Guid> imageMappings) {
+        this.imageMappings = imageMappings;
     }
 }

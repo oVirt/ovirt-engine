@@ -4,6 +4,7 @@
     extract_ova.py
     "{{ ovirt_import_ova_path }}"
     "{{ ovirt_import_ova_disks }}"
+    "{{ ovirt_import_ova_image_mappings }}"
   register: extraction_result
 
 - fail:

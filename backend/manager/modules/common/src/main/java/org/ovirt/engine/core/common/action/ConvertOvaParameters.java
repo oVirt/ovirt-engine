@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -7,6 +9,7 @@ public class ConvertOvaParameters extends ConvertVmParameters {
 
     private String ovaPath;
     private VmEntityType vmEntityType = VmEntityType.VM;
+    private Map<Guid, Guid> imageMappings;
 
     public ConvertOvaParameters() {
     }
@@ -29,5 +32,13 @@ public class ConvertOvaParameters extends ConvertVmParameters {
 
     public void setVmEntityType(VmEntityType vmEntityType) {
         this.vmEntityType = vmEntityType;
+    }
+
+    public Map<Guid, Guid> getImageMappings() {
+        return imageMappings;
+    }
+
+    public void setImageMappings(Map<Guid, Guid> diskMappings) {
+        this.imageMappings = diskMappings;
     }
 }

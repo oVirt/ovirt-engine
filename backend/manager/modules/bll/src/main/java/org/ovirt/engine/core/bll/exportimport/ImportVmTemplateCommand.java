@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -371,6 +372,12 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
                 newDiskIdForDisk.put(image.getId(), image);
             }
         }
+    }
+
+    protected Map<Guid, Guid> getImageMappings() {
+        return getImages().stream().collect(Collectors.toMap(
+                DiskImage::getImageId,
+                d -> newDiskIdForDisk.get(d.getId()).getImageId()));
     }
 
     protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {

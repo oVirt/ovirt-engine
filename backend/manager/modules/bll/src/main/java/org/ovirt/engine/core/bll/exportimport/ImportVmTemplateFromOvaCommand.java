@@ -169,6 +169,7 @@ implements SerialChildExecutingCommand {
     @Override
     protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
         getImages().stream().map(this::adjustDisk).forEach(this::createDisk);
+        getParameters().setDiskMappings(getImageMappings());
     }
 
     protected DiskImage adjustDisk(DiskImage image) {
@@ -202,6 +203,7 @@ implements SerialChildExecutingCommand {
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmTemplateName());
         parameters.setDisks(getVmTemplate().getDiskList());
+        parameters.setImageMappings(getParameters().getImageMappings());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
