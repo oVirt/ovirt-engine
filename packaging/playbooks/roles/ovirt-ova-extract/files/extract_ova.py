@@ -10,6 +10,8 @@ from contextlib import closing
 from subprocess import call
 from subprocess import check_output
 
+import yaml
+
 import six
 
 NUL = b"\0"
@@ -102,4 +104,4 @@ if len(sys.argv) < 3:
     print ("Usage: extract_ova.py ova_path disks_paths")
     sys.exit(2)
 
-extract_disks(sys.argv[1], sys.argv[2].split('+'))
+extract_disks(sys.argv[1], yaml.load(sys.argv[2]))
