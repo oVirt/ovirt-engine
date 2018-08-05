@@ -43,6 +43,12 @@ public class ClusterMapper {
             entity.setFirewallType(FirewallTypeMapper.mapFromModel(model.getFirewallType()));
         }
 
+        if (model.isSetLogMaxMemoryUsedThresholdType()) {
+            entity.setLogMaxMemoryUsedThresholdType(
+                    LogMaxMemoryUsedThresholdTypeMapper.mapFromModel(model.getLogMaxMemoryUsedThresholdType()));
+            entity.setLogMaxMemoryUsedThreshold(model.getLogMaxMemoryUsedThreshold());
+        }
+
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -188,6 +194,9 @@ public class ClusterMapper {
         model.setComment(entity.getComment());
         model.setSwitchType(SwitchTypeMapper.mapToModel(entity.getRequiredSwitchTypeForCluster()));
         model.setFirewallType(FirewallTypeMapper.mapToModel(entity.getFirewallType()));
+        model.setLogMaxMemoryUsedThresholdType(
+                LogMaxMemoryUsedThresholdTypeMapper.mapToModel(entity.getLogMaxMemoryUsedThresholdType()));
+        model.setLogMaxMemoryUsedThreshold(entity.getLogMaxMemoryUsedThreshold());
 
         if (entity.getCpuName() != null) {
             Cpu cpu = new Cpu();
