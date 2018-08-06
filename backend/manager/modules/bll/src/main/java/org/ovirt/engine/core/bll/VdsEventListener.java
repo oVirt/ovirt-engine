@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
@@ -605,7 +606,10 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void refreshHostCapabilities(Guid hostId) {
-        backend.runInternalAction(ActionType.RefreshHostCapabilities, new VdsActionParameters(hostId));
+        ActionParametersBase parameters = new VdsActionParameters(hostId);
+        parameters.setLockProperties(
+                LockProperties.create(LockProperties.Scope.Execution).withWait(true));
+        backend.runInternalAction(ActionType.RefreshHostCapabilities, parameters);
     }
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread
