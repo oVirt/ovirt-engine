@@ -22,8 +22,6 @@
 import gettext
 import time
 
-from async_tasks_map import ASYNC_TASKS_MAP
-
 from otopi import base
 from otopi import constants as otopicons
 from otopi import plugin
@@ -36,6 +34,8 @@ from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
 from ovirt_setup_lib import dialog
+
+from .async_tasks_map import ASYNC_TASKS_MAP
 
 
 def _(m):
