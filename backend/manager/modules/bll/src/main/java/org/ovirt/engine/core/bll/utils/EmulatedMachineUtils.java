@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class EmulatedMachineUtils {
                 recentClusterDefault,
                 Config.getValue(
                         ConfigValues.ClusterEmulatedMachines,
-                        vmBase.getCustomCompatibilityVersion().getValue()));
+                        CompatibilityVersionUtils.getEffective(vmBase, cluster).getValue()));
         log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", bestMatch, vmBase);
         return bestMatch;
     }
