@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.utils.NumaUtils;
 
 public class NumaSettingFactory {
 
@@ -20,7 +20,7 @@ public class NumaSettingFactory {
         return vmNumaNodes.stream()
                 .map(node -> {
                     Map<String, Object> createVmNumaNode = new HashMap<>(3);
-                    createVmNumaNode.put(VdsProperties.NUMA_NODE_CPU_LIST, NumaUtils.buildStringFromListForNuma(node.getCpuIds()));
+                    createVmNumaNode.put(VdsProperties.NUMA_NODE_CPU_LIST, buildStringFromListForNuma(node.getCpuIds()));
                     createVmNumaNode.put(VdsProperties.VM_NUMA_NODE_MEM, String.valueOf(node.getMemTotal()));
                     createVmNumaNode.put(VdsProperties.NUMA_NODE_INDEX, node.getIndex());
                     return createVmNumaNode;
@@ -43,7 +43,7 @@ public class NumaSettingFactory {
                 }
 
                 for (Integer vCpu : node.getCpuIds()) {
-                    cpuPinDict.put(String.valueOf(vCpu), NumaUtils.buildStringFromListForNuma(totalPinnedVdsCpus));
+                    cpuPinDict.put(String.valueOf(vCpu), buildStringFromListForNuma(totalPinnedVdsCpus));
                 }
             }
         }
@@ -63,7 +63,7 @@ public class NumaSettingFactory {
             Map<String, String> memNode = new HashMap<>(2);
             memNode.put(VdsProperties.NUMA_TUNE_VM_NODE_INDEX, String.valueOf(node.getIndex()));
             memNode.put(VdsProperties.NUMA_TUNE_NODESET,
-                    NumaUtils.buildStringFromListForNuma(node.getVdsNumaNodeList()));
+                    buildStringFromListForNuma(node.getVdsNumaNodeList()));
 
             memNodeList.add(memNode);
         }
@@ -78,5 +78,17 @@ public class NumaSettingFactory {
         createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
 
         return createNumaTune;
+    }
+
+    private static String buildStringFromListForNuma(Collection<Integer> list) {
+        if (!list.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (Integer item : list) {
+                sb.append(item);
+                sb.append(",");
+            }
+            return sb.deleteCharAt(sb.length() - 1).toString();
+        }
+        return "";
     }
 }

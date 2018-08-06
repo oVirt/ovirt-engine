@@ -116,7 +116,6 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.CollectionUtils;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByAddressPredicate;
 import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
@@ -1433,7 +1432,12 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Map<String, Object>> memStats = (Map<String, Map<String, Object>>)
                     struct.get(VdsProperties.NUMA_NODE_FREE_MEM_STAT);
             for (Map.Entry<String, Map<String, Object>> item : memStats.entrySet()) {
-                VdsNumaNode node = NumaUtils.getVdsNumaNodeByIndex(vdsNumaNodes, Integer.parseInt(item.getKey()));
+
+                int nodeIndex = Integer.parseInt(item.getKey());
+                VdsNumaNode node = vdsNumaNodes.stream()
+                        .filter(n -> n.getIndex() == nodeIndex)
+                        .findAny().orElse(null);
+
                 if (node != null && node.getNumaNodeStatistics() != null) {
                     node.getNumaNodeStatistics().setMemFree(assignLongValue(item.getValue(),
                             VdsProperties.NUMA_NODE_FREE_MEM));
@@ -2477,10 +2481,7 @@ public class VdsBrokerObjectsBuilder {
                     }
                 }
 
-                VdsNumaNode newNumaNode = NumaUtils.getVdsNumaNodeByIndex(newNumaNodeList, index);
-                if (newNumaNode != null) {
-                    newNumaNode.setNumaNodeDistances(distanceMap);
-                }
+                vdsNumaNode.setNumaNodeDistances(distanceMap);
             }
 
             vds.getDynamicData().setNumaNodeList(newNumaNodeList);

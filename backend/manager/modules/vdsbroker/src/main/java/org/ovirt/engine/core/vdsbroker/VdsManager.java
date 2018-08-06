@@ -57,7 +57,6 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -533,7 +532,10 @@ public class VdsManager {
 
         List<VdsNumaNode> dbVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vds.getId());
         for (VdsNumaNode node : vds.getNumaNodeList()) {
-            VdsNumaNode searchNode = NumaUtils.getVdsNumaNodeByIndex(dbVdsNumaNodes, node.getIndex());
+            VdsNumaNode searchNode = dbVdsNumaNodes.stream()
+                    .filter(n -> n.getIndex() == node.getIndex())
+                    .findAny().orElse(null);
+
             if (searchNode != null) {
                 node.setId(searchNode.getId());
                 numaNodesToUpdate.add(node);
