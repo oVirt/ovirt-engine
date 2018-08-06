@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -87,9 +88,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
     @ValidDescription(message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull
     private String description;
 
     @EditableVmField(onHostedEngine = true)
+    @NotNull
     private String comment;
 
     @CopyOnNewVersion
@@ -404,6 +407,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
         resumeBehavior = VmResumeBehavior.AUTO_RESUME;
         multiQueuesEnabled = true;
+        description = "";
+        comment = "";
     }
 
     @EditableVmField
@@ -846,7 +851,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public void setDescription(String value) {
-        this.description = value;
+        this.description = value == null ? "" : value;
     }
 
     public String getComment() {
@@ -854,7 +859,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public void setComment(String value) {
-        comment = value;
+        comment = value == null ? "" : value;
     }
 
     public int getMemSizeMb() {

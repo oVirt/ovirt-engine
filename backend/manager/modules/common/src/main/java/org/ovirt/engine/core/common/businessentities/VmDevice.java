@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -57,6 +59,7 @@ public class VmDevice implements Queryable, BusinessEntity<VmDeviceId>, Comparab
     private Guid snapshotId;
 
     /** The device alias. */
+    @NotNull
     private String alias;
 
     /** The device logical name. */
@@ -93,6 +96,7 @@ public class VmDevice implements Queryable, BusinessEntity<VmDeviceId>, Comparab
         this.customProperties = customProperties;
         this.snapshotId = snapshotId;
         this.logicalName = logicalName;
+        this.setAlias(alias);
     }
 
     @Override
@@ -204,7 +208,7 @@ public class VmDevice implements Queryable, BusinessEntity<VmDeviceId>, Comparab
     }
 
     public void setAlias(String alias) {
-        this.alias = alias;
+        this.alias = alias == null ? "" : alias;
     }
 
     public String getLogicalName() {

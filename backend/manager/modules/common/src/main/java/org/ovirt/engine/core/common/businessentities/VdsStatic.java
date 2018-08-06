@@ -32,6 +32,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private String name;
 
     @EditableVdsField
+    @NotNull
     private String comment;
 
     @EditableVdsField
@@ -196,6 +197,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.serverSslEnabled = serverSslEnabled;
         this.setVdsType(vdsType);
         this.hostProviderId = hostProviderId;
+        comment = "";
     }
 
     public boolean isServerSslEnabled() {
@@ -219,7 +221,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     public void setComment(String value) {
-        comment = value;
+        comment = value == null ? "" : value;
     }
 
     public String getUniqueID() {

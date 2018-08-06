@@ -699,9 +699,11 @@ public class HostSetupNetworksValidatorTest {
     public void testNetworksUniquelyConfiguredOnHostWhenUniquelyConfigured() throws Exception {
         Network networkA = new Network();
         networkA.setId(Guid.newGuid());
+        networkA.setName("A");
 
         Network networkB = new Network();
         networkB.setId(Guid.newGuid());
+        networkA.setName("B");
 
         NetworkAttachment networkAttachmentA = createNetworkAttachment(networkA);
         NetworkAttachment networkAttachmentB = createNetworkAttachment(networkB);

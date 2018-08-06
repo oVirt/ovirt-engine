@@ -66,6 +66,7 @@ public class Quota implements Queryable, BusinessEntity<Guid>, Nameable {
      * The quota description.
      */
     @Size(min = 0, max = BusinessEntitiesDefinitions.QUOTA_DESCRIPTION_SIZE)
+    @NotNull
     private String description;
 
     /**
@@ -128,6 +129,7 @@ public class Quota implements Queryable, BusinessEntity<Guid>, Nameable {
         setQuotaStorages(new ArrayList<QuotaStorage>());
         setQuotaClusters(new ArrayList<QuotaCluster>());
         id = Guid.Empty;
+        description = "";
     }
 
     /**
@@ -217,7 +219,7 @@ public class Quota implements Queryable, BusinessEntity<Guid>, Nameable {
      *            the description to set
      */
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description == null ? "" : description;
     }
 
     /**

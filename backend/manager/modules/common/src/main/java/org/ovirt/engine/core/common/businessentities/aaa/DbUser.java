@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -39,12 +40,15 @@ public class DbUser implements Queryable, Nameable {
     private String loginName;
 
     @Size(max = BusinessEntitiesDefinitions.USER_FIRST_NAME_SIZE)
+    @NotNull
     private String firstName;
 
     @Size(max = BusinessEntitiesDefinitions.USER_LAST_NAME_SIZE)
+    @NotNull
     private String lastName;
 
     @Size(max = BusinessEntitiesDefinitions.USER_DEPARTMENT_SIZE)
+    @NotNull
     private String department;
 
     @Size(max = BusinessEntitiesDefinitions.USER_EMAIL_SIZE)
@@ -76,9 +80,9 @@ public class DbUser implements Queryable, Nameable {
         domain = directoryUser.getDirectoryName();
         namespace = directoryUser.getNamespace();
         loginName = directoryUser.getPrincipal() != null ? directoryUser.getPrincipal() : directoryUser.getName();
-        firstName = directoryUser.getFirstName();
-        lastName = directoryUser.getLastName();
-        department = directoryUser.getDepartment();
+        this.setFirstName(directoryUser.getFirstName());
+        this.setLastName(lastName = directoryUser.getLastName());
+        this.setDepartment(directoryUser.getDepartment());
         email = directoryUser.getEmail();
         note = "";
         groupNames = new HashSet<>();
@@ -102,9 +106,9 @@ public class DbUser implements Queryable, Nameable {
             domain = dbUser.getDomain();
             namespace = dbUser.getNamespace();
             loginName = dbUser.getLoginName();
-            firstName = dbUser.getFirstName();
-            lastName = dbUser.getLastName();
-            department = dbUser.getDepartment();
+            setFirstName(firstName = dbUser.getFirstName());
+            setLastName(lastName = dbUser.getLastName());
+            setDepartment(dbUser.getDepartment());
             email = dbUser.getEmail();
             note = dbUser.getNote();
             groupIds = new ArrayList<>(dbUser.getGroupIds());
@@ -158,7 +162,7 @@ public class DbUser implements Queryable, Nameable {
     }
 
     public void setFirstName(String value) {
-        firstName = value;
+        firstName = value == null ? "" : value;
     }
 
     public String getLastName() {
@@ -166,7 +170,7 @@ public class DbUser implements Queryable, Nameable {
     }
 
     public void setLastName(String value) {
-        lastName = value;
+        lastName = value == null ? "" : value;
     }
 
     public String getDepartment() {
@@ -174,7 +178,7 @@ public class DbUser implements Queryable, Nameable {
     }
 
     public void setDepartment(String value) {
-        department = value;
+        department = value == null ? "" : value;
     }
 
     public String getEmail() {

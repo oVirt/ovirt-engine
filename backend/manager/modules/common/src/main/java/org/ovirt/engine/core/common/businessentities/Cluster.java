@@ -38,8 +38,10 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @NotNull
     private String description;
 
+    @NotNull
     private String comment;
 
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
@@ -163,7 +165,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
-        cpuName = "";
+        description = "";
+        comment = "";
     }
 
     @Override
@@ -194,7 +197,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     }
 
     public void setDescription(String value) {
-        description = value;
+        description = value == null ? "" : value;
     }
 
     @Override
@@ -204,7 +207,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     @Override
     public void setComment(String value) {
-        comment = value;
+        comment = value == null ? "" : value;
     }
 
     public String getCpuName() {

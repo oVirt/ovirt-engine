@@ -34,6 +34,7 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
     @ValidName(message = "VALIDATION_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
+    @NotNull
     private String description;
 
     private String url;
@@ -56,6 +57,10 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
 
     private String authUrl;
 
+    public Provider() {
+        description = "";
+    }
+
     @Override
     public String getName() {
         return name;
@@ -70,7 +75,7 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description == null ? "" : description;
     }
 
     public String getUrl() {
