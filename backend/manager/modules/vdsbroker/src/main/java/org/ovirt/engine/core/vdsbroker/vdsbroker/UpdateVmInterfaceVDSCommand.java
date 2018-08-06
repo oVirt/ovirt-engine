@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.xml.bind.JAXBException;
 
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -32,15 +31,10 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
 
     protected Map<String, Object> createParametersStruct() {
         if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
-            try {
-                Map<String, Object> updateInfo = new HashMap<>();
-                updateInfo.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
-                updateInfo.put(VdsProperties.engineXml, generateDomainXml());
-                return updateInfo;
-            } catch (JAXBException e) {
-                log.error("failed to create xml for update vm interface", e);
-                throw new RuntimeException(e);
-            }
+            Map<String, Object> updateInfo = new HashMap<>();
+            updateInfo.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
+            updateInfo.put(VdsProperties.engineXml, generateDomainXml());
+            return updateInfo;
         } else {
             return initDeviceStructure();
         }
@@ -60,7 +54,7 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
         return deviceStruct;
     }
 
-    private String generateDomainXml() throws JAXBException {
+    private String generateDomainXml() {
         VmNic nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
         LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
