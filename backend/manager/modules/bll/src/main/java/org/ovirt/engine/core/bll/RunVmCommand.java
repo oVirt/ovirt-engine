@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.EmulatedMachineUtils;
+import org.ovirt.engine.core.bll.utils.NumaUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -58,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -87,6 +89,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
@@ -141,6 +144,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private DiskDao diskDao;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
+    @Inject
+    private NumaUtils numaUtils;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -239,6 +246,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void runVm() {
         setActionReturnValue(VMStatus.Down);
         if (getVdsToRunOn()) {
+            warnIfVmNotFitInNumaNode();
             VMStatus status = null;
             try {
                 acquireHostDevicesLock();
@@ -848,6 +856,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return true;
+    }
+
+    private void warnIfVmNotFitInNumaNode() {
+        if (!getVds().isNumaSupport()) {
+            return;
+        }
+
+        // If the VM has NUMA nodes defined, the check is skipped
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(getVmId());
+        if (!vmNumaNodes.isEmpty()) {
+            return;
+        }
+
+        if (numaUtils.countNumaNodesWhereVmFits(getVm().getStaticData(), getVdsId()) == 0) {
+            addCustomValue("HostName", getVdsName());
+            auditLogDirector.log(this, AuditLogType.VM_DOES_NOT_FIT_TO_SINGLE_NUMA_NODE);
+        }
     }
 
     /**
