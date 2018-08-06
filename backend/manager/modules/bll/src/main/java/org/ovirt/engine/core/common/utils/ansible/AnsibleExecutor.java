@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
@@ -80,9 +79,15 @@ public class AnsibleExecutor {
 
         Path inventoryFile = null;
         Process ansibleProcess = null;
+        File stdoutFile = new File("/dev/null");
         try {
             // Create a temporary inventory file if user didn't specified it:
             inventoryFile = createInventoryFile(command);
+
+            // Create file where stdout will be redirected:
+            if (command.stdoutCallback() != null) {
+                stdoutFile = Files.createTempFile("playbook-out", ".tmp").toFile();
+            }
 
             // Build the command:
             log.info("Executing Ansible command: {}", command);
@@ -90,14 +95,9 @@ public class AnsibleExecutor {
             List<String> ansibleCommand = command.build();
             ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
                 .command(ansibleCommand)
-                .directory(command.playbookDir().toFile());
-
-            // Ignore stdout/stderr, if don't care about output from stdout callback plugin to avoid process stuck:
-            if (command.stdoutCallback() == null) {
-                ansibleProcessBuilder
-                    .redirectErrorStream(true)
-                    .redirectOutput(new File("/dev/null"));
-            }
+                .directory(command.playbookDir().toFile())
+                .redirectErrorStream(command.stdoutCallback() == null)
+                .redirectOutput(stdoutFile);
 
             // Set environment variables:
             ansibleProcessBuilder.environment()
@@ -113,13 +113,15 @@ public class AnsibleExecutor {
 
             // Execute the command:
             ansibleProcess = ansibleProcessBuilder.start();
+
+            // Wait for process to finish:
             if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
                 throw new Exception("Timeout occurred while executing Ansible playbook.");
             }
 
             returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
             if (command.stdoutCallback() != null) {
-                returnValue.setStdout(IOUtils.toString(ansibleProcess.getInputStream()));
+                returnValue.setStdout(new String(Files.readAllBytes(stdoutFile.toPath())));
             }
         } catch (Throwable t) {
             log.error(
@@ -133,6 +135,7 @@ public class AnsibleExecutor {
             }
             log.info("Ansible playbook command has exited with value: {}", returnValue.getAnsibleReturnCode());
             removeFile(inventoryFile);
+            removeFile(stdoutFile.toPath());
         }
 
         log.trace("Exit AnsibleExecutor::runCommand");
