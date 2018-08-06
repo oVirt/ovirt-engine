@@ -23,9 +23,8 @@ public class BackendExportDomainDiskAttachmentResource
         if (dve == null) {
             return notFound();
         }
-        // TODO: Currently we don't add links as the they are wrongly pointing to /vms/{vm_id}/diskattachemnts/{attachment_id}
-        // instead of /storagedomains/{storage_id}/vms/{vm_id}/diskattachments/{attachment_id}
-        // this needs to be added once the problem is solved
-        return map(dve);
+        DiskAttachment diskAttachment = map(dve);
+        parent.addHref(diskAttachment);
+        return diskAttachment;
     }
 }
