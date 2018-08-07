@@ -818,6 +818,10 @@ class OvirtUtils(base.Base):
             'pg_restore: \[archiver \(db\)\] could not execute query: ERROR:  '
             'must be owner of extension plpgsql'
         ),
+        (
+            'pg_restore: \[archiver \(db\)\] could not execute query: ERROR:  '
+            'must be owner of extension uuid-ossp'
+        ),
 
         # older versions of dwh used uuid-ossp, which requires
         # special privs, is not used anymore, and emits the following
@@ -842,6 +846,10 @@ class OvirtUtils(base.Base):
         (
             'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
             '; 0 0 COMMENT EXTENSION plpgsql'
+        ),
+        (
+            'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
+            '; 0 0 COMMENT EXTENSION uuid-ossp'
         ),
         (
             'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
