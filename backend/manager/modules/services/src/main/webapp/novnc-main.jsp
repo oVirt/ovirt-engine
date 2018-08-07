@@ -148,6 +148,10 @@
             return WebUtil.getQueryVar('host', window.location.hostname);
         }
 
+        function getPort() {
+            return WebUtil.getQueryVar('port', window.location.port);
+        }
+
         function connectToConsole () {
             try {
                 var host = getHost();
@@ -211,7 +215,7 @@
                 return;
             }
             var path = eventData.connectionTicket;
-            var url = new URL('wss://' + getHost() + ':6100/' + path);
+            var url = new URL('wss://' + getHost() + ':' + getPort() + "/" + path);
             checkConnection(url.toString(), connectToConsole, reportServerUnreachable.bind(undefined, url.origin));
         }
 
