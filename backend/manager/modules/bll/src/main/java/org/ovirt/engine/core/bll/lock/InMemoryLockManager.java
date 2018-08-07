@@ -191,40 +191,50 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     }
 
     /**
-     * The following method contains a logic for acquiring a lock The method is contains two steps:
-     * 1. The lock can be acquired
-     * 2. If the first step successes acquire a lock
+     * The following method contains a logic for acquiring a lock. It is comprised of two steps:
+     * 1. Check if the lock can be acquired
+     * 2. If the first step succeeds, acquire a lock
      */
     private Pair<Boolean, Set<String>> acquireLockInternal(EngineLock lock) {
-        boolean checkOnly = true;
-        for (int i = 0; i < 2; i++) {
-            if (lock.getSharedLocks() != null) {
-                for (Entry<String, Pair<String, String>> entry : lock.getSharedLocks().entrySet()) {
-                    Pair<Boolean, Set<String>> result =
-                            insertSharedLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
-                    if (!result.getFirst()) {
-                        log.debug("Failed to acquire lock. Shared lock is taken for key '{}', value '{}'",
-                                entry.getKey(),
-                                entry.getValue().getFirst());
-                        return result;
-                    }
-                }
-            }
-            if (lock.getExclusiveLocks() != null) {
-                for (Entry<String, Pair<String, String>> entry : lock.getExclusiveLocks().entrySet()) {
-                    Pair<Boolean, Set<String>> result =
-                            insertExclusiveLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
-                    if (!result.getFirst()) {
-                        log.debug("Failed to acquire lock. Exclusive lock is taken for key '{}', value '{}'",
-                                entry.getKey(),
-                                entry.getValue().getFirst());
-                        return result;
-                    }
-                }
-            }
-            checkOnly = false;
+        Pair<Boolean, Set<String>> result = acquireLockInternalStep(lock, true);
+        if (!result.getFirst()) {
+            return result;
         }
-        log.debug("Success acquiring lock '{}' succeeded ", lock);
+
+        result = acquireLockInternalStep(lock, false);
+        if (!result.getFirst()) {
+            return result;
+        }
+
+        log.debug("Success acquiring lock '{}'", lock);
+        return LOCK_INSERT_SUCCESS_RESULT;
+    }
+
+    private Pair<Boolean, Set<String>> acquireLockInternalStep(EngineLock lock, boolean checkOnly) {
+        if (lock.getSharedLocks() != null) {
+            for (Entry<String, Pair<String, String>> entry : lock.getSharedLocks().entrySet()) {
+                Pair<Boolean, Set<String>> result =
+                        insertSharedLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
+                if (!result.getFirst()) {
+                    log.debug("Failed to acquire lock. Shared lock is taken for key '{}', value '{}'",
+                            entry.getKey(),
+                            entry.getValue().getFirst());
+                    return result;
+                }
+            }
+        }
+        if (lock.getExclusiveLocks() != null) {
+            for (Entry<String, Pair<String, String>> entry : lock.getExclusiveLocks().entrySet()) {
+                Pair<Boolean, Set<String>> result =
+                        insertExclusiveLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
+                if (!result.getFirst()) {
+                    log.debug("Failed to acquire lock. Exclusive lock is taken for key '{}', value '{}'",
+                            entry.getKey(),
+                            entry.getValue().getFirst());
+                    return result;
+                }
+            }
+        }
         return LOCK_INSERT_SUCCESS_RESULT;
     }
 
