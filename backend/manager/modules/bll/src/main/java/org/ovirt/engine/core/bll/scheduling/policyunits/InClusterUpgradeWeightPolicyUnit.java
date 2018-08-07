@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
         type = PolicyUnitType.WEIGHT
 )
 public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
-    private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);
+    private static final Logger log = LoggerFactory.getLogger(InClusterUpgradeWeightPolicyUnit.class);
 
     public static final int BAD_WEIGHT = 1000000;
     public static final int BETTER_WEIGHT = 100000;

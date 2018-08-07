@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
         type = PolicyUnitType.FILTER
 )
 public class InClusterUpgradeFilterPolicyUnit extends PolicyUnitImpl {
-    private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);
+    private static final Logger log = LoggerFactory.getLogger(InClusterUpgradeFilterPolicyUnit.class);
 
     public InClusterUpgradeFilterPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
