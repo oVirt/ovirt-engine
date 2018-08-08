@@ -222,9 +222,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             getParameters().getCluster().setDetectEmulatedMachine(true);
         }
 
-        boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != getPrevCluster().isKsmMergeAcrossNumaNodes()) ||
-                (getCluster().isEnableKsm() != getPrevCluster().isEnableKsm());
-
         clusterDao.update(getParameters().getCluster());
         addOrUpdateAddtionalClusterFeatures();
         if (!oldCluster.supportsGlusterService() && getCluster().supportsGlusterService()) {
@@ -250,6 +247,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         alertIfFencingDisabled();
 
+        boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes()) ||
+                (getCluster().isEnableKsm() != oldCluster.isEnableKsm());
+
         if (isKsmPolicyChanged) {
             momPolicyUpdatedEvent.fire(getCluster());
         }
@@ -260,7 +260,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         updateVms();
         updateTemplates();
 
-        if (getCluster().getFirewallType() != getPrevCluster().getFirewallType()) {
+        if (getCluster().getFirewallType() != oldCluster.getFirewallType()) {
             markHostsForReinstall();
         }
 
@@ -281,7 +281,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private void updateDefaultNetworkProvider() {
-        if (getCluster().hasDefaultNetworkProviderId(getPrevCluster().getDefaultNetworkProviderId())) {
+        if (getCluster().hasDefaultNetworkProviderId(oldCluster.getDefaultNetworkProviderId())) {
             return;
         }
 
@@ -309,7 +309,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
     }
 
-    private boolean updateVms() {
+    private void updateVms() {
         for (VmStatic vm : vmsLockedForUpdate) {
             VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
             /*
@@ -338,7 +338,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 failedUpgradeEntities.put(vm.getName(), getFailedMessage(messages));
             }
         }
-        return true;
     }
 
     private void logFailedUpgrades() {
@@ -370,7 +369,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
     }
 
-    private boolean updateTemplates() {
+    private void updateTemplates() {
         for (VmTemplate template : templatesLockedForUpdate) {
             // the object was loaded in before command execution started and thus the value may be outdated
             template.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
@@ -397,7 +396,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 failedUpgradeEntities.put(template.getName(), getFailedMessage(messages));
             }
         }
-        return true;
     }
 
     private String getFailedMessage(List<String> messages) {
