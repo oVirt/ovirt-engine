@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -64,7 +65,10 @@ public class OvfManager {
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuId = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
-            String engineXml = generateEngineXml(vm, cpuId, cluster.getEmulatedMachine());
+            String engineXml = null;
+            if (FeatureSupported.isDomainXMLSupported(cluster.getCompatibilityVersion())) {
+                engineXml = generateEngineXml(vm, cpuId, cluster.getEmulatedMachine());
+            }
             vmWriter = new HostedEngineOvfWriter(vm, fullEntityOvfData, version, cluster.getEmulatedMachine(), cpuId, osRepository, engineXml);
         } else {
             vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository, getMemoryDiskForSnapshots(vm));

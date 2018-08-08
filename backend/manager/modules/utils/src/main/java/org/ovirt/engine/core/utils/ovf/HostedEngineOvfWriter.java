@@ -33,7 +33,7 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
             @NotNull String emulatedMachine,
             @NotNull String cpuId,
             @NotNull OsRepository osRepository,
-            @NotNull String engineXml) {
+            String engineXml) {
 
         super(vm, fullEntityOvfData, version, osRepository, null);
         if (!vm.isHostedEngine()) {
@@ -58,6 +58,8 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        _writer.writeElement(ENGINE_XML, engineXml);
+        if (engineXml != null){
+            _writer.writeElement(ENGINE_XML, engineXml);
+        }
     }
 }
