@@ -32,7 +32,7 @@ public class HostConnectionRefresher {
         private Subscription subscription;
 
         public SubscriberRefreshingHostOnHostConnectionChangeEvent() {
-            super(HostConnectionRefresher.this.vdsManager.getVdsHostname() + "|net|host_conn|no_id");
+            super(HostConnectionRefresher.this.vdsManager.getVdsHostname() + "|net|host_conn|*");
         }
 
         @Override
