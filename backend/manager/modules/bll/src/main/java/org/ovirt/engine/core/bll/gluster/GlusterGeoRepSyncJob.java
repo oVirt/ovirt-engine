@@ -360,10 +360,16 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
      * This method updates the status depending on health of individual nodes
      */
     private void updateGeoRepStatus(GlusterVolumeEntity volume, GlusterGeoRepSession session) {
-
         List<Set<GeoRepSessionStatus>> list = new ArrayList<>();
         // grouped node status
         int replicaCount = volume.getReplicaCount() == 0 ? 1 : volume.getReplicaCount();
+        if (replicaCount > volume.getBricks().size()) {
+            session.setStatus(GeoRepSessionStatus.UNKNOWN);
+            log.info("Not all bricks are available for this volume. replicaCount : {} , volumeBrickCount: {}",
+                    replicaCount,
+                    volume.getBricks().size());
+            return;
+        }
         for (int i = 0; i < volume.getBricks().size(); i = i + replicaCount) {
             Set<GeoRepSessionStatus> subVolumeStatusSet = new HashSet<>();
             int j = 0;
@@ -504,5 +510,4 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     private boolean supportsGlusterGeoRepFeature(Cluster cluster) {
         return cluster.supportsGlusterService();
     }
-
 }
