@@ -96,15 +96,6 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
         return getParameters().getCluster();
     }
 
-    /**
-     * Get the cluster object as it is in database before update
-     *
-     * @return Current cluster object before database update, or null if not existing
-     */
-    public Cluster getPrevCluster() {
-        return super.getCluster();
-    }
-
     protected Guid getManagementNetworkId() {
         return getParameters().getManagementNetworkId();
     }
