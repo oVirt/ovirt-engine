@@ -419,7 +419,7 @@ public class SchedulingManager implements BackendService {
             int hostNodeIndex = nodeAssignment.get().get(vmNode.getIndex());
             long vmNodeMem = vmNode.getMemTotal();
 
-            hostNodePending.compute(hostNodeIndex, (key, val) -> (val == null) ? vmNodeMem : val + vmNodeMem);
+            hostNodePending.merge(hostNodeIndex, vmNodeMem, Long::sum);
         }
 
         for (Map.Entry<Integer, Long> entry: hostNodePending.entrySet()) {

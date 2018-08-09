@@ -60,7 +60,8 @@ public class PendingNumaMemory extends PendingResource {
         return manager.pendingHostResources(hostId, PendingNumaMemory.class).stream()
                 .collect(Collectors.toMap(
                         PendingNumaMemory::getNodeIndex,
-                        PendingNumaMemory::getMemoryMB
+                        PendingNumaMemory::getMemoryMB,
+                        Long::sum
                 ));
     }
 }
