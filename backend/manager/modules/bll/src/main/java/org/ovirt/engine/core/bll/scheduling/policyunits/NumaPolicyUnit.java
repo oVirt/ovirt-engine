@@ -47,11 +47,6 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
-        // If the numa mode is not STRICT, a host with any NUMA configuration is accepted.
-        if (vm.getNumaTuneMode() != NumaTuneMode.STRICT) {
-            return hosts;
-        }
-
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         boolean vmNumaPinned = vmNumaNodes.stream()
                 .anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
@@ -60,6 +55,8 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
         if (!vmNumaPinned) {
             return hosts;
         }
+
+        boolean isNumaTuneStrict = vm.getNumaTuneMode() == NumaTuneMode.STRICT;
 
         List<VDS> result = new ArrayList<>();
         for (VDS host: hosts) {
@@ -72,6 +69,15 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
             if (!host.isNumaSupport()) {
                 log.debug("Host '{}' does not support NUMA", host.getName());
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NUMA_NOT_SUPPORTED.toString());
+                continue;
+            }
+
+            // If the numa mode is not STRICT, a host with any NUMA configuration is accepted.
+            //
+            // TODO - For now, this unit only checks NUMA configuration for STRICT mode.
+            //        In a future patch, it would be good to add the check also for other modes.
+            if (!isNumaTuneStrict) {
+                result.add(host);
                 continue;
             }
 

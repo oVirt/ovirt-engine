@@ -92,7 +92,7 @@ public class NumaPolicyUnitTest {
         ));
 
         List<VDS> passedHosts = filter();
-        assertThat(passedHosts).containsOnly(hostWithoutNuma, hostTwoNodes, hostFourNodes);
+        assertThat(passedHosts).containsOnly(hostTwoNodes, hostFourNodes);
     }
 
     @Test
