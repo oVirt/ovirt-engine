@@ -20,7 +20,7 @@ public class IsHostLockedOnNetworkOperationQuery<P extends IdQueryParameters> ex
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-            lockManager.isExclusivelyLocked(new EngineLock(hostLocking.getSetupNetworksLock(getParameters().getId())))
+            lockManager.isExclusiveLockPresent(new EngineLock(hostLocking.getSetupNetworksLock(getParameters().getId())))
         );
     }
 }

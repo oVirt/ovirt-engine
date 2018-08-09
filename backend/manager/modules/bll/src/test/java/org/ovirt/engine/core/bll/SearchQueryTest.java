@@ -187,7 +187,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     @Before
     public void mockLockManager() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
-        when(lockManager.isExclusivelyLocked(any())).thenReturn(Boolean.TRUE);
+        when(lockManager.isExclusiveLockPresent(any())).thenReturn(Boolean.TRUE);
     }
 
     /**

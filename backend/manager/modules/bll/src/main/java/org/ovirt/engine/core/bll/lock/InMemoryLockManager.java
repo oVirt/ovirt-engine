@@ -322,7 +322,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     }
 
     @Override
-    public boolean isExclusivelyLocked(EngineLock lock) {
+    public boolean isExclusiveLockPresent(EngineLock lock) {
         return lock.getExclusiveLocks() != null &&
             lock.getExclusiveLocks().entrySet().stream()
                 .anyMatch(entry -> getLockInfo(buildHashMapKey(entry)) != null);
