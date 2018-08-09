@@ -51,6 +51,12 @@ public class NumaPinningHelper {
         }
 
         VmNumaNode vmNode = vmNodes.get(vmNumaNodeIndex);
+
+        // If the node is not pinned, skip it
+        if (vmNode.getVdsNumaNodeList().isEmpty()) {
+            return fitNodes(vmNodes, vmNumaNodeIndex + 1, hostNodeFreeMem);
+        }
+
         for (Integer pinnedIndex: vmNode.getVdsNumaNodeList()) {
             long hostFreeMem = hostNodeFreeMem.get(pinnedIndex);
             if (hostFreeMem < vmNode.getMemTotal()) {

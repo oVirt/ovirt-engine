@@ -139,6 +139,18 @@ public class NumaPolicyUnitTest {
     }
 
     @Test
+    public void testThreeNodesWithOneUnpinned() {
+        vm.setvNumaNodeList(Arrays.asList(
+                createVmNode(NODE_SIZE, 0, Arrays.asList(0)),
+                createVmNode(NODE_SIZE, 1, Arrays.asList(1)),
+                createVmNode(NODE_SIZE, 2, Collections.emptyList())
+        ));
+
+        List<VDS> passedHosts = filter();
+        assertThat(passedHosts).containsOnly(hostTwoNodes, hostFourNodes);
+    }
+
+    @Test
     public void testSmallNodesPinnedToOne() {
         vm.setvNumaNodeList(Arrays.asList(
                 createVmNode(NODE_SIZE / 4, 0, Arrays.asList(0)),

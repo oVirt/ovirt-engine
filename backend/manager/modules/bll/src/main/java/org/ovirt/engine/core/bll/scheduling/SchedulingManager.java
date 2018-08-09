@@ -416,6 +416,11 @@ public class SchedulingManager implements BackendService {
 
         Map<Integer, Long> hostNodePending = new HashMap<>(hostNodes.size());
         for (VmNumaNode vmNode: vmNodes) {
+            // Ignore unpinned numa nodes
+            if (vmNode.getVdsNumaNodeList().isEmpty()) {
+                continue;
+            }
+
             int hostNodeIndex = nodeAssignment.get().get(vmNode.getIndex());
             long vmNodeMem = vmNode.getMemTotal();
 
