@@ -511,17 +511,18 @@ Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Summary:	Setup and upgrade common plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
-Requires:	cracklib-python
 Requires:	libselinux-python
 Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
 Requires(pre):	shadow-utils
 Requires:	java-openjdk-headless >= 1:1.8.0
+Requires:	python-pwquality
 
 %if 0%{?fedora}
 Requires:	python2-dnf
 %if 0%{?with_python3}
+Requires:	python3-pwquality
 Requires:	python3-dnf
 Requires:	python3-m2crypto >= 0.28
 %endif

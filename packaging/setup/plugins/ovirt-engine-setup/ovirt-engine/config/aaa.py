@@ -38,6 +38,13 @@ from ovirt_engine_setup.engine_common import database
 
 from ovirt_setup_lib import dialog
 
+try:
+    import pwquality
+    _use_pwquality = True
+except ImportError:
+    # do not force this optional feature
+    _use_pwquality = False
+
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -129,20 +136,15 @@ class Plugin(plugin.PluginBase):
                 self.logger.warning(_('Passwords do not match'))
             else:
                 try:
-                    import cracklib
-                    cracklib.FascistCheck(password)
+                    if(_use_pwquality):
+                        pwq = pwquality.PWQSettings()
+                        pwq.read_config()
+                        pwq.check(password, None, None)
                     valid = True
-                except ImportError:
-                    # do not force this optional feature
-                    self.logger.debug(
-                        'cannot import cracklib',
-                        exc_info=True,
-                    )
-                    valid = True
-                except ValueError as e:
+                except pwquality.PWQError as e:
                     self.logger.warning(
                         _('Password is weak: {error}').format(
-                            error=e,
+                            error=e[1],
                         )
                     )
                     valid = dialog.queryBoolean(
