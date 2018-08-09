@@ -56,8 +56,6 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        boolean isNumaTuneStrict = vm.getNumaTuneMode() == NumaTuneMode.STRICT;
-
         List<VDS> result = new ArrayList<>();
         for (VDS host: hosts) {
             // Skip checks if the VM is currently running on the host
@@ -72,14 +70,15 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
                 continue;
             }
 
-            // If the numa mode is not STRICT, a host with any NUMA configuration is accepted.
-            //
-            // TODO - For now, this unit only checks NUMA configuration for STRICT mode.
-            //        In a future patch, it would be good to add the check also for other modes.
-            if (!isNumaTuneStrict) {
+            // If the NUMA mode is PREFERRED, a host with any NUMA configuration is accepted.
+            if (vm.getNumaTuneMode() == NumaTuneMode.PREFERRED) {
                 result.add(host);
                 continue;
             }
+
+            // TODO - INTERLEAVE mode should use different algorithm to check if VM nodes fit host nodes.
+            //        For now, we use the same algorithm as for STRICT mode.
+            //        This will cause the host to be filtered out even in some cases when INTERLEAVE nodes could fit.
 
             List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId());
             Map<Integer, Long> pendingNodeMemory = PendingNumaMemory.collectForHost(getPendingResourceManager(), host.getId());

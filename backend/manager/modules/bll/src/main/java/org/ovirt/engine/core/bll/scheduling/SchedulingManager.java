@@ -402,7 +402,7 @@ public class SchedulingManager implements BackendService {
      * not pass scheduling, even if they could fit on the host.
      */
     private void addPendingNumaMemory(VM vm, Guid hostId) {
-        if (vm.getNumaTuneMode() != NumaTuneMode.STRICT) {
+        if (vm.getNumaTuneMode() == NumaTuneMode.PREFERRED) {
             return;
         }
 
