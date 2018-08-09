@@ -274,7 +274,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private void setNetworkOperationInProgressOnVds(VDS vds) {
-        vds.setNetworkOperationInProgress(lockManager.isExclusivelyLocked(new EngineLock(hostLocking.getSetupNetworksLock(vds.getId()))));
+        vds.setNetworkOperationInProgress(lockManager.isExclusiveLockPresent(new EngineLock(hostLocking.getSetupNetworksLock(vds.getId()))));
     }
 
     private List<DirectoryUser> searchDirectoryUsers() {

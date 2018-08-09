@@ -42,9 +42,9 @@ public interface LockManager {
     LockInfo getLockInfo(String key);
 
     /**
-     * Query whether the given lock is found in the {@code LockManager}
-     * @param lock - lock to search in the {@code LockManager}
+     * Query whether an exclusive lock is present in the {@code LockManager}
+     * @param lock - lock with parameters for searching exclusive locks
      * @return true if a lock was found, false otherwise
      */
-    boolean isExclusivelyLocked(EngineLock lock);
+    boolean isExclusiveLockPresent(EngineLock lock);
 }
