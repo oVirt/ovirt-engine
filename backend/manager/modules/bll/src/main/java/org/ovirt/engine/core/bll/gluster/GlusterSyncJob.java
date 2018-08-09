@@ -1133,7 +1133,8 @@ public class GlusterSyncJob extends GlusterJob {
                     volume.getName(),
                     cluster.getName());
             // self heal info can be fetched only for started volumes
-            if (volume.isOnline()) {
+            // and for replica type volumes
+            if (volume.isOnline() && volume.getVolumeType().isReplicatedType()) {
                 try {
                     refreshSelfHealData(upServer, volume);
                 } catch (Exception e) {
