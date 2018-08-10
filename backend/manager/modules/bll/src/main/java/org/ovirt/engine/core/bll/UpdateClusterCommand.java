@@ -228,10 +228,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         clusterDao.update(getParameters().getCluster());
         addOrUpdateAddtionalClusterFeatures();
-        if (!oldCluster.supportsGlusterService() && getCluster().supportsGlusterService()) {
-            //update gluster parameters on all hosts
-           updateGlusterHosts();
-        }
 
         if (isAddedToStoragePool) {
             for (VDS vds : allForCluster) {
@@ -249,24 +245,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             networkClusterDao.save(managementNetworkCluster);
         }
 
-        alertIfFencingDisabled();
-
-        boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes()) ||
-                (getCluster().isEnableKsm() != oldCluster.isEnableKsm());
-
-        if (isKsmPolicyChanged) {
-            momPolicyUpdatedEvent.fire(getCluster());
-        }
-
-        updateDefaultNetworkProvider();
-
         // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
         updateVms();
         updateTemplates();
-
-        if (getCluster().getFirewallType() != oldCluster.getFirewallType()) {
-            markHostsForReinstall();
-        }
 
         if (!failedUpgradeEntities.isEmpty()) {
             logFailedUpgrades();
@@ -275,6 +256,26 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             getReturnValue().setValid(false);
             setSucceeded(false);
             return;
+        }
+
+        updateDefaultNetworkProvider();
+
+        if (getCluster().getFirewallType() != oldCluster.getFirewallType()) {
+            markHostsForReinstall();
+        }
+
+        if (!oldCluster.supportsGlusterService() && getCluster().supportsGlusterService()) {
+            //update gluster parameters on all hosts
+            updateGlusterHosts();
+        }
+
+        alertIfFencingDisabled();
+
+        boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes()) ||
+                (getCluster().isEnableKsm() != oldCluster.isEnableKsm());
+
+        if (isKsmPolicyChanged) {
+            momPolicyUpdatedEvent.fire(getCluster());
         }
 
         if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
