@@ -6,11 +6,11 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 
-public class GetUserProfileAsListQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
+public class GetUserProfileAsListQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private UserProfileDao userProfileDao;
 
@@ -20,7 +20,7 @@ public class GetUserProfileAsListQuery<P extends QueryParametersBase> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        UserProfile userProfile = userProfileDao.getByUserId(getUserID());
+        UserProfile userProfile = userProfileDao.getByUserId(getParameters().getId());
 
         if (userProfile != null) {
             getQueryReturnValue().setReturnValue(Collections.singletonList(userProfile));
