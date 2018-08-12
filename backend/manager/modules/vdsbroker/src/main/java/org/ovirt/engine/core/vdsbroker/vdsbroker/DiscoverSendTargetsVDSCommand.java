@@ -43,13 +43,17 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
         ArrayList<StorageServerConnections> connections = new ArrayList<>(iqnList.size());
         for (String fullTarget : iqnList) {
             StorageServerConnections con = StorageServerConnections.copyOf(getParameters().getConnection());
-            // fullTarget format: <ip>:<port>, <portal> <targetName>
+            boolean isIpv6Format = fullTarget.startsWith("[");
+            // fullTarget format ipv4: <ip>:<port>, <portal> <targetName>
             // e.g 10.35.104.8:3600,1 blue-20G
+            // fullTarget format ipv6: [<ip>]:<port>, <portal> <targetName>
+            // e.g. [2620:52:0:2300:868f:69ff:fef9:6767]:3600,1 blue-20G
             String[] tokens = fullTarget.split(",");
-            String[] address = tokens[0].split(":");
+            String[] address = isIpv6Format ? tokens[0].split("]:")
+                    : tokens[0].split(":");
             String[] literals = tokens[1].split(" ");
 
-            con.setConnection(address[0]);
+            con.setConnection(isIpv6Format ? address[0].substring(1) : address[0]);
             con.setPort(address[1]);
             con.setPortal(literals[0]);
             con.setIqn(literals[1]);

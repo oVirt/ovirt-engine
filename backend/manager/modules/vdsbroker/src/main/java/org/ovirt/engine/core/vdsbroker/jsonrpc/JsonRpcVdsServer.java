@@ -820,6 +820,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("port", args.get("port"))
                         .withOptionalParameter("user", args.get("user"))
                         .withOptionalParameter("password", args.get("password"))
+                        .withOptionalParameter("ipv6_enabled", args.get("ipv6_enabled"))
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("fullTargets");
         return new IQNListReturn(response);
