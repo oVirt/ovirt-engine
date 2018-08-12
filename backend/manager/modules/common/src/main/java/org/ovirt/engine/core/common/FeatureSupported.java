@@ -124,6 +124,10 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.Ipv6Supported, version);
     }
 
+    public static boolean ipv6IscsiSupported(Version version) {
+        return supportedInConfig(ConfigValues.ipv6IscsiSupported, version);
+    }
+
     public static boolean ovsSupported(Version version) {
         return supportedInConfig(ConfigValues.OvsSupported, version);
     }

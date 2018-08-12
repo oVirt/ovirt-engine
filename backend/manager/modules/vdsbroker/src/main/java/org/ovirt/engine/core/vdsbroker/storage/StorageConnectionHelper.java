@@ -5,17 +5,24 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.collections.DefaultValueMap;
 
 @Singleton
 public class StorageConnectionHelper {
     @Inject
     private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
+
+    @Inject
+    private VdsDao vdsDao;
+
 
     public Map<String, String> createStructFromConnection(final StorageServerConnections connection, final Guid vdsId) {
 
@@ -30,6 +37,9 @@ public class StorageConnectionHelper {
         con.put("iqn", connection.getIqn(), "");
         con.put("user", credentials.getFirst(), "");
         con.put("password", credentials.getSecond(), "");
+        if (FeatureSupported.ipv6IscsiSupported(vdsDao.get(vdsId).getClusterCompatibilityVersion())) {
+            con.put("ipv6_enabled", isValidIpv6(connection.getConnection()), "false");
+        }
         con.putIfNotEmpty("ifaceName", connection.getIface());
         con.putIfNotEmpty("netIfaceName", connection.getNetIfaceName());
 
@@ -54,5 +64,9 @@ public class StorageConnectionHelper {
             credentials = new Pair<>(connExt.getUserName(), connExt.getPassword());
         }
         return credentials;
+    }
+
+    private boolean isValidIpv6(String address) {
+        return ValidationUtils.isValidIpv6(address);
     }
 }

@@ -1480,6 +1480,9 @@ public enum ConfigValues {
     Ipv6Supported,
 
     @TypeConverterAttribute(Boolean.class)
+    ipv6IscsiSupported,
+
+    @TypeConverterAttribute(Boolean.class)
     GetNamesOfVmsFromExternalProviderSupported(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
