@@ -847,9 +847,11 @@ class OvirtUtils(base.Base):
             'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
             '; 0 0 COMMENT EXTENSION plpgsql'
         ),
+        # Extensions with names containing special characters like dash need
+        # to be surrounded with double quotes.
         (
             'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
-            '; 0 0 COMMENT EXTENSION uuid-ossp'
+            '; 0 0 COMMENT EXTENSION "uuid-ossp"'
         ),
         (
             'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
