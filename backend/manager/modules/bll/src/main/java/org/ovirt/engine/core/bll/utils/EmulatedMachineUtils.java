@@ -18,6 +18,16 @@ public class EmulatedMachineUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EmulatedMachineUtils.class);
 
+    private static final String I440FX_CHIPSET_NAME = ChipsetType.I440FX.getChipsetName();
+    private static final String Q35_CHIPSET_NAME = ChipsetType.Q35.getChipsetName();
+
+    /**
+     * Get effective emulated machine type.
+     *
+     * @param vmBase - VM entity to check for
+     * @param clusterSupplier - Supplier of non-null Cluster
+     * @return The effective emulated machine type.
+     */
     public static String getEffective(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
         if (vmBase.getCustomEmulatedMachine() != null) {
             return vmBase.getCustomEmulatedMachine();
@@ -25,7 +35,7 @@ public class EmulatedMachineUtils {
 
         // The 'default' to be set
         Cluster cluster = clusterSupplier.get();
-        String recentClusterDefault = cluster != null ? cluster.getEmulatedMachine() : "";
+        String recentClusterDefault = cluster.getEmulatedMachine();
         if (vmBase.getCustomCompatibilityVersion() == null
                 && chipsetMatchesEmulatedMachine(vmBase.getBiosType().getChipsetType(), recentClusterDefault)) {
             return recentClusterDefault;
@@ -64,12 +74,10 @@ public class EmulatedMachineUtils {
             return emulatedMachine;
         }
 
-        final String I440FX_CHIPSET_NAME = ChipsetType.I440FX.getChipsetName();
-        final String Q35_CHIPSET_NAME = ChipsetType.Q35.getChipsetName();
-
         if (emulatedMachine.contains(I440FX_CHIPSET_NAME)) {
             return emulatedMachine.replace(I440FX_CHIPSET_NAME, Q35_CHIPSET_NAME);
         }
+
         return emulatedMachine.replace("pc-", "pc-" + Q35_CHIPSET_NAME + '-');
     }
 
