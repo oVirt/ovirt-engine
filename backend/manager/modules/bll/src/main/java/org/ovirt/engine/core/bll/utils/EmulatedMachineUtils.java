@@ -47,7 +47,8 @@ public class EmulatedMachineUtils {
                 Config.getValue(
                         ConfigValues.ClusterEmulatedMachines,
                         CompatibilityVersionUtils.getEffective(vmBase, cluster).getValue()));
-        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", bestMatch, vmBase);
+        log.info("Emulated machine '{}' which is different than that of the cluster is set for '{}'({})",
+                bestMatch, vmBase.getName(), vmBase.getId());
         return bestMatch;
     }
 
