@@ -155,7 +155,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         AsyncDataProvider.getInstance().getGlusterGeoRepSessionsForStorageDomain(new AsyncQuery<>(geoRepSessions -> {
             model.getGeoRepSession().setItems(geoRepSessions);
             //show error if there are no associated geoRepSessions
-            if (geoRepSessions.isEmpty()) {
+            if (geoRepSessions == null || geoRepSessions.isEmpty()) {
                 model.setMessage(ConstantsManager.getInstance().getConstants().noGeoRepSessionForGlusterVolume());
             }
             model.stopProgress();

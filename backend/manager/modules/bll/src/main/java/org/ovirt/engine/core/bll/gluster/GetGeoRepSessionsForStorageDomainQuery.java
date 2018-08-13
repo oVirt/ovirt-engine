@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,14 +59,28 @@ public class GetGeoRepSessionsForStorageDomainQuery<P extends IdQueryParameters>
             //retrieve the gluster volume associated with path
             String path = connection.getConnection();
             String[] pathElements = path.split(StorageConstants.GLUSTER_VOL_SEPARATOR);
+            if (pathElements.length !=2 ) {
+               // return empty as volume name could not be determined
+                log.info("Volume name could not be determined from storage connection '{}' ", path);
+                getQueryReturnValue().setSucceeded(false);
+                return;
+            }
             String volumeName = pathElements[1];
             String hostName = pathElements[0];
+            String hostAddress;
+            try {
+                hostAddress = InetAddress.getByName(hostName).getHostAddress();
+            } catch (UnknownHostException e) {
+                // return empty
+                getQueryReturnValue().setSucceeded(false);
+                return;
+            }
             List<VDS> vdsList = vdsDao.getAll();
             VDS vds = vdsList.stream()
                     .filter(v -> v.getName().equals(hostName)
                             || interfaceDao.getAllInterfacesForVds(v.getId())
                                     .stream()
-                                    .anyMatch(iface -> iface.getIpv4Address().equals(hostName)))
+                                    .anyMatch(iface -> iface.getIpv4Address().equals(hostAddress)))
                     .findFirst()
                     .orElse(null);
             if (vds == null) {
