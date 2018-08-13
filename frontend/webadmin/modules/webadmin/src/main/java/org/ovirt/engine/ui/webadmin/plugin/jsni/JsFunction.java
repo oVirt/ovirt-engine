@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.plugin.jsni;
 
+import java.util.logging.Logger;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
@@ -25,6 +27,12 @@ public final class JsFunction extends JavaScriptObject {
         void onError(String message);
 
     }
+
+    private static final Logger logger = Logger.getLogger(JsFunction.class.getName());
+
+    private static final ErrorHandler fallbackErrorHandler = message -> {
+        logger.severe("Error while invoking function: " + message); //$NON-NLS-1$
+    };
 
     public static final String RESULT_TYPE_STRING = "string"; //$NON-NLS-1$
     public static final String RESULT_TYPE_NUMBER = "number"; //$NON-NLS-1$
@@ -110,9 +118,8 @@ public final class JsFunction extends JavaScriptObject {
         };
 
         var handleInvocationError = function(error) {
-            if (errorHandler != null) {
-                errorHandler.@org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler::onError(Ljava/lang/String;)(error.toString());
-            }
+            var actualErrorHandler = errorHandler || @org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction::fallbackErrorHandler;
+            actualErrorHandler.@org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler::onError(Ljava/lang/String;)(error.toString());
         };
 
         try {
