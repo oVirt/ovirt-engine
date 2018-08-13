@@ -3,12 +3,15 @@ package org.ovirt.engine.core.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.lang.math.Range;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,4 +183,16 @@ public class MacAddressRangeUtils {
                 .filter(range1 -> rangeSet2.stream().anyMatch(range2 -> range1 != range2 && range2.overlapsRange(range1)))
                 .collect(Collectors.toList());
     }
+
+    public static Set<MacPool> poolsOverlappedByOtherPool(Collection<MacPool> pools, MacPool otherPool) {
+        Set<MacPool> overlappingPools = new HashSet<>();
+        pools.forEach(pool -> {
+            if (!pool.getId().equals(otherPool.getId()) &&
+                !filterOverlappingRangeSets(toRanges(pool), toRanges(otherPool)).isEmpty()) {
+                overlappingPools.add(pool);
+            }
+        });
+        return overlappingPools;
+    }
+
 }

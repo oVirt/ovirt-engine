@@ -54,7 +54,9 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
         }
 
         final MacPoolValidator validator = new MacPoolValidator(getMacPoolEntity());
-        return validate(validator.defaultPoolFlagIsNotSet()) && validate(validator.hasUniqueName());
+        return validate(validator.defaultPoolFlagIsNotSet()) && validate(validator.hasUniqueName()) &&
+            validate(validator.validateOverlappingRanges(getMacPoolEntity())) &&
+            validate(validator.validateOverlapWithAllCurrentPools(getMacPoolEntity()));
     }
 
     private MacPool getMacPoolEntity() {

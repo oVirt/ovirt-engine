@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.utils.MacAddressRangeUtils.filterOverlappingRanges;
+import static org.ovirt.engine.core.utils.MacAddressRangeUtils.poolsOverlappedByOtherPool;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -78,5 +83,42 @@ public class MacPoolValidator {
             .when(!macPool.isAllowDuplicateMacAddresses() &&
                 macPoolPerCluster.isDuplicateMacAddressesAllowed(macPool.getId()) &&
                 macPoolPerCluster.containsDuplicates(macPool.getId()));
+    }
+
+    /**
+     * Test that there are no overlapping ranges between the specified mac pool and ranges of all other
+     * already existing mac pools in the system
+     * @param macPool the mac pool to validate against all other existing pools
+     * @return a valid result if no overlap found; invalid otherwise
+     */
+    ValidationResult validateOverlapWithAllCurrentPools(MacPool macPool) {
+        final List<MacPool> macPools = getMacPoolDao().getAll();
+        return validateOverlapWithOtherPools(macPools, macPool);
+    }
+
+    ValidationResult validateOverlapWithOtherPools(List<MacPool> macPools, MacPool macPool) {
+        Set<MacPool> overlappingPools = poolsOverlappedByOtherPool(macPools, macPool);
+        return ValidationResult.failWith(
+            EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_OVERLAPS_WITH_OTHER_POOLS,
+            ReplacementUtils.createSetVariableString("macPools", reportOverlaps(overlappingPools))
+        ).when(!overlappingPools.isEmpty());
+    }
+
+
+    private String reportOverlaps(Set<MacPool> overlappingPools) {
+        StringJoiner overlapReport = new StringJoiner(", ");
+        overlappingPools.forEach(pool -> overlapReport.add("'" + pool.getName() + "'"));
+        return overlapReport.toString();
+    }
+
+
+    /**
+     * Test that there are no overlapping ranges within the specified mac pool
+     * @param macPool the mac pool to validate
+     * @return a valid result if no overlap found; invalid otherwise
+     */
+    ValidationResult validateOverlappingRanges(MacPool macPool) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_CONTAINS_OVERLAPPING_RANGES)
+            .when(!filterOverlappingRanges(macPool).isEmpty());
     }
 }
