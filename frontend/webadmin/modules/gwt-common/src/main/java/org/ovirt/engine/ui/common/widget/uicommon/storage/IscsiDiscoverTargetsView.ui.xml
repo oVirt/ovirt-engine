@@ -19,7 +19,7 @@
 		}
 		
 		.textBox {
-			width: 120px;
+			width: 230px;
 		}
 		
 		.chapBox {
@@ -93,7 +93,7 @@
 		}
 
 		.textBoxEditor {
-			width: 220px;
+			width: 300px;
 		}
 
 		.textBoxEditorChap {

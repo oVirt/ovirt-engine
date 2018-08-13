@@ -92,7 +92,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return model.getAddress();
             }
-        }, constants.addressSanStorage(), "95px"); //$NON-NLS-1$
+        }, constants.addressSanStorage(), "210px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractScrollableTextColumn<SanTargetModel>() {
             @Override
@@ -162,7 +162,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         HorizontalPanel panel = new HorizontalPanel();
 
         additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getName(), "", TextAlignment.LEFT); //$NON-NLS-1$
-        additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getAddress(), "95px", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getAddress(), "210px", TextAlignment.LEFT); //$NON-NLS-1$
         additemToRootNodePanel(panel, new StringValueLabel(), rootModel.getPort(), "60px", TextAlignment.LEFT); //$NON-NLS-1$
         addLoginButton(panel, rootModel);
 

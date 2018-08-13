@@ -269,14 +269,14 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getValue(SanTargetModel model) {
                 return model.getName();
             }
-        }, constants.targetNameSanStorage(), "500px"); //$NON-NLS-1$
+        }, constants.targetNameSanStorage(), "600px"); //$NON-NLS-1$
 
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getAddress();
             }
-        }, constants.addressSanStorage(), "100px"); //$NON-NLS-1$
+        }, constants.addressSanStorage(), "245px"); //$NON-NLS-1$
 
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
