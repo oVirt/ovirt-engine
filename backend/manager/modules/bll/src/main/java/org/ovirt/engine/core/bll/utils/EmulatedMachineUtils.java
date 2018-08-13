@@ -45,14 +45,14 @@ public class EmulatedMachineUtils {
             ChipsetType chipsetType,
             String currentEmulatedMachine,
             List<String> candidateEmulatedMachines) {
-        if (candidateEmulatedMachines.contains(currentEmulatedMachine)) {
-            return currentEmulatedMachine;
-        }
-        return candidateEmulatedMachines
+        String bestMatch = candidateEmulatedMachines
                 .stream()
-                .map(em -> replaceChipset(em, chipsetType))
-                .max(Comparator.comparingInt(s -> StringUtils.indexOfDifference(currentEmulatedMachine, s)))
+                .max(Comparator.comparingInt(s -> {
+                    int index = StringUtils.indexOfDifference(currentEmulatedMachine, s);
+                    return index < 0 ? Integer.MAX_VALUE : index;
+                }))
                 .orElse(currentEmulatedMachine);
+        return replaceChipset(bestMatch, chipsetType);
     }
 
     private static boolean chipsetMatchesEmulatedMachine(ChipsetType chipsetType, String emulatedMachine) {
