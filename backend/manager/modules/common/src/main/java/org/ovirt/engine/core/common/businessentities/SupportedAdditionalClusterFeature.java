@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class SupportedAdditionalClusterFeature implements Serializable {
+public class SupportedAdditionalClusterFeature implements BusinessEntity<Pair<Guid, Guid>> {
 
     private static final long serialVersionUID = -1063480824650271898L;
     private Guid clusterId;
@@ -79,4 +79,14 @@ public class SupportedAdditionalClusterFeature implements Serializable {
                 .build();
     }
 
+    @Override
+    public Pair<Guid, Guid> getId() {
+        return new Pair<>(getFeature().getId(), getClusterId());
+    }
+
+    @Override
+    public void setId(Pair<Guid, Guid> id) {
+        getFeature().setId(id.getFirst());
+        setClusterId(id.getSecond());
+    }
 }

@@ -11,13 +11,21 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class ClusterFeatureDaoImpl extends BaseDao implements ClusterFeatureDao {
+public class ClusterFeatureDaoImpl extends DefaultGenericDao<SupportedAdditionalClusterFeature, Pair<Guid, Guid>> implements ClusterFeatureDao {
+
+    public ClusterFeatureDaoImpl() {
+        super("SupportedClusterFeature");
+        setProcedureNameForGet("GetSupportedClusterFeature");
+        setProcedureNameForGetAll("GetAllSupportedClusterFeatures");
+    }
+
     private static final RowMapper<AdditionalFeature> clusterFeatureRowMapper = (rs, rowNum) -> {
         AdditionalFeature feature = new AdditionalFeature();
         feature.setId(getGuidDefaultEmpty(rs, "feature_id"));
@@ -38,33 +46,37 @@ public class ClusterFeatureDaoImpl extends BaseDao implements ClusterFeatureDao 
     };
 
     @Override
-    public void addSupportedClusterFeature(SupportedAdditionalClusterFeature feature) {
-        getCallsHandler().executeModification("InsertSupportedClusterFeature",
-                createSupportedClusterFeatureParameterMapper(feature));
-    }
+    protected MapSqlParameterSource createIdParameterMapper(Pair<Guid, Guid> id) {
+        Guid featureId = id.getFirst();
+        Guid clusterId = id.getSecond();
 
-    @Override
-    public void updateSupportedClusterFeature(SupportedAdditionalClusterFeature feature) {
-        getCallsHandler().executeModification("UpdateSupportedClusterFeature",
-                createSupportedClusterFeatureParameterMapper(feature));
-    }
-
-    private MapSqlParameterSource createSupportedClusterFeatureParameterMapper(SupportedAdditionalClusterFeature clusterFeature) {
         return getCustomMapSqlParameterSource()
-                .addValue("cluster_id", clusterFeature.getClusterId())
-                .addValue("feature_id", clusterFeature.getFeature().getId())
-                .addValue("is_enabled", clusterFeature.isEnabled());
+                .addValue("feature_id", featureId)
+                .addValue("cluster_id", clusterId);
     }
 
     @Override
-    public void addAllSupportedClusterFeature(Collection<SupportedAdditionalClusterFeature> features) {
-        getCallsHandler().executeStoredProcAsBatch("InsertSupportedClusterFeature",
+    protected MapSqlParameterSource createFullParametersMapper(SupportedAdditionalClusterFeature entity) {
+        return getCustomMapSqlParameterSource()
+                .addValue("cluster_id", entity.getClusterId())
+                .addValue("feature_id", entity.getFeature().getId())
+                .addValue("is_enabled", entity.isEnabled());
+    }
+
+    @Override
+    protected RowMapper<SupportedAdditionalClusterFeature> createEntityRowMapper() {
+        return supportedClusterFeatureRowMapper;
+    }
+
+    @Override
+    public void saveAll(Collection<SupportedAdditionalClusterFeature> features) {
+        getCallsHandler().executeStoredProcAsBatch(getProcedureNameForSave(),
                 features,
-                this::createSupportedClusterFeatureParameterMapper);
+                this::createFullParametersMapper);
     }
 
     @Override
-    public Set<SupportedAdditionalClusterFeature> getSupportedFeaturesByClusterId(Guid clusterId) {
+    public Set<SupportedAdditionalClusterFeature> getAllByClusterId(Guid clusterId) {
         List<SupportedAdditionalClusterFeature> features =
                 getCallsHandler().executeReadList("GetSupportedClusterFeaturesByClusterId",
                 supportedClusterFeatureRowMapper,

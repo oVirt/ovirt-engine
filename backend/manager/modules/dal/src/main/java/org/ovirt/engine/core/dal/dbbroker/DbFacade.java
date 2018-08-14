@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
@@ -241,6 +242,7 @@ public class DbFacade {
             put(StorageServerConnections.class, StorageServerConnectionDao.class);
             put(ImageTransfer.class, ImageTransferDao.class);
             put(LUNs.class, LunDao.class);
+            put(SupportedAdditionalClusterFeature.class, ClusterFeatureDao.class);
         }
     };
 

@@ -345,7 +345,7 @@ public class VmInfoBuildUtilsTest {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_1);
         vm.setClusterId(CLUSTER_ID);
-        doReturn(getSupportedAdditionalClusterFeatures(true)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
+        doReturn(getSupportedAdditionalClusterFeatures(true)).when(clusterFeatureDao).getAllByClusterId(CLUSTER_ID);
         assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).get());
     }
 
@@ -354,7 +354,7 @@ public class VmInfoBuildUtilsTest {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_1);
         vm.setClusterId(CLUSTER_ID);
-        doReturn(getSupportedAdditionalClusterFeatures(false)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
+        doReturn(getSupportedAdditionalClusterFeatures(false)).when(clusterFeatureDao).getAllByClusterId(CLUSTER_ID);
         assertEquals(false, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).isPresent());
     }
 

@@ -20,7 +20,7 @@ public class GetClusterFeaturesByClusterIdQuery<P extends IdQueryParameters> ext
     @Override
     protected void executeQueryCommand() {
         Set<SupportedAdditionalClusterFeature> additionalClusterFeatures =
-                clusterFeatureDao.getSupportedFeaturesByClusterId(getParameters().getId());
+                clusterFeatureDao.getAllByClusterId(getParameters().getId());
         getQueryReturnValue().setReturnValue(additionalClusterFeatures);
     }
 }

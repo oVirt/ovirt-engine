@@ -82,6 +82,31 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetSupportedClusterFeature (
+    v_feature_id UUID,
+    v_cluster_id UUID
+    )
+RETURNS SETOF supported_cluster_features_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM supported_cluster_features_view
+    WHERE feature_id = v_feature_id
+        AND cluster_id = v_cluster_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllSupportedClusterFeatures ()
+RETURNS SETOF supported_cluster_features_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM supported_cluster_features_view;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION InsertSupportedClusterFeature (
     v_feature_id UUID,
     v_cluster_id UUID,
@@ -111,6 +136,19 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE supported_cluster_features
     SET is_enabled = v_is_enabled
+    WHERE cluster_id = v_cluster_id
+        AND feature_id = v_feature_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteSupportedClusterFeature (
+    v_feature_id UUID,
+    v_cluster_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM supported_cluster_features
     WHERE cluster_id = v_cluster_id
         AND feature_id = v_feature_id;
 END;$PROCEDURE$

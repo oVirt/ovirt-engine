@@ -84,7 +84,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
             for (SupportedAdditionalClusterFeature feature : cluster.getAddtionalFeaturesSupported()) {
                 feature.setClusterId(cluster.getId());
             }
-            clusterFeatureDao.addAllSupportedClusterFeature(cluster.getAddtionalFeaturesSupported());
+            clusterFeatureDao.saveAll(cluster.getAddtionalFeaturesSupported());
         }
 
         setActionReturnValue(cluster.getId());

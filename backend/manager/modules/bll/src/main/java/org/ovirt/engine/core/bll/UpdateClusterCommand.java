@@ -450,7 +450,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private void addOrUpdateAddtionalClusterFeatures() {
         Set<SupportedAdditionalClusterFeature> featuresInDb =
-                clusterFeatureDao.getSupportedFeaturesByClusterId(getCluster().getId());
+                clusterFeatureDao.getAllByClusterId(getCluster().getId());
         Map<Guid, SupportedAdditionalClusterFeature> featuresEnabled = new HashMap<>();
 
         for (SupportedAdditionalClusterFeature feature : getCluster().getAddtionalFeaturesSupported()) {
@@ -461,17 +461,17 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             if (featureInDb.isEnabled() && !featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
                 // Disable the features which are not selected in update cluster
                 featureInDb.setEnabled(false);
-                clusterFeatureDao.updateSupportedClusterFeature(featureInDb);
+                clusterFeatureDao.update(featureInDb);
             } else if (!featureInDb.isEnabled() && featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
                 // Enable the features which are selected in update cluster
                 featureInDb.setEnabled(true);
-                clusterFeatureDao.updateSupportedClusterFeature(featureInDb);
+                clusterFeatureDao.update(featureInDb);
             }
             featuresEnabled.remove(featureInDb.getFeature().getId());
         }
         // Add the newly add cluster features
         if (CollectionUtils.isNotEmpty(featuresEnabled.values())) {
-            clusterFeatureDao.addAllSupportedClusterFeature(featuresEnabled.values());
+            clusterFeatureDao.saveAll(featuresEnabled.values());
         }
 
     }
@@ -772,7 +772,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         // Lets not modify the existing collection. Hence creating a new hashset.
         Set<SupportedAdditionalClusterFeature> featuresSupported =
                 new HashSet<>(getCluster().getAddtionalFeaturesSupported());
-        featuresSupported.removeAll(clusterFeatureDao.getSupportedFeaturesByClusterId(getCluster().getId()));
+        featuresSupported.removeAll(clusterFeatureDao.getAllByClusterId(getCluster().getId()));
         return featuresSupported;
     }
 
