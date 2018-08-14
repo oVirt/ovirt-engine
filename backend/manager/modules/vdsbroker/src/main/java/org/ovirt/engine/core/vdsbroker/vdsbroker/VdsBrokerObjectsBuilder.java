@@ -1535,6 +1535,11 @@ public class VdsBrokerObjectsBuilder {
                         actual = (Boolean)internalValue.get(VdsProperties.actual);
                     }
                     data.setActual(actual);
+                    Boolean acquired = Boolean.FALSE;
+                    if (internalValue.containsKey(VdsProperties.acquired)) {
+                        acquired = (Boolean)internalValue.get(VdsProperties.acquired);
+                    }
+                    data.setAcquired(acquired);
                     domainsData.add(data);
                 } catch (Exception e) {
                     log.error("failed building domains: {}", e.getMessage());

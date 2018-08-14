@@ -44,6 +44,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.SwapFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmLeasesReadyFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -92,6 +93,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(InClusterUpgradeFilterPolicyUnit.class);
         enabledUnits.add(InClusterUpgradeWeightPolicyUnit.class);
         enabledUnits.add(LabelFilterPolicyUnit.class);
+        enabledUnits.add(VmLeasesReadyFilterPolicyUnit.class);
         enabledUnits.add(BasicWeightSelectorPolicyUnit.class);
         enabledUnits.add(RankSelectorPolicyUnit.class);
     }

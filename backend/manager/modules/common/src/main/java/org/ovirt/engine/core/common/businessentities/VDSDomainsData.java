@@ -10,6 +10,7 @@ public class VDSDomainsData implements Serializable {
     private double lastCheck;
     private double delay;
     private boolean actual;
+    private boolean acquired;
 
     public Guid getDomainId() {
         return privateDomainId;
@@ -55,5 +56,13 @@ public class VDSDomainsData implements Serializable {
 
     public VDSDomainsData() {
         privateDomainId = Guid.Empty;
+    }
+
+    public boolean isAcquired() {
+        return acquired;
+    }
+
+    public void setAcquired(boolean acquired) {
+        this.acquired = acquired;
     }
 }

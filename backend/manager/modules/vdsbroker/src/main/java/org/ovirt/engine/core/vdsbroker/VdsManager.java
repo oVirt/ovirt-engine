@@ -157,6 +157,7 @@ public class VdsManager {
     private VmStatsRefresher vmsRefresher;
     protected AtomicInteger refreshIteration;
     private int autoRestartUnknownVmsIteration;
+    private ArrayList<VDSDomainsData> domains;
 
     private final ReentrantLock autoStartVmsWithLeasesLock;
     protected final long HOST_REFRESH_RATE;
@@ -322,7 +323,6 @@ public class VdsManager {
                 unrespondedAttempts.set(0);
                 setLastUpdate();
                 Guid storagePoolId = null;
-                ArrayList<VDSDomainsData> domainsList = null;
 
                 try {
                     hostMonitoring.afterRefreshTreatment();
@@ -333,7 +333,7 @@ public class VdsManager {
                     // the storage anymore (so there is no sense in updating the domains list in that case).
                     if (cachedVds != null && cachedVds.getStatus() != VDSStatus.Maintenance) {
                         storagePoolId = cachedVds.getStoragePoolId();
-                        domainsList = cachedVds.getDomains();
+                        setDomains(cachedVds.getDomains());
                     }
 
                     hostMonitoring = null;
@@ -349,8 +349,8 @@ public class VdsManager {
 
                 // Now update the status of domains, this code should not be in
                 // synchronized part of code
-                if (domainsList != null) {
-                    updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
+                if (getDomains() != null) {
+                    updateVdsDomainsData(cachedVds, storagePoolId, getDomains());
                 }
             }
         } catch (Exception e) {
@@ -1193,6 +1193,14 @@ public class VdsManager {
 
     public void setInServerRebootTimeout(boolean inServerRebootTimeout) {
         this.inServerRebootTimeout = inServerRebootTimeout;
+    }
+
+    public ArrayList<VDSDomainsData> getDomains() {
+        return domains;
+    }
+
+    public void setDomains(ArrayList<VDSDomainsData> domains) {
+        this.domains = domains;
     }
 
     public void vmsMonitoringInitFinished() {

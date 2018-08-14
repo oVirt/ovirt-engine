@@ -226,6 +226,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setGlusterPeerStatus(getGlusterPeerStatus());
         vds.setKernelFeatures(getKernelFeatures());
         vds.setOvsVersion(getOvsVersion());
+        vds.setDomains(getDomains());
 
         DnsResolverConfiguration originalDnsResolverConfiguration = getReportedDnsResolverConfiguration();
         if (originalDnsResolverConfiguration != null) {

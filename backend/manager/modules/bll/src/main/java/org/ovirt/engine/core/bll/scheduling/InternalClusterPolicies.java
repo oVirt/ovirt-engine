@@ -37,6 +37,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.PreferredHostsWeightPoli
 import org.ovirt.engine.core.bll.scheduling.policyunits.SwapFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmLeasesReadyFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -55,6 +56,7 @@ public class InternalClusterPolicies {
 
                 .addFilters(PinToHostPolicyUnit.class)
                 .addFilters(LabelFilterPolicyUnit.class)
+                .addFilters(VmLeasesReadyFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(CpuOverloadPolicyUnit.class)
@@ -92,6 +94,7 @@ public class InternalClusterPolicies {
                 .addFilters(ClusterInMaintenanceFilterPolicyUnit.class)
                 .addFilters(PinToHostPolicyUnit.class)
                 .addFilters(LabelFilterPolicyUnit.class)
+                .addFilters(VmLeasesReadyFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(CpuOverloadPolicyUnit.class)
@@ -128,6 +131,7 @@ public class InternalClusterPolicies {
 
                 .addFilters(PinToHostPolicyUnit.class)
                 .addFilters(LabelFilterPolicyUnit.class)
+                .addFilters(VmLeasesReadyFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(CpuOverloadPolicyUnit.class)
@@ -165,6 +169,7 @@ public class InternalClusterPolicies {
 
                 .addFilters(PinToHostPolicyUnit.class)
                 .addFilters(LabelFilterPolicyUnit.class)
+                .addFilters(VmLeasesReadyFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(CpuOverloadPolicyUnit.class)
@@ -203,6 +208,7 @@ public class InternalClusterPolicies {
 
                 .addFilters(PinToHostPolicyUnit.class)
                 .addFilters(LabelFilterPolicyUnit.class)
+                .addFilters(VmLeasesReadyFilterPolicyUnit.class)
                 .addFilters(CPUPolicyUnit.class)
                 .addFilters(CpuLevelFilterPolicyUnit.class)
                 .addFilters(CpuOverloadPolicyUnit.class)
