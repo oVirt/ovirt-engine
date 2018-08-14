@@ -618,6 +618,21 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
+        if (vm.getBiosType().isOvmf()) {
+            writer.writeStartElement("loader");
+            writer.writeAttributeString("readonly", "yes");
+            boolean secureBoot = vm.getBiosType() == BiosType.Q35_SECURE_BOOT;
+            writer.writeAttributeString("secure", secureBoot ? "yes" : "no");
+            writer.writeAttributeString("type", "pflash");
+            writer.writeRaw("/usr/share/OVMF/OVMF_CODE.secboot.fd");
+            writer.writeEndElement();
+            writer.writeStartElement("nvram");
+            writer.writeAttributeString("template",
+                    String.format("/usr/share/OVMF/%s", secureBoot ? "OVMF_VARS.secboot.fd" : "OVMF_VARS.fd"));
+            writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
+            writer.writeEndElement();
+        }
+
         if (vm.isBootMenuEnabled()) {
             writer.writeStartElement("bootmenu");
             writer.writeAttributeString("enable", "yes");
@@ -671,19 +686,6 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (vm.getBiosType().isOvmf()) {
-            writer.writeStartElement("loader");
-            writer.writeAttributeString("readonly", "yes");
-            writer.writeAttributeString("secure", vm.getBiosType() == BiosType.Q35_SECURE_BOOT ? "yes" : "no");
-            writer.writeAttributeString("type", "pflash");
-            writer.writeRaw("/usr/share/OVMF/OVMF_CODE.secboot.fd");
-            writer.writeEndElement();
-            writer.writeStartElement("nvram");
-            writer.writeAttributeString("template", "/usr/share/OVMF/OVMF_VARS.fd");
-            writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
-            writer.writeEndElement();
-        }
-
         writer.writeEndElement();
     }
 
@@ -694,8 +696,8 @@ public class LibvirtVmXmlBuilder {
 
         boolean acpiEnabled = vm.getAcpiEnable();
         boolean kaslrEnabled = vmInfoBuildUtils.isKASLRDumpEnabled(vm.getVmOsId());
-        boolean ovmfEnabled = vm.getBiosType().isOvmf();
-        if (!acpiEnabled && !hypervEnabled && !kaslrEnabled && !ovmfEnabled) {
+        boolean secureBootEnabled = vm.getBiosType() == BiosType.Q35_SECURE_BOOT;
+        if (!acpiEnabled && !hypervEnabled && !kaslrEnabled && !secureBootEnabled) {
             return;
         }
 
@@ -728,7 +730,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeElement("vmcoreinfo");
         }
 
-        if (ovmfEnabled) {
+        if (secureBootEnabled) {
             writer.writeStartElement("smm");
             writer.writeAttributeString("state", "on");
             writer.writeEndElement();
