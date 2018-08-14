@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.common.widget.table.header.IconTypeHeader;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.IconStatusPanel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -135,20 +134,20 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     protected void createAdditionalInfoPanel() {
         detailedInfoContainer = new Container();
 
-        detailedInfoContainer.add(createLogicalNetworkInfo(getEntity().getInterfaces().get(0)));
+        detailedInfoContainer.add(createLogicalNetworkInfo());
         additionalInfoPanel.add(this.detailedInfoContainer);
     }
 
-    private IsWidget createLogicalNetworkInfo(HostInterface hostInterface) {
+    private IsWidget createLogicalNetworkInfo() {
         VdsNetworkInterface vdsNetworkInterface = getNetworkInterface();
         Row networkRow = new Row();
         networkRow.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
         networkRow.addStyleName(NETWORK_DATA_ROW);
         networkRow.add(createMacColumn(vdsNetworkInterface));
-        networkRow.add(createRxColumn(hostInterface));
-        networkRow.add(createTxColumn(hostInterface));
+        networkRow.add(createRxColumn(vdsNetworkInterface));
+        networkRow.add(createTxColumn(vdsNetworkInterface));
         networkRow.add(createSpeedColumn(vdsNetworkInterface));
-        networkRow.add(createDropRateColumn(hostInterface));
+        networkRow.add(createDropRateColumn(vdsNetworkInterface));
         return networkRow;
     }
 
@@ -162,11 +161,12 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         return macCol;
     }
 
-    private IsWidget createRxColumn(HostInterface hostInterface) {
+    private IsWidget createRxColumn(VdsNetworkInterface hostInterface) {
         Column rxCol = new Column(ColumnSize.SM_3);
         DListElement dl = Document.get().createDLElement();
         addDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
-                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { hostInterface.getRxRate(),
+                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] {
+                        hostInterface.getStatistics().getReceiveRate(),
                         hostInterface.getSpeed().doubleValue() })), dl);
         dl.addClassName(Styles.PULL_LEFT);
         rxCol.getElement().appendChild(dl);
@@ -175,17 +175,18 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         rxCol.add(divider);
         dl = Document.get().createDLElement();
         addDetailItem(templates.sub(constants.rxTotal(), constants.bytes()),
-                SafeHtmlUtils.fromString(totalRenderer.render(hostInterface.getRxTotal())), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(hostInterface.getStatistics().getReceivedBytes())), dl);
         dl.addClassName(Styles.PULL_LEFT);
         rxCol.getElement().appendChild(dl);
         return rxCol;
     }
 
-    private IsWidget createTxColumn(HostInterface hostInterface) {
+    private IsWidget createTxColumn(VdsNetworkInterface hostInterface) {
         Column txCol = new Column(ColumnSize.SM_3);
         DListElement dl = Document.get().createDLElement();
         addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
-                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { hostInterface.getTxRate(),
+                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] {
+                        hostInterface.getStatistics().getTransmitRate(),
                         hostInterface.getSpeed().doubleValue() })), dl);
         dl.addClassName(Styles.PULL_LEFT);
         txCol.getElement().appendChild(dl);
@@ -194,7 +195,8 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         txCol.add(divider);
         dl = Document.get().createDLElement();
         addDetailItem(templates.sub(constants.txTotal(), constants.bytes()),
-                SafeHtmlUtils.fromString(totalRenderer.render(hostInterface.getTxTotal())), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(hostInterface.getStatistics().getTransmittedBytes())),
+                dl);
         dl.addClassName(Styles.PULL_LEFT);
         txCol.getElement().appendChild(dl);
         return txCol;
@@ -215,13 +217,15 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         return speedCol;
     }
 
-    private IsWidget createDropRateColumn(HostInterface hostInterface) {
+    private IsWidget createDropRateColumn(VdsNetworkInterface hostInterface) {
         Column dropRateCol = new Column(ColumnSize.SM_2);
         dropRateCol.addStyleName(NIC_SPEED_DROP);
         dropRateCol.add(createDropRateIcon());
         Span valueSpan = new Span();
-        valueSpan.getElement().setInnerSafeHtml(templates.dropRate(hostInterface.getRxDrop()
-                + hostInterface.getTxDrop()));
+        valueSpan.getElement()
+                .setInnerSafeHtml(templates.dropRate(
+                        hostInterface.getStatistics().getReceiveDropRate() + hostInterface.getStatistics()
+                                .getTransmitDropRate()));
         dropRateCol.add(valueSpan);
         return dropRateCol;
     }
