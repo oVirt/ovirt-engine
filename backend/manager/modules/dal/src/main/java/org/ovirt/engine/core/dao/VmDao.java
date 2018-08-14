@@ -224,9 +224,11 @@ public interface VmDao extends Dao {
     List<VM> getAll();
 
     /**
-     * Specific use-case in the User-Portal - Get vms:
+     * Specific use-case for ovirt-web-ui - Get vms:
      *
-     *   1) filtered by user
+     *   1) filtered by user: VMs that are not part of a pool that the
+     *      user has direct or inherited permissions on and VMs that are
+     *      part of a pool that the user has direct permissions on.
      *   2) sorted in ascending order
      *   3) with max # of results specified.
      *   4) potentially with page number (paging)

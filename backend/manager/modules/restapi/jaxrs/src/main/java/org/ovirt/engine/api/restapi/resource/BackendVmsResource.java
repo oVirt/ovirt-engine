@@ -111,7 +111,7 @@ public class BackendVmsResource extends
     @Override
     public Vms list() {
         if (isFiltered()) {
-            if (isSortedAndMaxResults()) { //Specific use-case of User-Portal
+            if (isSortedAndMaxResults()) { //Specific use-case of ovirt-web-ui
                 return getVmsFilteredAndSorted();
             } else {
                 return mapCollection(getBackendCollection(QueryType.GetAllVms, new QueryParametersBase(), SearchType.VM));
