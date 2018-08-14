@@ -113,7 +113,9 @@ public class BaseImportNetworksModel extends Model {
                     .stream()
                     .filter(provider -> !provider.getIsUnmanaged())
                     .collect(Collectors.toList());
-            managedProviders.add(0, null);
+            if (managedProviders.isEmpty()) {
+                managedProviders.add(null);
+            }
             getProviders().setItems(managedProviders);
         }));
     }
