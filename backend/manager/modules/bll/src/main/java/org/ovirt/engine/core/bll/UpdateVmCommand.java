@@ -431,8 +431,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void updateDeviceAddresses() {
-        if (isEmulatedMachineChanged()) {
-            log.info("Emulated machine changed for VM: {} ({}). Clearing device addresses.",
+        if (isEmulatedMachineChanged() || isChipsetChanged()) {
+            log.info("Emulated machine or BIOS chipset type has changed for VM: {} ({}), clearing device addresses.",
                     getVm().getName(),
                     getVm().getId());
             vmDeviceDao.clearAllDeviceAddressesByVmId(getVmId());
@@ -1332,9 +1332,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isEmulatedMachineChanged() {
-        return !Objects.equals(
-                getParameters().getVm().getCustomEmulatedMachine(),
-                getVm().getCustomEmulatedMachine());
+        return !Objects.equals(getParameters().getVm().getCustomEmulatedMachine(), getVm().getCustomEmulatedMachine());
+    }
+
+    private boolean isChipsetChanged() {
+        return getParameters().getVm().getBiosType().getChipsetType() != getVm().getBiosType().getChipsetType();
     }
 
     @Override
