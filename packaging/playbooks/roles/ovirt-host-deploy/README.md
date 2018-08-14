@@ -20,6 +20,7 @@ Dependencies
  * ovirt-provider-ovn-driver
  * ovirt-host-deploy-libvirt-guests
  * ovirt-host-deploy-firewalld
+ * ovirt-host-deploy-vnc-certificates
 
 Example Playbook
 ----------------

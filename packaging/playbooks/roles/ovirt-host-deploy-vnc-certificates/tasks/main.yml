@@ -1,0 +1,31 @@
+---
+- block:
+  - name: Create cert dir
+    file:
+      path: "{{ host_deploy_vnc_tls_x509_cert_dir }}"
+      state: directory
+
+  - name: Setup VNC PKI
+    copy:
+      src: "{{ host_deploy_spice_tls_x509_cert_dir }}/{{ item }}"
+      dest: "{{ host_deploy_vnc_tls_x509_cert_dir }}/{{ item }}"
+      force: no
+    with_items:
+      - "ca-cert.pem"
+      - "server-cert.pem"
+      - "server-key.pem"
+
+  - name: Modify qemu config file - TLS
+    lineinfile:
+      path: '/etc/libvirt/qemu.conf'
+      line: 'vnc_tls=1'
+    notify:
+      restart libvirtd
+
+  - name: Modify qemu config file - certificate directory
+    lineinfile:
+      path: '/etc/libvirt/qemu.conf'
+      line: 'vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"'
+    notify:
+      restart libvirtd
+
