@@ -42,8 +42,8 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
     }
 
     @Test
-    public void testGetSupportedFeaturesByClusterId() {
-        Set<SupportedAdditionalClusterFeature> featuresSupportedInCluster = dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+    public void testGetAllByClusterId() {
+        Set<SupportedAdditionalClusterFeature> featuresSupportedInCluster = dao.getAllByClusterId(EXISTING_CLUSTER);
         List<String> expectedFeatures = Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_2", "TEST_FEATURE_3");
         assertNotNull(featuresSupportedInCluster, "Failed to retrive supported additional features for the cluster");
         assertThat("Failed to retrive correct set of features for the given version and category",
@@ -66,23 +66,23 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
     @Test
     public void testAddSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> previouslySupportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
-        dao.addSupportedClusterFeature(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_CLUSTER, true));
+                dao.getAllByClusterId(EXISTING_CLUSTER);
+        dao.save(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_CLUSTER, true));
         Set<SupportedAdditionalClusterFeature> supportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+                dao.getAllByClusterId(EXISTING_CLUSTER);
         assertThat(supportedFeatures, hasSize(previouslySupportedFeatures.size() + 1));
     }
 
     @Test
     public void testAddAllSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> previouslySupportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+                dao.getAllByClusterId(EXISTING_CLUSTER);
         Set<SupportedAdditionalClusterFeature> newFeatures = new HashSet<>();
         newFeatures.add(buildSupportedFeature(NEW_SUPPORTED_FEATURE_1, EXISTING_CLUSTER, true));
         newFeatures.add(buildSupportedFeature(NEW_SUPPORTED_FEATURE_2, EXISTING_CLUSTER, true));
-        dao.addAllSupportedClusterFeature(newFeatures);
+        dao.saveAll(newFeatures);
         Set<SupportedAdditionalClusterFeature> supportedFeatures =
-                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+                dao.getAllByClusterId(EXISTING_CLUSTER);
         assertThat("Failed to add all the supported feature",
                 supportedFeatures, hasSize(previouslySupportedFeatures.size() + 2));
     }
@@ -90,16 +90,16 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
     @Test
     public void testUpdateSupportedClusterFeature() {
         Set<SupportedAdditionalClusterFeature> features =
-                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+                dao.getAllByClusterId(EXISTING_CLUSTER);
 
         // Lets stop after testing the first feature.
         features.stream().findFirst().ifPresent(feature -> {
             feature.setEnabled(false);
-            dao.updateSupportedClusterFeature(feature);
+            dao.update(feature);
         });
 
         Set<SupportedAdditionalClusterFeature> newFeatureSet =
-                dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
+                dao.getAllByClusterId(EXISTING_CLUSTER);
         assertEquals(new HashSet<>(features), newFeatureSet, "Failed to update the feature set");
     }
 }

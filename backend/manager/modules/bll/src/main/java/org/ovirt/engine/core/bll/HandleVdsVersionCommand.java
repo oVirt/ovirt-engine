@@ -88,7 +88,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
 
     private void checkClusterAdditionalFeaturesSupported(Cluster cluster, VDS vds) {
         Set<SupportedAdditionalClusterFeature> clusterSupportedFeatures =
-                clusterFeatureDao.getSupportedFeaturesByClusterId(cluster.getId());
+                clusterFeatureDao.getAllByClusterId(cluster.getId());
         Set<String> hostSupportedFeatures =
                 hostFeatureDao.getSupportedHostFeaturesByHostId(vds.getId());
         for (SupportedAdditionalClusterFeature feature : clusterSupportedFeatures) {

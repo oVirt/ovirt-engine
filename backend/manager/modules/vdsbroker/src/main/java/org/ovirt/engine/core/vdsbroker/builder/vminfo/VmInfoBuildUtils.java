@@ -958,7 +958,7 @@ public class VmInfoBuildUtils {
     }
 
     private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
-        return clusterFeatureDao.getSupportedFeaturesByClusterId(clusterId).stream()
+        return clusterFeatureDao.getAllByClusterId(clusterId).stream()
         .filter(SupportedAdditionalClusterFeature::isEnabled)
         .filter(f -> f.getFeature().getName().equals(featureName))
         .findAny()
