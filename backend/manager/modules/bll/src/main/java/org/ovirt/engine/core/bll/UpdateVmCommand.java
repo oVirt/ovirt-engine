@@ -298,6 +298,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateGraphicsDevices();
             updateVmHostDevices();
             updateDeviceAddresses();
+            clearUnmanagedDevices();
         }
         iconUtils.removeUnusedIcons(oldIconIds);
         vmHandler.updateVmInitToDB(getParameters().getVmStaticData());
@@ -440,6 +441,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
             change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);
             change.flush();
+        }
+    }
+
+    private void clearUnmanagedDevices() {
+        if (isChipsetChanged()) {
+            log.info("BIOS chipset type has changed for VM: {} ({}), removing its unmanaged devices.",
+                    getVm().getName(),
+                    getVm().getId());
+            vmDeviceDao.removeAllUnmanagedDevicsByVmId(getVmId());
         }
     }
 

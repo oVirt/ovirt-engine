@@ -235,6 +235,14 @@ public class VmDeviceDaoImpl extends
     }
 
     @Override
+    public void removeAllUnmanagedDevicsByVmId(Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+
+        getCallsHandler().executeModification("removeAllUnmanagedDevicesByVmId", parameterSource);
+    }
+
+    @Override
     public void updateRuntimeInfo(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
                 .addValue("address", vmDevice.getAddress())

@@ -295,7 +295,7 @@ BEGIN
     SELECT vm_device_view.*
     FROM vm_device_view
     WHERE vm_id = v_vm_id
-        AND is_managed = false;
+        AND NOT is_managed;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -336,6 +336,17 @@ BEGIN
     UPDATE vm_device
     SET address = ''
     WHERE vm_id = v_vm_id;
+END;$BODY$
+
+LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION removeAllUnmanagedDevicesByVmId (v_vm_id UUID)
+RETURNS VOID AS $BODY$
+
+BEGIN
+    DELETE FROM vm_device
+    WHERE vm_id = v_vm_id
+        AND NOT is_managed;
 END;$BODY$
 
 LANGUAGE 'plpgsql';
