@@ -4,18 +4,19 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DeactivateStorageDomainWithOvfUpdateParameters;
+import org.ovirt.engine.core.common.action.DeactivateStorageDomainWithOvfUpdateStep;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -31,7 +33,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
 public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateStorageDomainWithOvfUpdateParameters> extends
-        DeactivateStorageDomainCommand<T> {
+        DeactivateStorageDomainCommand<T> implements SerialChildExecutingCommand {
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -40,8 +42,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
-    @Typed(ConcurrentChildCommandsExecutionCallback.class)
-    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public DeactivateStorageDomainWithOvfUpdateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -71,20 +73,45 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, getCompensationContext());
 
         if (shouldPerformOvfUpdate()) {
-            ActionReturnValue returnValue =  runInternalAction(ActionType.UpdateOvfStoreForStorageDomain,
+            getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.UPDATE_OVF_STORE);
+        } else if (noAsyncOperations()) {
+            getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN);
+        }
+        setSucceeded(true);
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        log.info("Command '{}' id '{}' executing step '{}'", getActionType(), getCommandId(),
+                getParameters().getNextCommandStep());
+        switch (getParameters().getNextCommandStep()) {
+        case UPDATE_OVF_STORE:
+            getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.UPDATE_OVF_STORE);
+            runInternalAction(ActionType.UpdateOvfStoreForStorageDomain,
                     createUpdateOvfStoreParams(),
                     cloneContext().withoutCompensationContext());
-            if (!returnValue.getSucceeded()) {
-                propagateFailure(returnValue);
-                return;
-            }
-        }
-
-        if (noAsyncOperations()) {
+            getParameters().setNextCommandStep(
+                    DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN
+            );
+            break;
+        case DEACTIVATE_STORAGE_DOMAIN:
+            getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN);
             executeDeactivateCommand();
+            getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.COMPLETE);
+            break;
+        case COMPLETE:
+            getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.COMPLETE);
+            setCommandStatus(CommandStatus.SUCCEEDED);
+            return false;
         }
+        persistCommandIfNeeded();
+        return true;
+    }
 
-        setSucceeded(true);
+    @Override
+    public void handleFailure() {
+        log.error("Command '{}' id '{}' failed executing step '{}'", getActionType(), getCommandId(),
+                getParameters().getCommandStep());
     }
 
     private StorageDomainParametersBase createUpdateOvfStoreParams() {
@@ -128,7 +155,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
 
     @Override
     protected void endSuccessfully() {
-        executeDeactivateCommand();
         setSucceeded(true);
     }
 
