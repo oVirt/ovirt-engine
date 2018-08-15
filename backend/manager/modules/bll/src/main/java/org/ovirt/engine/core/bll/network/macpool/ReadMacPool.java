@@ -45,4 +45,16 @@ public interface ReadMacPool {
      */
     @AcquireReadLock
     boolean containsDuplicates();
+
+    /**
+     * @return the mac storage associated with this mac pool
+     */
+    MacsStorage getMacsStorage();
+
+    /**
+     * @return true if this mac pool has overlapping ranges with the specified mac pool
+     */
+    @AcquireReadLock
+    boolean overlaps(MacPool other);
+
 }

@@ -206,4 +206,14 @@ public final class MacPoolUsingRanges implements MacPool {
                 .append("id", id)
                 .build();
     }
+
+    @Override
+    public MacsStorage getMacsStorage() {
+        return macsStorage;
+    }
+
+    @Override
+    public boolean overlaps(MacPool macPool) {
+        return macsStorage.overlaps(macPool.getMacsStorage());
+    }
 }

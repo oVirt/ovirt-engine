@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -143,5 +144,13 @@ class MacsStorage {
 
     boolean overlaps(Range range) {
         return ranges.stream().anyMatch(r -> r.overlaps(range));
+    }
+
+    Collection<Range> getRanges() {
+        return ranges;
+    }
+
+    boolean overlaps(MacsStorage other) {
+        return other.getRanges().stream().anyMatch(this::overlaps);
     }
 }
