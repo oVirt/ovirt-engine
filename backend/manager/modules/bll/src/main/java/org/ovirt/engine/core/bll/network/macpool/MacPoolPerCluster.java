@@ -2,18 +2,26 @@ package org.ovirt.engine.core.bll.network.macpool;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
@@ -34,6 +42,9 @@ public class MacPoolPerCluster {
 
     @Inject
     MacPoolFactory macPoolFactory;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     private static final Logger log = LoggerFactory.getLogger(MacPoolPerCluster.class);
 
@@ -62,11 +73,43 @@ public class MacPoolPerCluster {
             for (org.ovirt.engine.core.common.businessentities.MacPool macPool : macPools) {
                 createPoolInternal(macPool, true);
             }
+            try (AutoCloseableLock lock = readLockResource()) {
+                Set<Pair<MacPool, MacPool>> overlappingPools = computeOverlappingPools();
+                if (!overlappingPools.isEmpty()) {
+                    reportOverlaps(overlappingPools);
+                }
+            }
             log.info("Successfully initialized");
         } catch (RuntimeException e) {
             log.error("Error initializing: {}", e.getMessage());
             throw e;
         }
+    }
+
+    private void reportOverlaps(Set<Pair<MacPool, MacPool>> overlappingPools) {
+        Map<Guid, String> idsToNames = macPoolDao.getAll().stream().collect(Collectors.toMap(
+            org.ovirt.engine.core.common.businessentities.MacPool::getId,
+            org.ovirt.engine.core.common.businessentities.MacPool::getName)
+        );
+        StringJoiner overlapReport = new StringJoiner(", ");
+        overlappingPools.forEach(pair ->
+            overlapReport.add("[a range in '" + idsToNames.get(pair.getFirst().getId()) + "' overlaps a range in '" + idsToNames.get(pair.getSecond().getId()) + "']")
+        );
+        AuditLogableImpl auditLoggable = new AuditLogableImpl();
+        auditLoggable.addCustomValue("overlapping", overlapReport.toString());
+        auditLogDirector.log(auditLoggable, AuditLogType.MAC_POOL_VIOLATES_NO_OVERLAPPING_MAC_POOLS);
+    }
+
+    private Set<Pair<MacPool, MacPool>> computeOverlappingPools() {
+        Set<Pair<MacPool, MacPool>> overlappingPools = new HashSet<>();
+        macPools.forEach((guid1, pool1) ->
+            macPools.forEach((guid2, pool2) -> {
+                if (!guid1.equals(guid2) && !overlappingPools.contains(new Pair<>(pool2, pool1)) && pool1.overlaps(pool2)) {
+                    overlappingPools.add(new Pair<>(pool1, pool2));
+                }
+            })
+        );
+        return overlappingPools;
     }
 
     /**

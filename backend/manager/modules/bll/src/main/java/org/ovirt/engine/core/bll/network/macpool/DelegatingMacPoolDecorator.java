@@ -89,6 +89,16 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     }
 
     @Override
+    public MacsStorage getMacsStorage() {
+        return macPool.getMacsStorage();
+    }
+
+    @Override
+    public boolean overlaps(MacPool macPool) {
+        return macPool.overlaps(macPool);
+    }
+
+    @Override
     public final String toString() {
         ToStringBuilder result = ToStringBuilder.forInstance(this);
 
