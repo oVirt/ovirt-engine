@@ -133,12 +133,43 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global wildfly_overlay_modules ""
 %endif
 
+# l,r are macro flags used to constract the correct python2 name
+# only one flag should be provided in normal usage
+# If you pass -l, then macro expands to: {l value}{all arguments}
+# If you pass -r, then macro expands to: {all arguments}{r value}
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global with_python3 1
-%global require_python() python%{python3_pkgversion}-%{*}, python2-%{*}
+%define required_python_lib(l:r:) python%{python3_pkgversion}-%{*}, python2-%{*}
 %else
 %global with_python3 0
-%global require_python() python2-%{*}
+%define required_python_lib(l:r:) %{-l*}%{*}%{-r*}
+%endif
+
+%global required_python_lib_openvswitch %{required_python_lib -l python2- openvswitch}
+%global required_python_lib_ovirt_engine_lib %{required_python_lib -l python2- %{name}-lib >= %{version}-%{release}}
+%global required_python_lib_jinja2 %{required_python_lib -l python- jinja2}
+%global required_python_lib_ovirt_setup_lib %{required_python_lib ovirt-setup-lib >= 1.1.1}
+%global required_python_lib_libxml2 %{required_python_lib -r -python libxml2}
+%global required_python_lib_otopi %{required_python_lib -l python2- otopi >= 1.7.8}
+%global required_python_lib_otopi_devtools %{required_python_lib -l python2- otopi-devtools >= 1.7.8}
+%global required_python_lib_paramiko %{required_python_lib -l python- paramiko}
+%global required_python_lib_libselinux %{required_python_lib -r -python libselinux}
+%global required_python_lib_psycopg2 %{required_python_lib -l python- psycopg2}
+%global required_python_lib_pwquality %{required_python_lib -l python- pwquality}
+%global required_python_lib_dnf %{required_python_lib dnf}
+%global required_python_lib_dateutil %{required_python_lib -l python- dateutil}
+%global required_python_lib_netaddr %{required_python_lib -l python2- netaddr}
+%global required_python_lib_six %{required_python_lib -l python2- six}
+%global required_python_lib_numpy %{required_python_lib numpy}
+%global required_python_lib_websockify %{required_python_lib -l python- websockify >= 0.6.0}
+%if 0%{?fedora} || 0%{?rhel} >= 8
+%global required_python_lib_m2crypto python3-m2crypto >= 0.28, m2crypto
+%global required_package_manager %{required_python_lib_dnf}
+%global required_package_manager_versionlock (yum-plugin-versionlock if yum), %{required_python_lib dnf-plugins-extras-versionlock}
+%else
+%global required_python_lib_m2crypto m2crypto
+%global required_package_manager yum
+%global required_package_manager_versionlock yum-plugin-versionlock
 %endif
 
 %if 0%{?rhel} >= 8
@@ -282,7 +313,7 @@ Requires:	postgresql-jdbc >= 42.2.2
 %endif
 
 %if 0%{?rhel}
-Requires:	yum-plugin-versionlock
+Requires:	%{required_package_manager_versionlock}
 %endif
 
 %if %{ovirt_rh_postgresql95}
@@ -305,10 +336,8 @@ Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 
 %if 0%{?fedora}
-Requires:	(yum-plugin-versionlock if yum)
+Requires:	%{required_package_manager_versionlock}
 Requires:	apache-sshd
-Requires:	python2-dnf-plugins-extras-versionlock
-Requires:	python3-dnf-plugins-extras-versionlock
 Requires:	quartz
 # On Fedora slf4j package is split and we need also jdk14 and jcl-over-slf4j
 # parts
@@ -337,7 +366,7 @@ Requires:	pyOpenSSL
 Requires:	openvswitch
 Requires:	openvswitch-ovn-common
 Requires:	openvswitch-ovn-central
-Requires:	python-openvswitch
+Requires:	%{required_python_lib_openvswitch}
 Requires:	ovirt-provider-ovn >= 1.2.1
 
 %description
@@ -411,13 +440,13 @@ Requires:	novnc
 %else
 Requires:	novnc >= 0.5.0, novnc < 0.6.0
 %endif
-Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
+Requires:	%{required_python_lib_ovirt_engine_lib}
 Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.4.14
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.7.3
-Requires:	python-jinja2
+Requires:	%{required_python_lib_jinja2}
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -449,14 +478,14 @@ The RESTful API for %{ovirt_product_name_short}
 %package setup-base
 Summary:	%{ovirt_product_name_short} suite base setup components.
 Group:		%{ovirt_product_group}
-Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
-Requires:	ovirt-setup-lib >= 1.1.1
+Requires:	%{required_python_lib_ovirt_engine_lib}
+Requires:	%{required_python_lib_ovirt_setup_lib}
 Requires:	bind-utils
 Requires:	iproute
-Requires:	libxml2-python
+Requires:	%{required_python_lib_libxml2}
 Requires:	logrotate
-Requires:	otopi >= 1.7.8
-Requires:	python-paramiko
+Requires:	%{required_python_lib_otopi}
+Requires:	%{required_python_lib_paramiko}
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 3.6.0
 Conflicts:	%{name}-reports < 3.6.0
@@ -511,25 +540,15 @@ Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Summary:	Setup and upgrade common plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
-Requires:	libselinux-python
+Requires:	%{required_python_lib_libselinux}
 Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
-Requires:	python-psycopg2
+Requires:	%{required_python_lib_psycopg2}
 Requires(pre):	shadow-utils
 Requires:	java-openjdk-headless >= 1:1.8.0
-Requires:	python-pwquality
-
-%if 0%{?fedora}
-Requires:	python2-dnf
-%if 0%{?with_python3}
-Requires:	python3-pwquality
-Requires:	python3-dnf
-Requires:	python3-m2crypto >= 0.28
-%endif
-%else
-Requires:	yum
-Requires:	m2crypto
-%endif
+Requires:	%{required_python_lib_pwquality}
+Requires:	%{required_python_lib_m2crypto}
+Requires:	%{required_package_manager}
 
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
@@ -565,15 +584,15 @@ The web administration interface to %{ovirt_product_name_short}
 Summary:	%{ovirt_product_name_short} Tools
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
+Requires:	%{required_python_lib_ovirt_engine_lib}
 Requires:	%{name}-tools-backup = %{version}-%{release}
 Requires:	ovirt-engine-metrics >= 1.1.2
 Requires:	java-headless
 Requires:	logrotate
-Requires:	python-dateutil
-Requires:	python-netaddr
-Requires:	python-psycopg2
-Requires:	python-six
+Requires:	%{required_python_lib_dateutil}
+Requires:	%{required_python_lib_netaddr}
+Requires:	%{required_python_lib_psycopg2}
+Requires:	%{required_python_lib_six}
 Requires:	gdeploy
 Requires(pre):		shadow-utils
 Requires(post):		systemd
@@ -605,7 +624,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
-Requires:	otopi >= 1.7.8
+Requires:	%{required_python_lib_otopi}
 %if %{ovirt_rh_postgresql95}
 Requires:	rh-postgresql95-postgresql
 %else
@@ -618,10 +637,10 @@ Requires:	postgresql >= 9.5
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
 Group:		%{ovirt_product_group}
-Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
-Requires:	numpy
-Requires:	python-dateutil
-Requires:	python-websockify >= 0.6.0
+Requires:	%{required_python_lib_ovirt_engine_lib}
+Requires:	%{required_python_lib_numpy}
+Requires:	%{required_python_lib_dateutil}
+Requires:	%{required_python_lib_websockify}
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 Requires(pre):		shadow-utils
 Requires(post):		systemd
@@ -646,7 +665,7 @@ Requires(postun):	systemd
 %package setup-plugin-websocket-proxy
 Summary:	Setup and upgrade specific plugins for websocket-proxy
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
-Requires:	python-six
+Requires:	%{required_python_lib_six}
 
 %description setup-plugin-websocket-proxy
 Setup and upgrade specific plugins for websocket-proxy
@@ -654,7 +673,7 @@ Setup and upgrade specific plugins for websocket-proxy
 %package vmconsole-proxy-helper
 Summary:	%{ovirt_product_name_short} VMconsole Proxy Helper
 Group:		%{ovirt_product_group}
-Requires:	%{require_python %{name}-lib >= %{version}-%{release}}
+Requires:	%{required_python_lib_ovirt_engine_lib}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	ovirt-vmconsole-proxy
 
@@ -676,7 +695,7 @@ Summary:	%{ovirt_product_name_short} health check bundler.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	makeself >= 2.2
-Requires:	otopi-devtools >= 1.7.8
+Requires:	%{required_python_lib_otopi_devtools}
 
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
