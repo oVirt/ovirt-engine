@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -37,6 +39,8 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Inject
     private NetworkDao networkDao;
 
+    @Inject
+    private GlusterUtil glusterUtil;
     public ActivateVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -74,6 +78,22 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 if (vds.getClusterSupportsGlusterService()) {
                     runVdsCommand(VDSCommandType.ManageGlusterService,
                             new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
+                    // starting vdo service
+                    GlusterStatus isRunning = glusterUtil.isVDORunning(vds.getId());
+                    switch (isRunning) {
+                    case DOWN:
+                           log.info("VDO service is down in host : '{}' , starting VDO service", vds.getId());
+                           startVDOService(vds);
+                           break;
+                    case UP:
+                        log.info("VDO service is up in host : '{}' , skipping starting of VDO service", vds.getId());
+                           break;
+                    case UNKNOWN:
+                        log.info("VDO service is not installed host : '{}' , ignoring to start VDO service",
+                                vds.getId());
+                        break;
+                    }
+
                 }
             }
         }
@@ -107,4 +127,16 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             return getSucceeded() ? AuditLogType.VDS_ACTIVATE : AuditLogType.VDS_ACTIVATE_FAILED;
         }
     }
+
+    public void startVDOService(VDS vds) {
+        // starting VDO service
+        boolean succeeded = runVdsCommand(VDSCommandType.ManageGlusterService,
+                new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("vdo"), "restart")).getSucceeded();
+        if (!succeeded) {
+            log.error("Failed to start VDO service while activating the host '{}'", vds.getHostName());
+        }
+
+    }
+
+
 }

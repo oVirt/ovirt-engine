@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,6 +32,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
@@ -42,6 +46,9 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -54,6 +61,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -67,7 +75,8 @@ public class GlusterUtil {
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
     private static final int PEER_IN_CLUSTER = 3;
-
+    @Inject
+    private ResourceManager resourceManager;
     @Inject
     private VdsDao vdsDao;
 
@@ -434,4 +443,31 @@ public class GlusterUtil {
             return null;
         }
     }
+
+    /**
+     * Returns GlusterStatus for checking id vdo service is running
+     *
+     * @param vdsId
+     *            input Guid
+     * @return GlusterStatus
+     */
+    public GlusterStatus isVDORunning(Guid vdsId) {
+        VDSReturnValue returnValue = resourceManager.runVdsCommand(VDSCommandType.ManageGlusterService,
+                new GlusterServiceVDSParameters(vdsId, Arrays.asList("vdo"), "status"));
+        if (!returnValue.getSucceeded()) {
+            log.error("Failed to check VDO running status of host : '{}' ", vdsId);
+            return GlusterStatus.UNKNOWN;
+        }
+        ArrayList<GlusterServerService> returnList = (ArrayList<GlusterServerService>) returnValue.getReturnValue();
+        if (returnList == null || returnList.isEmpty()) {
+            log.error("Failed to check VDO running status of host : '{}' returned empty object", vdsId);
+            return GlusterStatus.UNKNOWN;
+        }
+        GlusterServerService gss = returnList.get(0);
+        if (gss != null) {
+            return gss.getStatus().getStatusMsg().equalsIgnoreCase("Up") ? GlusterStatus.UP : GlusterStatus.DOWN;
+        }
+        return GlusterStatus.UNKNOWN;
+    }
+
 }
