@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view.popup;
 
 import java.util.ArrayList;
 
+import org.gwtbootstrap3.client.ui.constants.AlertType;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -45,6 +46,8 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     @Override
     public void edit(final ConfirmationModel object) {
         driver.edit(object);
+
+        messagePanel.setAlertType(AlertType.valueOf(object.getAlertType().name()));
 
         object.getItemsChangedEvent().addListener((ev, sender, args) -> {
             ArrayList<String> items = (ArrayList<String>) object.getItems();

@@ -79,6 +79,16 @@ public class ConfirmationModel extends ListModel {
 
     }
 
+    private AlertType alertType;
+
+    public AlertType getAlertType() {
+        return alertType;
+    }
+
+    public void setAlertType(AlertType alertType) {
+        this.alertType = alertType;
+    }
+
     public ConfirmationModel() {
         setTitle(ConstantsManager.getInstance().getConstants().confirmTitle());
         setLatch(new EntityModel<Boolean>());
@@ -91,6 +101,8 @@ public class ConfirmationModel extends ListModel {
 
         setReason(new EntityModel<String>());
         setReasonVisible(false);
+
+        setAlertType(AlertType.WARNING);
     }
 
     public boolean validate() {
@@ -105,5 +117,12 @@ public class ConfirmationModel extends ListModel {
         getReason().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         return getLatch().getIsValid() && getReason().getIsValid();
+    }
+
+    public enum AlertType {
+        SUCCESS,
+        INFO,
+        WARNING,
+        DANGER
     }
 }
