@@ -24,6 +24,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalPhysica
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalVolumeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVDOVolume;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -279,6 +281,14 @@ public class GlusterThinDeviceService {
     public void sendLowConfirmedSpaceEvent(Long confirmedFreeSize, GlusterVolumeEntity volume, List<Guid> sdId) {
         Long confirmedTotalSize = this.calculateConfirmedVolumeTotal(volume);
         Double percentFreeSize = (confirmedFreeSize.doubleValue() / confirmedTotalSize) * 100;
+        Integer freeSpaceThreshold = Config.getValue(ConfigValues.GlusterVolumeFreeSpaceThresholdInPercent);
+        if (percentFreeSize <= freeSpaceThreshold.doubleValue()) {
+            AuditLogable volumeEvent = new AuditLogableImpl();
+            volumeEvent.setGlusterVolumeName(volume.getName());
+            volumeEvent.setGlusterVolumeId(volume.getId());
+            volumeEvent.setRepeatable(true);
+            auditLogDirector.log(volumeEvent, AuditLogType.GLUSTER_VOLUME_CONFIRMED_SPACE_LOW);
+        }
         sdId.stream()
                 .map(storageDomainStaticDao::get)
                 .filter(s -> s.getWarningLowConfirmedSpaceIndicator() != null)

@@ -1607,6 +1607,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     UseNativeIOForGluster,
 
+    @TypeConverterAttribute(Integer.class)
+    GlusterVolumeFreeSpaceThresholdInPercent,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

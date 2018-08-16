@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalVolumeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,10 +43,12 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.utils.InjectorExtension;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith({ MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class })
 public class GlusterThinDeviceServiceTest {
+    private static final Integer LOW_SPACE_THRESHOLD_VALUE = 70;
     private static final Guid serverId = new Guid("e03104a4-399f-44e0-b61b-73bac390e49c");
     private static final Guid brickId = new Guid("929fa2ed-54a3-4500-bc34-666833797be3");
     private static final Guid sdId = new Guid("4d43b701-a689-45cf-b390-f64e5f883682");
@@ -67,6 +71,10 @@ public class GlusterThinDeviceServiceTest {
     @Spy
     @InjectMocks
     private GlusterThinDeviceService thinDeviceService;
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.GlusterVolumeFreeSpaceThresholdInPercent, LOW_SPACE_THRESHOLD_VALUE));
+    }
 
     GlusterBrickEntity brick;
 
@@ -192,7 +200,7 @@ public class GlusterThinDeviceServiceTest {
 
         StorageDomainStatic sd = new StorageDomainStatic();
         sd.setId(sdId);
-        sd.setWarningLowConfirmedSpaceIndicator(70);
+        sd.setWarningLowConfirmedSpaceIndicator(LOW_SPACE_THRESHOLD_VALUE);
         doReturn(sd).when(storageDomainStaticDao).get(sdId);
 
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
@@ -204,8 +212,9 @@ public class GlusterThinDeviceServiceTest {
 
         ArgumentCaptor<AuditLogable> event = ArgumentCaptor.forClass(AuditLogable.class);
         verify(auditLogDirector, times(1)).log(event.capture(), eq(AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW));
-
         assertThat(event.getValue().getCustomValues().get("diskspace"), is("3"));
+        verify(auditLogDirector, times(1)).log(event.capture(), eq(AuditLogType.GLUSTER_VOLUME_CONFIRMED_SPACE_LOW));
+
     }
 
     @Test
@@ -225,5 +234,6 @@ public class GlusterThinDeviceServiceTest {
 
         ArgumentCaptor<AuditLogable> event = ArgumentCaptor.forClass(AuditLogable.class);
         verify(auditLogDirector, times(0)).log(event.capture(), eq(AuditLogType.IRS_CONFIRMED_DISK_SPACE_LOW));
+        verify(auditLogDirector, times(0)).log(event.capture(), eq(AuditLogType.GLUSTER_VOLUME_CONFIRMED_SPACE_LOW));
     }
 }
