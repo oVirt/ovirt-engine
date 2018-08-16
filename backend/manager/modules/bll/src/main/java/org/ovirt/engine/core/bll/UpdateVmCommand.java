@@ -687,30 +687,28 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             QueryReturnValue query =
                     runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
             List<VmWatchdog> watchdogs = query.getReturnValue();
-            if (watchdogs.isEmpty()) {
-                if (getParameters().getWatchdog() == null) {
-                    // nothing to do, no watchdog and no watchdog to create
-                } else {
-                    WatchdogParameters parameters = new WatchdogParameters();
-                    parameters.setId(getParameters().getVmId());
-                    parameters.setAction(getParameters().getWatchdog().getAction());
-                    parameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(ActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
-                }
-            } else {
-                WatchdogParameters watchdogParameters = new WatchdogParameters();
-                watchdogParameters.setId(getParameters().getVmId());
-                if (getParameters().getWatchdog() == null) {
-                    // there is a watchdog in the vm, there should not be any, so let's delete
-                    runInternalAction(ActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
-                } else {
-                    // there is a watchdog in the vm, we have to update.
-                    watchdogParameters.setAction(getParameters().getWatchdog().getAction());
-                    watchdogParameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(ActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
-                }
+
+            if (watchdogs.isEmpty() && getParameters().getWatchdog() == null) {
+                return;
             }
 
+            WatchdogParameters parameters = new WatchdogParameters();
+            parameters.setId(getParameters().getVmId());
+
+            if (getParameters().getWatchdog() != null) {
+                parameters.setAction(getParameters().getWatchdog().getAction());
+                parameters.setModel(getParameters().getWatchdog().getModel());
+
+                if(watchdogs.isEmpty()) {
+                    runInternalAction(ActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
+                } else {
+                    // there is a watchdog in the vm, we have to update.
+                    runInternalAction(ActionType.UpdateWatchdog, parameters, cloneContextAndDetachFromParent());
+                }
+            } else {
+                // there is a watchdog in the vm, there should not be any, so let's delete
+                runInternalAction(ActionType.RemoveWatchdog, parameters, cloneContextAndDetachFromParent());
+            }
         }
     }
 
@@ -751,7 +749,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return cachedGraphics;
     }
 
-    protected void updateVmPayload() {
+    private void updateVmPayload() {
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null || getParameters().isClearPayload()) {
@@ -765,9 +763,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
 
             if (oldPayload != null) {
-                List<VmDeviceId> devs = new ArrayList<>();
-                devs.add(oldPayload.getId());
-                vmDeviceDao.removeAll(devs);
+                vmDeviceDao.remove(oldPayload.getId());
             }
 
             if (!getParameters().isClearPayload()) {
