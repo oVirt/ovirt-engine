@@ -248,7 +248,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
                 true,
                 getParameters().isPlugUnPlug(),
                 getDiskVmElement().isReadOnly(),
-                "",
+                getDeviceAliasForDisk(disk),
                 null,
                 getParameters().getSnapshotId(), null);
     }

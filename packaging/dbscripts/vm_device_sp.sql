@@ -113,12 +113,17 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateVmDeviceForHotPlugDisk (
     v_device_id UUID,
     v_vm_id UUID,
-    v_is_plugged boolean
+    v_is_plugged boolean,
+    v_alias VARCHAR(255)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_device
     SET is_plugged = v_is_plugged,
+        alias = (CASE WHEN length(v_alias) != 0
+                    THEN v_alias
+                    ELSE alias
+                END),
         _update_date = current_timestamp
     WHERE device_id = v_device_id
         AND vm_id = v_vm_id;

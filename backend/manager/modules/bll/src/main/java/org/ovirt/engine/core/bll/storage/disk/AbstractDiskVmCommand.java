@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
+import org.ovirt.engine.core.vdsbroker.libvirt.DomainXmlUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
@@ -333,5 +335,11 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     @Override
     protected boolean shouldUpdateHostedEngineOvf() {
         return true;
+    }
+
+    protected String getDeviceAliasForDisk(Disk disk) {
+        return FeatureSupported.isDomainXMLSupported(getVm().getClusterCompatibilityVersion()) ?
+                String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, disk.getId())
+                : "";
     }
 }
