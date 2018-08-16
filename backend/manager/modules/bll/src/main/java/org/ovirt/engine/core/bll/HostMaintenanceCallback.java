@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -53,6 +54,8 @@ public class HostMaintenanceCallback implements CommandCallback {
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
+    @Inject
+    private GlusterUtil glusterUtil;
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         MaintenanceVdsCommand<MaintenanceVdsParameters> maintenanceCommand =
@@ -93,6 +96,21 @@ public class HostMaintenanceCallback implements CommandCallback {
             log.info("Host '{}' is on maintenance mode. Stoping all gluster services.",
                     getHostName(parameters.getVdsId()));
             stopGlusterServices(parameters.getVdsId());
+            GlusterStatus isRunning = glusterUtil.isVDORunning(parameters.getVdsId());
+            switch (isRunning) {
+            case DOWN:
+                log.info("VDO service is down in host : '{}' , skipping stopping of VDO service",
+                        parameters.getVdsId());
+                break;
+            case UP:
+                log.info("VDO service is up in host : '{}' ,  stopping VDO service", parameters.getVdsId());
+                stopVDOService(parameters.getVdsId());
+                break;
+            case UNKNOWN:
+                log.info("VDO service is not installed host : '{}' , ignoring stop VDO service",
+                        parameters.getVdsId());
+                break;
+            }
             maintenanceCommand.setCommandStatus(CommandStatus.SUCCEEDED);
             break;
 
@@ -132,7 +150,13 @@ public class HostMaintenanceCallback implements CommandCallback {
             log.error("Failed to stop gluster services while moving the host '{}' to maintenance", getHostName(vdsId));
         }
     }
-
+    private void stopVDOService(Guid vdsId) {
+        boolean succeeded = resourceManager.runVdsCommand(VDSCommandType.ManageGlusterService,
+                new GlusterServiceVDSParameters(vdsId, Arrays.asList("vdo"), "stop")).getSucceeded();
+        if (!succeeded) {
+            log.error("Failed to stop VDO service while moving the host '{}' to maintenance", getHostName(vdsId));
+        }
+    }
     private String getHostName(Guid hostId) {
         if (hostName == null) {
             VdsStatic host = vdsStaticDao.get(hostId);
