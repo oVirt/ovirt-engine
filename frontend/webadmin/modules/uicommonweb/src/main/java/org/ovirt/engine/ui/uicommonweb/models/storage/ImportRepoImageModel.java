@@ -135,6 +135,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
                     model.cancel();
 
                     ConfirmationModel confirmModel = new ConfirmationModel();
+                    confirmModel.setAlertType(ConfirmationModel.AlertType.SUCCESS);
                     storageIsoListModel.setConfirmWindow(confirmModel);
                     confirmModel.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
                     confirmModel.setHelpTag(HelpTag.import_images);

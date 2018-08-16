@@ -12,7 +12,7 @@
             <b:Container fluid="true">
                 <b:Row>
                     <b:Column size="SM_12">
-                        <w:AlertWithIcon ui:field="messagePanel" alertType="WARNING" />
+                        <w:AlertWithIcon ui:field="messagePanel" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
