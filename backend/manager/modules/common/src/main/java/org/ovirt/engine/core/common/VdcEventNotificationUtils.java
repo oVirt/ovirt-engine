@@ -159,6 +159,7 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DEACTIVATE_FAILED);
         addEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORED);
         addEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED);
+        addEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_CONFIRMED_SPACE_LOW);
 
         // DWH
         addEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);
