@@ -544,7 +544,7 @@ class Plugin(plugin.PluginBase):
             (
                 ovn_db_config.command,
                 'set-connection',
-                'p%s:%s' % (ovn_db_config.protocol, ovn_db_config.port),
+                'p%s:%s:[::]' % (ovn_db_config.protocol, ovn_db_config.port),
             ),
             _(
                 'Failed to open {name} SSL connection'
