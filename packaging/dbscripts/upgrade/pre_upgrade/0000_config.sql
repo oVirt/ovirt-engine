@@ -44,7 +44,6 @@ select fn_db_rename_config_key('ImageProxyURL', 'ImageProxyAddress', 'general');
 --                  Add configuration values section
 ------------------------------------------------------------------------------------
 select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
-select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
 select fn_db_add_config_value('AffinityRulesEnforcementManagerEnabled', 'true', 'general');
 select fn_db_add_config_value('AffinityRulesEnforcementManagerRegularInterval', '1', 'general');
 
