@@ -770,9 +770,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     VmPoolMaxSubsequentFailures,
 
-    @TypeConverterAttribute(Boolean.class)
-    CpuPinMigrationEnabled(ClientAccessLevel.Admin),
-
     @TypeConverterAttribute(Integer.class)
     NetworkConnectivityCheckTimeoutInSeconds(ClientAccessLevel.Admin),
 

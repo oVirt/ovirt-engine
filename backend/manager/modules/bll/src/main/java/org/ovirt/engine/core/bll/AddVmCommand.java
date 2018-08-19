@@ -1177,11 +1177,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             if (!isLegalClusterId(vmStaticData.getClusterId())) {
                 return false;
             }
-
-            if (!validatePinningAndMigration()) {
-                return false;
-            }
-
         }
         return true;
     }

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -13,7 +12,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -103,19 +101,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 getEffectiveCompatibilityVersion(),
                 vmStaticFromParams.getCustomProperties(),
                 getReturnValue().getValidationMessages());
-    }
-
-    boolean validatePinningAndMigration() {
-        final boolean cpuPinMigrationEnabled = Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinMigrationEnabled));
-        VmStatic vmStaticData = getParameters().getVmStaticData();
-        if (!cpuPinMigrationEnabled
-                && (vmStaticData.getMigrationSupport() == MigrationSupport.MIGRATABLE
-                || vmStaticData.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)
-                && StringUtils.isNotEmpty(getParameters().getVm().getCpuPinning())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE);
-        }
-
-        return true;
     }
 
     protected boolean isVmWithSameNameExists(String name, Guid storagePoolId) {

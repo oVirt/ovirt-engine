@@ -1031,10 +1031,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!validatePinningAndMigration()) {
-            return false;
-        }
-
         if (vmFromParams.isUseHostCpuFlags()
                 && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_HOSTCPU_CANNOT_BE_AUTO_MIGRATABLE);

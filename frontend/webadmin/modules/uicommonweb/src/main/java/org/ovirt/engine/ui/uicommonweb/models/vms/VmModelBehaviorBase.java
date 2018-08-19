@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -827,13 +826,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             // cpu pinning is available on Local SD with no consideration for auto assign value
             boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity()) || isLocalSD;
-
-            if (Boolean.FALSE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.CpuPinMigrationEnabled,
-                    AsyncDataProvider.getInstance().getDefaultConfigurationVersion()))
-                    && isVmMigratable()
-                    && !isLocalSD) {
-                hasCpuPinning = false;
-            }
 
             getModel().getCpuPinning().setIsChangeable(hasCpuPinning);
             if (!hasCpuPinning) {
