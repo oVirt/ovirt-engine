@@ -99,7 +99,8 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
                 .append("removedNetworks", getRemovedNetworks())
                 .append("bonds", getCreateOrUpdateBonds())
                 .append("removedBonds", getRemovedBonds())
-                .append("clusterSwitchType", getClusterSwitchType());
+                .append("clusterSwitchType", getClusterSwitchType())
+                .append("managementNetworkChanged", isManagementNetworkChanged());
     }
 
     public boolean isManagementNetworkChanged() {
