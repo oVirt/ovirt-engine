@@ -128,9 +128,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     protected long convertUnitsToBytes(long size, int power) {
-        if (power == 0) {
-            return size;
-        } else if (power == 10) {
+        if (power == 10) {
             return size * BYTES_IN_KB;
         } else if (power == 20) {
             return size * BYTES_IN_MB;
@@ -139,6 +137,7 @@ public abstract class OvfReader implements IOvfBuilder {
         } else if (power == 40) {
             return size * BYTES_IN_TB;
         }
+        return size;
     }
 
     protected void readDisk(XmlNode node, DiskImage image) {
