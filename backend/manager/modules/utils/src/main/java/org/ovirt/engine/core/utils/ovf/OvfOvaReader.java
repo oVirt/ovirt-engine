@@ -210,7 +210,7 @@ public abstract class OvfOvaReader extends OvfReader {
             virtualSize = convertUnitsToBytes(virtualSize, 20);
         } else if ("byte * 2^10".equals(capacityUnits.getValue())) {
             virtualSize = convertUnitsToBytes(virtualSize, 10);
-	}
+        }
 
         image.setSize(virtualSize);
         XmlAttribute populatedSize = node.attributes.get("ovf:populatedSize");
