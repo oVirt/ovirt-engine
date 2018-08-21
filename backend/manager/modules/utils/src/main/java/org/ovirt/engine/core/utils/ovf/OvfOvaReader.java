@@ -203,13 +203,13 @@ public abstract class OvfOvaReader extends OvfReader {
 
         // By default, we assume virtualSize is in bytes
         if ("byte * 2^40".equals(capacityUnits.getValue())) {
-            virtualSize = virtualSize * BYTES_IN_TB;
+            virtualSize = convertUnitsToBytes(virtualSize,40);
         } else if ("byte * 2^30".equals(capacityUnits.getValue())) {
-            virtualSize = virtualSize * BYTES_IN_GB;
+            virtualSize = convertUnitsToBytes(virtualSize,30);
         } else if ("byte * 2^20".equals(capacityUnits.getValue())) {
-            virtualSize = virtualSize * BYTES_IN_MB;
+            virtualSize = convertUnitsToBytes(virtualSize,20);
         } else if ("byte * 2^10".equals(capacityUnits.getValue())) {
-            virtualSize = virtualSize * BYTES_IN_KB;
+            virtualSize = convertUnitsToBytes(virtualSize,10);
 	}
 
         image.setSize(virtualSize);
