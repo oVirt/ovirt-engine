@@ -127,8 +127,17 @@ public abstract class OvfReader implements IOvfBuilder {
         // No implementation - networks aren't read from the OVF.
     }
 
-    protected long convertGigabyteToBytes(long gb) {
-        return gb * BYTES_IN_GB;
+    protected long convertUnitsToBytes(long size, int power) {
+        if (power == 10) {
+            return size * BYTES_IN_KB;
+        } else if (power == 20) {
+            return size * BYTES_IN_MB;
+        } else if (power == 30) {
+            return size * BYTES_IN_GB;
+        } else if (power == 40) {
+            return size * BYTES_IN_TB;
+        }
+        return size;
     }
 
     protected void readDisk(XmlNode node, DiskImage image) {

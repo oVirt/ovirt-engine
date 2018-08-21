@@ -15,7 +15,10 @@ public interface IOvfBuilder extends OvfProperties {
     String XSI_PREFIX = "xsi";
     String OVIRT_PREFIX = "ovirt";
 
+    int BYTES_IN_TB = 1024 * 1024 * 1024 * 1024;
     int BYTES_IN_GB = 1024 * 1024 * 1024;
+    int BYTES_IN_MB = 1024 * 1024;
+    int BYTES_IN_KB = 1024;
 
     void buildReference();
 

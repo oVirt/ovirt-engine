@@ -225,11 +225,11 @@ public abstract class OvfOvirtReader extends OvfReader {
         super.readDisk(node, image);
 
         if (!StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
-            image.setSize(convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue())));
+            image.setSize(convertUnitsToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue()), 10));
         }
         if (!StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
             image.setActualSizeInBytes(
-                    convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue())));
+                    convertUnitsToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue()), 10));
         }
     }
 

@@ -199,11 +199,19 @@ public abstract class OvfOvaReader extends OvfReader {
         image.setDescription(description != null ? description.getValue() : diskId);
         XmlAttribute capacity = node.attributes.get("ovf:capacity");
         XmlAttribute capacityUnits = node.attributes.get("ovf:capacityAllocationUnits");
-        boolean capacityInBytes = capacityUnits == null || "byte".equals(capacityUnits.getValue());
         long virtualSize = Long.parseLong(capacity.getValue());
-        if (!capacityInBytes) {
-            virtualSize = convertGigabyteToBytes(virtualSize); // TODO: support different capacity units
+
+        // By default, we assume virtualSize is in bytes
+        if ("byte * 2^40".equals(capacityUnits.getValue())) {
+            virtualSize = convertUnitsToBytes(virtualSize, 40);
+        } else if ("byte * 2^30".equals(capacityUnits.getValue())) {
+            virtualSize = convertUnitsToBytes(virtualSize, 30);
+        } else if ("byte * 2^20".equals(capacityUnits.getValue())) {
+            virtualSize = convertUnitsToBytes(virtualSize, 20);
+        } else if ("byte * 2^10".equals(capacityUnits.getValue())) {
+            virtualSize = convertUnitsToBytes(virtualSize, 10);
         }
+
         image.setSize(virtualSize);
         XmlAttribute populatedSize = node.attributes.get("ovf:populatedSize");
         if (populatedSize != null) {
