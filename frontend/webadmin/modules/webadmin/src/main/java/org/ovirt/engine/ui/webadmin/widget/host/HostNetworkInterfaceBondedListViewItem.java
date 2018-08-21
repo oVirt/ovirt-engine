@@ -155,7 +155,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
                 return totalRenderer.render(hostInterface.getRxTotal());
             }
         };
-        slavesTable.addColumn(rxTotal, templates.sub(constants.rxTotal(), constants.mbps()));
+        slavesTable.addColumn(rxTotal, templates.sub(constants.rxTotal(), constants.bytes()));
 
         TextColumn<HostInterface> txTotal = new TextColumn<HostInterface>() {
             @Override
@@ -163,7 +163,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
                 return totalRenderer.render(hostInterface.getTxTotal());
             }
         };
-        slavesTable.addColumn(txTotal, templates.sub(constants.txTotal(), constants.mbps()));
+        slavesTable.addColumn(txTotal, templates.sub(constants.txTotal(), constants.bytes()));
 
         TextColumn<HostInterface> dropRate = new TextColumn<HostInterface>() {
             @Override
