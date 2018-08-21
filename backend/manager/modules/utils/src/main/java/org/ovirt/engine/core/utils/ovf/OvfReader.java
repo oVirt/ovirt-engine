@@ -127,6 +127,20 @@ public abstract class OvfReader implements IOvfBuilder {
         // No implementation - networks aren't read from the OVF.
     }
 
+    protected long convertUnitsToBytes(long size, int power) {
+        if (power == 0) {
+            return size;
+        } else if (power == 10) {
+            return size * BYTES_IN_KB;
+        } else if (power == 20) {
+            return size * BYTES_IN_MB;
+        } else if (power == 30) {
+            return size * BYTES_IN_GB;
+        } else if (power == 40) {
+            return size * BYTES_IN_TB;
+        }
+    }
+
     protected void readDisk(XmlNode node, DiskImage image) {
         image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
         DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
