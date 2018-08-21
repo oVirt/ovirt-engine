@@ -201,7 +201,7 @@ public abstract class OvfOvaReader extends OvfReader {
         XmlAttribute capacityUnits = node.attributes.get("ovf:capacityAllocationUnits");
         long virtualSize = Long.parseLong(capacity.getValue());
 
-	# By default,we  assume virtualSize is in bytes
+        # By default, we assume virtualSize is in bytes
         if ("byte * 2^40".equals(capacityUnits.getValue())) {
             virtualSize = virtualSize * BYTES_IN_TB;
         } else if ("byte * 2^30".equals(capacityUnits.getValue())) {
