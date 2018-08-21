@@ -1254,9 +1254,7 @@ public class VmDeviceUtils {
      * Remove all devices in the list.
      */
     public void removeVmDevices(List<VmDevice> devices) {
-        for (VmDevice device : devices) {
-            vmDeviceDao.remove(device.getId());
-        }
+        devices.stream().map(VmDevice::getId).forEach(vmDeviceDao::remove);
     }
 
     /**
@@ -1264,11 +1262,7 @@ public class VmDeviceUtils {
      */
     public void removeVmDevices(List<VmDevice> devices, int numberOfDevicesToRemove) {
         int size = devices.size();
-        for (int index = 1; index <= numberOfDevicesToRemove; index++) {
-            if (size >= index) {
-                vmDeviceDao.remove(devices.get(size - index).getId());
-            }
-        }
+        removeVmDevices(devices.subList(Math.max(size - numberOfDevicesToRemove, 0), size));
     }
 
     /**
