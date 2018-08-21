@@ -82,6 +82,7 @@ public class GlusterThinDeviceServiceTest {
         BrickProperties brickProperties = new BrickProperties();
         brickProperties.setConfirmedTotalSize(confirmedTotalSize);
         brickProperties.setConfirmedFreeSize(confirmedFreeSize);
+        brickProperties.setVdoSavings(80);
         brickProperties.setDevice(device);
 
         BrickDetails brickDetails = new BrickDetails();
@@ -129,6 +130,9 @@ public class GlusterThinDeviceServiceTest {
         long volumeConfirmedCapacity = thinDeviceService.calculateConfirmedVolumeCapacity(volumeEntity);
         long value = (long) (500.1 * SizeConverter.BYTES_IN_MB);
         assertEquals(value, volumeConfirmedCapacity);
+
+        int volumeConfirmedSavings = thinDeviceService.calculateVolumeSavings(volumeEntity);
+        assertEquals(80, volumeConfirmedSavings);
     }
 
     @Test
@@ -141,6 +145,9 @@ public class GlusterThinDeviceServiceTest {
         long volumeConfirmedCapacity = thinDeviceService.calculateConfirmedVolumeCapacity(volumeEntity);
         long expectedValue = (long) (500.1 * SizeConverter.BYTES_IN_MB) + (long) (400.2 * SizeConverter.BYTES_IN_MB);
         assertEquals(expectedValue, volumeConfirmedCapacity);
+
+        int volumeConfirmedSavings = thinDeviceService.calculateVolumeSavings(volumeEntity);
+        assertEquals(80, volumeConfirmedSavings);
     }
 
     @Test
@@ -155,6 +162,9 @@ public class GlusterThinDeviceServiceTest {
         long volumeConfirmedCapacity = thinDeviceService.calculateConfirmedVolumeCapacity(volumeEntity);
         long expectedValue = (long) (200.2 * SizeConverter.BYTES_IN_MB);
         assertEquals(expectedValue, volumeConfirmedCapacity);
+
+        int volumeConfirmedSavings = thinDeviceService.calculateVolumeSavings(volumeEntity);
+        assertEquals(80, volumeConfirmedSavings);
     }
 
     @Test
@@ -172,6 +182,9 @@ public class GlusterThinDeviceServiceTest {
         long volumeConfirmedCapacity = thinDeviceService.calculateConfirmedVolumeCapacity(volumeEntity);
         long expectedValue = (long) (200.2 * SizeConverter.BYTES_IN_MB + 300.2 * SizeConverter.BYTES_IN_MB);
         assertEquals(expectedValue, volumeConfirmedCapacity);
+
+        int volumeConfirmedSavings = thinDeviceService.calculateVolumeSavings(volumeEntity);
+        assertEquals(80, volumeConfirmedSavings);
     }
 
     @Test
