@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
@@ -121,6 +122,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getCluster(),
                 getParameters().getGraphicsDevices());
         vmHandler.autoSelectResumeBehavior(getParameters().getVmTemplateData(), getCluster());
+
+        getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
     }
 
     @Override
@@ -366,19 +369,23 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVmTemplate().getCompatibilityVersion());
         }
 
+        // This cannot be reverted using compensation, but it should not be needed
         vmStaticDao.incrementDbGeneration(getVmTemplate().getId());
+
         updateOriginalTemplateNameOnDerivedVms();
         List<Guid> oldIconIds = Collections.emptyList();
         if (isTemplate()) {
             oldIconIds = iconUtils.updateVmIcon(oldTemplate, getVmTemplate(), getParameters().getVmLargeIcon());
         }
         updateVmTemplate();
-        iconUtils.removeUnusedIcons(oldIconIds);
+        iconUtils.removeUnusedIcons(oldIconIds, getCompensationContextIfEnabledByCaller());
         updateWatchdog(getParameters().getVmTemplateData().getId());
         updateRngDevice(getParameters().getVmTemplateData().getId());
         updateGraphicsDevice();
         checkTrustedService();
         updateVmsOfInstanceType();
+
+        compensationStateChanged();
         setSucceeded(true);
     }
 
@@ -389,6 +396,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (!isInstanceType()) {
             return;
         }
+
+        // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+        // and it does not update instances.
+        // TODO - Add compensation support if needed.
+        throwIfCompensationEnabled();
 
         // get vms from db
         List<VM> vmsToUpdate = vmDao.getVmsListByInstanceType(getVmTemplateId());
@@ -419,13 +431,17 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private void updateOriginalTemplateNameOnDerivedVms() {
         boolean templateNameChanged = !Objects.equals(oldTemplate.getName(), getVmTemplate().getName());
         if (templateNameChanged) {
+            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+            // and it does not change the template name.
+            // TODO - Add compensation support if needed.
+            throwIfCompensationEnabled();
             vmDao.updateOriginalTemplateName(getVmTemplate().getId(), getVmTemplate().getName());
         }
     }
 
     private void updateVmTemplate() {
-        vmHandler.updateVmInitToDB(getVmTemplate());
-        vmTemplateDao.update(getVmTemplate());
+        vmHandler.updateVmInitToDB(getVmTemplate(), getCompensationContextIfEnabledByCaller());
+        CompensationUtils.updateEntity(getVmTemplate(), vmTemplateDao, getCompensationContextIfEnabledByCaller());
         // also update the smartcard device
         getVmDeviceUtils().updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
         // update audio device
@@ -443,6 +459,19 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             getVmDeviceUtils().updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
         }
         getVmDeviceUtils().updateVideoDevices(oldTemplate, getParameters().getVmTemplateData());
+    }
+
+    @Override
+    protected void updateWatchdog(Guid templateId) {
+        if (!getParameters().isUpdateWatchdog()) {
+            return;
+        }
+
+        // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+        // and it does not update watchdog.
+        // TODO - Add compensation support if needed.
+        throwIfCompensationEnabled();
+        super.updateWatchdog(templateId);
     }
 
     @Override
@@ -551,19 +580,22 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
-                    backend.runInternalAction(ActionType.AddGraphicsDevice, parameters);
+                    parameters.setCompensationEnabled(isCompensationEnabledByCaller());
+                    runInternalAction(ActionType.AddGraphicsDevice, parameters, cloneContextWithNoCleanupCompensation());
                 }
             } else {
                 if (getParameters().getGraphicsDevices().get(type) == null) {
                     GraphicsParameters parameters = new GraphicsParameters(vmGraphicsDevice);
                     parameters.setVm(false);
-                    backend.runInternalAction(ActionType.RemoveGraphicsDevice, parameters);
+                    parameters.setCompensationEnabled(isCompensationEnabledByCaller());
+                    runInternalAction(ActionType.RemoveGraphicsDevice, parameters, cloneContextWithNoCleanupCompensation());
                 } else {
                     getParameters().getGraphicsDevices().get(type).setDeviceId(vmGraphicsDevice.getDeviceId());
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
-                    backend.runInternalAction(ActionType.UpdateGraphicsDevice, parameters);
+                    parameters.setCompensationEnabled(isCompensationEnabledByCaller());
+                    runInternalAction(ActionType.UpdateGraphicsDevice, parameters, cloneContextWithNoCleanupCompensation());
                 }
             }
         }
