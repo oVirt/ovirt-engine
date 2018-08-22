@@ -9,6 +9,7 @@ public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandPar
     private long size;
     private String url;
     private String filename;
+    private boolean sparse;
 
     public AddImageTicketVDSCommandParameters() {
     }
@@ -19,12 +20,14 @@ public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandPar
             long timeout,
             long size,
             String url,
-            String filename) {
+            String filename,
+            boolean sparse) {
         super(vdsId, ticketId, timeout);
         this.operations = operations;
         this.size = size;
         this.url = url;
         this.filename = filename;
+        this.sparse = sparse;
     }
 
     public String[] getOperations() {
@@ -43,12 +46,21 @@ public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandPar
         return filename;
     }
 
+    public boolean isSparse() {
+        return sparse;
+    }
+
+    public void setSparse(boolean sparse) {
+        this.sparse = sparse;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("operations", getOperations())
                 .append("size", getSize())
                 .append("url", getUrl())
-                .append("filename", getFilename());
+                .append("filename", getFilename())
+                .append("sparse", isSparse());
     }
 }

@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -608,13 +609,17 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
 
         String[] transferOps = new String[] {getParameters().getTransferType().getAllowedOperation()};
+        // Sparse is not supported yet for block storage in imageio. See BZ#1619006.
+        boolean sparse = getDiskImage().getVolumeType() == VolumeType.Sparse &&
+                getStorageDomain().getStorageType().isFileDomain();
         AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
                 imagedTicketId,
                 transferOps,
                 timeout,
                 getParameters().getTransferSize(),
                 imagePath,
-                getParameters().getDownloadFilename());
+                getParameters().getDownloadFilename(),
+                sparse);
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
