@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -44,7 +45,10 @@ public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
     @Override
     protected void executeCommand() {
         VmDevice rngDevice = getParameters().getRngDevice();
-        vmDeviceDao.update(rngDevice);
+
+        CompensationUtils.updateEntity(rngDevice, vmDeviceDao, getCompensationContextIfEnabledByCaller());
+        compensationStateChanged();
+
         setSucceeded(true);
     }
 }

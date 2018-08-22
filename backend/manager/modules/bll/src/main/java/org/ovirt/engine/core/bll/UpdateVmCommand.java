@@ -205,6 +205,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none && !getParameters().isConsoleEnabled()) {
             getParameters().getVmStaticData().setUsbPolicy(UsbPolicy.DISABLED);
         }
+
+        getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {
@@ -235,12 +237,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (isRunningConfigurationNeeded()) {
             logNameChange();
             vmHandler.createNextRunSnapshot(
-                    getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
+                    getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContextIfEnabledByCaller());
             vmHandler.setVmDestroyOnReboot(getVm());
         }
 
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
+
+        // This cannot be reverted using compensation, but it should not be needed
         vmStaticDao.incrementDbGeneration(getVm().getId());
+
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         newVmStatic.setQuotaId(getQuotaId());
 
@@ -286,7 +291,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         final List<Guid> oldIconIds = iconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
+
+        if (isCompensationEnabledByCaller()) {
+            VmStatic oldStatic = oldVm.getStaticData();
+            getCompensationContext().snapshotEntityUpdated(oldStatic);
+        }
         resourceManager.getVmManager(getVmId()).update(newVmStatic);
+
         // Hosted Engine doesn't use next-run snapshots. Instead it requires the configuration
         // for next run to be stored in vm_static table.
         if (getVm().isNotRunning() || getVm().isHostedEngine()) {
@@ -298,11 +309,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateVmHostDevices();
             updateDeviceAddresses();
         }
-        iconUtils.removeUnusedIcons(oldIconIds);
-        vmHandler.updateVmInitToDB(getParameters().getVmStaticData());
+        iconUtils.removeUnusedIcons(oldIconIds, getCompensationContextIfEnabledByCaller());
+        vmHandler.updateVmInitToDB(getParameters().getVmStaticData(), getCompensationContextIfEnabledByCaller());
 
         checkTrustedService();
         liveUpdateCpuProfile();
+
+        // Persist all data in compensation context.
+        // It can be done here at the end, because the whole command runs in a transaction.
+        compensationStateChanged();
+
         setSucceeded(true);
     }
 
@@ -318,6 +334,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (Objects.equals(oldVm.getLeaseStorageDomainId(), newVmStatic.getLeaseStorageDomainId())) {
             return true;
         }
+
+        // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+        // and it does not update VM leases.
+        // TODO - Add compensation support if needed.
+        throwIfCompensationEnabled();
 
         if (getVm().isNotRunning()) {
             if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId(), false)) {
@@ -361,6 +382,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void updateVmHostDevices() {
         if (isDedicatedVmForVdsChanged()) {
+            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+            // and it does not change preferred hosts of the VM.
+            // TODO - Add compensation support if needed.
+            throwIfCompensationEnabled();
+
             log.info("Pinned host changed for VM: {}. Dropping configured host devices.", getVm().getName());
             vmDeviceDao.removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
         }
@@ -388,8 +414,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             setSucceeded(result.getSucceeded());
             setActionReturnValue(ActionType.UpdateVmVersion);
         } else {
-            vmHandler.createNextRunSnapshot(
-                    getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
+            vmHandler.createNextRunSnapshot(getVm(),
+                    getParameters().getVmStaticData(),
+                    getParameters(),
+                    getCompensationContextIfEnabledByCaller());
+
             setSucceeded(true);
         }
     }
@@ -408,16 +437,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (rngDevs.isEmpty()) {
             if (getParameters().getRngDevice() != null) {
                 RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
-                rngCommandResult = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
+                params.setCompensationEnabled(isCompensationEnabledByCaller());
+                rngCommandResult = runInternalAction(ActionType.AddRngDevice, params, cloneContextWithNoCleanupCompensation());
             }
         } else {
             if (getParameters().getRngDevice() == null) {
                 RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), true);
-                rngCommandResult = runInternalAction(ActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
+                params.setCompensationEnabled(isCompensationEnabledByCaller());
+                rngCommandResult = runInternalAction(ActionType.RemoveRngDevice, params, cloneContextWithNoCleanupCompensation());
             } else {
                 RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
+                params.setCompensationEnabled(isCompensationEnabledByCaller());
                 params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                rngCommandResult = runInternalAction(ActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
+                rngCommandResult = runInternalAction(ActionType.UpdateRngDevice, params, cloneContextWithNoCleanupCompensation());
             }
         }
 
@@ -432,6 +464,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void updateDeviceAddresses() {
         if (isEmulatedMachineChanged()) {
+            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+            // and it does not change emulated machine or chipset.
+            // TODO - Add compensation support if needed.
+            throwIfCompensationEnabled();
+
             log.info("Emulated machine changed for VM: {} ({}). Clearing device addresses.",
                     getVm().getName(),
                     getVm().getId());
@@ -687,6 +724,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void updateWatchdog() {
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
+            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+            // and it does not update watchdog.
+            // TODO - Add compensation support if needed.
+            throwIfCompensationEnabled();
+
             QueryReturnValue query =
                     runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
             List<VmWatchdog> watchdogs = query.getReturnValue();
@@ -727,8 +769,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void removeGraphicsDevice(GraphicsType type) {
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(type);
         if (existingGraphicsDevice != null) {
-            backend.runInternalAction(ActionType.RemoveGraphicsDevice,
-                    new GraphicsParameters(existingGraphicsDevice));
+            GraphicsParameters params = new GraphicsParameters(existingGraphicsDevice);
+            params.setCompensationEnabled(isCompensationEnabledByCaller());
+
+            backend.runInternalAction(ActionType.RemoveGraphicsDevice, params, cloneContextWithNoCleanupCompensation());
         }
     }
 
@@ -739,9 +783,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         device.setVmId(getVmId());
+
+        GraphicsParameters params = new GraphicsParameters(device);
+        params.setCompensationEnabled(isCompensationEnabledByCaller());
+
         backend.runInternalAction(
                 existingGraphicsDevice == null ? ActionType.AddGraphicsDevice : ActionType.UpdateGraphicsDevice,
-                new GraphicsParameters(device));
+                params,
+                cloneContextWithNoCleanupCompensation());
     }
 
     private GraphicsDevice getGraphicsDevOfType(GraphicsType type) {
@@ -760,6 +809,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null || getParameters().isClearPayload()) {
+            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+            // and it does not update VM payload.
+            // TODO - Add compensation support if needed.
+            throwIfCompensationEnabled();
+
             List<VmDevice> disks = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.DISK);
             VmDevice oldPayload = null;
             for (VmDevice disk : disks) {
@@ -787,6 +841,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void updateVmNetworks() {
         // check if the cluster has changed
         if (!Objects.equals(getVm().getClusterId(), getParameters().getVmStaticData().getClusterId())) {
+            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+            // and it does not change cluster ID.
+            // TODO - Add compensation support if needed.
+            throwIfCompensationEnabled();
+
             List<Network> networks =
                     networkDao.getAllForCluster(getParameters().getVmStaticData().getClusterId());
             List<VmNic> interfaces = vmNicDao.getAllForVm(getParameters().getVmStaticData().getId());
@@ -809,9 +868,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getParameters().isUpdateNuma()) {
             return;
         }
+
+        // Currently, compensation is only used when this command is called from UpdateClusterCommand,
+        // and it does not change NUMA nodes.
+        // TODO - Add compensation support if needed.
+        throwIfCompensationEnabled();
+
         List<VmNumaNode> newList = getParameters().getVmStaticData().getvNumaNodeList();
         VmNumaNodeOperationParameters params =
                 new VmNumaNodeOperationParameters(getParameters().getVm(), new ArrayList<>(newList));
+
         addLogMessages(backend.runInternalAction(ActionType.SetVmNumaNodes, params));
 
     }
@@ -1481,6 +1547,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());
+
+        // Currently, this method does not use compensation to revert this operation,
+        // because affinity groups are not changed when this command is called as a child of
+        // UpdateClusterCommand.
         labelDao.updateLabelsForVm(getVmId(), labelIds);
     }
 

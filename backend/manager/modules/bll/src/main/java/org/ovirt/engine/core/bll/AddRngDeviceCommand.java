@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -47,7 +48,10 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
         if (rngDevice.getDeviceId() == null) {
             rngDevice.setDeviceId(Guid.newGuid());
         }
-        vmDeviceDao.save(rngDevice);
+
+        CompensationUtils.saveEntity(rngDevice, vmDeviceDao, getCompensationContextIfEnabledByCaller());
+        compensationStateChanged();
+
         setActionReturnValue(rngDevice.getDeviceId());
         setSucceeded(true);
     }
