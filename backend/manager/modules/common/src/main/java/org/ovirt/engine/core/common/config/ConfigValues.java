@@ -1507,6 +1507,9 @@ public enum ConfigValues {
     VmLeasesSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
+    CopyPreallocatedFileBasedDiskSupported,
+
+    @TypeConverterAttribute(Boolean.class)
     DomainXML,
 
     @TypeConverterAttribute(Boolean.class)

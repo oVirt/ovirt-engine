@@ -100,6 +100,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -1218,13 +1219,23 @@ public class AsyncDataProvider {
         }
     }
 
-    public VolumeType getVolumeType(VolumeFormat volumeFormat, StorageType storageType) {
+    public VolumeType getVolumeType(VolumeFormat volumeFormat, StorageType storageType, VM vm, Image diskImage) {
         switch (volumeFormat) {
         case COW:
             return VolumeType.Sparse;
         case RAW:
         default:
-            return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
+            boolean copyPreallocatedFileBasedDiskSupported =
+                    vm != null ? isCopyPreallocatedFileBasedDiskSupported(vm.getCompatibilityVersion()) : false;
+            // if diskImage provided it means that we want to use the source image volume type,
+            // otherwise we set the volume type as sparse by default for file-based storage domain
+            VolumeType fileBasedVolumeType;
+            if (copyPreallocatedFileBasedDiskSupported) {
+                fileBasedVolumeType = diskImage != null ? diskImage.getVolumeType() : VolumeType.Sparse;
+            } else {
+                fileBasedVolumeType = VolumeType.Sparse;
+            }
+            return storageType.isFileDomain() ? fileBasedVolumeType : VolumeType.Preallocated;
         }
     }
 
@@ -3252,6 +3263,11 @@ public class AsyncDataProvider {
     public boolean isPassDiscardFeatureSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(
                 ConfigValues.PassDiscardSupported, dataCenterVersion.getValue());
+    }
+
+    public Boolean isCopyPreallocatedFileBasedDiskSupported(Version dataCenterVersion) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigValues.CopyPreallocatedFileBasedDiskSupported, dataCenterVersion.getValue());
     }
 
     public boolean isVmLeasesFeatureSupported(Version clusterVersion) {

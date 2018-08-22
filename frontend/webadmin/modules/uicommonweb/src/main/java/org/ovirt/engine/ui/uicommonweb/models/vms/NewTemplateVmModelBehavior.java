@@ -210,6 +210,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             : AsyncDataProvider.getInstance().getVolumeTypeList(), diskImage.getVolumeType());
                     diskModel.setVolumeType(volumes);
                     diskModel.getAlias().setEntity(diskImage.getDiskAlias());
+                    diskModel.setVm(getVm());
                     break;
                 case CINDER:
                     CinderDisk cinderDisk = (CinderDisk) disk;
