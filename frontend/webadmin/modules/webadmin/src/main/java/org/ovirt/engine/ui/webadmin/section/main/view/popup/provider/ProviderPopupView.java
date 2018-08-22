@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
 import org.gwtbootstrap3.client.ui.Row;
+import org.ovirt.engine.core.common.businessentities.OpenStackApiVersionType;
+import org.ovirt.engine.core.common.businessentities.OpenStackProtocolType;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -19,6 +21,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -101,6 +104,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @WithElementId
     EntityModelCheckBoxEditor requiresAuthenticationEditor;
 
+    @UiField(provided = true)
+    @Path(value = "authApiVersion.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<OpenStackApiVersionType> authApiVersionEditor;
+
     @UiField
     @Path(value = "username.entity")
     @WithElementId
@@ -111,15 +119,40 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @WithElementId
     StringEntityModelPasswordBoxEditor passwordEditor;
 
+    @UiField(provided = true)
+    @Path(value = "authProtocol.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<OpenStackProtocolType> authProtocolEditor;
+
+    @UiField
+    @Path(value = "authHostname.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor authHostnameEditor;
+
+    @UiField
+    @Path(value = "authPort.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor authPortEditor;
+
+    @UiField
+    @Path(value = "userDomainName.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor userDomainNameEditor;
+
+    @UiField
+    @Path(value = "projectName.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor projectNameEditor;
+
+    @UiField
+    @Path(value = "projectDomainName.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor projectDomainNameEditor;
+
     @UiField
     @Path(value = "tenantName.entity")
     @WithElementId
     StringEntityModelTextBoxEditor tenantNameEditor;
-
-    @UiField
-    @Path(value = "authUrl.entity")
-    @WithElementId
-    StringEntityModelTextBoxEditor authUrlEditor;
 
     @UiField
     @Path(value = "pluginType.selectedItem")
@@ -172,6 +205,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus);
 
         typeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
+        authApiVersionEditor = new ListModelListBoxEditor<>(new NameRenderer());
         autoSyncEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isUnmanagedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         datacenterEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StoragePool>() {
@@ -182,6 +216,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
             }
         });
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        authProtocolEditor = new ListModelListBoxEditor<>(new NameRenderer());
         readOnlyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -285,8 +320,14 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         requiresAuthenticationEditor.setTabIndex(nextTabIndex++);
         usernameEditor.setTabIndex(nextTabIndex++);
         passwordEditor.setTabIndex(nextTabIndex++);
+        authProtocolEditor.setTabIndexes(nextTabIndex++);
+        authHostnameEditor.setTabIndexes(nextTabIndex++);
+        authPortEditor.setTabIndexes(nextTabIndex++);
+        authApiVersionEditor.setTabIndexes(nextTabIndex++);
+        userDomainNameEditor.setTabIndexes(nextTabIndex++);
+        projectNameEditor.setTabIndexes(nextTabIndex++);
+        projectDomainNameEditor.setTabIndexes(nextTabIndex++);
         tenantNameEditor.setTabIndex(nextTabIndex++);
-        authUrlEditor.setTabIndex(nextTabIndex++);
         testButton.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }

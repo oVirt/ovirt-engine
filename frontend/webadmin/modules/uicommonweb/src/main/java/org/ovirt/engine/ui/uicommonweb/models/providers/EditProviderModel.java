@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.OpenStackApiVersionType;
+import org.ovirt.engine.core.common.businessentities.OpenStackProtocolType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -48,7 +51,17 @@ public class EditProviderModel extends ProviderModel {
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
         getUsername().setEntity(provider.getUsername());
         getPassword().setEntity(provider.getPassword());
-        getAuthUrl().setEntity(provider.getAuthUrl());
+        if (provider.isRequiringAuthentication() && provider.getType().isAuthUrlAware()) {
+            Uri uri = new Uri(provider.getAuthUrl());
+            if (uri.isValid()) {
+                getAuthProtocol().setSelectedItem(Uri.SCHEME_HTTPS.equals(uri.getScheme()) ?
+                        OpenStackProtocolType.https : OpenStackProtocolType.http);
+
+                getAuthHostname().setEntity(uri.getAuthority().getHost());
+                getAuthPort().setEntity(uri.getAuthority().getPort());
+                getAuthApiVersion().setSelectedItem(getOpenStackApiVersionType(uri));
+            }
+        }
 
         if (isTypeNetwork()) {
             getNeutronAgentModel().init(provider, getType().getSelectedItem());
@@ -70,6 +83,16 @@ public class EditProviderModel extends ProviderModel {
         }
 
         oldUrl = provider.getUrl();
+    }
+
+    private OpenStackApiVersionType getOpenStackApiVersionType(Uri uri) {
+        String[] segments = uri.getPathSegments();
+        if (segments != null && segments.length > 1) {
+            if (OpenStackApiVersionType.v2_0.getName().equals(segments[1])) {
+                return OpenStackApiVersionType.v2_0;
+            }
+        }
+        return OpenStackApiVersionType.v3;
     }
 
     @Override

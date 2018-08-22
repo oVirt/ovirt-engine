@@ -24,33 +24,45 @@ public class Uri {
     private String scheme;
     private UriAuthority authority;
     private String path;
+    private String stringRepresentation;
 
     public Uri(String uri) {
+        initialize(uri);
+    }
+
+    public Uri(String scheme, String authority, String path) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (scheme != null  && !scheme.isEmpty()) {
+            stringBuilder.append(scheme);
+            stringBuilder.append("://"); //$NON-NLS-1$
+        }
+        if (authority != null) {
+            stringBuilder.append(authority);
+        }
+        if (path != null) {
+            stringBuilder.append(path);
+        }
+        String candidate = stringBuilder.toString();
+
+        initialize(candidate);
+    }
+
+    private void initialize(String uri) {
         MatchResult matcher = PATTERN_URI.exec(uri == null ? "" : uri); //$NON-NLS-1$
         valid = matcher != null;
         if (valid) {
             setScheme(matcher.getGroup(1));
             setAuthority(new UriAuthority(matcher.getGroup(2)));
             setPath(matcher.getGroup(3));
+            stringRepresentation = uri;
         }
-    }
-
-    public Uri() {
-        this(null);
     }
 
     public String getStringRepresentation() {
         if (!valid) {
             return null;
         }
-
-        String uri = ""; //$NON-NLS-1$
-        if (!scheme.isEmpty()) {
-            uri += scheme + "://"; //$NON-NLS-1$
-        }
-        uri += authority.getStringRepresentation();
-        uri += path;
-        return uri;
+        return stringRepresentation;
     }
 
     public boolean isValid() {
@@ -61,7 +73,7 @@ public class Uri {
         return valid ? scheme : null;
     }
 
-    public void setScheme(String scheme) {
+    private void setScheme(String scheme) {
         this.scheme = (scheme == null) ? "" : scheme; //$NON-NLS-1$
     }
 
@@ -69,7 +81,7 @@ public class Uri {
         return valid ? authority : null;
     }
 
-    public void setAuthority(UriAuthority authority) {
+    private void setAuthority(UriAuthority authority) {
         this.authority = (authority == null) ? new UriAuthority(null) : authority;
         if (!this.authority.isValid()) {
             valid = false;
@@ -80,7 +92,11 @@ public class Uri {
         return valid ? path : null;
     }
 
-    public void setPath(String path) {
+    public String[] getPathSegments() {
+        return getPath() != null ? getPath().split("/") : null; //$NON-NLS-1$
+    }
+
+    private void setPath(String path) {
         this.path = (path == null) ? "" : path; //$NON-NLS-1$
     }
 
