@@ -569,7 +569,9 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 IS_SMARTCARD_ENABLED,
                 val -> vmBase.setSmartcardEnabled(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, NUM_OF_IOTHREADS, val -> vmBase.setNumOfIoThreads(Integer.parseInt(val)));
+        consumeReadProperty(content, NUM_OF_IOTHREADS,
+                val -> vmBase.setNumOfIoThreads(Integer.parseInt(val)),
+                () -> vmBase.setNumOfIoThreads(0));
         consumeReadProperty(content, DELETE_PROTECTED, val -> vmBase.setDeleteProtected(Boolean.parseBoolean(val)));
         consumeReadProperty(content, SSO_METHOD, val -> vmBase.setSsoMethod(SsoMethod.fromString(val)));
         consumeReadProperty(content, TUNNEL_MIGRATION, val -> vmBase.setTunnelMigration(Boolean.parseBoolean(val)));
