@@ -15,10 +15,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
+@Dependent
 public class VmDeviceUtils {
 
     private static final String EHCI_MODEL = "ich9-ehci";
@@ -80,6 +83,8 @@ public class VmDeviceUtils {
 
     private OsRepository osRepository;
 
+    private CompensationContext compensationContext;
+
     @Inject
     VmDeviceUtils(VmStaticDao vmStaticDao,
                   VmDeviceDao vmDeviceDao,
@@ -99,6 +104,14 @@ public class VmDeviceUtils {
         this.rngDeviceUtils = rngDeviceUtils;
         this.videoDeviceSettings = videoDeviceSettings;
         this.osRepository = osRepository;
+    }
+
+    public CompensationContext getCompensationContext() {
+        return compensationContext;
+    }
+
+    public void setCompensationContext(CompensationContext compensationContext) {
+        this.compensationContext = compensationContext;
     }
 
     /*
@@ -145,7 +158,7 @@ public class VmDeviceUtils {
         if (cdList.size() > 0) { // this is done only for safety, each VM must have at least an empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
             cd.getSpecParams().putAll(getCdDeviceSpecParams("", newVmBase.getIsoPath()));
-            vmDeviceDao.update(cd);
+            CompensationUtils.updateEntity(cd, vmDeviceDao, compensationContext);
         }
     }
 
@@ -888,12 +901,13 @@ public class VmDeviceUtils {
 
         // has been created on pre 4.0 engine by VDSM, adopt it as ours
         VmDevice device = unmanagedControllers.iterator().next();
-        device.setManaged(true);
-        device.setPlugged(true);
-        device.setReadOnly(false);
-        device.setSpecParams(createUsbControllerSpecParams(controllerModel.libvirtName, 0));
 
-        vmDeviceDao.update(device);
+        CompensationUtils.<VmDeviceId, VmDevice>updateEntity(device, dev -> {
+            dev.setManaged(true);
+            dev.setPlugged(true);
+            dev.setReadOnly(false);
+            dev.setSpecParams(createUsbControllerSpecParams(controllerModel.libvirtName, 0));
+        }, vmDeviceDao, compensationContext);
     }
 
     /**
@@ -1176,7 +1190,7 @@ public class VmDeviceUtils {
                     Guid dstDeviceId = srcDeviceIdToDstDeviceIdMapping.get(device.getDeviceId());
                     device.setId(new VmDeviceId(dstDeviceId, dstId));
                     device.setSpecParams(Collections.emptyMap());
-                    vmDeviceDao.save(device);
+                    CompensationUtils.saveEntity(device, vmDeviceDao, compensationContext);
                 }
             }
         }
@@ -1254,7 +1268,7 @@ public class VmDeviceUtils {
      * Remove all devices in the list.
      */
     public void removeVmDevices(List<VmDevice> devices) {
-        devices.stream().map(VmDevice::getId).forEach(vmDeviceDao::remove);
+        CompensationUtils.removeEntities(devices, vmDeviceDao, compensationContext);
     }
 
     /**
@@ -1642,7 +1656,7 @@ public class VmDeviceUtils {
                         customProps,
                         null,
                         null);
-        vmDeviceDao.save(managedDevice);
+        CompensationUtils.saveEntity(managedDevice, vmDeviceDao, compensationContext);
 
         return managedDevice;
     }

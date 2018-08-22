@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -265,8 +266,7 @@ public class SnapshotsManager {
                 memoryDumpDiskId,
                 memoryConfDiskId);
 
-        snapshotDao.save(snapshot);
-        compensationContext.snapshotNewEntity(snapshot);
+        CompensationUtils.saveEntity(snapshot, snapshotDao, compensationContext);
         return snapshot;
     }
 

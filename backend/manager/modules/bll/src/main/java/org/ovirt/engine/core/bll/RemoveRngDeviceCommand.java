@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -39,13 +37,10 @@ public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
     @Override
     protected void executeCommand() {
         List<VmDevice> rngDevices = getRngDevices();
-        Set<VmDeviceId> idsToRemove = new HashSet<>();
 
-        for (VmDevice dev : rngDevices) {
-            idsToRemove.add(dev.getId());
-        }
+        CompensationUtils.removeEntities(rngDevices, vmDeviceDao, getCompensationContextIfEnabledByCaller());
+        compensationStateChanged();
 
-        vmDeviceDao.removeAll(idsToRemove);
         setSucceeded(true);
     }
 }

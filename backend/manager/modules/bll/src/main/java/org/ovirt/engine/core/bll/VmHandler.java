@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -440,10 +441,14 @@ public class VmHandler implements BackendService {
     }
 
     public void addVmInitToDB(VmInit vmInit) {
+        addVmInitToDB(vmInit, null);
+    }
+
+    public void addVmInitToDB(VmInit vmInit, CompensationContext compensationContext) {
         if (vmInit != null) {
             VmInit oldVmInit = vmInitDao.get(vmInit.getId());
             if (oldVmInit == null) {
-                vmInitDao.save(vmInit);
+                CompensationUtils.saveEntity(vmInit, vmInitDao, compensationContext);
             } else {
                 if (vmInit.isPasswordAlreadyStored()) {
                     // since we are not always returning the password in
@@ -453,21 +458,29 @@ public class VmHandler implements BackendService {
                     // the password if the flag is on
                     vmInit.setRootPassword(oldVmInit.getRootPassword());
                 }
-                vmInitDao.update(vmInit);
+                CompensationUtils.updateEntity(vmInit, oldVmInit, vmInitDao, compensationContext);
             }
         }
     }
 
     public void updateVmInitToDB(VmBase vm) {
+        updateVmInitToDB(vm, null);
+    }
+
+    public void updateVmInitToDB(VmBase vm, CompensationContext compensationContext) {
         if (vm.getVmInit() != null) {
-            addVmInitToDB(vm.getVmInit());
+            addVmInitToDB(vm.getVmInit(), compensationContext);
         } else {
-            removeVmInitFromDB(vm);
+            removeVmInitFromDB(vm, compensationContext);
         }
     }
 
     public void removeVmInitFromDB(VmBase vm) {
-        vmInitDao.remove(vm.getId());
+        removeVmInitFromDB(vm, null);
+    }
+
+    public void removeVmInitFromDB(VmBase vm, CompensationContext compensationContext) {
+        CompensationUtils.removeEntity(vm.getId(), vmInitDao, compensationContext);
     }
 
     public List<VmInit> getVmInitWithoutPasswordByIds(List<Guid> ids) {

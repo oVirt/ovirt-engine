@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
+import org.ovirt.engine.core.bll.context.ChildCompensationWrapper;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
@@ -336,6 +337,14 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     /**
+     * Returns true, if the caller of the command wants the command to use compensation context.
+     * In case the command uses transaction, it should also use compensation context.
+     */
+    protected boolean isCompensationEnabledByCaller() {
+        return getParameters().isCompensationEnabled();
+    }
+
+    /**
      * @return the compensationContext
      */
     public CompensationContext getCompensationContext() {
@@ -347,6 +356,10 @@ public abstract class CommandBase<T extends ActionParametersBase>
      */
     public void setCompensationContext(CompensationContext compensationContext) {
         context.withCompensationContext(compensationContext);
+    }
+
+    public CompensationContext getCompensationContextIfEnabledByCaller() {
+        return isCompensationEnabledByCaller() ? getCompensationContext() : null;
     }
 
     /**
@@ -2366,6 +2379,17 @@ public abstract class CommandBase<T extends ActionParametersBase>
         return cloneContext().withoutCompensationContext().withoutExecutionContext().withoutLock();
     }
 
+    /**
+     * Clones CommandContext with CompensationContext that is not cleaned when the command successfully finishes.
+     * This is useful if the parent command wants to revert a successful child command.
+     */
+    public CommandContext cloneContextWithNoCleanupCompensation() {
+        return cloneContext()
+                .withoutExecutionContext()
+                .withoutLock()
+                .withCompensationContext(new ChildCompensationWrapper(getCompensationContext()));
+    }
+
     protected SessionDataContainer getSessionDataContainer() {
         return sessionDataContainer;
     }
@@ -2409,5 +2433,25 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     protected CommandActionState getActionState() {
         return actionState;
+    }
+
+    protected void compensationStateChanged() {
+        if (isCompensationEnabledByCaller()) {
+            getCompensationContext().stateChanged();
+        }
+    }
+
+    /**
+     * This method is used in parts of commands that do not support compensation yet.
+     *
+     * It guards against incorrect reverting of the command in case of a failure.
+     */
+    protected void throwIfCompensationEnabled() {
+        if (isCompensationEnabledByCaller()) {
+            throw new RuntimeException(String.format(
+                    "Command %s with compensation enabled called a method that does not support compensation.",
+                    this.getClass().getName()
+            ));
+        }
     }
 }

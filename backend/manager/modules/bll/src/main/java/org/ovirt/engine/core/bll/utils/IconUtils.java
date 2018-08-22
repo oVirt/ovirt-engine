@@ -13,8 +13,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.bind.DatatypeConverter;
 
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.compat.Guid;
@@ -167,7 +169,18 @@ public class IconUtils {
     }
 
     public void removeUnusedIcons(List<Guid> iconIds) {
+        removeUnusedIcons(iconIds, null);
+    }
+
+    public void removeUnusedIcons(List<Guid> iconIds, CompensationContext compensationContext) {
         for (Guid iconId : iconIds) {
+            if (compensationContext != null) {
+                VmIcon icon = vmIconDao.get(iconId);
+                if (icon != null) {
+                    compensationContext.snapshotEntity(icon);
+                }
+            }
+
             vmIconDao.removeIfUnused(iconId);
         }
     }

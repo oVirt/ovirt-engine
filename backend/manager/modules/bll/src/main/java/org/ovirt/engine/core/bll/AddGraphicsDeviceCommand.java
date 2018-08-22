@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -33,7 +34,10 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
         if (graphicsDev.getDeviceId() == null) {
             graphicsDev.setDeviceId(Guid.newGuid());
         }
-        vmDeviceDao.save(graphicsDev);
+
+        CompensationUtils.saveEntity(graphicsDev, vmDeviceDao, getCompensationContextIfEnabledByCaller());
+        compensationStateChanged();
+
         setSucceeded(true);
         setActionReturnValue(graphicsDev.getId().getDeviceId());
     }
