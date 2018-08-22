@@ -51,32 +51,29 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
             QueryReturnValue query =
                     runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(templateId));
             List<VmWatchdog> watchdogs = query.getReturnValue();
-            if (watchdogs.isEmpty()) {
-                if (getParameters().getWatchdog() != null) {
-                    WatchdogParameters parameters = new WatchdogParameters();
-                    parameters.setVm(false);
-                    parameters.setClusterIndependent(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE || isBlankTemplate());
 
-                    parameters.setId(templateId);
-                    parameters.setAction(getParameters().getWatchdog().getAction());
-                    parameters.setModel(getParameters().getWatchdog().getModel());
+            if (watchdogs.isEmpty() && getParameters().getWatchdog() == null) {
+                return;
+            }
+
+            WatchdogParameters parameters = new WatchdogParameters();
+            parameters.setVm(false);
+            parameters.setClusterIndependent(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE || isBlankTemplate());
+            parameters.setId(templateId);
+
+            if (getParameters().getWatchdog() != null) {
+                parameters.setAction(getParameters().getWatchdog().getAction());
+                parameters.setModel(getParameters().getWatchdog().getModel());
+
+                if (watchdogs.isEmpty()) {
                     runInternalAction(ActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
-                }
-            } else {
-                WatchdogParameters watchdogParameters = new WatchdogParameters();
-                watchdogParameters.setVm(false);
-                watchdogParameters.setClusterIndependent(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE || isBlankTemplate());
-
-                watchdogParameters.setId(templateId);
-                if (getParameters().getWatchdog() == null) {
-                    // there is a watchdog in the vm, there should not be any, so let's delete
-                    runInternalAction(ActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 } else {
                     // there is a watchdog in the vm, we have to update.
-                    watchdogParameters.setAction(getParameters().getWatchdog().getAction());
-                    watchdogParameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(ActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.UpdateWatchdog, parameters, cloneContextAndDetachFromParent());
                 }
+            } else {
+                // there is a watchdog in the vm, there should not be any, so let's delete
+                runInternalAction(ActionType.RemoveWatchdog, parameters, cloneContextAndDetachFromParent());
             }
         }
     }
