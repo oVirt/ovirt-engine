@@ -463,10 +463,6 @@ public class VmHandler implements BackendService {
         }
     }
 
-    public void updateVmInitToDB(VmBase vm) {
-        updateVmInitToDB(vm, null);
-    }
-
     public void updateVmInitToDB(VmBase vm, CompensationContext compensationContext) {
         if (vm.getVmInit() != null) {
             addVmInitToDB(vm.getVmInit(), compensationContext);

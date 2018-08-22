@@ -94,16 +94,22 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
             if (rngDevs.isEmpty()) {
                 if (getParameters().getRngDevice() != null) {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
-                    rngCommandResult = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
+                    params.setCompensationEnabled(isCompensationEnabledByCaller());
+
+                    rngCommandResult = runInternalAction(ActionType.AddRngDevice, params, cloneContextWithNoCleanupCompensation());
                 }
             } else {
                 if (getParameters().getRngDevice() == null) {
                     RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), false);
-                    rngCommandResult = runInternalAction(ActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
+                    params.setCompensationEnabled(isCompensationEnabledByCaller());
+
+                    rngCommandResult = runInternalAction(ActionType.RemoveRngDevice, params, cloneContextWithNoCleanupCompensation());
                 } else {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
                     params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                    rngCommandResult = runInternalAction(ActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
+                    params.setCompensationEnabled(isCompensationEnabledByCaller());
+
+                    rngCommandResult = runInternalAction(ActionType.UpdateRngDevice, params, cloneContextWithNoCleanupCompensation());
                 }
             }
 
