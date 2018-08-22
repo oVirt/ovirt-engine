@@ -84,10 +84,28 @@
                                     <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" autocomplete="new-password" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" label="{constants.tenantName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <e:ListModelListBoxEditor ui:field="authProtocolEditor" label="Protocol" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="authUrlEditor" label="{constants.authUrlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="authHostnameEditor" label="{constants.authHostName}"  usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="authPortEditor" label="{constants.authPort}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="authApiVersionEditor" label="{constants.authApiVersion}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="userDomainNameEditor" label="{constants.authUserDomainName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="projectNameEditor" label="{constants.authProjectName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="projectDomainNameEditor" label="{constants.authProjectDomainName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" label="{constants.tenantName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_2" offset="SM_10">

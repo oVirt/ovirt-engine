@@ -2598,11 +2598,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String usernameProvider();
 
-    String authUrlProvider();
-
     String passwordProvider();
 
     String tenantName();
+
+    String authHostName();
+
+    String authPort();
+
+    String authApiVersion();
+
+    String authUserDomainName();
+
+    String authProjectName();
+
+    String authProjectDomainName();
 
     String pluginType();
 

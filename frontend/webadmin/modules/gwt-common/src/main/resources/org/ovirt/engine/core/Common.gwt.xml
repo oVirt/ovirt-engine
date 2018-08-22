@@ -54,8 +54,10 @@
         <include name="common/businessentities/CertificateInfo.java" />
         <include name="common/businessentities/ProviderType.java" />
         <include name="common/businessentities/OpenStackProviderProperties.java" />
+        <include name="common/businessentities/OpenStackApiVersionType.java" />
         <include name="common/businessentities/OpenstackNetworkProviderProperties.java" />
         <include name="common/businessentities/OpenstackNetworkPluginType.java" />
+        <include name="common/businessentities/OpenStackProtocolType.java" />
         <include name="common/businessentities/ExternalNetworkPluginType.java" />
         <include name="common/businessentities/OpenStackImageProviderProperties.java" />
         <include name="common/businessentities/storage/OpenStackVolumeProviderProperties.java" />

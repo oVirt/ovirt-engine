@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import static org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT;
+import static org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +14,9 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
+import org.ovirt.engine.core.common.businessentities.OpenStackApiVersionType;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackProtocolType;
 import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -34,10 +39,11 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotNullIntegerValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -52,6 +58,7 @@ public class ProviderModel extends Model {
     private static final String CMD_IMPORT_CERTIFICATE = "ImportCertificate"; //$NON-NLS-1$
     private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
+    private static final String AUTH_PORT_DEFAULT = "35357"; //$NON-NLS-1$
 
     protected final SearchableListModel sourceListModel;
     private final ActionType action;
@@ -69,7 +76,14 @@ public class ProviderModel extends Model {
     private ListModel<ProviderType> type;
     private UICommand testCommand;
     private EntityModel<String> testResult = new EntityModel<>();
-    private EntityModel<String> authUrl = new EntityModel<>();
+    private ListModel<OpenStackApiVersionType> authApiVersion;
+    private ListModel<OpenStackProtocolType> authProtocol;
+    private EntityModel<String> authHostname = new EntityModel<>();
+    private EntityModel<String> authPort = new EntityModel<>();
+    private EntityModel<String> userDomainName = new EntityModel<>();
+    private EntityModel<String> projectName = new EntityModel<>();
+    private EntityModel<String> projectDomainName = new EntityModel<>();
+
     private ListModel<StoragePool> dataCenter;
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
@@ -132,6 +146,62 @@ public class ProviderModel extends Model {
         return tenantName;
     }
 
+    public ListModel<OpenStackApiVersionType> getAuthApiVersion() {
+        return authApiVersion;
+    }
+
+    public void setAuthApiVersion(ListModel<OpenStackApiVersionType> authApiVersion) {
+        this.authApiVersion = authApiVersion;
+    }
+
+    public ListModel<OpenStackProtocolType> getAuthProtocol() {
+        return authProtocol;
+    }
+
+    public void setAuthProtocol(ListModel<OpenStackProtocolType> authProtocol) {
+        this.authProtocol = authProtocol;
+    }
+
+    public EntityModel<String> getAuthHostname() {
+        return authHostname;
+    }
+
+    public void setAuthHostname(EntityModel<String> authHostname) {
+        this.authHostname = authHostname;
+    }
+
+    public EntityModel<String> getAuthPort() {
+        return authPort;
+    }
+
+    public void setAuthPort(EntityModel<String> authPort) {
+        this.authPort = authPort;
+    }
+
+    public EntityModel<String> getUserDomainName() {
+        return userDomainName;
+    }
+
+    public void setUserDomainName(EntityModel<String> userDomainName) {
+        this.userDomainName = userDomainName;
+    }
+
+    public EntityModel<String> getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(EntityModel<String> projectName) {
+        this.projectName = projectName;
+    }
+
+    public EntityModel<String> getProjectDomainName() {
+        return projectDomainName;
+    }
+
+    public void setProjectDomainName(EntityModel<String> projectDomainName) {
+        this.projectDomainName = projectDomainName;
+    }
+
     public UICommand getTestCommand() {
         return testCommand;
     }
@@ -165,12 +235,32 @@ public class ProviderModel extends Model {
         return type == ProviderType.EXTERNAL_NETWORK || type == ProviderType.OPENSTACK_NETWORK;
     }
 
+    private boolean hasOpenStackProviderProperties() {
+        return isTypeOpenStack() || isTypeExternalNetwork();
+    }
+
+    private boolean supportsAuthApiV3() {
+        return isTypeOpenStackNetwork();
+    }
+
+    private boolean isTypeOpenStack() {
+        return isTypeOpenStackImage() || isTypeOpenStackVolume() || isTypeOpenStackNetwork();
+    }
+
+    private boolean isTypeOpenStackNetwork() {
+        return getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
+    }
+
     private boolean isTypeOpenStackImage() {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
     }
 
     private boolean isTypeOpenStackVolume() {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_VOLUME;
+    }
+
+    private boolean isTypeExternalNetwork() {
+        return getType().getSelectedItem() == ProviderType.EXTERNAL_NETWORK;
     }
 
     protected boolean isTypeVmware() {
@@ -193,8 +283,12 @@ public class ProviderModel extends Model {
         this.dataCenter = dataCenter;
     }
 
-    public EntityModel<String> getAuthUrl() {
-        return authUrl;
+    private String getAuthUrl() {
+        String scheme = getAuthProtocol().getSelectedItem() == OpenStackProtocolType.https ?
+                Uri.SCHEME_HTTPS : Uri.SCHEME_HTTP;
+        String authority = getAuthHostname().getEntity() + ":" +  getAuthPort().getEntity(); //$NON-NLS-1$
+        Uri uri = new Uri(scheme, authority, getAuthApiVersion().getSelectedItem().getPath());
+        return uri.getStringRepresentation();
     }
 
     private boolean isTypeRequiresAuthentication() {
@@ -230,9 +324,23 @@ public class ProviderModel extends Model {
         this.action = action;
         this.provider = provider;
 
+        setAuthApiVersion(new ListModel<OpenStackApiVersionType>(){
+            @Override
+            protected void onSelectedItemChanging(OpenStackApiVersionType newValue, OpenStackApiVersionType oldValue) {
+                super.onSelectedItemChanging(newValue, oldValue);
+                getTenantName().setIsAvailable(newValue == OpenStackApiVersionType.v2_0);
+                getUserDomainName().setIsAvailable(newValue == OpenStackApiVersionType.v3);
+                getProjectName().setIsAvailable(newValue == OpenStackApiVersionType.v3);
+                getProjectDomainName().setIsAvailable(newValue == OpenStackApiVersionType.v3);
+            }
+        });
+        getAuthApiVersion().setItems(Arrays.asList(OpenStackApiVersionType.values()));
+        setAuthProtocol(new ListModel<>());
+        getAuthProtocol().setItems(Arrays.asList(OpenStackProtocolType.values()));
+
         getRequiresAuthentication().setEntity(false);
         getRequiresAuthentication().getEntityChangedEvent().addListener((ev, sender, args) -> {
-            setAuthFieldsChangeableStatus(requiresAuthentication.getEntity(), isUnmanaged.getEntity());
+            updateAuthFieldsChangeableStatus();
         });
         setType(new ListModel<ProviderType>() {
             @Override
@@ -255,27 +363,36 @@ public class ProviderModel extends Model {
             getRequiresAuthentication().setIsChangeable(!isUnmanaged);
             boolean requiresAuthentication = getRequiresAuthentication().getEntity();
             getRequiresAuthentication().setEntity(requiresAuthentication && !isUnmanaged);
-            setAuthFieldsChangeableStatus(requiresAuthentication, isUnmanaged);
+            updateAuthFieldsChangeableStatus();
             setReadOnlyEntity();
             getReadOnly().setIsChangeable(!isUnmanaged);
             getUrl().setIsChangeable(!isUnmanaged);
             getAutoSync().setEntity(false);
             getAutoSync().setIsChangeable(!isUnmanaged);
         });
-        setAuthFieldsChangeableStatus(requiresAuthentication.getEntity(), isUnmanaged.getEntity());
+        updateAuthFieldsChangeableStatus();
 
         getType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
             boolean isUnmanagedAware = getType().getSelectedItem().isUnmanagedAware();
-            boolean isTenantAware = getType().getSelectedItem().isTenantAware();
             boolean isAuthUrlAware = getType().getSelectedItem().isAuthUrlAware();
             boolean isReadOnlyAware = getType().getSelectedItem().isReadOnlyAware();
 
             getIsUnmanaged().setIsAvailable(isUnmanagedAware);
-            getTenantName().setIsAvailable(isTenantAware);
-            getAuthUrl().setIsAvailable(isAuthUrlAware);
-            if (isTenantAware) {
+            getAuthApiVersion().setIsAvailable(isAuthUrlAware);
+            getAuthApiVersion().setSelectedItem(supportsAuthApiV3() ?
+                    OpenStackApiVersionType.v3 : OpenStackApiVersionType.v2_0);
+            getAuthProtocol().setIsAvailable(isAuthUrlAware);
+            getAuthHostname().setIsAvailable(isAuthUrlAware);
+            getAuthPort().setIsAvailable(isAuthUrlAware);
+            if (isAuthUrlAware) {
+                getAuthPort().setEntity(AUTH_PORT_DEFAULT);
+            }
+            if (hasOpenStackProviderProperties()) {
                 OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
                 getTenantName().setEntity(properties == null ? null : properties.getTenantName());
+                getUserDomainName().setEntity(properties == null ? null : properties.getUserDomainName());
+                getProjectName().setEntity(properties == null ? null : properties.getProjectName());
+                getProjectDomainName().setEntity(properties == null ? null : properties.getProjectDomainName());
             }
 
             boolean isNetworkProvider = isTypeNetwork();
@@ -378,12 +495,20 @@ public class ProviderModel extends Model {
         }
     }
 
-    private void setAuthFieldsChangeableStatus(boolean requiresAuthentication, boolean isUnmanaged) {
+    private void updateAuthFieldsChangeableStatus() {
+        boolean requiresAuthentication = getRequiresAuthentication().getEntity();
+        boolean isUnmanaged = getIsUnmanaged().getEntity();
         boolean status = requiresAuthentication && !isUnmanaged;
         getUsername().setIsChangeable(status);
         getPassword().setIsChangeable(status);
         getTenantName().setIsChangeable(status);
-        getAuthUrl().setIsChangeable(status);
+        getAuthApiVersion().setIsChangeable(status && supportsAuthApiV3());
+        getAuthProtocol().setIsChangeable(status);
+        getAuthHostname().setIsChangeable(status);
+        getAuthPort().setIsChangeable(status);
+        getUserDomainName().setIsChangeable(status);
+        getProjectName().setIsChangeable(status);
+        getProjectDomainName().setIsChangeable(status);
     }
 
     public ProxyHostPropertiesModel getProxyHostPropertiesModel() {
@@ -454,19 +579,23 @@ public class ProviderModel extends Model {
             new NotEmptyValidation(),
             new LengthValidation(200)
         });
-        if (getType().getSelectedItem().isTenantRequired()) {
+        if (isTypeOpenStack()) {
             getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
+            getUserDomainName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
         }
-        getAuthUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
-        getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
+
+        getAuthHostname().validateEntity(new IValidation[] { new HostnameValidation()} );
+        getAuthPort().validateEntity(new IValidation[] {
+                new NotNullIntegerValidation(NETWORK_MIN_LEGAL_PORT, NETWORK_MAX_LEGAL_PORT)
+        } );
 
         return (getUrl().getEntity() == null || getUrl().getIsValid() || getUrl().getEntity().isEmpty()) &&
                 getUsername().getIsValid() &&
                 getPassword().getIsValid() &&
                 getTenantName().getIsValid() &&
-                getAuthUrl().getIsValid();
+                getUserDomainName().getIsValid() &&
+                getAuthHostname().getIsValid() &&
+                getAuthPort().getIsValid();
     }
 
     private void cancel() {
@@ -509,25 +638,40 @@ public class ProviderModel extends Model {
             provider.setUsername(getUsername().getEntity());
             provider.setPassword(getPassword().getEntity());
             if (getTenantName().getIsAvailable()) {
-                OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
-                if (properties == null) {
-                    properties = new OpenStackProviderProperties();
-                    provider.setAdditionalProperties(properties);
-                }
+                OpenStackProviderProperties properties = getOpenStackProviderProperties();
                 properties.setTenantName(getTenantName().getEntity());
+                properties.setUserDomainName(null);
+                properties.setProjectName(null);
+                properties.setProjectDomainName(null);
+            } else if (getUserDomainName().getIsAvailable()) {
+                OpenStackProviderProperties properties = getOpenStackProviderProperties();
+                properties.setTenantName(null);
+                properties.setUserDomainName(getUserDomainName().getEntity());
+                properties.setProjectName(getProjectName().getEntity());
+                properties.setProjectDomainName(getProjectDomainName().getEntity());
             }
-            provider.setAuthUrl(getAuthUrl().getEntity());
+            provider.setAuthUrl(getAuthUrl());
         } else {
             provider.setUsername(null);
             provider.setPassword(null);
-            if (getTenantName().getIsAvailable()) {
-                OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
-                if (properties != null) {
-                    properties.setTenantName(null);
-                }
+            if (hasOpenStackProviderProperties()) {
+                OpenStackProviderProperties properties = getOpenStackProviderProperties();
+                properties.setTenantName(null);
+                properties.setUserDomainName(null);
+                properties.setProjectName(null);
+                properties.setProjectDomainName(null);
             }
             provider.setAuthUrl(null);
         }
+    }
+
+    private OpenStackProviderProperties getOpenStackProviderProperties() {
+        OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
+        if (properties == null) {
+            properties = new OpenStackProviderProperties();
+            provider.setAdditionalProperties(properties);
+        }
+        return properties;
     }
 
     protected void preSave() {
