@@ -212,9 +212,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         _writer.writeElement(IS_SMARTCARD_ENABLED, String.valueOf(vmBase.isSmartcardEnabled()));
 
-        if (vmBase.getNumOfIoThreads() != 0) {
-            _writer.writeElement(NUM_OF_IOTHREADS, String.valueOf(vmBase.getNumOfIoThreads()));
-        }
+        _writer.writeElement(NUM_OF_IOTHREADS, String.valueOf(vmBase.getNumOfIoThreads()));
 
         _writer.writeElement(TIMEZONE, vmBase.getTimeZone());
         _writer.writeElement(DEFAULT_BOOT_SEQUENCE, String.valueOf(vmBase.getDefaultBootSequence().getValue()));
