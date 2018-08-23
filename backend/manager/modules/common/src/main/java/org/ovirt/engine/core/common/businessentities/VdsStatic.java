@@ -41,6 +41,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
     private String consoleAddress;
 
+    @EditableVdsField
+    private boolean vncEncryptionEnabled;
+
     @Size(max = BusinessEntitiesDefinitions.HOST_UNIQUE_ID_SIZE)
     private String uniqueId;
 
@@ -366,6 +369,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.consoleAddress = consoleAddress;
     }
 
+    public boolean getVncEncryptionEnabled() {
+        return vncEncryptionEnabled;
+    }
+
+    public void setVncEncryptionEnabled(boolean vncEncryptionEnabled) {
+        this.vncEncryptionEnabled = vncEncryptionEnabled;
+    }
+
     public void setHostProviderId (Guid hostProviderId) {
         this.hostProviderId = hostProviderId;
     }
@@ -461,6 +472,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 id,
                 hostName,
                 consoleAddress,
+                vncEncryptionEnabled,
                 name,
                 otpValidity,
                 pmEnabled,
@@ -500,6 +512,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         return Objects.equals(id, other.id)
                 && Objects.equals(hostName, other.hostName)
                 && Objects.equals(consoleAddress, other.consoleAddress)
+                && Objects.equals(vncEncryptionEnabled, other.vncEncryptionEnabled)
                 && Objects.equals(name, other.name)
                 && otpValidity == other.otpValidity
                 && pmEnabled == other.pmEnabled

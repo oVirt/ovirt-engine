@@ -365,6 +365,12 @@
                                         <ge:StringEntityModelTextBoxEditor ui:field="consoleAddress" usePatternFly="true" />
                                    </b:Column>
                                 </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="vncEncryptionEnabled" addStyleNames="{style.inline}" label="{constants.vncEncryptionEnabled}" usePatternFly="true" removeFormGroup="true" />
+                                        <d:InfoIcon ui:field="vncEncryptionEnabledInfoIcon" addStyleNames="{style.inline} {style.topOfLine}"/>
+                                    </b:Column>
+                                </b:Row>
                             </b:Container>
                         </t:content>
                     </t:DialogTab>

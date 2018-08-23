@@ -187,6 +187,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setPmEnabled(isPmEnabled());
         vds.setPmKdumpDetection(isPmKdumpDetection());
         vds.setConsoleAddress(getConsoleAddress());
+        vds.setVncEncryptionEnabled(getVncEncryptionEnabled());
         vds.setHBAs(getHBAs());
         vds.setVdsSpmPriority(getVdsSpmPriority());
         vds.setOtpValidity(getOtpValidity());
@@ -778,6 +779,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setConsoleAddress(String value) {
         vdsStatic.setConsoleAddress(value);
+    }
+
+    public Boolean getVncEncryptionEnabled() {
+        return vdsStatic.getVncEncryptionEnabled();
+    }
+
+    public void setVncEncryptionEnabled(Boolean value) {
+        vdsStatic.setVncEncryptionEnabled(value);
     }
 
     public Integer getMemCommitedPercent() {

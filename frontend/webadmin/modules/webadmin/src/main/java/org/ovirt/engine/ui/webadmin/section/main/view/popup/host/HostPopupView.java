@@ -368,6 +368,14 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     EntityModelCheckBoxEditor consoleAddressEnabled;
 
     @UiField(provided = true)
+    @Path(value = "vncEncryptionEnabled.entity")
+    EntityModelCheckBoxEditor vncEncryptionEnabled;
+
+    @UiField
+    @Ignore
+    InfoIcon vncEncryptionEnabledInfoIcon;
+
+    @UiField(provided = true)
     InfoIcon providerSearchInfoIcon;
 
     @UiField
@@ -566,6 +574,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
         consoleAddressEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
+        vncEncryptionEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         hostedEngineDeployActionsEditor = new ListModelListBoxEditor<>(new EnumRenderer<HostedEngineDeployConfiguration.Action>());
     }
 
@@ -633,6 +642,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalComputeResourceEditor.setLabel(constants.computeResourceLabel());
 
         // Info icons
+        vncEncryptionEnabledInfoIcon.setText(SafeHtmlUtils.fromString(constants.vncEncryptionEnabledHelpMessage()));
         kernelCmdlineUnsafeInterruptsInfoIcon.setText(
                 SafeHtmlUtils.fromString(constants.kernelCmdlineUnsafeInterruptsInfoIcon()));
         kernelCmdlineBlacklistNouveauInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineBlacklistNouveauInfoIcon()));
@@ -1019,6 +1029,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
         consoleAddressEnabled.setTabIndex(nextTabIndex++);
         consoleAddress.setTabIndex(nextTabIndex++);
+        vncEncryptionEnabled.setTabIndex(nextTabIndex++);
 
         // ==Kernel Tab==
         nextTabIndex = kernelTab.setTabIndexes(nextTabIndex);

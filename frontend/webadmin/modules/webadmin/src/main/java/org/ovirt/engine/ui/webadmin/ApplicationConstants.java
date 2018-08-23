@@ -574,6 +574,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String enableConsoleAddressOverrideHelpMessage();
 
+    String vncEncryptionEnabled();
+
+    String vncEncryptionEnabledHelpMessage();
+
     String consoleAddress();
 
     String spmNeverText();

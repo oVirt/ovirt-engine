@@ -313,6 +313,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         this.consoleAddressEnabled = consoleAddressEnabled;
     }
 
+    private EntityModel<Boolean> vncEncryptionEnabled;
+
+    public EntityModel<Boolean> getVncEncryptionEnabled() {
+        return vncEncryptionEnabled;
+    }
+
+    public void setVncEncryptionEnabled(EntityModel<Boolean> vncEncryptionEnabled) {
+        this.vncEncryptionEnabled = vncEncryptionEnabled;
+    }
+
     private EntityModel<Boolean> pmKdumpDetection;
 
     public EntityModel<Boolean> getPmKdumpDetection() {
@@ -762,6 +772,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getConsoleAddressEnabled().setEntity(false);
         getConsoleAddressEnabled().getEntityChangedEvent().addListener(this);
 
+        setVncEncryptionEnabled(new EntityModel<Boolean>(true));
+        getVncEncryptionEnabled().getEntityChangedEvent().addListener(this);
+
         setIsPm(new EntityModel<Boolean>());
         getIsPm().getEntityChangedEvent().addListener(pmListener);
         getIsPm().setEntity(false);
@@ -1126,6 +1139,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
         getConsoleAddress().setEntity(vds.getConsoleAddress());
         getConsoleAddress().setIsChangeable(consoleAddressEnabled);
+
+        getVncEncryptionEnabled().setEntity(vds.getVncEncryptionEnabled());
 
         if (!showInstallationProperties()) {
             getPkSection().setIsChangeable(false);
