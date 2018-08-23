@@ -78,7 +78,7 @@ class Plugin(plugin.PluginBase):
         calculated_heap_size = '{sizemb}M'.format(
             sizemb=max(
                 1024,
-                self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] / 4
+                self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] // 4
             )
         )
 
