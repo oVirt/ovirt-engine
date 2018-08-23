@@ -478,16 +478,24 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     protected boolean validateImages() {
         List<DiskImage> imagesToValidate = getDiskImagesToValidate();
-
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
+        List<DiskImage> allDiskImagesInSrcAndDstToValidate = getAllDiskImagesInSrcAndDstToValidate();
+        DiskImagesValidator allDiskImagesInChainValidator = new DiskImagesValidator(allDiskImagesInSrcAndDstToValidate);
 
         return validateImagesNotLocked(diskImagesValidator) &&
-                (getVm().isQualifiedForLiveSnapshotMerge() || validate(diskImagesValidator.diskImagesNotIllegal())) &&
+                (getVm().isQualifiedForLiveSnapshotMerge() || validate(allDiskImagesInChainValidator.diskImagesNotIllegal())) &&
                 (!getVm().isQualifiedForLiveSnapshotMerge() || validateSnapshotDisksArePlugged());
     }
 
     private boolean validateImagesNotLocked(DiskImagesValidator diskImagesValidator) {
         return !getParameters().isNeedsLocking() || validate(diskImagesValidator.diskImagesNotLocked());
+    }
+
+    private List<DiskImage> getAllDiskImagesInSrcAndDstToValidate() {
+        List<Guid> parentsIds = getSourceImages().stream().map(DiskImage::getImageId).collect(Collectors.toList());
+        List<DiskImage> allDiskImages = new ArrayList<>(diskImageDao.getAllSnapshotsForParents(parentsIds));
+        allDiskImages.addAll(getSourceImages());
+        return allDiskImages;
     }
 
     private List<DiskImage> getDiskImagesToValidate() {
