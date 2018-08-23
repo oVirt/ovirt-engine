@@ -51,14 +51,14 @@ class Plugin(plugin.PluginBase):
                 '-m', 'PKCS8',
                 '-f', '/proc/self/fd/0',
             ),
-            stdin=key.split('\n'),
+            stdin=key.decode().split('\n'),
         )
         return stdout[0]
 
     def _getSSHPublicKeyFingerprint(self, key):
         # until openssh-7.1 -l does not support pipe
         with tempfile.NamedTemporaryFile() as f:
-            f.write(key)
+            f.write(key.encode())
             f.flush()
             rc, stdout, stderr = self.execute(
                 (

@@ -144,7 +144,7 @@ class Plugin(plugin.PluginBase):
                 except pwquality.PWQError as e:
                     self.logger.warning(
                         _('Password is weak: {error}').format(
-                            error=e[1],
+                            error=e.args[1],
                         )
                     )
                     valid = dialog.queryBoolean(

@@ -22,7 +22,6 @@ import distutils.version
 import gettext
 import os
 import re
-import string
 import tempfile
 
 import psycopg2
@@ -1278,7 +1277,7 @@ class OvirtUtils(base.Base):
                 dialog.queryEnvKey(
                     name='{qpref}{what}'.format(
                         qpref=queryprefix,
-                        what=string.upper(what),
+                        what=what.upper(),
                     ),
                     dialog=self.dialog,
                     logger=self.logger,

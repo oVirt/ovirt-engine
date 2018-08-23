@@ -175,7 +175,7 @@ class Plugin(plugin.PluginBase):
             self._encrypt_password(self._password)
             if self._password
             else None
-        )
+        ).decode()
 
         self.environment[
             oenginecons.EngineDBEnv.STATEMENT
@@ -378,11 +378,11 @@ class Plugin(plugin.PluginBase):
                 logStreams=False,
             )
             return RSA.load_key_string(
-                str('\n'.join(stdout))
-            )
+                '\n'.join(stdout).encode()
+                )
 
         encrypted_password = _getRSA().public_encrypt(
-            data=password,
+            data=password.encode(),
             padding=RSA.pkcs1_padding,
         )
         return base64.b64encode(encrypted_password)

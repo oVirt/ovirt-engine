@@ -113,8 +113,8 @@ class Plugin(plugin.PluginBase):
         def _addSection(section, description, optional):
             if not config.has_section(section):
                 config.add_section(section)
-                config.set(section, 'description', description)
-                config.set(section, 'optional', optional)
+                config.set(section, 'description', str(description))
+                config.set(section, 'optional', str(optional))
 
         def _addFiles(section, files):
             for index, name in enumerate(sorted(set(files))):
@@ -136,7 +136,7 @@ class Plugin(plugin.PluginBase):
                 sorted(set(changes))
             ):
                 for line_index, content in enumerate(
-                    sorted(list(changes[filename]))
+                    list(changes[filename])
                 ):
                     if os.path.exists(filename):
                         prefix = 'line.{file_index:03}{line_index:03}'.format(
