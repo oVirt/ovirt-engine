@@ -20,7 +20,10 @@ CREATE OR REPLACE FUNCTION InsertProvider (
     v_auth_url TEXT DEFAULT NULL,
     v_read_only BOOLEAN DEFAULT FALSE,
     v_is_unmanaged BOOLEAN DEFAULT FALSE,
-    v_auto_sync BOOLEAN DEFAULT FALSE
+    v_auto_sync BOOLEAN DEFAULT FALSE,
+    v_user_domain_name VARCHAR(128) DEFAULT NULL,
+    v_project_name VARCHAR(128) DEFAULT NULL,
+    v_project_domain_name VARCHAR(128) DEFAULT NULL
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -41,7 +44,10 @@ BEGIN
         auth_url,
         read_only,
         is_unmanaged,
-        auto_sync
+        auto_sync,
+        user_domain_name,
+        project_name,
+        project_domain_name
         )
     VALUES (
         v_id,
@@ -60,7 +66,10 @@ BEGIN
         v_auth_url,
         v_read_only,
         v_is_unmanaged,
-        v_auto_sync
+        v_auto_sync,
+        v_user_domain_name,
+        v_project_name,
+        v_project_domain_name
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -82,7 +91,10 @@ CREATE OR REPLACE FUNCTION UpdateProvider (
     v_auth_url TEXT DEFAULT NULL,
     v_read_only BOOLEAN DEFAULT FALSE,
     v_is_unmanaged BOOLEAN DEFAULT FALSE,
-    v_auto_sync BOOLEAN DEFAULT FALSE
+    v_auto_sync BOOLEAN DEFAULT FALSE,
+    v_user_domain_name VARCHAR(128) DEFAULT NULL,
+    v_project_name VARCHAR(128) DEFAULT NULL,
+    v_project_domain_name VARCHAR(128) DEFAULT NULL
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -103,7 +115,10 @@ BEGIN
         auth_url = v_auth_url,
         read_only = v_read_only,
         is_unmanaged = v_is_unmanaged,
-        auto_sync = v_auto_sync
+        auto_sync = v_auto_sync,
+        user_domain_name = v_user_domain_name,
+        project_name = v_project_name,
+        project_domain_name = v_project_domain_name
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
