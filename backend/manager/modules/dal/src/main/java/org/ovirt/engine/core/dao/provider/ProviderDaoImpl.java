@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -43,6 +44,10 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         String pluginType = null;
         boolean readOnly = false;
         boolean autoSync = false;
+        String userDomainName = null;
+        String projectName = null;
+        String projectDomainName = null;
+
         AgentConfiguration agentConfiguration = null;
         AdditionalProperties additionalProperties = null;
 
@@ -53,20 +58,17 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 OpenstackNetworkProviderProperties networkProperties =
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
                 readOnly = networkProperties.getReadOnly();
-                tenantName = networkProperties.getTenantName();
                 pluginType = networkProperties.getPluginType();
                 agentConfiguration = networkProperties.getAgentConfiguration();
                 autoSync = networkProperties.getAutoSync();
-                break;
             case OPENSTACK_IMAGE:
-                OpenStackImageProviderProperties imageProperties =
-                        (OpenStackImageProviderProperties) entity.getAdditionalProperties();
-                tenantName = imageProperties.getTenantName();
-                break;
             case OPENSTACK_VOLUME:
-                OpenStackVolumeProviderProperties volumeProperties =
-                        (OpenStackVolumeProviderProperties) entity.getAdditionalProperties();
-                tenantName = volumeProperties.getTenantName();
+                OpenStackProviderProperties openStackProviderProperties =
+                        (OpenStackProviderProperties) entity.getAdditionalProperties();
+                tenantName = openStackProviderProperties.getTenantName();
+                userDomainName = openStackProviderProperties.getUserDomainName();
+                projectName = openStackProviderProperties.getProjectName();
+                projectDomainName = openStackProviderProperties.getProjectDomainName();
                 break;
             case VMWARE:
             case KVM:
@@ -85,6 +87,9 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         mapper.addValue("additional_properties", SerializationFactory.getSerializer().serialize(additionalProperties));
         mapper.addValue("read_only", readOnly);
         mapper.addValue("auto_sync", autoSync);
+        mapper.addValue("user_domain_name", userDomainName);
+        mapper.addValue("project_name", projectName);
+        mapper.addValue("project_domain_name", projectDomainName);
         return mapper;
     }
 
@@ -153,20 +158,20 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
             case EXTERNAL_NETWORK:
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
+                mapOpenStackProperties(rs, networkProperties);
                 networkProperties.setReadOnly(rs.getBoolean("read_only"));
                 networkProperties.setAutoSync(rs.getBoolean("auto_sync"));
-                networkProperties.setTenantName(rs.getString("tenant_name"));
                 networkProperties.setPluginType(rs.getString("plugin_type"));
                 networkProperties.setAgentConfiguration(SerializationFactory.getDeserializer()
                         .deserialize(rs.getString("agent_configuration"), AgentConfiguration.class));
                 return networkProperties;
             case OPENSTACK_IMAGE:
                 OpenStackImageProviderProperties imageProperties = new OpenStackImageProviderProperties();
-                imageProperties.setTenantName(rs.getString("tenant_name"));
+                mapOpenStackProperties(rs, imageProperties);
                 return imageProperties;
             case OPENSTACK_VOLUME:
                 OpenStackVolumeProviderProperties volumeProperties = new OpenStackVolumeProviderProperties();
-                volumeProperties.setTenantName(rs.getString("tenant_name"));
+                mapOpenStackProperties(rs, volumeProperties);
                 return volumeProperties;
             case VMWARE:
                 return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), VmwareVmProviderProperties.class);
@@ -177,6 +182,13 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
             default:
                 return null;
             }
+        }
+
+        private void mapOpenStackProperties(ResultSet rs, OpenStackProviderProperties openStackProviderProperties) throws SQLException {
+            openStackProviderProperties.setTenantName(rs.getString("tenant_name"));
+            openStackProviderProperties.setUserDomainName(rs.getString("user_domain_name"));
+            openStackProviderProperties.setProjectName(rs.getString("project_name"));
+            openStackProviderProperties.setProjectDomainName(rs.getString("project_domain_name"));
         }
     }
 
