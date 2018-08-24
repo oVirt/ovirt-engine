@@ -52,7 +52,11 @@ public class NumaPinningHelper {
 
         VmNumaNode vmNode = vmNodes.get(vmNumaNodeIndex);
 
-        // If the node is not pinned, skip it
+        // If the node is not pinned, skip it.
+        //
+        // Unpinned nodes will behave according to the default NUMA configuration on the host.
+        // Here they are ignored, because we don't know if the host will use strict, interleaved or
+        // preferred mode and to which host nodes they can be pinned.
         if (vmNode.getVdsNumaNodeList().isEmpty()) {
             return fitNodes(vmNodes, vmNumaNodeIndex + 1, hostNodeFreeMem);
         }

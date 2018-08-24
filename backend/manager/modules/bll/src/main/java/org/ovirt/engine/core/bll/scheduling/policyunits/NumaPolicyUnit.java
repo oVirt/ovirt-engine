@@ -52,6 +52,8 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
                 .anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
 
         // If no VM numa node is pinned, all hosts are accepted.
+        //
+        // A VM with unpinned NUMA nodes can run on a host without NUMA support.
         if (!vmNumaPinned) {
             return hosts;
         }
