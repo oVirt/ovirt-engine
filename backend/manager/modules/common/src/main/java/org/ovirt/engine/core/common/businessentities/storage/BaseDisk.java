@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -61,6 +62,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
             groups = { CreateEntity.class, UpdateEntity.class })
     @ValidDescription(message = "VALIDATION_DISK_DESCRIPTION_INVALID", groups = { CreateEntity.class
             , UpdateEntity.class })
+    @NotNull
     private String diskDescription;
 
     /**
@@ -108,6 +110,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     public BaseDisk() {
         propagateErrors = PropagateErrors.Off;
         contentType = DiskContentType.DATA;
+        diskDescription = "";
     }
 
     @Override
@@ -153,7 +156,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public void setDiskDescription(String diskDescription) {
-        this.diskDescription = diskDescription;
+        this.diskDescription =  diskDescription == null ? "" : diskDescription;
     }
 
     public String getDiskAlias() {
