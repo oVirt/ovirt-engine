@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -78,9 +79,11 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
 
@@ -223,14 +226,21 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             getParameters().getCluster().setDetectEmulatedMachine(true);
         }
 
-        clusterDao.update(getParameters().getCluster());
-        addOrUpdateAddtionalClusterFeatures();
+        TransactionSupport.executeInNewTransaction(() -> {
+            CompensationUtils.updateEntity(getParameters().getCluster(), oldCluster, clusterDao, getCompensationContext());
+            addOrUpdateAddtionalClusterFeatures();
+
+            getCompensationContext().stateChanged();
+            return null;
+        });
 
         if (isAddedToStoragePool) {
             for (VDS vds : allForCluster) {
                 VdsActionParameters parameters = new VdsActionParameters();
                 parameters.setVdsId(vds.getId());
-                ActionReturnValue addVdsSpmIdReturn = runInternalAction(ActionType.AddVdsSpmId, parameters, cloneContextAndDetachFromParent());
+                parameters.setCompensationEnabled(true);
+
+                ActionReturnValue addVdsSpmIdReturn = runInternalAction(ActionType.AddVdsSpmId, parameters, cloneContextWithNoCleanupCompensation());
                 if (!addVdsSpmIdReturn.getSucceeded()) {
                     setSucceeded(false);
                     getReturnValue().setFault(addVdsSpmIdReturn.getFault());
@@ -238,8 +248,13 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 }
             }
 
-            final NetworkCluster managementNetworkCluster = createManagementNetworkCluster();
-            networkClusterDao.save(managementNetworkCluster);
+            TransactionSupport.executeInNewTransaction(() -> {
+                final NetworkCluster managementNetworkCluster = createManagementNetworkCluster();
+                CompensationUtils.saveEntity(managementNetworkCluster, networkClusterDao, getCompensationContext());
+
+                getCompensationContext().stateChanged();
+                return null;
+            });
         }
 
         // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
@@ -255,29 +270,39 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             return;
         }
 
-        updateDefaultNetworkProvider();
+        // Executing the rest of the command in one transaction.
+        // This avoids using compensation context inside functions
+        // called here, which would be tricky.
+        //
+        // If anything fails, this transaction is not committed and
+        // changes committed before this block are reverted using compensation.
+        TransactionSupport.executeInNewTransaction(() -> {
+            updateDefaultNetworkProvider();
 
-        if (getCluster().getFirewallType() != oldCluster.getFirewallType()) {
-            markHostsForReinstall();
-        }
+            if (getCluster().getFirewallType() != oldCluster.getFirewallType()) {
+                markHostsForReinstall();
+            }
 
-        if (!oldCluster.supportsGlusterService() && getCluster().supportsGlusterService()) {
-            //update gluster parameters on all hosts
-            updateGlusterHosts();
-        }
+            if (!oldCluster.supportsGlusterService() && getCluster().supportsGlusterService()) {
+                //update gluster parameters on all hosts
+                updateGlusterHosts();
+            }
 
-        alertIfFencingDisabled();
+            alertIfFencingDisabled();
 
-        boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes()) ||
-                (getCluster().isEnableKsm() != oldCluster.isEnableKsm());
+            boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes()) ||
+                    (getCluster().isEnableKsm() != oldCluster.isEnableKsm());
 
-        if (isKsmPolicyChanged) {
-            momPolicyUpdatedEvent.fire(getCluster());
-        }
+            if (isKsmPolicyChanged) {
+                momPolicyUpdatedEvent.fire(getCluster());
+            }
 
-        if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
-            vmStaticDao.getAllByCluster(getCluster().getId()).forEach(this::updateClusterVersionInManager);
-        }
+            if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+                vmStaticDao.getAllByCluster(getCluster().getId()).forEach(this::updateClusterVersionInManager);
+            }
+
+            return null;
+        });
 
         setSucceeded(true);
     }
@@ -320,6 +345,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
              */
             updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
             updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
+            updateParams.setCompensationEnabled(true);
+
 
             upgradeGraphicsDevices(vm, updateParams);
             updateResumeBehavior(vm);
@@ -328,7 +355,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVm,
                     updateParams,
-                    cloneContextAndDetachFromParent());
+                    cloneContextWithNoCleanupCompensation());
 
             if (!result.getSucceeded()) {
                 List<String> params = new ArrayList<>();
@@ -379,6 +406,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             // Locking by UpdateVmTemplate is disabled since templates are already locked in #getExclusiveLocks method.
             parameters.setLockProperties(LockProperties.create(LockProperties.Scope.None));
             parameters.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
+            parameters.setCompensationEnabled(true);
 
             updateRngDeviceIfNecessary(template.getId(), template.getCustomCompatibilityVersion(), parameters);
             updateResumeBehavior(template);
@@ -386,7 +414,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             final ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVmTemplate,
                     parameters,
-                    cloneContextAndDetachFromParent());
+                    cloneContextWithNoCleanupCompensation());
 
             if (!result.getSucceeded()) {
                 List<String> params = new ArrayList<>();
@@ -457,10 +485,12 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         for (SupportedAdditionalClusterFeature featureInDb : featuresInDb) {
             if (featureInDb.isEnabled() && !featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
                 // Disable the features which are not selected in update cluster
+                getCompensationContext().snapshotEntityUpdated(featureInDb);
                 featureInDb.setEnabled(false);
                 clusterFeatureDao.update(featureInDb);
             } else if (!featureInDb.isEnabled() && featuresEnabled.containsKey(featureInDb.getFeature().getId())) {
                 // Enable the features which are selected in update cluster
+                getCompensationContext().snapshotEntityUpdated(featureInDb);
                 featureInDb.setEnabled(true);
                 clusterFeatureDao.update(featureInDb);
             }
@@ -469,6 +499,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         // Add the newly add cluster features
         if (CollectionUtils.isNotEmpty(featuresEnabled.values())) {
             clusterFeatureDao.saveAll(featuresEnabled.values());
+            getCompensationContext().snapshotNewEntities(featuresEnabled.values());
         }
 
     }

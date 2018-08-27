@@ -104,6 +104,11 @@ public class NetworkClusterDaoImpl extends BaseDao implements NetworkClusterDao 
     }
 
     @Override
+    public void remove(NetworkClusterId networkClusterId) {
+        remove(networkClusterId.clusterId, networkClusterId.networkId);
+    }
+
+    @Override
     public void remove(Guid clusterid, Guid networkid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", clusterid)
