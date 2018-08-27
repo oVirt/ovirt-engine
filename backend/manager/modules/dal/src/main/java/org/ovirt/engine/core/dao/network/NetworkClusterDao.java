@@ -5,9 +5,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.Dao;
+import org.ovirt.engine.core.dao.GenericDao;
 
-public interface NetworkClusterDao extends Dao {
+public interface NetworkClusterDao extends GenericDao<NetworkCluster, NetworkClusterId> {
 
     /**
      * Retrieves the entity with the given id.

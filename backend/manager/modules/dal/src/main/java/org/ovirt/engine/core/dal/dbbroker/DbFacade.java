@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.ExternalVariable;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -243,6 +245,8 @@ public class DbFacade {
             put(ImageTransfer.class, ImageTransferDao.class);
             put(LUNs.class, LunDao.class);
             put(SupportedAdditionalClusterFeature.class, ClusterFeatureDao.class);
+            put(Cluster.class, ClusterDao.class);
+            put(NetworkCluster.class, NetworkClusterDao.class);
         }
     };
 

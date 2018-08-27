@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * {@code ClusterDao} defines a type that performs CRUD operations on instances of {@link Cluster}.
  */
-public interface ClusterDao extends Dao, SearchDao<Cluster> {
+public interface ClusterDao extends GenericDao<Cluster, Guid>, SearchDao<Cluster> {
     /**
      * Gets the group with the specified id.
      *
