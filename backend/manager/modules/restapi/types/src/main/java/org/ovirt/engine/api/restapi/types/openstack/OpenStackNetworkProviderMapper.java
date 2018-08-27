@@ -89,6 +89,19 @@ public class OpenStackNetworkProviderMapper {
         if (model.isSetTenantName()) {
             entity.setTenantName(model.getTenantName());
         }
+
+        if (model.isSetUserDomainName()) {
+            entity.setUserDomainName(model.getUserDomainName());
+        }
+
+        if (model.isSetProjectName()) {
+            entity.setProjectName(model.getProjectName());
+        }
+
+        if (model.isSetProjectDomainName()) {
+            entity.setProjectDomainName(model.getProjectDomainName());
+        }
+
         // The `plugin_type` attribute has been deprecated in version 4.2 of the engine. This code is preserved
         // for backwards compatibility, and should be removed in version 5 of the API.
         if (model.isSetPluginType() && model.getType() == OpenStackNetworkProviderType.NEUTRON) {
@@ -153,6 +166,15 @@ public class OpenStackNetworkProviderMapper {
         if (additionalProperties != null) {
             if (additionalProperties.getTenantName() != null) {
                 model.setTenantName(additionalProperties.getTenantName());
+            }
+            if (additionalProperties.getUserDomainName() != null) {
+                model.setUserDomainName(additionalProperties.getUserDomainName());
+            }
+            if (additionalProperties.getProjectName() != null) {
+                model.setProjectName(additionalProperties.getProjectName());
+            }
+            if (additionalProperties.getProjectDomainName() != null) {
+                model.setProjectDomainName(additionalProperties.getProjectDomainName());
             }
             String pluginType = additionalProperties.getPluginType();
             if (pluginType != null) {
