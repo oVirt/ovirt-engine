@@ -194,14 +194,13 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             // Remove the image from the storage
             runInternalAction(ActionType.DestroyImage,
                     buildDestroyImageParameters(getParameters().getImageGroupID(),
-                            Collections.singletonList(getParameters().getImageId()),
-                                    getActionType()));
+                            Collections.singletonList(getParameters().getImageId())));
         }
 
         super.endWithFailure();
     }
 
-    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, ActionType actionType) {
+    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList) {
         DestroyImageParameters parameters = new DestroyImageParameters(
                 getVdsId(),
                 getVmId(),
@@ -211,7 +210,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 imageList,
                 getDiskImage().isWipeAfterDelete(),
                 false);
-        parameters.setParentCommand(actionType);
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         parameters.setParentParameters(getParameters());
         return parameters;
