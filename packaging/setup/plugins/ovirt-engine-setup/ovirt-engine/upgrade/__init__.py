@@ -23,6 +23,7 @@ from otopi import util
 
 from . import answerfile_fixup
 from . import asynctasks
+from . import auth_url_validation
 from . import dbvalidations
 
 
@@ -31,6 +32,7 @@ def createPlugins(context):
     dbvalidations.Plugin(context=context)
     asynctasks.Plugin(context=context)
     answerfile_fixup.Plugin(context=context)
+    auth_url_validation.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
