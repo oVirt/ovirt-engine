@@ -559,6 +559,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     parameters.setVm(false);
                     backend.runInternalAction(ActionType.RemoveGraphicsDevice, parameters);
                 } else {
+                    getParameters().getGraphicsDevices().get(type).setDeviceId(vmGraphicsDevice.getDeviceId());
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
