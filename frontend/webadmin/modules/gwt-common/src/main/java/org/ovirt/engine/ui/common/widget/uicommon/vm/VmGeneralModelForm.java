@@ -27,6 +27,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel minAllocatedMemory = new StringValueLabel();
     @Path("OS")
     StringValueLabel oS = new StringValueLabel();
+    StringValueLabel biosType = new StringValueLabel();
     StringValueLabel cpuInfo = new StringValueLabel();
     StringValueLabel guestCpuCount = new StringValueLabel();
     StringValueLabel guestCpuType = new StringValueLabel();
@@ -73,10 +74,11 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.descriptionVm(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
-        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 6, 0));
-        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 7, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 8, 0));
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(), guestFreeCachedBufferedMemInfo, 2, 1)

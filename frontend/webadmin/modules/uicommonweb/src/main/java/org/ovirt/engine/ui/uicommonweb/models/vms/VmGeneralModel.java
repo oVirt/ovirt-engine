@@ -136,6 +136,18 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private String biosType;
+
+    public String getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(String value) {
+        if (!Objects.equals(biosType, value)) {
+            biosType = value;
+            onPropertyChanged(new PropertyChangedEventArgs("BiosType")); //$NON-NLS-1$
+        }
+    }
 
     private String defaultDisplayType;
 
@@ -553,6 +565,8 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 
         EnumTranslator translator = EnumTranslator.getInstance();
+        setBiosType(translator.translate(vm.getBiosType()));
+
         setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
 
         setOrigin(translator.translate(vm.getOrigin()));
