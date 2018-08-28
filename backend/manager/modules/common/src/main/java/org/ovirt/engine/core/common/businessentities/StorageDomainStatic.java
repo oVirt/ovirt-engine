@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -29,11 +30,13 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     @ValidDescription(message = "VALIDATION_STORAGE_DOMAIN_DESCRIPTION_INVALID", groups = { CreateEntity.class,
             UpdateEntity.class })
-    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE,
+    @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE,
             message = "VALIDATION_STORAGE_DOMAIN_DESCRIPTION_MAX",
             groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull
     private String description;
 
+    @NotNull
     private String comment;
 
     private StorageDomainType storageType;
@@ -84,6 +87,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         storagePoolType = StorageType.UNKNOWN;
         autoRecoverable = true;
         name = "";
+        description = "";
+        comment = "";
     }
 
     @Override
@@ -181,7 +186,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description == null ? "" : description;
     }
 
     public String getComment() {
@@ -189,7 +194,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     }
 
     public void setComment(String value) {
-        comment = value;
+        comment = comment == null ? "" : value;
     }
 
     public SANState getSanState() {
