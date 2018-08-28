@@ -722,6 +722,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void addOrUpdateGraphicsDevice(GraphicsDevice device) {
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(device.getGraphicsType());
+        if (existingGraphicsDevice != null) {
+            device.setDeviceId(existingGraphicsDevice.getDeviceId());
+        }
+
         device.setVmId(getVmId());
         backend.runInternalAction(
                 existingGraphicsDevice == null ? ActionType.AddGraphicsDevice : ActionType.UpdateGraphicsDevice,
