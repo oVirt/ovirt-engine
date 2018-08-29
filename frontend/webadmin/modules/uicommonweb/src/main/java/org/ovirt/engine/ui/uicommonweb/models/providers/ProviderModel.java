@@ -12,11 +12,11 @@ import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -274,7 +274,7 @@ public class ProviderModel extends Model {
             getTenantName().setIsAvailable(isTenantAware);
             getAuthUrl().setIsAvailable(isAuthUrlAware);
             if (isTenantAware) {
-                TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
                 getTenantName().setEntity(properties == null ? null : properties.getTenantName());
             }
 
@@ -512,9 +512,9 @@ public class ProviderModel extends Model {
             provider.setUsername(getUsername().getEntity());
             provider.setPassword(getPassword().getEntity());
             if (getTenantName().getIsAvailable()) {
-                TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
                 if (properties == null) {
-                    properties = new TenantProviderProperties();
+                    properties = new OpenStackProviderProperties();
                     provider.setAdditionalProperties(properties);
                 }
                 properties.setTenantName(getTenantName().getEntity());
@@ -524,7 +524,7 @@ public class ProviderModel extends Model {
             provider.setUsername(null);
             provider.setPassword(null);
             if (getTenantName().getIsAvailable()) {
-                TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                OpenStackProviderProperties properties = (OpenStackProviderProperties) provider.getAdditionalProperties();
                 if (properties != null) {
                     properties.setTenantName(null);
                 }
