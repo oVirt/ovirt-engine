@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class OpenstackNetworkProviderProperties extends TenantProviderProperties {
+public class OpenstackNetworkProviderProperties extends OpenStackProviderProperties {
 
     private static final long serialVersionUID = -7470940167999871534L;
 

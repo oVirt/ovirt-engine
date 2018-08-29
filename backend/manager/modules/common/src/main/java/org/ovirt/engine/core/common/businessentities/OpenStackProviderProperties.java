@@ -5,16 +5,16 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class TenantProviderProperties implements AdditionalProperties {
+public class OpenStackProviderProperties implements AdditionalProperties {
 
     private static final long serialVersionUID = 573702404083234015L;
 
     private String tenantName;
 
-    public TenantProviderProperties() {
+    public OpenStackProviderProperties() {
     }
 
-    public TenantProviderProperties(String tenantName) {
+    public OpenStackProviderProperties(String tenantName) {
         this.tenantName = tenantName;
     }
 
@@ -36,10 +36,10 @@ public class TenantProviderProperties implements AdditionalProperties {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof TenantProviderProperties)) {
+        if (!(obj instanceof OpenStackProviderProperties)) {
             return false;
         }
-        TenantProviderProperties other = (TenantProviderProperties) obj;
+        OpenStackProviderProperties other = (OpenStackProviderProperties) obj;
         return Objects.equals(tenantName, other.tenantName);
     }
 

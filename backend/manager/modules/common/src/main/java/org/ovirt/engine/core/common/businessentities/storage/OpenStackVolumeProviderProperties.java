@@ -2,10 +2,10 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.compat.Guid;
 
-public class OpenStackVolumeProviderProperties extends TenantProviderProperties {
+public class OpenStackVolumeProviderProperties extends OpenStackProviderProperties {
 
     private static final long serialVersionUID = -3887979451360188295L;
 
