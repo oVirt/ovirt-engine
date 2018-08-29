@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -47,6 +48,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String CREATED_BY_USER_ID = "CREATED_BY_USER_ID";
     public static final String NEXT_RUN_CONFIG_EXISTS = "NEXT_RUN_CONFIG_EXISTS";
     public static final String HAS_ILLEGAL_IMAGES = "HAS_ILLEGAL_IMAGES";
+    public static final String BIOS_TYPE = "BIOS_TYPE";
     private static final int MILISECOND = 1000;
 
     public VmConditionFieldAutoCompleter() {
@@ -84,6 +86,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         verbs.add(CREATED_BY_USER_ID);
         verbs.add(NEXT_RUN_CONFIG_EXISTS);
         verbs.add(HAS_ILLEGAL_IMAGES);
+        verbs.add(BIOS_TYPE);
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -121,6 +124,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(CREATED_BY_USER_ID, UUID.class);
         getTypeDictionary().put(NEXT_RUN_CONFIG_EXISTS, Boolean.class);
         getTypeDictionary().put(HAS_ILLEGAL_IMAGES, Boolean.class);
+        getTypeDictionary().put(BIOS_TYPE, BiosType.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_name");
@@ -156,6 +160,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
         columnNameDict.put(NEXT_RUN_CONFIG_EXISTS, "next_run_config_exists");
         columnNameDict.put(HAS_ILLEGAL_IMAGES, "has_illegal_images");
+        columnNameDict.put(BIOS_TYPE, "bios_type");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put(IP, Collections.singletonList(
@@ -201,6 +206,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
             return new BitValueAutoCompleter();
         } else if (HAS_ILLEGAL_IMAGES.equals(fieldName)) {
             return new BitValueAutoCompleter();
+        } else if (BIOS_TYPE.equals(fieldName)) {
+            return new EnumValueAutoCompleter(BiosType.class);
         }
         return null;
     }
