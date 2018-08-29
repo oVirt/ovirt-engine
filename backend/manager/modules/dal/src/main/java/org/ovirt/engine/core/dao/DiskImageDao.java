@@ -145,7 +145,7 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
      * Return all children snapshots for a list of parents
      *
      * @param parentIds List of parent image guids
-     * @return List of child snpashots
+     * @return List of child snapshots
      */
     Set<DiskImage> getAllSnapshotsForParents(Collection<Guid> parentIds);
 
