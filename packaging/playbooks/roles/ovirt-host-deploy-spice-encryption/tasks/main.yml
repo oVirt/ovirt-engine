@@ -1,0 +1,15 @@
+---
+- name: Create SPICE config file with the right permissions
+  file:
+    dest: '/etc/pki/tls/spice.cnf'
+    state: touch
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Put cipher string to SPICE config file
+  copy:
+    dest: '/etc/pki/tls/spice.cnf'
+    backup: yes
+    content: |
+      CipherString = {{ host_deploy_spice_cipher_string }}
