@@ -49,8 +49,9 @@ public class NetworkProviderValidator extends ProviderValidator {
 
             if (provider.getType() == ProviderType.OPENSTACK_NETWORK) {
                 OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                if (StringUtils.isEmpty(properties.getTenantName())) {
-                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_NAME);
+                if (StringUtils.isEmpty(properties.getTenantName())
+                        && StringUtils.isEmpty(properties.getUserDomainName())) {
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_OR_USER_DOMAIN);
                 }
             }
         }

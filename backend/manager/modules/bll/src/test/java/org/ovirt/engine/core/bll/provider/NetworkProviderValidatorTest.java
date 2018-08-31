@@ -170,6 +170,6 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
         when(provider.getAuthUrl()).thenReturn("url");
         when(provider.getAdditionalProperties()).thenReturn(properties);
         assertThat(validator.validateAuthentication(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_NAME));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NO_TENANT_OR_USER_DOMAIN));
     }
 }
