@@ -344,9 +344,10 @@ Requires:	quartz
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
+%endif
+
 Requires:	nimbus-jose-jwt >= 5.12
 Requires:	json-smart >= 2.2
-%endif
 
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
@@ -880,7 +881,9 @@ common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/r
 common/com/netflix/config/main/archaius-core.jar archaius/archaius-core.jar
 common/com/netflix/hystrix/main/hystrix-core.jar hystrix/hystrix-core.jar
 common/com/netflix/hystrix/contrib/main/hystrix-metrics-event-stream.jar hystrix/hystrix-metrics-event-stream.jar
+common/com/nimbusds/main/nimbus-jose-jwt.jar nimbus-jose-jwt/nimbus-jose-jwt.jar
 common/io/reactivex/rxjava/main/rxjava.jar
+common/net/minidev/main/json-smart.jar json-smart.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
@@ -908,10 +911,9 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
-common/com/nimbusds/main/nimbus-jose-jwt.jar nimbus-jose-jwt/nimbus-jose-jwt.jar
-common/net/minidev/main/json-smart.jar json-smart.jar
 %endif
 __EOF__
+
 
 #
 # Register services
