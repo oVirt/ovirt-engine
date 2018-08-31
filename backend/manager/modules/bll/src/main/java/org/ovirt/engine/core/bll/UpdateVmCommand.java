@@ -488,6 +488,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
+            // Temporarily setting to the currentMemory. It will be increased in hotPlugMemory().
+            newVmStatic.setMemSizeMb(currentMemory);
+
             final int memoryAddedMb = newAmountOfMemory - currentMemory;
             final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryBlockSizeMb);
             final boolean memoryDividable = memoryAddedMb % factor == 0;
@@ -495,11 +498,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
                 addCustomValue("requiredFactor", String.valueOf(factor));
                 auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
-                newVmStatic.setMemSizeMb(currentMemory);
                 return;
             }
 
-            hotSetMemory(currentMemory, newAmountOfMemory);
+            hotPlugMemory(memoryAddedMb);
             return;
         }
 
@@ -610,29 +612,37 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * movable zone can be onlined as online movable in arbitrary order. Movable zone is not shrunk when memory devices
      * are offlined and hot unplugged.</p>
      */
-    private void hotSetMemory(int currentMemoryMb, int newAmountOfMemoryMb) {
+    private void hotPlugMemory(int memoryHotPlugSize) {
         final int minimalHotPlugDeviceSizeMb = getVm().getClusterArch().getHotplugMemorySizeFactorMb();
         final List<VmDevice> memoryDevices = getVmDeviceUtils().getMemoryDevices(getVmId());
         final boolean minimalMemoryDevicePresent = memoryDevices.stream()
                 .anyMatch(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device)
                         .map(size -> size == minimalHotPlugDeviceSizeMb).orElse(false));
-        final int secondPartSizeMb = (newAmountOfMemoryMb - currentMemoryMb) - minimalHotPlugDeviceSizeMb;
-        if (minimalMemoryDevicePresent || secondPartSizeMb == 0) {
-            hotPlugMemoryDevice(currentMemoryMb, newAmountOfMemoryMb);
+
+        if (minimalMemoryDevicePresent) {
+            hotPlugMemoryDevice(memoryHotPlugSize);
             return;
         }
-        hotPlugMemoryDevice(currentMemoryMb, currentMemoryMb + minimalHotPlugDeviceSizeMb);
-        hotPlugMemoryDevice(currentMemoryMb + minimalHotPlugDeviceSizeMb, newAmountOfMemoryMb);
+
+        if (!hotPlugMemoryDevice(minimalHotPlugDeviceSizeMb)) {
+            // If the first hotplug fails, no need to execute the second call
+            return;
+        }
+
+        int secondPartSizeMb = memoryHotPlugSize - minimalHotPlugDeviceSizeMb;
+        if (secondPartSizeMb > 0) {
+            hotPlugMemoryDevice(secondPartSizeMb);
+        }
     }
 
-    private void hotPlugMemoryDevice(int currentMemoryMb, int newAmountOfMemoryMb) {
+    private boolean hotPlugMemoryDevice(int memHotplugSize) {
         HotSetAmountOfMemoryParameters params =
                 new HotSetAmountOfMemoryParameters(
                         newVmStatic,
-                        currentMemoryMb < newAmountOfMemoryMb ? PlugAction.PLUG : PlugAction.UNPLUG,
+                        memHotplugSize > 0 ? PlugAction.PLUG : PlugAction.UNPLUG,
                         // We always use node 0, auto-numa should handle the allocation
                         0,
-                        newAmountOfMemoryMb - currentMemoryMb);
+                        memHotplugSize);
 
         ActionReturnValue setAmountOfMemoryResult =
                 runInternalAction(
@@ -640,10 +650,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         params, cloneContextAndDetachFromParent());
         // Hosted engine VM does not care if hostplug failed. The requested memory size is serialized
         // into the OVF store and automatically used during the next HE VM start
-        if (!getVm().isHostedEngine()) {
-            newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemoryMb : currentMemoryMb);
+        if (!getVm().isHostedEngine() && setAmountOfMemoryResult.getSucceeded()) {
+            newVmStatic.setMemSizeMb(newVmStatic.getMemSizeMb() + memHotplugSize);
         }
         logHotSetActionEvent(setAmountOfMemoryResult, AuditLogType.FAILED_HOT_SET_MEMORY);
+
+        return setAmountOfMemoryResult.getSucceeded();
     }
 
     /**
@@ -1169,6 +1181,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             "compatibilityVersion", getVm().getCompatibilityVersion()),
                     ReplacementUtils.createSetVariableString(
                             "architecture", getVm().getClusterArch()));
+        }
+
+        if (vmFromDB.getMaxMemorySizeMb() < vmFromParams.getMemSizeMb() &&
+                vmFromDB.isRunning() &&
+                isHotSetEnabled()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE,
+                    ReplacementUtils.createSetVariableString("maxMemory", vmFromDB.getMaxMemorySizeMb()),
+                    ReplacementUtils.createSetVariableString("memory", vmFromParams.getMemSizeMb()));
         }
 
         if (vmFromDB.getMemSizeMb() != vmFromParams.getMemSizeMb() &&
