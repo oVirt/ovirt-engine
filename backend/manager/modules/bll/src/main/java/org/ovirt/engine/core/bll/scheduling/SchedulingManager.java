@@ -44,6 +44,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
+import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper;
 import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -409,7 +410,18 @@ public class SchedulingManager implements BackendService {
         List<VmNumaNode> vmNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(hostId);
 
-        Optional<Map<Integer, Integer>> nodeAssignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
+        Map<Integer, Collection<Integer>> cpuPinning = CpuPinningHelper.parseCpuPinning(vm.getCpuPinning()).stream()
+                .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus()));
+
+        Optional<Map<Integer, Integer>> nodeAssignment = Optional.empty();
+        if (!cpuPinning.isEmpty()) {
+            nodeAssignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes, cpuPinning);
+        }
+
+        if (!nodeAssignment.isPresent()) {
+            nodeAssignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
+        }
+
         if (!nodeAssignment.isPresent()) {
             return;
         }

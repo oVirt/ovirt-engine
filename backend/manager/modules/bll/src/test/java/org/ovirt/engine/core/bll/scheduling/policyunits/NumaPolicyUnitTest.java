@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -18,12 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -31,9 +27,9 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class NumaPolicyUnitTest {
+public class NumaPolicyUnitTest extends NumaPolicyTestBase{
 
-    private static long NODE_SIZE = 1024;
+    private static final long NODE_SIZE = 1024;
 
     @Mock
     public VmNumaNodeDao vmNumaNodeDao;
@@ -59,7 +55,6 @@ public class NumaPolicyUnitTest {
         vm = new VM();
         vm.setId(Guid.newGuid());
         vm.setNumaTuneMode(NumaTuneMode.STRICT);
-        vm.setvNumaNodeList(new ArrayList<>());
 
         doAnswer(arg -> vm.getvNumaNodeList()).when(vmNumaNodeDao).getAllVmNumaNodeByVmId(any(Guid.class));
 
@@ -233,35 +228,5 @@ public class NumaPolicyUnitTest {
 
     private List<VDS> filter() {
         return unit.filter(null, hosts, vm, null, new PerHostMessages());
-    }
-
-    private VmNumaNode createVmNode(long size, int index, List<Integer> pinnedList) {
-        VmNumaNode node = new VmNumaNode();
-        node.setId(Guid.newGuid());
-        node.setIndex(index);
-        node.setMemTotal(size);
-        node.setVdsNumaNodeList(pinnedList);
-        return node;
-    }
-
-    private VDS createHost(int nodeCount, long nodeSize) {
-        VDS host = new VDS();
-        host.setId(Guid.newGuid());
-        host.setNumaNodeList(new ArrayList<>());
-        host.setNumaSupport(nodeCount > 0);
-
-        for (int i = 0; i < nodeCount; ++i) {
-            VdsNumaNode node = new VdsNumaNode();
-            node.setId(Guid.newGuid());
-            node.setIndex(i);
-            node.setMemTotal(nodeSize);
-
-            node.setNumaNodeStatistics(new NumaNodeStatistics());
-            node.getNumaNodeStatistics().setMemFree(nodeSize);
-
-            host.getNumaNodeList().add(node);
-        }
-
-        return host;
     }
 }

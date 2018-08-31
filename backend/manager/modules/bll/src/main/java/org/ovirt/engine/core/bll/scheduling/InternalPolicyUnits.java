@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.BasicWeightSelectorPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.ClusterInMaintenanceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CompatibilityVersionFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuAndNumaPinningWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuOverloadPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
@@ -98,6 +99,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(BasicWeightSelectorPolicyUnit.class);
         enabledUnits.add(RankSelectorPolicyUnit.class);
         enabledUnits.add(HighPerformanceCpuPolicyUnit.class);
+        enabledUnits.add(CpuAndNumaPinningWeightPolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {

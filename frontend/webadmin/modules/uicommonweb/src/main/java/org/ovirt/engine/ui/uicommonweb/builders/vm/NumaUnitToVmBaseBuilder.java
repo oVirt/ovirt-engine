@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.ovirt.engine.core.common.businessentities.NumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.MathUtils;
@@ -35,6 +37,10 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
                 nodeList.add(newNode);
             }
         }
+
+        // Sorting is needed, otherwise the list will be ordered by nodeId,
+        // as it was returned by DB. It can assign wrong CPU IDs to nodes.
+        nodeList.sort(Comparator.comparing(NumaNode::getIndex));
 
         long memTotal = model.getMemSize().getEntity();
 

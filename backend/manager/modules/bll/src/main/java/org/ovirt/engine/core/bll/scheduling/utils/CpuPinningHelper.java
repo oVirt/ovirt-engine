@@ -5,11 +5,14 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 public class CpuPinningHelper {
 
@@ -64,6 +67,10 @@ public class CpuPinningHelper {
      * @return a list containing virtual cpu to host cpu associations
      */
     public static List<PinnedCpu> parseCpuPinning(final String cpuPinning) {
+        if (StringUtils.isEmpty(cpuPinning)) {
+            return Collections.emptyList();
+        }
+
         final List<PinnedCpu> rules = new ArrayList<>();
         for (final String rule : cpuPinning.split("_")) {
             String[] splitRule = rule.split("#");
