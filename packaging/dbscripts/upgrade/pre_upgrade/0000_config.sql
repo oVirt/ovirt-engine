@@ -130,7 +130,7 @@ select fn_db_add_config_value('WarningLowSpaceIndicator','10','general');
 
 -- Gluster related
 select fn_db_add_config_value('GlusterRefreshRateHooks', '7200', 'general');
-select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
+select fn_db_add_config_value('GlusterRefreshRateLight', '15', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 select fn_db_add_config_value('GlusterRefreshRateStorageDevices', '7200', 'general');
 select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
@@ -1040,6 +1040,9 @@ select fn_db_update_default_config_value('AlertOnNumberOfLVs', '1000', '1300', '
 -- Increase default values of Quality of Service (QoS) allowed bandwidth, Mbps (Mega bits per sec)
 select fn_db_update_default_config_value('MaxAverageNetworkQoSValue', '1024', '17179', 'general', false);
 select fn_db_update_default_config_value('MaxPeakNetworkQoSValue', '2048', '34359', 'general', false);
+
+-- Increase interval of polling gluster cli for info from 5 to 15 seconds
+select fn_db_update_default_config_value('GlusterRefreshRateLight', '5', '15', 'general', false);
 
 ------------------------------------------------------------------------------------
 --                  Split config section
