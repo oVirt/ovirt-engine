@@ -158,7 +158,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global required_python_lib_pwquality %{required_python_lib -l python- pwquality}
 %global required_python_lib_dnf %{required_python_lib dnf}
 %global required_python_lib_dateutil %{required_python_lib -l python- dateutil}
-%global required_python_lib_netaddr %{required_python_lib -l python2- netaddr}
+%global required_python_lib_netaddr %{required_python_lib -l python- netaddr}
 %global required_python_lib_six %{required_python_lib -l python- six}
 %global required_python_lib_numpy %{required_python_lib numpy}
 %global required_python_lib_websockify %{required_python_lib -l python- websockify >= 0.6.0}
