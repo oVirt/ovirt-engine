@@ -215,6 +215,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         group.setArchitecture(ArchitectureType.x86_64);
         vm.setClusterId(clusterId);
         vm.setClusterArch(ArchitectureType.x86_64);
+        vm.setVmMemSizeMb(MEMORY_SIZE);
+        vm.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
 
         doReturn(group).when(command).getCluster();
         doReturn(vm).when(command).getVm();
@@ -573,6 +575,19 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         verify(quotaValidator, times(1)).isValid();
         verify(quotaValidator, times(1)).isDefinedForStoragePool(any());
+    }
+
+    @Test
+    public void testFailIncreaseMemOverMaxMemOnRunningVm() {
+        prepareVmToPassValidate();
+        mockVmValidator();
+
+        vm.setStatus(VMStatus.Up);
+        vmStatic.setMemSizeMb(vm.getMaxMemorySizeMb() + 1024);
+
+        command.initEffectiveCompatibilityVersion();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE);
     }
 
     private void mockVmValidator() {
