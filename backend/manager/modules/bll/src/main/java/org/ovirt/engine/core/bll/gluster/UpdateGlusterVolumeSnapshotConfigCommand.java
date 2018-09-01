@@ -164,7 +164,11 @@ public class UpdateGlusterVolumeSnapshotConfigCommand extends GlusterCommandBase
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Guid clusterId = getParameters().getConfigParams().get(0).getClusterId();
+        List<GlusterVolumeSnapshotConfig> configParams = getParameters().getConfigParams();
+        if (configParams.isEmpty()) {
+            return null;
+        }
+        Guid clusterId = configParams.get(0).getClusterId();
         if (!isInternalExecution()) {
             return Collections.singletonMap(clusterId.toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
