@@ -1,7 +1,7 @@
 ---
 - block:
   - name: Install ovs
-    yum:
+    package:
         name: openvswitch
         state: present
 
