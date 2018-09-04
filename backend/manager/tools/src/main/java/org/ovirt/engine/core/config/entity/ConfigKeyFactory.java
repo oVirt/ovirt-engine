@@ -141,6 +141,7 @@ public class ConfigKeyFactory {
         ConfigKey configKey = generateByPropertiesKey(resultSet.getString("option_name"));
         configKey.unsafeSetValue(resultSet.getString("option_value"));
         configKey.setVersion(resultSet.getString("version"));
+        configKey.setDefaultValue(resultSet.getString("default_value"));
         return configKey;
     }
 }

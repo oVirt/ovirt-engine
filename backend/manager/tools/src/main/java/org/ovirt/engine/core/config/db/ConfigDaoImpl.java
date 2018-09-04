@@ -23,10 +23,12 @@ public class ConfigDaoImpl implements ConfigDao {
     private String updateSql;
     private String selectSql;
     private String selectKeysForNameSql;
+    private String selectConfigDiff;
     private String configTable;
     private String nameColumn;
     private String valueColumn;
     private String versionColumn;
+    private String defaultColumn;
     private DataSource ds;
 
     public ConfigDaoImpl(Configuration appConfig) throws ClassNotFoundException, SQLException, ConfigurationException,
@@ -35,6 +37,7 @@ public class ConfigDaoImpl implements ConfigDao {
         configTable = appConfig.getString("configTable");
         nameColumn = appConfig.getString("configColumnName");
         versionColumn = appConfig.getString("configColumnVersion");
+        defaultColumn = appConfig.getString("configColumnDefault");
         selectSql =
                 MessageFormat.format("select {0} from {1} where {2}=? and {3} =?",
                                  valueColumn,
@@ -51,6 +54,15 @@ public class ConfigDaoImpl implements ConfigDao {
                 MessageFormat.format("select * from {0} where {1}=? ",
                         configTable,
                         nameColumn);
+        selectConfigDiff =
+                MessageFormat.format("SELECT {0}, {1}, {2}, {3} FROM {4} WHERE {5} != {6}",
+                        nameColumn,
+                        valueColumn,
+                        defaultColumn,
+                        versionColumn,
+                        configTable,
+                        valueColumn,
+                        defaultColumn);
         ds = new StandaloneDataSource();
     }
 
@@ -112,5 +124,21 @@ public class ConfigDaoImpl implements ConfigDao {
         }
 
         return keys;
+    }
+
+    @Override public List<ConfigKey> getConfigDiff() throws SQLException {
+        List<ConfigKey> configDiffs = new ArrayList<>();
+        try (
+                Connection connection = ds.getConnection();
+                PreparedStatement prepareStatement = connection.prepareStatement(selectConfigDiff)
+        ) {
+            try (ResultSet resultSet = prepareStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    configDiffs.add(ConfigKeyFactory.getInstance().fromResultSet(resultSet));
+                }
+            }
+        }
+
+        return configDiffs;
     }
 }

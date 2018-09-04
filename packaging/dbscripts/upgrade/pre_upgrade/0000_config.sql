@@ -16,6 +16,10 @@ please keep this when modifying this file.
 PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 
 ************************************************************************************/
+------------------------------------------------------------------------------------
+--                  Update vdc_options structure
+------------------------------------------------------------------------------------
+select fn_db_add_column('vdc_options', 'default_value', 'VARCHAR(4000)');
 
 ------------------------------------------------------------------------------------
 -- Rename existing configuration key names, values modifications are preserved
@@ -1101,3 +1105,12 @@ END; $procedure$
 LANGUAGE plpgsql;
 SELECT  __temp_set_pg_major_release();
 DROP FUNCTION __temp_set_pg_major_release();
+
+
+
+------------------------------------------------------------------------------------
+--                  Finalization of vdc_options structure update
+--
+-- This must be the last section of the file!
+------------------------------------------------------------------------------------
+select fn_db_change_column_type('vdc_options', 'default_value', 'VARCHAR(4000)', 'VARCHAR(4000) NOT NULL');

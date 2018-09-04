@@ -117,6 +117,9 @@ public class EngineConfigLogic {
         case ACTION_RELOAD:
             reloadConfigurations();
             break;
+        case ACTION_DIFF:
+            checkDiff();
+            break;
         default: // Should have already been discovered before execute
             log.debug("execute: unable to recognize action: {}.", actionType);
             throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all? reload?");
@@ -528,6 +531,24 @@ public class EngineConfigLogic {
     private void testIfConfigKeyCanBeFetchedOrPrinted(ConfigKey configKey) {
         if (configKey.isDeprecated()) {
             throw new IllegalAccessError("Configuration key " + configKey.getKey() + " is deprecated, thus cannot get its value.");
+        }
+    }
+
+    private void checkDiff() {
+        try {
+            getConfigDao().getConfigDiff()
+                    .stream()
+                    .filter(configKey -> configKey.getKey() != null)
+                    .forEach(configDiff -> console.writeFormat("Name: %s\n"
+                                    + "Version: %s\n"
+                                    + "Current: %s\n"
+                                    + "Default: %s\n\n",
+                            configDiff.getKey(),
+                            configDiff.getVersion(),
+                            configDiff.getValue(),
+                            configDiff.getDefaultValue()));
+        } catch (Exception e) {
+            log.error("Error details: ", e);
         }
     }
 
