@@ -389,7 +389,6 @@ public enum QueryType implements Serializable {
     GetTemplatesRelatedToQuotaId,
     GetPermissionsToConsumeQuotaByQuotaId,
     GetQuotasByAdElementId,
-    GetQuotasConsumptionForCurrentUser(QueryAuthType.User),
     GetAllRelevantQuotasForStorage(QueryAuthType.User),
     GetAllRelevantQuotasForCluster(QueryAuthType.User),
 

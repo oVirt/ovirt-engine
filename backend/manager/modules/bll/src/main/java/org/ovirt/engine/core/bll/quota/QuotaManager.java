@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -249,12 +248,6 @@ public class QuotaManager implements BackendService {
         return quota;
     }
 
-    /**
-     * REturn a list of QuotaUsagePerUser representing the status of all the quotas in quotaIdsList
-     *
-     * @param quotaList
-     *            quota list
-     */
     public void updateUsage(List<Quota> quotaList) {
         List<Quota> needToCache = new ArrayList<>();
 
@@ -336,135 +329,6 @@ public class QuotaManager implements BackendService {
                 quotaCluster.getVirtualCpuUsage(),
                 quotaCluster.getMemSizeMB(),
                 quotaCluster.getMemSizeMBUsage());
-    }
-
-    /**
-     * Return a list of QuotaUsagePerUser representing the status of all the quotas available for a specific user
-     *
-     *
-     * @param quotaIdsList
-     *            - quotas available for user
-     * @return - list of QuotaUsagePerUser
-     */
-    public Map<Guid, QuotaUsagePerUser> generatePerUserUsageReport(List<Quota> quotaIdsList) {
-        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = new HashMap<>();
-        List<Quota> needToCache = new ArrayList<>();
-
-        if (quotaIdsList != null) {
-            lock.readLock().lock();
-            try {
-                for (Quota quotaExternal : quotaIdsList) {
-                    // look for the quota in the cache
-                    Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(quotaExternal.getStoragePoolId());
-                    Quota quota = null;
-                    if (quotaMap != null) {
-                        quota = quotaMap.get(quotaExternal.getId());
-                    }
-
-                    // if quota not in cache look for it in DB and add it to cache
-                    if (quota == null) {
-                        needToCache.add(quotaExternal);
-                    } else {
-                        QuotaUsagePerUser usagePerUser = addQuotaEntry(quota);
-                        if (usagePerUser != null) {
-                            quotaPerUserUsageEntityMap.put(quota.getId(), usagePerUser);
-                        }
-                    }
-                }
-            } finally {
-                lock.readLock().unlock();
-            }
-
-            if (!needToCache.isEmpty()) {
-                lock.writeLock().lock();
-                try {
-                    for (Quota quotaExternal : needToCache) {
-                        // look for the quota in the cache again (it may have been added by now)
-                        addStoragePoolToCache(quotaExternal.getStoragePoolId());
-
-                        Quota quota = fetchQuotaFromCache(quotaExternal.getId(), quotaExternal.getStoragePoolId());
-
-                        QuotaUsagePerUser usagePerUser = addQuotaEntry(quota);
-                        if (usagePerUser != null) {
-                            quotaPerUserUsageEntityMap.put(quota.getId(), usagePerUser);
-                        }
-                    }
-                } finally {
-                    lock.writeLock().unlock();
-                }
-            }
-        }
-
-        return quotaPerUserUsageEntityMap;
-    }
-
-    private QuotaUsagePerUser addQuotaEntry(Quota quota) {
-        // if quota is not null (found in cache or DB) - add entry to quotaPerUserUsageEntityMap
-        if (quota != null) {
-            long storageLimit = 0;
-            double storageUsage = 0;
-            int cpuLimit = 0;
-            int cpuUsage = 0;
-            long memLimit = 0;
-            long memUsage = 0;
-
-            // calc storage
-            if (quota.getGlobalQuotaStorage() != null) {
-                storageLimit = quota.getGlobalQuotaStorage().getStorageSizeGB();
-                storageUsage = quota.getGlobalQuotaStorage().getStorageSizeGBUsage();
-            } else {
-                for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                    // once storage was set unlimited it will remain so
-                    if (QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
-                        storageLimit = QuotaStorage.UNLIMITED; // Do not break because usage is still counting
-                    }
-                    if (storageLimit != QuotaStorage.UNLIMITED) {
-                        storageLimit += quotaStorage.getStorageSizeGB();
-                    }
-                    storageUsage += quotaStorage.getStorageSizeGBUsage();
-                }
-            }
-
-            // calc cpu and mem
-            if (quota.getGlobalQuotaCluster() != null) {
-                memLimit = quota.getGlobalQuotaCluster().getMemSizeMB();
-                memUsage = quota.getGlobalQuotaCluster().getMemSizeMBUsage();
-                cpuLimit = quota.getGlobalQuotaCluster().getVirtualCpu();
-                cpuUsage = quota.getGlobalQuotaCluster().getVirtualCpuUsage();
-            } else {
-                for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
-
-                    // once mem was set unlimited it will remain so
-                    if (QuotaCluster.UNLIMITED_MEM.equals(quotaCluster.getMemSizeMB())) {
-                        memLimit = QuotaCluster.UNLIMITED_MEM; // Do not break because usage is still counting
-                    }
-                    if (memLimit != QuotaCluster.UNLIMITED_MEM) {
-                        memLimit += quotaCluster.getMemSizeMB();
-                    }
-
-                    // once cpu was set unlimited it will remain so
-                    if (QuotaCluster.UNLIMITED_VCPU.equals(quotaCluster.getVirtualCpu())) {
-                        cpuLimit = QuotaCluster.UNLIMITED_VCPU; // Do not break because usage is still counting
-                    }
-                    if (cpuLimit != QuotaCluster.UNLIMITED_VCPU) {
-                        cpuLimit += quotaCluster.getVirtualCpu();
-                    }
-
-                    memUsage += quotaCluster.getMemSizeMBUsage();
-                    cpuUsage += quotaCluster.getVirtualCpuUsage();
-                }
-            }
-
-            return new QuotaUsagePerUser(quota.getId(),
-                    quota.getQuotaName(),
-                    storageLimit,
-                    storageUsage,
-                    cpuLimit,
-                    cpuUsage,
-                    memLimit,
-                    memUsage);
-        }
-        return null;
     }
 
     /**
