@@ -90,6 +90,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private static final String TOKEN_ISSUED_AT = "iat";
     private static final String TOKEN_IMAGED_HOST_URI = "imaged-uri";
     private static final String TOKEN_TRANSFER_TICKET = "transfer-ticket";
+    private static final String TOKEN_TRANSFER_ID = "transfer-id";
     private static final boolean LEGAL_IMAGE = true;
     private static final boolean ILLEGAL_IMAGE = false;
     private static final String HTTP_SCHEME = "http://";
@@ -798,6 +799,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getStorageDomain().getStorageType().isFileDomain();
         AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
                 imagedTicketId,
+                getParameters().getCommandId(),
                 transferOps,
                 timeout,
                 getParameters().getTransferSize(),
@@ -995,6 +997,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         elements.put(TOKEN_EXPIRATION, ts + getClientTicketLifetime());
         elements.put(TOKEN_IMAGED_HOST_URI, getImageDaemonUri(vds.getHostName()));
         elements.put(TOKEN_TRANSFER_TICKET, transferToken.toString());
+        elements.put(TOKEN_TRANSFER_ID, getParameters().getCommandId().toString());
 
         String payload;
         try {
