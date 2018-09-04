@@ -12,4 +12,6 @@ public interface ConfigDao {
     int updateKey(ConfigKey configKey) throws SQLException;
 
     List<ConfigKey> getKeysForName(String name) throws SQLException;
+
+    List<ConfigKey> getConfigDiff() throws SQLException;
 }

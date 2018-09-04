@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.helper.CompositePasswordValueHelper;
 import org.ovirt.engine.core.config.entity.helper.PasswordValueHelper;
 import org.ovirt.engine.core.config.entity.helper.ValidationResult;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
-import org.slf4j.LoggerFactory;
 
 public class ConfigKey {
     private String type;
@@ -25,6 +25,7 @@ public class ConfigKey {
     private static final List<String> EMPTY_LIST = new ArrayList<>(0);
     private String version;
     private ValueHelper valueHelper;
+    private String defaultValue;
 
     protected ConfigKey(String type,
             String description,
@@ -126,20 +127,6 @@ public class ConfigKey {
         this.value = value;
     }
 
-    @Override
-    public String toString() {
-        String value = "Error fetching value";
-        try{
-            value = getDisplayValue();
-        }
-        catch (Exception e) {
-            LoggerFactory.getLogger(ConfigKey.class).debug("Error fetching value", e);
-        }
-        return new StringBuilder ("ConfigKey [type=").append(type).append(", description=").append(description)
-                .append(", alternateKey=").append(alternateKey).append(", key=").append(keyName).append(", value=").append(value)
-                .append(", validValues=").append(validValues).append(", version=").append(version + "]").toString();
-    }
-
     public List<String> getValidValues() {
         return this.validValues;
     }
@@ -164,5 +151,30 @@ public class ConfigKey {
 
     public boolean isDeprecated() {
         return deprecated;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("type", type)
+                .append("description", description)
+                .append("alternateKey", alternateKey)
+                .append("keyName", keyName)
+                .append("value", value)
+                .append("deprecated", deprecated)
+                .append("reloadable", reloadable)
+                .append("validValues", validValues)
+                .append("version", version)
+                .append("valueHelper", valueHelper)
+                .append("defaultValue", defaultValue)
+                .toString();
     }
 }

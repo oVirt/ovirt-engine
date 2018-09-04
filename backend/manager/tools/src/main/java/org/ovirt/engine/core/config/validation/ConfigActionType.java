@@ -17,7 +17,9 @@ public enum ConfigActionType {
     ACTION_SET(Arrays.asList(new String[] { "-s", "--set" }), new ValidatorType[] { ValidatorType.set }),
     ACTION_HELP(Arrays.asList(new String[] { "-h", "--help" }), new ValidatorType[] { ValidatorType.help }),
     ACTION_RELOAD(Arrays.asList(new String[] { "-r", "--reload" }), null),
-    ACTION_MERGE(Arrays.asList(new String[] { "-m", "--merge" }), new ValidatorType[] { ValidatorType.set });
+    ACTION_MERGE(Arrays.asList(new String[] { "-m", "--merge" }), new ValidatorType[] { ValidatorType.set }),
+    ACTION_DIFF(Arrays.asList(new String[] { "-d", "--diff" }), null);
+
 
     private List<String> optionalStrings;
     private ValidatorType[] validatorTypes;

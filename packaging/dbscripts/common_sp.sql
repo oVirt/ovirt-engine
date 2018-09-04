@@ -180,14 +180,25 @@ BEGIN
             INSERT INTO vdc_options (
                 option_name,
                 option_value,
-                version
+                version,
+                default_value
                 )
             VALUES (
                 v_option_name,
                 v_option_value,
-                v_version
+                v_version,
+                v_option_value
                 );
         END;
+    ELSE
+        BEGIN
+            -- We need to set default value to not have it empty after upgrade from previous versions
+            UPDATE vdc_options SET
+                default_value = v_option_value
+            WHERE option_name ilike v_option_name
+                AND version = v_version
+                AND default_value IS NULL;
+            END;
     END IF;
 
 END;$PROCEDURE$
@@ -277,7 +288,8 @@ BEGIN
             ) THEN
         BEGIN
             UPDATE vdc_options
-            SET option_value = v_option_value
+            SET option_value = v_option_value,
+                default_value = v_option_value
             WHERE option_name ilike v_option_name
                 AND version = v_version;
         END;
@@ -319,6 +331,11 @@ BEGIN
                 AND version = v_version;
         END IF;
 
+        -- We need to update default value regardless of user changes
+        UPDATE vdc_options
+        SET default_value = v_option_value
+        WHERE option_name ilike v_option_name
+            AND version = v_version;
     END;
     END IF;
 END;$PROCEDURE$
@@ -693,23 +710,27 @@ LANGUAGE plpgsql;
                     INSERT INTO vdc_options (
                         option_name,
                         option_value,
-                        version
+                        version,
+                        default_value
                         )
                     VALUES (
                         v_option_name,
                         v_new_option_value,
-                        v_version
+                        v_version,
+                        v_new_option_value
                         );
                 ELSE
                     INSERT INTO vdc_options (
                         option_name,
                         option_value,
-                        version
+                        version,
+                        default_value
                         )
                     VALUES (
                         v_option_name,
                         v_old_value,
-                        v_version
+                        v_version,
+                        v_old_value
                         );
                 END IF;
 
