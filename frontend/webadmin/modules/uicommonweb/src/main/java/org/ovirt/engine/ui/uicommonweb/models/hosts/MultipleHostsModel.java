@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -122,11 +124,24 @@ public class MultipleHostsModel extends Model {
                         .importClusterHostFingerprintEmpty(host.getAddress()));
                 isValid = false;
                 break;
+            } else if (!host.getAddress().equals(host.getGlusterPeerAddress())) {
+                AsyncQuery<String> aQuery = new AsyncQuery<>(fingerprint -> {
+                    host.setGlusterPeerAddressFingerprint(fingerprint);
+                });
+                AsyncDataProvider.getInstance()
+                        .getHostFingerprint(aQuery, host.getAddress(), VdsStatic.DEFAULT_SSH_PORT);
+                if (!host.getFingerprint().equals(host.getGlusterPeerAddressFingerprint())) {
+                    setMessage(ConstantsManager.getInstance()
+                            .getMessages()
+                            .glusterPeerNotMatchingHostFingerprint(host.getAddress(),
+                                    host.getGlusterPeerAddress()));
+                    isValid = false;
+                    break;
+                }
             }
         }
         return isValid;
     }
-
     public boolean isConfigureFirewall() {
         return configureFirewall;
     }

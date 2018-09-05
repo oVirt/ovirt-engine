@@ -420,5 +420,7 @@ public interface UIMessages extends Messages {
     String storageDomainOfDiskCannotBeAccessed(String diskName);
 
     String highPerformancePopupRecommendationMsgForKsm(String clusterName);
+
+    String glusterPeerNotMatchingHostFingerprint(String hostAddress, String glusterPeerAddress);
 }
 

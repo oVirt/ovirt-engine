@@ -106,16 +106,23 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
                 return ((HostDetailModel) object.getEntity()).getName();
             }
         };
-        hostsTable.addColumn(nameColumn, constants.nameHost(), "50px"); //$NON-NLS-1$
-
+        hostsTable.addColumn(nameColumn, constants.nameHost(), "80px"); //$NON-NLS-1$
         nameColumn.setFieldUpdater((index, object, value) -> ((HostDetailModel) object.getEntity()).setName(value));
-
         hostsTable.addColumn(new AbstractEntityModelTextColumn<HostDetailModel>() {
             @Override
             public String getText(HostDetailModel hostModel) {
-                return hostModel.getAddress();
+                return hostModel.getGlusterPeerAddress();
             }
-        }, constants.ipHost(), "100px"); //$NON-NLS-1$
+        }, constants.glusterPeerAddress(), "120px"); //$NON-NLS-1$
+        Column<EntityModel, String> addressColumn = new Column<EntityModel, String>(new TextInputCell()) {
+                    @Override
+                    public String getValue(EntityModel object) {
+                        return ((HostDetailModel) object.getEntity()).getAddress();
+            }
+        };
+        hostsTable.addColumn(addressColumn, constants.ipHostImportCluster(), "180px"); //$NON-NLS-1$
+        addressColumn
+                .setFieldUpdater((index, object, value) -> ((HostDetailModel) object.getEntity()).setAddress(value));
 
         Column<EntityModel, String> passwordColumn = new Column<EntityModel, String>(new PasswordTextInputCell()) {
 

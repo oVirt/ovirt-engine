@@ -3477,4 +3477,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String notifDoNotDisturbNextLogin();
 
+    String ipHostImportCluster();
+
+    String glusterPeerAddress();
 }
