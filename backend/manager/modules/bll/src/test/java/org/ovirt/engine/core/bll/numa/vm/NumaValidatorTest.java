@@ -10,7 +10,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,20 +25,14 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class NumaValidatorTest {
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.SupportNUMAMigration, false));
-    }
 
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
@@ -169,14 +162,6 @@ public class NumaValidatorTest {
         vdsNumaNodes.remove(0);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX);
-    }
-
-    @Test
-    public void shouldOnlyDoWithPinnedToHostMigrationSupport() {
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
-
-        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
-                EngineMessage.ACTION_TYPE_FAILED_VM_NUMA_CANNOT_BE_AUTO_MIGRATABLE);
     }
 
     @Test

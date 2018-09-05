@@ -686,11 +686,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (vmFromParams.isUseHostCpuFlags()
-                && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_HOSTCPU_CANNOT_BE_AUTO_MIGRATABLE);
-        }
-
         if (vmFromParams.isUseHostCpuFlags() && (ArchitectureType.ppc == getCluster().getArchitecture().getFamily())) {
             return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }

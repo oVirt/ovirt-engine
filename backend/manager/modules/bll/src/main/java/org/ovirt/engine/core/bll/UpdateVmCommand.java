@@ -1115,10 +1115,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (vmFromParams.isUseHostCpuFlags()
-                && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_HOSTCPU_CANNOT_BE_AUTO_MIGRATABLE);
-        }
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);

@@ -646,8 +646,6 @@ select fn_db_add_config_value('UsageHistoryLimit','40', 'general');
 
 select fn_db_add_config_value('HostStorageLeaseAliveCheckingInterval', '90', 'general');
 
-select fn_db_add_config_value('SupportNUMAMigration','false','general');
-
 select fn_db_add_config_value('UnsupportedLocalesFilter','','general');
 
 select fn_db_add_config_value('DefaultAutoConvergence','false','general');

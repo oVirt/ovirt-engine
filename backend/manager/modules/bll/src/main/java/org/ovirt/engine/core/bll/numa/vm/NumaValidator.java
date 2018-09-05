@@ -19,14 +19,11 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -299,20 +296,15 @@ public class NumaValidator {
     }
 
     /**
-     * Check if the VM pinning to the host and migration mode are valid.
-     * By default this means a manual migration mode or non migration allowed
-     * and a single host where it is pinned to.
+     * Check if the VM is pinned to a host and only to a single host
      *
      * @param vm to check
      * @return validation result
      */
     public ValidationResult validateVmPinning(final VM vm) {
 
-        //TODO Proper validation for multiple hosts for SupportNumaMigration was never implemented. Implement it.
+        //TODO Proper validation for multiple hosts pinnning was never implemented. Implement it.
         // validate - host pinning is mandatory
-        if (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
-             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NUMA_CANNOT_BE_AUTO_MIGRATABLE);
-        }
         if (vm.getDedicatedVmForVdsList().isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
         }
@@ -341,13 +333,6 @@ public class NumaValidator {
         }
 
         //TODO Proper validation for multiple host pinning
-        //TODO Numa sheduling policy
-        //TODO This config parameter will be removed once there will be
-        // a full support for NUMA automatic migration
-        if (Config.<Boolean>getValue(ConfigValues.SupportNUMAMigration)) {
-            return ValidationResult.VALID;
-        }
-
         validationResult = validateVmPinning(vm);
         if (!validationResult.isValid()) {
             return validationResult;

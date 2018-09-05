@@ -100,15 +100,6 @@ public class AddVmNumaNodesCommandTest
     }
 
     @Test
-    public void canOnlyDoWithPinnedToHostPolicy() {
-        mockCommandWithVmFromDb();
-        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
-
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NUMA_CANNOT_BE_AUTO_MIGRATABLE);
-    }
-
-    @Test
     public void canNotDoWithoutPinnedHost() {
         mockCommandWithVmFromDb();
         vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
