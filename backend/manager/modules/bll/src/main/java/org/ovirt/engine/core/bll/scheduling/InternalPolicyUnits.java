@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionMemoryWe
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HighPerformanceCpuPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
@@ -96,6 +97,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(VmLeasesReadyFilterPolicyUnit.class);
         enabledUnits.add(BasicWeightSelectorPolicyUnit.class);
         enabledUnits.add(RankSelectorPolicyUnit.class);
+        enabledUnits.add(HighPerformanceCpuPolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {

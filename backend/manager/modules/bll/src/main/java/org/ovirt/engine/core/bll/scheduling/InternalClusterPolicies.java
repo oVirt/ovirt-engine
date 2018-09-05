@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionMemoryWe
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HighPerformanceCpuPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
@@ -82,6 +83,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
                 .addFunction(10, VmToHostAffinityWeightPolicyUnit.class)
+                .addFunction(1, HighPerformanceCpuPolicyUnit.class)
 
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
                 .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
@@ -120,6 +122,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
                 .addFunction(10, VmToHostAffinityWeightPolicyUnit.class)
+                .addFunction(1, HighPerformanceCpuPolicyUnit.class)
 
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
                 .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
@@ -157,6 +160,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
                 .addFunction(10, VmToHostAffinityWeightPolicyUnit.class)
+                .addFunction(1, HighPerformanceCpuPolicyUnit.class)
 
                 .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
@@ -195,6 +199,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
                 .addFunction(10, VmToHostAffinityWeightPolicyUnit.class)
+                .addFunction(1, HighPerformanceCpuPolicyUnit.class)
 
                 .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
@@ -233,6 +238,7 @@ public class InternalClusterPolicies {
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(1, VmAffinityWeightPolicyUnit.class)
                 .addFunction(10, VmToHostAffinityWeightPolicyUnit.class)
+                .addFunction(1, HighPerformanceCpuPolicyUnit.class)
 
                 .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
