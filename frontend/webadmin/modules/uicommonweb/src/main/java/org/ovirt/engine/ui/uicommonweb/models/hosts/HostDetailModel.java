@@ -10,13 +10,15 @@ public class HostDetailModel implements Serializable {
     private String address;
     private String password;
     private String fingerprint;
-
+    private String glusterPeerAddress;
+    private String glusterPeerAddressFingerprint;
     public HostDetailModel() {
 
     }
 
     public HostDetailModel(String address, String shaFingerPrint) {
         setAddress(address);
+        setGlusterPeerAddress(address);
         setFingerprint(shaFingerPrint);
     }
 
@@ -51,4 +53,21 @@ public class HostDetailModel implements Serializable {
     public void setFingerprint(String fingerprint) {
         this.fingerprint = fingerprint;
     }
+
+    public String getGlusterPeerAddress() {
+        return glusterPeerAddress;
+    }
+
+    public void setGlusterPeerAddress(String glusterPeerAddress) {
+        this.glusterPeerAddress = glusterPeerAddress;
+    }
+
+    public String getGlusterPeerAddressFingerprint() {
+        return glusterPeerAddressFingerprint;
+    }
+
+    public void setGlusterPeerAddressFingerprint(String glusterPeerAddressFingerprint) {
+        this.glusterPeerAddressFingerprint = glusterPeerAddressFingerprint;
+    }
+
 }

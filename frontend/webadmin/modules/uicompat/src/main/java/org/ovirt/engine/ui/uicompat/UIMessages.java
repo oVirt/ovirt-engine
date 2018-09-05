@@ -422,5 +422,7 @@ public interface UIMessages extends Messages {
     String highPerformancePopupRecommendationMsgForKsm(String clusterName);
 
     String biosTypeSupportedForX86Only();
+
+    String glusterPeerNotMatchingHostFingerprint(String hostAddress, String glusterPeerAddress);
 }
 
