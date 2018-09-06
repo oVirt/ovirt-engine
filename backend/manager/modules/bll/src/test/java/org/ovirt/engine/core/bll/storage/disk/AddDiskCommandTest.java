@@ -408,7 +408,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     protected void mockInterfaceList() {
         List<String> diskInterfaces = Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI");
-        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(diskInterfaces);
+        when(osRepository.getDiskInterfaces(anyInt(), any(), any())).thenReturn(diskInterfaces);
     }
 
     /**
@@ -784,7 +784,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockMaxPciSlots();
 
-        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any(), any())).thenReturn(
                 Collections.singletonList("VirtIO_SCSI"));
 
         mockInterfaceList();

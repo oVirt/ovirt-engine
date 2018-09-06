@@ -145,7 +145,9 @@ public class AttachDiskModel extends NewDiskModel {
             Collections.sort(disks, new DiskByDiskAliasComparator());
             final List<DiskModel> diskModels = DiskModel.disksToDiskModelList(disks);
 
-            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(), getVm().getClusterCompatibilityVersion(), new AsyncQuery<>(
+            AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getVmOsId(),
+                        getVm().getClusterCompatibilityVersion(), getVm().getBiosType().getChipsetType(),
+                        new AsyncQuery<>(
                     diskInterfaces -> AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(
                             virtioScsiEnabledReturnValue -> {
                                 boolean virtioScsiEnabled = Boolean.TRUE.equals(virtioScsiEnabledReturnValue);

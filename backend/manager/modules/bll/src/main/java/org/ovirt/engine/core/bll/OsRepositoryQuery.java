@@ -64,7 +64,8 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
                 setReturnValue(osRepository.isFloppySupported(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case GetDiskInterfaces:
-                setReturnValue(osRepository.getDiskInterfaces(getParameters().getOsId(), getParameters().getVersion()));
+                setReturnValue(osRepository.getDiskInterfaces(getParameters().getOsId(), getParameters().getVersion(),
+                        getParameters().getChipset()));
                 break;
             case GetNetworkDevices:
                 setReturnValue(osRepository.getNetworkDevices(getParameters().getOsId(), getParameters().getVersion()));

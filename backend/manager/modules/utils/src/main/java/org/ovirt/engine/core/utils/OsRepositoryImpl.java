@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -246,10 +247,9 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public List<String> getDiskInterfaces(int osId, Version version) {
-        String devices =
-                getValueByVersion(idToUnameLookup.get(osId), "devices.diskInterfaces", version);
-        return trimElements(devices.split(","));
+    public List<String> getDiskInterfaces(int osId, Version version, ChipsetType chipset) {
+        return parseChipsetPrefixedList(
+                getValueByVersion(idToUnameLookup.get(osId), "devices.diskInterfaces", version), chipset);
     }
 
     @Override
@@ -339,6 +339,26 @@ public enum OsRepositoryImpl implements OsRepository {
         }
 
         return graphicsAndDisplays;
+    }
+
+    private List<String> parseChipsetPrefixedList(String line, ChipsetType chipset) {
+        if (StringUtils.isEmpty(line)) {
+            return Collections.emptyList();
+        }
+
+        List<String> values = new ArrayList<>();
+        for (String element : line.split(",")) {
+            Pair<String, String> pair = parseSlashSeparatedPair(element);
+            if (pair == null) {
+                String value = element.trim();
+                if (!value.isEmpty()) {
+                    values.add(value);
+                }
+            } else if (chipset != null && chipset.getChipsetName().equalsIgnoreCase(pair.getFirst())) {
+                values.add(pair.getSecond());
+            }
+        }
+        return values;
     }
 
     private String parseChipsetPrefixedValue(String line, ChipsetType chipset) {

@@ -91,7 +91,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public void isVirtioScsiEnabledDefaultedToTrue() {
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.initEffectiveCompatibilityVersion();
-        when(vmValidationUtils.isDiskInterfaceSupportedByOs(anyInt(), any(), eq(DiskInterface.VirtIO_SCSI)))
+        when(vmValidationUtils.isDiskInterfaceSupportedByOs(anyInt(), any(), any(), eq(DiskInterface.VirtIO_SCSI)))
                 .thenReturn(true);
         assertTrue(cmd.isVirtioScsiEnabled(), "isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.");
     }

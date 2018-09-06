@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.ConfigurationType;
@@ -2444,7 +2445,11 @@ public class AsyncDataProvider {
         return new ArrayList<>(Arrays.asList(StorageType.ISCSI, StorageType.FCP));
     }
 
-    public void getDiskInterfaceList(int osId, Version clusterVersion, AsyncQuery<List<DiskInterface>> asyncQuery) {
+    public void getDiskInterfaceList(
+            int osId,
+            Version clusterVersion,
+            ChipsetType chipset,
+            AsyncQuery<List<DiskInterface>> asyncQuery) {
         asyncQuery.converterCallback = returnValue -> {
             ArrayList<String> interfaces = (ArrayList<String>) returnValue;
             List<DiskInterface> interfaceTypes = new ArrayList<>();
@@ -2458,20 +2463,12 @@ public class AsyncDataProvider {
             return interfaceTypes;
         };
         Frontend.getInstance().runQuery(QueryType.OsRepository,
-                new OsQueryParameters(OsRepositoryVerb.GetDiskInterfaces, osId, clusterVersion),
+                new OsQueryParameters(OsRepositoryVerb.GetDiskInterfaces, osId, clusterVersion, chipset),
                 asyncQuery);
     }
 
     public ArrayList<DiskInterface> getDiskInterfaceList() {
-        ArrayList<DiskInterface> diskInterfaces = new ArrayList<>(
-                Arrays.asList(new DiskInterface[] {
-                        DiskInterface.IDE,
-                        DiskInterface.VirtIO,
-                        DiskInterface.VirtIO_SCSI,
-                        DiskInterface.SPAPR_VSCSI
-                }));
-
-        return diskInterfaces;
+        return new ArrayList<>(Arrays.asList(DiskInterface.values()));
     }
 
     public String getNewNicName(Collection<VmNetworkInterface> existingInterfaces) {

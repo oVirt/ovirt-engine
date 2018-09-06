@@ -161,7 +161,7 @@ public interface OsRepository {
     /**
      * @return list of supported disk interface devices
      */
-    List<String> getDiskInterfaces(int osId, Version version);
+    List<String> getDiskInterfaces(int osId, Version version, ChipsetType chipset);
 
     /**
      * @return list of supported network devices

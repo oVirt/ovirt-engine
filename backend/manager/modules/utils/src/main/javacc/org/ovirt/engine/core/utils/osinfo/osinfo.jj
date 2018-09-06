@@ -115,7 +115,7 @@ void cdInterfaceValue() : {} {
 }
 
 void hardwareInterfacesValue() : {} {
-    valueSpecifier() (<HARDWARE_INTERFACE_TYPE>)* (<COMMA> (<WS>)* <HARDWARE_INTERFACE_TYPE>)*
+    valueSpecifier() (<CHIPSET_HARDWARE_INTERFACE_TYPE>)* (<COMMA> (<WS>)* <CHIPSET_HARDWARE_INTERFACE_TYPE>)*
 }
 
 void usbControllerModelValue() : {} {
@@ -161,9 +161,13 @@ void valueSpecifier() : {} {
     :
     ("rtl8139_pv" | "rtl8139" | "e1000" | "pv" | "spaprVlan" | "pciPassthrough")
     >
+|   < CHIPSET_HARDWARE_INTERFACE_TYPE
+    :
+    ((<CHIPSET_TYPE>) "/")? (<HARDWARE_INTERFACE_TYPE>)
+    >
 |   < HARDWARE_INTERFACE_TYPE
     :
-    ("IDE" | "VirtIO" | "VirtIO_SCSI" | "SPAPR_VSCSI")
+    ("IDE" | "VirtIO" | "VirtIO_SCSI" | "SPAPR_VSCSI" | "SATA")
     >
 |   < DISPLAY_PROTOCOL_TYPE
     :

@@ -41,7 +41,8 @@ public class VirtioScsiUtil {
             return;
         }
 
-        AsyncDataProvider.getInstance().getDiskInterfaceList(osId, cluster.getCompatibilityVersion(),
+        // VirtIO_SCSI is not chipset-dependent at the moment, so we can pass chipset == null to the call
+        AsyncDataProvider.getInstance().getDiskInterfaceList(osId, cluster.getCompatibilityVersion(), null,
                 model.asyncQuery(diskInterfaces -> {
                     boolean isOsSupportVirtioScsi = diskInterfaces.contains(DiskInterface.VirtIO_SCSI);
 

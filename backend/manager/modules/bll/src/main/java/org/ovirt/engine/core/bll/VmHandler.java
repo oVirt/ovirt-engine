@@ -655,7 +655,9 @@ public class VmHandler implements BackendService {
     public ValidationResult isOsTypeSupportedForVirtioScsi(int osId, Version clusterVersion) {
         return ValidationResult
                 .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI)
-                .unless(vmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI));
+                // VirtIO_SCSI is not chipset-dependent at the moment, so we can pass chipset == null to the call
+                .unless(vmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, null,
+                        DiskInterface.VirtIO_SCSI));
     }
 
     /**

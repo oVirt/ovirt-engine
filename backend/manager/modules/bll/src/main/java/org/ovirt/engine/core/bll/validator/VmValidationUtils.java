@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -65,8 +66,12 @@ public class VmValidationUtils {
      *
      * @return If the disk interface is supported by the OS type.
      */
-    public boolean isDiskInterfaceSupportedByOs(int osId, Version clusterVersion, DiskInterface diskInterface) {
-        List<String> diskInterfaces = osRepository.getDiskInterfaces(osId, clusterVersion);
+    public boolean isDiskInterfaceSupportedByOs(
+            int osId,
+            Version clusterVersion,
+            ChipsetType chipset,
+            DiskInterface diskInterface) {
+        List<String> diskInterfaces = osRepository.getDiskInterfaces(osId, clusterVersion, chipset);
         return diskInterfaces.contains(diskInterface.name());
     }
 

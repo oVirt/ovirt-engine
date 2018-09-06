@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -140,7 +142,8 @@ public class DiskVmElementValidatorTest {
     }
 
     private void initializeInterfaceValidation(DiskInterface diskInterface) {
-        when(vmValidationUtils.isDiskInterfaceSupportedByOs(OS_WITH_SUPPORTED_INTERFACES, null, diskInterface)).thenReturn(true);
+        when(vmValidationUtils.isDiskInterfaceSupportedByOs(
+                OS_WITH_SUPPORTED_INTERFACES, null, ChipsetType.I440FX, diskInterface)).thenReturn(true);
     }
 
     private static VM createVM(int vmOs) {
@@ -148,6 +151,7 @@ public class DiskVmElementValidatorTest {
         vm.setStatus(VMStatus.Down);
         vm.setId(Guid.newGuid());
         vm.setVmOs(vmOs);
+        vm.setBiosType(BiosType.I440FX_SEA_BIOS);
         return vm;
     }
 }

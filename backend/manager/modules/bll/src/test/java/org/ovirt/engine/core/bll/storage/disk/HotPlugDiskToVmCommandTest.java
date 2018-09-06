@@ -241,7 +241,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
                         "VirtIO_SCSI"
                 }));
 
-        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(diskInterfaces);
+        when(osRepository.getDiskInterfaces(anyInt(), any(), any())).thenReturn(diskInterfaces);
     }
 
     /**
