@@ -34,10 +34,12 @@ public class EventsListPopover extends OvirtPopover {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private static final String EVENT_ANCHOR_ID = "event_notification_anchor"; // $NON-NLS-1$
     private static final String EVENT_ACCORDION = "event_notification_accordion"; // $NON-NLS-1$
     private static final String CONTENT = "event_notification_content"; // $NON-NLS-1$
 
     private AnchorListItem eventListButton = new AnchorListItem();
+    private Span eventListButtonBadge = new Span();
     private boolean expanded = false;
     private WidgetTooltip eventListButtonTooltip;
 
@@ -69,7 +71,10 @@ public class EventsListPopover extends OvirtPopover {
         iconPanel.addStyleName(Styles.FONT_AWESOME_BASE);
         iconPanel.addStyleName(iconType.getCssName());
         anchor.add(iconPanel);
+        anchor.setId(EVENT_ANCHOR_ID);
         setContainer(iconPanel);
+        eventListButtonBadge.setStyleName(Styles.BADGE);
+        anchor.add(eventListButtonBadge);
         setWidget(eventListButton);
         contentPanel.setId(EVENT_ACCORDION);
         contentPanel.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
@@ -126,7 +131,7 @@ public class EventsListPopover extends OvirtPopover {
     }
 
     public void setBadgeText(String text) {
-        this.eventListButton.setBadgeText(text);
+        this.eventListButtonBadge.setText(text);
     }
 
     @Override
