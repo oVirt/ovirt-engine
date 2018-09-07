@@ -44,8 +44,12 @@ public class VmConverter {
         info.put(VdsProperties.vm_name, domain.selectSingleNode("name").innerText);
         info.put(VdsProperties.vm_guid, domain.selectSingleNode("uuid").innerText);
         XmlNode cpusTopology = domain.selectSingleNode("cpu").selectSingleNode("topology");
-        info.put(VdsProperties.num_of_cpus, cpusTopology.attributes.get("sockets").innerText);
-        info.put(VdsProperties.mem_size_mb, domain.selectSingleNode("memory").innerText);
+        if (cpusTopology != null) {
+            info.put(VdsProperties.num_of_cpus, cpusTopology.attributes.get("sockets").innerText);
+        } else { // fallback when no topology is specified (ignoring offline CPUs)
+            info.put(VdsProperties.num_of_cpus, domain.selectSingleNode("vcpu").innerText);
+        }
+        info.put(VdsProperties.mem_size_mb, DomainXmlUtils.parseMemSize(domain.selectSingleNode("memory")));
         info.putAll(DomainXmlUtils.parseMaxMemSize(domain.selectSingleNode("maxMemory")));
         info.put(VdsProperties.emulatedMachine, DomainXmlUtils.parseEmulatedMachine(domain.selectSingleNode("os")));
         return info;
