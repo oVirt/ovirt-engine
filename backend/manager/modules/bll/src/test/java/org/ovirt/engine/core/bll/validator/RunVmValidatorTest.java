@@ -388,7 +388,7 @@ public class RunVmValidatorTest {
         doReturn("sap_agent=^(true|false)$;sndbuf=^[0-9]+$;" +
                 "vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;" +
                 "viodiskcache=^(none|writeback|writethrough)$;" +
-                "mdev_type=^.*$;hugepages=^[0-9]+$").
+                "mdev_type=^[^,](,?[0-9A-Za-z-]+)+$;hugepages=^[0-9]+$").
                 when(utils)
                 .getPredefinedVMProperties(any());
         doReturn("").
