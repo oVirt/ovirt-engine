@@ -77,9 +77,17 @@ public class DomainXmlUtils {
         return "";
     }
 
+    public static String parseMemSize(XmlNode node) {
+        return node != null ?
+                Integer.toString(Integer.parseInt(node.innerText) / 1024)
+                : "1024"; // should never get here, memory should be set
+    }
+
     public static Map<String, String> parseMaxMemSize(XmlNode node) {
         return node != null ?
-                Collections.singletonMap(VdsProperties.maxMemSize, node.innerText)
+                Collections.singletonMap(
+                        VdsProperties.maxMemSize,
+                        Integer.toString(Integer.parseInt(node.innerText) / 1024))
                 : Collections.emptyMap();
     }
 
