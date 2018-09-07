@@ -1128,22 +1128,25 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeVGpu() {
-        String mdevType = vmCustomProperties.remove("mdev_type");
-        if (mdevType != null) {
-            writer.writeStartElement("hostdev");
-            writer.writeAttributeString("mode", "subsystem");
-            writer.writeAttributeString("type", "mdev");
-            writer.writeAttributeString("model", "vfio-pci");
+        String mdevTypes = vmCustomProperties.remove("mdev_type");
+        if (mdevTypes != null) {
+            String[] mdevDevices = mdevTypes.split(",");
+            for (String mdevType : mdevDevices) {
+                writer.writeStartElement("hostdev");
+                writer.writeAttributeString("mode", "subsystem");
+                writer.writeAttributeString("type", "mdev");
+                writer.writeAttributeString("model", "vfio-pci");
 
-            writer.writeStartElement("source");
-            String address = Guid.newGuid().toString();
-            writer.writeStartElement("address");
-            writer.writeAttributeString("uuid", address);
-            writer.writeEndElement();
-            writer.writeEndElement();
+                writer.writeStartElement("source");
+                String address = Guid.newGuid().toString();
+                writer.writeStartElement("address");
+                writer.writeAttributeString("uuid", address);
+                writer.writeEndElement();
+                writer.writeEndElement();
 
-            writer.writeEndElement();
-            mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevType));
+                writer.writeEndElement();
+                mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevType));
+            }
         }
     }
 

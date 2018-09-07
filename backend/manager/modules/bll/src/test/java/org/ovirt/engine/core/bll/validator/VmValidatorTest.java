@@ -112,7 +112,7 @@ public class VmValidatorTest extends BaseCommandTest {
 
     private void mockVmPropertiesUtils() throws InitializationException {
         VmPropertiesUtils utils = spy(new VmPropertiesUtils());
-        doReturn("mdev_type=^.*$").
+        doReturn("mdev_type=^(,?[0-9A-Za-z-]+)+$").
                 when(utils)
                 .getPredefinedVMProperties(any());
         doReturn("").
