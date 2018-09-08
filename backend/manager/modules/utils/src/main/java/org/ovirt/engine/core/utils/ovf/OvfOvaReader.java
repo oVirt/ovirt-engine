@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -199,10 +200,9 @@ public abstract class OvfOvaReader extends OvfReader {
         image.setDescription(description != null ? description.getValue() : diskId);
         XmlAttribute capacity = node.attributes.get("ovf:capacity");
         XmlAttribute capacityUnits = node.attributes.get("ovf:capacityAllocationUnits");
-        boolean capacityInBytes = capacityUnits == null || "byte".equals(capacityUnits.getValue());
         long virtualSize = Long.parseLong(capacity.getValue());
-        if (!capacityInBytes) {
-            virtualSize = convertGigabyteToBytes(virtualSize); // TODO: support different capacity units
+        if (capacityUnits != null) {
+            virtualSize *= parseCapacityUnit(capacityUnits.getValue());
         }
         image.setSize(virtualSize);
         XmlAttribute populatedSize = node.attributes.get("ovf:populatedSize");
@@ -227,6 +227,36 @@ public abstract class OvfOvaReader extends OvfReader {
         image.setRemotePath(fileIdToFileAttributes.get(fileRef).get("ovf:href").getValue());
 
         _images.add(image);
+    }
+
+    /**
+     * Parse allocation units of the form "byte * x * y^z"
+     * The format is defined in:
+     * DSP0004: Common Information Model (CIM) Infrastructure,
+     * ANNEX C.1 Programmatic Units
+     *
+     * We conform only to the subset of the format specification and
+     * base-units must be bytes.
+     */
+    protected static long parseCapacityUnit(String capacityUnit) {
+        String[] elements = capacityUnit.split("[*]");
+        if (!elements[0].trim().equals("byte")) {
+            log.error("Base-unit of the capacity unit must be in bytes, found: {}", capacityUnit);
+            throw new IllegalArgumentException("Unsupported capacity unit, must be in bytes");
+        }
+        return Arrays.stream(elements).skip(1).map(String::trim).mapToLong(element -> {
+            if (element.matches("\\d+")) {
+                return Long.parseLong(element);
+            }
+            if (element.matches("\\d+\\^\\d+")) {
+                int indexOfSeparator = element.indexOf('^');
+                return (long) Math.pow(
+                        Integer.parseInt(element.substring(0, indexOfSeparator)),
+                        Integer.parseInt(element.substring(indexOfSeparator + 1)));
+            }
+            log.error("Unsupported capacity unit: {}", capacityUnit);
+            throw new IllegalArgumentException("Unsupported capacity unit: " + capacityUnit);
+        }).reduce(1, (a, b) -> a * b);
     }
 
     protected void readDiskImageItem(XmlNode node) {
