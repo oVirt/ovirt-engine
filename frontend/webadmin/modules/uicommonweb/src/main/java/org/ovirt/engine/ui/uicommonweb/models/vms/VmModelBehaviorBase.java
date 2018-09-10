@@ -75,6 +75,9 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
+    // no need to have this configurable
+    public static final int DEFAULT_NUM_OF_IOTHREADS = 1;
+
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -1411,6 +1414,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getOSType().setSelectedItem(osIdList);
                 break;
             }
+        }
+    }
+
+    public void updateNumOfIoThreads() {
+        getModel().getIoThreadsEnabled().setIsChangeable(true);
+        getModel().getNumOfIoThreads().setIsChangeable(true);
+
+        Integer numOfIoThreads = getModel().getNumOfIoThreads().getEntity();
+        if (numOfIoThreads == null || numOfIoThreads == 0) {
+            getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
         }
     }
 

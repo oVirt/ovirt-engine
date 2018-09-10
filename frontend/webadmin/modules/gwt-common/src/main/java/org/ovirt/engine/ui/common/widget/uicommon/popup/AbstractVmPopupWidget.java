@@ -820,6 +820,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "ioThreadsEnabled.entity")
     EntityModelCheckBoxEditor isIoThreadsEnabled;
 
+    @UiField
+    protected FlowPanel ioThreadsPanel;
+
+    @UiField(provided = true)
+    InfoIcon ioThreadsInfo;
+
+    @UiField(provided = true)
+    @Path(value = "numOfIoThreads.entity")
+    @WithElementId("numOfIoThreadsEditor")
+    public IntegerEntityModelTextBoxOnlyEditor numOfIoThreadsEditor;
+
     @UiField(provided = true)
     public EntityModelDetachableWidget isIoThreadsEnabledDetachable;
 
@@ -1018,6 +1029,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        numOfIoThreadsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
+        ioThreadsInfo.setTooltipMaxWidth(TooltipWidth.W420);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
@@ -1534,6 +1548,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hideAlwaysHiddenFields();
         decorateDetachableFields();
         enableNumaSupport(model);
+
+        // Hiding IO threads panel here if needed.
+        // When editing an existing VM, the UnitVmModel.IoThreadsEnabled entity
+        // is set to a value before this method is called and so the callback
+        // that would hide the IO threads panel was not yet created.
+        ioThreadsPanel.setVisible(model.getIoThreadsEnabled().getEntity());
     }
 
     private void enableNumaSupport(final UnitVmModel model) {
@@ -1656,6 +1676,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 cpuPinningLabel.setStyleName(object.getCpuPinning().getIsChangable() ? OvirtCss.LABEL_ENABLED : OvirtCss.LABEL_DISABLED);
             }
         });
+
+        object.getIoThreadsEnabled().getEntityChangedEvent().addListener(
+                (ev, sender, args) -> ioThreadsPanel.setVisible(object.getIoThreadsEnabled().getEntity())
+        );
 
         object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateUrandomLabel(object));
 
@@ -1954,6 +1978,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);
         cpuSharesAmountEditor.setTabIndex(nextTabIndex++);
+        numOfIoThreadsEditor.setTabIndex(nextTabIndex++);
         multiQueues.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
 
