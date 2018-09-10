@@ -585,6 +585,12 @@
                   <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="isIoThreadsEnabledDetachable" usePatternFly="true" />
                   </b:Column>
+                  <g:FlowPanel ui:field="ioThreadsPanel">
+                    <b:Column size="SM_6">
+                      <d:InfoIcon ui:field="ioThreadsInfo" addStyleNames="info-icon-right" />
+                      <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="numOfIoThreadsEditor" usePatternFly="true" removeFormGroup="true" addStyleNames="vm-io-threads-textbox"/>
+                    </b:Column>
+                  </g:FlowPanel>
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_12">

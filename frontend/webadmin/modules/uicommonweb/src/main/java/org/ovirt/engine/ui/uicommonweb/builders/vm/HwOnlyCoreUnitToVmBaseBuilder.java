@@ -8,15 +8,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * HW only part of the core. This is part of ALL the builders (including the instance types)
  */
 public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<UnitVmModel, T> {
-    // no need to have this configurable
-    public static final int DEFAULT_NUM_OF_IOTHREADS = 1;
 
     @Override
     protected void build(UnitVmModel model, T vm) {
         vm.setMemSizeMb(model.getMemSize().getEntity());
         vm.setMaxMemorySizeMb(model.getMaxMemorySize().getEntity());
         if (model.getIoThreadsEnabled().getEntity()) {
-            vm.setNumOfIoThreads(DEFAULT_NUM_OF_IOTHREADS);
+            vm.setNumOfIoThreads(model.getNumOfIoThreads().getEntity());
         } else {
             vm.setNumOfIoThreads(0);
         }

@@ -63,7 +63,7 @@ public class BaseVmTest {
     protected static final MigrationSupport MIGRATION_SUPPORT = MigrationSupport.PINNED_TO_HOST;
     protected static final MigrationSupport MIGRATION_SUPPORT_2 = MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
     protected static final Integer MIGRATION_DOWNTIME = 500;
-    protected static final Integer NUM_OF_IO_THREADS = 1;
+    protected static final Integer NUM_OF_IO_THREADS = 12;
     protected static final Integer MIGRATION_DOWNTIME_2 = 750;
     protected static final SerialNumberPolicy SERIAL_NUMBER_POLICY = SerialNumberPolicy.CUSTOM;
     protected static final String CUSTOM_SERIAL_NUMBER = "my custom number"; //$NON-NLS-1$

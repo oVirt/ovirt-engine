@@ -217,6 +217,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.ioThreadsEnabled = ioThreadsEnabled;
     }
 
+    private NotChangableForVmInPoolEntityModel<Integer> numOfIoThreads;
+
+    public EntityModel<Integer> getNumOfIoThreads() {
+        return numOfIoThreads;
+    }
+
+    public void setNumOfIoThreads(NotChangableForVmInPoolEntityModel<Integer> numOfIoThreads) {
+        this.numOfIoThreads = numOfIoThreads;
+    }
+
     /**
      * VM icon
      * <p>
@@ -307,6 +317,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getProvisioningClone_IsSelected().setIsChangeable(false);
             getDisksAllocationModel().setIsChangeable(false);
             getIoThreadsEnabled().setIsChangeable(false);
+            getNumOfIoThreads().setIsChangeable(false);
 
             // ==Boot Options Tab==
             getFirstBootDevice().setIsChangeable(false);
@@ -1834,6 +1845,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
 
         setIoThreadsEnabled(new NotChangableForVmInPoolEntityModel<>(false));
+        setNumOfIoThreads(new NotChangableForVmInPoolEntityModel<>(0));
         getIoThreadsEnabled().getEntityChangedEvent().addListener(this);
 
         setProviders(new NotChangableForVmInPoolListModel<Provider<OpenstackNetworkProviderProperties>>());
@@ -2032,6 +2044,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getVmInitEnabled()) {
                 vmInitEnabledChanged();
+            } else if (sender == getIoThreadsEnabled()) {
+                behavior.updateNumOfIoThreads();
             } else if (sender == getMemSize()) {
                 memSize_EntityChanged(sender, args);
             } else if (sender == getTotalCPUCores()) {
@@ -2079,6 +2093,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void compatibilityVersionChanged(Object sender, EventArgs args) {
         dataCenterWithClusterSelectedItemChanged(sender, args);
         updateDisplayAndGraphics();
+        behavior.updateNumOfIoThreads();
         initUsbPolicy();
         updateMultiQueues();
     }
@@ -2973,6 +2988,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
 
         setValidTab(TabName.TAB_RNG, getRngBytes().getIsValid() && getRngPeriod().getIsValid());
+
+        if (getIoThreadsEnabled().getEntity()) {
+            getNumOfIoThreads().validateEntity(new IValidation[] {
+                    new NotNullIntegerValidation(1, AsyncDataProvider.getInstance().getMaxIoThreadsPerVm())
+            });
+        }
+
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getNumOfIoThreads().getIsValid());
 
         // Minimum 'Physical Memory Guaranteed' is 1MB
         validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
