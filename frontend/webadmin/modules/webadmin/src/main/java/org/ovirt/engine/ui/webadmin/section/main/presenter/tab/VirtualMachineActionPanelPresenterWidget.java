@@ -95,7 +95,7 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getStopCommand();
             }
         });
-        addComboActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(), IconType.STOP
+        addComboActionButtonWithContexts(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(), IconType.STOP
                 ) {
             @Override
             protected UICommand resolveCommand() {

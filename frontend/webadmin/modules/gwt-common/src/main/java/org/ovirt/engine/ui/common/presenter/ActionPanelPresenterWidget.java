@@ -158,6 +158,16 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         initButton(buttonDef, newButton);
     }
 
+    // Add an option to include a subaction in the right-click menu
+    public void addComboActionButtonWithContexts(ActionButtonDefinition<T> buttonDef, List<ActionButtonDefinition<T>> subActions) {
+        ActionButton newButton = getView().addDropdownComboActionButton(buttonDef, subActions, this);
+        actionButtonDefinitions.add(buttonDef);
+        for (ActionButtonDefinition ab : subActions) {
+            actionButtonDefinitions.add(ab);
+        }
+        initButton(buttonDef, newButton);
+    }
+
     public void addActionButton(ActionButtonDefinition<T> buttonDef, List<ActionButtonDefinition<T>> subActions) {
         ActionButton newButton = getView().addDropdownActionButton(buttonDef, subActions, this);
         initButton(buttonDef, newButton);
