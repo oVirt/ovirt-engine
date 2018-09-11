@@ -258,7 +258,6 @@ Requires(pre):	shadow-utils
 Requires:	%{jboss} >= 13.0.0
 
 Requires:	%{name}-backend = %{version}-%{release}
-Requires:	%{name}-cli >= 3.6.2.0
 Requires:	%{name}-dbscripts = %{version}-%{release}
 Requires:	%{name}-restapi = %{version}-%{release}
 Requires:	%{name}-tools = %{version}-%{release}
