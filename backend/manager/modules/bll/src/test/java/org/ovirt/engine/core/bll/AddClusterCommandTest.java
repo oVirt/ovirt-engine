@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -93,6 +94,8 @@ public class AddClusterCommandTest extends BaseCommandTest {
         cluster.setCompatibilityVersion(SET_COMPATIBILITY_VERSION);
         cluster.setMigrateOnError(MIGRATE_ON_ERROR);
         cluster.setArchitecture(ARCHITECTURE_TYPE);
+        cluster.setLogMaxMemoryUsedThreshold(95);
+        cluster.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
         return cluster;
     }
 
