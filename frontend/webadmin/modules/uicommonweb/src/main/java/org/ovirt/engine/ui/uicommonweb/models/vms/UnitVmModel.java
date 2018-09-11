@@ -2887,12 +2887,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setValidTab(TabName.RESOURCE_ALLOCATION_TAB, isValidTab(TabName.RESOURCE_ALLOCATION_TAB)
                 && getCpuSharesAmount().getIsValid() && diskAliasesValid);
 
-        setValidTab(TabName.BOOT_OPTIONS_TAB, getCdImage().getIsValid() && getKernel_path().getIsValid());
+        setValidTab(TabName.BOOT_OPTIONS_TAB, isValidTab(TabName.BOOT_OPTIONS_TAB) &&
+                getCdImage().getIsValid() && getKernel_path().getIsValid());
+
         boolean vmInitIsValid = getVmInitModel().validate();
-        setValidTab(TabName.INITIAL_RUN_TAB, vmInitIsValid);
+        setValidTab(TabName.INITIAL_RUN_TAB, isValidTab(TabName.INITIAL_RUN_TAB) && vmInitIsValid);
 
         getIcon().validateEntity(new IValidation[] { new IconWithOsDefaultValidation() });
-        setValidTab(TabName.ICON_TAB, getIcon().getIsValid());
+        setValidTab(TabName.ICON_TAB, isValidTab(TabName.ICON_TAB) && getIcon().getIsValid());
 
         boolean hwPartValid = validateHwPart();
 
@@ -2979,8 +2981,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     , new IntegerValidation(0, 262144)});
         }
 
-        boolean customPropertySheetValid = getCustomPropertySheet().validate();
-        setValidTab(TabName.CUSTOM_PROPERTIES_TAB, customPropertySheetValid);
+        setValidTab(TabName.CUSTOM_PROPERTIES_TAB, isValidTab(TabName.CUSTOM_PROPERTIES_TAB) &&
+                getCustomPropertySheet().validate());
 
         if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
             getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -2992,14 +2994,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)});
         getCustomCpu().validateSelectedItem(new IValidation[] { new CpuNameValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)});
 
-        setValidTab(TabName.CONSOLE_TAB, getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid()
-                && getSpiceProxy().getIsValid());
-        setValidTab(TabName.HOST_TAB, getMigrationDowntime().getIsValid());
+        setValidTab(TabName.CONSOLE_TAB, isValidTab(TabName.CONSOLE_TAB) &&
+                getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
+
+        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
 
         getRngBytes().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE), new RngDevValidation()});
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
 
-        setValidTab(TabName.TAB_RNG, getRngBytes().getIsValid() && getRngPeriod().getIsValid());
+        setValidTab(TabName.TAB_RNG, isValidTab(TabName.TAB_RNG) && getRngBytes().getIsValid() && getRngPeriod().getIsValid());
 
         if (getIoThreadsEnabled().getEntity()) {
             getNumOfIoThreads().validateEntity(new IValidation[] {
@@ -3015,11 +3018,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         validateMaxMemorySize();
         validateMemoryAlignment(getMemSize());
 
-        setValidTab(TabName.RESOURCE_ALLOCATION_TAB,
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, isValidTab(TabName.RESOURCE_ALLOCATION_TAB) &&
                 getNumOfIoThreads().getIsValid() &&
                 getMinAllocatedMemory().getIsValid());
 
-        setValidTab(TabName.SYSTEM_TAB,
+        setValidTab(TabName.SYSTEM_TAB, isValidTab(TabName.SYSTEM_TAB) &&
                 getMemSize().getIsValid() &&
                 getMaxMemorySize().getIsValid() &&
                 getTotalCPUCores().getIsValid() &&
