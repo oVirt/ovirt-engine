@@ -1147,7 +1147,12 @@ public abstract class CommandBase<T extends ActionParametersBase>
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
             log.error("Exception", e);
         } catch (RuntimeException e) {
-            processExceptionToClient(new EngineFault(e, EngineError.ENGINE));
+            if (e.getCause() instanceof EngineException) {
+                EngineException ex = (EngineException) e.getCause();
+                processExceptionToClient(new EngineFault(ex, ex.getVdsError().getCode()));
+            } else {
+                processExceptionToClient(new EngineFault(e, EngineError.ENGINE));
+            }
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
             log.error("Exception", e);
         } finally {
