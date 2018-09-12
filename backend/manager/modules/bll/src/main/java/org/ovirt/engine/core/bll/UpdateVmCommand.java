@@ -498,6 +498,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
+            // Temporarily setting to the currentMemory. It will be increased in hotPlugMemory().
+            newVmStatic.setMemSizeMb(currentMemory);
+
             final int memoryAddedMb = newAmountOfMemory - currentMemory;
             final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryBlockSizeMb);
             final boolean memoryDividable = memoryAddedMb % factor == 0;
@@ -505,7 +508,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
                 addCustomValue("requiredFactor", String.valueOf(factor));
                 auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
-                newVmStatic.setMemSizeMb(currentMemory);
                 return;
             }
 
