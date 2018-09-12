@@ -19,9 +19,11 @@
 """ovirt-provider-ovn plugin."""
 from otopi import util
 
+from . import macpools
 from . import ovirtproviderovn
 
 
 @util.export
 def createPlugins(context):
     ovirtproviderovn.Plugin(context=context)
+    macpools.Plugin(context=context)

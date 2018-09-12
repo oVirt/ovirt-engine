@@ -399,6 +399,8 @@ class Stages(object):
     OVN_PROVIDER_SERVICE_RESTART = 'osetup.ovn.provider.service.restart'
     OVN_PROVIDER_OVN_DB = 'osetup.ovn.provider.db'
 
+    MAC_POOL_DB = 'osetup.macpool.db'
+
 
 @util.export
 @util.codegen
