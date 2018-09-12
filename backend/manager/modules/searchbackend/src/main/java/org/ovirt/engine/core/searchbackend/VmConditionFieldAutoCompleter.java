@@ -30,7 +30,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String NETWORK_USAGE = "NETWORK_USAGE";
     public static final String MIGRATION_PROGRESS_PERCENT = "MIGRATION_PROGRESS_PERCENT";
     public static final String MEMORY = "MEMORY";
-    public static final String MEMORY_GUARANTEED = "MEMORY_GUARANTEED";
+    public static final String GUARANTEED_MEMORY = "GUARANTEED_MEMORY";
     public static final String APPS = "APPS";
     public static final String CLUSTER = "CLUSTER";
     public static final String POOL = "POOL";
@@ -67,7 +67,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         verbs.add(MEM_USAGE);
         verbs.add(NETWORK_USAGE);
         verbs.add(MEMORY);
-        verbs.add(MEMORY_GUARANTEED);
+        verbs.add(GUARANTEED_MEMORY);
         verbs.add(MIGRATION_PROGRESS_PERCENT);
         verbs.add(APPS);
         verbs.add(CLUSTER);
@@ -105,7 +105,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(NETWORK_USAGE, Integer.class);
         getTypeDictionary().put(MIGRATION_PROGRESS_PERCENT, Integer.class);
         getTypeDictionary().put(MEMORY, Integer.class);
-        getTypeDictionary().put(MEMORY_GUARANTEED, Integer.class);
+        getTypeDictionary().put(GUARANTEED_MEMORY, Integer.class);
         getTypeDictionary().put(APPS, String.class);
         getTypeDictionary().put(CLUSTER, String.class);
         getTypeDictionary().put(POOL, String.class);
@@ -141,7 +141,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CPU_USAGE, "usage_cpu_percent");
         columnNameDict.put(MIGRATION_PROGRESS_PERCENT, "migration_progress_percent");
         columnNameDict.put(MEMORY, "mem_size_mb");
-        columnNameDict.put(MEMORY_GUARANTEED, "min_allocated_mem");
+        columnNameDict.put(GUARANTEED_MEMORY, "min_allocated_mem");
         columnNameDict.put(APPS, "app_list");
         columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(POOL, "vm_pool_name");
@@ -179,7 +179,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         if (UPTIME.equals(fieldName) || CREATIONDATE.equals(fieldName)) {
             return BiggerOrSmallerRelationAutoCompleter.INSTANCE;
         } else if (CPU_USAGE.equals(fieldName) || MEM_USAGE.equals(fieldName)
-                || MEMORY.equals(fieldName) || MEMORY_GUARANTEED.equals(fieldName)
+                || MEMORY.equals(fieldName) || GUARANTEED_MEMORY.equals(fieldName)
                 || NETWORK_USAGE.equals(fieldName)
                 || MIGRATION_PROGRESS_PERCENT.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
