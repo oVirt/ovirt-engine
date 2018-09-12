@@ -98,17 +98,6 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#getFileSize(java.io.File)}.
-     */
-    @Test
-    public void testGetFileSize() {
-        File file = new File(canReadFileName);
-        long hostsSize = file.length();
-        assertTrue(ServletUtils.canReadFile(file), "We should be able to read this file.");
-        assertEquals(hostsSize, ServletUtils.getFileSize(file), "Values should match");
-    }
-
-    /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#isSane(java.lang.String)}.
      */
     @Test

@@ -21,10 +21,6 @@ public class ServletUtils {
     // Map of MIME types:
     private static MimetypesFileTypeMap mimeMap;
 
-    // Anything longer than this is considered a large file and a warning
-    // will be generating when serving it:
-    private static final long LARGE = 1048576; // 1 MiB
-
     static {
         // Load the system wide MIME types map:
         try {
@@ -119,7 +115,7 @@ public class ServletUtils {
                     mime = getMimeMap().getContentType(file);
                 }
                 response.setContentType(mime);
-                response.setContentLength((int) getFileSize(file));
+                response.setContentLength((int) file.length());
 
                 // Send content
                 writeFileToStream(response.getOutputStream(), file);
@@ -153,23 +149,6 @@ public class ServletUtils {
             log.error(message, exception);
             throw new IOException(message, exception);
         }
-    }
-
-    /**
-     * Returns the size of the {@code File} passed in.
-     * @param file The file to get the length for.
-     * @return The length of the file as a {@code long}
-     */
-    public static long getFileSize(File file) {
-        // Advice against large files:
-        final long length = file.length();
-        if (length > LARGE) {
-            log.warn("File '{}' is {} bytes long. Please reconsider using this servlet for files larger than {} bytes.",
-                    file.getAbsolutePath(),
-                    length,
-                    LARGE);
-        }
-        return length;
     }
 
     /**
