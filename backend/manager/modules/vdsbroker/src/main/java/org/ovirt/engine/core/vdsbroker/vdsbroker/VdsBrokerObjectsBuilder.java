@@ -213,6 +213,9 @@ public class VdsBrokerObjectsBuilder {
                     case "ide":
                         dve.setDiskInterface(DiskInterface.IDE);
                         break;
+                    case "sata":
+                        dve.setDiskInterface(DiskInterface.SATA);
+                        break;
                     }
                     diskImages.add(image);
                 }
