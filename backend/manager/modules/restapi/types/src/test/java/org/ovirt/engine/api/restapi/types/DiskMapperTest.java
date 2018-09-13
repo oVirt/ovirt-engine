@@ -18,9 +18,9 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
 
     @Override
     protected Disk postPopulate(Disk model) {
-        model.setFormat(MappingTestHelper.shuffle(DiskFormat.class));
-        model.setSgio(MappingTestHelper.shuffle(ScsiGenericIO.class));
-        model.setStatus(MappingTestHelper.shuffle(DiskStatus.class));
+        model.setFormat(DiskFormat.COW);
+        model.setSgio(ScsiGenericIO.FILTERED);
+        model.setStatus(DiskStatus.ILLEGAL);
         model.setLunStorage(null);
         return model;
     }

@@ -22,7 +22,6 @@ import java.util.Set;
 import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.restapi.types.AbstractInvertibleMappingTest;
-import org.ovirt.engine.api.restapi.types.MappingTestHelper;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 
 public class OpenStackSubnetMapperTest
@@ -33,7 +32,7 @@ public class OpenStackSubnetMapperTest
 
     @Override
     protected OpenStackSubnet postPopulate(OpenStackSubnet model) {
-        model.setIpVersion(MappingTestHelper.shuffle(IpVersion.class).value());
+        model.setIpVersion(IpVersion.V4.value());
         return model;
     }
 

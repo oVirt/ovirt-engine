@@ -76,14 +76,14 @@ public class VmMapperTest extends
 
     @Override
     protected Vm postPopulate(Vm from) {
-        from.setType(MappingTestHelper.shuffle(VmType.class));
-        from.setStorageErrorResumeBehaviour(MappingTestHelper.shuffle(VmStorageErrorResumeBehaviour.class));
+        from.setType(VmType.DESKTOP);
+        from.setStorageErrorResumeBehaviour(VmStorageErrorResumeBehaviour.AUTO_RESUME);
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
-        from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class));
-        from.getPayloads().getPayloads().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class));
+        from.getDisplay().setType(DisplayType.SPICE);
+        from.getPayloads().getPayloads().get(0).setType(VmDeviceType.CDROM);
         List<BootDevice> devices = from.getOs().getBoot().getDevices().getDevices();
         for (int i = 0; i < devices.size(); i++) {
-            devices.set(i, MappingTestHelper.shuffle(BootDevice.class));
+            devices.set(i, BootDevice.HD);
         }
         while (from.getCpu().getTopology().getSockets() == 0) {
             from.getCpu().getTopology().setSockets(MappingTestHelper.rand(100));
@@ -105,7 +105,7 @@ public class VmMapperTest extends
         from.setPlacementPolicy(createPlacementPolicy(Guid.EVERYONE, Guid.SYSTEM));
         // Guest Nics configurations
         for (NicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
-            guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF, BootProtocol.POLY_DHCP_AUTOCONF));
+            guestNic.setBootProtocol(BootProtocol.STATIC);
         }
         from.getDisplay().setType(DisplayType.SPICE);
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);

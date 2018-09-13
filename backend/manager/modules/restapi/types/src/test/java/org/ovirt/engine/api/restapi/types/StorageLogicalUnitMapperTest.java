@@ -16,7 +16,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
 
     @Override
     protected HostStorage postPopulate(HostStorage from) {
-        from.setType(MappingTestHelper.shuffle(StorageType.class));
+        from.setType(StorageType.CINDER);
         LogicalUnit unit = new LogicalUnit();
         unit.setId(from.getId());
         from.getLogicalUnits().unsetLogicalUnits();

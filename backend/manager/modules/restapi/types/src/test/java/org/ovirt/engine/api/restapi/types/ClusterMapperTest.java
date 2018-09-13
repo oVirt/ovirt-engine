@@ -15,7 +15,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<org.ovirt.e
     @Override
     protected org.ovirt.engine.api.model.Cluster postPopulate(org.ovirt.engine.api.model.Cluster model) {
         ErrorHandling errorHandling = new ErrorHandling();
-        errorHandling.setOnError(MappingTestHelper.shuffle(MigrateOnError.class));
+        errorHandling.setOnError(MigrateOnError.DO_NOT_MIGRATE);
         model.setErrorHandling(errorHandling);
         model.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);
         model.getRequiredRngSources().getRequiredRngSources().clear();

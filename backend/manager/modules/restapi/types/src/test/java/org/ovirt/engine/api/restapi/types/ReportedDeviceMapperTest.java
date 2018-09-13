@@ -14,9 +14,9 @@ public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<Repo
 
     @Override
     protected ReportedDevice postPopulate(ReportedDevice model) {
-        model.setType(MappingTestHelper.shuffle(ReportedDeviceType.class));
+        model.setType(ReportedDeviceType.NETWORK);
         for (Ip ip : model.getIps().getIps()) {
-            ip.setVersion(MappingTestHelper.shuffle(IpVersion.class));
+            ip.setVersion(IpVersion.V4);
             ip.setGateway(null);
             ip.setNetmask(null);
         }

@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.types;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
@@ -9,7 +8,6 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -67,14 +65,12 @@ public class MappingTestHelper {
                 if (takesPrimitive(method)) {
                     random(method, model);
                 } else if (takesEnum(method)) {
-                    shuffle(method, model);
-                }
-                else if(takesBigDecimal(method)) {
+                    //do nothing
+                } else if (takesBigDecimal(method)) {
                     populateBigDecimal(method, model);
                 } else if (takesXmlGregorianCalendar(method)) {
                     populateXmlGregorianCalendar(method, model);
-                }
-                else {
+                } else {
                     descend(method, model, scope(seen), level);
                 }
             } else if (isGetter(method) && returnsList(method)) {
@@ -134,22 +130,10 @@ public class MappingTestHelper {
         }
     }
 
-    @SafeVarargs
-    public static <E extends Enum<E>> E shuffle(Class<E> enumType, E... excludeValues) {
-        final Set<E> valuesSet = complementOf(enumType, excludeValues);
-        final E[] values = valuesSet.toArray((E[]) Array.newInstance(enumType, valuesSet.size()));
-        return values[rand(values.length)];
-    }
-
     private static <E extends Enum<E>> EnumSet<E> complementOf(Class<E> enumType, E[] excludeValues) {
         final EnumSet<E> result = EnumSet.allOf(enumType);
         result.removeAll(Arrays.asList(excludeValues));
         return result;
-    }
-
-    private static void shuffle(Method method, Object model) throws Exception {
-        Class<? extends Enum> enumType = (Class<? extends Enum>)method.getParameterTypes()[0];
-        method.invoke(model, shuffle(enumType));
     }
 
     private static void descend(Method method, Object model, List<Class<?>> seen, int level) throws Exception {

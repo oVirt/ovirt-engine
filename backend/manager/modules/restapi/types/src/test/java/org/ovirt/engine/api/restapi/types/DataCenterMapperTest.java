@@ -17,8 +17,8 @@ public class DataCenterMapperTest extends
 
     @Override
     protected DataCenter postPopulate(DataCenter model) {
-        model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class));
-        model.setQuotaMode(MappingTestHelper.shuffle(QuotaModeType.class));
+        model.setStorageFormat(StorageFormat.V1);
+        model.setQuotaMode(QuotaModeType.AUDIT);
         return model;
     }
 
