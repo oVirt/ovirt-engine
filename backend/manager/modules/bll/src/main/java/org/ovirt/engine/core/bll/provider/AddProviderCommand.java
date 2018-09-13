@@ -61,7 +61,9 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
                     String.format("$providerType %1$s", getProvider().getType()));
         }
         ProviderValidator validator = getProviderProxy().getProviderValidator();
-        return validate(validator.nameAvailable()) && validate(validator.validateAddProvider());
+        return validate(validator.nameAvailable())
+                && validate(validator.validateAuthUrl())
+                && validate(validator.validateAddProvider());
     }
 
     @Override
