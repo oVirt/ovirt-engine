@@ -61,6 +61,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
         ProviderValidator validatorNew = new ProviderValidator(getProvider());
         return validate(validatorOld.providerIsSet())
                 && (nameKept() || validate(validatorNew.nameAvailable()))
+                && validate(validatorNew.validateAuthUrl())
                 && validate(providerTypeNotChanged(getOldProvider(), getProvider()));
     }
 

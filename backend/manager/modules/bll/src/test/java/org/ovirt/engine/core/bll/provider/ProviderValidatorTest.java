@@ -24,6 +24,10 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class ProviderValidatorTest {
 
+    private final String INVALID_AUTH_URL = "http://invalid-auth.com";
+    private final String VALID_AUTH_URL_IPV4 = "http://192.168.123.137:35357/v3";
+    private final String VALID_AUTH_URL_IPV6 = "http://[2001:DB8::1]:35357/v3";
+
     protected Provider<AdditionalProperties> provider = createProvider("provider");
 
     @Mock
@@ -51,6 +55,31 @@ public class ProviderValidatorTest {
     @Test
     public void nameAvailable() throws Exception {
         assertThat(validator.nameAvailable(), isValid());
+    }
+
+    @Test
+    public void authUrlNull() {
+        assertThat(validator.validateAuthUrl(), isValid());
+    }
+
+    @Test
+    public void authUrlInvalid() {
+        when(provider.getAuthUrl()).thenReturn(INVALID_AUTH_URL);
+        EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_PROVIDER_INVALID_AUTH_URL;
+        assertThat(validator.validateAuthUrl(), failsWith(engineMessage,
+                ReplacementUtils.createSetVariableString(ProviderValidator.VAR_AUTH_URL, INVALID_AUTH_URL)));
+    }
+
+    @Test
+    public void authUrlValidIpv4() {
+        when(provider.getAuthUrl()).thenReturn(VALID_AUTH_URL_IPV4);
+        assertThat(validator.validateAuthUrl(), isValid());
+    }
+
+    @Test
+    public void authUrlValidIpv6() {
+        when(provider.getAuthUrl()).thenReturn(VALID_AUTH_URL_IPV6);
+        assertThat(validator.validateAuthUrl(), isValid());
     }
 
     @Test
