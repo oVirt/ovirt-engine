@@ -289,7 +289,7 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
             cluster.setLogMaxMemoryUsedThreshold(Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage));
         }
 
-        if (cluster.getLogMaxMemoryUsedThreshold() <=0 ) {
+        if (cluster.getLogMaxMemoryUsedThreshold() == null) {
             cluster.setLogMaxMemoryUsedThreshold(
                     cluster.getLogMaxMemoryUsedThresholdType() == LogMaxMemoryUsedThresholdType.PERCENTAGE ?
                             Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage) :

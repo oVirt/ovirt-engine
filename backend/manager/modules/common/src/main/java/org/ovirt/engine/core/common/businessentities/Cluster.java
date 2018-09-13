@@ -94,7 +94,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
 
     @Min(1)
-    private int logMaxMemoryUsedThreshold;
+    private Integer logMaxMemoryUsedThreshold;
 
     private LogMaxMemoryUsedThresholdType logMaxMemoryUsedThresholdType;
 
@@ -610,11 +610,11 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         return Objects.equals(getDefaultNetworkProviderId(), providerId);
     }
 
-    public int getLogMaxMemoryUsedThreshold() {
+    public Integer getLogMaxMemoryUsedThreshold() {
         return logMaxMemoryUsedThreshold;
     }
 
-    public void setLogMaxMemoryUsedThreshold(int logMaxMemoryUsedThreshold) {
+    public void setLogMaxMemoryUsedThreshold(Integer logMaxMemoryUsedThreshold) {
         this.logMaxMemoryUsedThreshold = logMaxMemoryUsedThreshold;
     }
 
@@ -731,7 +731,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(macPoolId, other.macPoolId)
                 && Objects.equals(firewallType, other.firewallType)
                 && Objects.equals(defaultNetworkProviderId, other.defaultNetworkProviderId)
-                && logMaxMemoryUsedThreshold == other.logMaxMemoryUsedThreshold
+                && Objects.equals(logMaxMemoryUsedThreshold, other.logMaxMemoryUsedThreshold)
                 && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType;
     }
 
