@@ -280,18 +280,26 @@ public class BackendApiResource
             return getSchema();
         }
         else {
-            BaseResource response;
             Api api;
             if (appMode == ApplicationMode.GlusterOnly) {
-                api = getGlusterApi();
-                response = addGlusterSummary(addSystemVersion(api));
-            }
-            else {
-                api = getApi();
-                response = addSummary(addSystemVersion(api));
+                api = addSystemVersion(getGlusterApi());
+                //only add summary for admin-users, since non-admin users
+                //don't have permission to see the system summary
+                //(https://bugzilla.redhat.com/1612124)
+                if (!isFiltered()) {
+                    addGlusterSummary(api);
+                }
+            } else {
+                api = addSystemVersion(getApi());
+                //only add summary for admin-users, since non-admin users
+                //don't have permission to see the system summary
+                //(https://bugzilla.redhat.com/1612124)
+                if (!isFiltered()) {
+                    addSummary(api);
+                }
             }
             setAuthenticatedUser(api);
-            return getResponseBuilder(response).entity(response).build();
+            return getResponseBuilder(api).entity(api).build();
         }
     }
 
