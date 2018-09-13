@@ -93,7 +93,6 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private Set<SupportedAdditionalClusterFeature> addtionalFeaturesSupported;
 
-    @Min(1)
     private Integer logMaxMemoryUsedThreshold;
 
     private LogMaxMemoryUsedThresholdType logMaxMemoryUsedThresholdType;
