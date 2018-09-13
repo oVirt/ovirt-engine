@@ -16,7 +16,7 @@ public class PermitMapperTest extends AbstractInvertibleMappingTest<Permit, Acti
 
     @Override
     protected Permit postPopulate(Permit from) {
-        ActionGroup actionGroup = MappingTestHelper.shuffle(ActionGroup.class);
+        ActionGroup actionGroup = ActionGroup.ACCESS_IMAGE_STORAGE;
         from.setId(Integer.toString(actionGroup.getId()));
         from.setName(actionGroup.name().toLowerCase());
         from.setAdministrative(actionGroup.getRoleType() == RoleType.ADMIN);

@@ -27,9 +27,9 @@ public class StorageDomainMapperTest extends
 
     @Override
     protected StorageDomain postPopulate(StorageDomain model) {
-        model.setType(MappingTestHelper.shuffle(StorageDomainType.class));
-        model.getStorage().setType(MappingTestHelper.shuffle(StorageType.class));
-        model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class));
+        model.setType(StorageDomainType.DATA);
+        model.getStorage().setType(StorageType.CINDER);
+        model.setStorageFormat(StorageFormat.V1);
         return model;
     }
 

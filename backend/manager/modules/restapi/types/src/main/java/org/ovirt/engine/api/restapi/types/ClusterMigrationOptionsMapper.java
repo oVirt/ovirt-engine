@@ -39,16 +39,18 @@ public class ClusterMigrationOptionsMapper {
 
         if (model.isSetBandwidth()) {
             MigrationBandwidth bandwidth = model.getBandwidth();
-            switch (bandwidth.getAssignmentMethod()) {
-                case AUTO:
-                    entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.AUTO);
-                    break;
-                case HYPERVISOR_DEFAULT:
-                    entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.VDSM_CONFIG);
-                    break;
-                case CUSTOM:
-                    entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);
-                    entity.setCustomMigrationNetworkBandwidth(model.getBandwidth().getCustomValue());
+            if (bandwidth.getAssignmentMethod()!=null) {
+                switch (bandwidth.getAssignmentMethod()) {
+                    case AUTO:
+                        entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.AUTO);
+                        break;
+                    case HYPERVISOR_DEFAULT:
+                        entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.VDSM_CONFIG);
+                        break;
+                    case CUSTOM:
+                        entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);
+                        entity.setCustomMigrationNetworkBandwidth(model.getBandwidth().getCustomValue());
+                }
             }
         }
     }

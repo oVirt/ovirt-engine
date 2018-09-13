@@ -31,7 +31,7 @@ public class PolicyUnitMapperTest extends AbstractInvertibleMappingTest<Scheduli
     @Override
     protected SchedulingPolicyUnit postPopulate(SchedulingPolicyUnit model) {
         model = super.postPopulate(model);
-        model.setType(MappingTestHelper.shuffle(org.ovirt.engine.api.model.PolicyUnitType.class));
+        model.setType(org.ovirt.engine.api.model.PolicyUnitType.FILTER);
         return model;
     }
 

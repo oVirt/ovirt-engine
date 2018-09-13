@@ -37,12 +37,12 @@ public class TemplateMapperTest
 
     @Override
     protected Template postPopulate(Template from) {
-        from.setType(MappingTestHelper.shuffle(VmType.class));
-        from.setStorageErrorResumeBehaviour(MappingTestHelper.shuffle(VmStorageErrorResumeBehaviour.class));
+        from.setType(VmType.DESKTOP);
+        from.setStorageErrorResumeBehaviour(VmStorageErrorResumeBehaviour.AUTO_RESUME);
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         List<BootDevice> devices = from.getOs().getBoot().getDevices().getDevices();
         for (int i = 0; i < devices.size(); i++) {
-            devices.set(i, MappingTestHelper.shuffle(BootDevice.class));
+            devices.set(i, BootDevice.NETWORK);
         }
         while (from.getCpu().getTopology().getSockets() == 0) {
             from.getCpu().getTopology().setSockets(MappingTestHelper.rand(100));
@@ -57,7 +57,7 @@ public class TemplateMapperTest
         from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         for (NicConfiguration nicConfiguration : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
-            nicConfiguration.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class, BootProtocol.AUTOCONF, BootProtocol.POLY_DHCP_AUTOCONF));
+            nicConfiguration.setBootProtocol(BootProtocol.STATIC);
         }
         return from;
     }

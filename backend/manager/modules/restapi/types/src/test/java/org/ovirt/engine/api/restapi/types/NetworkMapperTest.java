@@ -45,7 +45,7 @@ public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, or
 
     @Override
     protected Network postPopulate(Network model) {
-        model.setStatus(MappingTestHelper.shuffle(NetworkStatus.class));
+        model.setStatus(NetworkStatus.NON_OPERATIONAL);
         model.setUsages(new Network.UsagesList());
         model.getUsages().getUsages().add(NetworkUsage.DISPLAY);
         model.getUsages().getUsages().add(NetworkUsage.MIGRATION);

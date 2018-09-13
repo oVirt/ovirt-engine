@@ -17,7 +17,7 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<Nic, VmNetworkI
 
     @Override
     protected Nic postPopulate(Nic model) {
-        model.setInterface(MappingTestHelper.shuffle(NicInterface.class));
+        model.setInterface(NicInterface.E1000);
         return model;
     }
 
