@@ -292,9 +292,13 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                                     return false;
                                 }
                             }
+
+                            boolean vmNonMigratable = vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST ||
+                                    (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE && getParameters().getIsInternal());
+
                             // The Hosted Engine VM is migrated by the HA agent;
                             // other non-migratable VMs are reported
-                            if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE && !vm.isHostedEngine()) {
+                            if (vmNonMigratable && !vm.isHostedEngine()) {
                                 nonMigratableVmDescriptionsToFrontEnd.add(vm.getName());
                             }
                         }

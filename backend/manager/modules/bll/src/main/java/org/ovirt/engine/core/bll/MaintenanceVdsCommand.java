@@ -159,7 +159,8 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     }
 
     protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
-        MigrateVmParameters parameters = new MigrateVmParameters(false, vm.getId());
+        boolean forceMigration = !getParameters().isInternal();
+        MigrateVmParameters parameters = new MigrateVmParameters(forceMigration, vm.getId());
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
         return runInternalAction(ActionType.MigrateVm,
                 parameters,
@@ -211,7 +212,8 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 // The Hosted Engine vm is migrated by the HA agent
                 continue;
             }
-            if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
+            if ((getParameters().isInternal() && vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE) ||
+                    vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
                 return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
             }
         }

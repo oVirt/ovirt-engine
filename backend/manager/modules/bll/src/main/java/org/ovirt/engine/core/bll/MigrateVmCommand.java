@@ -825,10 +825,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             }
         }
 
-        if (isInternalExecution() && getVm().getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
-        }
-
         return validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
