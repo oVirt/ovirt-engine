@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -21,6 +22,8 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 /**
@@ -46,6 +49,11 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
     @Inject
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
+    @Inject
+    private LockManager lockManager;
+    @Inject
+    private HostLocking hostLocking;
+
     public GetVdsAndNetworkInterfacesByNetworkIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -67,6 +75,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
                 networkImplementationDetailsUtils.calculateNetworkImplementationDetails(vdsNetworkInterface,
                     network);
             vdsNetworkInterface.setNetworkImplementationDetails(vdsInterfaceNetworkImplementationDetails);
+        }
+        for (VDS vds : vdsById.values()) {
+            vds.setNetworkOperationInProgress(lockManager.isExclusiveLockPresent(new EngineLock(hostLocking.getSetupNetworksLock(vds.getId()))));
         }
 
         getQueryReturnValue().setReturnValue(vdsInterfaceVdsPairs);

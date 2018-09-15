@@ -96,7 +96,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 clusterGlusterService,
                 balloonEnabled,
                 countThreadsAsCores,
-                glusterPeerStatus
+                glusterPeerStatus,
+                networkOperationInProgress
         );
     }
 
@@ -128,7 +129,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 && Objects.equals(clusterName, other.clusterName)
                 && Objects.equals(clusterVirtService, other.clusterVirtService)
                 && Objects.equals(clusterGlusterService, other.clusterGlusterService)
-                && glusterPeerStatus == other.glusterPeerStatus;
+                && glusterPeerStatus == other.glusterPeerStatus
+                && networkOperationInProgress == other.networkOperationInProgress;
     }
 
 
@@ -229,6 +231,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
             vds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration(originalDnsResolverConfiguration));
         }
         vds.setInFenceFlow(isInFenceFlow());
+        vds.setNetworkOperationInProgress(isNetworkOperationInProgress());
         return vds;
     }
 
