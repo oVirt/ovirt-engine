@@ -7,8 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 /**
@@ -43,6 +46,10 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
     private Network networkMocked;
     @Mock
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+    @Mock
+    private LockManager lockManager;
+    @Mock
+    private HostLocking hostLocking;
 
     @Test
     public void testExecuteQueryCommand() {
@@ -52,6 +59,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         setupVdsDao();
         setupVdsNetworkInterfaceDao();
         setupNetworkDao();
+        setLockManager();
 
         PairQueryable<VdsNetworkInterface, VDS> vdsInterfaceVdsPair =
                 new PairQueryable<>(vdsNetworkInterface, vds);
@@ -75,5 +83,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
 
     private void setupNetworkDao() {
         when(networkDaoMocked.get(networkId)).thenReturn(networkMocked);
+    }
+
+    private void setLockManager() {
+        when(lockManager.isExclusiveLockPresent(ArgumentMatchers.any())).thenReturn(false);
     }
 }
