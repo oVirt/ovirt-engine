@@ -106,7 +106,9 @@ public class DiskVmElementValidator {
         }
 
         DiskInterface diskInterface = diskVmElement.getDiskInterface();
-        if (diskInterface != DiskInterface.VirtIO_SCSI && diskInterface != DiskInterface.IDE) {
+        if (diskInterface != DiskInterface.VirtIO_SCSI
+                && diskInterface != DiskInterface.IDE
+                && diskInterface != DiskInterface.SATA) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE,
                     getDiskAliasVarReplacement());
