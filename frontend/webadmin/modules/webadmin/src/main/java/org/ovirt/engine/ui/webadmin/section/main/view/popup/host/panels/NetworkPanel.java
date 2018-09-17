@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
@@ -13,7 +12,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
@@ -195,14 +193,4 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
             item.getSetupModel().onOperation(NetworkOperation.REMOVE_UNMANAGED_NETWORK, detach);
         }
     }
-
-    @Override
-    protected void onLoad() {
-        super.onLoad();
-
-        while (ElementUtils.detectHorizontalOverflow(getElement())) {
-            titleLabel.getElement().getStyle().setWidth(titleLabel.getElement().getClientWidth() - 1, Unit.PX);
-        }
-    }
-
 }
