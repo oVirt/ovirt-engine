@@ -34,7 +34,7 @@ public class DiskVmElementValidator {
         if (Boolean.TRUE.equals(diskVmElement.isReadOnly())) {
             DiskInterface diskInterface = diskVmElement.getDiskInterface();
 
-            if (diskInterface == DiskInterface.IDE) {
+            if (diskInterface == DiskInterface.IDE || diskInterface == DiskInterface.SATA) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR,
                         String.format("$interface %1$s", diskInterface));
             }

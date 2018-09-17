@@ -704,7 +704,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsSgIoUnfiltered().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsScsiPassthrough().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsUsingScsiReservation().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
-        getIsReadOnly().setIsAvailable(!DiskInterface.IDE.equals(diskInterface));
+        getIsReadOnly().setIsAvailable(diskInterface != DiskInterface.IDE && diskInterface != DiskInterface.SATA);
 
         updatePassDiscardAvailability();
         updateScsiPassthroughChangeability();

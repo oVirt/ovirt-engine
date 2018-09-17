@@ -541,7 +541,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                     Disk disk = diskModel.getDisk();
                     boolean isScsiPassthrough = disk.isScsiPassthrough();
                     boolean ideLimitation = diskModel.getDiskInterface().getSelectedItem() == DiskInterface.IDE;
-                    return !isScsiPassthrough && !ideLimitation;
+                    boolean sataLimitation = diskModel.getDiskInterface().getSelectedItem() == DiskInterface.SATA;
+                    return !isScsiPassthrough && !ideLimitation && !sataLimitation;
                 }
 
                 @Override
