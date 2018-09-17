@@ -333,8 +333,12 @@ public class VmValidator {
         ArrayList<EngineMessage> messages = new ArrayList<>();
         if (pciInUse > maxPciSlots) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
-        } else if (VmCommand.MAX_IDE_SLOTS < diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
+        } else if (VmCommand.MAX_IDE_SLOTS <
+                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.IDE).count()) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS);
+        } else if (VmCommand.MAX_SATA_SLOTS <
+                diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.SATA).count()) {
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SATA_SLOTS);
         } else if (VmCommand.MAX_VIRTIO_SCSI_DISKS <
                 diskVmElements.stream().filter(a -> a.getDiskInterface() == DiskInterface.VirtIO_SCSI).count()) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_VIRTIO_SCSI_DISKS);

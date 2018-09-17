@@ -716,6 +716,32 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testAddingSATALunExceedsSlotLimit() {
+        mockInterfaceList();
+        LunDisk disk = createISCSILunDisk();
+
+        command.getParameters().setDiskInfo(disk);
+        command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.SATA);
+
+        VM vm = mockVm();
+
+        mockMaxPciSlots();
+
+        // use maximum slots for SATA - validate expected to succeed.
+        mockOtherVmDisks(vm, VmCommand.MAX_SATA_SLOTS - 1, DiskInterface.SATA);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+
+        LunDisk newDisk = createISCSILunDisk();
+        DiskVmElement dve = new DiskVmElement(disk.getId(), vmId);
+        dve.setDiskInterface(DiskInterface.SATA);
+        newDisk.setDiskVmElements(Collections.singletonList(dve));
+
+        vm.getDiskMap().put(newDisk.getId(), newDisk);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_EXCEEDED_MAX_SATA_SLOTS);
+    }
+
+    @Test
     public void testAddingPCILunExceedsSlotLimit() {
         mockInterfaceList();
         LunDisk disk = createISCSILunDisk();

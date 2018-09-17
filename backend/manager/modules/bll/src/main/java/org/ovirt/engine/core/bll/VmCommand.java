@@ -175,6 +175,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     // 3 IDE slots: 4 total minus 1 for CD
     public static final int MAX_IDE_SLOTS = 3;
 
+    // 5 SATA slots: 6 total minus 1 for CD
+    public static final int MAX_SATA_SLOTS = 5;
+
     // The maximum number of VirtIO SCSI disks that libvirt
     // allows without creating another controller
     public static final int MAX_VIRTIO_SCSI_DISKS = 16383;
