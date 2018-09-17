@@ -648,18 +648,20 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             connection.setRequestMethod("PUT");
             // Send request
+            log.debug(String.format("Add image ticket to proxy request: %s", connection.toString()));
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(signedTicket.getBytes(StandardCharsets.UTF_8));
                 outputStream.flush();
-                outputStream.close();
             }
             int responseCode = connection.getResponseCode();
+            log.debug(String.format("Add image ticket to proxy response: code - %d, message - %s",
+                    connection.getResponseCode(), connection.getResponseMessage()));
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 throw new RuntimeException(String.format(
                         "Request to imageio-proxy failed, response code: %s", responseCode));
             }
         } catch (Exception ex) {
-            log.error("Failed to add image ticket to ovirt-imageio-proxy", ex.getMessage());
+            log.error("Failed to add image ticket to ovirt-imageio-proxy", ex);
             return false;
         }
         return true;
