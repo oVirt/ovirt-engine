@@ -105,9 +105,11 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.nameInterface()),
                     SafeHtmlUtils.fromString(nic.getName()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
-                    SafeHtmlUtils.fromString(nic.getNetworkName()), dl);
+                    SafeHtmlUtils.fromString(nic.getNetworkName() == null ? constants.unAvailablePropertyLabel() :
+                            nic.getNetworkName()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
-                    SafeHtmlUtils.fromString(nic.getVnicProfileName()), dl);
+                    SafeHtmlUtils.fromString(nic.getVnicProfileName() == null ? messages.emptyProfile().asString() :
+                            nic.getVnicProfileName()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeInterface()),
                     SafeHtmlUtils.fromString(VmInterfaceType.forValue(nic.getType()).getDescription()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()),
