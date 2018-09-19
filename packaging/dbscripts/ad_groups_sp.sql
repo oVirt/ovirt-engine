@@ -114,4 +114,16 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetGroupByNameAndDomain (v_name VARCHAR(256), v_domain VARCHAR(256))
+RETURNS SETOF ad_groups STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM ad_groups
+    WHERE name = v_name
+      AND domain = v_domain;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 

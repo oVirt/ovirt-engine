@@ -74,6 +74,15 @@ public class DbGroupDaoImpl extends BaseDao implements DbGroupDao {
     }
 
     @Override
+    public DbGroup getByNameAndDomain(String name, String domain) {
+        return getCallsHandler().executeRead("GetGroupByNameAndDomain",
+                dbGroupRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("name", name)
+                        .addValue("domain", domain));
+    }
+
+    @Override
     public List<DbGroup> getAll() {
         return getCallsHandler().executeReadList("GetAllGroups",
                 dbGroupRowMapper,

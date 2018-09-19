@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 @NonTransactiveCommandAttribute
 public class CreateUserSessionCommand<T extends CreateUserSessionParameters> extends CommandBase<T> {
@@ -47,6 +48,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     private RoleDao roleDao;
 
     private static final String UNKNOWN = "UNKNOWN";
+    private static final String OVIRT_ADMINISTRATOR = "ovirt-administrator";
 
     private String sessionId;
     private String sourceIp;
@@ -56,10 +58,11 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     }
 
     private DbUser buildUser(T params, String authzName) {
+        boolean externalSsoEnabled = EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO");
         DbUser dbUser = dbUserDao.getByExternalId(authzName, params.getPrincipalId());
         DbUser user = new DbUser(dbUser);
         user.setId(dbUser == null ? Guid.newGuid() : dbUser.getId());
-        user.setExternalId(params.getPrincipalId());
+        user.setExternalId(externalSsoEnabled ? Guid.newGuid().toString() : params.getPrincipalId());
         user.setDomain(authzName);
         user.setEmail(params.getEmail());
         user.setFirstName(params.getFirstName());
@@ -70,9 +73,16 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         Map<String, ExtMap> groupRecords = new HashMap<>();
         flatGroups((Collection<ExtMap>) params.getGroupIds(), groupRecords);
         for (Map.Entry<String, ExtMap> group: groupRecords.entrySet()) {
-            DbGroup dbGroup = dbGroupDao.getByExternalId(authzName, group.getKey());
+            String name = group.getValue().get(Authz.GroupRecord.NAME);
+            // The domain is empty for predefined ovirt-administrator group
+            String domain = name.equals(OVIRT_ADMINISTRATOR) ? "" : authzName;
+            // If external sso integration is enabled we retrieve the group by their name and domain. We do not have
+            // the external id for the groups in the OpenID Connect claim set.
+            DbGroup dbGroup = externalSsoEnabled ?
+                    dbGroupDao.getByNameAndDomain(name, domain) :
+                    dbGroupDao.getByExternalId(authzName, group.getKey());
             if (dbGroup != null) {
-                dbGroup.setName(group.getValue().get(Authz.GroupRecord.NAME));
+                dbGroup.setName(name);
                 dbGroupDao.update(dbGroup);
                 groupIds.add(dbGroup.getId());
             }

@@ -49,6 +49,17 @@ public interface DbGroupDao extends Dao, SearchDao<DbGroup> {
     DbGroup getByName(String name);
 
     /**
+     * Retrieves the group with the specified name and domain.
+     *
+     * @param name
+     *            the group name
+     * @param domain
+     *            the domain name
+     * @return the group
+     */
+    DbGroup getByNameAndDomain(String name, String domain);
+
+    /**
      * Retrieves all groups.
      *
      * @return the list of all groups
