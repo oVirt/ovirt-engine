@@ -233,7 +233,7 @@ Requires:	archaius-core
 Requires:	hystrix-core
 Requires:	hystrix-metrics-event-stream
 Requires:	jakarta-commons-httpclient
-Requires:	java-openjdk-headless >= 1:1.8.0
+Requires:	java-1.8.0-openjdk-headless >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.1.0
@@ -482,7 +482,7 @@ Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
 Requires:	python-psycopg2
 Requires(pre):	shadow-utils
-Requires:	java-openjdk-headless >= 1:1.8.0
+Requires:	java-1.8.0-openjdk-headless >= 1:1.8.0
 
 %if 0%{?fedora}
 Requires:	python2-dnf
