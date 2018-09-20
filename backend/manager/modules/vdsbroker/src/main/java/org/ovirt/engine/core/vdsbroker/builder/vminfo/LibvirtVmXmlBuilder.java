@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
@@ -506,7 +507,8 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("entry");
         writer.writeAttributeString("name", "manufacturer");
-        writer.writeRaw("oVirt");
+        String product = Config.getValue(ConfigValues.OriginType);
+        writer.writeRaw(OriginType.valueOf(product) == OriginType.OVIRT ? "oVirt" : "Red Hat");
         writer.writeEndElement();
 
         writer.writeStartElement("entry");
