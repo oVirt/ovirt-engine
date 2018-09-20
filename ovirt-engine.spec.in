@@ -1207,6 +1207,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Fri Sep 21 2018 Martin Perina <mperina@redhat.com> - 4.2.7.1
+- Bump version to 4.2.7.1
+
 * Mon Sep 17 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.7
 - Bump version to 4.2.7
 
