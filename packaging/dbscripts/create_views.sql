@@ -635,7 +635,7 @@ WHERE (
 
 CREATE OR REPLACE VIEW storage_domains_image_sizes AS
 SELECT storage_domain_id,
-    CAST(CAST(COALESCE(SUM(
+    CAST(COALESCE(SUM(
         CASE WHEN active = TRUE
             AND(
                 entity_type IS NULL
@@ -643,10 +643,11 @@ SELECT storage_domain_id,
                 )
             THEN size
         ELSE actual_size
-        END), 0) * 0.000000000931322574615478515625 AS BIGINT) AS INT)
+        END), 0) * 0.000000000931322574615478515625 AS BIGINT)
+
     AS commited_disk_size,
-    CAST(CAST(COALESCE(SUM(actual_size), 0)
-    * 0.000000000931322574615478515625 AS BIGINT) AS INT)
+    CAST(COALESCE(SUM(actual_size), 0)
+    * 0.000000000931322574615478515625 AS BIGINT)
     AS actual_images_size
 FROM images i
 INNER JOIN image_storage_domain_map isdm
