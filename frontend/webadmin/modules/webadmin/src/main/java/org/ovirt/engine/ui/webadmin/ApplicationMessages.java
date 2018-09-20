@@ -113,5 +113,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String clusterDefaultRouteCompatibility(String version);
 
     String vmStartedWithDifferentName(String runtimeName);
+
+    String cpuDeprecationWarning(String cpuType);
 }
 
