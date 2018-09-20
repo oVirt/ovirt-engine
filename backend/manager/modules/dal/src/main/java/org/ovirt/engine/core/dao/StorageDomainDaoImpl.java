@@ -164,8 +164,8 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
         entity.setAvailableDiskSize((Integer) rs.getObject("available_disk_size"));
         entity.setConfirmedAvailableDiskSize((Integer) rs.getObject("confirmed_available_disk_size"));
         entity.setUsedDiskSize((Integer) rs.getObject("used_disk_size"));
-        entity.setActualImagesSize(rs.getInt("actual_images_size"));
-        entity.setCommittedDiskSize(rs.getInt("commited_disk_size"));
+        entity.setActualImagesSize((int) rs.getLong("actual_images_size"));
+        entity.setCommittedDiskSize((int) rs.getLong("commited_disk_size"));
         entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
         entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
         entity.setStorageDomainSharedStatus(
