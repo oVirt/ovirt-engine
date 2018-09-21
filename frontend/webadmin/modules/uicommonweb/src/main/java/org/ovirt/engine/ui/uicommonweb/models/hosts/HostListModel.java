@@ -881,7 +881,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : model.getConsoleAddress().getEntity());
-        host.setVncEncryptionEnabled(model.getVncEncryptionEnabled().getEntity());
         Guid oldClusterId = host.getClusterId();
         Guid newClusterId = model.getCluster().getSelectedItem().getId();
         host.setClusterId(newClusterId);
