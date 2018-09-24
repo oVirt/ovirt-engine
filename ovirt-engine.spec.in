@@ -60,7 +60,7 @@
 
 %global ovirt_install_poms 1
 %global ovirt_provides_jboss 1
-%global jboss ovirt-engine-wildfly-overlay
+%global jboss ovirt-engine-wildfly-overlay-13
 %if 0%{?fedora}
 %global ovirt_rh_postgresql95 0
 %global postgresql_systemd_service postgresql.service
@@ -255,7 +255,7 @@ BuildRequires:	javapackages-local
 
 Requires(pre):	shadow-utils
 
-Requires:	%{jboss} >= 13.0.0
+Requires:	%{jboss}
 
 Requires:	%{name}-backend = %{version}-%{release}
 Requires:	%{name}-dbscripts = %{version}-%{release}
