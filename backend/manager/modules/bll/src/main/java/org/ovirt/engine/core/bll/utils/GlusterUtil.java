@@ -467,6 +467,7 @@ public class GlusterUtil {
         if (gss != null) {
             return gss.getStatus().getStatusMsg().equalsIgnoreCase("Up") ? GlusterStatus.UP : GlusterStatus.DOWN;
         }
+        log.info("Failed to check VDO running status of host : '{}' ", vdsId);
         return GlusterStatus.UNKNOWN;
     }
 

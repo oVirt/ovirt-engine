@@ -82,14 +82,19 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     GlusterStatus isRunning = glusterUtil.isVDORunning(vds.getId());
                     switch (isRunning) {
                     case DOWN:
-                           log.info("VDO service is down in host : '{}' , starting VDO service", vds.getId());
-                           startVDOService(vds);
-                           break;
+                        log.info("VDO service is down in host : '{}' with id '{}', starting VDO service",
+                                vds.getHostName(),
+                                vds.getId());
+                        startVDOService(vds);
+                        break;
                     case UP:
-                        log.info("VDO service is up in host : '{}' , skipping starting of VDO service", vds.getId());
+                        log.info("VDO service is up in host : '{}' with id '{}', skipping starting of VDO service",
+                                vds.getHostName(),
+                                vds.getId());
                            break;
                     case UNKNOWN:
-                        log.info("VDO service is not installed host : '{}' , ignoring to start VDO service",
+                        log.info("VDO service is not installed host : '{}' with id '{}', ignoring to start VDO service",
+                                vds.getHostName(),
                                 vds.getId());
                         break;
                     }
@@ -127,16 +132,14 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             return getSucceeded() ? AuditLogType.VDS_ACTIVATE : AuditLogType.VDS_ACTIVATE_FAILED;
         }
     }
-
     public void startVDOService(VDS vds) {
         // starting VDO service
         boolean succeeded = runVdsCommand(VDSCommandType.ManageGlusterService,
                 new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("vdo"), "restart")).getSucceeded();
         if (!succeeded) {
-            log.error("Failed to start VDO service while activating the host '{}'", vds.getHostName());
+            log.error("Failed to start VDO service while activating the host '{}' with id '{}'",
+                    vds.getHostName(),
+                    vds.getId());
         }
-
     }
-
-
 }
