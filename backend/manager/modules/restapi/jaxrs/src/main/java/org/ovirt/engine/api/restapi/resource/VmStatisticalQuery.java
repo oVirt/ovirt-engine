@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.model.ValueType;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,6 +26,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
     private static final Statistic MEM_USAGE_HISTORY    = create("memory.usage.history",      "List of memory usage history, sorted by date from newest to oldest, at intervals of 30 seconds",       GAUGE, PERCENT, DECIMAL);
     private static final Statistic NETWORK_USAGE_HISTORY    = create("network.usage.history",      "List of network usage history, sorted by date from newest to oldest, at intervals of 30 seconds",       GAUGE, PERCENT, DECIMAL);
     private static final Statistic MIGRATION_PROGRESS = create("migration.progress",      "Migration Progress",       GAUGE, PERCENT, DECIMAL);
+    private static final Statistic DISKS_USAGE = create("disks.usage",      "Disk usage, in bytes, per filesystem as JSON (agent)",       GAUGE, NONE, ValueType.STRING);
 
     protected VmStatisticalQuery(Vm parent) {
         this(null, parent);
@@ -43,6 +45,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
         long memCached = entity.getGuestMemoryCached() == null ? 0 : entity.getGuestMemoryCached() * Kb;
         long migrationProgress = entity.getMigrationProgressPercent() != null ? entity.getMigrationProgressPercent() : 0;
         int networkUsagePercent = entity.getUsageNetworkPercent() != null ? entity.getUsageNetworkPercent() : 0;
+        String disksUsage = s.getDisksUsage() != null ? s.getDisksUsage() : "";
 
         Double zero = 0.0;
         Double cpuUser = s.getCpuUser()==null ? zero : s.getCpuUser();
@@ -56,7 +59,8 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
                 setDatum(clone(MEM_BUFFERED), memBuffered),
                 setDatum(clone(MEM_CACHED), memCached),
                 setDatum(clone(MEM_FREE), memFree),
-                setDatum(clone(NETWORK_TOTAL), networkUsagePercent)
+                setDatum(clone(NETWORK_TOTAL), networkUsagePercent),
+                setDatum(clone(DISKS_USAGE), disksUsage)
         );
 
         statistics.add(addHistoryData(clone(CPU_USAGE_HISTORY), entity.getCpuUsageHistory()));

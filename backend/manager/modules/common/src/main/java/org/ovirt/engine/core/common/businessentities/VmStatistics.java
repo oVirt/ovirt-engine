@@ -136,9 +136,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.migrationProgressPercent = migrationProgressPercent;
     }
 
-    /**
-     * Field for history db, not intended to be accessible to clients.
-     */
     public String getDisksUsage() {
         return disksUsage;
     }
