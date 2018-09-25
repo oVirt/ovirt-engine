@@ -81,6 +81,9 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         return getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 0, cpuOverCommitDurationMinutes);
     }
 
+    /**
+     * Returns list of hosts, that are not under-utilized with respect to memory.
+     */
     @Override
     protected List<VDS> getSecondarySources(Cluster cluster,
                                             List<VDS> candidateHosts,
@@ -88,9 +91,12 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         long requiredMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
 
-        return getOverUtilizedMemoryHosts(candidateHosts, requiredMemory);
+        return getHostsWithLessFreeMemory(candidateHosts, requiredMemory);
     }
 
+    /**
+     * Returns list of hosts, that are not under-utilized with respect to memory.
+     */
     @Override
     protected List<VDS> getSecondaryDestinations(Cluster cluster,
                                                  List<VDS> candidateHosts,
@@ -98,7 +104,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         long requiredMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) : 0L;
 
-        return getUnderUtilizedMemoryHosts(candidateHosts, requiredMemory, 0);
+        return getHostsWithMoreFreeMemory(candidateHosts, requiredMemory, 0);
     }
 
 }

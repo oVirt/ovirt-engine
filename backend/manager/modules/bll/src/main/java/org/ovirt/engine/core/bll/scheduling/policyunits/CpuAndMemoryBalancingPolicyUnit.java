@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -141,30 +140,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                     );
     }
 
-
     /**
-     * Get all hosts that have more free memory than minFreeMemory, but less free memory than maxFreeMemory.
-     *
-     * @param hosts - candidate hosts
-     * @param minFreeMemory - minimum amount of free memory required (MiBú
-     * @param maxFreeMemory - maximum amount of free memory allowed (MiB)
-     * @return - normally utilized hosts
-     */
-    protected List<VDS> getNormallyUtilizedMemoryHosts(Collection<VDS> hosts, long minFreeMemory, long maxFreeMemory) {
-        List<VDS> result = new ArrayList<>();
-
-        for (VDS h: hosts) {
-            if (h.getMaxSchedulingMemory() >= minFreeMemory
-                    && h.getMaxSchedulingMemory() <= maxFreeMemory) {
-                result.add(h);
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Return a list of hosts that have more free memory than lowFreeMemoryLimit and more
+     * Return a list of hosts that have more free memory than freeMemoryLimit and more
      * VMs than minVmCount.
      *
      * minVmCount is useful for using this method to find a source of VMs for migration
@@ -172,15 +149,15 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * for a destination candidates, pass 0 there.
      *
      * @param hosts - candidate hosts
-     * @param lowFreeMemoryLimit - minimal amount of free memory to be considered under utilized (MiB)
+     * @param freeMemoryLimit - minimal amount of free memory
      * @param minVmCount - minimal number of VMs that need to be present on a host
-     * @return - under-utilized hosts
+     * @return - Hosts with more free memory
      */
-    protected List<VDS> getUnderUtilizedMemoryHosts(Collection<VDS> hosts, long lowFreeMemoryLimit, int minVmCount) {
+    protected List<VDS> getHostsWithMoreFreeMemory(Collection<VDS> hosts, long freeMemoryLimit, int minVmCount) {
         List<VDS> result = new ArrayList<>();
 
         for (VDS h: hosts) {
-            if (h.getMaxSchedulingMemory() > lowFreeMemoryLimit
+            if (h.getMaxSchedulingMemory() > freeMemoryLimit
                     && h.getVmCount() >= minVmCount) {
                 result.add(h);
             }
@@ -194,15 +171,15 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * and there is more VMs than one.
      *
      * @param hosts A list of all hosts to consider
-     * @param highFreeMemoryLimit The amount of free memory that has to be available for
+     * @param freeMemoryLimit The amount of free memory that has to be available for
      *                       the host to NOT be overutilized (in MB)
      * @return A list of hosts with a memory pressure situation
      */
-    protected List<VDS> getOverUtilizedMemoryHosts(Collection<VDS> hosts, long highFreeMemoryLimit) {
+    protected List<VDS> getHostsWithLessFreeMemory(Collection<VDS> hosts, long freeMemoryLimit) {
         List<VDS> result = new ArrayList<>();
 
         for (VDS h: hosts) {
-            if (h.getMaxSchedulingMemory() < highFreeMemoryLimit
+            if (h.getMaxSchedulingMemory() < freeMemoryLimit
                     && h.getVmCount() > 1) {
                 result.add(h);
             }
@@ -211,23 +188,13 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         return result;
     }
 
-    /**
-     * Get all hosts that are neither over- or under-utilized in terms of CPU power.
-     * See getOverUtilizedCpuHosts and getUnderUtilizedCpuHosts for details.
-     */
-    protected List<VDS> getNormallyUtilizedCPUHosts(Cluster cluster,
-                                                List<VDS> relevantHosts,
-                                                final int highUtilization,
-                                                final int cpuOverCommitDurationMinutes,
-                                                final int highVdsCount) {
-        Set<VDS> remainingHosts = new HashSet<>(relevantHosts);
-        remainingHosts.removeAll(getOverUtilizedCPUHosts(remainingHosts, highUtilization, cpuOverCommitDurationMinutes));
-        remainingHosts.removeAll(getUnderUtilizedCPUHosts(remainingHosts,
-                highVdsCount,
-                0,
-                cpuOverCommitDurationMinutes));
+    protected boolean isHostCpuOverUtilized(VDS host, int highUtilization, int cpuOverCommitDurationMinutes) {
+        long duration = TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes);
 
-        return new ArrayList<>(remainingHosts);
+        return host.getUsageCpuPercent() + calcSpmCpuConsumption(host) >= highUtilization &&
+                host.getCpuOverCommitTimestamp() != null &&
+                getTime().getTime() - host.getCpuOverCommitTimestamp().getTime() >= duration &&
+                host.getVmCount() > 0;
     }
 
     /**
@@ -244,11 +211,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                                                 final int cpuOverCommitDurationMinutes) {
 
         List<VDS> overUtilizedHosts = relevantHosts.stream()
-                .filter(p -> (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) >= highUtilization
-                    && p.getCpuOverCommitTimestamp() != null
-                    && (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime())
-                    >= TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes)
-                    && p.getVmCount() > 0)
+                .filter(p -> isHostCpuOverUtilized(p, highUtilization, cpuOverCommitDurationMinutes))
                 .collect(Collectors.toList());
 
         if (overUtilizedHosts.size() > 1) {

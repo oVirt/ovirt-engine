@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -279,6 +280,9 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
     }
 
+    /**
+     * Returns hosts that are over-utilized or under-utilized with respect to CPU load.
+     */
     @Override
     protected List<VDS> getPrimarySources(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
@@ -294,33 +298,38 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                         highUtilization
                                 - Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage));
 
+        // Over-utilized hosts are in the front of the list, because it is more important
+        // to migrate a VM from an over-utilized host than from an under-utilized
         List<VDS> result = new ArrayList<>();
-        result.addAll(getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 1, cpuOverCommitDurationMinutes));
         result.addAll(getOverUtilizedCPUHosts(candidateHosts, highVdsCount, cpuOverCommitDurationMinutes));
+        result.addAll(getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 1, cpuOverCommitDurationMinutes));
 
         return result;
     }
 
+    /**
+     * Returns list of hosts, that are not over-utilized with respect to CPU load.
+     * The PowerSavingCPUWeightPolicyUnit prefers hosts that are the most utilized,
+     * so the under-utilized hosts are used only if the VM cannot fit to other hosts.
+     */
     @Override
     protected List<VDS> getPrimaryDestinations(Cluster cluster,
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
                 Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        final int lowUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.LOW_UTILIZATION.getDbName()),
-                Config.<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
         final int cpuOverCommitDurationMinutes =
                 tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
                         Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
 
-        final List<VDS> result = getNormallyUtilizedCPUHosts(cluster,
-                candidateHosts,
-                highUtilization,
-                cpuOverCommitDurationMinutes,
-                lowUtilization);
-        return result;
+        return candidateHosts.stream()
+                .filter(host -> !isHostCpuOverUtilized(host, highUtilization, cpuOverCommitDurationMinutes))
+                .collect(Collectors.toList());
     }
 
+    /**
+     * Returns hosts that are over-utilized or under-utilized with respect to memory.
+     */
     @Override
     protected List<VDS> getSecondarySources(Cluster cluster,
             List<VDS> candidateHosts,
@@ -331,21 +340,25 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                 Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()))
                 : Long.MAX_VALUE;
 
+        // Over-utilized hosts are in the front of the list, because it is more important
+        // to migrate a VM from an over-utilized host than from an under-utilized
         List<VDS> result = new ArrayList<>();
-        result.addAll(getUnderUtilizedMemoryHosts(candidateHosts, highMemoryLimit, 1));
-        result.addAll(getOverUtilizedMemoryHosts(candidateHosts, lowMemoryLimit));
+        result.addAll(getHostsWithLessFreeMemory(candidateHosts, lowMemoryLimit));
+        result.addAll(getHostsWithMoreFreeMemory(candidateHosts, highMemoryLimit, 1));
         return result;
     }
 
+    /**
+     * Returns list of hosts, that are not over-utilized with respect to memory.
+     * The PowerSavingMemoryWeightPolicyUnit prefers hosts that are the most utilized,
+     * so the under-utilized hosts are used only if the VM cannot fit to other hosts.
+     */
     @Override
     protected List<VDS> getSecondaryDestinations(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
-        long notEnoughMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
+        long lowMemoryLimit = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
-        long tooMuchMemory = parameters.containsKey(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName()) ?
-                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName())) :
-                Long.MAX_VALUE;
 
-        return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
+        return getHostsWithMoreFreeMemory(candidateHosts, lowMemoryLimit, 0);
     }
 
     protected VdsDao getVdsDao() {

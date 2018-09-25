@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -76,7 +77,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
 
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_B);
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_B, HOST_C);
     }
 
     @Test
@@ -142,7 +143,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
 
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_B);
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_B, HOST_C);
     }
 
     @Test
@@ -160,7 +161,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         initMocks(policyUnit, hosts, vms);
 
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
-        assert !result.isPresent();
+        assertFalse(result.isPresent());
     }
 
     @Test
@@ -178,7 +179,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         initMocks(policyUnit, hosts, vms);
 
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
-        assert !result.isPresent();
+        assertFalse(result.isPresent());
     }
 
     @Test
@@ -196,7 +197,11 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         initMocks(policyUnit, hosts, vms);
 
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
-        assert !result.isPresent();
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isValid());
+
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_A);
     }
 
     @Override
