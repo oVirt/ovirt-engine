@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -79,7 +80,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
         if (worstVdsOccupiedVmSlots < highVmCountUtilization) {
             log.info("There is no host with more than {} running guests, no balancing is needed",
                     highVmCountUtilization);
-            return null;
+            return Collections.emptyList();
         }
 
         return candidateHosts.stream().filter(p -> getOccupiedVmSlots(p, parameters) >= worstVdsOccupiedVmSlots)
@@ -110,11 +111,11 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
 
     @Override
     protected List<VDS> getSecondarySources(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     protected List<VDS> getSecondaryDestinations(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
-        return null;
+        return Collections.emptyList();
     }
 }

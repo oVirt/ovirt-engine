@@ -75,8 +75,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         final List<VDS> overUtilizedSecondaryHosts = getSecondarySources(cluster, hosts, parameters);
 
         // if there aren't any overutilized hosts, then there is nothing to balance...
-        if ((overUtilizedPrimaryHosts == null || overUtilizedPrimaryHosts.size() == 0)
-                && (overUtilizedSecondaryHosts == null || overUtilizedSecondaryHosts.size() == 0)) {
+        if (overUtilizedPrimaryHosts.isEmpty() && overUtilizedSecondaryHosts.isEmpty()) {
             log.debug("There is no over-utilized host in cluster '{}'", cluster.getName());
             return Optional.empty();
         }
@@ -85,13 +84,13 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         Optional<BalanceResult> result = Optional.empty();
 
         // try balancing based on CPU first
-        if (overUtilizedPrimaryHosts != null && overUtilizedPrimaryHosts.size() > 0) {
+        if (!overUtilizedPrimaryHosts.isEmpty()) {
             // returns hosts with utilization lower than the specified threshold
             List<VDS> underUtilizedHosts = getPrimaryDestinations(cluster, hosts, parameters);
 
             /* if no host has a spare power, then there is nothing we can do to balance it here, try
                the secondary aporoach */
-            if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
+            if (underUtilizedHosts.isEmpty()) {
                 log.warn("All candidate hosts have been filtered, can't balance the cluster '{}'"
                                 + " based on the CPU usage, will try memory based approach",
                         cluster.getName());
@@ -101,12 +100,12 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         }
 
         // if it is not possible (or necessary) to balance based on CPU, try with memory
-        if (!result.isPresent() && (overUtilizedSecondaryHosts != null && overUtilizedSecondaryHosts.size() > 0)) {
+        if (!result.isPresent() && !overUtilizedSecondaryHosts.isEmpty()) {
             // returns hosts with more free memory than the specified threshold
             List<VDS> underUtilizedHosts = getSecondaryDestinations(cluster, hosts, parameters);
 
             // if no host has memory to spare, then there is nothing we can do to balance it..
-            if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
+            if (underUtilizedHosts.isEmpty()) {
                 log.warn("All candidate hosts have been filtered, can't balance the cluster '{}'"
                                 + " using memory based approach",
                         cluster.getName());
@@ -263,28 +262,13 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     }
 
     public static int calcSpmCpuConsumption(VDS vds) {
-        return (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
-                .<Integer> getValue(ConfigValues.SpmVCpuConsumption)
-                * Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores();
-    }
-
-    protected VmDao getVmDao() {
-        return vmDao;
+        return (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 :
+                Config.<Integer> getValue(ConfigValues.SpmVCpuConsumption) *
+                        Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores();
     }
 
     protected Date getTime() {
         return new Date();
-    }
-
-    protected int tryParseWithDefault(String candidate, int defaultValue) {
-        if (candidate != null) {
-            try {
-                return Integer.parseInt(candidate);
-            } catch (Exception e) {
-                // do nothing
-            }
-        }
-        return defaultValue;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -42,10 +43,11 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
 
     @Override
     protected FindVmAndDestinations getFindVmAndDestinations(Cluster cluster, Map<String, String> parameters) {
-        final int highCpuUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
-                getHighUtilizationDefaultValue());
-        final long overUtilizedMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
-                Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
+        final int highCpuUtilization = NumberUtils.toInt(parameters.get(HIGH_UTILIZATION), getHighUtilizationDefaultValue());
+        final long overUtilizedMemory = NumberUtils.toLong(
+                parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()),
+                0L
+        );
 
         return new FindVmAndDestinations(cluster, highCpuUtilization, overUtilizedMemory);
     }
@@ -54,11 +56,11 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     protected List<VDS> getPrimarySources(Cluster cluster,
                                           List<VDS> candidateHosts,
                                           Map<String, String> parameters) {
-        final int highUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION),
-                getHighUtilizationDefaultValue());
-        final int cpuOverCommitDurationMinutes =
-                tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                        Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes));
+        final int highUtilization = NumberUtils.toInt(parameters.get(HIGH_UTILIZATION), getHighUtilizationDefaultValue());
+        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
+                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes)
+        );
 
         return getOverUtilizedCPUHosts(candidateHosts, highUtilization, cpuOverCommitDurationMinutes);
     }
@@ -67,16 +69,20 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
     protected List<VDS> getPrimaryDestinations(Cluster cluster,
                                                List<VDS> candidateHosts,
                                                Map<String, String> parameters) {
-        int highUtilization = tryParseWithDefault(parameters.get(HIGH_UTILIZATION), Config
-                .<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute));
-        final int lowUtilization = Math
-                .min(Config.<Integer> getValue(ConfigValues.UtilizationThresholdInPercent)
-                                * highUtilization / 100,
-                        highUtilization
-                                - Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage));
-        final int cpuOverCommitDurationMinutes =
-                tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                        Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes));
+        int highUtilization = NumberUtils.toInt(
+                parameters.get(HIGH_UTILIZATION),
+                Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute)
+        );
+
+        final int lowUtilization = Math.min(
+                Config.<Integer> getValue(ConfigValues.UtilizationThresholdInPercent) * highUtilization / 100,
+                highUtilization - Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage)
+        );
+
+        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
+                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes)
+        );
 
         return getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 0, cpuOverCommitDurationMinutes);
     }

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
@@ -84,7 +85,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         List<VDS> maintenanceHosts = new ArrayList<>();
         List<VDS> downHosts = new ArrayList<>();
 
-        getHostLists(allHosts, parameters, emptyHosts, maintenanceHosts, downHosts);
+        getHostLists(allHosts, emptyHosts, maintenanceHosts, downHosts);
 
         Pair<VDS, VDSStatus> action = evaluatePowerManagementSituation(
                 cluster,
@@ -169,8 +170,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      * @param downHosts Pre-initialized list that will be filled by hosts that are down
      *                  that have automatic power management still enabled
      */
-    protected void getHostLists(List<VDS> allHosts, Map<String, String> parameters,
-                                     List<VDS> emptyHosts, List<VDS> maintenanceHosts, List<VDS> downHosts) {
+    protected void getHostLists(List<VDS> allHosts, List<VDS> emptyHosts, List<VDS> maintenanceHosts, List<VDS> downHosts) {
         for (VDS vds: allHosts) {
             if (vds.getStatus() == VDSStatus.Up
                     && vds.getVmCount() == 0
@@ -200,8 +200,11 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                                                                     List<VDS> pmMaintenanceHosts,
                                                                     List<VDS> emptyHosts,
                                                                     Map<String, String> parameters) {
-        final int requiredReserve = tryParseWithDefault(parameters.get(PolicyUnitParameter.HOSTS_IN_RESERVE.getDbName()),
-                Config.<Integer> getValue(ConfigValues.HostsInReserve));
+        final int requiredReserve = NumberUtils.toInt(
+                parameters.get(PolicyUnitParameter.HOSTS_IN_RESERVE.getDbName()),
+                Config.<Integer> getValue(ConfigValues.HostsInReserve)
+        );
+
         String enableAutoPMParameter = parameters.get(
                 PolicyUnitParameter.ENABLE_AUTOMATIC_HOST_POWER_MANAGEMENT.getDbName());
         Boolean enableAutoPM = enableAutoPMParameter == null ? null : Boolean.valueOf(enableAutoPMParameter);
@@ -210,7 +213,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         }
 
         /* Automatic power management is disabled */
-        if (!enableAutoPM.booleanValue()) {
+        if (!enableAutoPM) {
             log.info("Automatic power management is disabled for cluster '{}'.", cluster.getName());
             return null;
         }
@@ -270,12 +273,13 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
 
     @Override
     protected FindVmAndDestinations getFindVmAndDestinations(Cluster cluster, Map<String, String> parameters) {
-        final int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
-                .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        final long overUtilizedMemory =
-                parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
-                        Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) :
-                        0L;
+        final int highUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
+                Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
+
+        final long overUtilizedMemory = NumberUtils.toLong(parameters.get(
+                PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()),
+                0L
+        );
 
         return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
     }
@@ -285,18 +289,19 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      */
     @Override
     protected List<VDS> getPrimarySources(Cluster cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
-        int highUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
+        int highUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
                 Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        final int lowUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.LOW_UTILIZATION.getDbName()),
+        final int lowUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.LOW_UTILIZATION.getDbName()),
                 Config.<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
-        final int cpuOverCommitDurationMinutes =
-                tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                        Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
-        final int highVdsCount = Math
-                .min(Config.<Integer>getValue(ConfigValues.UtilizationThresholdInPercent)
-                                * highUtilization / 100,
-                        highUtilization
-                                - Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage));
+        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
+                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes)
+        );
+
+        final int highVdsCount = Math.min(
+                Config.<Integer>getValue(ConfigValues.UtilizationThresholdInPercent) * highUtilization / 100,
+                highUtilization - Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage)
+        );
 
         // Over-utilized hosts are in the front of the list, because it is more important
         // to migrate a VM from an over-utilized host than from an under-utilized
@@ -316,11 +321,12 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     protected List<VDS> getPrimaryDestinations(Cluster cluster,
             List<VDS> candidateHosts,
             Map<String, String> parameters) {
-        int highUtilization = tryParseWithDefault(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
+        int highUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
                 Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        final int cpuOverCommitDurationMinutes =
-                tryParseWithDefault(parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                        Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
+        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
+                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes)
+        );
 
         return candidateHosts.stream()
                 .filter(host -> !isHostCpuOverUtilized(host, highUtilization, cpuOverCommitDurationMinutes))
