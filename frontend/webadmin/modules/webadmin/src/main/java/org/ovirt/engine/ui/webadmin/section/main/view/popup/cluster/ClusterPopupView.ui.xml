@@ -472,6 +472,12 @@
                               </b:Column>
                               <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" usePatternFly="true" widgetColSize="SM_5" />
                             </b:Row>
+                            <b:Row>
+                              <b:Column size="SM_12">
+                                <ge:EntityModelCheckBoxEditor ui:field="vncEncryptionEnabled" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.floatLeft}" addLabelStyleName="{style.inline}" label="{constants.vncEncryptionEnabled}" />
+                                <d:InfoIcon ui:field="vncEncryptionEnabledInfoIcon" addStyleNames="{style.panelInfo}" />
+                              </b:Column>
+                            </b:Row>
                           </b:Container>
                         </t:content>
                     </t:DialogTab>

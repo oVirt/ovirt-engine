@@ -448,6 +448,15 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelCheckBoxEditor spiceProxyOverrideEnabled;
 
     @UiField(provided = true)
+    @Path(value = "vncEncryptionEnabled.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor vncEncryptionEnabled;
+
+    @UiField
+    InfoIcon vncEncryptionEnabledInfoIcon;
+
+
+    @UiField(provided = true)
     InfoIcon isVirtioScsiEnabledInfoIcon;
 
     @UiField
@@ -713,6 +722,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfGlusterQuorumNotMetCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         spiceProxyOverrideEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
+        vncEncryptionEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         additionalFeaturesEditor = new ListModelCheckBoxGroup<>(new AbstractRenderer<AdditionalFeature>() {
             @Override
@@ -746,6 +756,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfGlusterQuorumNotMetInfo.setVisible(false);
 
         isVirtioScsiEnabledInfoIcon = new InfoIcon(templates.italicText("")); //$NON-NLS-1$
+        vncEncryptionEnabledInfoIcon = new InfoIcon(templates.italicText("")); //$NON-NLS-1$
 
         logMaxMemoryUsedThresholdInfoIcon =
                 new InfoIcon(templates.italicText(constants.logMaxMemoryUsedThresholdLabelHelpMessage()));

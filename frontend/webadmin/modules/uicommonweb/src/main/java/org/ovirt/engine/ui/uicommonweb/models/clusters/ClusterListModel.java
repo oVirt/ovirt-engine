@@ -671,6 +671,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         // cancel confirm window if there is
         cancelConfirmation();
 
+        model.setVncEncryptionEnabled(model.getVncEncryptionEnabled());
+
         onSaveInternalWithModel(model);
     }
 
@@ -732,6 +734,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         if (model.getSpiceProxyEnabled().getEntity()) {
             cluster.setSpiceProxy(model.getSpiceProxy().getEntity());
         }
+
+        cluster.setVncEncryptionEnabled(model.getVncEncryptionEnabled().getEntity());
 
         if (model.getMigrationPolicies().getSelectedItem() != null) {
             cluster.setMigrationPolicyId(model.getMigrationPolicies().getSelectedItem().getId());

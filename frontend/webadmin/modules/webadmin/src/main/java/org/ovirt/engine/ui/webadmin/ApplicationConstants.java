@@ -3472,4 +3472,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String ipHostImportCluster();
 
     String glusterPeerAddress();
+
+    String vncEncryptionEnabled();
+
+    String vncEncryptionEnabledHelpMessage();
 }

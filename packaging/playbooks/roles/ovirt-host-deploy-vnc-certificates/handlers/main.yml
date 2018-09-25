@@ -1,4 +1,23 @@
+- name: stop vdsmd
+  service:
+    name: vdsmd
+    state: stopped
+  listen: "restart libvirtd"
+
+- name: stop supervdsmd
+  service:
+    name: supervdsmd
+    state: stopped
+  listen: "restart libvirtd"
+
 - name: restart libvirtd
   service:
     name: libvirtd
     state: restarted
+  listen: "restart libvirtd"
+
+- name: start vdsmd
+  service:
+    name: vdsmd
+    state: started
+  listen: "restart libvirtd"

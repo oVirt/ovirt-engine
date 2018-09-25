@@ -255,7 +255,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("firewall_type", cluster.getFirewallType())
                 .addValue("default_network_provider_id", cluster.getDefaultNetworkProviderId())
                 .addValue("log_max_memory_used_threshold", cluster.getLogMaxMemoryUsedThreshold())
-                .addValue("log_max_memory_used_threshold_type", cluster.getLogMaxMemoryUsedThresholdType().getValue());
+                .addValue("log_max_memory_used_threshold_type", cluster.getLogMaxMemoryUsedThresholdType().getValue())
+                .addValue("vnc_encryption_enabled", cluster.isVncEncryptionEnabled());
     }
 
     private static final RowMapper<ClusterHostsAndVMs> clusterHostsAndVMsRowMapper = (rs, rowNum) -> {
@@ -321,6 +322,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setDefaultNetworkProviderId(getGuid(rs, "default_network_provider_id"));
         entity.setLogMaxMemoryUsedThreshold(rs.getInt("log_max_memory_used_threshold"));
         entity.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.forValue(rs.getInt("log_max_memory_used_threshold_type")));
+        entity.setVncEncryptionEnabled(rs.getBoolean("vnc_encryption_enabled"));
 
         return entity;
     };

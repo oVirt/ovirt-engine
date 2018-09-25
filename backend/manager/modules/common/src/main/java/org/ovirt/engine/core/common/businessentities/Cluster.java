@@ -139,6 +139,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private FirewallType firewallType;
 
+    private boolean vncEncryptionEnabled;
+
     /**
      * How max sum of bandwidths of both outgoing and incoming migrations on one host are limited
      */
@@ -173,6 +175,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         description = "";
         comment = "";
         cpuName = "";
+        vncEncryptionEnabled = true;
     }
 
     @Override
@@ -625,6 +628,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.logMaxMemoryUsedThresholdType = logMaxMemoryUsedThresholdType;
     }
 
+    public boolean isVncEncryptionEnabled() {
+        return vncEncryptionEnabled;
+    }
+
+    public void setVncEncryptionEnabled(boolean vncEncryptionEnabled) {
+        this.vncEncryptionEnabled = vncEncryptionEnabled;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -671,7 +682,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 firewallType,
                 defaultNetworkProviderId,
                 logMaxMemoryUsedThreshold,
-                logMaxMemoryUsedThresholdType
+                logMaxMemoryUsedThresholdType,
+                vncEncryptionEnabled
         );
     }
 
@@ -731,7 +743,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(firewallType, other.firewallType)
                 && Objects.equals(defaultNetworkProviderId, other.defaultNetworkProviderId)
                 && Objects.equals(logMaxMemoryUsedThreshold, other.logMaxMemoryUsedThreshold)
-                && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType;
+                && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType
+                && vncEncryptionEnabled == other.vncEncryptionEnabled;
     }
 
     @Override

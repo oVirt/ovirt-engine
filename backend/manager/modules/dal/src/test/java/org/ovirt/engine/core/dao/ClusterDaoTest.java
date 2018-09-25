@@ -77,6 +77,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
         newGroup.setFirewallType(FirewallType.FIREWALLD);
         newGroup.setLogMaxMemoryUsedThreshold(95);
         newGroup.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
+        newGroup.setVncEncryptionEnabled(true);
     }
 
     /**

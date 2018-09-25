@@ -644,6 +644,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.spiceProxyEnabled = spiceProxyEnabled;
     }
 
+    private EntityModel<Boolean> vncEncryptionEnabled;
+
+    public EntityModel<Boolean> getVncEncryptionEnabled() {
+        return vncEncryptionEnabled;
+    }
+
+    public void setVncEncryptionEnabled(EntityModel<Boolean> vncEncryptionEnabled) {
+        this.vncEncryptionEnabled = vncEncryptionEnabled;
+    }
+
     private MigrateOnErrorOptions migrateOnErrorOption = MigrateOnErrorOptions.values()[0];
 
     public MigrateOnErrorOptions getMigrateOnErrorOption() {
@@ -1020,6 +1030,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setSpiceProxyEnabled(new EntityModel<>());
         getSpiceProxyEnabled().setEntity(false);
         getSpiceProxyEnabled().getEntityChangedEvent().addListener(this);
+
+        setVncEncryptionEnabled(new EntityModel<>());
+        getVncEncryptionEnabled().setEntity(true);
 
         setSpiceProxy(new EntityModel<>());
         getSpiceProxy().setIsChangeable(false);
@@ -1566,6 +1579,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getComment().setEntity(getEntity().getComment());
 
         initSpiceProxy();
+        getVncEncryptionEnabled().setEntity(getEntity().isVncEncryptionEnabled());
         getFencingEnabledModel().setEntity(getEntity().getFencingPolicy().isFencingEnabled());
         getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
         getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity().getFencingPolicy()

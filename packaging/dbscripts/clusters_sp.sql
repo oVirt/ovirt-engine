@@ -52,7 +52,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_firewall_type INT,
     v_default_network_provider_id UUID,
     v_log_max_memory_used_threshold INT,
-    v_log_max_memory_used_threshold_type SMALLINT
+    v_log_max_memory_used_threshold_type SMALLINT,
+    v_vnc_encryption_enabled BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -105,7 +106,8 @@ BEGIN
         firewall_type,
         default_network_provider_id,
         log_max_memory_used_threshold,
-        log_max_memory_used_threshold_type
+        log_max_memory_used_threshold_type,
+        vnc_encryption_enabled
         )
     VALUES (
         v_cluster_id,
@@ -156,7 +158,8 @@ BEGIN
         v_firewall_type,
         v_default_network_provider_id,
         v_log_max_memory_used_threshold,
-        v_log_max_memory_used_threshold_type
+        v_log_max_memory_used_threshold_type,
+        v_vnc_encryption_enabled
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -211,7 +214,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_firewall_type INT,
     v_default_network_provider_id UUID,
     v_log_max_memory_used_threshold INT,
-    v_log_max_memory_used_threshold_type SMALLINT
+    v_log_max_memory_used_threshold_type SMALLINT,
+    v_vnc_encryption_enabled BOOLEAN
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -267,7 +271,8 @@ BEGIN
         firewall_type = v_firewall_type,
         default_network_provider_id = v_default_network_provider_id,
         log_max_memory_used_threshold = v_log_max_memory_used_threshold,
-        log_max_memory_used_threshold_type = v_log_max_memory_used_threshold_type
+        log_max_memory_used_threshold_type = v_log_max_memory_used_threshold_type,
+        vnc_encryption_enabled = v_vnc_encryption_enabled
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

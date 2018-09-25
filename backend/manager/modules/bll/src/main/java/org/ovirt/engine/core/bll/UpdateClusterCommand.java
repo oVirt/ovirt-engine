@@ -279,7 +279,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         TransactionSupport.executeInNewTransaction(() -> {
             updateDefaultNetworkProvider();
 
-            if (getCluster().getFirewallType() != oldCluster.getFirewallType()) {
+            if (getCluster().getFirewallType() != oldCluster.getFirewallType()
+                    || getCluster().isVncEncryptionEnabled() != oldCluster.isVncEncryptionEnabled()) {
                 markHostsForReinstall();
             }
 

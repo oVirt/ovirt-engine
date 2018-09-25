@@ -258,7 +258,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new Pair<>("ansible_port", getVds().getSshPort()),
                 new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH),
                 new Pair<>("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(getVds())),
-                new Pair<>("host_deploy_ovn_central", getOvnCentral())
+                new Pair<>("host_deploy_ovn_central", getOvnCentral()),
+                new Pair<>("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
             )
             // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
             .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
