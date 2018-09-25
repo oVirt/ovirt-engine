@@ -745,7 +745,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected abstract void buildFileReference();
 
-    private Integer getVmInterfaceType(XmlNode resourceSubTypeNode) {
+    private int getVmInterfaceType(XmlNode resourceSubTypeNode) {
         String resourceSubType = resourceSubTypeNode != null ? resourceSubTypeNode.innerText : null;
         if (StringUtils.isNotEmpty(resourceSubType)) {
             try {
@@ -758,7 +758,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 }
             }
         }
-        return null;
+        return VmInterfaceType.pv.getValue();
     }
 
     private int getResourceType(XmlNode node, String resource) {
@@ -804,16 +804,11 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         } else if (OvfHardware.Network.equals(resourceType)) {
             // handle interfaces with different sub types : we have 0-5 as the VmInterfaceType enum
-            Integer nicTypeValue = getVmInterfaceType(resourceSubTypeNode);
-            VmInterfaceType nicType = nicTypeValue != null ? VmInterfaceType.forValue(nicTypeValue) : null;
-            if (nicType != null) {
-                if (nicType == VmInterfaceType.pciPassthrough) {
-                    vmDevice.setDevice(VmDeviceType.HOST_DEVICE.getName());
-                } else {
-                    vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
-                }
+            VmInterfaceType nicType = VmInterfaceType.forValue(getVmInterfaceType(resourceSubTypeNode));
+            if (nicType == VmInterfaceType.pciPassthrough) {
+                vmDevice.setDevice(VmDeviceType.HOST_DEVICE.getName());
             } else {
-                vmDevice.setDevice(VmDeviceType.getoVirtDevice(Integer.parseInt(resourceType)).getName());
+                vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
             }
         }
     }
