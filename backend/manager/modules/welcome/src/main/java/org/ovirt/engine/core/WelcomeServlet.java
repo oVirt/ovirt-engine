@@ -165,6 +165,8 @@ public class WelcomeServlet extends HttpServlet {
                     request.getSession(true).setAttribute(WelcomeUtils.SSO_USER, username);
                     request.getSession(true).setAttribute(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE,
                             getChangePasswordEnabled(userInfoMap));
+                    request.getSession(true).setAttribute(WelcomeUtils.ENGINE_SSO_ENABLE_EXTERNAL_SSO,
+                            EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO"));
                 }
             }
         } catch (Exception e) {

@@ -17,6 +17,7 @@ public class WelcomeUtils {
     public static final String ENGINE_URI = "ENGINE_URI";
     public static final String ENGINE_SSO_AUTH_URL = "ENGINE_SSO_AUTH_URL";
     public static final String ENGINE_SSO_CLIENT_ID = "ENGINE_SSO_CLIENT_ID";
+    public static final String ENGINE_SSO_ENABLE_EXTERNAL_SSO = "engine_sso_enable_external_sso";
     public static final String LOCALE = "locale";
     public static final String REAUTHENTICATE = "reauthenticate";
     public static final String SCOPE = "scope";

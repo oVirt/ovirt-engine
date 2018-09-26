@@ -27,13 +27,15 @@
                             <li>
                                 <a href='${applicationScope["sso_logout_url"]}' style="font-size: 11px; cursor: pointer;"><fmt:message key="pageheader.signOut" bundle="${pageheader}" /></a>
                             </li>
-                            <li>
-                                <a href='${applicationScope["sso_switch_user_url"]}' style="font-size: 11px; cursor: pointer;"><fmt:message key="pageheader.switchUser" bundle="${pageheader}" /></a>
-                            </li>
-                            <c:if test='${sessionScope["capability_credentials_change"] == true}'>
+                            <c:if test='${sessionScope["engine_sso_enable_external_sso"] == false}'>
                                 <li>
-                                    <a href='${requestScope["sso_credential_change_url"]}' style="font-size: 11px; cursor: pointer;"><fmt:message key="pageheader.changePassword" bundle="${pageheader}" /></a>
+                                    <a href='${applicationScope["sso_switch_user_url"]}' style="font-size: 11px; cursor: pointer;"><fmt:message key="pageheader.switchUser" bundle="${pageheader}" /></a>
                                 </li>
+                                <c:if test='${sessionScope["capability_credentials_change"] == true}'>
+                                    <li>
+                                        <a href='${requestScope["sso_credential_change_url"]}' style="font-size: 11px; cursor: pointer;"><fmt:message key="pageheader.changePassword" bundle="${pageheader}" /></a>
+                                    </li>
+                                </c:if>
                             </c:if>
                         </c:when>
                         <c:otherwise>
