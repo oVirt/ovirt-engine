@@ -90,7 +90,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private EntityModel<Boolean> privateIsVmNetwork;
     private ListModel<HostNetworkQos> qos;
     private DnsConfigurationModel dnsConfigurationModel;
-    private boolean isSupportBridgesReportByVDSM = false;
     private ListModel<StoragePool> privateDataCenters;
     private NetworkProfilesModel profiles;
     private EntityModel<Boolean> createSubnet;
@@ -396,18 +395,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         this.dnsConfigurationModel = dnsConfigurationModel;
     }
 
-    public boolean isSupportBridgesReportByVDSM() {
-        return isSupportBridgesReportByVDSM;
-    }
-
-    public void setSupportBridgesReportByVDSM() {
-        if (!this.isSupportBridgesReportByVDSM) {
-            initIsVm();
-        }
-        getIsVmNetwork().setIsChangeable(true);
-        this.isSupportBridgesReportByVDSM = true;
-    }
-
     public ListModel<StoragePool> getDataCenters() {
         return privateDataCenters;
     }
@@ -624,8 +611,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         if (dc == null) {
             return;
         }
-
-        setSupportBridgesReportByVDSM();
 
         AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), new AsyncQuery<>(qos -> {
             getQos().setItems(qos);

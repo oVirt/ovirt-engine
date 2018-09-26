@@ -117,8 +117,8 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     protected void onExportChanged() {
         boolean externalNetwork = getExternal().getEntity();
-        getIsVmNetwork().setIsChangeable(!externalNetwork && isSupportBridgesReportByVDSM()
-                && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+        getIsVmNetwork().setIsChangeable(!externalNetwork &&
+                ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         if (externalNetwork) {
             getIsVmNetwork().setEntity(true);
         }
