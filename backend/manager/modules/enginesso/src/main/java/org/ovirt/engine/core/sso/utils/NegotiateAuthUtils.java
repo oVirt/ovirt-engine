@@ -120,17 +120,23 @@ public class NegotiateAuthUtils {
                                     authRecord
                                 );
                             }
-                            ExtMap outputMap = profile.getAuthz().invoke(new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
+                            ExtMap input = new ExtMap().mput(
+                                    Base.InvokeKeys.COMMAND,
+                                    Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
                             ).mput(
-                                Authn.InvokeKeys.AUTH_RECORD,
-                                authRecord
+                                    Authn.InvokeKeys.AUTH_RECORD,
+                                    authRecord
                             ).mput(
-                                Authz.InvokeKeys.QUERY_FLAGS,
-                                Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
-                            ));
+                                    Authz.InvokeKeys.QUERY_FLAGS,
+                                    Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
+                            );
+                            if (SsoUtils.getSsoContext(req).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                                input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, req);
+                            }
+                            ExtMap outputMap = profile.getAuthz().invoke(input);
+                            token = SsoUtils.getTokenFromHeader(req);
                             SsoSession ssoSession = SsoUtils.persistAuthInfoInContextWithToken(req,
+                                token,
                                 null,
                                 profile.getName(),
                                 authRecord,

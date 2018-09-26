@@ -442,6 +442,13 @@ public class SsoUtils {
         return principal != null ? principal : principalRecord.get(Authz.PrincipalRecord.NAME);
     }
 
+    public static String getTokenFromHeader(HttpServletRequest req) {
+        if (getSsoContext(req).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+            return req.getHeader(SsoConstants.HTTP_REQ_HEADER_OIDC_ACCESS_TOKEN);
+        }
+        return null;
+    }
+
     public static void persistUserPassword(
             HttpServletRequest request,
             SsoSession ssoSession,
@@ -462,9 +469,19 @@ public class SsoUtils {
             String profileName,
             ExtMap authRecord,
             ExtMap principalRecord) throws Exception {
+        return persistAuthInfoInContextWithToken(request, null, password, profileName, authRecord, principalRecord);
+    }
+
+    public static SsoSession persistAuthInfoInContextWithToken(
+            HttpServletRequest request,
+            String token,
+            String password,
+            String profileName,
+            ExtMap authRecord,
+            ExtMap principalRecord) throws Exception {
         String validTo = authRecord.get(Authn.AuthRecord.VALID_TO);
         String authCode = generateAuthorizationToken();
-        String accessToken = generateAuthorizationToken();
+        String accessToken = StringUtils.isNotEmpty(token) ? token : generateAuthorizationToken();
 
         SsoSession ssoSession = getSsoSession(request, true);
         ssoSession.setAccessToken(accessToken);

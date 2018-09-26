@@ -105,8 +105,12 @@ public class SsoRestApiNegotiationFilter implements Filter {
                     }
                     if (authResult.username != null) {
                         log.debug("SsoRestApiNegotiationFilter invoking SsoAuthServiceUtils.loginOnBehalf for : {}", authResult.username);
-                        Map<String, Object> jsonResponse = SsoOAuthServiceUtils.loginOnBehalf(
-                                authResult.username, scope, authResult.authRecord);
+                        Map<String, Object> jsonResponse =
+                                SsoOAuthServiceUtils.loginOnBehalf(
+                                        req,
+                                        authResult.username,
+                                        scope,
+                                        authResult.authRecord);
                         FiltersHelper.isStatusOk(jsonResponse);
                         log.debug("SsoRestApiNegotiationFilter creating user session");
                         SsoUtils.createUserSession(req, FiltersHelper.getPayloadForToken(

@@ -68,6 +68,7 @@ public class SsoConstants {
     public static final String HTTP_PARAM_SOURCE_ADDR = "source_addr";
     public static final String HTTP_PARAM_CLIENT_SECRET = "client_secret";
     public static final String HTTP_REQ_ATTR_ACCESS_TOKEN = "access_token";
+    public static final String HTTP_REQ_HEADER_OIDC_ACCESS_TOKEN = "OIDC_access_token";
     public static final String HTTP_PARAM_SEARCH_QUERY_TYPE = "query_type";
 
     public static final String INTERACTIVE_LOGIN_NEGOTIATE_URI = "/interactive-login-negotiate/ovirt-auth";

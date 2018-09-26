@@ -102,6 +102,25 @@ public class AuthenticationUtils {
             Credentials credentials,
             ExtMap authRecord,
             boolean interactive) throws Exception {
+        if (ssoContext.getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+            return loginExternalSso(ssoContext,
+                    request,
+                    credentials,
+                    authRecord);
+        }
+        return loginNegotiate(ssoContext,
+                request,
+                credentials,
+                authRecord,
+                interactive);
+    }
+
+    private static SsoSession loginNegotiate(
+            SsoContext ssoContext,
+            HttpServletRequest request,
+            Credentials credentials,
+            ExtMap authRecord,
+            boolean interactive) throws Exception {
         ExtensionProfile profile = getExtensionProfile(ssoContext, credentials.getProfile());
         String user = mapUser(profile, credentials);
         if (authRecord == null) {
@@ -142,26 +161,44 @@ public class AuthenticationUtils {
             log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn succeeded");
             authRecord = outputMap.get(Authn.InvokeKeys.AUTH_RECORD);
         }
+        authRecord = getMappedAuthRecord(profile, authRecord);
+        ExtMap principalRecord = getPrincipalRecord(profile, authRecord, false, null, null);
 
-        if (profile.mapper != null) {
-            log.debug("AuthenticationUtils.handleCredentials invoking MAP_AUTH_RECORD on mapper");
-            authRecord = profile.mapper.invoke(new ExtMap()
-                    .mput(
-                            Base.InvokeKeys.COMMAND,
-                            Mapping.InvokeCommands.MAP_AUTH_RECORD
-                    ).mput(
-                            Authn.InvokeKeys.AUTH_RECORD,
-                            authRecord
-                    ),
-                    true
-            ).get(
-                    Authn.InvokeKeys.AUTH_RECORD,
-                    authRecord
-            );
+        log.debug("AuthenticationUtils.handleCredentials saving data in session data");
+        return SsoUtils.persistAuthInfoInContextWithToken(request,
+                credentials.getPassword(),
+                credentials.getProfile(),
+                authRecord,
+                principalRecord);
+    }
+
+    private static ExtMap getMappedAuthRecord(ExtensionProfile profile, ExtMap authRecord) {
+        if (profile.mapper == null) {
+            return authRecord;
         }
+        log.debug("AuthenticationUtils.handleCredentials invoking MAP_AUTH_RECORD on mapper");
+        return profile.mapper.invoke(new ExtMap()
+                .mput(
+                        Base.InvokeKeys.COMMAND,
+                        Mapping.InvokeCommands.MAP_AUTH_RECORD
+                ).mput(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        authRecord
+                ),
+                true
+                ).get(
+                        Authn.InvokeKeys.AUTH_RECORD,
+                        authRecord
+                );
+    }
 
+    private static ExtMap getPrincipalRecord(ExtensionProfile profile,
+            ExtMap authRecord,
+            boolean externalAuthEnabled,
+            HttpServletRequest request,
+            Map<String, String> params) {
         log.debug("AuthenticationUtils.handleCredentials invoking FETCH_PRINCIPAL_RECORD on authz");
-        ExtMap output = profile.authz.invoke(new ExtMap().mput(
+        ExtMap input = new ExtMap().mput(
                 Base.InvokeKeys.COMMAND,
                 Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
         ).mput(
@@ -170,13 +207,42 @@ public class AuthenticationUtils {
         ).mput(
                 Authz.InvokeKeys.QUERY_FLAGS,
                 Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
-        ));
-        log.debug("AuthenticationUtils.handleCredentials saving data in session data");
+        );
+        if (externalAuthEnabled) {
+            if (params != null) {
+                input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST_PARAMS, params);
+            } else if (request != null) {
+                input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, request);
+            }
+        }
+        ExtMap output = profile.authz.invoke(input);
+        return output.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
+    }
+
+    private static SsoSession loginExternalSso(
+            SsoContext ssoContext,
+            HttpServletRequest request,
+            Credentials credentials,
+            ExtMap authRecord) throws Exception {
+        ExtensionProfile profile = getExtensionProfile(ssoContext, credentials.getProfile());
+
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+
+        Map<String, String> params = mapper.readValue(
+                SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_PARAMS),
+                HashMap.class);
+
+        ExtMap principalRecord = getPrincipalRecord(profile, authRecord, true, null, params);
+
         return SsoUtils.persistAuthInfoInContextWithToken(request,
+                params.get(SsoConstants.HTTP_REQ_HEADER_OIDC_ACCESS_TOKEN),
                 credentials.getPassword(),
                 credentials.getProfile(),
                 authRecord,
-                output.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
+                principalRecord);
     }
 
     public static void changePassword(SsoContext context, HttpServletRequest request, Credentials credentials)

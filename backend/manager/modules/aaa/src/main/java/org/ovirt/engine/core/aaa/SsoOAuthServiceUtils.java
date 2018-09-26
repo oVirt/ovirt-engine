@@ -13,6 +13,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,19 +84,36 @@ public class SsoOAuthServiceUtils {
         }
     }
 
-    public static Map<String, Object> loginOnBehalf(String username, String scope, ExtMap authRecord) {
-        return loginWithPasswordImpl(username, "", scope, authRecord);
+    public static Map<String, Object> loginOnBehalf(HttpServletRequest req,
+            String username,
+            String scope,
+            ExtMap authRecord) {
+        return loginWithPasswordImpl(username, "", scope, authRecord, getParams(req));
+    }
+
+    private static Map<String, String> getParams(HttpServletRequest req) {
+        Map<String, String> params = null;
+        if (EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+            params = new HashMap<>();
+            Enumeration<String> headerNames = req.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                params.put(headerName, req.getHeader(headerName));
+            }
+        }
+        return params;
     }
 
     public static Map<String, Object> loginWithPassword(String username, String password, String scope) {
-        return loginWithPasswordImpl(username, password, scope, null);
+        return loginWithPasswordImpl(username, password, scope, null, null);
     }
 
     private static Map<String, Object> loginWithPasswordImpl(
             String username,
             String password,
             String scope,
-            ExtMap authRecord) {
+            ExtMap authRecord,
+            Map<String, String> params) {
         try {
             HttpPost request = createPost("/oauth/token");
             setClientIdSecretBasicAuthHeader(request);
@@ -106,6 +124,9 @@ public class SsoOAuthServiceUtils {
             form.add(new BasicNameValuePair("scope", scope));
             if (authRecord != null) {
                 form.add(new BasicNameValuePair("ovirt_auth_record", serialize(authRecord)));
+            }
+            if (params != null) {
+                form.add(new BasicNameValuePair("params", serialize(params)));
             }
             request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
             return getResponse(request);

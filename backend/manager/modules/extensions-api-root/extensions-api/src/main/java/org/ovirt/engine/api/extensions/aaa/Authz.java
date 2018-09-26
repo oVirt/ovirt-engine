@@ -92,6 +92,15 @@ public class Authz {
          * Actual content depends on the query.
          */
         public static final ExtKey QUERY_RESULT = new ExtKey("AAA_AUTHZ_QUERY_RESULT", Collection/*<ExtMap>*/.class, "0cde6caf-b851-41cb-8de2-cd34327d7249");
+        /*
+         * HttpServletRequest.
+         * Used for negotiate authentication.
+         */
+        public static final ExtKey HTTP_SERVLET_REQUEST = new ExtKey("AAA_AUTHN_HTTP_SERVLET_REQUEST", Object.class, "e1cd5eb2-8f63-4617-bcd4-9863bbc788d7");
+        /**
+         * Used for Fetch Principal for external SSO authentication where the claim set is included in the parameters
+         */
+        public static final ExtKey HTTP_SERVLET_REQUEST_PARAMS = new ExtKey("AAA_AUTHN_REQUEST_PARAMS", Object.class, "a02e573f-d928-4c78-bf40-fc932ee2a645");
     }
 
     /**
