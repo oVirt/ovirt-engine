@@ -293,6 +293,10 @@ ENGINE_SSO_CLIENT_ID=
 # Client password to use.
 ENGINE_SSO_CLIENT_SECRET=
 
+# Enable integration with external OpenID Connect identity provider like Keycloak. This will turn off the internal
+# authentication profiles and will only use the users and groups from the external provider.
+ENGINE_SSO_ENABLE_EXTERNAL_SSO=false
+
 # Enable restapi nego using direct access. This config variable enables or disables the restapi negotiate authentication.
 # If all restapi clients are RESTAPI/SDK v4 then this can be set to false. It is required to be set to true only for
 # compatibility with RESTAPI/SDK v3.6 clients.
