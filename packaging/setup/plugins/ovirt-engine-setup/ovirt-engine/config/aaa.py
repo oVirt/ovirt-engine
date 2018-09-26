@@ -302,6 +302,27 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        after=(
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
+        ),
+        condition=lambda self: (
+            self.environment[
+                oenginecons.CoreEnv.ENABLE
+            ]
+        ),
+    )
+    def _attach_group_to_role(self):
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
+            statement="""
+                select attach_group_to_role(
+                    'ovirt-administrator',
+                    'SuperUser'
+                )
+            """
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,

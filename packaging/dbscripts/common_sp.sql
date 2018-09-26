@@ -604,6 +604,54 @@ LANGUAGE plpgsql;
 
     LANGUAGE plpgsql;
 
+    CREATE
+        OR REPLACE FUNCTION attach_group_to_role (
+        v_group_name VARCHAR(255),
+        v_role_name VARCHAR(255)
+        )
+    RETURNS void AS $BODY$
+    DECLARE selected_group_id uuid;
+    input_role_id uuid;
+    BEGIN
+       SELECT roles.id
+       INTO input_role_id
+       FROM roles
+       WHERE roles.name = v_role_name;
+       -- The external identifier is the user identifier converted to an array of
+       -- bytes:
+       INSERT INTO ad_groups (
+           id,
+           name,
+           external_id
+           )
+       SELECT uuid_generate_v1(),
+           v_group_name,
+           uuid_generate_v1()
+       WHERE NOT EXISTS (
+               SELECT 1
+               FROM ad_groups
+               WHERE name = v_group_name
+               );
+       SELECT id
+       FROM ad_groups
+       WHERE name = v_group_name
+       INTO selected_group_id;
+       IF NOT EXISTS (
+                   SELECT 1
+                   FROM permissions
+                   WHERE ad_element_id = selected_group_id
+                     AND role_id = input_role_id
+                   ) THEN
+                         PERFORM InsertPermission(
+                             selected_group_id,
+                             uuid_generate_v1(),
+                             input_role_id,
+                             getGlobalIds('system'),
+                             1);
+       END IF;
+    END;$BODY$
+    LANGUAGE plpgsql;
+
     -- a method for adding an action group to a role if doesn't exist
     CREATE
         OR REPLACE FUNCTION fn_db_add_action_group_to_role (
