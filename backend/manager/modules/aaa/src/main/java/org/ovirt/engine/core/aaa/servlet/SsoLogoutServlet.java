@@ -84,6 +84,16 @@ public class SsoLogoutServlet extends HttpServlet {
             log.debug("Invalidating existing session");
             session.invalidate();
         }
+        if (StringUtils.isEmpty(error_description) &&
+                EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+            String logoutUrl = String.format("%s://%s:%s%s", request.getScheme(),
+                    FiltersHelper.getRedirectUriServerName(request.getServerName()),
+                    request.getServerPort(),
+                    EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_EXTERNAL_SSO_LOGOUT_URI"));
+            if (StringUtils.isNotEmpty(logoutUrl)) {
+                redirectUri = new URLBuilder(logoutUrl).addParameter("logout", redirectUri).build();
+            }
+        }
         log.debug("Redirecting to {}", redirectUri);
         response.sendRedirect(redirectUri);
         log.debug("Exiting SsoLogoutServlet");

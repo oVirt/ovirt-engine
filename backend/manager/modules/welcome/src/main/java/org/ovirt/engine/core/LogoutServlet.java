@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.aaa.filters.FiltersHelper;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +39,21 @@ public class LogoutServlet extends HttpServlet {
         } catch (Exception ex) {
             log.error("Unable to logout user: {}", ex.getMessage());
         }
-        response.sendRedirect(new URLBuilder(WelcomeUtils.getOauth2CallbackUrl(request))
+
+        String redirectUri = new URLBuilder(WelcomeUtils.getOauth2CallbackUrl(request))
                 .addParameter(WelcomeUtils.ERROR_DESCRIPTION, StringUtils.defaultIfEmpty(errorDescription, ""))
-                .addParameter(WelcomeUtils.ERROR, StringUtils.defaultIfEmpty(error, "")).build());
+                .addParameter(WelcomeUtils.ERROR, StringUtils.defaultIfEmpty(error, "")).build();
+
+        if (StringUtils.isEmpty(errorDescription) &&
+                EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+            String logoutUrl = String.format("%s://%s:%s%s", request.getScheme(),
+                    FiltersHelper.getRedirectUriServerName(request.getServerName()),
+                    request.getServerPort(),
+                    EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_EXTERNAL_SSO_LOGOUT_URI"));
+            if (StringUtils.isNotEmpty(logoutUrl)) {
+                redirectUri = new URLBuilder(logoutUrl).addParameter("logout", redirectUri).build();
+            }
+        }
+        response.sendRedirect(redirectUri);
     }
 }
