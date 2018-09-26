@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfil
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileStats;
 import org.ovirt.engine.core.common.businessentities.gluster.ProfileStatsType;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.TimeConverter;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
@@ -98,8 +101,7 @@ public final class GlusterVolumeProfileInfoReturn extends StatusReturn {
         for (Object brickProfileObj : brickProfileDetails) {
             BrickProfileDetails brickProfileDetail = new BrickProfileDetails();
             Map<String, Object> brickProfile = (Map<String, Object>) brickProfileObj;
-            GlusterBrickEntity brick =
-                    GlusterCoreUtil.getBrickByQualifiedName(volume.getBricks(), (String) brickProfile.get(BRICK));
+            GlusterBrickEntity brick = getBrick(volume.getBricks(), (String) brickProfile.get(BRICK));
             if (brick != null) {
                 brickProfileDetail.setBrickId(brick.getId());
             }
@@ -171,6 +173,30 @@ public final class GlusterVolumeProfileInfoReturn extends StatusReturn {
 
     protected GlusterVolumeDao getGlusterVolumeDao() {
         return DbFacade.getInstance().getGlusterVolumeDao();
+    }
+
+    private GlusterBrickEntity getBrick(List<GlusterBrickEntity> bricksList,
+            String qualifiedBrickName) {
+        GlusterBrickEntity brick =
+                GlusterCoreUtil.getBrickByQualifiedName(bricksList, qualifiedBrickName);
+        if (brick == null) {
+            String[] pathElements = qualifiedBrickName.split(StorageConstants.GLUSTER_VOL_SEPARATOR);
+            String hostName = pathElements[0];
+            /*
+             * Getting hostAddress as qualifiedBrickName might not have the FQDN matching any of the bricks in the
+             * volume
+             */
+            String hostAddress;
+            try {
+                hostAddress = InetAddress.getByName(hostName).getHostAddress();
+            } catch (UnknownHostException e) {
+                return null;
+            }
+            qualifiedBrickName = hostAddress + StorageConstants.GLUSTER_VOL_SEPARATOR + pathElements[1];
+
+            return GlusterCoreUtil.getBrickByQualifiedName(bricksList, qualifiedBrickName);
+        }
+        return brick;
     }
 
     public Status getStatus() {
