@@ -3,17 +3,26 @@ package org.ovirt.engine.core.utils.serialization.json;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
+import org.apache.commons.lang.SerializationException;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 
 
 /**
@@ -57,5 +66,75 @@ public class JsonObjectSerializerTest {
         data.put("NEXT_COMMAND_TYPE", ActionType.DestroyImage);
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         assertTrue(serializer.serialize(data).length() > 0);
+    }
+
+    @Test
+    public void serializeCreateSnapshotForVmParametersMap() {
+        Map<Guid, Guid> diskToImageIds = new HashMap<>();
+        diskToImageIds.put(Guid.newGuid(), Guid.newGuid());
+        CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(
+                Guid.newGuid(),
+                "Test",
+                false,
+                new TreeSet<>(diskToImageIds.keySet()));
+        params.setDiskToImageIds(diskToImageIds);
+
+        JsonObjectSerializer serializer = new JsonObjectSerializer();
+        String json = serializer.serialize(params);
+        assertTrue(json.length() > 0);
+
+        JsonObjectDeserializer deserializer = new JsonObjectDeserializer();
+        CreateSnapshotForVmParameters deserializedParams =
+                deserializer.deserialize(json, CreateSnapshotForVmParameters.class);
+        assertEquals(params.getDiskIds(), deserializedParams.getDiskIds());
+    }
+
+    @Test(expected = SerializationException.class)
+    public void serializeCreateSnapshotForVmParametersMapFailure() {
+        Map<Guid, Guid> diskToImageIds = new HashMap<>();
+        diskToImageIds.put(Guid.newGuid(), Guid.newGuid());
+        CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(
+                Guid.newGuid(),
+                "Test",
+                false,
+                diskToImageIds.keySet());
+        params.setDiskToImageIds(diskToImageIds);
+
+        JsonObjectSerializer serializer = new JsonObjectSerializer();
+        String json = serializer.serialize(params);
+        assertTrue(json.length() > 0);
+
+        JsonObjectDeserializer deserializer = new JsonObjectDeserializer();
+        deserializer.deserialize(json, CreateSnapshotForVmParameters.class);
+    }
+
+    @Test(expected = JsonMappingException.class)
+    public void objectMapperSerializeCreateSnapshotForVmParametersMapFailure() throws Exception {
+        Map<Guid, Guid> diskToImageIds = new HashMap<>();
+        diskToImageIds.put(Guid.newGuid(), Guid.newGuid());
+        CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(
+                Guid.newGuid(),
+                "Test",
+                false,
+                diskToImageIds.keySet());
+        params.setDiskToImageIds(diskToImageIds);
+
+        String json = serialize(params);
+        assertTrue(json.length() > 0);
+        deserialize(json, CreateSnapshotForVmParameters.class);
+    }
+
+    private String serialize(Object obj) throws IOException {
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        return mapper.writeValueAsString(obj);
+    }
+
+    private <T> T deserialize(String json, Class<T> type) throws IOException {
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
+        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        return mapper.readValue(json, type);
     }
 }

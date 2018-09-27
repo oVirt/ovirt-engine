@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
@@ -62,7 +63,7 @@ public class BackendSnapshotsResource
         }
         if (snapshot.isSetDiskAttachments()) {
             Map<Guid, Guid> diskToImageIds = mapDisks(snapshot.getDiskAttachments());
-            snapshotParams.setDiskIds(diskToImageIds.keySet());
+            snapshotParams.setDiskIds(new TreeSet<>(diskToImageIds.keySet()));
             snapshotParams.setDiskToImageIds(diskToImageIds);
         }
         return performCreate(ActionType.CreateSnapshotForVm,
