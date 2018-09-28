@@ -165,7 +165,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             // the command should also be handled as a failure
             getParameters().setTaskGroupSuccess(createdSnapshot != null && getParameters().getTaskGroupSuccess());
             if (getParameters().getTaskGroupSuccess()) {
-                snapshotDao.updateStatus(createdSnapshot.getId(), Snapshot.SnapshotStatus.OK);
                 getParameters().setLiveSnapshotRequired(shouldPerformLiveSnapshot(createdSnapshot));
 
                 if (getParameters().isLiveSnapshotRequired()) {
@@ -407,8 +406,10 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     @Override
     protected void endVmCommand() {
-        if (!getParameters().getTaskGroupSuccess()) {
-            Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
+        Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
+        if (getParameters().getTaskGroupSuccess()) {
+            snapshotDao.updateStatus(createdSnapshot.getId(), Snapshot.SnapshotStatus.OK);
+        } else {
             if (!isSnapshotCreated()) {
                 log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
             } else {
