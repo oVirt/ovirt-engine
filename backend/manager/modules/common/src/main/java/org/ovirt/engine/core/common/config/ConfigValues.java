@@ -1604,6 +1604,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     BiosTypeSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    UseNativeIOForGluster,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
