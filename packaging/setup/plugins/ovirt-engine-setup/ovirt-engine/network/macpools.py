@@ -41,6 +41,18 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
+    def _default_mac_pool_exists(self):
+        return self.environment[
+            oenginecons.EngineDBEnv.STATEMENT
+        ].execute(
+            statement="""
+                SELECT 1 FROM mac_pools WHERE id = %(mac_pool_id)s;
+            """,
+            args=dict(
+                mac_pool_id=self.MAC_POOL_ID,
+            )
+        ) == 1
+
     def _get_count_of_mac_pool_ranges(self):
         rows = self.environment[
             oenginecons.EngineDBEnv.STATEMENT
@@ -92,7 +104,10 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc_db_entries(self):
-        if self._get_count_of_mac_pool_ranges() == 0:
+        if (
+            self._default_mac_pool_exists() and
+            self._get_count_of_mac_pool_ranges() == 0
+        ):
             self.logger.info(_('Creating default mac pool'))
             range_prefix = self._generate_random_mac_pool_range_prefix()
             self._create_new_mac_pool_range(range_prefix)
