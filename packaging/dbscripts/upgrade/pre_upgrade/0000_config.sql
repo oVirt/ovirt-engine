@@ -145,6 +145,9 @@ select fn_db_add_config_value('GlusterSelfHealMonitoringSupported', 'false', '3.
 select fn_db_add_config_value_for_versions_up_to('GlusterSelfHealMonitoringSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.1');
 select fn_db_add_config_value('LibgfApiSupported', 'false', '4.2');
+select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.1');
+select fn_db_add_config_value('UseNativeIOForGluster', 'true', '4.2');
+
 -- Gluster Geo-replication --
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');

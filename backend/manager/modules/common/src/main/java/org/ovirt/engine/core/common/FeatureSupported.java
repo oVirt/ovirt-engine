@@ -305,4 +305,14 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, version);
     }
 
+    /**
+     * Check if aio=native should be used for Gluster storage
+     * instead of threads
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean useNativeIOForGluster(Version version) {
+        return supportedInConfig(ConfigValues.UseNativeIOForGluster, version);
+    }
+
 }

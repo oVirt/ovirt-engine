@@ -1361,4 +1361,9 @@ public class VmInfoBuildUtils {
     public boolean isInterfaceQueuable(VmDevice vmDevice, VmNic vmNic) {
         return multiQueueUtils.isInterfaceQueuable(vmDevice, vmNic);
     }
+
+    public boolean shouldUseNativeIO(VM vm, DiskImage diskImage) {
+        StorageType storageType = diskImage.getStorageTypes().get(0);
+        return storageType == StorageType.GLUSTERFS && FeatureSupported.useNativeIOForGluster(vm.getCompatibilityVersion());
+    }
 }

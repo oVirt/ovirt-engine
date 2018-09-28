@@ -1598,6 +1598,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     EnableKASLRDump,
 
+    @TypeConverterAttribute(Boolean.class)
+    UseNativeIOForGluster,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
