@@ -36,12 +36,23 @@ def _(m):
 class Plugin(plugin.PluginBase):
     """macpool plugin."""
 
-    MAC_POOL_ID = '58ca604b-017d-0374-0220-00000000014e'
-
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
-    def _get_count_of_mac_pool_ranges(self):
+    def _get_default_mac_pool_id(self):
+        rows = self.environment[
+            oenginecons.EngineDBEnv.STATEMENT
+        ].execute(
+            statement="""
+                SELECT id
+                FROM mac_pools
+                WHERE default_pool IS true;
+            """
+        )
+        if len(rows) > 0:
+            return rows[0].get('id')
+
+    def _get_count_of_mac_pool_ranges(self, mac_pool_id):
         rows = self.environment[
             oenginecons.EngineDBEnv.STATEMENT
         ].execute(
@@ -51,12 +62,12 @@ class Plugin(plugin.PluginBase):
                 WHERE mac_pool_id = %(mac_pool_id)s
             """,
             args=dict(
-                mac_pool_id=self.MAC_POOL_ID,
+                mac_pool_id=mac_pool_id,
             ),
         )
         return rows[0].get('mac_pool_ranges_count')
 
-    def _create_new_mac_pool_range(self, range_prefix):
+    def _create_new_mac_pool_range(self, range_prefix, mac_pool_id):
         self.environment[
             oenginecons.EngineDBEnv.STATEMENT
         ].execute(
@@ -68,7 +79,7 @@ class Plugin(plugin.PluginBase):
                 )
             """,
             args=dict(
-                mac_pool_id=self.MAC_POOL_ID,
+                mac_pool_id=mac_pool_id,
                 from_mac=range_prefix + ':00:00',
                 to_mac=range_prefix + ':ff:ff',
             )
@@ -92,9 +103,13 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc_db_entries(self):
-        if self._get_count_of_mac_pool_ranges() == 0:
-            self.logger.info(_('Creating default mac pool'))
+        mac_pool_id = self._get_default_mac_pool_id()
+        if (
+            mac_pool_id and
+            self._get_count_of_mac_pool_ranges(mac_pool_id) == 0
+        ):
+            self.logger.info(_('Creating default mac pool range'))
             range_prefix = self._generate_random_mac_pool_range_prefix()
-            self._create_new_mac_pool_range(range_prefix)
+            self._create_new_mac_pool_range(range_prefix, mac_pool_id)
 
 # vim: expandtab tabstop=4 shiftwidth=4
