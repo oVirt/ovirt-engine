@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
 <fmt:setLocale value="${locale}" />
-<fmt:setBundle basename="messages" var="loginpage" />
+<fmt:setBundle basename="sso-messages" var="loginpage" />
 <!DOCTYPE html>
 <html class="login-pf">
 <head>
