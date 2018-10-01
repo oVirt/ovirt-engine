@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
 <fmt:setLocale value="${locale}" />
-<fmt:setBundle basename="messages" var="pagenotfound" />
+<fmt:setBundle basename="welcome-messages" var="pagenotfound" />
 <!DOCTYPE html>
 <html class="login-pf">
 <head>
