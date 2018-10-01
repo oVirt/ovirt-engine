@@ -81,9 +81,11 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     private void initExternalNetworkParameters() {
-        getConnectedToPhysicalNetwork().setEntity(true);
-        getUsePhysicalNetworkFromCustom().setEntity(true);
-        getCustomPhysicalNetwork().setEntity(getNetwork().getProvidedBy().getCustomPhysicalNetworkName());
+        if (isConnectedToPhysicalNetwork()) {
+            getConnectedToPhysicalNetwork().setEntity(true);
+            getUsePhysicalNetworkFromCustom().setEntity(true);
+            getCustomPhysicalNetwork().setEntity(getNetwork().getProvidedBy().getCustomPhysicalNetworkName());
+        }
         getHasVLanTag().setEntity(getNetwork().getProvidedBy().hasExternalVlanId());
         getVLanTag().setEntity(getNetwork().getProvidedBy().getExternalVlanId());
         onExportChanged();
