@@ -452,11 +452,11 @@ Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
 %if %{ovirt_rh_postgresql95}
-Requires:       rh-postgresql95-postgresql-server
-Requires:       rh-postgresql95-postgresql-contrib
+Requires:	rh-postgresql95-postgresql-server
+Requires:	rh-postgresql95-postgresql-contrib
 %else
-Requires:       postgresql-server >= 9.5
-Requires:       postgresql-contrib >= 9.5
+Requires:	postgresql-server >= 9.5
+Requires:	postgresql-contrib >= 9.5
 %endif
 Conflicts:	%{name} < 4.1.7
 
@@ -675,7 +675,7 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 #
 install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
-# see also relevant %dir line to set permissions
+# see also relevant %%dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
 install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup}
 install -dm 755 "%{buildroot}/%{engine_cache}"
@@ -1207,6 +1207,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Mon Oct 01 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.7.2
+- Bump version to 4.2.7.2
+
 * Fri Sep 21 2018 Martin Perina <mperina@redhat.com> - 4.2.7.1
 - Bump version to 4.2.7.1
 
