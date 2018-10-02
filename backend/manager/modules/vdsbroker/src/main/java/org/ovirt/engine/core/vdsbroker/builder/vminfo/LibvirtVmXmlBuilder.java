@@ -881,15 +881,15 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeMinGuaranteedMemoryMetadata() {
-        writer.writeStartElement("minGuaranteedMemoryMb");
+        writer.writeStartElement(OVIRT_VM_URI, "minGuaranteedMemoryMb");
         writer.writeAttributeString("type", "int");
         writer.writeRaw(String.valueOf(vm.getMinAllocatedMem()));
         writer.writeEndElement();
     }
 
     private void writeClusterVersionMetadata() {
+        writer.writeStartElement(OVIRT_VM_URI, "clusterVersion");
         Version version = vm.getCompatibilityVersion();
-        writer.writeStartElement("clusterVersion");
         writer.writeRaw(String.valueOf(version.getMajor()) + "." + String.valueOf(version.getMinor()));
         writer.writeEndElement();
     }
