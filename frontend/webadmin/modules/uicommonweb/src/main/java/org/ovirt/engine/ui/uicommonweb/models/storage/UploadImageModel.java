@@ -339,7 +339,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             } });
 
             StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
-            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType, getVirtualSize());
+            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType, imageInfoModel.getActualSize());
 
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
             getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());
@@ -399,7 +399,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         TransferDiskImageParameters parameters = new TransferDiskImageParameters(
                 diskParameters.getStorageDomainId(),
                 diskParameters);
-        parameters.setTransferSize(getVirtualSize());
+        parameters.setTransferSize(imageInfoModel.getActualSize());
         parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
 
         return parameters;
