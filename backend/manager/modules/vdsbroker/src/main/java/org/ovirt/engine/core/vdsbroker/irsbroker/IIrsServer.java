@@ -44,8 +44,6 @@ public interface IIrsServer {
 
     StatusOnlyReturn setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID, String description);
 
-    IrsStatsAndStatus getIrsStats();
-
     FileStatsReturn getFileStats(String sdUUID, String pattern, boolean caseSensitive);
 
     StorageStatusReturn activateStorageDomain(String sdUUID, String spUUID);

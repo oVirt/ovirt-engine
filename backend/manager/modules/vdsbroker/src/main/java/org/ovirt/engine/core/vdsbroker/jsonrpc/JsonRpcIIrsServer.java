@@ -9,7 +9,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.GetVmsInfoReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IIrsServer;
 import org.ovirt.engine.core.vdsbroker.irsbroker.ImagesListReturn;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsStatsAndStatus;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
@@ -246,14 +245,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturn(response);
-    }
-
-    @Override
-    public IrsStatsAndStatus getIrsStats() {
-        JsonRpcRequest request = new RequestBuilder("Host.getStorageRepoStats").build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("stats");
-        return new IrsStatsAndStatus(response);
     }
 
     @Override
