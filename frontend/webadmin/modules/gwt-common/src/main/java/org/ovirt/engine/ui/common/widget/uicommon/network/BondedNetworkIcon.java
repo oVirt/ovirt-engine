@@ -10,6 +10,6 @@ public class BondedNetworkIcon extends Span {
     public BondedNetworkIcon() {
         addStyleName(Styles.FONT_AWESOME_BASE);
         addStyleName(IconType.CHAIN.getCssName());
-        addStyleName(PatternflyConstants.PF_LIST_VIEW_ICON_MD);
+        addStyleName(PatternflyConstants.PF_LIST_VIEW_ICON_SM);
     }
 }

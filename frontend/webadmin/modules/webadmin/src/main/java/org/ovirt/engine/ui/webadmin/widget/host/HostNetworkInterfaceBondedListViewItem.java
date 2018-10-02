@@ -197,8 +197,10 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
     protected IsWidget createBondInterfaceStatusPanel(boolean isUp) {
         Bond bond = (Bond) getEntity().getInterface();
         if(!isAdPartnerMacValid(bond)) {
-            WidgetTooltip tooltip = new WidgetTooltip(new IconStatusPanel(PatternflyConstants.PFICON_WARNING_TRIANGLE_O,
-                    PatternflyConstants.PFICON));
+            IconStatusPanel iconStatusPanel = new IconStatusPanel(PatternflyConstants.PFICON_WARNING_TRIANGLE_O,
+                    PatternflyConstants.PFICON);
+            iconStatusPanel.addStyleName(DOUBLE_SIZE);
+            WidgetTooltip tooltip = new WidgetTooltip(iconStatusPanel);
             tooltip.setHtml(templates.italicWordWrapMaxWidth(constants.bondInMode4HasNoPartnerMac()));
             return tooltip;
         } else {
