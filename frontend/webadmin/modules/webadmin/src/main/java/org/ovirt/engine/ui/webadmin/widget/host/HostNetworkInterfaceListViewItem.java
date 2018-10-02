@@ -64,6 +64,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private static final String NIC_SPEED_DROP = "nic-speed-drop"; // $NON-NLS-1$
     private static final String NETWORK_DATA_ROW = "network-data-row"; // $NON-NLS-1$
     private static final String NETWORK_LIST_ITEM = "network-list-item"; // $NON-NLS-1$
+    private static final String MAC_ADDRESS_WORD_BREAK = "break-word"; // $NON-NLS-1$
 
     private ExpandableListViewItem logicalNetworkExpand;
 
@@ -156,6 +157,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
 
     private IsWidget createMacColumn(VdsNetworkInterface hostInterface) {
         Column macCol = new Column(ColumnSize.SM_2);
+        macCol.addStyleName(MAC_ADDRESS_WORD_BREAK);
         DListElement dl = Document.get().createDLElement();
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()),
                 SafeHtmlUtils.fromString(hostInterface.getMacAddress() != null ? hostInterface.getMacAddress()
