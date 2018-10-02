@@ -31,9 +31,9 @@ import six
 
 class PwdArgsParser(argparse.ArgumentParser):
 
-    MISSING_PWD_MSG = 'PASSWORD variable not found in enviornoment'
+    MISSING_PWD_MSG = 'PASSWORD variable not found in environment'
     USAGE_PWD_MSG = ('usage: Database password must be set via an '
-                     'enviornment variable ("PASSWORD")')
+                     'environment variable ("PASSWORD")')
 
     def print_usage(self, *args, **kwargs):
         print(self.USAGE_PWD_MSG)
