@@ -60,7 +60,6 @@
 
 %global ovirt_install_poms 1
 %global ovirt_provides_jboss 1
-%global jboss ovirt-engine-wildfly-overlay-13
 %if 0%{?fedora}
 %global ovirt_rh_postgresql95 0
 %global postgresql_systemd_service postgresql.service
@@ -255,7 +254,13 @@ BuildRequires:	javapackages-local
 
 Requires(pre):	shadow-utils
 
-Requires:	%{jboss}
+# There is no way how to prevent WildFly not being upgraded, so we need to
+# fix engine to work with current and new WildFly version and only afterwards
+# bump the requirement (otherwise we would need to pass wildfly,
+# wildfly-overlay and ovirt-engine through the change queue at once)
+%if %{ovirt_provides_jboss}
+Requires:	ovirt-engine-wildfly-overlay >= 13.0.0
+%endif
 
 Requires:	%{name}-backend = %{version}-%{release}
 Requires:	%{name}-dbscripts = %{version}-%{release}
