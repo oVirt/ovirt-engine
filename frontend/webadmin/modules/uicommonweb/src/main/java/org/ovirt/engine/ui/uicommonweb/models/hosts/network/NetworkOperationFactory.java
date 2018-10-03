@@ -131,6 +131,7 @@ public class NetworkOperationFactory {
         for (LogicalNetworkModel network : networks) {
             if (!network.isManaged()) {
                 if (op1 instanceof LogicalNetworkModel) {
+                    dst.setCulpritNetwork(network.getName());
                     return NetworkOperation.NULL_OPERATION_UNMANAGED;
                 }
 
@@ -141,6 +142,7 @@ public class NetworkOperationFactory {
             } else {
                 if (!network.isInSync()) {
                     if (op1 instanceof LogicalNetworkModel) {
+                        dst.setCulpritNetwork(network.getName());
                         return NetworkOperation.NULL_OPERATION_OUT_OF_SYNC;
                     }
 
