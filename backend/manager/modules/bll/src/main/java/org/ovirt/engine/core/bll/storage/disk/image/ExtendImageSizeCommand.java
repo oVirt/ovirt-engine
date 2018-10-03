@@ -88,8 +88,9 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     @Override
     protected void endSuccessfully() {
+        boolean updateAllVmsSucceeded = true;
         if (getImage().getActive()) {
-            updateRelevantVms();
+            updateAllVmsSucceeded = updateRelevantVms();
         } else if (getImage().hasRawBlock()) {
             refreshVolume();
         }
@@ -103,12 +104,12 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
             updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_SUCCESS, diskImage.getSizeInGigabytes());
         }
 
-        setSucceeded(true);
+        setSucceeded(updateAllVmsSucceeded);
     }
 
-    private void updateRelevantVms() {
+    private boolean updateRelevantVms() {
         List<VM> vms = getVmsDiskPluggedTo();
-
+        boolean updateAllVmsSucceeded = true;
         for (VM vm : vms) {
             try {
                 VDSReturnValue ret = extendVmDiskSize(vm, getParameters().getNewSize());
@@ -122,8 +123,10 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
                         e.getMessage());
                 log.debug("Exception", e);
                 updateAuditLogFailedToUpdateVM(vm.getName());
+                updateAllVmsSucceeded = false;
             }
         }
+        return updateAllVmsSucceeded;
     }
 
     private VDSReturnValue extendVmDiskSize(VM vm, Long newSize) {
