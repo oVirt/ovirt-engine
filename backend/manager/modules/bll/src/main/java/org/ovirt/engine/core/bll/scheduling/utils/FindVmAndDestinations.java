@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -29,31 +30,13 @@ public class FindVmAndDestinations {
     private int highCpuUtilization;
     private long requiredMemory;
 
-    public static class Result {
-        private List<VDS> destinationHosts;
-        private VM vmToMigrate;
-
-        public Result(VM vmToMigrate, List<VDS> destinationHosts) {
-            this.vmToMigrate = vmToMigrate;
-            this.destinationHosts = destinationHosts;
-        }
-
-        public List<VDS> getDestinationHosts() {
-            return destinationHosts;
-        }
-
-        public VM getVmToMigrate() {
-            return vmToMigrate;
-        }
-    }
-
     public FindVmAndDestinations(Cluster cluster, int highCpuUtilization, long requiredMemory) {
         this.cluster = cluster;
         this.highCpuUtilization = highCpuUtilization;
         this.requiredMemory = requiredMemory;
     }
 
-    public Optional<Result> invoke(List<VDS> sourceHosts,
+    public Optional<BalanceResult> invoke(List<VDS> sourceHosts,
             List<VDS> destinationHosts,
             VmDao vmDao,
             VmStatisticsDao vmStatisticsDao) {
@@ -80,7 +63,17 @@ public class FindVmAndDestinations {
 
                 if (!validDestinationHosts.isEmpty()){
                     log.debug("Vm '{}' selected for migration", vmToMigrate.getName());
-                    return Optional.of(new Result(vmToMigrate, validDestinationHosts));
+
+                    // Add the current host, it is possible it is the best host after all,
+                    // because the balancer does not know about affinity for example
+                    validDestinationHosts.add(sourceHost);
+
+                    return Optional.of(new BalanceResult(
+                            vmToMigrate.getId(),
+                            validDestinationHosts.stream()
+                                .map(VDS::getId)
+                                .collect(Collectors.toList())
+                    ));
                 }
             }
         }

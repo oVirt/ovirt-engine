@@ -60,8 +60,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     @Override
     public Optional<BalanceResult> balance(final Cluster cluster,
             List<VDS> hosts,
-            Map<String, String> parameters,
-            ArrayList<String> messages) {
+            Map<String, String> parameters) {
 
         Objects.requireNonNull(hosts);
         Objects.requireNonNull(cluster);
@@ -115,14 +114,6 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             result = getBalance(findVmAndDestinations, overUtilizedSecondaryHosts, underUtilizedHosts);
         }
 
-        // add the current host, it is possible it is the best host after all,
-        // because the balancer does not know about affinity for example
-        Optional<BalanceResult> finalResult = result;
-        result.map(BalanceResult::getCurrentHost)
-                .filter(Objects::nonNull)
-                .ifPresent(h ->
-                        finalResult.ifPresent(res -> res.getCandidateHosts().add(h)));
-
         return result;
     }
 
@@ -130,13 +121,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             final List<VDS> overUtilizedHosts,
             final List<VDS> underUtilizedHosts) {
 
-        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, vmDao, vmStatisticsDao)
-                .map(res -> new BalanceResult(res.getVmToMigrate().getId(),
-                        res.getDestinationHosts().stream()
-                                .map(VDS::getId)
-                                .collect(Collectors.toList()),
-                        res.getVmToMigrate().getRunOnVds())
-                    );
+        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, vmDao, vmStatisticsDao);
     }
 
     /**

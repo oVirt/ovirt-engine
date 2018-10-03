@@ -68,11 +68,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -89,11 +87,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -111,11 +107,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -134,11 +128,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -156,11 +148,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertFalse(result.isPresent());
     }
 
@@ -174,11 +164,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertFalse(result.isPresent());
     }
 
@@ -192,11 +180,9 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "768");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "128");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
 
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());

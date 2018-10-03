@@ -59,8 +59,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         initMocks(policyUnit, hosts, vms);
 
-        ArrayList<String> messages = new ArrayList<>();
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -79,11 +78,9 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -107,11 +104,9 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assert !result.isPresent();
     }
 
@@ -129,11 +124,9 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "300");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
@@ -159,11 +152,9 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
 
-        ArrayList<String> messages = new ArrayList<>();
-
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters, messages);
+        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assert !result.isPresent();
     }
 }

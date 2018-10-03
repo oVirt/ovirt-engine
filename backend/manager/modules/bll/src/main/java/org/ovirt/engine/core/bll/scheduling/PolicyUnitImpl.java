@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -81,8 +80,7 @@ public abstract class PolicyUnitImpl {
 
     public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
-            Map<String, String> parameters,
-            ArrayList<String> messages) {
+            Map<String, String> parameters) {
         log.error("Policy unit '{}' balance is not implemented", getPolicyUnit().getName());
         return Optional.empty();
     }

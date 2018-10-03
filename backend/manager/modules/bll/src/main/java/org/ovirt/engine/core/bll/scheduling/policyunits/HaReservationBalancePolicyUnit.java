@@ -46,8 +46,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
     @Override
     public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
-            Map<String, String> parameters,
-            ArrayList<String> messages) {
+            Map<String, String> parameters) {
 
         Objects.requireNonNull(hosts);
         Objects.requireNonNull(cluster);

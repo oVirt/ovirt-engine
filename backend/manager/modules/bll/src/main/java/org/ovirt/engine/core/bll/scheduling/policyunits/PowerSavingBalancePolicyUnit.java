@@ -75,9 +75,8 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     @Override
     public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
-            Map<String, String> parameters,
-            ArrayList<String> messages) {
-        final Optional<BalanceResult> migrationRule =  super.balance(cluster, hosts, parameters, messages);
+            Map<String, String> parameters) {
+        final Optional<BalanceResult> migrationRule =  super.balance(cluster, hosts, parameters);
 
         List<VDS> allHosts = vdsDao.getAllForCluster(cluster.getId());
 

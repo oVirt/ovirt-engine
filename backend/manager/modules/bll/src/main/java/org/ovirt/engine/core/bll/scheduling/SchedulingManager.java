@@ -1068,8 +1068,7 @@ public class SchedulingManager implements BackendService {
             List<VDS> hosts) {
         return policyUnit.balance(cluster,
                 hosts,
-                cluster.getClusterPolicyProperties(),
-                new ArrayList<>());
+                cluster.getClusterPolicyProperties());
     }
 
     private Optional<BalanceResult> externalRunBalance(PolicyUnitImpl policyUnit,

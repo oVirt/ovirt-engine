@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,8 +29,7 @@ public class NoneBalancePolicyUnit extends PolicyUnitImpl {
     @Override
     public Optional<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
-            Map<String, String> parameters,
-            ArrayList<String> messages) {
+            Map<String, String> parameters) {
         return Optional.empty();
     }
 }
