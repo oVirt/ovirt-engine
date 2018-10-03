@@ -356,7 +356,11 @@ public class BackendStorageDomainsResource
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         final HostStorage storage = model.getStorage();
         StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
-        if (cnx.getConnection().contains(":")) {
+        if (cnx.getConnection().startsWith("[")) {
+            String[] parts = cnx.getConnection().split("]:");
+            storage.setAddress(parts[0].substring(1));
+            storage.setPath(parts[1]);
+        } else if (cnx.getConnection().contains(":")) {
             String[] parts = cnx.getConnection().split(":");
             storage.setAddress(parts[0]);
             storage.setPath(parts[1]);
