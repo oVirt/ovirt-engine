@@ -276,7 +276,7 @@ public final class ActionUtils {
                 EnumSet.of(ActionType.RunVm, ActionType.CloneVm,
                         ActionType.RunVmOnce, ActionType.HibernateVm, ActionType.MigrateVm,
                         ActionType.RemoveVm, ActionType.AddVmTemplate, ActionType.ExportVm,
-                        ActionType.ImportVm, ActionType.ChangeDisk,
+                        ActionType.ImportVm, ActionType.ChangeDisk, ActionType.CreateSnapshotForVm,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm, ActionType.ExtendImageSize,
                         ActionType.RebootVm));
