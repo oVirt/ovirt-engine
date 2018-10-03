@@ -116,7 +116,7 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult vmNotIlegal() {
+    public ValidationResult vmNotIllegal() {
         if (vm.getStatus() == VMStatus.ImageIllegal) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
         }

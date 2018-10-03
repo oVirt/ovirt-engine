@@ -289,7 +289,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         VmValidator vmValidator = createVmValidator();
         StoragePoolValidator spValidator = createStoragePoolValidator();
         if (!(validateVM(vmValidator) && validate(spValidator.existsAndUp())
-                && validate(vmValidator.vmNotIlegal())
+                && validate(vmValidator.vmNotIllegal())
                 && validate(vmValidator.vmNotLocked())
                 && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotsValidator.vmNotInPreview(getVmId()))

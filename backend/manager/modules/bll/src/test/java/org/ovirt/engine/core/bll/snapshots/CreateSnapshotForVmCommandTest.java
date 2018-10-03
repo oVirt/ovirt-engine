@@ -204,7 +204,7 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Test
     public void testVmIllegal() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL)).when(vmValidator)
-                .vmNotIlegal();
+                .vmNotIllegal();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
     }
