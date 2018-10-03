@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,13 +18,15 @@ public class BasicMigrationHandler implements MigrationHandler {
     private BackendInternal backendInternal;
 
     @Override
-    public void migrateVM(List<Guid> initialHosts, Guid vmToMigrate, String reason) {
+    public boolean migrateVM(List<Guid> initialHosts, Guid vmToMigrate, String reason) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
         parameters.setInitialHosts(new ArrayList<>(initialHosts));
         parameters.setReason(reason);
-        backendInternal.runInternalAction(ActionType.BalanceVm,
+        ActionReturnValue res = backendInternal.runInternalAction(ActionType.BalanceVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());
+
+        return res.getSucceeded();
     }
 
 }

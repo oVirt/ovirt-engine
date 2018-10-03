@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
     private static final Guid HOST_B = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
 
     private static final Guid VM_1A = new Guid("087fc692-de02-11e4-8830-0800200c9a66");
+    private static final Guid VM_1B = new Guid("087fc694-de02-11e4-8830-0800200c9a66");
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
@@ -63,10 +65,13 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
+        List<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get());
+        assertFalse(result.isEmpty());
+
+        assertThat(result).hasSize(2);
+        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get(0));
+        assertBalanceResult(VM_1B, Arrays.asList(HOST_A, HOST_B), result.get(1));
     }
 
     @Test
@@ -81,10 +86,13 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
+        List<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get());
+        assertFalse(result.isEmpty());
+
+        assertThat(result).hasSize(2);
+        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get(0));
+        assertBalanceResult(VM_1B, Arrays.asList(HOST_A, HOST_B), result.get(1));
     }
 
     /**
@@ -102,8 +110,8 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
-        assertFalse(result.isPresent());
+        List<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
+        assertTrue(result.isEmpty());
     }
 
     /**
@@ -122,10 +130,13 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
+        List<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get());
+        assertFalse(result.isEmpty());
+
+        assertThat(result).hasSize(2);
+        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get(0));
+        assertBalanceResult(VM_1B, Arrays.asList(HOST_A, HOST_B), result.get(1));
     }
 
     /**
@@ -144,7 +155,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
 
         initMocks(policyUnit, hosts, vms);
 
-        Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
-        assertFalse(result.isPresent());
+        List<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
+        assertTrue(result.isEmpty());
     }
 }

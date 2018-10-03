@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     @Inject
     private VmDao vmDao;
     @Inject
-    private VmStatisticsDao vmStatisticsDao;
+    private ResourceManager resourceManager;
     @Override
     protected Set<PolicyUnitParameter> getParameters() {
         Set<PolicyUnitParameter> params = super.getParameters();
@@ -58,7 +57,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Optional<BalanceResult> balance(final Cluster cluster,
+    public List<BalanceResult> balance(final Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters) {
 
@@ -67,7 +66,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (hosts.size() < 2) {
             log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hosts.size());
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         final List<VDS> overUtilizedPrimaryHosts = getPrimarySources(cluster, hosts, parameters);
@@ -76,11 +75,11 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         // if there aren't any overutilized hosts, then there is nothing to balance...
         if (overUtilizedPrimaryHosts.isEmpty() && overUtilizedSecondaryHosts.isEmpty()) {
             log.debug("There is no over-utilized host in cluster '{}'", cluster.getName());
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         FindVmAndDestinations findVmAndDestinations = getFindVmAndDestinations(cluster, parameters);
-        Optional<BalanceResult> result = Optional.empty();
+        List<BalanceResult> result = new ArrayList<>();
 
         // try balancing based on CPU first
         if (!overUtilizedPrimaryHosts.isEmpty()) {
@@ -99,7 +98,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         }
 
         // if it is not possible (or necessary) to balance based on CPU, try with memory
-        if (!result.isPresent() && !overUtilizedSecondaryHosts.isEmpty()) {
+        if (!overUtilizedSecondaryHosts.isEmpty()) {
             // returns hosts with more free memory than the specified threshold
             List<VDS> underUtilizedHosts = getSecondaryDestinations(cluster, hosts, parameters);
 
@@ -108,20 +107,19 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 log.warn("All candidate hosts have been filtered, can't balance the cluster '{}'"
                                 + " using memory based approach",
                         cluster.getName());
-                return Optional.empty();
+            } else {
+                result.addAll(getBalance(findVmAndDestinations, overUtilizedSecondaryHosts, underUtilizedHosts));
             }
-
-            result = getBalance(findVmAndDestinations, overUtilizedSecondaryHosts, underUtilizedHosts);
         }
 
         return result;
     }
 
-    private Optional<BalanceResult> getBalance(FindVmAndDestinations findVmAndDestinations,
+    private List<BalanceResult> getBalance(FindVmAndDestinations findVmAndDestinations,
             final List<VDS> overUtilizedHosts,
             final List<VDS> underUtilizedHosts) {
 
-        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, vmDao, vmStatisticsDao);
+        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, vmDao, resourceManager);
     }
 
     /**

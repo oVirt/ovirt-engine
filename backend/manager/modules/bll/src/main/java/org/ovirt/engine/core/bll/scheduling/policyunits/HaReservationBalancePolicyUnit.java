@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -44,7 +44,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public Optional<BalanceResult> balance(Cluster cluster,
+    public List<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters) {
 
@@ -53,11 +53,11 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
         log.debug("Started HA reservation balancing method for cluster '{}'", cluster.getName());
         if (!cluster.supportsHaReservation()) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
         if (hosts.size() < 2) {
             log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hosts.size());
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         int haVmsInCluster = 0;
@@ -84,14 +84,14 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
                 getHostUtilizedByCondition(hosts, hostId2HaVmMapping, overUtilizationThreshold, Condition.MORE_THAN);
         if (overUtilizedHosts.isEmpty()) {
             log.debug("No over utilized hosts for cluster '{}'", cluster.getName());
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         List<VDS> underUtilizedHosts =
                 getHostUtilizedByCondition(hosts, hostId2HaVmMapping, overUtilizationParam, Condition.LESS_THAN);
         if (underUtilizedHosts.size() == 0) {
             log.debug("No under utilized hosts for cluster '{}'", cluster.getName());
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         // Get random host from the over utilized hosts
@@ -100,7 +100,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
         List<VM> migrableVmsOnRandomHost = getMigrableVmsRunningOnVds(randomHost.getId(), hostId2HaVmMapping);
         if (migrableVmsOnRandomHost.isEmpty()) {
             log.debug("No migratable hosts were found for cluster '{}'", cluster.getName());
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         // Get random vm to migrate
@@ -112,7 +112,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
             underUtilizedHostsKeys.add(vds.getId());
         }
 
-        return Optional.of(new BalanceResult(vm.getId(), underUtilizedHostsKeys));
+        return Collections.singletonList(new BalanceResult(vm.getId(), underUtilizedHostsKeys));
 
     }
 

@@ -145,6 +145,16 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
+    public Map<Guid, List<VM>> getAllRunningForMultipleVds(Collection<Guid> hostIds) {
+        List<VM> vms = getCallsHandler().executeReadList("GetVmsRunningOnMultipleVds",
+                vmRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_ids", createArrayOfUUIDs(hostIds)));
+
+        return vms.stream().collect(Collectors.groupingBy(VM::getRunOnVds));
+    }
+
+    @Override
     public List<VM> getAllRunningOnOrMigratingToVds(Guid id) {
         return getCallsHandler().executeReadList("GetVmsRunningOnOrMigratingToVds",
                 vmRowMapper,

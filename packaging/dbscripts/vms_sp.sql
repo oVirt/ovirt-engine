@@ -1590,6 +1590,19 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetVmsRunningOnMultipleVds(v_vds_ids UUID[])
+RETURNS SETOF vms STABLE AS $procedure$
+BEGIN
+   RETURN QUERY
+
+   SELECT DISTINCT vms.*
+   FROM vms
+   WHERE run_on_vds = ANY(v_vds_ids);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetVmsRunningByVds(v_vds_id UUID) RETURNS SETOF vms_monitoring_view STABLE
    AS $procedure$
 BEGIN

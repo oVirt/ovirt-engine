@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,11 +78,11 @@ public abstract class PolicyUnitImpl {
         return hosts.stream().map(host -> new Pair<>(host.getId(), 1)).collect(Collectors.toList());
     }
 
-    public Optional<BalanceResult> balance(Cluster cluster,
+    public List<BalanceResult> balance(Cluster cluster,
             List<VDS> hosts,
             Map<String, String> parameters) {
         log.error("Policy unit '{}' balance is not implemented", getPolicyUnit().getName());
-        return Optional.empty();
+        return Collections.emptyList();
     }
 
     public SelectorInstance selector(Map<String, String> parameters) {

@@ -2,9 +2,8 @@ package org.ovirt.engine.core.bll.scheduling.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
@@ -15,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,48 +35,42 @@ public class FindVmAndDestinations {
         this.requiredMemory = requiredMemory;
     }
 
-    public Optional<BalanceResult> invoke(List<VDS> sourceHosts,
+    public List<BalanceResult> invoke(List<VDS> sourceHosts,
             List<VDS> destinationHosts,
             VmDao vmDao,
-            VmStatisticsDao vmStatisticsDao) {
+            ResourceManager resourceManager) {
 
-        // Iterate over source hosts until you find valid vm to migrate, hosts sorted by cpu usage
-        for (VDS sourceHost : sourceHosts){
-            // Get list of all migratable vms on host
-            List<VM> migratableVmsOnHost = getMigratableVmsRunningOnVds(vmDao, sourceHost.getId());
-            if (migratableVmsOnHost.isEmpty()) {
-                continue;
-            }
+        Map<Guid, List<VM>> vmsForHost =  getMigratableVmsRunningOnHosts(vmDao,
+                sourceHosts.stream().map(VDS::getId).collect(Collectors.toList()));
+
+        List<BalanceResult> results = new ArrayList<>();
+        for (VDS sourceHost: sourceHosts) {
+            List<VM> migratableVms = vmsForHost.get(sourceHost.getId());
 
             // Statistics are needed for sorting by cpu usage
-            for (VM vm : migratableVmsOnHost) {
-                vm.setStatisticsData(vmStatisticsDao.get(vm.getId()));
-            }
+            migratableVms.forEach(vm -> vm.setStatisticsData(resourceManager.getVmManager(vm.getId(), false).getStatistics()));
+            migratableVms.sort(VmCpuUsageComparator.INSTANCE);
 
-            // Sort vms by cpu usage
-            Collections.sort(migratableVmsOnHost, VmCpuUsageComparator.INSTANCE);
-            for (VM vmToMigrate : migratableVmsOnHost){
+            for (VM vm : migratableVms){
                 // Check if vm not over utilize memory or CPU of destination hosts
                 List<VDS> validDestinationHosts = getValidHosts(
-                        destinationHosts, cluster, vmToMigrate, highCpuUtilization, requiredMemory);
+                        destinationHosts, cluster, vm, highCpuUtilization, requiredMemory);
 
                 if (!validDestinationHosts.isEmpty()){
-                    log.debug("Vm '{}' selected for migration", vmToMigrate.getName());
-
                     // Add the current host, it is possible it is the best host after all,
                     // because the balancer does not know about affinity for example
                     validDestinationHosts.add(sourceHost);
 
-                    return Optional.of(new BalanceResult(
-                            vmToMigrate.getId(),
+                    results.add(new BalanceResult(
+                            vm.getId(),
                             validDestinationHosts.stream()
-                                .map(VDS::getId)
-                                .collect(Collectors.toList())
+                                    .map(VDS::getId)
+                                    .collect(Collectors.toList())
                     ));
                 }
             }
         }
-        return Optional.empty();
+        return results;
     }
 
     /**
@@ -96,19 +89,22 @@ public class FindVmAndDestinations {
     }
 
     /**
-     * Return all VMs that run on a host and can be migrated away.
+     * Return all VMs that run on a hosts and can be migrated away.
      *
      * This method is to be considered private. It is protected to be available
      * from unit tests.
      *
      * @param vmDao The data source to get the VM information
-     * @param hostId Id of a host the returned VMs run at
-     * @return list od VM that run on host and can be migrated
+     * @param hostIds Ids of hosts the returned VMs run at
+     * @return Map of host ID to VMs that run on host and can be migrated
      */
-    protected List<VM> getMigratableVmsRunningOnVds(final VmDao vmDao, final Guid hostId) {
-        return vmDao.getAllRunningForVds(hostId).stream()
-                .filter(vm -> vm.getMigrationSupport() == MigrationSupport.MIGRATABLE)
-                .collect(Collectors.toList());
+    private static Map<Guid, List<VM>> getMigratableVmsRunningOnHosts(final VmDao vmDao, final Collection<Guid> hostIds) {
+        Map<Guid, List<VM>> vmsForHost = vmDao.getAllRunningForMultipleVds(hostIds);
+        vmsForHost.forEach((id, vms) ->
+                vms.removeIf(vm -> vm.getMigrationSupport() != MigrationSupport.MIGRATABLE)
+        );
+
+        return vmsForHost;
     }
 
     /**
@@ -127,6 +123,10 @@ public class FindVmAndDestinations {
         List<VDS> result = new ArrayList<>();
 
         for (VDS vds: candidates) {
+            if (vds.getId().equals(vm.getRunOnVds())) {
+                continue;
+            }
+
             int predictedVmCpu = getPredictedVmCpu(vm, vds, cluster.getCountThreadsAsCores());
             if (vds.getUsageCpuPercent() + predictedVmCpu <= highCpuUtilization
                     && vds.getMaxSchedulingMemory() - vm.getMemSizeMb() > minimalFreeMemory) {

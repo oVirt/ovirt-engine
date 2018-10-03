@@ -1045,25 +1045,33 @@ public class SchedulingManager implements BackendService {
         for (Cluster cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
-            Optional<BalanceResult> balanceResult = Optional.empty();
+            List<BalanceResult> balanceResults = Collections.emptyList();
             if (policyUnit.getPolicyUnit().isEnabled()) {
                 List<VDS> hosts = vdsDao.getAllForClusterWithoutMigrating(cluster.getId());
                 if (policyUnit.getPolicyUnit().isInternal()) {
-                    balanceResult = internalRunBalance(policyUnit, cluster, hosts);
+                    balanceResults = internalRunBalance(policyUnit, cluster, hosts);
                 } else if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {
-                    balanceResult = externalRunBalance(policyUnit, cluster, hosts);
+                    balanceResults = externalRunBalance(policyUnit, cluster, hosts);
                 }
             }
 
-            if (balanceResult.isPresent() && balanceResult.get().isValid()) {
-                migrationHandler.migrateVM(balanceResult.get().getCandidateHosts(),
-                        balanceResult.get().getVmToMigrate(),
+            for (BalanceResult balanceResult: balanceResults) {
+                if (!balanceResult.isValid()) {
+                    continue;
+                }
+
+                boolean migrated = migrationHandler.migrateVM(balanceResult.getCandidateHosts(),
+                        balanceResult.getVmToMigrate(),
                         MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_LOAD_BALANCING));
+
+                if (migrated) {
+                    break;
+                }
             }
         }
     }
 
-    private Optional<BalanceResult> internalRunBalance(PolicyUnitImpl policyUnit,
+    private List<BalanceResult> internalRunBalance(PolicyUnitImpl policyUnit,
             Cluster cluster,
             List<VDS> hosts) {
         return policyUnit.balance(cluster,
@@ -1071,7 +1079,7 @@ public class SchedulingManager implements BackendService {
                 cluster.getClusterPolicyProperties());
     }
 
-    private Optional<BalanceResult> externalRunBalance(PolicyUnitImpl policyUnit,
+    private List<BalanceResult> externalRunBalance(PolicyUnitImpl policyUnit,
             Cluster cluster,
             List<VDS> hosts) {
         List<Guid> hostIDs = new ArrayList<>();
@@ -1083,11 +1091,11 @@ public class SchedulingManager implements BackendService {
                 hostIDs, cluster.getClusterPolicyProperties());
 
         if (balanceResult.isPresent()) {
-            return balanceResult;
+            return Collections.singletonList(balanceResult.get());
         }
 
         log.warn("All external schedulers returned empty balancing result.");
-        return Optional.empty();
+        return Collections.emptyList();
     }
 
     /**

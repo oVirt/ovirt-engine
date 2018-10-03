@@ -24,7 +24,8 @@ public class BalanceVmCommand<T extends MigrateVmParameters> extends MigrateVmCo
 
     @Override
     protected boolean perform() {
-        // Do nothing when same host migration is detected
+        // Fail when same host migration is detected.
+        // The balancing will try to migrate a different VM.
         if (getVm().getRunOnVds().equals(getDestinationVdsId())) {
             log.debug("Migration target host is the same as the source host, migration for VM {} will not occur.",
                     getVm().getName());
@@ -32,7 +33,7 @@ public class BalanceVmCommand<T extends MigrateVmParameters> extends MigrateVmCo
             //In this case, the command should not wait for an answer from VDS
             //in order to release the engine lock.
             freeLock();
-            return true;
+            return false;
         }
         return super.perform();
     }
