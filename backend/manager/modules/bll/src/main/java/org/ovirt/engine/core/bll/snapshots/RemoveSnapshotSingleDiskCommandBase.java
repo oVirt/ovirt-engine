@@ -12,13 +12,17 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
@@ -28,11 +32,13 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
@@ -201,6 +207,8 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         imageDao.update(topImage.getImage());
         updateDiskImageDynamic(imageFromVdsm, topImage);
 
+        removeTopImageMemoryIfNeeded(topImage);
+
         updateVmConfigurationForImageChange(getDestinationDiskImage().getImage().getSnapshotId(),
                 getDestinationDiskImage().getImageId(), getDestinationDiskImage());
     }
@@ -246,10 +254,51 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         baseDiskDao.update(baseImage);
         imageDao.update(baseImage.getImage());
 
+        removeTopImageMemoryIfNeeded(topImage);
+
         updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
                 baseImage.getImageId(), topImage);
+
         updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
                 topImage.getImageId());
+    }
+
+    private boolean isRemoveTopImageMemoryNeeded(Snapshot snapshot) {
+        if (snapshot.containsMemory()) {
+            VM vmSnapshot = new VM();
+            FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vmSnapshot);
+            try {
+                ovfManager.importVm(snapshot.getVmConfiguration(), vmSnapshot, fullEntityOvfData);
+                if (Version.getLowest()
+                        .greater(vmSnapshot.getStaticData().getClusterCompatibilityVersionOrigin())) {
+                    return true;
+                }
+            } catch (OvfReaderException e) {
+                log.error("Failed to read snapshot '{}' configuration", snapshot.getId());
+            }
+        }
+        return false;
+    }
+
+    private void removeTopImageMemoryIfNeeded(DiskImage topImage) {
+        // If the top image snapshot created in a cluster version < 3.6, the memory of the snapshot
+        // is not supported by the engine.
+        // The engine updates the snapshot's cluster compatibility version to the lowest supported version (3.6)
+        // to be able to update the snapshot OVF.
+        // Therefore, the memory of the snapshot should be removed to prevent a preview of unsupported snapshot memory.
+        Snapshot topSnapshot = snapshotDao.get(topImage.getImage().getSnapshotId());
+        if (isRemoveTopImageMemoryNeeded(topSnapshot)) {
+            ActionReturnValue retVal = runInternalAction(
+                    ActionType.RemoveMemoryVolumes,
+                    new RemoveMemoryVolumesParameters(topSnapshot, getVmId()),
+                    cloneContextAndDetachFromParent());
+
+            if (!retVal.getSucceeded()) {
+                log.error("Failed to remove memory volumes '{}, {}'",
+                        topSnapshot.getMemoryDiskId(),
+                        topSnapshot.getMetadataDiskId());
+            }
+        }
     }
 
     private void updateVmConfigurationForImageChange(final Guid snapshotId, final Guid oldImageId, final DiskImage newImage) {
