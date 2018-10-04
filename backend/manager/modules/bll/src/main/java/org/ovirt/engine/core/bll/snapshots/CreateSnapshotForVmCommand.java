@@ -406,13 +406,13 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     @Override
     protected void endVmCommand() {
-        Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
         if (getParameters().getTaskGroupSuccess()) {
-            snapshotDao.updateStatus(createdSnapshot.getId(), Snapshot.SnapshotStatus.OK);
+            snapshotDao.updateStatus(getParameters().getCreatedSnapshotId(), Snapshot.SnapshotStatus.OK);
         } else {
             if (!isSnapshotCreated()) {
                 log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
             } else {
+                Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
                 revertToActiveSnapshot(createdSnapshot.getId());
                 // If the removed snapshot contained memory, remove the memory volumes
                 // Note that the memory volumes might not have been created
