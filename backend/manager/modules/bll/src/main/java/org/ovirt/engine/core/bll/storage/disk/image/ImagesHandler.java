@@ -754,9 +754,11 @@ public class ImagesHandler {
                     fullEntityOvfData.getDiskImages().add(newImage);
                 }
 
-                final Version compatibilityVersion =
+                Version compatibilityVersion =
                         Optional.ofNullable(vmSnapshot.getStaticData().getClusterCompatibilityVersionOrigin())
                         .orElse(Version.getLowest());
+                compatibilityVersion = compatibilityVersion.less(Version.getLowest()) ? Version.getLowest() : compatibilityVersion;
+
                 FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vmSnapshot);
                 fullEntityOvfDataForExport.setDiskImages(fullEntityOvfData.getDiskImages());
                 String newOvf =
