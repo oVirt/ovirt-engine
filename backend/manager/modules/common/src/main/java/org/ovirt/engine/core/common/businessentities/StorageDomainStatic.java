@@ -194,7 +194,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     }
 
     public void setComment(String value) {
-        comment = comment == null ? "" : value;
+        comment = value == null ? "" : value;
     }
 
     public SANState getSanState() {
