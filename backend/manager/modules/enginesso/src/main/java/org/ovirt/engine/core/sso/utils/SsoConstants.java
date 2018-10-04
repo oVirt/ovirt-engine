@@ -95,6 +95,7 @@ public class SsoConstants {
     public static final String ERROR_DESCRIPTION = "error_description";
     public static final String ERR_CODE_INVALID_GRANT = "invalid_grant";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
+    public static final String ERR_CODE_BAD_REQUEST_EXTERNAL_AUTH_ENABLED_TYPE = "unsupported_request";
     public static final String ERR_CODE_INVALID_REQUEST = "invalid_request";
     public static final String ERR_CODE_INVALID_TOKEN = "invalid_token";
     public static final String ERR_OVIRT_CODE_NOT_AUTHENTICATED = "not_authenticated";
@@ -105,6 +106,9 @@ public class SsoConstants {
     public static final String ERR_CODE_SERVER_ERROR = "server_error";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG = "The authorization grant type is not supported " +
             "by the authorization server.";
+    public static final String ERR_CODE_BAD_REQUEST_EXTERNAL_AUTH_ENABLED_MSG = "Issuing tokens is not supported " +
+            "by the authorization server. External SSO authentication has been enabled, tokens need to be obtained " +
+            "from the external server.";
     public static final String ERR_CODE_INVALID_CODE_MSG = "Code not valid";
     public static final String ERR_CODE_INVALID_REQUEST_MSG = "Missing parameter: '%s'";
     public static final String ERR_CODE_NOT_AUTHENTICATED_MSG = "The user is not authenticated.";
