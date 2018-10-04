@@ -7,6 +7,5 @@
   hosts: ovirt_cluster_{{cluster_name}}
 
   roles:
-    - ovirt-provider-ovn-driver
     - role: ovirt-provider-ovn-driver
       ovn_tunneling_interface: "{{hostvars['localhost']['vdsm_network_name']['stdout']}}"
