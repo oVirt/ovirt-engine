@@ -79,10 +79,10 @@ if len(sys.argv) < 3:
 entity = sys.argv[1]
 ova_path = sys.argv[2]
 ovf = sys.argv[3]
+disks_info = sys.argv[4]
 with io.open(ova_path, "wb") as ova_file:
     write_ovf(entity, ova_file, ovf)
-    if len(sys.argv) > 4:
-        disks_info = sys.argv[4]
+    if len(disks_info) > 0:
         write_disk_headers(ova_file, disks_info.split('+'))
     # write two null blocks at the end of the file
     write_null_blocks(ova_file)
