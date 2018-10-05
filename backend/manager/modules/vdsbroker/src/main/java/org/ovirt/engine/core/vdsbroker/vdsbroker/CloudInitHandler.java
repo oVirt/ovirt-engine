@@ -170,9 +170,9 @@ public class CloudInitHandler {
     }
 
     private void storeRegenerateKeys() {
-        if (vmInit.getRegenerateKeys() != null && vmInit.getRegenerateKeys()) {
+        if (vmInit.getRegenerateKeys() != null) {
             // Create new system ssh keys
-            userData.put("ssh_deletekeys", "True");
+            userData.put("ssh_deletekeys", String.valueOf(vmInit.getRegenerateKeys()));
         }
     }
 
