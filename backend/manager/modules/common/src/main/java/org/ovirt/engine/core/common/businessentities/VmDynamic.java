@@ -711,6 +711,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
      */
     public void updateRuntimeData(VmDynamic vm, Guid vdsId) {
         setStatus(vm.getStatus());
+        if (vm.getStatus().isUpOrPaused()) {
+            // migratingToVds is usually cleared by the migrate command or by ResourceManager#resetVmAttributes, this is just a
+            // safety net in case those are missed, e.g., when the engine restarts and the migration ends before the engine is up.
+            setMigratingToVds(null);
+        }
         setRunOnVds(vdsId);
         setVmHost(vm.getVmHost());
         setFqdn(vm.getFqdn());
