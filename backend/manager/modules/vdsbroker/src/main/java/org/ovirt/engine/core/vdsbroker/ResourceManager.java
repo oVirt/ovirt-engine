@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -77,9 +76,6 @@ public class ResourceManager implements BackendService {
 
     @Inject
     private Instance<IVdsEventListener> eventListener;
-
-    @Inject
-    private BeanManager beanManager;
 
     @Inject
     private AuditLogDirector auditLogDirector;
