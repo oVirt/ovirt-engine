@@ -75,7 +75,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         if (shouldPerformOvfUpdate()) {
             getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.UPDATE_OVF_STORE);
         } else if (noAsyncOperations()) {
-            getParameters().setNextCommandStep(DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN);
+            executeDeactivateCommand();
         }
         setSucceeded(true);
     }
