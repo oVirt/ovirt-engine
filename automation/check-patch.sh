@@ -1,5 +1,17 @@
 #!/bin/bash -xe
 
+# Get the MILESTONE from version.mak, so that we know if we build for a
+# non-release milestone, such as master, alpha, beta, etc., or for a
+# release (and then MILESTONE is empty).
+# Do this methodically, by generating a shell script snippet using make
+# and writing it there, instead of parsing version.mak ourselves.
+make generated-files
+. automation/milestone-config.sh
+
+# Set SUFFIX only for MILESTONEs
+SUFFIX=
+[ -n "${MILESTONE}" ] && SUFFIX=".git$(git rev-parse --short HEAD)"
+
 source automation/jvm-opts.sh
 
 MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
@@ -8,6 +20,11 @@ export MAVEN_OPTS
 BUILD_UT=0
 RUN_DAO_TESTS=0
 BUILD_GWT=0
+if [ -z "${MILESTONE}" ]; then
+	BUILD_UT=1
+	RUN_DAO_TESTS=1
+	BUILD_GWT=1
+fi
 
 # Check for copyright notices in files that do not also include an SPDX tag.
 non_removed_files=$( \
@@ -89,8 +106,6 @@ if git show --pretty="format:" --name-only | egrep \
     RUN_DAO_TESTS=1
 fi
 
-SUFFIX=".git$(git rev-parse --short HEAD)"
-
 if [ -d /root/.m2/repository/org/ovirt ]; then
     echo "Deleting ovirt folder from maven cache"
     rm -rf /root/.m2/repository/org/ovirt
@@ -171,9 +186,9 @@ make dist
 rpmbuild \
     -D "_srcrpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "release_suffix ${SUFFIX}" \
+    ${SUFFIX:+-D "release_suffix ${SUFFIX}"} \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
-    -D "ovirt_build_quick 1" \
+    ${MILESTONE:+-D "ovirt_build_quick 1"} \
     -ts ./*.gz
 
 # install any build requirements
@@ -190,10 +205,10 @@ fi
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "release_suffix ${SUFFIX}" \
+    ${SUFFIX:+-D "release_suffix ${SUFFIX}"} \
     -D "ovirt_build_ut $BUILD_UT" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
-    -D "${RPM_BUILD_MODE} 1" \
+    ${MILESTONE:+-D "${RPM_BUILD_MODE} 1"} \
     --rebuild output/*.src.rpm
 
 # Store any relevant artifacts in exported-artifacts for the ci system to

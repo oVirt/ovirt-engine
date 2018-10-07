@@ -1,6 +1,6 @@
 # Version Information are taken from pom.xml
 
-# Milestone is manually specified,
+# MILESTONE_IF_NEEDED is manually specified,
 # example for ordering:
 # - master
 # - alpha
@@ -15,9 +15,20 @@
 # - master
 # - <none>
 #
-MILESTONE=master
+MILESTONE_IF_NEEDED=master
 
-# RPM release is manually specified,
+# RPM_RELEASE_ON_RELEASE should be set to the rpm release to have on release (non-SNAPSHOT) builds.
+RPM_RELEASE_ON_RELEASE=1
+
+# AUTO_MILESTONE is set to MILESTONE_IF_NEEDED on SNAPSHOT builds, empty otherwise.
+AUTO_MILESTONE=$(shell cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$' && echo $(MILESTONE_IF_NEEDED))
+
+# AUTO_RPM_RELEASE is set to 0.0.something on SNAPSHOT builds, and to RPM_RELEASE_ON_RELEASE otherwise.
+AUTO_RPM_RELEASE=$(shell if cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$'; then echo 0.0.$(MILESTONE).$$(date -u +%Y%m%d%H%M%S); else echo $(RPM_RELEASE_ON_RELEASE); fi)
+
+MILESTONE=$(AUTO_MILESTONE)
+
+# RPM release should be automatic. If needed to be set manually:
 # For pre-release:
 # RPM_RELEASE=0.N.$(MILESTONE).$(shell date -u +%Y%m%d%H%M%S)
 # While N is incremented when milestone is changed.
@@ -26,7 +37,7 @@ MILESTONE=master
 # RPM_RELEASE=N
 # while N is incremented each re-release
 #
-RPM_RELEASE=0.0.$(MILESTONE).$(shell date -u +%Y%m%d%H%M%S)
+RPM_RELEASE=$(AUTO_RPM_RELEASE)
 
 #
 # Downstream only release prefix
