@@ -200,6 +200,7 @@ export ENVFILEC
 	-e "s|@DEV_SETUP_ENV_DIR@|$(DEV_SETUP_ENV_DIR)|g" \
 	-e "s|@RPM_VERSION@|$(ENGINE_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
+	-e "s|@MILESTONE@|$(MILESTONE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
 	-e "s|@POSTGRESQL_SYSTEMD_SERVICE@|$(POSTGRESQL_SYSTEMD_SERVICE)|g" \
@@ -221,6 +222,7 @@ export ENVFILEC
 
 # List of files that will be generated from templates:
 GENERATED = \
+	automation/milestone-config.sh \
 	build/python-check.sh \
 	ovirt-engine.spec \
 	packaging/bin/engine-backup.sh \
