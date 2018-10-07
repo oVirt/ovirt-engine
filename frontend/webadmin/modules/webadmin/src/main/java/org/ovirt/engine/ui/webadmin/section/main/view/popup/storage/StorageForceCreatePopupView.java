@@ -74,7 +74,7 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
         List<String> items = object.getItemsAsList();
 
         for (String item : items) {
-            descriptionPanel.add(new Label("- " + item + "<br/>")); //$NON-NLS-1$ $NON-NLS-2$
+            descriptionPanel.add(new Label("- " + item)); //$NON-NLS-1$
         }
     }
 
