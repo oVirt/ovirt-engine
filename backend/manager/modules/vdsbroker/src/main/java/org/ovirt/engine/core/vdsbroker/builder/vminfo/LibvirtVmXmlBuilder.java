@@ -1783,8 +1783,7 @@ public class LibvirtVmXmlBuilder {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            String diskType = vmInfoBuildUtils.getDiskType(this.vm, diskImage, device);
-            nativeIO = !"file".equals(diskType) || vmInfoBuildUtils.shouldUseNativeIO(vm, diskImage);
+            nativeIO =  vmInfoBuildUtils.shouldUseNativeIO(vm, diskImage, device);
             writer.writeAttributeString("io", nativeIO ? "native" : "threads");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
