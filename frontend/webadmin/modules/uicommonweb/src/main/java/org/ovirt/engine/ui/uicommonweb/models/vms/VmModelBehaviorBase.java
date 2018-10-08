@@ -1314,7 +1314,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         getModel().getAllowConsoleReconnect().setEntity(vmType == VmType.Server);
-        getModel().getIoThreadsEnabled().setEntity(vmType == VmType.Server || vmType == VmType.HighPerformance);
+
+        if (vmType == VmType.Server) {
+            getModel().getIoThreadsEnabled().setEntity(true);
+        }
 
         // High Performance
         if (vmType == VmType.HighPerformance) {
@@ -1340,6 +1343,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             // Resource allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
+            getModel().getIoThreadsEnabled().setEntity(true);
         } else {
             getModel().getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
         }
