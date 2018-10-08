@@ -225,7 +225,7 @@ public class VmPoolDaoImpl extends BaseDao implements VmPoolDao {
                 .addValue("offset", offset)
                 .addValue("limit", limit);
         return getCallsHandler().executeReadList("GetAllFromVmPoolsFilteredAndSorted",
-                vmPoolFullRowMapper,
+                vmPoolNonFullRowMapper,
                 parameterSource);
     }
 }
