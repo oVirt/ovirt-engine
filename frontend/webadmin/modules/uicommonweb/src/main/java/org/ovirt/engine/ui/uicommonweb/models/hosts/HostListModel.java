@@ -923,11 +923,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             parameters.setOverrideFirewall(model.getOverrideIpTables().getEntity());
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
-            Provider<?> networkProvider = model.getNetworkProviders().getSelectedItem();
-            if (networkProvider != null) {
-                parameters.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
-            }
-
             if (model.getProviders().getSelectedItem() != null) {
                 parameters.getVdsStaticData().setHostProviderId(model.getProviders().getSelectedItem().getId());
             }
@@ -1381,13 +1376,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
         param.setHostedEngineDeployConfiguration(
                 new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
-
-        Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
-        if (networkProvider == null) {
-            param.getVdsStaticData().setOpenstackNetworkProviderId(null);
-        } else {
-            param.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
-        }
 
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> Frontend.getInstance().runAction(
                 ActionType.InstallVds,

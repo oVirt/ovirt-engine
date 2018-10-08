@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -95,28 +94,8 @@ public class InstallModel extends Model {
         return hostAuthenticationMethod;
     }
 
-    private HostNetworkProviderModel networkProviderModel;
-
-    public HostNetworkProviderModel getNetworkProviderModel() {
-        return networkProviderModel;
-    }
-
-    private void setNetworkProviderModel(HostNetworkProviderModel value) {
-        networkProviderModel = value;
-        updateNetworkProviderModel();
-    }
-
-    public ListModel<?> getNetworkProviders() {
-        return getNetworkProviderModel().getNetworkProviders();
-    }
-
-    public EntityModel<?> getInterfaceMappings() {
-        return getNetworkProviderModel().getInterfaceMappings();
-    }
-
     public void setVds(VDS value) {
         vds = value;
-        updateNetworkProviderModel();
     }
 
     public VDS getVds() {
@@ -161,7 +140,6 @@ public class InstallModel extends Model {
         getPublicKey().setEntity(""); //$NON-NLS-1$
         setValidationFailed(new EntityModel<Boolean>());
         fetchEngineSshPublicKey();
-        setNetworkProviderModel(new HostNetworkProviderModel());
         setHostedEngineHostModel(new HostedEngineHostModel());
     }
 
@@ -177,11 +155,8 @@ public class InstallModel extends Model {
             }
         }
 
-        getNetworkProviderModel().validate();
-
         return getUserPassword().getIsValid()
                 && getOVirtISO().getIsValid()
-                && getNetworkProviderModel().getIsValid()
                 && getHostedEngineHostModel().getIsValid();
     }
 
@@ -191,16 +166,5 @@ public class InstallModel extends Model {
                 getPublicKey().setEntity(pk);
             }
         }));
-    }
-
-    private void updateNetworkProviderModel() {
-        if (vds != null && networkProviderModel != null) {
-            networkProviderModel.selectProviderById(vds.getOpenstackNetworkProviderId());
-            startProgress();
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> {
-                stopProgress();
-                networkProviderModel.setDefaultProviderId(cluster.getDefaultNetworkProviderId());
-            }), vds.getClusterId());
-        }
     }
 }

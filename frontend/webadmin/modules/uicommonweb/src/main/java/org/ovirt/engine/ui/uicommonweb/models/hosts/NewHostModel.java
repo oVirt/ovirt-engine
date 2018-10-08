@@ -193,11 +193,6 @@ public class NewHostModel extends HostModel {
     }
 
     @Override
-    public boolean showNetworkProviderTab() {
-        return ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly;
-    }
-
-    @Override
     protected boolean editTransportProperties(VDS vds) {
         return true;
     }

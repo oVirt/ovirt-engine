@@ -122,13 +122,6 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="networkProviderTab" label="{constants.networkProviderButtonLabel}">
-                        <t:content>
-                            <p:HostNetworkProviderWidget ui:field="networkProviderWidget" />
-                        </t:content>
-                    </t:DialogTab>
-                </t:tab>
-                <t:tab>
                     <t:DialogTab ui:field="hostedEngineTab" label="{constants.hostedEngineLabel}">
                         <t:content>
                             <b:Container fluid="true">

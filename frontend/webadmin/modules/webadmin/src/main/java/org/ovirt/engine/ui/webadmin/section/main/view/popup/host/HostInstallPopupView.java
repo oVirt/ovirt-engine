@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -19,12 +18,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
@@ -102,11 +99,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     StringEntityModelTextAreaLabelEditor publicKeyEditor;
 
     @UiField
-    @Ignore
-    @WithElementId("networkProviderWidget")
-    HostNetworkProviderWidget networkProviderWidget;
-
-    @UiField
     @Path(value = "hostedEngineHostModel.selectedItem")
     ListModelListBoxEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
 
@@ -117,10 +109,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @UiField
     @Ignore
     DialogTab hostPopupGeneralTab;
-
-    @UiField
-    @Ignore
-    DialogTab networkProviderTab;
 
     @UiField
     @Ignore
@@ -139,18 +127,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         localize();
         addStyles();
         driver.initialize(this);
-        applyModeCustomizations();
     }
 
     private void hideLabels() {
         passwordEditor.hideLabel();
         publicKeyEditor.hideLabel();
-    }
-
-    private void applyModeCustomizations() {
-        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly) {
-            networkProviderTab.setVisible(false);
-        }
     }
 
     void initEditors() {
@@ -209,11 +190,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         });
         // TODO: remove setIsChangeable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
-
-        networkProviderWidget.edit(model.getNetworkProviderModel());
-        if (model.getVds().isOvirtVintageNode()) {
-            networkProviderTab.setVisible(false);
-        }
     }
 
     private void displayPasswordField(boolean isPasswordVisible) {
@@ -228,13 +204,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     @Override
     public InstallModel flush() {
-        networkProviderWidget.flush();
         return driver.flush();
     }
 
     @Override
     public void cleanup() {
-        networkProviderWidget.cleanup();
         driver.cleanup();
     }
 

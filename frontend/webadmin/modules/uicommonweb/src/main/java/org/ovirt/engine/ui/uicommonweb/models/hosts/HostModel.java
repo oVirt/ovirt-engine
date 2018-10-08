@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
-import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -674,16 +673,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privateProviders = value;
     }
 
-    private HostNetworkProviderModel networkProviderModel;
-
-    public HostNetworkProviderModel getNetworkProviderModel() {
-        return networkProviderModel;
-    }
-
-    private void setNetworkProviderModel(HostNetworkProviderModel value) {
-        networkProviderModel = value;
-    }
-
     private EntityModel<Boolean> isDiscoveredHosts;
 
     public EntityModel<Boolean> getIsDiscoveredHosts() {
@@ -692,14 +681,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     public void setIsDiscoveredHosts(EntityModel<Boolean> value) {
         isDiscoveredHosts = value;
-    }
-
-    public ListModel<Provider<org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties>> getNetworkProviders() {
-        return getNetworkProviderModel().getNetworkProviders();
-    }
-
-    public EntityModel<String> getInterfaceMappings() {
-        return getNetworkProviderModel().getInterfaceMappings();
     }
 
     private HostedEngineHostModel hostedEngineHostModel;
@@ -858,7 +839,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         initSpmPriorities();
         fetchEngineSshPublicKey();
 
-        setNetworkProviderModel(new HostNetworkProviderModel());
         setIsDiscoveredHosts(new EntityModel<Boolean>());
         setKernelCmdline(new EntityModel<String>());
         setKernelCmdlineBlacklistNouveau(new EntityModel<>(false));
@@ -1121,7 +1101,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             cpuVendorChanged();
         }
 
-        getNetworkProviderModel().setDefaultProviderId(cluster.getDefaultNetworkProviderId());
         setVgpuPlacementChangeability(cluster.getCompatibilityVersion());
     }
 
@@ -1151,10 +1130,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         } else {
             getExternalComputeResource().setIsValid(true);
             getExternalHostGroups().setIsValid(true);
-        }
-        if (getExternalHostProviderEnabled().getEntity() && getProviders().getSelectedItem() == null) {
-            getProviders().getInvalidityReasons().add(constants.validateSelectExternalProvider());
-            getProviders().setIsValid(false);
         }
 
         getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
@@ -1191,11 +1166,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         setValidTab(TabName.POWER_MANAGEMENT_TAB, fenceAgentsValid);
 
-        getNetworkProviderModel().validate();
-
         ValidationCompleteEvent.fire(getEventBus(), this);
         return isValidTab(TabName.GENERAL_TAB) && isValidTab(TabName.POWER_MANAGEMENT_TAB)
-                && getConsoleAddress().getIsValid() && getNetworkProviderModel().getIsValid()
+                && getConsoleAddress().getIsValid()
                 && isValidTab(TabName.KERNEL_TAB);
     }
 
@@ -1560,8 +1533,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     protected abstract void setPort(VDS vds);
-
-    public abstract boolean showNetworkProviderTab();
 
     /**
      * {@code EntityModel.setEntity(..., false);} can't be used because this prevents

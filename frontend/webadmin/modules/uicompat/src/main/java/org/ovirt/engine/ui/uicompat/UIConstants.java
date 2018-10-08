@@ -421,11 +421,7 @@ public interface UIConstants extends Constants {
 
     String networksTitle();
 
-    String externalProvidersTitle();
-
     String providersTitle();
-
-    String validateSelectExternalProvider();
 
     String vnicProfilesTitle();
 
@@ -1640,16 +1636,6 @@ public interface UIConstants extends Constants {
     String importNetworksButton();
 
     String importDuplicateName();
-
-    String interfaceMappings();
-
-    String bridgeMappings();
-
-    String interfaceMappingsExplanation();
-
-    String bridgeMappingsExplanation();
-
-    String interfaceMappingsInvalid();
 
     String removeNetworkFromProvider();
 

@@ -14,7 +14,6 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ProviderModel> {
         HasUiCommandClickHandlers getTestButton();
         void setTestResult(String errorMessage);
-        void setAgentTabVisibility(boolean visible);
         void setCurrentActiveProviderWidget();
     }
 
@@ -31,12 +30,6 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
 
         model.getTestResult().getEntityChangedEvent().addListener((ev, sender, args) ->
                 getView().setTestResult(model.getTestResult().getEntity()));
-        model.getNeutronAgentModel()
-                .isPluginConfigurationAvailable()
-                .getEntityChangedEvent()
-                .addListener((ev, sender, args) -> getView().setAgentTabVisibility(model.getNeutronAgentModel()
-                        .isPluginConfigurationAvailable()
-                        .getEntity()));
         model.getDataCenter().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (IS_AVAILABLE.equals(args.propertyName)) {
                 getView().setCurrentActiveProviderWidget();

@@ -386,15 +386,6 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="networkProviderTab">
-                        <t:content>
-                            <b:Container fluid="true">
-                                <p:HostNetworkProviderWidget ui:field="networkProviderWidget" usePatternFly="true" addStyleNames="{style.topElement}" />
-                            </b:Container>
-                        </t:content>
-                    </t:DialogTab>
-                </t:tab>
-                <t:tab>
                     <t:DialogTab ui:field="kernelTab" label="{constants.hostKernelTabLabel}">
                         <t:content>
                             <b:Container fluid="true">

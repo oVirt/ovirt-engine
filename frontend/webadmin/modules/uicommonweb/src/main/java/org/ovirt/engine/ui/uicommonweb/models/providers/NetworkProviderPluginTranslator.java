@@ -78,10 +78,6 @@ public enum NetworkProviderPluginTranslator {
         }
     }
 
-    public static boolean isOpenstackPlugin(String displayString) {
-        return NEUTRON.getPresetDisplayStrings().contains(displayString);
-    }
-
     public static String getPluginNameForDisplayString(String displayString) {
         Enum pluginType = pluginForDisplay.get(displayString.toLowerCase());
         return (pluginType == null) ? displayString : pluginType.name();

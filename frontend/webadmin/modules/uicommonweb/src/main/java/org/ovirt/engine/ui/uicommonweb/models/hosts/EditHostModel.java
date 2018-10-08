@@ -86,11 +86,6 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    public boolean showNetworkProviderTab() {
-        return false;
-    }
-
-    @Override
     protected boolean editTransportProperties(VDS vds) {
         if (VDSStatus.Maintenance.equals(vds.getStatus())) {
             return true;

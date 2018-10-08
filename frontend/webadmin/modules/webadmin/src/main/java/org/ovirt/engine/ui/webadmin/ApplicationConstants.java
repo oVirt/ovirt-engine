@@ -223,8 +223,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String computeLabel();
 
-    String externalProviderExplanation();
-
     String networkLabel();
 
     String networkLabelNetworksTab();
@@ -581,10 +579,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String vgpuConsolidatedPlacementLabel();
 
     String vgpuSeparatedPlacementLabel();
-
-    String networkProviderButtonLabel();
-
-    String externalNetworkProviderLabel();
 
     String enableConsoleAddressOverride();
 
@@ -2570,8 +2564,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @Override
     String unknown();
 
-    String providerPopupAgentConfigurationTabLabel();
-
     String providerPopupGeneralTabLabel();
 
     String nameProvider();
@@ -2649,18 +2641,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String providerNetworksSubTabLabel();
 
     String providerSecretsSubTabLabel();
-
-    String messagingConfiguration();
-
-    String messagingBrokerType();
-
-    String messagingServer();
-
-    String messagingServerPort();
-
-    String messagingServerUsername();
-
-    String messagingServerPassword();
 
     String externalIdProviderNetwork();
 

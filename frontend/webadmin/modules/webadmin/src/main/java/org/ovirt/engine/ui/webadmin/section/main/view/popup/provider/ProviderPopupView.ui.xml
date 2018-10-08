@@ -116,17 +116,6 @@
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
-                <t:tab >
-                    <t:DialogTab ui:field="agentConfigurationTab" label="{constants.providerPopupAgentConfigurationTabLabel}">
-                        <t:content>
-                            <b:Container addStyleNames="{style.container}">
-                                <g:FlowPanel addStyleNames="{style.topElement}">
-                                    <p:NeutronAgentWidget ui:field="neutronAgentWidget" />
-                                </g:FlowPanel>
-                            </b:Container>
-                        </t:content>
-                    </t:DialogTab>
-                </t:tab>
             </t:DialogTabPanel>
         </d:content>
     </d:SimpleDialogPanel>

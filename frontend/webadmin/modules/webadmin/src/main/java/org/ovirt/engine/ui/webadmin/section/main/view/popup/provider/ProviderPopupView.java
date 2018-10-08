@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.KVMPropertiesWidget;
-import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.VmwarePropertiesWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.XENPropertiesWidget;
 
@@ -164,18 +163,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     DialogTab generalTab;
 
     @UiField
-    @Ignore
-    DialogTab agentConfigurationTab;
-
-    @UiField
     Row typeEditorRow;
 
     @UiField
     Row datacenterEditorRow;
-
-    @UiField
-    @Ignore
-    NeutronAgentWidget neutronAgentWidget;
 
     @UiField
     @Ignore
@@ -227,9 +218,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Override
     public void edit(ProviderModel model) {
         providerModel = model;
-        setAgentTabVisibility(model.getNeutronAgentModel().isPluginConfigurationAvailable().getEntity());
         driver.edit(model);
-        neutronAgentWidget.edit(model.getNeutronAgentModel());
         vmwarePropertiesWidget.edit(model.getVmwarePropertiesModel());
         kvmPropertiesWidget.edit(model.getKvmPropertiesModel());
         xenPropertiesWidget.edit(model.getXenPropertiesModel());
@@ -241,7 +230,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     @Override
     public ProviderModel flush() {
-        neutronAgentWidget.flush();
         vmwarePropertiesWidget.flush();
         kvmPropertiesWidget.flush();
         xenPropertiesWidget.flush();
@@ -280,11 +268,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
             testResultMessage.addMessage(SafeHtmlUtils.fromString(errorMessage));
 
         }
-    }
-
-    @Override
-    public void setAgentTabVisibility(boolean visible) {
-        agentConfigurationTab.setVisible(visible);
     }
 
     @Override
