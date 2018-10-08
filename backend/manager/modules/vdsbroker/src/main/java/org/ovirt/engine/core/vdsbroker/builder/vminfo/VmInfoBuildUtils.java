@@ -1371,8 +1371,10 @@ public class VmInfoBuildUtils {
                 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
     }
 
-    public boolean shouldUseNativeIO(VM vm, DiskImage diskImage) {
+    public boolean shouldUseNativeIO(VM vm, DiskImage diskImage, VmDevice device) {
         StorageType storageType = diskImage.getStorageTypes().get(0);
-        return storageType == StorageType.GLUSTERFS && FeatureSupported.useNativeIOForGluster(vm.getCompatibilityVersion());
+        String diskType = getDiskType(vm, diskImage, device);
+        return !"file".equals(diskType) || (storageType == StorageType.GLUSTERFS
+                && FeatureSupported.useNativeIOForGluster(vm.getCompatibilityVersion()));
     }
 }
