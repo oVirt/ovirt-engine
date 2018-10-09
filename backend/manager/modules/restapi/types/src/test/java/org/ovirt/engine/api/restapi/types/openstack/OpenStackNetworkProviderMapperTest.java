@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.ovirt.engine.api.model.AgentConfiguration;
-import org.ovirt.engine.api.model.MessageBrokerType;
 import org.ovirt.engine.api.model.NetworkPluginType;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackNetworkProviderType;
@@ -38,8 +36,6 @@ public class OpenStackNetworkProviderMapperTest
     protected OpenStackNetworkProvider postPopulate(OpenStackNetworkProvider model) {
         model.setType(OpenStackNetworkProviderType.NEUTRON);
         model.setPluginType(NetworkPluginType.OPEN_VSWITCH);
-        AgentConfiguration agentConfiguration = model.getAgentConfiguration();
-        agentConfiguration.setBrokerType(MessageBrokerType.QPID);
         model.setAutoSync(true);
         model.setReadOnly(false);
         model.setUnmanaged(true);
@@ -60,19 +56,8 @@ public class OpenStackNetworkProviderMapperTest
         assertEquals(model.getTenantName(), transform.getTenantName());
         assertEquals(model.getExternalPluginType(), transform.getExternalPluginType());
         assertEquals(model.getType(), transform.getType());
-        verify(model.getAgentConfiguration(), transform.getAgentConfiguration());
         assertEquals(model.isAutoSync(), transform.isAutoSync());
         assertEquals(model.isReadOnly(), transform.isReadOnly());
         assertEquals(model.isUnmanaged(), transform.isUnmanaged());
-    }
-
-    private void verify(AgentConfiguration model, AgentConfiguration transform) {
-        assertEquals(model.getNetworkMappings(), transform.getNetworkMappings());
-        assertEquals(model.getBrokerType(), transform.getBrokerType());
-        assertEquals(model.getAddress(), transform.getAddress());
-        assertEquals(model.getPort(), transform.getPort());
-        assertEquals(model.getUsername(), transform.getUsername());
-        // The password isn't mapped for security reasons.
-        assertNull(transform.getPassword());
     }
 }

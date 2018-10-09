@@ -19,8 +19,6 @@ package org.ovirt.engine.api.restapi.types.openstack;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.api.model.AgentConfiguration;
-import org.ovirt.engine.api.model.MessageBrokerType;
 import org.ovirt.engine.api.model.NetworkPluginType;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackNetworkProviderType;
@@ -110,9 +108,6 @@ public class OpenStackNetworkProviderMapper {
         if (model.isSetExternalPluginType()) {
             entity.setPluginType(model.getExternalPluginType());
         }
-        if (model.isSetAgentConfiguration()) {
-            entity.setAgentConfiguration(map(model.getAgentConfiguration(), entity.getAgentConfiguration()));
-        }
         if (model.isSetReadOnly()) {
             entity.setReadOnly(model.isReadOnly());
         }
@@ -186,72 +181,10 @@ public class OpenStackNetworkProviderMapper {
                 }
                 model.setExternalPluginType(additionalProperties.getPluginType());
             }
-            if (additionalProperties.getAgentConfiguration() != null) {
-                model.setAgentConfiguration(map(additionalProperties.getAgentConfiguration(), null));
-            }
             model.setReadOnly(additionalProperties.getReadOnly());
             model.setAutoSync(additionalProperties.getAutoSync());
         }
         return model;
-    }
-
-    @Mapping(from = OpenstackNetworkProviderProperties.AgentConfiguration.class, to = AgentConfiguration.class)
-    public static AgentConfiguration map(OpenstackNetworkProviderProperties.AgentConfiguration entity,
-            AgentConfiguration template) {
-        AgentConfiguration model = template != null? template: new AgentConfiguration();
-        if (entity.getNetworkMappings() != null) {
-            model.setNetworkMappings(entity.getNetworkMappings());
-        }
-        OpenstackNetworkProviderProperties.MessagingConfiguration messagingConfiguration =
-            entity.getMessagingConfiguration();
-        if (messagingConfiguration != null) {
-            if (messagingConfiguration.getBrokerType() != null) {
-                model.setBrokerType(map(messagingConfiguration.getBrokerType()));
-            }
-            if (messagingConfiguration.getAddress() != null) {
-                model.setAddress(messagingConfiguration.getAddress());
-            }
-            if (messagingConfiguration.getPort() != null) {
-                model.setPort(messagingConfiguration.getPort());
-            }
-            if (messagingConfiguration.getUsername() != null) {
-                model.setUsername(messagingConfiguration.getUsername());
-            }
-            // The password isn't mapped for security reasons.
-            // if (messagingConfiguration.getPassword() != null) {
-            //     model.setPassword(messagingConfiguration.getPassword());
-            // }
-        }
-        return model;
-    }
-
-    @Mapping(from = AgentConfiguration.class, to = OpenstackNetworkProviderProperties.AgentConfiguration.class)
-    public static OpenstackNetworkProviderProperties.AgentConfiguration map(AgentConfiguration model,
-            OpenstackNetworkProviderProperties.AgentConfiguration template) {
-        OpenstackNetworkProviderProperties.AgentConfiguration entity =
-            template != null? template: new OpenstackNetworkProviderProperties.AgentConfiguration();
-        if (model.isSetNetworkMappings()) {
-            entity.setNetworkMappings(model.getNetworkMappings());
-        }
-        OpenstackNetworkProviderProperties.MessagingConfiguration messagingConfiguration =
-            new OpenstackNetworkProviderProperties.MessagingConfiguration();
-        if (model.isSetBrokerType()) {
-            messagingConfiguration.setBrokerType(map(model.getBrokerType()));
-        }
-        if (model.isSetAddress()) {
-            messagingConfiguration.setAddress(model.getAddress());
-        }
-        if (model.isSetPort()) {
-            messagingConfiguration.setPort(model.getPort());
-        }
-        if (model.isSetUsername()) {
-            messagingConfiguration.setUsername(model.getUsername());
-        }
-        if (model.isSetPassword()) {
-            messagingConfiguration.setPassword(model.getPassword());
-        }
-        entity.setMessagingConfiguration(messagingConfiguration);
-        return entity;
     }
 
     private static String mapPluginType(NetworkPluginType pluginType) {
@@ -259,28 +192,6 @@ public class OpenStackNetworkProviderMapper {
             return OpenstackNetworkPluginType.OPEN_VSWITCH.name();
         }
         throw new IllegalArgumentException("Unknown Neutron network plugin type \"" + pluginType + "\"");
-    }
-
-    private static OpenstackNetworkProviderProperties.BrokerType map(MessageBrokerType model) {
-        switch (model) {
-        case QPID:
-            return OpenstackNetworkProviderProperties.BrokerType.QPID;
-        case RABBIT_MQ:
-            return OpenstackNetworkProviderProperties.BrokerType.RABBIT_MQ;
-        default:
-            throw new IllegalArgumentException("Unknown message broker type \"" + model + "\"");
-        }
-    }
-
-    private static MessageBrokerType map(OpenstackNetworkProviderProperties.BrokerType entity) {
-        switch (entity) {
-        case QPID:
-            return MessageBrokerType.QPID;
-        case RABBIT_MQ:
-            return MessageBrokerType.RABBIT_MQ;
-        default:
-            throw new IllegalArgumentException("Unknown message broker type \"" + entity + "\"");
-        }
     }
 
     private static ProviderType mapProviderType(OpenStackNetworkProviderType type) {
