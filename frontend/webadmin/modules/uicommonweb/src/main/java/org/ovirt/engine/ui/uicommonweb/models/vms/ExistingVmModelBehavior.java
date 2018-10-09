@@ -481,7 +481,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void updateHaAvailability() {
         super.updateHaAvailability();
 
-        if (getVm().isHostedEngine()) {
+        if (getVm() != null && getVm().isHostedEngine()) {
             getModel().getIsHighlyAvailable().setEntity(false);
             getModel().getIsHighlyAvailable().setIsChangeable(false);
             getModel().getIsHighlyAvailable().setChangeProhibitionReason(getModel().constants.noHaWhenHostedEngineUsed());
