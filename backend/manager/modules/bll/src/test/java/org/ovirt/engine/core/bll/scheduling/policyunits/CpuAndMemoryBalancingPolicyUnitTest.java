@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.text.ParseException;
@@ -7,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
@@ -59,11 +60,9 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         return result;
     }
 
-    protected List<Guid> validMigrationTargets(Optional<BalanceResult> result) {
-        VM vm = vmDao.get(result.get().getVmToMigrate());
-        return result.get().getCandidateHosts()
-                .stream()
-                .filter(h -> !h.equals(vm.getRunOnVds()))
-                .collect(Collectors.toList());
+    protected void assertBalanceResult(Guid expectedVm, Collection<Guid> expectedHosts, BalanceResult result) {
+        assertTrue(result.isValid());
+        assertEquals(expectedVm, result.getVmToMigrate());
+        assertThat(result.getCandidateHosts()).containsOnlyElementsOf(expectedHosts);
     }
 }

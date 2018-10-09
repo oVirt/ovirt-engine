@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -31,7 +31,11 @@ import org.ovirt.engine.core.utils.MockConfigExtension;
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancingPolicyUnitTest {
-    static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
+
+    private static final Guid HOST_A = new Guid("087fc690-de02-11e4-8830-0800200c9a66");
+    private static final Guid HOST_B = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
+
+    private static final Guid VM_1A = new Guid("087fc692-de02-11e4-8830-0800200c9a66");
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
@@ -62,10 +66,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-        assertNotNull(result.get().getVmToMigrate());
-        assertEquals(2, result.get().getCandidateHosts().size());
-        assertEquals(DESTINATION_HOST, result.get().getCandidateHosts().get(0));
+        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get());
     }
 
     @Test
@@ -83,12 +84,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-        assertNotNull(result.get().getVmToMigrate());
-
-        List<Guid> candidateHosts = validMigrationTargets(result);
-        assertEquals(1, candidateHosts.size());
-        assertEquals(DESTINATION_HOST, candidateHosts.get(0));
+        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get());
     }
 
     /**
@@ -107,7 +103,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         initMocks(policyUnit, hosts, vms);
 
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
-        assert !result.isPresent();
+        assertFalse(result.isPresent());
     }
 
     /**
@@ -129,13 +125,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-        assertNotNull(result.get().getVmToMigrate());
-
-        List<Guid> candidateHosts = validMigrationTargets(result);
-
-        assertEquals(1, candidateHosts.size());
-        assertEquals(DESTINATION_HOST, candidateHosts.get(0));
+        assertBalanceResult(VM_1A, Arrays.asList(HOST_A, HOST_B), result.get());
     }
 
     /**
@@ -155,6 +145,6 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         initMocks(policyUnit, hosts, vms);
 
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
-        assert !result.isPresent();
+        assertFalse(result.isPresent());
     }
 }

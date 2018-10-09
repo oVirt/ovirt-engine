@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +40,10 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
     private static final Guid HOST_A = new Guid("087fc690-de02-11e4-8830-0800200c9a66");
     private static final Guid HOST_B = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
     private static final Guid HOST_C = new Guid("087fc692-de02-11e4-8830-0800200c9a66");
+
+    private static final Guid VM_1 = new Guid("087fc692-de02-11e4-8830-0800200c9a66");
+    private static final Guid VM_2 = new Guid("087fc693-de02-11e4-8830-0800200c9a66");
+    private static final Guid VM_3 = new Guid("087fc694-de02-11e4-8830-0800200c9a66");
 
     @Mock
     private VdsDao vdsDao;
@@ -73,9 +77,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_B, HOST_C);
+        assertBalanceResult(VM_1, Arrays.asList(HOST_A, HOST_B, HOST_C), result.get());
     }
 
     @Test
@@ -92,10 +94,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-        assertNotNull(result.get().getVmToMigrate());
-
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_B, HOST_C);
+        assertBalanceResult(VM_1, Arrays.asList(HOST_A, HOST_B, HOST_C), result.get());
     }
 
     @Test
@@ -112,10 +111,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-        assertNotNull(result.get().getVmToMigrate());
-
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_A, HOST_B);
+        assertBalanceResult(VM_3, Arrays.asList(HOST_A, HOST_B, HOST_C), result.get());
     }
 
     @Test
@@ -133,9 +129,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
         assertNotNull(result);
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_B, HOST_C);
+        assertBalanceResult(VM_1, Arrays.asList(HOST_A, HOST_B, HOST_C), result.get());
     }
 
     @Test
@@ -185,9 +179,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         Optional<BalanceResult> result = policyUnit.balance(cluster, new ArrayList<>(hosts.values()), parameters);
 
         assertTrue(result.isPresent());
-        assertTrue(result.get().isValid());
-
-        assertThat(validMigrationTargets(result)).containsOnly(HOST_A);
+        assertBalanceResult(VM_2, Arrays.asList(HOST_A, HOST_B), result.get());
     }
 
     @Override
