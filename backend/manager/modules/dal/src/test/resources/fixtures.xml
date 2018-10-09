@@ -120,7 +120,7 @@
   <storage_domain_dynamic id="a7957057-b5de-47bb-b8e0-2f8dbd9e63d8" available_disk_size="666" used_disk_size="666" external_status="0"/>
   <storage_domain_dynamic id="bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5" available_disk_size="666" used_disk_size="666" external_status="0"/>
 
-  <providers id="1115c1c6-cb15-4832-b2a4-023770607111" name="provider" description="External provider" url="http://provider.com" provider_type="OPENSTACK_NETWORK" auth_required="false" tenant_name="bubu" plugin_type="LINUX_BRIDGE" agent_configuration="{&quot;messagingConfiguration&quot; : {&quot;brokerTpe&quot; : &quot;QPID&quot;, &quot;address&quot; : &quot;test&quot;, &quot;port&quot; : 5672, &quot;username&quot; : null, &quot;password&quot; : null}, &quot;networkMappings&quot; : &quot;&quot;}" auth_url="http://keystone-server:35357/v2.0/"/>
+  <providers id="1115c1c6-cb15-4832-b2a4-023770607111" name="provider" description="External provider" url="http://provider.com" provider_type="OPENSTACK_NETWORK" auth_required="false" tenant_name="bubu" plugin_type="LINUX_BRIDGE" auth_url="http://keystone-server:35357/v2.0/"/>
   <providers id="47f310ad-2175-4464-89bb-5ca09062b685" name="ovirt-provider-ovn" description="oVirt network provider for OVN" url="https://provider.com:9696" provider_type="EXTERNAL_NETWORK" auth_required="false"/>
   <providers id="983fcfe8-ca56-4a11-8d0e-840c988d67af" name="cinder provider" description="OpenStack volume provider" url="http://provider.com" provider_type="OPENSTACK_VOLUME" auth_required="false" tenant_name="services" auth_url="http://keystone-server:5000/v2.0/"/>
 

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -48,7 +47,6 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         String projectName = null;
         String projectDomainName = null;
 
-        AgentConfiguration agentConfiguration = null;
         AdditionalProperties additionalProperties = null;
 
         if (entity.getAdditionalProperties() != null) {
@@ -59,7 +57,6 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
                 readOnly = networkProperties.getReadOnly();
                 pluginType = networkProperties.getPluginType();
-                agentConfiguration = networkProperties.getAgentConfiguration();
                 autoSync = networkProperties.getAutoSync();
             case OPENSTACK_IMAGE:
             case OPENSTACK_VOLUME:
@@ -83,7 +80,6 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         // We always add the values since JdbcTeplate expects them to be set, otherwise it throws an exception.
         mapper.addValue("tenant_name", tenantName);
         mapper.addValue("plugin_type", pluginType);
-        mapper.addValue("agent_configuration", SerializationFactory.getSerializer().serialize(agentConfiguration));
         mapper.addValue("additional_properties", SerializationFactory.getSerializer().serialize(additionalProperties));
         mapper.addValue("read_only", readOnly);
         mapper.addValue("auto_sync", autoSync);
@@ -162,8 +158,6 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 networkProperties.setReadOnly(rs.getBoolean("read_only"));
                 networkProperties.setAutoSync(rs.getBoolean("auto_sync"));
                 networkProperties.setPluginType(rs.getString("plugin_type"));
-                networkProperties.setAgentConfiguration(SerializationFactory.getDeserializer()
-                        .deserialize(rs.getString("agent_configuration"), AgentConfiguration.class));
                 return networkProperties;
             case OPENSTACK_IMAGE:
                 OpenStackImageProviderProperties imageProperties = new OpenStackImageProviderProperties();
