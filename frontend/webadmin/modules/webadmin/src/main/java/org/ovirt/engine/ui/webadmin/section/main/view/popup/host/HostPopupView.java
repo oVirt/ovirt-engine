@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -155,7 +154,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField(provided = true)
     @Path(value = "providers.selectedItem")
     @WithElementId("providers")
-    ListModelListBoxEditor<Provider<OpenstackNetworkProviderProperties>> providersEditor;
+    ListModelListBoxEditor<Provider<Provider.AdditionalProperties>> providersEditor;
 
     @UiField
     Row searchProviderRow;
@@ -539,7 +538,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         externalHostNameEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
+        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<Provider.AdditionalProperties>>());
 
         externalDiscoveredHostsEditor = getListModelTypeAheadListBoxEditor();
         externalHostGroupsEditor = getListModelTypeAheadListBoxEditor();

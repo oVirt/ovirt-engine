@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Label;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -583,13 +582,13 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         this.externalHostProviderEnabled = externalHostProviderEnabled;
     }
 
-    private ListModel<Provider<OpenstackNetworkProviderProperties>> privateProviders;
+    private ListModel<Provider<Provider.AdditionalProperties>> privateProviders;
 
-    public ListModel<Provider<OpenstackNetworkProviderProperties>> getProviders() {
+    public ListModel<Provider<Provider.AdditionalProperties>> getProviders() {
         return privateProviders;
     }
 
-    protected void setProviders(ListModel<Provider<OpenstackNetworkProviderProperties>> value) {
+    protected void setProviders(ListModel<Provider<Provider.AdditionalProperties>> value) {
         privateProviders = value;
     }
 
@@ -735,7 +734,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getExternalHostName().setIsAvailable(false);
         setExternalHostProviderEnabled(new EntityModel<>(false));
         getExternalHostProviderEnabled().setIsAvailable(false);
-        setProviders(new ListModel<Provider<OpenstackNetworkProviderProperties>>());
+        setProviders(new ListModel<>());
         getProviders().setIsAvailable(false);
         setProviderSearchFilter(new EntityModel<String>());
         getProviderSearchFilter().setIsAvailable(false);
@@ -1225,10 +1224,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private void updateExternalHostModels(final Guid selected) {
         AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(result -> {
-            List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
-            ListModel<Provider<OpenstackNetworkProviderProperties>> providersListModel = getProviders();
+            List<Provider<Provider.AdditionalProperties>> providers = (List) result;
+            ListModel<Provider<Provider.AdditionalProperties>> providersListModel = getProviders();
             if (selected != null) {
-                for (Provider<OpenstackNetworkProviderProperties> provider: providers) {
+                for (Provider<Provider.AdditionalProperties> provider: providers) {
                     if (provider.getId().equals(selected)) {
                         providersListModel.setItems(providers, provider);
                         getExternalHostProviderEnabled().setEntity(true);
