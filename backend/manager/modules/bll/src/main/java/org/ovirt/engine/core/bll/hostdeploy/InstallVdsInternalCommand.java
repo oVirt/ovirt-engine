@@ -134,20 +134,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new VdsDeployKernelUnit()
             );
 
-            if (parameters.getNetworkProviderId() != null) {
-                Provider<?> provider = providerDao.get(parameters.getNetworkProviderId());
-                if (provider.getType() == ProviderType.OPENSTACK_NETWORK) {
-                    OpenstackNetworkProviderProperties agentProperties =
-                            (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                    if (StringUtils.isNotBlank(parameters.getNetworkMappings())) {
-                        agentProperties.getAgentConfiguration().setNetworkMappings(
-                            parameters.getNetworkMappings()
-                        );
-                    }
-                    deploy.addUnit(new VdsDeployOpenStackUnit(agentProperties));
-                }
-            }
-
             FirewallType hostFirewallType = hostCluster.getFirewallType();
             if (parameters.getOverrideFirewall()) {
                 switch (getVds().getVdsType()) {
