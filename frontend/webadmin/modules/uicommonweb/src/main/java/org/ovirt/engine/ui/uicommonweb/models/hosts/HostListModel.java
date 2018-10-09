@@ -926,7 +926,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             Provider<?> networkProvider = model.getNetworkProviders().getSelectedItem();
             if (networkProvider != null) {
                 parameters.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
-                parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
             }
 
             if (model.getProviders().getSelectedItem() != null) {
@@ -1388,7 +1387,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             param.getVdsStaticData().setOpenstackNetworkProviderId(null);
         } else {
             param.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
-            param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> Frontend.getInstance().runAction(
