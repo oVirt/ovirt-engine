@@ -133,14 +133,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         return activateHost;
     }
 
-    public String getNetworkMappings() {
-        return networkMappings;
-    }
-
-    public void setNetworkMappings(String networkMappings) {
-        this.networkMappings = networkMappings;
-    }
-
     public void setEnableSerialConsole(boolean enableSerialConsole) {
         this.enableSerialConsole = enableSerialConsole;
     }
