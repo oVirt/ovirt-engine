@@ -345,7 +345,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_REMOVE_VM_FINISHED : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS;
+        if (getSucceeded()) {
+            return isInternalExecution() ? AuditLogType.USER_REMOVE_VM_FINISHED_INTERNAL: AuditLogType.USER_REMOVE_VM_FINISHED;
+        }
+
+        return isInternalExecution() ?
+                AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS_INTERNAL:
+                AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS;
     }
 
     @Override
