@@ -28,6 +28,7 @@ public class VmActionByVmOriginTypeValidator {
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.SetVmTicket);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.VmLogon);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.UpdateVm);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.UpdateVmDisk);
         COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(ActionType.RemoveVm);
         /**
          * Needed specifically to move the HE VM out of a cluster in order to increase its cluster
