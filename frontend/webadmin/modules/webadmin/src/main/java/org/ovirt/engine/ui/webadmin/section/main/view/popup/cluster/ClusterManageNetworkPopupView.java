@@ -245,8 +245,10 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 if (canEditRequired(clusterNetworkModel)) {
                     clusterNetworkModel.setRequired(value);
                 }
-                refreshNetworksTable();
             }
+            refreshNetworksTable();
+            // We need to steal the focus to prevent jumping of the bottom scroll
+            networks.setKeyboardSelectedColumn(2, true);
         }
 
         @Override
@@ -319,6 +321,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 }
             }
             refreshNetworksTable();
+            // We need to steal the focus to prevent jumping of the bottom scroll
+            networks.setKeyboardSelectedColumn(1, true);
         }
 
         @Override
