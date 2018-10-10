@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -746,6 +747,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 
+        if (model.getIsHeadlessModeEnabled().getEntity()) {
+            parameters.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+        }
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
         }
