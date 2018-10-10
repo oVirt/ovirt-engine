@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="${locale}" />
-<fmt:setBundle basename="messages" var="pageheader" />
+<fmt:setBundle basename="welcome-messages" var="pageheader" />
 
 <div class="obrand_ssoHeader">
     <div class="collapse navbar-collapse navbar-collapse-1" style="position: absolute; top 0px; right: 20px;">
