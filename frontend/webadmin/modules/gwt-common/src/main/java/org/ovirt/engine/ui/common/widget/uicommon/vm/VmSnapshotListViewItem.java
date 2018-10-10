@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
 
     private static final String DL_HORIZONTAL = "dl-horizontal"; // $NON-NLS-1$
+    private static final String VM_NIC_INFO_COLUMN = "vm-nic-info-column"; // $NON-NLS-1$
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
@@ -99,6 +100,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
                 container.add(content);
             }
             Column column = new Column(calculateColSize(i));
+            column.addStyleName(VM_NIC_INFO_COLUMN);
             content.add(column);
             DListElement dl = Document.get().createDLElement();
             dl.addClassName(DL_HORIZONTAL);
