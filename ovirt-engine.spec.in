@@ -259,7 +259,7 @@ Requires(pre):	shadow-utils
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
 %if %{ovirt_provides_jboss}
-Requires:	ovirt-engine-wildfly-overlay >= 13.0.0
+Requires:	ovirt-engine-wildfly-overlay >= 14.0.1
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
