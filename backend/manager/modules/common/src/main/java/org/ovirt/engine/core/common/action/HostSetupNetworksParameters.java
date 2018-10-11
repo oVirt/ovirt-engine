@@ -57,6 +57,19 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         setRemovedLabels(new HashSet<String>());
     }
 
+    public HostSetupNetworksParameters(HostSetupNetworksParameters other) {
+        super(other.getVdsId());
+        setNetworkAttachments(other.networkAttachments);
+        setRemovedNetworkAttachments(other.removedNetworkAttachments);
+        setCreateOrUpdateBonds(other.createOrUpdateBonds);
+        setRemovedBonds(other.removedBonds);
+        setRemovedUnmanagedNetworks(other.removedUnmanagedNetworks);
+        setLabels(other.labels);
+        setRemovedLabels(other.removedLabels);
+        setRollbackOnFailure(other.rollbackOnFailure);
+        setConectivityTimeout(other.conectivityTimeout);
+    }
+
     public boolean isEmptyRequest() {
         return networkAttachments.isEmpty() &&
             removedNetworkAttachments.isEmpty() &&

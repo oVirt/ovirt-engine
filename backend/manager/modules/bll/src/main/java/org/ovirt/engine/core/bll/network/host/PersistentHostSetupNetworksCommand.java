@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -53,9 +54,10 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
         if (getParameters().getShouldBeLogged()) {
             auditLogDirector.log(this, AuditLogType.PERSIST_HOST_SETUP_NETWORK_ON_HOST);
         }
-
+        HostSetupNetworksParameters params = new HostSetupNetworksParameters(getParameters());
+        params.setCorrelationId(getParameters().getCorrelationId());
         ActionReturnValue returnValue =
-                runInternalAction(ActionType.HostSetupNetworks, getParameters(), cloneContextAndDetachFromParent());
+                runInternalAction(ActionType.HostSetupNetworks, params, cloneContextAndDetachFromParent());
 
         if (returnValue.getSucceeded()) {
             boolean changesDetected = checkForChanges();
