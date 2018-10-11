@@ -393,6 +393,11 @@ public class ProviderModel extends Model {
                 getUserDomainName().setEntity(properties == null ? null : properties.getUserDomainName());
                 getProjectName().setEntity(properties == null ? null : properties.getProjectName());
                 getProjectDomainName().setEntity(properties == null ? null : properties.getProjectDomainName());
+            } else {
+                getTenantName().setIsAvailable(false);
+                getUserDomainName().setIsAvailable(false);
+                getProjectName().setIsAvailable(false);
+                getProjectDomainName().setIsAvailable(false);
             }
 
             boolean isNetworkProvider = isTypeNetwork();
