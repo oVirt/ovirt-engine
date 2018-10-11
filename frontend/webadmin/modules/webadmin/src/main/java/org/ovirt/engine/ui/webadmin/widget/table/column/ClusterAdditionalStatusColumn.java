@@ -19,7 +19,9 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
                                                       "AMD Opteron G2", //$NON-NLS-1$
                                                       "AMD Opteron G3"}; //$NON-NLS-1$
     private static final String[] versions = new String[]{"4.2",  //$NON-NLS-1$
-                                                          "4.3"}; //$NON-NLS-1$
+                                                          "4.1",  //$NON-NLS-1$
+                                                          "4.0",  //$NON-NLS-1$
+                                                          "3.6"}; //$NON-NLS-1$
 
     private boolean isDeprecated(Cluster object) {
         for (String version : versions) {
