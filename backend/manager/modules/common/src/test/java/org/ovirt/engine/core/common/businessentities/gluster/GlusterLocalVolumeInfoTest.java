@@ -33,6 +33,8 @@ public class GlusterLocalVolumeInfoTest {
         sdc
          |- sdc1
              |- vdophysical (VDO)
+                 |- vg(1) (VG)
+                     |- vmstore (LV)
 
      */
 
@@ -71,6 +73,13 @@ public class GlusterLocalVolumeInfoTest {
         assertTrue(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vdophysical").isPresent());
         assertThat(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vdophysical").get(), is(6483109092L));
         assertThat(volumeInfo.getSavingsForDevice("/dev/mapper/vdophysical").get(), is(64));
+    }
+
+    @Test
+    public void testVdoLvm() {
+        assertTrue(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vg1-vmstore").isPresent());
+        assertThat(volumeInfo.getAvailableThinSizeForDevice("/dev/mapper/vg1-vmstore").get(), is(6483109092L));
+        assertThat(volumeInfo.getSavingsForDevice("/dev/mapper/vg1-vmstore").get(), is(64));
     }
 
     @Test
@@ -137,6 +146,13 @@ public class GlusterLocalVolumeInfoTest {
         vdosecond.setSize(10737418240L);
         vdosecond.setFree(0);
 
+        GlusterLocalLogicalVolume vmstore = new GlusterLocalLogicalVolume();
+        vmstore.setLogicalVolumeName("vmstore");
+        vmstore.setVolumeGroupName("vg1");
+        vmstore.setPoolName("");
+        vmstore.setSize(53687091200L);
+        vmstore.setFree(0);
+
         List<GlusterLocalLogicalVolume> logicalVolumeList = new ArrayList<>();
         logicalVolumeList.add(internalPool);
         logicalVolumeList.add(vdoreplica);
@@ -145,6 +161,7 @@ public class GlusterLocalVolumeInfoTest {
         logicalVolumeList.add(pool);
         logicalVolumeList.add(vdobase);
         logicalVolumeList.add(vdosecond);
+        logicalVolumeList.add(vmstore);
         return logicalVolumeList;
     }
 
@@ -157,9 +174,14 @@ public class GlusterLocalVolumeInfoTest {
         sdbDataVolume.setPhysicalVolumeName("/dev/sdb1");
         sdbDataVolume.setVolumeGroupName("vg0");
 
+        GlusterLocalPhysicalVolume sdcDataVolume = new GlusterLocalPhysicalVolume();
+        sdcDataVolume.setPhysicalVolumeName("/dev/mapper/vdophysical");
+        sdcDataVolume.setVolumeGroupName("vg1");
+
         List<GlusterLocalPhysicalVolume> physicalVolumeList = new ArrayList<>();
         physicalVolumeList.add(vdoDataVolume);
         physicalVolumeList.add(sdbDataVolume);
+        physicalVolumeList.add(sdcDataVolume);
         return physicalVolumeList;
     }
 

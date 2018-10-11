@@ -69,7 +69,13 @@ public class GlusterLocalVolumeInfo {
                 .findAny());
 
         Optional<ThinSize> result = thinVolume.map(v -> new ThinSize(v.getFree(), v.getSize(), 0));
-        List<String> physicalDevices = thinVolume.map(GlusterLocalLogicalVolume::getVolumeGroupName)
+
+        Optional<GlusterLocalLogicalVolume> thisVolume = logicalVolumes.stream()
+                .filter(lvmMatchMapperName(device))
+                .findAny();
+
+        List<String> physicalDevices = thinVolume.map(Optional::of).orElse(thisVolume)
+                .map(GlusterLocalLogicalVolume::getVolumeGroupName)
                 .map(v -> physicalVolumes.stream()
                         .filter(g -> g.getVolumeGroupName().equals(v))
                         .map(GlusterLocalPhysicalVolume::getPhysicalVolumeName)
@@ -82,7 +88,11 @@ public class GlusterLocalVolumeInfo {
         Optional<ThinSize> innerResult = getThinSizeForDevice(physicalDevices.get(0));
 
         if (innerResult.isPresent()) {
-            result = result.map(chooseSmallest(innerResult));
+            if (result.isPresent()) {
+                result = result.map(chooseSmallest(innerResult));
+            } else {
+                result = innerResult;
+            }
         }
 
         return result;
