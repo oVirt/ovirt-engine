@@ -322,7 +322,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeMemory() {
-        int memSizeKB = vm.getMemSizeMb() * 1024;
+        long memSizeKB = (long) vm.getMemSizeMb() * 1024;
         writer.writeElement("memory", String.valueOf(memSizeKB));
         writer.writeElement("currentMemory", String.valueOf(memSizeKB));
     }
@@ -344,7 +344,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("maxMemory");
         writer.writeAttributeString("slots", Config.getValue(ConfigValues.MaxMemorySlots).toString());
-        writer.writeRaw(String.valueOf(vm.getMaxMemorySizeMb() * 1024));
+        writer.writeRaw(String.valueOf((long) vm.getMaxMemorySizeMb() * 1024));
         writer.writeEndElement();
     }
 
@@ -411,7 +411,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeStartElement("cell");
                 writer.writeAttributeString("id", vmNumaNode.get(VdsProperties.NUMA_NODE_INDEX).toString());
                 writer.writeAttributeString("cpus", vmNumaNode.get(VdsProperties.NUMA_NODE_CPU_LIST).toString());
-                writer.writeAttributeString("memory", String.valueOf(Integer.parseInt((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
+                writer.writeAttributeString("memory", String.valueOf(Long.parseLong((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
                 if (HugePageUtils.isHugepagesShared(vm.getStaticData())) {
                     writer.writeAttributeString("memAccess", "shared");
                 }
