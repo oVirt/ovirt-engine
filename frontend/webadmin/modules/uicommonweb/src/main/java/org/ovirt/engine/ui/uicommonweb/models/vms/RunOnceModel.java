@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -831,6 +833,8 @@ public abstract class RunOnceModel extends Model {
     protected void updateFloppyImages() {
         ImagesDataProvider.getFloppyImageList(new AsyncQuery<>(
                         images -> {
+                            images.sort(new LexoNumericComparator());
+
                             VM selectedVM = vm;
 
                             if (AsyncDataProvider.getInstance().isWindowsOsType(selectedVM.getVmOsId())) {
@@ -940,6 +944,12 @@ public abstract class RunOnceModel extends Model {
         ImagesDataProvider.getISOImagesList(new AsyncQuery<>(
                         images -> {
                             final RepoImage lastSelectedIso = getIsoImage().getSelectedItem();
+
+                            images.sort(
+                                    Comparator.nullsLast(
+                                            Comparator.comparing(RepoImage::getRepoImageName, new LexoNumericComparator())
+                                    ).thenComparing(RepoImage::getRepoImageId, new LexoNumericComparator())
+                            );
 
                             getIsoImage().setItems(images);
 
