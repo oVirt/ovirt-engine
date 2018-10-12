@@ -787,6 +787,8 @@ select fn_db_add_config_value_for_versions_up_to('VdsFenceType',
                                                  '4.3');
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'true', '4.3');
+select fn_db_add_config_value_for_versions_up_to('ScsiReservationSupported', 'false', '4.2');
+select fn_db_add_config_value_for_versions_up_to('ScsiReservationSupported', 'true', '4.3');
 select fn_db_add_config_value('AlwaysFilterResultsForWebUi', 'false', 'general');
 select fn_db_add_config_value('EnableKASLRDump','false','general');
 select fn_db_add_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*','general');

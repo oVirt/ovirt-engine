@@ -66,6 +66,16 @@ public class FeatureSupported {
     }
 
     /**
+     * Checks if SCSI reservations are supported by the cluster version
+     *
+     * @param version
+     *            Compatibility version to check for.
+     */
+    public static boolean isScsiReservationSupported(Version version) {
+        return supportedInConfig(ConfigValues.ScsiReservationSupported, version);
+    }
+
+    /**
      * Checks if memory snapshot is supported by architecture
      *
      * @param architecture

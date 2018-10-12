@@ -1882,7 +1882,8 @@ public class LibvirtVmXmlBuilder {
                             lunDisk.getLun().getLUNId()));
             diskMetadata.put(dev, Collections.singletonMap("GUID", lunDisk.getLun().getLUNId()));
 
-            if (dve.isUsingScsiReservation()) {
+            if (FeatureSupported.isScsiReservationSupported(vm.getCompatibilityVersion()) &&
+                        dve.isUsingScsiReservation()) {
                 writer.writeStartElement("reservations");
                 writer.writeAttributeString("managed", "yes");
                 writer.writeEndElement();
