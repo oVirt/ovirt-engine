@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -53,6 +54,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private ExpandableListViewItem infoExpand;
     private final List<VmGuestAgentInterface> allGuestAgentData;
@@ -131,9 +133,13 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.plugged()),
                 renderPlugged(networkInterface.isPlugged()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
-                SafeHtmlUtils.fromString(networkInterface.getNetworkName() != null ? networkInterface.getNetworkName() : ""), dl);
+                SafeHtmlUtils.fromString(networkInterface.getNetworkName() != null ?
+                        networkInterface.getNetworkName() :
+                        constants.unAvailablePropertyLabel()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
-                SafeHtmlUtils.fromString(networkInterface.getVnicProfileName() != null ? networkInterface.getVnicProfileName() : ""), dl);
+                SafeHtmlUtils.fromString(networkInterface.getVnicProfileName() != null ?
+                        networkInterface.getVnicProfileName() :
+                        messages.emptyProfile().asString()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.vmNetworkQosName()),
                 SafeHtmlUtils.fromString(StringHelper.isNullOrEmpty(networkInterface.getQosName())
                     ? constants.notAvailableLabel() : networkInterface.getQosName()), dl);
