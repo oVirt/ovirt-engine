@@ -498,10 +498,8 @@ Requires:	logrotate
 Requires:	%{required_python_lib_otopi}
 Requires:	%{required_python_lib_paramiko}
 Requires(pre):	shadow-utils
-Conflicts:	%{name}-dwh < 3.6.0
-Conflicts:	%{name}-reports < 3.6.0
-Conflicts:	%{name}-dwh-setup < 4.0.0
-Conflicts:	%{name}-reports-setup < 4.0.0
+Conflicts:	%{name}-dwh < 4.2.0
+Conflicts:	%{name}-dwh-setup < 4.3.0
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
@@ -534,7 +532,7 @@ Requires:       rh-postgresql95-postgresql-contrib
 Requires:       postgresql-server >= 9.5
 Requires:       postgresql-contrib >= 9.5
 %endif
-Conflicts:	%{name} < 4.1.7
+Conflicts:	%{name} < 4.2.6
 
 # OVS/OVN stuff, for firewalld service files
 Requires:	openvswitch-ovn-central >= 0:2.7
