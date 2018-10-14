@@ -177,6 +177,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div class='talign-center'>{0}&nbsp;&nbsp;&nbsp;<span class='spinner spinner-xs spinner-inline valign-middle'></span> {1}...</div>")
     SafeHtml networkDeviceStatusImgAndNetworkOperationInProgress(SafeHtml imgHtml, String progressText);
 
-    @Template("&nbsp;&nbsp;&nbsp;<span class='spinner spinner-xs spinner-inline valign-middle'></span> {0}...")
-    SafeHtml networkOperationInProgressSpinner(String progressText);
+    @Template("<div class='networkUpdatingSpinner'><span class='spinner spinner-xs spinner-inline valign-middle'></span> {0}...</div>")
+    SafeHtml networkUpdatingSpinner(String progressText);
 }
