@@ -14,13 +14,18 @@ import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItemCreator
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.widget.host.HostNetworkInterfaceBondedListViewItem;
 import org.ovirt.engine.ui.webadmin.widget.host.HostNetworkInterfaceListViewItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class SubTabHostInterfaceView extends AbstractDetailTabListView<VDS, HostListModel<Void>, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef, PatternflyListViewItemCreator<HostInterfaceLineModel> {
@@ -29,9 +34,13 @@ public class SubTabHostInterfaceView extends AbstractDetailTabListView<VDS, Host
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
+
     private VDS currentMainModel;
 
     private PatternflyListView<VDS, HostInterfaceLineModel, HostInterfaceListModel> hostInterfaceListView;
+    private SimplePanel progressIndicator;
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>,
@@ -45,6 +54,17 @@ public class SubTabHostInterfaceView extends AbstractDetailTabListView<VDS, Host
         hostInterfaceListView.setModel(modelProvider.getModel());
         getContentPanel().add(hostInterfaceListView);
         initWidget(getContentPanel());
+        initProgressIndicator();
+    }
+
+    private void initProgressIndicator() {
+        progressIndicator = new SimplePanel();
+        getContainer().insert(progressIndicator, 0);
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) ->
+            progressIndicator.getElement().setInnerSafeHtml(getDetailModel().isNetworkOperationInProgress() ?
+                templates.networkUpdatingSpinner(constants.networkUpdating()) : SafeHtmlUtils.fromTrustedString("")
+            )
+        );
     }
 
     @Override

@@ -85,6 +85,12 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
     private Map<Guid, Guid> vfToPfMap;
 
+    private boolean isNetworkOperationInProgress;
+
+    public boolean isNetworkOperationInProgress() {
+        return isNetworkOperationInProgress;
+    }
+
     @Override
     public Collection<HostInterfaceLineModel> getItems() {
         return super.items;
@@ -162,6 +168,16 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         queryVirtualFunctionMap(tempVar);
+        queryIsHostLockedOnNetworkOperation(tempVar);
+    }
+
+    private void queryIsHostLockedOnNetworkOperation(IdQueryParameters idQueryParameters) {
+            Frontend.getInstance()
+                .runQuery(QueryType.IsHostLockedOnNetworkOperation,
+                        idQueryParameters,
+                        new AsyncQuery<QueryReturnValue>(returnValue ->
+                            isNetworkOperationInProgress = returnValue.getReturnValue())
+                        );
     }
 
     private void queryVirtualFunctionMap(IdQueryParameters idQueryParameters) {

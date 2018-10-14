@@ -243,9 +243,6 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         if (containsOutOfSync(logicalNetworks)) {
             icons.add(createNeedsSyncStatusPanel());
         }
-        if (vds.isNetworkOperationInProgress()){
-            icons.add(createNetworkUpdatingStatusPanel());
-        }
         String logicalNetworksText = logicalNetworks.size() == 1 ? constants.logicalNetwork() :
             messages.logicalNetworks(logicalNetworks.size());
         logicalNetworkExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(logicalNetworksText), icons);
@@ -432,14 +429,6 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         outOfSync.setColor(RED);
         WidgetTooltip tooltip = new WidgetTooltip(outOfSync);
         tooltip.setText(constants.hostOutOfSync());
-        return tooltip;
-    }
-
-    protected IsWidget createNetworkUpdatingStatusPanel() {
-        Span span = new Span();
-        span.getElement().setInnerSafeHtml(templates.networkOperationInProgressSpinner(constants.networkUpdating()));
-        WidgetTooltip tooltip = new WidgetTooltip(span);
-        tooltip.setText(constants.networksUpdating());
         return tooltip;
     }
 
