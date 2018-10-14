@@ -339,7 +339,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any());
         doReturn(ValidationResult.VALID).when(command).checkDisksInBackupStorage();
-        doNothing().when(command).checkVmLeaseStorageDomain();
         Cluster cluster = new Cluster();
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());

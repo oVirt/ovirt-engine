@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -70,6 +72,7 @@ import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -111,6 +114,9 @@ public class RunVmValidator {
 
     @Inject
     private DiskDao diskDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -226,6 +232,15 @@ public class RunVmValidator {
         if (vm.getLeaseInfo() == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_LEASE);
         }
+        StorageDomain leaseStorageDomain =
+                storageDomainDao.getForStoragePool(vm.getLeaseStorageDomainId(), vm.getStoragePoolId());
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(leaseStorageDomain);
+        ValidationResult validationResult = storageDomainValidator.isDomainExistAndActive();
+        if (!validationResult.isValid()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_LEASE_STORAGE_DOMAIN_STATUS,
+                    String.format("$LeaseStorageDomainName %1$s", leaseStorageDomain.getName()));
+        }
+
         return ValidationResult.VALID;
     }
 
