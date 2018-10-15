@@ -36,6 +36,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -1002,6 +1004,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
+        checkVmLeaseStorageDomain();
+
         if (!checkRngDeviceClusterCompatibility()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
@@ -1040,6 +1044,24 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return true;
+    }
+
+    protected void checkVmLeaseStorageDomain() {
+        if (getVm().getLeaseStorageDomainId() != null) {
+            // Engine will allow HA VM with a lease to run even if the status of the storage domain that holds the lease
+            // is not active, it will allow the VM to run in case of a disaster that causes the SPM without
+            // a power management to go down which will eventually set the DC to 'down' state.
+            StorageDomain leaseStorageDomain =
+                    storageDomainDao.getForStoragePool(getVm().getLeaseStorageDomainId(), getVm().getStoragePoolId());
+            StorageDomainValidator storageDomainValidator = new StorageDomainValidator(leaseStorageDomain);
+            ValidationResult validationResult = storageDomainValidator.isDomainExistAndActive();
+            if (!validate(validationResult)) {
+                log.warn("The VM lease storage domain '{}' status is not active, "
+                                + "VM '{}' will fail to run in case the storage domain isn't reachable",
+                        leaseStorageDomain.getName(),
+                        getVm().getName());
+            }
+        }
     }
 
     @Override
