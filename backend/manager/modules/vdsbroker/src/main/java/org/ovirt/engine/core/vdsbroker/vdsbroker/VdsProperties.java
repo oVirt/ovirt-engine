@@ -33,6 +33,7 @@ public final class VdsProperties {
     public static final String pinToIoThread = "pinToIoThread";
     public static final String ioThreadId = "ioThreadId";
     public static final String hosted_engine_configured = "hostedEngineDeployed";
+    public static final String vnc_encryption_enabled = "vncEncrypted";
 
     // vds runtime (i.e. VdsDynamic req getVdsStats)
     public static final String netConfigDirty = "netConfigDirty";

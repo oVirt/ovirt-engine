@@ -207,6 +207,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
+    private boolean vncEncryptionEnabled;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -845,6 +847,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.openstackBindingHostIds = openstackBindingHostIds;
     }
 
+    public boolean isVncEncryptionEnabled() {
+        return vncEncryptionEnabled;
+    }
+
+    public void setVncEncryptionEnabled(boolean vncEncryptionEnabled) {
+        this.vncEncryptionEnabled = vncEncryptionEnabled;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -914,7 +924,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 reportedDnsResolverConfiguration,
                 inFenceFlow,
                 kernelFeatures,
-                openstackBindingHostIds
+                openstackBindingHostIds,
+                vncEncryptionEnabled
         );
     }
 
@@ -995,6 +1006,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(reportedDnsResolverConfiguration, other.reportedDnsResolverConfiguration)
                 && inFenceFlow == other.inFenceFlow
                 && Objects.equals(kernelFeatures, other.kernelFeatures)
-                && Objects.equals(openstackBindingHostIds, other.openstackBindingHostIds);
+                && Objects.equals(openstackBindingHostIds, other.openstackBindingHostIds)
+                && vncEncryptionEnabled == other.vncEncryptionEnabled;
     }
 }

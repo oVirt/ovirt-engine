@@ -998,6 +998,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setKernelFeatures((Map<String, Object>) struct.get(VdsProperties.kernelFeatures));
 
         vds.setOpenstackBindingHostIds((Map<String, Object>) struct.get(VdsProperties.OPENSTACK_BINDING_HOST_IDS));
+        vds.setVncEncryptionEnabled(assignBoolValue(struct, VdsProperties.vnc_encryption_enabled));
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

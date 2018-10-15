@@ -1649,4 +1649,12 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setNetworkOperationInProgress(boolean networkOperationInProgress) {
         this.networkOperationInProgress = networkOperationInProgress;
     }
+
+    public void setVncEncryptionEnabled(boolean vncEncryptionEnabled) {
+        vdsDynamic.setVncEncryptionEnabled(vncEncryptionEnabled);
+    }
+
+    public boolean isVncEncryptionEnabled() {
+        return vdsDynamic.isVncEncryptionEnabled();
+    }
 }
