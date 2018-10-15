@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -34,6 +35,14 @@ public abstract class AbstractBackendNetworksResource
         Networks collection = new Networks();
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : entities) {
             collection.getNetworks().add(addLinks(map(entity)));
+        }
+        return collection;
+    }
+
+    protected Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities, Class<? extends BaseResource> suggestedParentType) {
+        Networks collection = new Networks();
+        for (org.ovirt.engine.core.common.businessentities.network.Network entity : entities) {
+            collection.getNetworks().add(addLinks(map(entity), suggestedParentType));
         }
         return collection;
     }

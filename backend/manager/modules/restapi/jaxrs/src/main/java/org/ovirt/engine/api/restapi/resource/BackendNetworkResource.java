@@ -6,6 +6,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedVnicProfilesResource;
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -28,7 +29,7 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
         }
         Network network = map(entity);
         network.setDisplay(null);
-        return addLinks(network);
+        return addLinks(network, LinkHelper.NO_PARENT);
     }
 
     @Override

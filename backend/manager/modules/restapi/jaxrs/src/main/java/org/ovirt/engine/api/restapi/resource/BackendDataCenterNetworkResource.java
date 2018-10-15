@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.DataCenterNetworkResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -26,7 +27,7 @@ public class BackendDataCenterNetworkResource
         if (entity == null) {
             return notFound();
         }
-        return addLinks(map(entity));
+        return addLinks(map(entity), LinkHelper.NO_PARENT);
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {

@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -32,7 +33,7 @@ public class BackendIscsiBondNetworkResource extends BackendNetworkResource {
             return notFound();
         }
 
-        return addLinks(map(entity));
+        return addLinks(map(entity), LinkHelper.NO_PARENT);
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {

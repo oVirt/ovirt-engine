@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -42,11 +43,18 @@ public class BackendNetworksResource
     @Override
     public Networks list() {
         Networks networks;
-
+        // Specifying LinkHelper.NO_PARENT to explicitly point link to API root:
+        //   <network href=".../api/networks/xxx">
+        // rather than under datacenter:
+        //   <network href=".../api/datacenters/yyy/networks/xxx">
+        //
+        // If LinkHelper.NO_PARENT were not specified, the href including the
+        // datacenter would be seleced by default because the the network spec
+        // includes the datacenter-id.
         if (isFiltered()) {
-            networks = mapCollection(getBackendCollection(queryType, getQueryParameters(), SearchType.Network));
+            networks = mapCollection(getBackendCollection(queryType, getQueryParameters(), SearchType.Network), LinkHelper.NO_PARENT);
         } else {
-            networks = mapCollection(getBackendCollection(SearchType.Network));
+            networks = mapCollection(getBackendCollection(SearchType.Network), LinkHelper.NO_PARENT);
         }
 
         for (Network network : networks.getNetworks()) {

@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.DataCenterNetworkResource;
 import org.ovirt.engine.api.resource.DataCenterNetworksResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -44,7 +45,7 @@ public class BackendDataCenterNetworksResource
 
     @Override
     public Networks list() {
-        Networks networks = mapCollection(getNetworks());
+        Networks networks = mapCollection(getNetworks(), LinkHelper.NO_PARENT);
 
         for (Network network : networks.getNetworks()) {
             network.setDisplay(null);

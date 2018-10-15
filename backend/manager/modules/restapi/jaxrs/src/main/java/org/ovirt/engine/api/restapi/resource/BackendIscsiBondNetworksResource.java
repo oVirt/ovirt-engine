@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.restapi.types.NetworkMapper;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -25,7 +26,8 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
     @Override
     public Networks list() {
         return mapCollection(
-                getBackendCollection(QueryType.GetNetworksByIscsiBondId, new IdQueryParameters(iscsiBondId))
+                getBackendCollection(QueryType.GetNetworksByIscsiBondId, new IdQueryParameters(iscsiBondId)),
+                LinkHelper.NO_PARENT
         );
     }
 
