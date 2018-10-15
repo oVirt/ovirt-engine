@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -231,7 +230,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<>();
 
         for (Disk disk : loadedImages) {
-            if (disk.getDiskStorageType() == DiskStorageType.LUN || disk.isShareable()) {
+            if (disk.isShareable()) {
                 attachDetachDisk(disk, actionType);
             }
         }
@@ -239,11 +238,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     private void attachDetachDisk(Disk disk, ActionType actionType) {
         DiskVmElement oldDve = disk.getDiskVmElementForVm(oldVmId);
+        DiskVmElement newDve = new DiskVmElement(disk.getId(), getParameters().getNewVmGuid());
+        newDve.setDiskInterface(oldDve.getDiskInterface());
         runInternalAction(
                 actionType,
-                new AttachDetachVmDiskParameters(
-                        new DiskVmElement(disk.getId(), getParameters().getNewVmGuid()),
-                        oldDve.isPlugged())
+                new AttachDetachVmDiskParameters(newDve, oldDve.isPlugged())
         );
     }
 
