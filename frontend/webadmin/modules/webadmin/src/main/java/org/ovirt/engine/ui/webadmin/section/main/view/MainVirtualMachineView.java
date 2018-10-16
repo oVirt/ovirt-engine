@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +12,6 @@ import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.cell.Cell;
-import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -28,16 +24,12 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVirtualMachinePre
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnResizeTableLineChartProgressBar;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ImportProgressColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusIconColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
@@ -210,64 +202,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
         };
         getTable().addColumn(graphicsColumn, constants.graphicsVm(), "70px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
-            @Override
-            public VMStatus getRawValue(VM object) {
-                return object.getStatus();
-            }
-
-            @Override
-            public String getValue(VM vm) {
-                if (vm.getStatus() == VMStatus.MigratingFrom) {
-                    // will be rendered by progress column
-                    return null;
-                }
-
-                if (vm.getBackgroundOperationDescription() != null) {
-                    // will be rendered by progress column
-                    return null;
-                }
-
-                return super.getValue(vm);
-            }
-        };
-
-        MigrationProgressColumn migrationProgressColumn = new MigrationProgressColumn();
-        ImportProgressColumn importProgressColumn = new ImportProgressColumn();
-
-        ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>() {
-
-            @Override
-            protected String getReason(VM value) {
-                return value.getStopReason();
-            }
-
-        };
-
-        List<HasCell<VM, ?>> list = new ArrayList<>();
-        list.add(statusColumn);
-        list.add(reasonColumn);
-        list.add(migrationProgressColumn);
-        list.add(importProgressColumn);
-
-        Cell<VM> compositeCell = new StatusCompositeCell<>(list);
-
-        AbstractColumn<VM, VM> statusTextColumn = new AbstractColumn<VM, VM>(compositeCell) {
-            @Override
-            public VM getValue(VM object) {
-                return object;
-            }
-
-            @Override
-            public SafeHtml getTooltip(VM value) {
-                String stopReason = value.getStopReason();
-                if (stopReason != null && !stopReason.trim().isEmpty()) {
-                    return SafeHtmlUtils.fromString(stopReason);
-                }
-                return null;
-            }
-
-        };
+        VmStatusColumn statusTextColumn = new VmStatusColumn();
         statusTextColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusTextColumn, constants.statusVm(), "120px"); //$NON-NLS-1$
 
