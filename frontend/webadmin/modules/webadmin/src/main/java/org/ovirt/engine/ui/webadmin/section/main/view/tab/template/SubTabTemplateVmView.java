@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusIconColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -52,7 +52,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
     void initTable() {
         getTable().enableColumnResizing();
 
-        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<>();
+        VmStatusIconColumn<VM> statusIconColumn = new VmStatusIconColumn<>();
         statusIconColumn.setContextMenuTitle(constants.statusIconVm());
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 

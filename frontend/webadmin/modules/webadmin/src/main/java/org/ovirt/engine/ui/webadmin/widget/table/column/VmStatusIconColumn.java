@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.cell.VmStatusCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VmStatusIconCell;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -26,13 +26,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 /**
  * Image column that corresponds to XAML {@code VmStatusTemplate}.
  */
-public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
+public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
-    public VmStatusColumn() {
-        super(new VmStatusCell());
+    public VmStatusIconColumn() {
+        super(new VmStatusIconCell());
     }
 
     @Override

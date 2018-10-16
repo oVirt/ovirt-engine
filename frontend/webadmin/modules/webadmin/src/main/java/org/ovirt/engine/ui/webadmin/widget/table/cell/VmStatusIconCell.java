@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusIconColumn;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -14,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class VmStatusCell extends AbstractCell<VM> {
+public class VmStatusIconCell extends AbstractCell<VM> {
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -94,7 +94,7 @@ public class VmStatusCell extends AbstractCell<VM> {
             statusImageHtml = templates.lockedStatusTemplate(lockImageHtml, statusImageHtml);
         }
 
-        if (VmStatusColumn.needsAlert(vm)) {
+        if (VmStatusIconColumn.needsAlert(vm)) {
             sb.append(templates.statusWithAlertTemplate(statusImageHtml, getAlertImageResource(vm), id, status.toString()));
         } else {
             sb.append(templates.statusTemplate(statusImageHtml, id, status.toString()));

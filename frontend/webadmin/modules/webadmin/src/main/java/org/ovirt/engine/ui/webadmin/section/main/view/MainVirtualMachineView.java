@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ImportProgressColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusIconColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -62,7 +62,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
     void initTable() {
         getTable().enableColumnResizing();
 
-        VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<>();
+        VmStatusIconColumn<VM> statusIconColumn = new VmStatusIconColumn<>();
         statusIconColumn.setContextMenuTitle(constants.statusIconVm());
         statusIconColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusIconColumn, constants.empty(), "35px"); //$NON-NLS-1$

@@ -29,7 +29,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusIconColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -74,7 +74,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         boolean running = selected == NetworkVmFilter.running;
 
-        getTable().ensureColumnVisible(vmStatusColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(vmStatusIconColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(nameColumn, constants.nameVm(), true, "150px"); //$NON-NLS-1$
 
@@ -109,8 +109,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         getTable().ensureColumnVisible(descriptionColumn, constants.descriptionVm(), true, "150px"); //$NON-NLS-1$
     }
 
-    private final VmStatusColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusColumn =
-            new VmStatusColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final VmStatusIconColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusIconColumn =
+            new VmStatusIconColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 {
                     setContextMenuTitle(constants.statusVm());
                 }
@@ -241,7 +241,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private void initSorting() {
-        vmStatusColumn.makeSortable();
+        vmStatusIconColumn.makeSortable();
         nameColumn.makeSortable();
         clusterColumn.makeSortable();
         ipColumn.makeSortable();
