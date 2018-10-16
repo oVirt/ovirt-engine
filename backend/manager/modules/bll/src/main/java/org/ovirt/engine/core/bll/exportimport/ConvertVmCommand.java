@@ -153,9 +153,13 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     protected void endSuccessfully() {
-        getVdsManager().removeV2VJobInfoForVm(getVmId());
-        getVmManager().setConvertProxyHostId(null);
-        setSucceeded(true);
+        try {
+            getVdsManager().removeV2VJobInfoForVm(getVmId());
+            getVmManager().setConvertProxyHostId(null);
+            setSucceeded(true);
+        } finally {
+            deleteV2VJob();
+        }
     }
 
     private void deleteV2VJob() {
