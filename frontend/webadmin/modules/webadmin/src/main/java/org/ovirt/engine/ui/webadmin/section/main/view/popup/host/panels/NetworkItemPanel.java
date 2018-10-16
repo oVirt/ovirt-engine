@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -145,7 +146,7 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
 
     protected void initTooltip() {
         tooltip = new WidgetTooltip(getContents());
-        tooltip.setPlacement(Placement.BOTTOM);
+        tooltip.setPlacementList(Arrays.asList(Placement.AUTO, Placement.BOTTOM));
         SafeHtml tooltipContent = infoPopup.getTooltipContent(item);
         setTooltipContent(tooltipContent);
     }
