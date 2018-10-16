@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.WidgetDecorator;
@@ -82,7 +85,11 @@ public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
     }
 
     public void setPlacement(Placement placement) {
-        tooltipConfig.setPlacement(placement);
+        tooltipConfig.setPlacement(Collections.singletonList(placement));
+    }
+
+    public void setPlacementList(List<Placement> placementList) {
+        tooltipConfig.setPlacement(placementList);
     }
 
     public void setMaxWidth(TooltipWidth width) {

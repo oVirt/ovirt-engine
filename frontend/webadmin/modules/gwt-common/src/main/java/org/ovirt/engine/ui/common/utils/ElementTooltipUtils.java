@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.Placement;
@@ -70,7 +71,7 @@ public final class ElementTooltipUtils {
      * Apply tooltip on the given element. Uses default config.
      */
     public static void setTooltipOnElement(Element e, SafeHtml tooltip, Placement placement) {
-        setTooltipOnElement(e, tooltip, new TooltipConfig().setPlacement(placement));
+        setTooltipOnElement(e, tooltip, new TooltipConfig().setPlacement(Collections.singletonList(placement)));
     }
 
     /**
@@ -88,8 +89,13 @@ public final class ElementTooltipUtils {
         // Create new tooltip.
         String tooltipHtmlString = getTooltipHtmlString(tooltip);
         if (!tooltipHtmlString.isEmpty()) {
+            String placement =
+                    config.getPlacement()
+                            .stream()
+                            .map(Placement::getCssName)
+                            .collect(Collectors.joining(" ")); //$NON-NLS-1$
             createTooltipImpl(e, tooltipHtmlString,
-                    config.getPlacement().getCssName(),
+                    placement,
                     config.getTooltipTemplate(),
                     config.isForceShow());
 

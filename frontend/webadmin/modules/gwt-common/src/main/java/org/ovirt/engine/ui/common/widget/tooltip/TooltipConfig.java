@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
@@ -27,19 +29,19 @@ public class TooltipConfig {
 
     }
 
-    private Placement placement = Defaults.PLACEMENT;
+    private List<Placement> placement = Collections.singletonList(Defaults.PLACEMENT);
     private Set<String> extraTooltipClassNames = new LinkedHashSet<>();
     private boolean forceShow = false;
     private boolean forCellWidgetElement = false;
 
-    public TooltipConfig setPlacement(Placement placement) {
-        if (placement != null) {
-            this.placement = placement;
+    public TooltipConfig setPlacement(List<Placement> placementList) {
+        if (placementList != null) {
+            this.placement = placementList;
         }
         return this;
     }
 
-    public Placement getPlacement() {
+    public List<Placement> getPlacement() {
         return placement;
     }
 
