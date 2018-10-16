@@ -1640,9 +1640,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private Guid getQuotaId() {
-        return getQuotaManager().getDefaultQuotaIfNull(
+        return getQuotaManager().getFirstQuotaForUser(
                 getParameters().getVmStaticData().getQuotaId(),
-                getStoragePoolId());
+                getStoragePoolId(),
+                getCurrentUser());
     }
 
     @Override

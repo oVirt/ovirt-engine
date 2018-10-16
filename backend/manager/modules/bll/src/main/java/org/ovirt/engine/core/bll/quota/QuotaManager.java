@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -1153,9 +1154,32 @@ public class QuotaManager implements BackendService {
         return storagePoolDefaultQuotaIdMap.get(storagePoolId);
     }
 
-    public Guid getDefaultQuotaIfNull(Guid quotaId, Guid storagePoolId) {
+    public Guid getFirstQuotaForUserId(Guid storagePoolId, Guid adElementId) {
+        List<Quota> quotas = getQuotaDao().getQuotaByAdElementId(adElementId, storagePoolId, false);
+        Guid defaultQuotaId = getDefaultQuotaId(storagePoolId);
+        if (quotas.isEmpty()) {
+            return defaultQuotaId;
+        }
+        for (Quota quota : quotas) {
+            if (quota.getId().equals(defaultQuotaId)) {
+                return defaultQuotaId;
+            }
+        }
+        return quotas.get(0).getId();
+    }
+
+    private Guid getDefaultQuotaIfNull(Guid quotaId, Guid storagePoolId) {
         return quotaId != null && !Guid.Empty.equals(quotaId) ?
                 quotaId :
                 getDefaultQuotaId(storagePoolId);
+    }
+
+    public Guid getFirstQuotaForUser(Guid quotaId, Guid storagePoolId, DbUser currentUser) {
+        if (currentUser != null) {
+            return quotaId != null && !Guid.Empty.equals(quotaId) ?
+                    quotaId :
+                    getFirstQuotaForUserId(storagePoolId, currentUser.getId());
+        }
+        return getDefaultQuotaIfNull(quotaId, storagePoolId);
     }
 }
