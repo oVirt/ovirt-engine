@@ -994,6 +994,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setOnlineCores(onlineCores);
 
         setKernelFeatures(formatKernelFeatures(vds.getKernelFeatures()));
+
+        setvncEncryptionEnabled(vds.isVncEncryptionEnabled());
     }
 
     private String formatKernelFeatures(Map<String, Object> kernelFeatures) {
@@ -1153,5 +1155,18 @@ public class HostGeneralModel extends EntityModel<VDS> {
             model = new UpgradeConfirmationModel(host);
         }
         return model;
+    }
+
+    private boolean vncEncryptionEnabled;
+
+    public boolean isVncEncryptionEnabled() {
+        return vncEncryptionEnabled;
+    }
+
+    public void setvncEncryptionEnabled(boolean value) {
+        if (vncEncryptionEnabled != value) {
+            vncEncryptionEnabled = value;
+            onPropertyChanged(new PropertyChangedEventArgs("vncEncryptionEnabled")); //$NON-NLS-1$
+        }
     }
 }

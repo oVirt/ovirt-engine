@@ -3476,4 +3476,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String vncEncryptionEnabled();
 
     String vncEncryptionEnabledHelpMessage();
+
+    String vncEncryptionLabel();
 }
