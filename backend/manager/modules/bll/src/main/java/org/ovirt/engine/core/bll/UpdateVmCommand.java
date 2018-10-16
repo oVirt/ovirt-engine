@@ -1495,9 +1495,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private Guid getQuotaId() {
-        return getQuotaManager().getDefaultQuotaIfNull(
+        return getQuotaManager().getFirstQuotaForUser(
                 getParameters().getVmStaticData().getQuotaId(),
-                getStoragePoolId());
+                getStoragePoolId(),
+                getCurrentUser());
     }
 
     @Override

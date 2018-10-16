@@ -380,7 +380,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
-                .when(quotaManager).getDefaultQuotaIfNull(any(), any());
+                .when(quotaManager).getFirstQuotaForUser(any(), any(), any());
     }
 
     /**

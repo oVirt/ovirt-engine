@@ -715,7 +715,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private Guid getQuotaId() {
         if (getParameters().getDiskInfo() != null && getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
             Guid quotaId = ((DiskImage) getParameters().getDiskInfo()).getQuotaId();
-            return getQuotaManager().getDefaultQuotaIfNull(quotaId, getStoragePoolId());
+            return getQuotaManager().getFirstQuotaForUser(
+                    quotaId,
+                    getStoragePoolId(),
+                    getCurrentUser());
         }
         return null;
     }

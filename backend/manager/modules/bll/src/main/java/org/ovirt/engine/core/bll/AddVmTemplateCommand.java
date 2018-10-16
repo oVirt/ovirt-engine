@@ -1246,9 +1246,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        Guid quotaId = getQuotaManager().getDefaultQuotaIfNull(
+        Guid quotaId = getQuotaManager().getFirstQuotaForUser(
                 getParameters().getMasterVm().getQuotaId(),
-                getStoragePoolId());
+                getStoragePoolId(),
+                getCurrentUser());
 
         List<QuotaConsumptionParameter> list = new ArrayList<>();
         list.add(new QuotaSanityParameter(quotaId));

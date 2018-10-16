@@ -612,9 +612,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (Guid.isNullOrEmpty(getDestinationQuotaId())) {
             // Use old quota, if no new quota is set
             // If both quotas are null, use the default for the destination storage pool
-            Guid quotaId = getQuotaManager().getDefaultQuotaIfNull(
+            Guid quotaId = getQuotaManager().getFirstQuotaForUser(
                     getImage().getQuotaId(),
-                    getStoragePoolId()
+                    getStoragePoolId(),
+                    getCurrentUser()
             );
 
             getParameters().setQuotaId(quotaId);

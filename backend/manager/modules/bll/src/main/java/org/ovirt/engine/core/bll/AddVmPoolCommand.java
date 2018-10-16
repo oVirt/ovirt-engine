@@ -158,9 +158,10 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        Guid quotaId = getQuotaManager().getDefaultQuotaIfNull(
+        Guid quotaId = getQuotaManager().getFirstQuotaForUser(
                 getParameters().getVmStaticData().getQuotaId(),
-                getStoragePoolId());
+                getStoragePoolId(),
+                getCurrentUser());
 
         return Collections.singletonList(new QuotaSanityParameter(quotaId));
     }

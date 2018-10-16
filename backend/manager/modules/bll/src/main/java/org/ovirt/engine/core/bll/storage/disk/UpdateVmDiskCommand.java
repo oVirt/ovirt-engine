@@ -756,7 +756,10 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     protected Guid getQuotaId() {
         if (getNewDisk() != null && isInternalManagedDisk()) {
             Guid quotaId = ((DiskImage) getNewDisk()).getQuotaId();
-            return getQuotaManager().getDefaultQuotaIfNull(quotaId, getStoragePoolId());
+            return getQuotaManager().getFirstQuotaForUser(
+                    quotaId,
+                    getStoragePoolId(),
+                    getCurrentUser());
         }
         return null;
     }

@@ -577,7 +577,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
-                .when(quotaManager).getDefaultQuotaIfNull(any(), any());
+                .when(quotaManager).getFirstQuotaForUser(any(), any(), any());
 
         doReturn(diskValidator).when(command).getDiskValidator(any());
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
