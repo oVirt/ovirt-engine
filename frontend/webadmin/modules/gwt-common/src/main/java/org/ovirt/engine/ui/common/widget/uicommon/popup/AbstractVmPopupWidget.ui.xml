@@ -132,7 +132,7 @@
                       </b:Row>
                       <b:Row ui:field="newPoolEditVmsRow">
                         <b:Column size="SM_6">
-                          <g:Label ui:field="prestartedLabel" addStyleNames="{style.floatLeft} labelEnabled" text="{constants.prestartedPoolPopup}" />
+                          <g:Label ui:field="prestartedLabel" addStyleNames="{style.floatLeft} labelEnabled" text="{constants.prestartedVms}" />
                           <d:InfoIcon ui:field="newPoolPrestartedVmsIcon" addStyleNames="{style.infoIcon}" />
                         </b:Column>
                         <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" usePatternFly="true" widgetColSize="SM_6" label="{constants.prestartedVms}" />

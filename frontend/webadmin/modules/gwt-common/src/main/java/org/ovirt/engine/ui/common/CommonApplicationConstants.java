@@ -873,8 +873,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String numOfVmsPoolPopup();
 
-    String prestartedPoolPopup();
-
     String sizeVmDiskPopup();
 
     String extendImageSizeBy();
