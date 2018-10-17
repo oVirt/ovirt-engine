@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,6 +61,8 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -462,7 +463,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
             break;
 
         case CONVERT:
-            if (EnumSet.of(OriginType.KVM, OriginType.OVIRT).contains(getVm().getOrigin())) {
+            if (getVm().getOrigin() == OriginType.OVIRT) {
                 return false;
             }
 
@@ -488,7 +489,11 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
                 break;
 
             case POST_CONVERT:
-                updateVm();
+                if (getVm().getOrigin() == OriginType.KVM) {
+                    deleteV2VJob();
+                } else {
+                    updateVm();
+                }
                 break;
         }
     }
@@ -539,5 +544,10 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         }
 
         return commandCtx;
+    }
+
+    private void deleteV2VJob() {
+        runVdsCommand(VDSCommandType.DeleteV2VJob,
+                new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
     }
 }
