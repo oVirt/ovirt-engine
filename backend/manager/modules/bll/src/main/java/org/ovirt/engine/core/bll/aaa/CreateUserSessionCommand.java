@@ -59,10 +59,12 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     private DbUser buildUser(T params, String authzName) {
         boolean externalSsoEnabled = EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO");
-        DbUser dbUser = dbUserDao.getByExternalId(authzName, params.getPrincipalId());
+        DbUser dbUser = externalSsoEnabled ?
+                dbUserDao.getByUsernameAndDomain(params.getPrincipalName(), authzName) :
+                dbUserDao.getByExternalId(authzName, params.getPrincipalId());
         DbUser user = new DbUser(dbUser);
         user.setId(dbUser == null ? Guid.newGuid() : dbUser.getId());
-        user.setExternalId(externalSsoEnabled ? Guid.newGuid().toString() : params.getPrincipalId());
+        user.setExternalId(dbUser == null ? Guid.newGuid().toString() : params.getPrincipalId());
         user.setDomain(authzName);
         user.setEmail(params.getEmail());
         user.setFirstName(params.getFirstName());
