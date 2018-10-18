@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @ValidateSupportsTransaction
@@ -123,6 +124,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
 
     @Override
     protected void executeCommand() {
+        boolean externalSsoEnabled = EngineLocalConfig.getInstance().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO");
         // Get the parameters:
         T parameters = getParameters();
 
@@ -133,7 +135,9 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             Guid id = user.getId();
             String directory = user.getDomain();
             String externalId = user.getExternalId();
-            DbUser existing = dbUserDao.getByIdOrExternalId(id, directory, externalId);
+            DbUser existing = externalSsoEnabled ?
+                    dbUserDao.getByUsernameAndDomain(user.getLoginName(), directory) :
+                    dbUserDao.getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 user = existing;
             } else {
@@ -149,7 +153,9 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             Guid id = group.getId();
             String directory = group.getDomain();
             String externalId = group.getExternalId();
-            DbGroup existing = dbGroupDao.getByIdOrExternalId(id, directory, externalId);
+            DbGroup existing = externalSsoEnabled ?
+                    dbGroupDao.getByNameAndDomain(group.getName(), directory) :
+                    dbGroupDao.getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 group = existing;
             } else {
