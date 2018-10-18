@@ -95,7 +95,7 @@ public class VmsMonitoring {
             // It is important to add the unmanaged VMs before flushing the dynamic data into the database
             addUnmanagedVms(vmAnalyzers, vdsManager.getVdsId());
             flush(vmAnalyzers);
-            postFlush(vmAnalyzers, vdsManager);
+            postFlush(vmAnalyzers, vdsManager, fetchTime);
             vdsManager.vmsMonitoringInitFinished();
         } catch (RuntimeException ex) {
             log.error("Failed during vms monitoring on host {} error is: {}", vdsManager.getVdsName(), ex);
@@ -187,7 +187,7 @@ public class VmsMonitoring {
         return true;
     }
 
-    private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager) {
+    private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager, long fetchTime) {
         Collection<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
@@ -271,7 +271,7 @@ public class VmsMonitoring {
 
         vmJobsMonitoring.process(vmAnalyzers.stream()
                 .filter(analyzer -> analyzer.getVmJobs() != null)
-                .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmJobs)));
+                .collect(Collectors.toMap(VmAnalyzer::getVmId, VmAnalyzer::getVmJobs)), fetchTime);
 
         balloonMonitoring.process(
                 vmIdsWithBalloonDriverNotRequestedOrAvailable,

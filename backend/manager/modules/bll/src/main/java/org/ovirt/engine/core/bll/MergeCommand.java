@@ -92,6 +92,7 @@ public class MergeCommand<T extends MergeParameters>
         blockJob.setJobType(VmJobType.BLOCK);
         blockJob.setJobState(VmJobState.UNKNOWN);
         blockJob.setImageGroupId(getParameters().getImageGroupId());
+        blockJob.setStartTime(System.nanoTime());
         vmJobsMonitoring.addJob(blockJob);
     }
 

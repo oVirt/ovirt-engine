@@ -11,6 +11,7 @@ public class VmJob implements BusinessEntity<Guid> {
     private Guid vmId;
     private VmJobState jobState;
     private VmJobType jobType;
+    private long startTime;
 
     public VmJob() {
         id = Guid.Empty;
@@ -51,6 +52,14 @@ public class VmJob implements BusinessEntity<Guid> {
 
     public void setJobType(VmJobType jobType) {
         this.jobType = jobType;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
     }
 
     @Override
