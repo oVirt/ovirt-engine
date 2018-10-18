@@ -34,15 +34,6 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
     List<VmStatic> getAllByCluster(Guid cluster);
 
     /**
-     * Not really sure what this method's doing.
-     *
-     * @param vds
-     *            the VDS id
-     * @return the list of VMs
-     */
-    List<VmStatic> getAllWithFailbackByVds(Guid vds);
-
-    /**
      * Retrieves all static VMs for the specified group and name.
      *
      * @param group

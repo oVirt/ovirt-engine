@@ -892,7 +892,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getTimeZone(),
                         getParameters().getMasterVm().getNiceLevel(),
                         getParameters().getMasterVm().getCpuShares(),
-                        getParameters().getMasterVm().isFailBack(),
                         getParameters().getMasterVm().getDefaultBootSequence(),
                         getParameters().getMasterVm().getVmType(),
                         getParameters().getMasterVm().isSmartcardEnabled(),

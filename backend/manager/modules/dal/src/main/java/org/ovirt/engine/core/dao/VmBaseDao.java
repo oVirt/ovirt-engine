@@ -60,7 +60,6 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("iso_path", entity.getIsoPath())
                 .addValue("usb_policy", entity.getUsbPolicy())
                 .addValue("time_zone", entity.getTimeZone())
-                .addValue("fail_back", entity.isFailBack())
                 .addValue("nice_level", entity.getNiceLevel())
                 .addValue("cpu_shares", entity.getCpuShares())
                 .addValue("default_boot_sequence", entity.getDefaultBootSequence())
@@ -125,7 +124,6 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setTimeZone(rs.getString("time_zone"));
             entity.setVmType(VmType.forValue(rs.getInt("vm_type")));
             entity.setUsbPolicy(UsbPolicy.forValue(rs.getInt("usb_policy")));
-            entity.setFailBack(rs.getBoolean("fail_back"));
             entity.setDefaultBootSequence(BootSequence.forValue(rs.getInt("default_boot_sequence")));
             entity.setNiceLevel(rs.getInt("nice_level"));
             entity.setCpuShares(rs.getInt("cpu_shares"));

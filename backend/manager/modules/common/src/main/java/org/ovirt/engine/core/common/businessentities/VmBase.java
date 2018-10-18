@@ -209,9 +209,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private UsbPolicy usbPolicy;
 
     @CopyOnNewVersion
-    private boolean failBack;
-
-    @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private BootSequence defaultBootSequence;
@@ -549,7 +546,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getTimeZone(),
                 vmBase.getVmType(),
                 vmBase.getUsbPolicy(),
-                vmBase.isFailBack(),
                 vmBase.getDefaultBootSequence(),
                 vmBase.getNiceLevel(),
                 vmBase.getCpuShares(),
@@ -620,7 +616,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             String timezone,
             VmType vmType,
             UsbPolicy usbPolicy,
-            boolean failBack,
             BootSequence defaultBootSequence,
             int niceLevel,
             int cpuShares,
@@ -689,7 +684,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.timeZone = timezone;
         this.vmType = vmType;
         this.usbPolicy = usbPolicy;
-        this.failBack = failBack;
         this.defaultBootSequence = defaultBootSequence;
         this.niceLevel = niceLevel;
         this.cpuShares = cpuShares;
@@ -959,14 +953,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         usbPolicy = value;
     }
 
-    public boolean isFailBack() {
-        return failBack;
-    }
-
-    public void setFailBack(boolean value) {
-        failBack = value;
-    }
-
     public BootSequence getDefaultBootSequence() {
         return defaultBootSequence;
     }
@@ -1113,7 +1099,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 creationDate,
                 defaultBootSequence,
                 description,
-                failBack,
                 initrdUrl,
                 isoPath,
                 kernelParams,
@@ -1181,7 +1166,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(creationDate, other.creationDate)
                 && defaultBootSequence == other.defaultBootSequence
                 && Objects.equals(description, other.description)
-                && failBack == other.failBack
                 && Objects.equals(initrdUrl, other.initrdUrl)
                 && Objects.equals(isoPath, other.isoPath)
                 && Objects.equals(kernelParams, other.kernelParams)

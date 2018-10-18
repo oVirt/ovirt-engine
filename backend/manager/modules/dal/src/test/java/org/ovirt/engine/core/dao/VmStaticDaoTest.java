@@ -154,20 +154,6 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
         }
     }
 
-    /**
-     * Ensures that the right set of VMs are returned.
-     */
-    @Test
-    public void testGetAllWithFailbackByVds() {
-        List<VmStatic> result = dao.getAllWithFailbackByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VmStatic vm : result) {
-            assertEquals(FixturesTool.CLUSTER, vm.getClusterId());
-        }
-    }
-
     @Test
     public void testGetAll() {
         assertThrows(UnsupportedOperationException.class, () -> dao.getAll());

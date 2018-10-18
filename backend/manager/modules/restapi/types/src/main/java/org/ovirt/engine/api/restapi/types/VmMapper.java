@@ -94,7 +94,6 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setOsId(entity.getOsId());
         staticVm.setNiceLevel(entity.getNiceLevel());
         staticVm.setCpuShares(entity.getCpuShares());
-        staticVm.setFailBack(entity.isFailBack());
         staticVm.setStateless(entity.isStateless());
         staticVm.setDeleteProtected(entity.isDeleteProtected());
         staticVm.setSsoMethod(entity.getSsoMethod());

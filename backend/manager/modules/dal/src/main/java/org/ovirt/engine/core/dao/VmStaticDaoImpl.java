@@ -99,13 +99,6 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
     }
 
     @Override
-    public List<VmStatic> getAllWithFailbackByVds(Guid vds) {
-        return getCallsHandler().executeReadList("GetVmStaticWithFailbackByVdsId", VMStaticRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("vds_id", vds));
-    }
-
-    @Override
     public List<VmStatic> getAllByGroupAndNetworkName(Guid group, String name) {
         return getCallsHandler().executeReadList("GetvmStaticByGroupIdAndNetwork", VMStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()

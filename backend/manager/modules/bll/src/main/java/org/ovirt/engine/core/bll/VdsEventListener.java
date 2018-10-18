@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +34,6 @@ import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
-import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -54,7 +52,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -340,30 +337,7 @@ public class VdsEventListener implements IVdsEventListener {
         HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(vds);
         CommandContext commandContext = new CommandContext(new EngineContext()).withoutExecutionContext();
         commandContext.getExecutionContext().setJobRequired(true);
-        boolean isSucceeded = backend.runInternalAction(ActionType.InitVdsOnUp, params, commandContext).getSucceeded();
-        if (isSucceeded) {
-            ThreadPoolUtil.execute(() -> {
-                try {
-                    // migrate vms that its their default vds and failback
-                    // is on
-                    List<VmStatic> vmsToMigrate = vmStaticDao.getAllWithFailbackByVds(vds.getId());
-                    if (!vmsToMigrate.isEmpty()) {
-                        CommandContext ctx = new CommandContext(new EngineContext());
-                        ctx.getExecutionContext().setMonitored(true);
-                        backend.runInternalMultipleActions(ActionType.MigrateVmToServer,
-                                new ArrayList<>(createMigrateVmToServerParametersList(
-                                        vmsToMigrate,
-                                        vds,
-                                        null)),
-                                ctx);
-                    }
-                } catch (RuntimeException e) {
-                    log.error("Failed to initialize Vds on up: {}", e.getMessage());
-                    log.error("Exception", e);
-                }
-            });
-        }
-        return isSucceeded;
+        return backend.runInternalAction(ActionType.InitVdsOnUp, params, commandContext).getSucceeded();
     }
 
     @Override
@@ -374,20 +348,6 @@ public class VdsEventListener implements IVdsEventListener {
         return backend
                 .runInternalAction(ActionType.ConnectHostToStoragePoolServers, params)
                 .getSucceeded();
-    }
-
-    private List<ActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate,
-            final VDS vds,
-            String reason) {
-        return vmsToMigrate.stream().map(
-                vm -> {
-                    MigrateVmToServerParameters parameters =
-                            new MigrateVmToServerParameters(false, vm.getId(), vds.getId());
-
-                    parameters.setReason(reason);
-                    parameters.setShouldBeLogged(false);
-                    return parameters;
-                }).collect(Collectors.toList());
     }
 
     @Override

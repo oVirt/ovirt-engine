@@ -104,7 +104,6 @@ public final class Cloner {
         vm.setExitMessage(instance.getExitMessage());
         vm.setExitStatus(instance.getExitStatus());
         vm.setExitReason(instance.getExitReason());
-        vm.setFailBack(instance.isFailBack());
         vm.setConsoleCurrentUserName(instance.getConsoleCurentUserName());
         vm.setGuestCurrentUserName(instance.getGuestCurentUserName());
         vm.setConsoleUserId(instance.getConsoleUserId());
@@ -440,7 +439,6 @@ public final class Cloner {
         obj.setBiosType(instance.getBiosType());
         obj.setCustomCpuName(instance.getCustomCpuName());
         obj.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
-        obj.setFailBack(instance.isFailBack());
         obj.setStateless(instance.isStateless());
         obj.setMemSizeMb(instance.getMemSizeMb());
         obj.setMaxMemorySizeMb(instance.getMaxMemorySizeMb());
@@ -486,7 +484,6 @@ public final class Cloner {
     private static VmStatic cloneVmStatic(VmStatic instance) {
         VmStatic obj = new VmStatic();
 
-        obj.setFailBack(instance.isFailBack());
         obj.setDefaultBootSequence(instance.getDefaultBootSequence());
         obj.setVmType(instance.getVmType());
         obj.setDefaultDisplayType(instance.getDefaultDisplayType());

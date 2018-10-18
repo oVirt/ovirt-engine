@@ -672,7 +672,6 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_is_delete_protected BOOLEAN,
     v_sso_method VARCHAR(32),
     v_dedicated_vm_for_vds TEXT,
-    v_fail_back BOOLEAN,
     v_vm_type INT,
     v_nice_level INT,
     v_cpu_shares INT,
@@ -752,7 +751,6 @@ INSERT INTO vm_static(description,
                       auto_startup,
                       is_stateless,
                       dedicated_vm_for_vds,
-                      fail_back,
                       default_boot_sequence,
                       vm_type,
                       nice_level,
@@ -828,7 +826,6 @@ INSERT INTO vm_static(description,
            v_auto_startup,
            v_is_stateless,
            v_dedicated_vm_for_vds,
-           v_fail_back,
            v_default_boot_sequence,
            v_vm_type,
            v_nice_level,
@@ -1033,7 +1030,6 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_is_delete_protected BOOLEAN,
  v_sso_method VARCHAR(32),
  v_dedicated_vm_for_vds text ,
-    v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
     v_nice_level INTEGER,
     v_cpu_shares INTEGER,
@@ -1113,7 +1109,6 @@ BEGIN
      auto_startup = v_auto_startup,
      is_stateless = v_is_stateless,
      dedicated_vm_for_vds = v_dedicated_vm_for_vds,
-     fail_back = v_fail_back,
      vm_type = v_vm_type,
      nice_level = v_nice_level,
      cpu_shares = v_cpu_shares,
@@ -1370,20 +1365,6 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-Create or replace FUNCTION GetVmStaticWithFailbackByVdsId(v_vds_id UUID) RETURNS SETOF vm_static STABLE
-   AS $procedure$
-BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
-   WHERE dedicated_vm_for_vds LIKE '%'||v_vds_id::text||'%'
-       AND fail_back = TRUE
-       AND   entity_type = 'VM';
-
-END; $procedure$
-LANGUAGE plpgsql;
 
 
 -----------------------------------------------------------------------------------------

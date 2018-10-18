@@ -939,14 +939,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.clusterCpuName = value;
     }
 
-    public boolean isFailBack() {
-        return this.vmStatic.isFailBack();
-    }
-
-    public void setFailBack(boolean value) {
-        this.vmStatic.setFailBack(value);
-    }
-
     public BootSequence getDefaultBootSequence() {
         return this.vmStatic.getDefaultBootSequence();
     }
