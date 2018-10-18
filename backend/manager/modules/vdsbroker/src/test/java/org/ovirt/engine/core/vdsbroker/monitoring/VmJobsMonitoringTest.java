@@ -68,6 +68,8 @@ public class VmJobsMonitoringTest {
     @Mock
     private VmJobDao vmJobDao;
 
+    public static final long DEFAULT_FETCH_TIME_FOR_VMS = 10L;
+
     @Before
     public void before() {
         when(job1FromDb.getId()).thenReturn(JOB_ID_1);
@@ -98,7 +100,7 @@ public class VmJobsMonitoringTest {
 
     @Test
     public void noVms() {
-        vmJobsMonitoring.process(Collections.emptyMap());
+        vmJobsMonitoring.process(Collections.emptyMap(), DEFAULT_FETCH_TIME_FOR_VMS);
         verify(vmJobsMonitoring, never()).getExistingJobsForVm(any());
         verify(vmJobsMonitoring, never()).updateJobs(any());
         verify(vmJobsMonitoring, never()).removeJobs(any());
@@ -106,7 +108,7 @@ public class VmJobsMonitoringTest {
 
     @Test
     public void vmWithNoJobs() {
-        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, null));
+        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, null), DEFAULT_FETCH_TIME_FOR_VMS);
         verify(vmJobsMonitoring, never()).getExistingJobsForVm(any());
         verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
         assertTrue(vmJobsToUpdateCaptor.getValue().isEmpty());
@@ -116,7 +118,7 @@ public class VmJobsMonitoringTest {
 
     @Test
     public void noChangeInJobs() {
-        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Arrays.asList(job1FromDb, job2FromDb)));
+        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Arrays.asList(job1FromDb, job2FromDb)), DEFAULT_FETCH_TIME_FOR_VMS);
         verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
         assertTrue(vmJobsToUpdateCaptor.getValue().isEmpty());
         verify(vmJobsMonitoring, times(1)).removeJobs(vmJobsToRemoveCaptor.capture());
@@ -125,7 +127,7 @@ public class VmJobsMonitoringTest {
 
     @Test
     public void vmsWithJobs() {
-        vmJobsMonitoring.process(initJobsFromVdsm());
+        vmJobsMonitoring.process(initJobsFromVdsm(), DEFAULT_FETCH_TIME_FOR_VMS);
         List<VmJob> vm1Jobs = vmJobsMonitoring.getExistingJobsForVm(VM_ID_1);
         List<VmJob> vm2Jobs = vmJobsMonitoring.getExistingJobsForVm(VM_ID_2);
         assertEquals(2, vm1Jobs.size());
@@ -147,7 +149,7 @@ public class VmJobsMonitoringTest {
 
     @Test
     public void finishedJobsAreRemovedFromMemory() {
-        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Collections.emptyList()));
+        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Collections.emptyList()), DEFAULT_FETCH_TIME_FOR_VMS);
         assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).isEmpty());
         assertEquals(2, vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).size());
     }
@@ -157,6 +159,19 @@ public class VmJobsMonitoringTest {
         vmJobsMonitoring.onVmDelete(VM_ID_1);
         assertTrue(vmJobsMonitoring.getExistingJobsForVm(VM_ID_1).isEmpty());
         assertEquals(2, vmJobsMonitoring.getExistingJobsForVm(VM_ID_2).size());
+    }
+
+    @Test
+    public void jobsAreNotUpdatedWhenVmDataNotCurrent() {
+        initJobsFromVdsm();
+        when(job2FromDb.getStartTime()).thenReturn(5L);
+        vmJobsMonitoring.process(Collections.singletonMap(VM_ID_1, Arrays.asList(job1FromVdsm, job2FromVdsm)), 3L);
+        verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToUpdateCaptor.capture());
+        verify(vmJobsMonitoring, times(1)).updateJobs(vmJobsToRemoveCaptor.capture());
+
+        // The start time of the job is later than the fetch time so no update should have been updated or removed
+        assertTrue(vmJobsToUpdateCaptor.getValue().isEmpty());
+        assertTrue(vmJobsToRemoveCaptor.getValue().isEmpty());
     }
 
     @SuppressWarnings("serial")

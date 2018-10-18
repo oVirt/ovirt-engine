@@ -47,7 +47,7 @@ public class VmJobsMonitoring {
         removeJobsByVmIds(getIdsOfDownVms());
     }
 
-    void process(Map<Guid, List<VmJob>> vmIdToJobs) {
+    void process(Map<Guid, List<VmJob>> vmIdToJobs, long vmStatsFetchTime) {
         if (vmIdToJobs.isEmpty()) {
             return;
         }
@@ -55,12 +55,12 @@ public class VmJobsMonitoring {
         List<VmJob> jobsToUpdate = new ArrayList<>();
         List<VmJob> jobsToRemove = new ArrayList<>();
         vmIdToJobs.entrySet().forEach(entry -> processVmJobs(
-                entry.getKey(), entry.getValue(), jobsToUpdate, jobsToRemove));
+                entry.getKey(), entry.getValue(), jobsToUpdate, jobsToRemove, vmStatsFetchTime));
         updateJobs(jobsToUpdate);
         removeJobs(jobsToRemove);
     }
 
-    private void processVmJobs(Guid vmId, List<VmJob> jobs, List<VmJob> jobsToUpdate, List<VmJob> jobsToRemove) {
+    private void processVmJobs(Guid vmId, List<VmJob> jobs, List<VmJob> jobsToUpdate, List<VmJob> jobsToRemove, long vmStatsFetchTime) {
         if (jobs == null) {
             // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
             log.debug("No vmJob data returned from VDSM, preserving existing jobs");
@@ -69,6 +69,13 @@ public class VmJobsMonitoring {
 
         Map<Guid, VmJob> jobIdToReportedJob = jobs.stream().collect(toMap(VmJob::getId, identity()));
         getExistingJobsForVm(vmId).forEach(job -> {
+            // We need to make sure the VM data was fetched after the job was registered in the
+            // repository
+            if (vmStatsFetchTime - job.getStartTime() <= 0) {
+                log.info("The reported data is not current and should not be used to monitor job {}, ", job.getId());
+                return;
+            }
+
             VmJob reportedJob = jobIdToReportedJob.get(job.getId());
             if (reportedJob != null) {
                 if (reportedJob.equals(job)) {
