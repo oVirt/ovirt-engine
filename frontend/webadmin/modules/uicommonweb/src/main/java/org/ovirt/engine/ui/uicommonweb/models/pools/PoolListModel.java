@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -461,15 +462,19 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
             if (model.getIcon().getEntity().isCustom()) {
                 param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
             }
-            Frontend.getInstance().runAction(ActionType.AddVmPool,
-                    param,
+            // Although only one action is invoked by this call, runMultipleAction() is necessary here.
+            // In contrast to runAction(), runMultipleAction() allows to call the callback immediately
+            // after the command is started, not waiting till it finishes.
+            Frontend.getInstance().runMultipleAction(ActionType.AddVmPool,
+                    new ArrayList<>(Collections.singletonList(param)),
                     result -> {
                         cancel();
                         stopProgress();
                     },
                     this);
         } else {
-            Frontend.getInstance().runAction(ActionType.UpdateVmPool, param,
+            Frontend.getInstance().runMultipleAction(ActionType.UpdateVmPool,
+                    new ArrayList<>(Collections.singletonList(param)),
                     result -> {
                         cancel();
                         stopProgress();
