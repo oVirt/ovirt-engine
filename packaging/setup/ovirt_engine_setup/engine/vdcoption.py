@@ -133,12 +133,7 @@ class VdcOption():
             if res[0]['count'] == 0:
                 self._statement.execute(
                     statement="""
-                        insert into vdc_options (
-                            option_name,
-                            option_value,
-                            version
-                        )
-                        values (
+                        select fn_db_add_config_value (
                             %(name)s,
                             %(value)s,
                             %(version)s
@@ -154,12 +149,11 @@ class VdcOption():
             else:
                 self._statement.execute(
                     statement="""
-                        update vdc_options
-                        set
-                            option_value=%(value)s
-                        where
-                            option_name=%(name)s and
-                            version=%(version)s
+                        select fn_db_update_config_value (
+                            %(name)s,
+                            %(value)s,
+                            %(version)s
+                        )
                     """,
                     args=dict(
                         name=name,
