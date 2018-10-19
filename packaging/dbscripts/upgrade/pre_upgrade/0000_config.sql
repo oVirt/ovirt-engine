@@ -512,7 +512,7 @@ select fn_db_add_config_value('CustomVdsFenceType','','general');
 select fn_db_add_config_value('vdsHeartbeatInSeconds','30','general');
 select fn_db_add_config_value('VdsLoadBalancingIntervalInMinutes','1','general');
 select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','general');
-select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
+select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','100','general');
 select fn_db_add_config_value('VdsRecoveryTimeoutInMinutes','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
@@ -982,6 +982,7 @@ select fn_db_update_config_value('ServerCPUList', '3:Intel Conroe Family:vmx,nx,
 -- Increase AsyncTaskZombieTaskLifeInMinutes to 50 hours if it's the default 5 hours.
 select fn_db_update_default_config_value('AsyncTaskZombieTaskLifeInMinutes','300','3000','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
+select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','1000', '100','general',false);
 select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_', 'ovirt-guest-tools-','general', false);
 
