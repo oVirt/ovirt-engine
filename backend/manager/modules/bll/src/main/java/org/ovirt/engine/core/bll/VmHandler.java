@@ -951,7 +951,7 @@ public class VmHandler implements BackendService {
     // FIXME: currently oVirt-ToolsSetup is not present in app_list when it does
     // ISO_VERSION_PATTERN should address this pattern as well as the TOOLS_PATTERN
     // if the name will be different.
-    private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhev-toolssetup_(\\d\\.\\d\\_\\d).*");
+    private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rh(e)?v-toolssetup_(\\d\\.\\d\\_\\d).*");
 
     private void updateGuestAgentStatus(VM vm, GuestAgentStatus guestAgentStatus) {
         if (vm.getGuestAgentStatus() != guestAgentStatus) {
@@ -1003,7 +1003,7 @@ public class VmHandler implements BackendService {
     private static String getLatestGuestToolsVersion(Set<String> isoList) {
         String latestVersion = null;
         for (String iso: isoList) {
-            if (iso.toLowerCase().contains("rhev-toolssetup")) {
+            if (iso.toLowerCase().contains("rhev-toolssetup") || iso.toLowerCase().contains("rhv-toolssetup")) {
                 Matcher m = ISO_VERSION_PATTERN.matcher(iso.toLowerCase());
                 if (m.matches() && m.groupCount() > 0) {
                     String isoVersion = m.group(1).replace('_', '.');
