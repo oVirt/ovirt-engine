@@ -30,6 +30,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.SetAmountOfMemoryVDSCommand;
+import org.ovirt.engine.core.vdsbroker.libvirt.DomainXmlUtils;
 
 @NonTransactiveCommandAttribute
 public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameters> extends VmManagementCommandBase<T> implements QuotaVdsDependent {
@@ -115,9 +116,13 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
     private VmDevice createMemoryDevice() {
         Map<String, Object> specParams = new HashMap<>();
+        Guid guid = Guid.newGuid();
+        String alias = FeatureSupported.isDomainXMLSupported(getVm().getClusterCompatibilityVersion()) ?
+                String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, guid) :
+                "";
         specParams.put(DEVICE_SIZE_FIELD_KEY, String.valueOf(getParameters().getMemoryDeviceSizeMb()));
         specParams.put(DEVICE_NODE_FIELD_KEY, String.valueOf(getParameters().getNumaNode()));
-        return new VmDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
+        return new VmDevice(new VmDeviceId(guid, getVmId()),
                 VmDeviceGeneralType.MEMORY,
                 VmDeviceType.MEMORY.getName(),
                 "",
@@ -125,7 +130,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 true,
                 true,
                 false,
-                "",
+                alias,
                 null,
                 null,
                 null);

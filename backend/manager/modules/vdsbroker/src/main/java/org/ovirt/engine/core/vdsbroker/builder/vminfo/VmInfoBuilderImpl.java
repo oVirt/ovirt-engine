@@ -432,7 +432,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         if (StringUtils.isEmpty(hibernationVolHandle)) {
             return;
         }
-        devices.add(MemoryUtils.createVmMemoryDeviceMap(vmDevice, true));
+        devices.add(MemoryUtils.createVmMemoryDeviceMap(vmDevice));
     }
 
     @Override

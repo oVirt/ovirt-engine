@@ -16,7 +16,7 @@ public class SetAmountOfMemoryVDSCommand <P extends SetAmountOfMemoryVDSCommand.
     protected void executeVdsBrokerCommand() {
         try {
             status = getBroker().hotplugMemory(
-                    MemoryUtils.createHotplugMemoryParamsMap(getParameters().getMemoryDevice(), false, getParameters().getMinAllocatedMem()));
+                    MemoryUtils.createHotplugMemoryParamsMap(getParameters().getMemoryDevice(), getParameters().getMinAllocatedMem()));
             proceedProxyReturnValue();
         } catch (RuntimeException e) {
             setVdsRuntimeErrorAndReport(e);

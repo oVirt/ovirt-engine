@@ -17,10 +17,10 @@ public class MemoryUtils {
      *
      * @param vmDevice memory device
      */
-    public static Map<String, Object> createHotplugMemoryParamsMap(VmDevice vmDevice, boolean copyAlias, int minAllocatedMem) {
+    public static Map<String, Object> createHotplugMemoryParamsMap(VmDevice vmDevice, int minAllocatedMem) {
         Map<String, Object> data = new HashMap<>();
         data.put("vmId", vmDevice.getVmId().toString());
-        data.put("memory", createVmMemoryDeviceMap(vmDevice, copyAlias));
+        data.put("memory", createVmMemoryDeviceMap(vmDevice));
         data.put("memGuaranteedSize", minAllocatedMem);
         return data;
     }
@@ -29,7 +29,7 @@ public class MemoryUtils {
      * Creates "VmMemoryDevice" as defined
      * in <a href="https://github.com/oVirt/vdsm/blob/master/lib/vdsm/api/vdsm-api.yml">vdsm-api.yml</a>
      */
-    public static Map<String, Object> createVmMemoryDeviceMap(VmDevice vmDevice, boolean copyAlias) {
+    public static Map<String, Object> createVmMemoryDeviceMap(VmDevice vmDevice) {
         Map<String, Object> memDeviceData = new HashMap<>();
 
         memDeviceData.put(VdsProperties.Type, vmDevice.getType().getValue());
@@ -39,7 +39,8 @@ public class MemoryUtils {
         }
         memDeviceData.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
         memDeviceData.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
-        if (copyAlias) {
+        if (!vmDevice.getAlias().isEmpty()) {
+            // Alias is empty in legacy non-XML Engine mode
             memDeviceData.put(VdsProperties.Alias, vmDevice.getAlias());
         }
 
