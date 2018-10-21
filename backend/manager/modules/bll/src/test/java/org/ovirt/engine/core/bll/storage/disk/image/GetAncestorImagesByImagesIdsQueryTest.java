@@ -30,6 +30,7 @@ public class GetAncestorImagesByImagesIdsQueryTest extends
     private DiskImage image1; // snapshot 0 (base snapshot)
     private DiskImage image2; // snapshot 1
     private DiskImage image3; // snapshot 2 (active image)
+    private DiskImage image4; // image with null ancestor
 
     @Override
     @Before
@@ -59,12 +60,14 @@ public class GetAncestorImagesByImagesIdsQueryTest extends
         imagesIds.add(image1.getImageId());
         imagesIds.add(image2.getImageId());
         imagesIds.add(image3.getImageId());
+        imagesIds.add(image4.getImageId());
 
         Map<Guid, DiskImage> queryReturnValue = runQuery();
         assertEquals(3, queryReturnValue.size());
         assertEquals(image1, queryReturnValue.get(image1.getImageId()));
         assertEquals(image1, queryReturnValue.get(image2.getImageId()));
         assertEquals(image1, queryReturnValue.get(image3.getImageId()));
+        assertEquals(null, queryReturnValue.get(image4.getImageId()));
     }
 
     private void initializeImages() {
@@ -79,6 +82,11 @@ public class GetAncestorImagesByImagesIdsQueryTest extends
         image3 = new DiskImage();
         image3.setImageId(Guid.newGuid());
         mockImageAncestor(image3, image1);
+
+        // Images with null ancestors shouldn't be returned values
+        image4 = new DiskImage();
+        image4.setImageId(Guid.newGuid());
+        mockImageAncestor(image4, null);
     }
 
     private void mockImageAncestor(DiskImage imageToMock, DiskImage imageAncestor) {
