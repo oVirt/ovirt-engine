@@ -51,11 +51,16 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     private CreateImageVDSCommandParameters getCreateVDSCommandParameters() {
         CreateVolumeVDSCommandParameters parameters =
                 new CreateVolumeVDSCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters().getStorageDomainId(), getParameters().getImageGroupID(), getParameters()
-                        .getSrcImageId(), getParameters().getSize(),
-                        getType(), getParameters().getVolumeFormat(), getParameters().getSrcImageGroupId(),
+                        getParameters().getStorageDomainId(),
+                        getParameters().getImageGroupID(),
+                        getParameters().getSrcImageId(),
+                        getParameters().getSize(),
+                        getType(),
+                        getParameters().getVolumeFormat(),
+                        getParameters().getSrcImageGroupId(),
                         getParameters().getImageId(),
-                        getParameters().getDescription(), getStoragePool().getCompatibilityVersion(),
+                        getParameters().getDescription(),
+                        getStoragePool().getCompatibilityVersion(),
                         DiskContentType.DATA);
         if (getType() != VolumeType.Preallocated &&
                 ImagesHandler.isImageInitialSizeSupported(getStorageDomain().getStorageType())) {
