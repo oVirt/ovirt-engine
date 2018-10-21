@@ -8,9 +8,17 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class CreateVolumeVDSCommandParameters extends CreateImageVDSCommandParameters {
-    public CreateVolumeVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            Guid imageId, long imgSizeInBytes, VolumeType imageType, VolumeFormat volFormat,
-            Guid sourceImageGroupId, Guid newImageId, String newImageDescription, Version compatibilityVersion,
+    public CreateVolumeVDSCommandParameters(Guid storagePoolId,
+            Guid storageDomainId,
+            Guid imageGroupId,
+            Guid imageId,
+            long imgSizeInBytes,
+            VolumeType imageType,
+            VolumeFormat volFormat,
+            Guid sourceImageGroupId,
+            Guid newImageId,
+            String newImageDescription,
+            Version compatibilityVersion,
             DiskContentType diskContentType) {
         super(storagePoolId, storageDomainId, imageGroupId, imgSizeInBytes, imageType, volFormat, newImageId,
                 newImageDescription, compatibilityVersion, diskContentType);
