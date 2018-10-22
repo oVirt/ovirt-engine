@@ -384,6 +384,7 @@ select fn_db_add_config_value('DefaultManagementNetwork','ovirtmgmt','general');
 select fn_db_add_config_value('MaxAuditLogMessageLength','10000','general');
 select fn_db_add_config_value('MaxBlockDiskSize','8192','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '16', '4.0');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '254', '4.3');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfThreadsPerCpu', '8', '4.3');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '240', '4.0');
