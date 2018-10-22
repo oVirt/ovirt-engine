@@ -307,11 +307,11 @@ public class VdsManager {
         }
 
         try {
+            Guid storagePoolId = null;
+            ArrayList<VDSDomainsData> domainsList = null;
             synchronized (this) {
                 unrespondedAttempts.set(0);
                 setLastUpdate();
-                Guid storagePoolId = null;
-                ArrayList<VDSDomainsData> domainsList = null;
 
                 try {
                     hostMonitoring.afterRefreshTreatment();
@@ -335,12 +335,11 @@ public class VdsManager {
                     logAfterRefreshFailureMessage(ex);
                     logException(ex);
                 }
-
-                // Now update the status of domains, this code should not be in
-                // synchronized part of code
-                if (domainsList != null) {
-                    updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
-                }
+            }
+            // Now update the status of domains, this code should not be in
+            // synchronized part of code
+            if (domainsList != null) {
+                updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
             }
         } catch (Exception e) {
             log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
