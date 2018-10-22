@@ -137,7 +137,7 @@ public final class Linq {
 
         @Override
         public boolean test(ServerCpu source) {
-            return Objects.equals(source.getCpuName(), cpuName);
+            return source != null ? Objects.equals(source.getCpuName(), cpuName) : false;
         }
     }
 
