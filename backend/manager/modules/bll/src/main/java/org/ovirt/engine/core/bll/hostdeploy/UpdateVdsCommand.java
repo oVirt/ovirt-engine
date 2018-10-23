@@ -154,7 +154,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private boolean validateNetworkProviderConfiguration() {
         return !getParameters().isInstallHost()
                 || super.validateNetworkProviderConfiguration(
-                        getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
+                        getParameters().getVdsStaticData().getOpenstackNetworkProviderId(),
+                        getParameters().getNetworkMappings());
     }
 
     @Override
@@ -186,6 +187,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
             tempVar.setActivateHost(getParameters().getActivateHost());
             tempVar.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
+            tempVar.setNetworkMappings(getParameters().getNetworkMappings());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             if (getParameters().getHostedEngineDeployConfiguration() != null) {
                 tempVar.setHostedEngineConfiguration(

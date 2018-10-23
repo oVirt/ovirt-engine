@@ -195,6 +195,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setActivateHost(getParameters().getActivateHost());
             installVdsParameters.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
+            installVdsParameters.setNetworkMappings(getParameters().getNetworkMappings());
             installVdsParameters.setEnableSerialConsole(getParameters().getEnableSerialConsole());
             if (getParameters().getHostedEngineDeployConfiguration() != null) {
                 Map<String, String> vdsDeployParams = hostedEngineHelper.createVdsDeployParams(
@@ -359,7 +360,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         if (!validateNetworkProviderConfiguration(
-                getParameters().getVdsStaticData().getOpenstackNetworkProviderId())) {
+                getParameters().getVdsStaticData().getOpenstackNetworkProviderId(),
+                getParameters().getNetworkMappings())) {
             return false;
         }
 

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -300,7 +301,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         );
     }
 
-    protected boolean validateNetworkProviderConfiguration(Guid providerId) {
+    protected boolean validateNetworkProviderConfiguration(Guid providerId, String networkMappings) {
         if (providerId == null) {
             return true;
         } else {
@@ -312,7 +313,18 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                 return false;
             }
 
+            if ((provider.getType() == ProviderType.OPENSTACK_NETWORK) &&
+                    !validateOpenstackNetworkProviderProperties(validator, networkMappings)) {
+                return false;
+            }
+
             return true;
         }
+    }
+
+    private boolean validateOpenstackNetworkProviderProperties(NetworkProviderValidator validator,
+                                                               String networkMappings) {
+        return validate(validator.networkMappingsProvided(networkMappings))
+                && validate(validator.messagingBrokerProvided());
     }
 }
