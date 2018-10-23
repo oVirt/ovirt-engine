@@ -41,6 +41,24 @@ public class OpenstackNetworkProviderProperties extends OpenStackProviderPropert
         this.pluginType = pluginType;
     }
 
+    /**
+     * Convenience method to know if the plugin represented is Linux Bridge.
+     *
+     * @return <code>false</code> the Linux Bridge plugin is deprecated and replaced by ml2.
+     */
+    public final boolean isLinuxBridge() {
+        return false;
+    }
+
+    /**
+     * Convenience method to know if the plugin represented is Open vSwitch.
+     *
+     * @return <code>true</code> iff the plugin type represents a Open vSwitch plugin.
+     */
+    public final boolean isOpenVSwitch() {
+        return OpenstackNetworkPluginType.OPEN_VSWITCH.name().equals(getPluginType());
+    }
+
     public AgentConfiguration getAgentConfiguration() {
         return agentConfiguration;
     }
