@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
@@ -1909,7 +1910,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         boolean vmsSelected = items.size() > 0;
 
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
-        getRemoveCommand().setIsExecutionAllowed(vmsSelected
+        getRemoveCommand().setIsExecutionAllowed(vmsSelected && isRemovalEnabled()
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.RunVm));
@@ -1967,6 +1968,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             }
         }
         return false;
+    }
+
+    private boolean isRemovalEnabled() {
+        Predicate<VM> p = v -> v.isDeleteProtected();
+        return getSelectedItems()
+                .stream()
+                .noneMatch(p);
     }
 
     private boolean isConsoleEditEnabled() {
