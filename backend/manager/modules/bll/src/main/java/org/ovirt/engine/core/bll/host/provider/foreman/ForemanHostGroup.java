@@ -32,6 +32,7 @@ public class ForemanHostGroup implements Serializable {
     private int[] puppetClassIds;
     private Map<String, String> parameters;
     private String ancestry;
+    private String title;
     @JsonProperty("subnet_name")
     private String subnetName;
     @JsonProperty("operatingsystem_name")
@@ -53,6 +54,14 @@ public class ForemanHostGroup implements Serializable {
 
     public void setAncestry(String ancestry) {
         this.ancestry = ancestry;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title= title;
     }
 
     public String getSubnetName() {

@@ -579,7 +579,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                     @Override
                     public String getDisplayStringNullSafe(ExternalEntityBase data) {
                         return typeAheadNameDescriptionTemplateNullSafe(
-                                data.getName(),
+                                data.getViewableName(),
                                 data.getDescription()
                         );
                     }

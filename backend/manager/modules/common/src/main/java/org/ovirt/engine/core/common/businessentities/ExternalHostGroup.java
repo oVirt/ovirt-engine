@@ -7,6 +7,7 @@ public class ExternalHostGroup implements ExternalEntityBase {
 
     private String name;
 
+    private String title;
     private int subnetId;
     private int domainId;
     private int environmentId;
@@ -160,6 +161,11 @@ public class ExternalHostGroup implements ExternalEntityBase {
         return name;
     }
 
+    @Override
+    public String getViewableName() {
+        return getTitle();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -194,5 +200,13 @@ public class ExternalHostGroup implements ExternalEntityBase {
 
     public int getPuppetCaProxyId() {
         return puppetCaProxyId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

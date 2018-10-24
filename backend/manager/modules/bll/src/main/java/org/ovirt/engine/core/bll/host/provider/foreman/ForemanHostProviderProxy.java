@@ -149,6 +149,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ExternalHostGroup hostgroup = new ExternalHostGroup();
             hostgroup.setHostgroupId(hostGroup.getId());
             hostgroup.setName(hostGroup.getName());
+            hostgroup.setTitle(hostGroup.getTitle());
             hostgroup.setOperatingsystemId(hostGroup.getOperatingSystemId());
             hostgroup.setEnvironmentId(hostGroup.getEnvironmentId());
             hostgroup.setDomainId(hostGroup.getDomainId());
