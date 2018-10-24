@@ -15,6 +15,7 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
+import org.ovirt.engine.core.aaa.CreateUserSessionsError;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -35,6 +36,8 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
 @NonTransactiveCommandAttribute
 public class CreateUserSessionCommand<T extends CreateUserSessionParameters> extends CommandBase<T> {
     private static final Guid BOTTOM_OBJECT_ID = new Guid("BBB00000-0000-0000-0000-123456789BBB");
+    private static final int UNLIMITED_SESSIONS = -1;
+    private final int maxUserSessions;
 
     @Inject
     private SessionDataContainer sessionDataContainer;
@@ -55,6 +58,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     public CreateUserSessionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+        maxUserSessions = EngineLocalConfig.getInstance().getInteger("ENGINE_MAX_USER_SESSIONS");
     }
 
     private DbUser buildUser(T params, String authzName) {
@@ -121,6 +125,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
             setUserName(String.format("%s@%s", getCurrentUser().getLoginName(), getCurrentUser().getDomain()));
 
             if (getParameters().isAdminRequired() && !isAdmin) {
+                setActionReturnValue(CreateUserSessionsError.USER_NOT_AUTHORIZED);
                 setSucceeded(false);
             } else if (permissionDao.getEntityPermissionsForUserAndGroups(user.getId(),
                     StringUtils.join(user.getGroupIds(), ","),
@@ -128,6 +133,11 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
                     BOTTOM_OBJECT_ID,
                     VdcObjectType.Bottom,
                     true) == null) {
+                setActionReturnValue(CreateUserSessionsError.USER_NOT_AUTHORIZED);
+                setSucceeded(false);
+            } else if (maxUserSessions != UNLIMITED_SESSIONS
+                    && sessionDataContainer.getNumUserSessions(user) >= maxUserSessions) {
+                setActionReturnValue(CreateUserSessionsError.NUM_OF_SESSIONS_EXCEEDED);
                 setSucceeded(false);
             } else {
                 String engineSessionId = sessionDataContainer.generateEngineSessionId();
@@ -178,6 +188,13 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
         addCustomValue("SessionID", StringUtils.isEmpty(sessionId) ? UNKNOWN : sessionId);
         addCustomValue("SourceIP", StringUtils.isEmpty(sourceIp) ? UNKNOWN : sourceIp);
         addCustomValue("LoginErrMsg", "");
-        return getSucceeded() ? AuditLogType.USER_VDC_LOGIN : AuditLogType.USER_VDC_LOGIN_FAILED;
+        if (getSucceeded()) {
+            return AuditLogType.USER_VDC_LOGIN;
+        }
+        if (getActionReturnValue() == CreateUserSessionsError.NUM_OF_SESSIONS_EXCEEDED) {
+            addCustomValue("MaxUserSessions", String.valueOf(maxUserSessions));
+            return AuditLogType.USER_MAX_SESSIONS_EXCEEDED;
+        }
+        return AuditLogType.USER_VDC_LOGIN_FAILED;
     }
 }

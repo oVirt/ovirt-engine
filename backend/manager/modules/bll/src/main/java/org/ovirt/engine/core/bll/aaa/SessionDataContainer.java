@@ -322,6 +322,14 @@ public class SessionDataContainer {
         return (DbUser) getData(sessionId, USER_PARAMETER_NAME, refresh);
     }
 
+    public long getNumUserSessions(DbUser user) {
+        return sessionInfoMap.keySet()
+                .stream()
+                .filter(sessionId -> getUser(sessionId, false).getId().equals(user.getId()))
+                .filter(sessionId -> getSessionValid(sessionId, false))
+                .count();
+    }
+
     public void refresh(String sessionId) {
         refresh(getSessionInfo(sessionId));
     }

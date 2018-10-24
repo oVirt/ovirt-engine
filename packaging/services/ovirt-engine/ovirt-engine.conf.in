@@ -396,6 +396,9 @@ SSO_ALTERNATE_ENGINE_FQDNS=""
 # uses to communicate with the engine:
 SSO_CALLBACK_CLIENT_POOL_SIZE=10
 
+# The maximal allowed number of sessions per user, where -1 indicates that no limit has been set
+ENGINE_MAX_USER_SESSIONS=-1
+
 #
 # Comma separated list of supported versions of the API. When the user
 # selects a version of the API that isn't in this list the server will
