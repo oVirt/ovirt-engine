@@ -8,6 +8,6 @@ postgresql-jdbc
 pyflakes
 python-devel
 python-pep8
-rh-postgresql95-postgresql-contrib
-rh-postgresql95-postgresql-server
+rh-postgresql10-postgresql-contrib
+rh-postgresql10-postgresql-server
 yum-utils

@@ -11,9 +11,9 @@ Install the following system components:
 - unzip
 - openssl
 - bind-utils
-- postgresql-server >= 9.5 / rh-postgresql95-postgresql-server
-- postgresql >= 9.5 / rh-postgresql95-postgresql-server
-- postgresql-contrib >= 9.5 / rh-postgresql95-postgresql-contrib
+- postgresql-server >= 10.0 / rh-postgresql10-postgresql-server
+- postgresql >= 10.0 / rh-postgresql10-postgresql-server
+- postgresql-contrib >= 10.0 / rh-postgresql10-postgresql-contrib
 - python-dateutil / dateutil
 - python-m2crypto / m2crypto
 - python-psycopg2 / psycopg
@@ -82,7 +82,7 @@ Locate `pg_hba.conf` within your distribution, common locations are:
 - `/var/lib/pgsql/data/pg_hba.conf`
 - `/etc/postgresql-*/pg_hba.conf`
 - `/etc/postgresql/*/main/pg_hba.conf`
-- `/var/opt/rh/rh-postgresql95/lib/pgsql/data/pg_hba.conf` (el7 with rh-postgresql95)
+- `/var/opt/rh/rh-postgresql10/lib/pgsql/data/pg_hba.conf` (el7 with rh-postgresql10)
 
 Within `pg_hba.conf` set method to `password` for `127.0.0.1/32` and
 `::1/128`.
@@ -92,7 +92,7 @@ Locate `postgresql.conf` within your distribution, common locations are:
 
 - `/var/lib/pgsql/data`
 - `/etc/postgresql*`
-- `/var/opt/rh/rh-postgresql95/lib/pgsql/data/postgresql.conf` (el7 with rh-postgresql95)
+- `/var/opt/rh/rh-postgresql10/lib/pgsql/data/postgresql.conf` (el7 with rh-postgresql10)
 
 Within `postgresql.conf` set:
 
@@ -102,7 +102,7 @@ Within `postgresql.conf` set:
   max_connections = 150
   work_mem = 8192
 
-Restart the PostgreSQL service (`systemctl restart rh-postgresql95-postgresql` for the SCL one).
+Restart the PostgreSQL service (`systemctl restart rh-postgresql10-postgresql` for the SCL one).
 
 === Database creation
 
@@ -110,7 +110,7 @@ Create database for ovirt-engine, usually the following sequence should
 work to create a user named `engine` that owns database named `engine`:
 
   # su - postgres -c "psql -d template1" # if on fedora or
-  # su - postgres -c "scl enable rh-postgresql95 -- psql -d template1" # if on el7 with rh-postgresql95
+  # su - postgres -c "scl enable rh-postgresql10 -- psql -d template1" # if on el7 with rh-postgresql10
   template1=# create user engine password 'engine';
   template1=# drop database engine;
   template1=# create database engine owner engine template template0
@@ -143,7 +143,7 @@ NOTE: `${PREFIX}` should be replaced with the location in which you
 intend to install the environment.
 
 NOTE: Add DEV_BUILD_SCL_POSTGRESQL=1 in order to configure your local build
-for SCL rh-postgresql95.
+for SCL rh-postgresql10.
 
 ==== Build targets
 
@@ -197,7 +197,7 @@ is preferred, as it automatically disables all optimizations and allows
 you to recompile the GWT application on the fly.
 
 DEV_BUILD_SCL_POSTGRESQL:: Configure your local development deployment
-to be used with SCL rh-postgresql95 instead of system PostgreSQL.
+to be used with SCL rh-postgresql10 instead of system PostgreSQL.
 Default value is `0`.
 +
 

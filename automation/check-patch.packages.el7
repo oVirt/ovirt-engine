@@ -12,6 +12,6 @@ python2-mock
 python-devel
 python-pep8
 python-psycopg2
-rh-postgresql95-postgresql-contrib
-rh-postgresql95-postgresql-server
+rh-postgresql10-postgresql-contrib
+rh-postgresql10-postgresql-server
 yum-utils

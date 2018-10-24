@@ -77,11 +77,14 @@
 %global ovirt_install_poms 1
 %global ovirt_provides_jboss 1
 %if 0%{?fedora}
-%global ovirt_rh_postgresql95 0
+%global ovirt_rh_postgresql 0
 %global postgresql_systemd_service postgresql.service
 %else
-%global ovirt_rh_postgresql95 1
-%global postgresql_systemd_service rh-postgresql95-postgresql.service
+%global ovirt_rh_postgresql 1
+#The postgresql SCL service we can upgrade from
+%global old_scl_pg_base rh-postgresql95
+%global scl_pg_base rh-postgresql10
+%global postgresql_systemd_service %{scl_pg_base}-postgresql.service
 %endif
 
 %global ovirt_product_name oVirt Engine
@@ -338,12 +341,12 @@ Requires:	postgresql-jdbc >= 42.2.2
 Requires:	%{required_package_manager_versionlock}
 %endif
 
-%if %{ovirt_rh_postgresql95}
-Requires:	rh-postgresql95-postgresql-server
-Requires:	rh-postgresql95-postgresql-contrib
+%if %{ovirt_rh_postgresql}
+Requires:	%{scl_pg_base}-postgresql-server
+Requires:	%{scl_pg_base}-postgresql-contrib
 %else
-Requires:	postgresql-server >= 9.5
-Requires:	postgresql-contrib >= 9.5
+Requires:	postgresql-server >= 10.0
+Requires:	postgresql-contrib >= 10.0
 %endif
 
 Requires:	openstack-java-cinder-client >= %{openstack_java_version}
@@ -536,12 +539,12 @@ Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
-%if %{ovirt_rh_postgresql95}
-Requires:       rh-postgresql95-postgresql-server
-Requires:       rh-postgresql95-postgresql-contrib
+%if %{ovirt_rh_postgresql}
+Requires:       %{scl_pg_base}-postgresql-server
+Requires:       %{scl_pg_base}-postgresql-contrib
 %else
-Requires:       postgresql-server >= 9.5
-Requires:       postgresql-contrib >= 9.5
+Requires:       postgresql-server >= 10.0
+Requires:       postgresql-contrib >= 10.0
 %endif
 Conflicts:	%{name} < 4.2.6
 
@@ -645,10 +648,10 @@ Requires:	tar
 Requires:	bzip2
 Requires:	xz
 Requires:	%{required_python_lib_otopi}
-%if %{ovirt_rh_postgresql95}
-Requires:	rh-postgresql95-postgresql
+%if %{ovirt_rh_postgresql}
+Requires:	%{scl_pg_base}-postgresql
 %else
-Requires:	postgresql >= 9.5
+Requires:	postgresql >= 10.0
 %endif
 
 %description tools-backup
@@ -966,26 +969,27 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 __EOF__
 
-%if %{ovirt_rh_postgresql95}
+%if %{ovirt_rh_postgresql}
 install -d "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.env.d"
-cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.env.d/10-setup-scl-postgres-95.env" << __EOF__
-RHPOSTGRESQL95BASE="/opt/rh/rh-postgresql95/root"
-RHPOSTGRESQL95DATA="/var/opt/rh/rh-postgresql95/lib/pgsql/data"
-if [ -e \${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup ]
+cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.env.d/10-setup-scl-postgres.env" << __EOF__
+RHPOSTGRESQLSCLROOT="/opt/rh/%{scl_pg_base}/root"
+RHPOSTGRESQLSCLDATA="/var/opt/rh/%{scl_pg_base}/lib/pgsql/data"
+if [ -e \${RHPOSTGRESQLSCLROOT}/usr/bin/postgresql-setup ]
 then
-  export sclenv="rh-postgresql95"
-  export POSTGRESQLENV="COMMAND/pg_dump=str:\${RHPOSTGRESQL95BASE}/usr/bin/pg_dump \
-         COMMAND/psql=str:\${RHPOSTGRESQL95BASE}/usr/bin/psql \
-         COMMAND/pg_restore=str:\${RHPOSTGRESQL95BASE}/usr/bin/pg_restore \
-         COMMAND/postgresql-setup=str:\${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup \
-         OVESETUP_PROVISIONING/postgresService=str:rh-postgresql95-postgresql \
-         OVESETUP_PROVISIONING/postgresConf=str:\${RHPOSTGRESQL95DATA}/postgresql.conf \
-         OVESETUP_PROVISIONING/postgresPgHba=str:\${RHPOSTGRESQL95DATA}/pg_hba.conf \
-         OVESETUP_PROVISIONING/postgresPgVersion=str:\${RHPOSTGRESQL95DATA}/PG_VERSION"
+  export sclenv=%{scl_pg_base}
+  export POSTGRESQLENV="COMMAND/pg_dump=str:\${RHPOSTGRESQLSCLROOT}/usr/bin/pg_dump \
+         COMMAND/psql=str:\${RHPOSTGRESQLSCLROOT}/usr/bin/psql \
+         COMMAND/pg_restore=str:\${RHPOSTGRESQLSCLROOT}/usr/bin/pg_restore \
+         COMMAND/postgresql-setup=str:\${RHPOSTGRESQLSCLROOT}/usr/bin/postgresql-setup \
+         OVESETUP_PROVISIONING/postgresService=str:%{scl_pg_base}-postgresql \
+         OVESETUP_PROVISIONING/oldPostgresService=str:%{old_scl_pg_base}-postgresql \
+         OVESETUP_PROVISIONING/postgresConf=str:\${RHPOSTGRESQLSCLDATA}/postgresql.conf \
+         OVESETUP_PROVISIONING/postgresPgHba=str:\${RHPOSTGRESQLSCLDATA}/pg_hba.conf \
+         OVESETUP_PROVISIONING/postgresPgVersion=str:\${RHPOSTGRESQLSCLDATA}/PG_VERSION"
 fi
 __EOF__
-cat > "%{buildroot}%{engine_etc}/engine.conf.d/10-scl-postgres-95.conf" << __EOF__
-sclenv="rh-postgresql95"
+cat > "%{buildroot}%{engine_etc}/engine.conf.d/10-scl-postgres.conf" << __EOF__
+sclenv=%{scl_pg_base}
 __EOF__
 %endif
 
@@ -1216,9 +1220,9 @@ fi
 %config %{engine_etc}/engine.conf.d/20-setup-jboss-overlay.conf
 %endif
 
-%if %{ovirt_rh_postgresql95}
-%config %{_sysconfdir}/ovirt-engine-setup.env.d/10-setup-scl-postgres-95.env
-%config %{engine_etc}/engine.conf.d/10-scl-postgres-95.conf
+%if %{ovirt_rh_postgresql}
+%config %{_sysconfdir}/ovirt-engine-setup.env.d/10-setup-scl-postgres.env
+%config %{engine_etc}/engine.conf.d/10-scl-postgres.conf
 %endif
 
 %files setup-plugin-websocket-proxy

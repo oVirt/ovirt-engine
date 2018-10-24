@@ -141,21 +141,23 @@ BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR=.
 BUILD_TARGET=install
 
-# SCL rh-postgresql95 customization
+# SCL rh-postgresql10 customization
+SCL_PG_BASE=rh-postgresql10
 define ENVFILEC
-RHPOSTGRESQL95BASE="/opt/rh/rh-postgresql95/root"
-RHPOSTGRESQL95DATA="/var/opt/rh/rh-postgresql95/lib/pgsql/data"
-if [ -e $${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup ]
+RHPOSTGRESQLSCLROOT="/opt/rh/$(SCL_PG_BASE)/root"
+RHPOSTGRESQLSCLDATA="/var/opt/rh/$(SCL_PG_BASE)/lib/pgsql/data"
+if [ -e $${RHPOSTGRESQLSCLROOT}/usr/bin/postgresql-setup ]
 then
-  export sclenv="rh-postgresql95"
-  export POSTGRESQLENV="COMMAND/pg_dump=str:$${RHPOSTGRESQL95BASE}/usr/bin/pg_dump \
-         COMMAND/psql=str:$${RHPOSTGRESQL95BASE}/usr/bin/psql \
-         COMMAND/pg_restore=str:$${RHPOSTGRESQL95BASE}/usr/bin/pg_restore \
-         COMMAND/postgresql-setup=str:$${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup \
-         OVESETUP_PROVISIONING/postgresService=str:rh-postgresql95-postgresql \
-         OVESETUP_PROVISIONING/postgresConf=str:$${RHPOSTGRESQL95DATA}/postgresql.conf \
-         OVESETUP_PROVISIONING/postgresPgHba=str:$${RHPOSTGRESQL95DATA}/pg_hba.conf \
-         OVESETUP_PROVISIONING/postgresPgVersion=str:$${RHPOSTGRESQL95DATA}/PG_VERSION"
+  export sclenv="$(SCL_PG_BASE)"
+  export POSTGRESQLENV="COMMAND/pg_dump=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/pg_dump \
+         COMMAND/psql=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/psql \
+         COMMAND/pg_restore=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/pg_restore \
+         COMMAND/postgresql-setup=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/postgresql-setup \
+         OVESETUP_PROVISIONING/oldPostgresService=str:rh-postgresql95-postgresql \
+         OVESETUP_PROVISIONING/postgresService=str:$(SCL_PG_BASE)-postgresql \
+         OVESETUP_PROVISIONING/postgresConf=str:$${RHPOSTGRESQLSCLDATA}/postgresql.conf \
+         OVESETUP_PROVISIONING/postgresPgHba=str:$${RHPOSTGRESQLSCLDATA}/pg_hba.conf \
+         OVESETUP_PROVISIONING/postgresPgVersion=str:$${RHPOSTGRESQLSCLDATA}/PG_VERSION"
 fi
 endef
 export ENVFILEC
@@ -584,6 +586,6 @@ install-dev:	\
 
 ifneq ($(DEV_BUILD_SCL_POSTGRESQL),0)
 	mkdir -p "$(PREFIX)/etc/ovirt-engine-setup.env.d"
-	echo "$$ENVFILEC" > "$(PREFIX)/etc/ovirt-engine-setup.env.d/10-setup-scl-postgres-95.env"
-	echo "sclenv=\"rh-postgresql95\"" > "$(PREFIX)/etc/ovirt-engine/engine.conf.d/10-scl-postgres-95.conf"
+	echo "$$ENVFILEC" > "$(PREFIX)/etc/ovirt-engine-setup.env.d/10-setup-scl-postgres.env"
+	echo "sclenv=\"rh-postgresql10\"" > "$(PREFIX)/etc/ovirt-engine/engine.conf.d/10-scl-postgres.conf"
 endif

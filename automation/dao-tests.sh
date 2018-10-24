@@ -1,10 +1,10 @@
 #!/bin/bash -xe
 
 if [[ "$STD_CI_DISTRO" = "el7" ]]; then
-    # On EL7 we are now using SCL PG 9.5
-    PGENGINE=/opt/rh/rh-postgresql95/root/usr/bin
-    PGDATA=/var/opt/rh/rh-postgresql95/lib/pgsql/data
-    PGENV="/usr/bin/scl enable rh-postgresql95 --"
+    # On EL7 we are now using SCL PG 10
+    PGENGINE=/opt/rh/rh-postgresql10/root/usr/bin
+    PGDATA=/var/opt/rh/rh-postgresql10/lib/pgsql/data
+    PGENV="/usr/bin/scl enable rh-postgresql10 --"
 else
     PGENGINE=/usr/bin
     PGDATA=/var/lib/pgsql/data
