@@ -89,6 +89,8 @@ public interface CommonApplicationMessages extends Messages {
 
     String migrationPolicyInfo();
 
+    String hostCpuInfo();
+
     String hotPlugUnplugCpuWarning();
 
     String threadsPerCoreInfo();

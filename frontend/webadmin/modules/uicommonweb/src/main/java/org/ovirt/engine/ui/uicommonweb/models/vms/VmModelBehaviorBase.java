@@ -840,8 +840,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
+        Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
 
-        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture()) {
+        if (isAutoAssign == null) {
+            return;
+        }
+
+        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && Boolean.FALSE.equals(isAutoAssign)) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
@@ -876,7 +881,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             presentHosts = new ArrayList<>();
         }
 
-        if ((!automaticMigrationAllowed || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)
+        if (!automaticMigrationAllowed
+                && !isVmHpOrPinningConfigurationEnabled()
                 && (pinToHostSize == 1
                     || (pinToHostSize == 0 && presentHosts.size() < 2))
                 && (!isAutoAssign || presentHosts.size() < 2)
@@ -888,7 +894,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         getModel().getIsHighlyAvailable().setIsChangeable(isHighlyAvailable
                 || automaticMigrationAllowed
-                || getModel().getVmType().getSelectedItem() == VmType.HighPerformance
+                || isVmHpOrPinningConfigurationEnabled()
                 || (isAutoAssign && presentHosts.size() >= 2)
                 || pinToHostSize >= 2
                 || (pinToHostSize == 0 && presentHosts.size() >= 2));
@@ -912,15 +918,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         if (haHost
-                && getModel().getVmType().getSelectedItem() != VmType.HighPerformance
+                && !isVmHpOrPinningConfigurationEnabled()
                 && (pinToHostSize == 1
                     || (pinToHostSize == 0 && presentHosts.size() < 2))
                 && (!isAutoAssign || presentHosts.size() < 2)) {
             getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
-        getModel().getMigrationMode().setIsChangeable(
-                !haHost
+        getModel().getMigrationMode().setIsChangeable(isVmHpOrPinningConfigurationEnabled()
+                || !haHost
                 || (isAutoAssign && presentHosts.size() >= 2)
                 || pinToHostSize >= 2
                 || (pinToHostSize == 0 && presentHosts.size() >= 2));
@@ -1312,7 +1318,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getIoThreadsEnabled().setEntity(true);
         }
 
-        // High Performance
+        // Configuration relevant only for High Performance
         if (vmType == VmType.HighPerformance) {
             // Console tab
             getModel().getIsHeadlessModeEnabled().setEntity(true);
@@ -1338,6 +1344,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             if (getModel().getMultiQueues().getIsAvailable()) {
                 getModel().getMultiQueues().setEntity(true);
             }
+        } else {
+            getModel().getHostCpu().setEntity(false);
+        }
+
+        // Configuration relevant for either High Performance or VMs with pinned configuration
+        if (isVmHpOrPinningConfigurationEnabled()) {
+            getModel().getMigrationMode().setSelectedItem(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        } else {
+            getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
     }
 
@@ -1628,5 +1643,45 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public VirtioScsiUtil getVirtioScsiUtil() {
         return virtioScsiUtil;
+    }
+
+    /**
+     * Return true if VM is of High Performance type or if includes host pinning
+     * configuration (like cpu pinning or cpu pass through or NUMA pinning).
+     */
+    protected boolean isVmHpOrPinningConfigurationEnabled() {
+        return getModel().getVmType().getSelectedItem() == VmType.HighPerformance
+                || (getModel().getCpuPinning().getEntity() != null && !getModel().getCpuPinning().getEntity().isEmpty())
+                || (getModel().getHostCpu().getEntity() != null && getModel().getHostCpu().getEntity().equals(true))
+                || (getModel().getVmNumaNodes() != null
+                    && getModel().getVmNumaNodes().stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty()));
+    }
+
+    protected void useHostCpuValueChanged() {
+        if(getModel().getHostCpu().getEntity() != null && getModel().getHostCpu().getEntity()) {
+            getModel().getCustomCpu().setIsChangeable(false);
+            getModel().getCustomCpu().setSelectedItem(""); //$NON-NLS-1$
+        } else {
+            getModel().getCustomCpu().setIsChangeable(true);
+        }
+
+        // Set migration mode
+        getModel().getMigrationMode().setSelectedItem(
+                isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE
+        );
+    }
+
+    protected void useNumaPinningChanged(List<VmNumaNode> vNumaNodeList) {
+        // Set migration mode
+        getModel().getMigrationMode().setSelectedItem(
+                isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE
+        );
+    }
+
+    protected void updateCpuPinningChanged() {
+        // Set migration mode
+        getModel().getMigrationMode().setSelectedItem(
+                isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE
+        );
     }
 }

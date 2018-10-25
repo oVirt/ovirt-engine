@@ -460,8 +460,9 @@
                   <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <b:Column size="SM_12">
-                    <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" label="{constants.passThroughHostCpu}" usePatternFly="true"/>
+                  <b:Column size="SM_5">
+                    <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" label="{constants.passThroughHostCpu}" usePatternFly="true" addStyleNames="{style.floatLeft} "/>
+                    <d:InfoIcon ui:field="hostCpuInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                 </b:Row>
                 <g:FlowPanel ui:field="numaPanel">

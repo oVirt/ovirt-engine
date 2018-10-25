@@ -1792,6 +1792,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setCpuPinning(new NotChangableForVmInPoolEntityModel<String>());
         getCpuPinning().setEntity("");
         getCpuPinning().setIsChangeable(false);
+        getCpuPinning().getEntityChangedEvent().addListener(this);
 
         setCpuSharesAmount(new NotChangableForVmInPoolEntityModel<Integer>());
         getCpuSharesAmount().setIsChangeable(false);
@@ -2003,7 +2004,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getThreadsPerCore()) {
                 threadsPerCore_EntityChanged(sender, args);
             } else if (sender == getMigrationMode()) {
-                behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
@@ -2076,16 +2076,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getIsSubTemplate()) {
                 behavior.isSubTemplateEntityChanged();
             } else if (sender == getHostCpu()) {
-                if(getHostCpu().getEntity() != null && getHostCpu().getEntity()) {
-                    getCustomCpu().setIsChangeable(false);
-                    getCustomCpu().setSelectedItem(""); //$NON-NLS-1$
-                } else {
-                    getCustomCpu().setIsChangeable(true);
-                }
+                behavior.useHostCpuValueChanged();
             } else if (sender == getName()) {
                 autoSetHostname();
             } else if (sender == getIsHeadlessModeEnabled()) {
                 headlessModeChanged();
+            } else if (sender == getCpuPinning()) {
+                behavior.updateCpuPinningChanged();
             }
         }
     }
@@ -3388,6 +3385,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         VmNumaSupportModel model = (VmNumaSupportModel) getWindow();
         setVmNumaNodes(model.getNumaNodes(model.getVm().getId()));
         model.getVm().setvNumaNodeList(getVmNumaNodes());
+
+        behavior.useNumaPinningChanged(getVmNumaNodes());
     }
 
     public void setNumaChanged(boolean numaChanged) {

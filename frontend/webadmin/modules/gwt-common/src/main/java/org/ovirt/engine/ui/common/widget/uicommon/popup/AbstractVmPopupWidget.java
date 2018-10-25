@@ -615,6 +615,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("hostCpu")
     public EntityModelCheckBoxEditor hostCpuEditor;
 
+    @UiField(provided = true)
+    public InfoIcon hostCpuInfoIcon;
+
     @UiField
     @Ignore
     public FlowPanel numaPanel;
@@ -1056,6 +1059,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationPolicyInfoIcon = new InfoIcon(templates.italicText(messages.migrationPolicyInfo()));
 
         migrationSelectInfoIcon = new InfoIcon(templates.italicText(messages.migrationSelectInfo()));
+
+        hostCpuInfoIcon = new InfoIcon(templates.italicText(messages.hostCpuInfo()));
+
         priorityEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<Integer>>() {
             @Override
             protected String renderNullSafe(EntityModel<Integer> model) {
@@ -1589,7 +1595,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         if (message == null) {
             message = ""; //$NON-NLS-1$
         }
-        numaInfoIcon.setText(templates.italicText(message));
+        numaInfoIcon.setText(multiLineItalicSafeHtml(message));
     }
 
     private void enableNumaFields(boolean enabled) {
