@@ -439,7 +439,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     /**
-     * @return Maximum bandwidth of each migration in cluster in Mbps, `null` indicates that value in VDSM configuration
+     * @return Maximum bandwidth of each migration in cluster in MiB/s, `null` indicates that value in VDSM configuration
      * on source host should be used.
      *
      * @see org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType
@@ -448,12 +448,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         switch (getCluster().getMigrationBandwidthLimitType()) {
             case AUTO:
                 return Optional.ofNullable(getAutoMaxBandwidth())
-                        .map(bandwidth -> bandwidth / migrationPolicy.getMaxMigrations())
+                        .map(bandwidth -> bandwidth / migrationPolicy.getMaxMigrations() / 8)
                         .orElse(null);
             case VDSM_CONFIG:
                 return null;
             case CUSTOM:
-                return getCluster().getCustomMigrationNetworkBandwidth() / migrationPolicy.getMaxMigrations();
+                return getCluster().getCustomMigrationNetworkBandwidth() / migrationPolicy.getMaxMigrations() / 8;
             default:
                 throw new IllegalStateException(
                         "Unexpected enum item: " + getCluster().getMigrationBandwidthLimitType());
