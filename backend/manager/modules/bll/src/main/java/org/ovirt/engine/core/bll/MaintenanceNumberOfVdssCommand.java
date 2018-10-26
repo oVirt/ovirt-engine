@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -148,7 +149,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         return result;
     }
 
-    private void migrateAllVdss() {
+    private boolean migrateAllVdss() {
         for (Guid vdsId : vdssToMaintenance.keySet()) {
             // ParametersCurrentUser = CurrentUser
             MaintenanceVdsParameters tempVar = new MaintenanceVdsParameters(vdsId,
@@ -164,6 +165,20 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 getReturnValue().getValidationMessages().addAll(result.getValidationMessages());
                 getReturnValue().setValid(false);
             }
+            if (!result.getSucceeded()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void activateVdssFromGoingToMaintenanceMode() {
+        for (Guid vdsId : vdssToMaintenance.keySet()) {
+            VDS vds = vdsDao.get(vdsId);
+            if (vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+                VdsActionParameters parameters = new VdsActionParameters(vds.getId());
+                runInternalAction(ActionType.ActivateVds, parameters);
+            }
         }
     }
 
@@ -176,7 +191,15 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Override
     protected void executeCommand() {
         moveVdssToGoingToMaintenanceMode();
-        migrateAllVdss();
+        if (!migrateAllVdss()) {
+            // If the migrate VMs failed and the command was invoked from UpgradeHost activate the hosts so that they
+            // are not stuck in PreparingForMaintenance status.
+            if (ActionType.UpgradeHost == getParameters().getParentCommand()) {
+                activateVdssFromGoingToMaintenanceMode();
+            }
+            setSucceeded(false);
+            return;
+        }
 
         // find clusters for hosts that should move to maintenance
         Set<Guid> clusters = new HashSet<>();
