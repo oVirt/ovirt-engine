@@ -15,6 +15,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
  * A simple recursive tar based on javatar.
  */
 public class Tar {
+    // The default record size for GNU tar is 20 blocks of 512 bytes
+    private static final int RECORD_SIZE = 10240;
 
     private static void recurse(
         TarArchiveOutputStream archive,
@@ -80,7 +82,7 @@ public class Tar {
             );
         }
 
-        try (TarArchiveOutputStream archive = new TarArchiveOutputStream(os)) {
+        try (TarArchiveOutputStream archive = new TarArchiveOutputStream(os, RECORD_SIZE)) {
             // TODO: use LONGFILE_POSIX in newer version of commons-compress
             archive.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
             recurse(archive, base, "./");
