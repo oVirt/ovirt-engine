@@ -93,7 +93,12 @@ public class UpdateClusterCommandTest {
         migrationMap.put("ppc", "true");
 
         return Stream.concat(
-                Stream.of(MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, versions)),
+                Stream.of(
+                        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, versions),
+                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_0, true),
+                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_1, true),
+                        MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, VERSION_1_2, true)
+                ),
                 // Permute the migration map to all supported versions
                 versions.stream().map(v -> MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, v, migrationMap))
         );

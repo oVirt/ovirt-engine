@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -160,11 +162,23 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
      * Returns list of VMs that requires to be updated provided cluster compatibility version has changed.
      */
     protected List<VmStatic> filterVmsInClusterNeedUpdate() {
+        final boolean biosTypeChanged = isBiosTypeChanged();
         return vmStaticDao.getAllByCluster(getCluster().getId()).stream()
                 .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
-                .filter(vm -> vm.getCustomCompatibilityVersion() == null)
+                .filter(vm -> vm.getCustomCompatibilityVersion() == null
+                        || biosTypeChanged && vm.getBiosType() == BiosType.CLUSTER_DEFAULT)
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    private boolean isBiosTypeChanged() {
+        try {
+            return FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
+                    && oldCluster.getBiosType() != getCluster().getBiosType();
+        } catch (IllegalArgumentException e) {
+            // Thrown by FeatureSupported. Ignore here, because validate() will fail in this case.
+            return false;
+        }
     }
 
     protected void setVmInitToVms() {
@@ -624,6 +638,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                     && validate(clusterValidator.disableGluster())
                     && validate(clusterValidator.setTrustedAttestation())
                     && validate(clusterValidator.migrationOnError(getArchitecture()))
+                    && validate(clusterValidator.invalidBiosType())
+                    && validate(clusterValidator.nonDefaultBiosType())
                     && validateClusterPolicy(oldCluster)
                     && validateConfiguration();
         }

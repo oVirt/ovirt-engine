@@ -524,6 +524,7 @@ public class SnapshotsManager {
                     vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
                     vm.setClusterName(cluster.getName());
                     vm.setClusterCpuName(cluster.getCpuName());
+                    vm.setClusterBiosType(cluster.getBiosType());
                 }
             }
             // if the required dedicated host is invalid -> use current VM dedicated host

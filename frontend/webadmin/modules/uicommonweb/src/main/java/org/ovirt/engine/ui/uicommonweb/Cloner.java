@@ -160,6 +160,7 @@ public final class Cloner {
         vm.setComment(instance.getComment());
         vm.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
         vm.setBiosType(instance.getBiosType());
+        vm.setClusterBiosType(instance.getClusterBiosType());
         vm.setCustomCpuName(instance.getCustomCpuName());
         vm.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         vm.setId(instance.getId());
@@ -316,6 +317,7 @@ public final class Cloner {
         obj.setCountThreadsAsCores(instance.getCountThreadsAsCores());
         obj.setEmulatedMachine(instance.getEmulatedMachine());
         obj.setDetectEmulatedMachine(instance.isDetectEmulatedMachine());
+        obj.setBiosType(instance.getBiosType());
         obj.setArchitecture(instance.getArchitecture());
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());

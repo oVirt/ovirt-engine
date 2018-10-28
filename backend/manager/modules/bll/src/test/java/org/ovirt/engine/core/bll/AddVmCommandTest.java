@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -90,6 +91,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
         cmd.getParameters().getVm().setClusterId(cluster.getId());
+        cmd.getParameters().getVm().setClusterBiosType(BiosType.I440FX_SEA_BIOS);
         cmd.initEffectiveCompatibilityVersion();
         when(vmValidationUtils.isDiskInterfaceSupportedByOs(anyInt(), any(), any(), eq(DiskInterface.VirtIO_SCSI)))
                 .thenReturn(true);

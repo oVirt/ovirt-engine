@@ -244,6 +244,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         } else if (getCluster() != null && masterVm != null) {
             VM vm = new VM(masterVm, new VmDynamic(), null);
             vm.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+            vm.setClusterBiosType(getCluster().getBiosType());
             setVm(vm);
             setStoragePoolId(getCluster().getStoragePoolId());
         }

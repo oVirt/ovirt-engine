@@ -83,6 +83,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private String emulatedMachine;
 
+    private BiosType biosType;
+
     private boolean trustedService;
 
     private boolean haReservation;
@@ -178,6 +180,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         cpuName = "";
         vncEncryptionEnabled = true;
         hostNamesOutOfSync = "";
+        biosType = BiosType.I440FX_SEA_BIOS;
     }
 
     @Override
@@ -353,6 +356,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setEmulatedMachine(String emulatedMachine) {
         this.emulatedMachine = emulatedMachine;
+    }
+
+    public BiosType getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(BiosType biosType) {
+        this.biosType = biosType;
     }
 
     public void setTrustedService(boolean trustedService) {
@@ -673,6 +684,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 glusterCliBasedSchedulingOn,
                 tunnelMigration,
                 emulatedMachine,
+                biosType,
                 trustedService,
                 haReservation,
                 clusterPolicyName,
@@ -732,6 +744,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && glusterCliBasedSchedulingOn == other.glusterCliBasedSchedulingOn
                 && tunnelMigration == other.tunnelMigration
                 && Objects.equals(emulatedMachine, other.emulatedMachine)
+                && biosType == other.biosType
                 && trustedService == other.trustedService
                 && haReservation == other.haReservation
                 && Objects.equals(clusterPolicyId, other.clusterPolicyId)

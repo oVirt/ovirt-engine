@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -401,11 +402,13 @@ public class ClusterValidator {
     }
 
     protected ArchitectureType getArchitecture() {
-        if (StringUtils.isNotEmpty(newCluster.getCpuName())) {
-            return cpuFlagsManagerHandler.getArchitectureByCpuName(newCluster.getCpuName(),
-                    newCluster.getCompatibilityVersion());
-        } else if (newCluster.getArchitecture() == null) {
-            return ArchitectureType.undefined;
+        if (newCluster != null) {
+            if (StringUtils.isNotEmpty(newCluster.getCpuName())) {
+                return cpuFlagsManagerHandler.getArchitectureByCpuName(newCluster.getCpuName(),
+                        newCluster.getCompatibilityVersion());
+            } else if (newCluster.getArchitecture() == null) {
+                return ArchitectureType.undefined;
+            }
         }
 
         return cluster.getArchitecture();
@@ -419,6 +422,23 @@ public class ClusterValidator {
 
     protected boolean migrationSupportedForArch(ArchitectureType arch) {
         return FeatureSupported.isMigrationSupported(arch, cluster.getCompatibilityVersion());
+    }
+
+    public ValidationResult invalidBiosType() {
+        return ValidationResult.failWith(EngineMessage.BIOS_TYPE_INVALID_FOR_CLUSTER)
+                .when(newCluster != null && newCluster.getBiosType() == BiosType.CLUSTER_DEFAULT
+                        || cluster.getBiosType() == BiosType.CLUSTER_DEFAULT);
+    }
+
+    public ValidationResult nonDefaultBiosType() {
+        Cluster eCluster = newCluster != null ? newCluster : cluster;
+        ArchitectureType architecture = getArchitecture();
+        return ValidationResult.failWith(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY)
+                .when(FeatureSupported.isBiosTypeSupported(eCluster.getCompatibilityVersion())
+                    && eCluster.getBiosType() != BiosType.CLUSTER_DEFAULT
+                    && eCluster.getBiosType() != BiosType.I440FX_SEA_BIOS
+                    && architecture != ArchitectureType.undefined
+                    && architecture.getFamily() != ArchitectureType.x86);
     }
 
     private boolean attestationServerEnabled() {

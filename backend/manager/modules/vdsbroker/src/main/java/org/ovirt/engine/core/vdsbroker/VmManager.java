@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,6 +42,7 @@ public class VmManager {
     private int numOfCpus;
     private Version clusterCompatibilityVersion;
     private ArchitectureType clusterArchitecture;
+    private BiosType clusterBiosType;
     private Guid leaseStorageDomainId;
 
     private final ReentrantLock lock;
@@ -108,6 +110,7 @@ public class VmManager {
         final Cluster cluster = clusterDao.get(vmStatic.getClusterId());
         clusterCompatibilityVersion = cluster.getCompatibilityVersion();
         clusterArchitecture = cluster.getArchitecture();
+        clusterBiosType = cluster.getBiosType();
         leaseStorageDomainId = vmStatic.getLeaseStorageDomainId();
 
         vmMemoryWithOverheadInMB = estimateOverhead(vmStatic);
@@ -116,7 +119,7 @@ public class VmManager {
     private int estimateOverhead(VmStatic vmStatic) {
         // Prepare VM object using the available bits and pieces
         VM compose = new VM(vmStatic, new VmDynamic(), new VmStatistics(),
-                clusterArchitecture, clusterCompatibilityVersion);
+                clusterArchitecture, clusterCompatibilityVersion, clusterBiosType);
 
         // Load device list, TODO ignores unmanaged devices for now
         Map<Guid, VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId).stream()

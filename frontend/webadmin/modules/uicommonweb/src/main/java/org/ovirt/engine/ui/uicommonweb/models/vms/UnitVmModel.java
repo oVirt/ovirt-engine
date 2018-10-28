@@ -1664,7 +1664,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setBiosType(new NotChangableForVmInPoolListModel<>());
         getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
-        getBiosType().setSelectedItem(BiosType.I440FX_SEA_BIOS);
+        getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
 
         setEmulatedMachine(new NotChangableForVmInPoolListModel<String>());
 
@@ -3548,10 +3548,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
         if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
             getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
-            return;
-
+        } else {
+            getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getCompatibilityVersion());
         }
-        getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getCompatibilityVersion());
+        if (!getBiosType().getIsChangable()) {
+            getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
+        }
     }
 
 }

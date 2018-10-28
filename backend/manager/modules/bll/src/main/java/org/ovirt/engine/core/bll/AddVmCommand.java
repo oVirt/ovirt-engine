@@ -804,6 +804,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
+                && vmFromParams.getBiosType() != BiosType.CLUSTER_DEFAULT
                 && vmFromParams.getBiosType() != BiosType.I440FX_SEA_BIOS
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
@@ -1721,7 +1722,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         boolean isOsSupportedForVirtIoScsi = vmValidationUtils.isDiskInterfaceSupportedByOs(
                 getParameters().getVm().getOs(), getEffectiveCompatibilityVersion(),
-                getParameters().getVm().getBiosType().getChipsetType(), DiskInterface.VirtIO_SCSI);
+                getParameters().getVm().getEffectiveBiosType().getChipsetType(), DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;
     }

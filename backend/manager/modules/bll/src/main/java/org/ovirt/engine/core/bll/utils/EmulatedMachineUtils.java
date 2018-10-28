@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -35,14 +36,15 @@ public class EmulatedMachineUtils {
 
         // The 'default' to be set
         Cluster cluster = clusterSupplier.get();
+        BiosType biosType = BiosTypeUtils.getEffective(vmBase, cluster);
         String recentClusterDefault = cluster.getEmulatedMachine();
         if (vmBase.getCustomCompatibilityVersion() == null
-                && chipsetMatchesEmulatedMachine(vmBase.getBiosType().getChipsetType(), recentClusterDefault)) {
+                && chipsetMatchesEmulatedMachine(biosType.getChipsetType(), recentClusterDefault)) {
             return recentClusterDefault;
         }
 
         String bestMatch = findBestMatchForEmulatedMachine(
-                vmBase.getBiosType().getChipsetType(),
+                biosType.getChipsetType(),
                 recentClusterDefault,
                 Config.getValue(
                         ConfigValues.ClusterEmulatedMachines,

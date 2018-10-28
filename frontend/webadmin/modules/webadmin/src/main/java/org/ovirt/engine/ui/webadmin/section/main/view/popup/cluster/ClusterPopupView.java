@@ -5,6 +5,7 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -127,6 +128,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "CPU.selectedItem")
     @WithElementId
     ListModelListBoxEditor<ServerCpu> cpuEditor;
+
+    @UiField(provided = true)
+    @Path(value = "biosType.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<BiosType> biosTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
@@ -628,6 +634,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         : constants.autoDetect();
             }
         });
+
+        biosTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<BiosType>());
 
         versionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {
             @Override

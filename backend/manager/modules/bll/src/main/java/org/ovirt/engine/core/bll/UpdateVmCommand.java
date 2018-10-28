@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -112,6 +113,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -151,6 +153,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private InClusterUpgradeValidator clusterUpgradeValidator;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
+    @Inject
+    private ClusterDao clusterDao;
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject
@@ -234,7 +238,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         updateUSB();
 
+        if (getParameters().getVmStaticData().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+            getParameters().getVm().setClusterBiosType(getNewCluster().getBiosType());
+        }
+
         getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
+    }
+
+    protected Cluster getNewCluster() {
+        return clusterDao.get(getParameters().getVm().getClusterId());
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {
@@ -1384,6 +1396,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
+                && vmFromParams.getBiosType() != BiosType.CLUSTER_DEFAULT
                 && vmFromParams.getBiosType() != BiosType.I440FX_SEA_BIOS
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
@@ -1549,7 +1562,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isChipsetChanged() {
-        return getParameters().getVm().getBiosType().getChipsetType() != getVm().getBiosType().getChipsetType();
+        return getParameters().getVm().getEffectiveBiosType().getChipsetType()
+                != getVm().getEffectiveBiosType().getChipsetType();
     }
 
     @Override

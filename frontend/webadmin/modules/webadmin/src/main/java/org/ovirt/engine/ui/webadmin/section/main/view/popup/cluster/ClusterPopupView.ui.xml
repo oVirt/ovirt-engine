@@ -221,6 +221,9 @@
                                     <e:ListModelListBoxEditor ui:field="cpuEditor" label="{constants.clusterPopupCPUTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.clusterPopupBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <e:ListModelListBoxEditor ui:field="versionEditor" label="{constants.clusterPopupVersionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>

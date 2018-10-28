@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -213,6 +214,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         group.setId(clusterId);
         group.setCompatibilityVersion(version);
         group.setArchitecture(ArchitectureType.x86_64);
+        group.setBiosType(BiosType.I440FX_SEA_BIOS);
         vm.setClusterId(clusterId);
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setVmMemSizeMb(MEMORY_SIZE);
@@ -220,6 +222,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setOrigin(OriginType.OVIRT);
 
         doReturn(group).when(command).getCluster();
+        doReturn(group).when(command).getNewCluster();
         doReturn(vm).when(command).getVm();
         doReturn(ActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any());

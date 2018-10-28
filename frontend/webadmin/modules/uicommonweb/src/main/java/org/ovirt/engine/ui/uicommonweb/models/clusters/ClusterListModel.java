@@ -391,6 +391,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         clusterModel.getEnableKsm().setEntity(cluster.isEnableKsm());
         clusterModel.setKsmPolicyForNuma(cluster.isKsmMergeAcrossNumaNodes());
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
+        clusterModel.getBiosType().setSelectedItem(cluster.getBiosType());
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
         clusterModel.getSerialNumberPolicy().setSelectedSerialNumberPolicy(cluster.getSerialNumberPolicy());
         clusterModel.getSerialNumberPolicy().getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
@@ -685,6 +686,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         if (model.getCPU().getSelectedItem() != null) {
             cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
+        cluster.setBiosType(model.getBiosType().getSelectedItem());
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
         cluster.setSmtDisabled(Boolean.TRUE.equals(model.getSmtDisabled().getEntity()));
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())

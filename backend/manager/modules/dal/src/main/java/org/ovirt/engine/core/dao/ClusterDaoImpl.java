@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterHostsAndVMs;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
@@ -252,6 +253,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("additional_rng_sources", VmRngDevice.sourcesToCsv(cluster.getAdditionalRngSources()))
                 .addValue("emulated_machine", cluster.getEmulatedMachine())
                 .addValue("detect_emulated_machine", cluster.isDetectEmulatedMachine())
+                .addValue("bios_type", cluster.getBiosType())
                 .addValue("trusted_service", cluster.supportsTrustedService())
                 .addValue("ha_reservation", cluster.supportsHaReservation())
                 .addValue("cluster_policy_id", cluster.getClusterPolicyId())
@@ -317,6 +319,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.getAdditionalRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("additional_rng_sources")));
         entity.setEmulatedMachine(rs.getString("emulated_machine"));
         entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
+        entity.setBiosType(BiosType.forValue(rs.getInt("bios_type")));
         entity.setTrustedService(rs.getBoolean("trusted_service"));
         entity.setHaReservation(rs.getBoolean("ha_reservation"));
         entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));

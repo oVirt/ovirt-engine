@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -935,6 +937,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.addMacPoolCommand = addMacPoolCommand;
     }
 
+    private ListModel<BiosType> biosType;
+
+    public ListModel<BiosType> getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(ListModel<BiosType> biosType) {
+        this.biosType = biosType;
+    }
+
     @Override
     public void setEntity(Cluster value) {
         super.setEntity(value);
@@ -1297,6 +1309,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         getCPU().getSelectedItemChangedEvent().addListener(this);
 
+        setBiosType(new ListModel<>());
+        initBiosType();
+
         setVersion(new ListModel<>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
@@ -1438,6 +1453,18 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         return null;
     }
 
+    private void initBiosType() {
+        ListModel<BiosType> biosType = getBiosType();
+
+        List<BiosType> biosTypeList = AsyncDataProvider.getInstance()
+                .getBiosTypeList()
+                .stream()
+                .filter(bt -> bt != BiosType.CLUSTER_DEFAULT)
+                .collect(Collectors.toList());
+        biosType.setItems(biosTypeList);
+        updateBiosType();
+    }
+
     private void initFirewallType() {
         ListModel<FirewallType> firewallType = getFirewallType();
 
@@ -1461,6 +1488,19 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             firewallType.setSelectedItem(FirewallType.IPTABLES);
         } else {
             firewallType.setIsChangeable(true);
+        }
+    }
+
+    private void updateBiosType() {
+        ArchitectureType architecture = getArchitecture().getSelectedItem();
+
+        if (architecture == null || architecture.getFamily() != ArchitectureType.x86) {
+            getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
+        } else {
+            getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
+        }
+        if (!getBiosType().getIsChangable()) {
+            getBiosType().setSelectedItem(BiosType.I440FX_SEA_BIOS);
         }
     }
 
@@ -1746,6 +1786,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     private void architectureSelectedItemChanged() {
         filterCpuTypeByArchitecture();
+        updateBiosType();
     }
 
     private void filterCpuTypeByArchitecture() {
@@ -1809,6 +1850,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             initTunedProfiles();
         }
 
+        updateBiosType();
     }
 
     private void refreshAdditionalClusterFeaturesList() {

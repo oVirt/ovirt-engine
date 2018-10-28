@@ -57,6 +57,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private boolean transparentHugePages;
     private boolean trustedService;
     private boolean hasIllegalImages;
+    private BiosType clusterBiosType;
 
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
@@ -80,10 +81,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
             VmDynamic vmDynamic,
             VmStatistics vmStatistics,
             ArchitectureType clusterArch,
-            Version clusterCompatibilityVersion) {
+            Version clusterCompatibilityVersion,
+            BiosType clusterBiosType) {
         this(vmStatic, vmDynamic, vmStatistics);
         this.clusterArch = clusterArch;
         this.clusterCompatibilityVersion = clusterCompatibilityVersion;
+        this.clusterBiosType = clusterBiosType;
     }
 
     public VmPauseStatus getVmPauseStatus() {
@@ -1820,5 +1823,17 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public boolean isUsingCpuPassthrough() {
         return isUseHostCpuFlags() || Objects.equals(getCustomCpuName(), "hostPassthrough");
+    }
+
+    public BiosType getClusterBiosType() {
+        return clusterBiosType;
+    }
+
+    public void setClusterBiosType(BiosType clusterBiosType) {
+        this.clusterBiosType = clusterBiosType;
+    }
+
+    public BiosType getEffectiveBiosType() {
+        return getBiosType() != BiosType.CLUSTER_DEFAULT ? getBiosType() : getClusterBiosType();
     }
 }

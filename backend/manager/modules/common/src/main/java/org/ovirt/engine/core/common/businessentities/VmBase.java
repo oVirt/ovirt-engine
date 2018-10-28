@@ -413,7 +413,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
         resumeBehavior = VmResumeBehavior.AUTO_RESUME;
-        biosType = BiosType.I440FX_SEA_BIOS;
+        biosType = BiosType.CLUSTER_DEFAULT;
         description = "";
         comment = "";
         multiQueuesEnabled = true;
