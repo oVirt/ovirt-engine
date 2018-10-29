@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.Pattern;
-
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class Bond extends VdsNetworkInterface {
@@ -25,7 +22,6 @@ public class Bond extends VdsNetworkInterface {
     }
 
     @Override
-    @Pattern(regexp = BusinessEntitiesDefinitions.BOND_NAME_PATTERN, message = "NETWORK_BOND_NAME_BAD_FORMAT")
     public String getName() {
         return super.getName();
     }

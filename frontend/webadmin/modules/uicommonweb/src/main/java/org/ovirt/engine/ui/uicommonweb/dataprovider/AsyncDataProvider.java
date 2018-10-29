@@ -3346,4 +3346,12 @@ public class AsyncDataProvider {
             callback.run();
         }
     }
+
+    public void getCustomBondNameSupported(AsyncQuery<Boolean> aQuery, Version version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
+        getConfigFromCache(
+                new GetConfigurationValueParameters(ConfigValues.CustomBondNameSupported,
+                        version.getValue()),
+                aQuery);
+    }
 }

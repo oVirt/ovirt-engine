@@ -43,6 +43,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
@@ -67,16 +68,20 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({ MockitoExtension.class, MockConfigExtension.class })
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class HostSetupNetworksValidatorTest {
 
@@ -113,12 +118,22 @@ public class HostSetupNetworksValidatorTest {
     @Captor
     private ArgumentCaptor<Collection<String>> collectionArgumentCaptor;
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.concat(AbstractQueryTest.mockConfiguration(),
+                Stream.of(
+                        MockConfigDescriptor.of(ConfigValues.CustomBondNameSupported, Version.getLast(), true),
+                        MockConfigDescriptor.of(ConfigValues.CustomBondNameSupported, Version.v4_2, false)
+                )
+        );
+    }
+
     @BeforeEach
     public void setUp() {
         host = new VDS();
         host.setId(Guid.newGuid());
         final VdsDynamic vdsDynamic = new VdsDynamic();
         host.setDynamicData(vdsDynamic);
+        host.setClusterCompatibilityVersion(Version.getLast());
 
         bond = new Bond();
         bond.setId(Guid.newGuid());
@@ -1585,6 +1600,64 @@ public class HostSetupNetworksValidatorTest {
         assertThat(validator.bondNotUpdatedAndRemovedSimultaneously(), failsWith(engineMessage,
                 ReplacementUtils.getListVariableAssignmentString(engineMessage,
                         Collections.singletonList(bond.getName()))));
+    }
+
+    @Test
+    public void testBondNameNumPatternValid() {
+        host.setClusterCompatibilityVersion(Version.v4_2);
+        CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(null, "bond1", "slaveA", "slaveB");
+        doTestValidModifiedBonds(
+                createOrUpdateBond,
+                ValidationResult.VALID,
+                ValidationResult.VALID,
+                ValidationResult.VALID);
+    }
+
+    @Test
+    public void testBondNameNumPatternInvalid() {
+        host.setClusterCompatibilityVersion(Version.v4_2);
+        CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(null, "bond_fancy", "slaveA", "slaveB");
+        doTestValidModifiedBonds(
+                createOrUpdateBond,
+                ValidationResult.VALID,
+                new ValidationResult(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                        ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                                createOrUpdateBond.getName())),
+                ValidationResult.VALID);
+    }
+
+    @Test
+    public void testBondNamePatternValid() {
+        CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(null, "bond_fancy", "slaveA", "slaveB");
+        doTestValidModifiedBonds(
+                createOrUpdateBond,
+                ValidationResult.VALID,
+                ValidationResult.VALID,
+                ValidationResult.VALID);
+    }
+
+    @Test
+    public void testBondNamePatternInvalid() {
+        CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(null, "fancy_bond", "slaveA", "slaveB");
+        doTestValidModifiedBonds(
+                createOrUpdateBond,
+                ValidationResult.VALID,
+                new ValidationResult(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                        ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                                createOrUpdateBond.getName())),
+                ValidationResult.VALID);
+    }
+
+    @Test
+    public void testBondNamePatternUnicode() {
+        CreateOrUpdateBond createOrUpdateBond = createNewCreateOrUpdateBond(null, "bond_מפואר", "slaveA", "slaveB");
+        doTestValidModifiedBonds(
+                createOrUpdateBond,
+                ValidationResult.VALID,
+                new ValidationResult(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                        ReplacementUtils.getVariableAssignmentString(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                                createOrUpdateBond.getName())),
+                ValidationResult.VALID);
     }
 
     private void testValidateQosNotPartiallyConfigured(boolean networkAttachment1HasQos,

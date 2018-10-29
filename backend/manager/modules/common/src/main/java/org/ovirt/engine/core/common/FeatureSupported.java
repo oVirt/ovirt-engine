@@ -292,6 +292,14 @@ public class FeatureSupported {
 
     /**
      * @param version Compatibility version to check for.
+     * @return {@code true} if getting an custom bond name is supported for this version.
+     */
+    public static boolean isCustomBondNameSupported(Version version) {
+        return supportedInConfig(ConfigValues.CustomBondNameSupported, version);
+    }
+
+    /**
+     * @param version Compatibility version to check for.
      * @return {@code true} if verb Host.ping2 is supported for this version.
      */
     public static boolean isPing2SupportedByVdsm(Version version) {

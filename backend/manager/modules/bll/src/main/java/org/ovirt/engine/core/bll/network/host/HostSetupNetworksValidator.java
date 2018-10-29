@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -492,7 +493,10 @@ public class HostSetupNetworksValidator {
                 return validateCoherentNicIdentification;
             }
 
-            boolean validBondName = bondName.matches(BusinessEntitiesDefinitions.BOND_NAME_PATTERN);
+            boolean validBondName =
+                    bondName.matches(FeatureSupported.isCustomBondNameSupported(host.getClusterCompatibilityVersion()) ?
+                            BusinessEntitiesDefinitions.BOND_NAME_PATTERN :
+                            BusinessEntitiesDefinitions.NUM_ONLY_BOND_NAME_PATTERN);
 
             if (!validBondName) {
                 EngineMessage engineMessage = EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT;

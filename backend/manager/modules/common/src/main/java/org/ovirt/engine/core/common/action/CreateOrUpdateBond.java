@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -23,7 +22,6 @@ public class CreateOrUpdateBond implements BusinessEntity<Guid>, Nameable {
     private Guid id;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.BOND_NAME_SIZE)
-    @Pattern(regexp = BusinessEntitiesDefinitions.BOND_NAME_PATTERN, message = "NETWORK_BOND_NAME_BAD_FORMAT")
     private String name;
 
     private String bondOptions;

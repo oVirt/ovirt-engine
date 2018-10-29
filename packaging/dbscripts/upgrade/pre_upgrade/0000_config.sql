@@ -701,6 +701,8 @@ select fn_db_add_config_value_for_versions_up_to('Ping2SupportedByVdsm', 'true',
 select fn_db_add_config_value_for_versions_up_to('ConfirmConnectivitySupportedByVdsm', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('ConfirmConnectivitySupportedByVdsm', 'true', '4.3');
 select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','general');
+select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'false', '4.2');
+select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'true', '4.3');
 
 -- Monitoring
 select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');

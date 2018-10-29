@@ -1583,6 +1583,9 @@ public enum ConfigValues {
     LldpInformationSupported,
 
     @TypeConverterAttribute(Boolean.class)
+    CustomBondNameSupported,
+
+    @TypeConverterAttribute(Boolean.class)
     Ping2SupportedByVdsm,
 
     @TypeConverterAttribute(Boolean.class)

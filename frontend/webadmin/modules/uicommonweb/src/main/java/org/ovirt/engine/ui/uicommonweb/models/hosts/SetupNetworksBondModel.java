@@ -11,16 +11,21 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
-import org.ovirt.engine.ui.uicommonweb.validation.BondNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.CustomBondNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValueFormatValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NumberOnlyBondNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 
 @SuppressWarnings("unused")
 public class SetupNetworksBondModel extends Model {
 
     public static final String CUSTOM_BONDING_MODE = "custom"; //$NON-NLS-1$
+
+    private static RegexValidation CUSTOM_BOND_NAME_VALIDATION = new CustomBondNameValidation();
+    private static RegexValidation NUM_ONLY_BOND_NAME_VALIDATION = new NumberOnlyBondNameValidation();
 
     private SortedListModel<String> privateBond;
 
@@ -79,9 +84,12 @@ public class SetupNetworksBondModel extends Model {
         getBondingOptions().getSelectedItemChangedEvent().addListener((ev, sender, args) -> onBondingOptionsSelectionChange());
     }
 
-    public boolean validate() {
+    public boolean validate(boolean customBondNameSupported) {
         getBond().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),
-                new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH), new BondNameValidation() });
+                new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH),
+                customBondNameSupported ?
+                        CUSTOM_BOND_NAME_VALIDATION :
+                        NUM_ONLY_BOND_NAME_VALIDATION });
         getCustomBondEditor().setIsValid(true);
         if (getBondingOptions().getSelectedItem().getKey().equals(CUSTOM_BONDING_MODE)) {
             getCustomBondEditor().validateEntity(new IValidation[] { new KeyValueFormatValidation() });

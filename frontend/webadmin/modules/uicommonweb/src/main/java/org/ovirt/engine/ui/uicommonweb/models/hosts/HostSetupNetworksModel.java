@@ -169,6 +169,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private NetworkItemModel<?> currentOp1;
     private NetworkItemModel<?> currentOp2;
     private String nextBondName;
+    private boolean customBondNameSupported = false;
 
     private Map<Integer, VdsNetworkInterface> existingVlanDevicesByVlanId;
 
@@ -325,7 +326,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             okTarget = new BaseCommandTarget() {
                 @Override
                 public void executeCommand(UICommand command) {
-                    if (!bondDialogModel.validate()) {
+                    if (!bondDialogModel.validate(customBondNameSupported)) {
                         return;
                     }
                     sourceListModel.setConfirmWindow(null);
@@ -527,7 +528,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
                 @Override
                 public void executeCommand(UICommand command) {
-                    if (!bondPopup.validate()) {
+                    if (!bondPopup.validate(customBondNameSupported)) {
                         return;
                     }
 
@@ -1041,6 +1042,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     allBonds = returnValue.getReturnValue();
 
+                    queryCustomBondNameSupport();
                     queryTLVInformation();
 
                     initNetworkModels();
@@ -1048,6 +1050,12 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
                     stopProgress();
                 }));
+    }
+
+    private void queryCustomBondNameSupport() {
+        AsyncDataProvider.getInstance().getCustomBondNameSupported(new AsyncQuery<>(returnValue -> {
+            customBondNameSupported = returnValue;
+        }), getEntity().getClusterCompatibilityVersion());
     }
 
     private void queryVfMap() {
