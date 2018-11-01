@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
+@NonTransactiveCommandAttribute
 public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T> {
 
     @Inject
