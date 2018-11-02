@@ -169,7 +169,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertEquals(NUM_OF_SOCKETS, (int) model.getNumOfSockets().getSelectedItem());
         assertTrue(model.getIsSmartcardEnabled().getEntity());
         assertEquals(MIGRATION_DOWNTIME, model.getSelectedMigrationDowntime());
-        assertEquals(NUM_OF_IO_THREADS, model.getNumOfIoThreads().getEntity());
+        assertEquals(NUM_OF_IO_THREADS, Integer.valueOf(model.getNumOfIoThreads().getEntity()));
 
     }
 }

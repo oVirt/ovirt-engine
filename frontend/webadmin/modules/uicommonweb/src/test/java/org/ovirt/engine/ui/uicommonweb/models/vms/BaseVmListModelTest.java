@@ -106,7 +106,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
         when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(
                 LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID, ValidationResult.ok()));
-        when(model.getNumOfIoThreads().getEntity()).thenReturn(NUM_OF_IO_THREADS);
+        when(model.getNumOfIoThreads().getEntity()).thenReturn(Integer.toString(NUM_OF_IO_THREADS));
         when(model.getIoThreadsEnabled().getEntity()).thenReturn(true);
         when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
         when(model.getCustomCompatibilityVersion().getSelectedItem()).thenReturn(Version.v3_6);

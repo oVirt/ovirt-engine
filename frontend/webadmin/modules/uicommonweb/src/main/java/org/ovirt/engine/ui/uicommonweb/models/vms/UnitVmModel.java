@@ -216,13 +216,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.ioThreadsEnabled = ioThreadsEnabled;
     }
 
-    private NotChangableForVmInPoolEntityModel<Integer> numOfIoThreads;
+    private NotChangableForVmInPoolEntityModel<String> numOfIoThreads;
 
-    public EntityModel<Integer> getNumOfIoThreads() {
+    public EntityModel<String> getNumOfIoThreads() {
         return numOfIoThreads;
     }
 
-    public void setNumOfIoThreads(NotChangableForVmInPoolEntityModel<Integer> numOfIoThreads) {
+    public void setNumOfIoThreads(NotChangableForVmInPoolEntityModel<String> numOfIoThreads) {
         this.numOfIoThreads = numOfIoThreads;
     }
 
@@ -1829,7 +1829,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
 
         setIoThreadsEnabled(new NotChangableForVmInPoolEntityModel<>(false));
-        setNumOfIoThreads(new NotChangableForVmInPoolEntityModel<>(0));
+        setNumOfIoThreads(new NotChangableForVmInPoolEntityModel<>("0")); //$NON-NLS-1$
         getIoThreadsEnabled().getEntityChangedEvent().addListener(this);
 
         setProviders(new NotChangableForVmInPoolListModel<Provider<OpenstackNetworkProviderProperties>>());

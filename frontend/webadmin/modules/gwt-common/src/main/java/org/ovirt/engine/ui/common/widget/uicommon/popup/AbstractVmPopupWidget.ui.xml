@@ -592,7 +592,7 @@
                   <g:FlowPanel ui:field="ioThreadsPanel">
                     <b:Column size="SM_6">
                       <d:InfoIcon ui:field="ioThreadsInfo" addStyleNames="info-icon-right" />
-                      <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="numOfIoThreadsEditor" usePatternFly="true" removeFormGroup="true" addStyleNames="vm-io-threads-textbox"/>
+                      <ge:StringEntityModelTextBoxOnlyEditor ui:field="numOfIoThreadsEditor" usePatternFly="true" removeFormGroup="true" addStyleNames="vm-io-threads-textbox"/>
                     </b:Column>
                   </g:FlowPanel>
                 </b:Row>
