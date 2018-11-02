@@ -360,7 +360,7 @@ public class FenceProxyLocatorTest extends BaseCommandTest {
         host.setId(Guid.newGuid());
         host.setClusterId(clusterId);
         host.setStoragePoolId(dcId);
-        host.setClusterCompatibilityVersion(Version.v3_6);
+        host.setClusterCompatibilityVersion(Version.getLast());
         host.setStatus(status);
         host.setHostName("host-" + host.getId());
         return host;
