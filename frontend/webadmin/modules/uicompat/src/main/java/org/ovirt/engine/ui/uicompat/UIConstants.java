@@ -2152,4 +2152,10 @@ public interface UIConstants extends Constants {
     String separatedTitle();
 
     String vgpuPlacementCompatibilityInfo();
+
+    String portSecurityDisabled();
+
+    String portSecurityEnabled();
+
+    String portSecurityUndefined();
 }

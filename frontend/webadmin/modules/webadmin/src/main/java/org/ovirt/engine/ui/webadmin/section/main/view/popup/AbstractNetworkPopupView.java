@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel.MtuSelector;
+import org.ovirt.engine.ui.uicommonweb.models.networks.PortSecuritySelectorValue;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -155,6 +156,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "mtu.entity")
     public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
+    @UiField
+    @Path(value = "portSecuritySelector.selectedItem")
+    public ListModelListBoxEditor<PortSecuritySelectorValue> portSecuritySelectorEditor;
+
     @UiField(provided = true)
     @Path(value = "dnsConfigurationModel.shouldSetDnsConfiguration.entity")
     @WithElementId
@@ -249,7 +254,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         this.clustersTable = new EntityModelCellTable<>(SelectionMode.NONE, true);
         this.clustersTable.setHeight(CLUSTERS_TABLE_HEIGHT + Unit.PX.getType());
         shouldSetDnsConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
+        portSecuritySelectorEditor = new ListModelListBoxEditor<>();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable();
         localize();
@@ -271,6 +276,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         externalEditor.setLabel(constants.externalCheckboxLabel());
         physicalNetworkEditor.setLabel(constants.physicalNetworkCheckboxLabel());
 
+        portSecuritySelectorEditor.setLabel(constants.portSecurityEnabledLabel());
         externalProviderEditor.setLabel(constants.externalProviderLabel());
         networkLabel.setLabel(constants.networkLabel());
         commentEditor.setLabel(constants.commentLabel());

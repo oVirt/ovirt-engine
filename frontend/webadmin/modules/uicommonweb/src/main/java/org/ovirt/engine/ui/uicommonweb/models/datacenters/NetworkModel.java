@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
 import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.DnsConfigurationModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.PortSecuritySelectorValue;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -86,6 +87,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private EntityModel<Boolean> privateIsStpEnabled;
     private EntityModel<Boolean> privateHasVLanTag;
     private ListModel<MtuSelector> mtuSelector;
+    private ListModel<PortSecuritySelectorValue> portSecuritySelector;
     private EntityModel<Integer> mtu;
     private EntityModel<Boolean> privateIsVmNetwork;
     private ListModel<HostNetworkQos> qos;
@@ -153,6 +155,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         mtuSelector.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateMtuSelectorsChangeability());
 
         setMtu(new EntityModel<Integer>());
+
+        portSecuritySelector = new ListModel<>();
+        portSecuritySelector.setItems(Arrays.asList(PortSecuritySelectorValue.values()));
 
         EntityModel<Boolean> isVmNetwork = new EntityModel<>();
         isVmNetwork.setEntity(true);
@@ -357,6 +362,10 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     public ListModel<MtuSelector> getMtuSelector() {
         return mtuSelector;
+    }
+
+    public ListModel<PortSecuritySelectorValue> getPortSecuritySelector() {
+        return portSecuritySelector;
     }
 
     private void setMtuSelector(ListModel<MtuSelector> value) {
@@ -794,6 +803,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     protected abstract void initIsVm();
 
+    protected abstract void initEnablePortSecurity();
+
     protected abstract void selectExternalProvider();
 
     protected abstract void selectPhysicalDatacenterNetwork();
@@ -813,6 +824,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         getConnectedToPhysicalNetwork().setIsChangeable(externalNetwork);
         getUsePhysicalNetworkFromCustom().setIsChangeable(externalNetwork);
         getUsePhysicalNetworkFromDatacenter().setIsChangeable(externalNetwork);
+        getPortSecuritySelector().setIsChangeable(externalNetwork);
         updateDnsChangeabilityAndValue();
         updateMtuSelectorsChangeability();
         updateVlanChangeabilityAndValue();

@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.PortSecuritySelectorValue;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditNetworkModel extends NetworkModel {
@@ -60,11 +61,11 @@ public class EditNetworkModel extends NetworkModel {
     @Override
     public void syncWithBackend() {
         super.syncWithBackend();
-        checkAndMapCustomExternalNetwork();
+        checkAndMapNetwork();
     }
 
-    private void checkAndMapCustomExternalNetwork() {
-        if (getNetwork().isExternal() && !getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
+    private void checkAndMapNetwork() {
+        if (getNetwork().isExternal()) {
             startProgress();
             Frontend.getInstance()
                     .runQuery(QueryType.GetExternalNetworkById,
@@ -73,14 +74,19 @@ public class EditNetworkModel extends NetworkModel {
                                 Network network = result.getReturnValue();
                                 if (network != null) {
                                     getNetwork().setProvidedBy(network.getProvidedBy());
-                                    initExternalNetworkParameters();
+                                    initEnablePortSecurity();
+                                    if (!getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
+                                        initPhysnetAttachmentParameters();
+                                    }
                                 }
                                 stopProgress();
                             }));
+        } else {
+            getPortSecuritySelector().setSelectedItem(PortSecuritySelectorValue.UNDEFINED);
         }
     }
 
-    private void initExternalNetworkParameters() {
+    private void initPhysnetAttachmentParameters() {
         if (isConnectedToPhysicalNetwork()) {
             getConnectedToPhysicalNetwork().setEntity(true);
             getUsePhysicalNetworkFromCustom().setEntity(true);
@@ -104,6 +110,18 @@ public class EditNetworkModel extends NetworkModel {
     protected void initMtu() {
         getMtuSelector().setSelectedItem(getNetwork().isDefaultMtu() ? MtuSelector.defaultMtu : MtuSelector.customMtu);
         getMtu().setEntity(isCustomMtu() ? getNetwork().getMtu() : null);
+    }
+
+    @Override
+    protected void initEnablePortSecurity() {
+        if (getNetwork().getProvidedBy().isPortSecurityConfigured()) {
+            getPortSecuritySelector().setSelectedItem(
+                    getNetwork().getProvidedBy().getPortSecurityEnabled() ?
+                            PortSecuritySelectorValue.ENABLED : PortSecuritySelectorValue.DISABLED
+            );
+        } else {
+            getPortSecuritySelector().setSelectedItem(PortSecuritySelectorValue.UNDEFINED);
+        }
     }
 
     @Override
@@ -155,6 +173,7 @@ public class EditNetworkModel extends NetworkModel {
             getUsePhysicalNetworkFromDatacenter().setIsChangeable(false);
             getUsePhysicalNetworkFromCustom().setIsChangeable(false);
             getDatacenterPhysicalNetwork().setIsChangeable(false);
+            getPortSecuritySelector().setIsChangeable(false);
         }
     }
 

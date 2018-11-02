@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.PortSecuritySelectorValue;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -48,6 +49,7 @@ public class NewNetworkModel extends NetworkModel {
         getConnectedToPhysicalNetwork().setEntity(false);
 
         initMtu();
+        initEnablePortSecurity();
     }
 
     @Override
@@ -80,6 +82,11 @@ public class NewNetworkModel extends NetworkModel {
     protected void initMtu() {
         getMtuSelector().setSelectedItem(MtuSelector.defaultMtu);
         getMtu().setEntity(null);
+    }
+
+    @Override
+    protected void initEnablePortSecurity() {
+        getPortSecuritySelector().setSelectedItem(PortSecuritySelectorValue.ENABLED);
     }
 
     @Override
@@ -148,7 +155,7 @@ public class NewNetworkModel extends NetworkModel {
             ProviderNetwork providerNetwork = new ProviderNetwork();
             providerNetwork.setProviderId(externalProvider.getId());
             getNetwork().setProvidedBy(providerNetwork);
-
+            getNetwork().getProvidedBy().setPortSecurityEnabled(getPortSecuritySelector().getSelectedItem().getValue());
             if (hasDefinedSubnet()) {
                 getSubnetModel().flush();
                 parameters.setExternalSubnet(getSubnetModel().getSubnet());

@@ -126,6 +126,10 @@ public class ProviderNetwork implements Serializable {
         this.portSecurityEnabled = portSecurityEnabled;
     }
 
+    public boolean isPortSecurityConfigured() {
+        return this.portSecurityEnabled != null;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(

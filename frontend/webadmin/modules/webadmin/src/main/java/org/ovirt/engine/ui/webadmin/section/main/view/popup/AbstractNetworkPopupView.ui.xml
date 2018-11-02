@@ -143,6 +143,11 @@
                                                               labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row addStyleNames="{style.firstLevelPadding}">
+                                    <e:ListModelListBoxEditor ui:field="portSecuritySelectorEditor"
+                                                                 usePatternFly="true" labelColSize="SM_6"
+                                                                 widgetColSize="SM_6"/>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.firstLevelPadding}">
                                     <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="physicalNetworkEditor"
                                                                       usePatternFly="true" />
