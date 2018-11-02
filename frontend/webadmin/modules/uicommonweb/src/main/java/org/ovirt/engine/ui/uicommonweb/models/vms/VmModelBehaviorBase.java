@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -1432,9 +1433,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getIoThreadsEnabled().setIsChangeable(true);
         getModel().getNumOfIoThreads().setIsChangeable(true);
 
-        Integer numOfIoThreads = getModel().getNumOfIoThreads().getEntity();
+        Integer numOfIoThreads = IntegerCompat.tryParse(getModel().getNumOfIoThreads().getEntity());
         if (numOfIoThreads == null || numOfIoThreads == 0) {
-            getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
+            getModel().getNumOfIoThreads().setEntity(Integer.toString(DEFAULT_NUM_OF_IOTHREADS));
         }
     }
 

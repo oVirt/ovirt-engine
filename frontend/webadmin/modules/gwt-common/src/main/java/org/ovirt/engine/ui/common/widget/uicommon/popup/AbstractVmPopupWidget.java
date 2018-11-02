@@ -838,7 +838,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "numOfIoThreads.entity")
     @WithElementId("numOfIoThreadsEditor")
-    public IntegerEntityModelTextBoxOnlyEditor numOfIoThreadsEditor;
+    public StringEntityModelTextBoxOnlyEditor numOfIoThreadsEditor;
 
     @UiField(provided = true)
     public EntityModelDetachableWidget isIoThreadsEnabledDetachable;
@@ -1038,7 +1038,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        numOfIoThreadsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        numOfIoThreadsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
         ioThreadsInfo.setTooltipMaxWidth(TooltipWidth.W420);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());

@@ -14,7 +14,7 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
         vm.setMemSizeMb(model.getMemSize().getEntity());
         vm.setMaxMemorySizeMb(model.getMaxMemorySize().getEntity());
         if (model.getIoThreadsEnabled().getEntity()) {
-            vm.setNumOfIoThreads(model.getNumOfIoThreads().getEntity());
+            vm.setNumOfIoThreads(Integer.parseInt(model.getNumOfIoThreads().getEntity()));
         } else {
             vm.setNumOfIoThreads(0);
         }
