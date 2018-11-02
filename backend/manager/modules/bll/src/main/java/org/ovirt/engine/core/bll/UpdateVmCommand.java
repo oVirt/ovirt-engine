@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
@@ -159,6 +162,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private IconUtils iconUtils;
     @Inject
     private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -1515,7 +1521,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     public void setEntityId(AuditLogable logable) {
-       logable.setVmId(oldVm.getId());
+        logable.setVmId(oldVm.getId());
     }
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
@@ -1573,5 +1579,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Override
     protected boolean shouldUpdateHostedEngineOvf() {
         return true;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getVm().getVmPoolId() != null ? callbackProvider.get() : null;
     }
 }
