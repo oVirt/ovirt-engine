@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
+import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -314,9 +315,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     @Override
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
             message = "VALIDATION_VM_TEMPLATE_NAME_MAX",
-            groups = { Default.class, ImportClonedEntity.class })
+            groups = { Default.class, ImportEntity.class, ImportClonedEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
-            UpdateEntity.class, ImportClonedEntity.class })
+            UpdateEntity.class, ImportEntity.class, ImportClonedEntity.class })
     public String getName() {
         return super.getName();
     }

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -258,7 +257,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDoNotValidateNameSizeImport() {
+    public void testValidateNameSizeImport() {
         checkTemplateName(false, string500);
     }
 
@@ -268,7 +267,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDoNotValidateNameSpecialCharImport() {
+    public void testValidateNameSpecialCharImport() {
         checkTemplateName(false, "vm_$%$#%#$");
     }
 
@@ -279,7 +278,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(command.getParameters(),
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        assertNotEquals(validate.isEmpty(), isImportAsNewEntity);
+        assertFalse(validate.isEmpty());
     }
 
     /**

@@ -343,7 +343,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDoNotValidateNameSizeImport() {
+    public void testValidateNameSizeImport() {
         checkVmName(false, RandomUtils.instance().nextPropertyString(300));
     }
 
@@ -353,7 +353,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testDoNotValidateNameSpecialCharsImport() {
+    public void testValidateNameSpecialCharsImport() {
         checkVmName(false, "vm_#$@%$#@@");
     }
 
@@ -364,7 +364,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(cmd.getParameters(),
                         cmd.getValidationGroups().toArray(new Class<?>[0]));
-        assertEquals(validate.isEmpty(), !isImportAsNewEntity);
+        assertFalse(validate.isEmpty());
     }
 
     /**
