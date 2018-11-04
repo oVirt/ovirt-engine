@@ -15,7 +15,8 @@ public enum StorageType implements Identifiable {
     POSIXFS(6, Subtype.FILE),
     GLUSTERFS(7, Subtype.FILE),
     GLANCE(8, Subtype.FILE),
-    CINDER(9, Subtype.OPENSTACK);
+    CINDER(9, Subtype.OPENSTACK),
+    MANAGED_BLOCK_STORAGE(10, Subtype.OPENSTACK);
 
     public enum Subtype { NONE, FILE, BLOCK, OPENSTACK }
 
@@ -78,5 +79,9 @@ public enum StorageType implements Identifiable {
 
     public boolean isCinderDomain() {
         return this == CINDER;
+    }
+
+    public boolean isManagedBlockStorage() {
+        return this == MANAGED_BLOCK_STORAGE;
     }
 }
