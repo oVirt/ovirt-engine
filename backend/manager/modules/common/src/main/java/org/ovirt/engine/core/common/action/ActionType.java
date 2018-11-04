@@ -551,6 +551,9 @@ public enum ActionType {
     ThawVm(3218, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     RemoveCinderDiskVolume(3219, QuotaDependency.STORAGE),
 
+    // Managed Block Storage
+    AddManagedBlockStorageDomain(3230, ActionGroup.CREATE_STORAGE_DOMAIN, false, QuotaDependency.NONE),
+
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     RefreshHost(4001, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),

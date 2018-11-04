@@ -306,7 +306,9 @@ public class BackendStorageDomainsResource
             }
             resp = addDomain(ActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
-
+        case MANAGED_BLOCK_STORAGE:
+            resp = addDomain(ActionType.AddManagedBlockStorageDomain, storageDomain, entity, hostId, cnx);
+            break;
         default:
             break;
         }

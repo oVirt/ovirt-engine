@@ -1344,3 +1344,68 @@ BEGIN
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+-- ----------------------------------------------------------------
+-- [cinder_storage] Table
+--
+--This function is also called during installation. If you change it, please verify
+--that functions in inst_sp.sql can be executed successfully.
+CREATE OR REPLACE FUNCTION InsertCinderStorage (
+    v_storage_domain_id UUID,
+    v_driver_options JSONB
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO cinder_storage (
+        storage_domain_id,
+        driver_options
+        )
+    VALUES (
+        v_storage_domain_id,
+        v_driver_options
+        );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateCinderStorage (
+    v_storage_domain_id UUID,
+    v_driver_options JSONB
+    )
+RETURNS VOID
+    AS $PROCEDURE$
+BEGIN
+    UPDATE cinder_storage
+    SET driver_options = v_driver_options
+    WHERE storage_domain_id = v_storage_domain_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteCinderStorage (v_storage_domain_id UUID)
+RETURNS VOID AS $PROCEDURE$
+DECLARE v_val UUID;
+
+BEGIN
+    -- Get (and keep) a shared lock with "right to upgrade to exclusive"
+    -- in order to force locking parent before children
+    SELECT id
+    INTO v_val
+    FROM cinder_storage
+    WHERE storage_domain_id = v_storage_domain_id
+    FOR UPDATE;
+
+    DELETE
+    FROM cinder_storage
+    WHERE id = v_storage_domain_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetCinderStorage (v_storage_domain_id UUID)
+RETURNS SETOF cinder_storage STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM cinder_storage
+    WHERE storage_domain_id = v_storage_domain_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
