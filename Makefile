@@ -190,7 +190,6 @@ export ENVFILEC
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
 	-e "s|@ENGINE_COMMON_USR@|$(DATA_DIR)|g" \
-	-e "s|@SETUP_ETC@|$(PKG_SYSCONF_DIR)|g" \
 	-e "s|@SETUP_LOG@|$(PKG_LOG_DIR)|g" \
 	-e "s|@SETUP_USR@|$(DATA_DIR)|g" \
 	-e "s|@SETUP_VAR@|$(PKG_STATE_DIR)|g" \

@@ -29,7 +29,6 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
 
 from ovirt_setup_lib import dialog
 
@@ -74,7 +73,7 @@ class Plugin(plugin.PluginBase):
         self._infos = sorted(
             glob.glob(
                 os.path.join(
-                    oenginecons.FileLocations.OVIRT_ENGINE_UNINSTALL_DIR,
+                    osetupcons.FileLocations.OVIRT_ENGINE_UNINSTALL_DIR,
                     '*.conf',
                 )
             )

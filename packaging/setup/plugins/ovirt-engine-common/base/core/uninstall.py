@@ -241,7 +241,7 @@ class Plugin(plugin.PluginBase):
                 )
 
         output = os.path.join(
-            osetupcons.FileLocations.OVIRT_SETUP_UNINSTALL_DIR,
+            osetupcons.FileLocations.OVIRT_ENGINE_UNINSTALL_DIR,
             '%s-uninstall.conf' % (
                 datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
             ),

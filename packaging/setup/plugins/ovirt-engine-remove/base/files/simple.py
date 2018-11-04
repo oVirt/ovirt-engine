@@ -191,7 +191,7 @@ class Plugin(plugin.PluginBase):
         self._infos = sorted(
             glob.glob(
                 os.path.join(
-                    osetupcons.FileLocations.OVIRT_SETUP_UNINSTALL_DIR,
+                    osetupcons.FileLocations.OVIRT_ENGINE_UNINSTALL_DIR,
                     '*.conf',
                 )
             )

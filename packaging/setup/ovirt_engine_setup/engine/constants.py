@@ -294,10 +294,6 @@ class FileLocations(object):
         OVIRT_ENGINE_SERVICE_CONFIGD,
         '10-setup-java.conf',
     )
-    OVIRT_ENGINE_UNINSTALL_DIR = os.path.join(
-        OVIRT_ENGINE_SYSCONFDIR,
-        'uninstall.d'
-    )
     OVIRT_ENGINE_EXTENSIONS_DIR = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
         'extensions.d'

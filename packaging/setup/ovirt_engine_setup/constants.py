@@ -87,7 +87,7 @@ class FileLocations(object):
         config.SETUP_LOG,
         'setup',
     )
-    OVIRT_SETUP_SYSCONFDIR = config.SETUP_SYSCONFDIR
+    OVIRT_ENGINE_SYSCONFDIR = config.ENGINE_SYSCONFDIR
     OVIRT_SETUP_DATADIR = config.SETUP_DATADIR
     OVIRT_OVIRT_SETUP_LOG_PREFIX = 'ovirt-engine-setup'
     OVIRT_OVIRT_REMOVE_LOG_PREFIX = 'ovirt-engine-remove'
@@ -96,13 +96,9 @@ class FileLocations(object):
     OVIRT_OVIRT_HEALTH_CHECK_LOG_PREFIX = 'ovirt-engine-health-check'
 
     OVIRT_OVIRT_SETUP_CONFIG_FILE = config.ENGINE_SETUP_CONFIG
-    OVIRT_SETUP_OSINFO_REPOSITORY_DIR = os.path.join(
-        OVIRT_SETUP_SYSCONFDIR,
-        'osinfo.conf.d',
-    )
 
     OVIRT_IPTABLES_EXAMPLE = os.path.join(
-        OVIRT_SETUP_SYSCONFDIR,
+        OVIRT_ENGINE_SYSCONFDIR,
         'iptables.example'
     )
 
@@ -124,7 +120,7 @@ class FileLocations(object):
     )
 
     OVIRT_FIREWALLD_EXAMPLE_DIR = os.path.join(
-        OVIRT_SETUP_SYSCONFDIR,
+        OVIRT_ENGINE_SYSCONFDIR,
         'firewalld'
     )
 
@@ -189,8 +185,8 @@ class FileLocations(object):
         'ovirt-guest-tools-iso',
     )
 
-    OVIRT_SETUP_UNINSTALL_DIR = os.path.join(
-        OVIRT_SETUP_SYSCONFDIR,
+    OVIRT_ENGINE_UNINSTALL_DIR = os.path.join(
+        OVIRT_ENGINE_SYSCONFDIR,
         'uninstall.d'
     )
 
