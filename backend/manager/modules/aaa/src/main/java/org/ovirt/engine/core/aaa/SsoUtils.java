@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
 import org.ovirt.engine.core.common.constants.SessionConstants;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.EnvelopeEncryptDecrypt;
 import org.slf4j.Logger;
@@ -56,7 +57,17 @@ public class SsoUtils {
                             (Collection<ExtMap>) payload.get("group_ids"),
                             loginAsAdmin));
             if (!queryRetVal.getSucceeded()) {
-                throw new RuntimeException(String.format("The user %s is not authorized to perform login", username));
+                if (queryRetVal.getActionReturnValue() == CreateUserSessionsError.NUM_OF_SESSIONS_EXCEEDED) {
+                    throw new RuntimeException(String.format(
+                            "Unable to login user %s@%s because the maximum number of allowed sessions %s is exceeded",
+                            username,
+                            profile,
+                            EngineLocalConfig.getInstance().getInteger("ENGINE_MAX_USER_SESSIONS")));
+                }
+                throw new RuntimeException(String.format(
+                        "The user %s@%s is not authorized to perform login",
+                        username,
+                        profile));
             }
             engineSessionId = queryRetVal.getActionReturnValue();
             if (req != null) {

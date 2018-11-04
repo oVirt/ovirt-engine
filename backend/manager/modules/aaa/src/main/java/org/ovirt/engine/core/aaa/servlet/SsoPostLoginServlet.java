@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.core.aaa.CreateUserSessionsError;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -29,9 +30,14 @@ public class SsoPostLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 9210030009170727847L;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private final int maxUserSessions;
     private boolean loginAsAdmin = false;
     private String postActionUrl;
     private String appScope;
+
+    public SsoPostLoginServlet() {
+        maxUserSessions = EngineLocalConfig.getInstance().getInteger("ENGINE_MAX_USER_SESSIONS");
+    }
 
     @Override
     public void init() throws ServletException {
@@ -101,7 +107,18 @@ public class SsoPostLoginServlet extends HttpServlet {
                                 (Collection<ExtMap>) payload.get("group_ids"),
                                 loginAsAdmin));
                 if (!queryRetVal.getSucceeded() ) {
-                    throw new RuntimeException(String.format("The user %s@%s is not authorized to perform login", username, profile));
+                    if (queryRetVal.getActionReturnValue() == CreateUserSessionsError.NUM_OF_SESSIONS_EXCEEDED) {
+                        throw new RuntimeException(String.format(
+                                "Unable to login user %s@%s because the maximum number of allowed sessions %s is"
+                                        + " exceeded",
+                                username,
+                                profile,
+                                maxUserSessions));
+                    }
+                    throw new RuntimeException(String.format(
+                            "The user %s@%s is not authorized to perform login",
+                            username,
+                            profile));
                 } else {
                     HttpSession httpSession = request.getSession(true);
                     httpSession.setAttribute(
