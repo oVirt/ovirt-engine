@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +30,13 @@ public abstract class AbstractBackendDiskProfilesResource
 
     protected DiskProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> entities) {
         DiskProfiles collection = new DiskProfiles();
-        Map<Guid, Qos> qosMap = new HashMap<>();
+        Map<Guid, List<Qos>> qosMap = new HashMap<>();
         for (org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity : entities) {
             DiskProfile profile = populate(map(entity), entity);
             collection.getDiskProfiles().add(profile);
             if (entity.getQosId() != null) {
-                qosMap.put(entity.getQosId(), profile.getQos());
+                List<Qos> qosList = qosMap.computeIfAbsent(entity.getQosId(), id -> new ArrayList<>());
+                qosList.add(profile.getQos());
             }
         }
 
@@ -48,17 +50,20 @@ public abstract class AbstractBackendDiskProfilesResource
     /**
      * used to set qos's href (requires dc id).
      */
-    private void handleQosDataCenterLinks(Map<Guid, Qos> qosMap) {
+    private void handleQosDataCenterLinks(Map<Guid, List<Qos>> qosMap) {
         if (!qosMap.isEmpty()) {
             List<StorageQos> list = getBackendCollection(
                     StorageQos.class,
                     QueryType.GetAllQosByType,
                     new QosQueryParameterBase(null, QosType.STORAGE));
             for (StorageQos storageQos : list) {
-                Qos qos = qosMap.get(storageQos.getId());
-                if (qos != null) {
-                    qos.setDataCenter(new DataCenter());
-                    qos.getDataCenter().setId(storageQos.getStoragePoolId().toString());
+                List<Qos> qosList = qosMap.get(storageQos.getId());
+                if (qosList != null) {
+                    DataCenter dc = new DataCenter();
+                    dc.setId(storageQos.getStoragePoolId().toString());
+                    for (Qos qos : qosList) {
+                        qos.setDataCenter(dc);
+                    }
                 }
             }
         }
