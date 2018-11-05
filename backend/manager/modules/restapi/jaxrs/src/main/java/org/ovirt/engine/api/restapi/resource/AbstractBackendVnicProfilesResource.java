@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.VnicProfile;
@@ -26,7 +27,8 @@ public abstract class AbstractBackendVnicProfilesResource
         super(VnicProfile.class, org.ovirt.engine.core.common.businessentities.network.VnicProfile.class);
     }
 
-    protected VnicProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities) {
+    protected VnicProfiles mapCollection(List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> entities,
+            Class<? extends BaseResource> suggestedParentType) {
         VnicProfiles collection = new VnicProfiles();
         Map<Guid, Qos> qosMap = new HashMap<>();
         for (org.ovirt.engine.core.common.businessentities.network.VnicProfile entity : entities) {
@@ -39,7 +41,7 @@ public abstract class AbstractBackendVnicProfilesResource
 
         handleQosDataCenterLinks(qosMap);
         for (VnicProfile vnicProfile : collection.getVnicProfiles()) {
-            addLinks(vnicProfile);
+            addLinks(vnicProfile, suggestedParentType);
         }
         return collection;
     }
@@ -76,7 +78,7 @@ public abstract class AbstractBackendVnicProfilesResource
 
     protected abstract List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> getVnicProfilesCollection();
 
-    protected VnicProfiles performList() {
-        return mapCollection(getVnicProfilesCollection());
+    protected VnicProfiles performList(Class<? extends BaseResource> suggestedParentType) {
+        return mapCollection(getVnicProfilesCollection(), suggestedParentType);
     }
 }

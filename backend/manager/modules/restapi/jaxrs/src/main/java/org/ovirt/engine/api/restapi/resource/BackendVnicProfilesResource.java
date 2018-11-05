@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.VnicProfiles;
 import org.ovirt.engine.api.resource.VnicProfileResource;
 import org.ovirt.engine.api.resource.VnicProfilesResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -17,7 +18,7 @@ public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesReso
 
     @Override
     public VnicProfiles list() {
-        return performList();
+        return performList(LinkHelper.NO_PARENT);
     }
 
     @Override
