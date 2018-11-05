@@ -325,6 +325,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.storage.StorageType.GLANCE;
         case CINDER:
             return org.ovirt.engine.core.common.businessentities.storage.StorageType.CINDER;
+        case MANAGED_BLOCK_STORAGE:
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.MANAGED_BLOCK_STORAGE;
         default:
             return null;
         }
@@ -369,6 +371,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.StorageDomainType.Image;
         case VOLUME:
             return org.ovirt.engine.core.common.businessentities.StorageDomainType.Volume;
+        case MANAGED_BLOCK_STORAGE:
+            return org.ovirt.engine.core.common.businessentities.StorageDomainType.ManagedBlockStorage;
         default:
             return null;
         }

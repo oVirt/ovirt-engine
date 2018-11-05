@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 
 public class AddManagedBlockStorageDomainParameters extends StorageDomainManagementParameter {
+    public static final String VOLUME_BACKEND_NAME = "volume_backend_name";
 
     private Map<String, Object> driverOptions;
 

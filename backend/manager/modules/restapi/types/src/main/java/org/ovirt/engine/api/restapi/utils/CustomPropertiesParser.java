@@ -80,6 +80,25 @@ public class CustomPropertiesParser {
     }
 
     /**
+     * Get a map containing the key:value pairs from the given Properties object.
+     *
+     * @param properties
+     *            The key:value pairs.
+     * @return A newly-created map containing the key:value pairs.
+     */
+    public static Map<String, Object> toObjectsMap(Properties properties) {
+        Map<String, Object> res = new HashMap<>();
+
+        if (properties != null) {
+            for (Property property : properties.getProperties()) {
+                res.put(property.getName(), property.getValue());
+            }
+        }
+
+        return res;
+    }
+
+    /**
      * Create a Properties object from a map containing key:value pairs.
      *
      * @param properties

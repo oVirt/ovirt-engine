@@ -3,8 +3,10 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.getLinksToExclude;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
@@ -15,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LogicalUnits;
+import org.ovirt.engine.api.model.Properties;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomains;
@@ -23,7 +26,9 @@ import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.restapi.types.StorageDomainMapper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -114,6 +119,13 @@ public class BackendStorageDomainsResource
             throw e;
         }
         return response;
+    }
+
+    private Response addCinderDomain(ActionType action,
+            StorageDomainStatic entity,
+            String driverName,
+            Properties driverOptions) {
+        return performCreate(action, getCinderAddParams(entity, driverName, driverOptions), ID_RESOLVER);
     }
 
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
@@ -262,16 +274,17 @@ public class BackendStorageDomainsResource
         HostStorage storageConnectionFromUser = storageDomain.getStorage();
         Guid hostId = getHostId(storageDomain);
         StorageServerConnections cnx = null;
-
-        if (!storageConnectionFromUser.isSetId()) {
-            validateParameters(storageDomain, "storage.type");
-            cnx = mapToCnx(storageDomain);
-            if (cnx.getStorageType().isFileDomain()) {
-                validateParameters(storageConnectionFromUser, "path");
+        if (storageConnectionFromUser.getType() != org.ovirt.engine.api.model.StorageType.MANAGED_BLOCK_STORAGE) {
+            if (!storageConnectionFromUser.isSetId()) {
+                validateParameters(storageDomain, "storage.type");
+                cnx = mapToCnx(storageDomain);
+                if (cnx.getStorageType().isFileDomain()) {
+                    validateParameters(storageConnectionFromUser, "path");
+                }
+            } else {
+                cnx = getStorageServerConnection(storageConnectionFromUser.getId());
+                storageDomain.getStorage().setType(mapType(cnx.getStorageType()));
             }
-        } else {
-            cnx = getStorageServerConnection(storageConnectionFromUser.getId());
-            storageDomain.getStorage().setType(mapType(cnx.getStorageType()));
         }
         StorageDomainStatic entity = mapToStatic(storageDomain);
         Response resp = null;
@@ -307,7 +320,10 @@ public class BackendStorageDomainsResource
             resp = addDomain(ActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case MANAGED_BLOCK_STORAGE:
-            resp = addDomain(ActionType.AddManagedBlockStorageDomain, storageDomain, entity, hostId, cnx);
+            resp = addCinderDomain(ActionType.AddManagedBlockStorageDomain,
+                    entity,
+                    storageDomain.getStorage().getDriverName(),
+                    storageDomain.getStorage().getDriverOptions());
             break;
         default:
             break;
@@ -528,6 +544,16 @@ public class BackendStorageDomainsResource
         params.setVdsId(hostId);
         params.setLunIds(lunIds);
         params.setForce(force);
+        return params;
+    }
+
+    private AddManagedBlockStorageDomainParameters getCinderAddParams(StorageDomainStatic entity, String driverName, Properties driverOptions) {
+        AddManagedBlockStorageDomainParameters params = new AddManagedBlockStorageDomainParameters();
+        Map<String, Object> driverOptionsMap = new HashMap<>(CustomPropertiesParser.toObjectsMap(driverOptions));
+        driverOptionsMap.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, driverName);
+        params.setDriverOptions(driverOptionsMap);
+        entity.setStorage(Guid.Empty.toString());
+        params.setStorageDomain(entity);
         return params;
     }
 
