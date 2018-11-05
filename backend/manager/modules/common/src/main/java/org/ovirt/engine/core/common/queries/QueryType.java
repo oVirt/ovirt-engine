@@ -393,7 +393,7 @@ public enum QueryType implements Serializable {
     GetAllRelevantQuotasForCluster(QueryAuthType.User),
 
     // Jobs
-    GetJobByJobId,
+    GetJobByJobId(QueryAuthType.User),
     GetJobsByCorrelationId,
     GetJobsByOffset,
     GetAllJobs,
