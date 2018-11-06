@@ -951,7 +951,7 @@ public class VmHandler implements BackendService {
     // FIXME: currently oVirt-ToolsSetup is not present in app_list when it does
     // ISO_VERSION_PATTERN should address this pattern as well as the TOOLS_PATTERN
     // if the name will be different.
-    private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhev-toolssetup_(\\d\\.\\d\\_\\d).*");
+    private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhe?v-toolssetup_(\\d\\.\\d\\_\\d).*");
 
     private void updateGuestAgentStatus(VM vm, GuestAgentStatus guestAgentStatus) {
         if (vm.getGuestAgentStatus() != guestAgentStatus) {
@@ -994,24 +994,23 @@ public class VmHandler implements BackendService {
     }
 
     /**
-     * iso file name that we are looking for: RHEV_toolsSetup_x.x_x.iso returning latest version only: xxx (ie 3.1.2)
+     * iso file name that we are looking for: RHEV_toolsSetup_x.x_x.iso or RHV_toolsSetup_x.x_x.iso
+     * returning latest version only: x.x.x (ie 3.1.2)
      *
      * @param isoList
      *            list of iso file names
      * @return latest iso version or null if no iso tools was found
      */
-    private static String getLatestGuestToolsVersion(Set<String> isoList) {
+    protected static String getLatestGuestToolsVersion(Set<String> isoList) {
         String latestVersion = null;
         for (String iso: isoList) {
-            if (iso.toLowerCase().contains("rhev-toolssetup")) {
-                Matcher m = ISO_VERSION_PATTERN.matcher(iso.toLowerCase());
-                if (m.matches() && m.groupCount() > 0) {
-                    String isoVersion = m.group(1).replace('_', '.');
-                    if (latestVersion == null) {
-                        latestVersion = isoVersion;
-                    } else if (latestVersion.compareTo(isoVersion) < 0) {
-                        latestVersion = isoVersion;
-                    }
+            Matcher m = ISO_VERSION_PATTERN.matcher(iso.toLowerCase());
+            if (m.matches() && m.groupCount() > 0) {
+                String isoVersion = m.group(1).replace('_', '.');
+                if (latestVersion == null) {
+                    latestVersion = isoVersion;
+                } else if (latestVersion.compareTo(isoVersion) < 0) {
+                    latestVersion = isoVersion;
                 }
             }
         }
