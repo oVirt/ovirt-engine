@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,6 +200,19 @@ public class VmHandlerTest {
 
         // Then
         assertTrue(updateIsValid, "Update should be valid for different number of sockets on a running VM");
+    }
+
+    @Test
+    public void testGetLatestGuestToolsVersion() {
+        Set<String> isoNames = new HashSet<>();
+        isoNames.add("Rhv-toolsSetup_4.2_8.iso");
+        isoNames.add("Rhev-toolSsetup_4.2_5.iso");
+
+        // When
+        String latestVersion = VmHandler.getLatestGuestToolsVersion(isoNames);
+
+        // Then
+        assertEquals(latestVersion, "4.2.8");
     }
 
 }
