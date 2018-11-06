@@ -1387,7 +1387,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
                                         list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
 
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "performance.strict-o-direct", "on")));//$NON-NLS-1$ $NON-NLS-2$
+
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "network.remote-dio", "off")));//$NON-NLS-1$ $NON-NLS-2$
+
+                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "cluster.granular-entry-heal", "enable")));//$NON-NLS-1$ $NON-NLS-2$
 
                                         final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "30");//$NON-NLS-1$//$NON-NLS-2$
                                         if (volume.getOptions().stream().noneMatch
