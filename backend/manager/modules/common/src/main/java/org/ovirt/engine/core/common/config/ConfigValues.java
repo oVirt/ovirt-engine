@@ -1616,6 +1616,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     GlusterVolumeFreeSpaceThresholdInPercent,
 
+    @TypeConverterAttribute(Integer.class)
+    ForemanResponsePageSize,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

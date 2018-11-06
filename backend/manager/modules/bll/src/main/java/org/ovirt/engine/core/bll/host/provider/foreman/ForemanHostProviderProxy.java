@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.ErrataFilter;
@@ -35,6 +37,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private static final String JSON_FORMAT = "format=json";
     private static final String API_VERSION_ENTRY_POINT = API_ENTRY_POINT + "/status";
     private static final String HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/hosts";
+    private static final String LARGE_PAGE_SIZE = "&per_page=%s";
 
     private static final String ALL_HOSTS_QUERY = HOSTS_ENTRY_POINT + "?" + JSON_FORMAT;
     private static final String SEARCH_SECTION_FORMAT = "search=%1$s";
@@ -48,6 +51,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private static final String DISCOVERED_HOSTS = "/discovered_hosts";
 
     private static final String DISCOVERED_HOSTS_ENTRY_POINT = API_ENTRY_POINT + DISCOVERED_HOSTS;
+    private static final String DISCOVERED_HOSTS_QUERY = DISCOVERED_HOSTS_ENTRY_POINT + "?" + JSON_FORMAT;
     private static final Version KATELLO_V3_VERSION = new Version("1.11");
 
 
@@ -274,29 +278,66 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         return ret;
     }
 
+    private String buildLimitedPageSizeRequestUrl(String baseUrl) {
+        String PAGE_SIZE = String.valueOf(Config.<Integer> getValue(ConfigValues.ForemanResponsePageSize));
+        return baseUrl + String.format(LARGE_PAGE_SIZE, PAGE_SIZE);
+    }
+
+    /**
+     *  Retrieves list of hosts from Foreman responding to the request URL:
+     *  /api/v2/hosts?format=json&per_page=9999
+     *
+     * @return a list of hosts
+     */
     @Override
     public List<VDS> getAll() {
-        return runHostListMethod(ALL_HOSTS_QUERY);
+        return runHostListMethod(buildLimitedPageSizeRequestUrl(ALL_HOSTS_QUERY));
     }
 
+    /**
+     *  Retrieves list of filtered hosts from Foreman responding to the request URL:
+     *  /api/v2/hosts?search=FILTER&format=json&per_page=9999
+     *
+     * @param filter The filter for hosts
+     * @return a list of filtered hosts
+     */
     @Override
     public List<VDS> getFiltered(String filter) {
-        return runHostListMethod(HOSTS_ENTRY_POINT + String.format(SEARCH_QUERY_FORMAT, filter));
+        String baseUrl = HOSTS_ENTRY_POINT + String.format(SEARCH_QUERY_FORMAT, filter);
+        return runHostListMethod(buildLimitedPageSizeRequestUrl(baseUrl));
     }
 
+    /**
+     *  Retrieves list of discovered hosts from Foreman responding to the request URL:
+     *  /api/v2/discovered_hosts?format=json&per_page=9999
+     *
+     * @return a list of discovered hosts
+     */
     @Override
     public List<ExternalDiscoveredHost> getDiscoveredHosts() {
-        return runDiscoveredHostListMethod(DISCOVERED_HOSTS_ENTRY_POINT);
+        return runDiscoveredHostListMethod(buildLimitedPageSizeRequestUrl(DISCOVERED_HOSTS_QUERY));
     }
 
+    /**
+     *  Retrieves list of host groups from Foreman responding to the request URL:
+     *  /api/v2/hostgroups?format=json&per_page=9999
+     *
+     * @return a list of host groups
+     */
     @Override
     public List<ExternalHostGroup> getHostGroups() {
-        return runHostGroupListMethod(HOST_GROUPS_QUERY);
+        return runHostGroupListMethod(buildLimitedPageSizeRequestUrl(HOST_GROUPS_QUERY));
     }
 
+    /**
+     *  Retrieves list of compute resource from Foreman responding to the request URL:
+     *  /api/v2/compute_resources?search=oVirt%7CRHEV&per_page=9999
+     *
+     * @return a list of compute resources
+     */
     @Override
     public List<ExternalComputeResource> getComputeResources() {
-        return runComputeResourceMethod(COMPUTE_RESOURCES_HOSTS_ENTRY_POINT);
+        return runComputeResourceMethod(buildLimitedPageSizeRequestUrl(COMPUTE_RESOURCES_HOSTS_ENTRY_POINT));
     }
 
     @Override
