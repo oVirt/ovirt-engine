@@ -905,9 +905,11 @@ public class VmAnalyzer {
                 vdsmVm.getVmStatistics(),
                 getVmManager().getNumOfCpus(),
                 updateMigrationProgress);
-        if (dbVm.getBootTime() != null) {
+        // Apparently, users want to see the time that the guest is running rather than that of the VM and therefore
+        // it needs to be cleared when the guest reboots. So let's keep using the value that is reported by VDSM.
+        /*if (dbVm.getBootTime() != null) {
             statistics.setElapsedTime((System.currentTimeMillis() - dbVm.getBootTime().getTime()  - dbVm.getDowntime()) / 1000.0);
-        }
+        }*/
     }
 
     private void updateDiskImageDynamics() {
