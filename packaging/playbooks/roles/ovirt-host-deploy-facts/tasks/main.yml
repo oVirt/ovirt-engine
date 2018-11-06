@@ -9,3 +9,10 @@
 - name: Set facts
   set_fact:
     host_deploy_vdsm_version: "{{ vdsm_version.stdout }}"
+    ansible_python_interpreter : "{{ '/usr/bin/python3' if (ansible_distribution == 'Fedora') or (
+        (
+            ansible_distribution|map(match, ['RedHat','CentOS'])
+        ) and (
+            ansible_distribution_major_version|int >= 8
+        )
+    ) else '/usr/bin/python2' }}"
