@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
-import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
@@ -17,6 +16,8 @@ import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.sshd.common.config.keys.KeyUtils;
+import org.apache.sshd.common.digest.BuiltinDigests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,34 +213,7 @@ public class OpenSSHUtils {
             digest = "SHA-256";
         }
 
-        try {
-            MessageDigest md = MessageDigest.getInstance(digest);
-            md.update(getKeyBytes(key));
-
-            String fingerprint;
-            if (MD5.equals(digest)) {
-                StringBuilder s = new StringBuilder();
-                s.append(MD5);
-                for (byte b : md.digest()) {
-                    s.append(':');
-                    s.append(String.format("%02x", b));
-                }
-                fingerprint = s.toString();
-            } else {
-                fingerprint = String.format(
-                        "%s:%s",
-                        digest.toUpperCase().replace("-", ""),
-                        new Base64(0).encodeToString(md.digest()).replaceAll("=", ""));
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Fingerprint: {}", fingerprint);
-            }
-
-            return fingerprint;
-        } catch (GeneralSecurityException e) {
-            throw new RuntimeException(e);
-        }
+        return KeyUtils.getFingerPrint(BuiltinDigests.fromAlgorithm(digest), key);
     }
 
     public static final String getKeyFingerprint(final PublicKey key) throws Exception {
