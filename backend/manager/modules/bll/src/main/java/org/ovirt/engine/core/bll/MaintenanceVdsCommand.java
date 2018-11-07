@@ -160,18 +160,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vm.getId());
-        ArrayList<Guid> dedicatedList = new ArrayList<>(vm.getDedicatedVmForVdsList());
-        if (dedicatedList != null && !dedicatedList.isEmpty()) {
-            // From the list remove the host the VM is currently running on.
-            dedicatedList.remove(vm.getRunOnVds());
-            // If the list of hosts the host can run on is empty there is no need to invoke MigrateVM
-            if (dedicatedList.isEmpty()) {
-                setVm(vm);
-                auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NO_VDS_TO_MIGRATE_TO);
-                return false;
-            }
-            parameters.setInitialHosts(dedicatedList);
-        }
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
         return runInternalAction(ActionType.MigrateVm,
                 parameters,
