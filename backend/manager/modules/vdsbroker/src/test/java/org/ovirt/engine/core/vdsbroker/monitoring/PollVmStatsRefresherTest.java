@@ -56,12 +56,12 @@ public class PollVmStatsRefresherTest {
         return new Object[][] {
                 // host status              is monitoring needed
                 { Up,                       true},
-                { NonResponsive,            true },
+                { NonResponsive,            false },
                 { Error,                    true },
                 { NonOperational,           true },
                 { PreparingForMaintenance,  true },
-                { Initializing,             true },
-                { Connecting,               true },
+                { Initializing,             false },
+                { Connecting,               false },
                 { Unassigned,               false },
                 { Down,                     false },
                 { Maintenance,              false },
