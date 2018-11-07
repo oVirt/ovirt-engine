@@ -292,6 +292,27 @@ class CoreEnv(object):
     ANSWER_FILE = 'OVESETUP_CORE/answerFile'
     DEVELOPER_MODE = 'OVESETUP_CORE/developerMode'
     UNINSTALL_UNREMOVABLE_FILES = 'OVESETUP_CORE/uninstallUnremovableFiles'
+
+    # Information about files that were written by previous engine-setup runs
+    # dict of filename: {
+    #   hash type ('md5' or TODO 'sha256'): hash value,
+    #   'unremovable': True or False,
+    #   'changed': True or False,
+    #   'groups': set of: [group_id] . There is also a group 'unremovable'.
+    # }
+    UNINSTALL_FILES_INFO = 'OVESETUP_CORE/uninstallFilesInfo'
+
+    # Information about files that were edited by previous engine-setup runs
+    # dict of: filename: [ list of: { dict of: 'added' or 'removed': line } ]
+    UNINSTALL_LINES_INFO = 'OVESETUP_CORE/uninstallLinesInfo'
+
+    # List of the config files from which above information was parsed
+    UNINSTALL_UNINSTALL_FILES = 'OVESETUP_CORE/uninstallUninstallFiles'
+
+    # Descriptions of uninstall groups
+    # dict of group_id: (localized) description
+    UNINSTALL_GROUPS_DESCRIPTIONS = 'OVESETUP_CORE/uninstallGroupsDescriptions'
+
     GENERATE_POSTINSTALL = 'OVESETUP_CORE/generatePostInstall'
     GENERATE_STANDARD_ANSWERFILE = 'OVESETUP_CORE/generateStandardAnswerfile'
     FILE_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_FILE_GROUP/'
