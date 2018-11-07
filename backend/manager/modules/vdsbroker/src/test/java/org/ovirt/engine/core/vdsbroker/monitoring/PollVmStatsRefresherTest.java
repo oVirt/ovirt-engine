@@ -53,12 +53,12 @@ public class PollVmStatsRefresherTest {
         return Stream.of(
                 // host status              is monitoring needed
                 Arguments.of(Up,                       true),
-                Arguments.of(NonResponsive,            true),
+                Arguments.of(NonResponsive,            false),
                 Arguments.of(Error,                    true),
                 Arguments.of(NonOperational,           true),
                 Arguments.of(PreparingForMaintenance,  true),
-                Arguments.of(Initializing,             true),
-                Arguments.of(Connecting,               true),
+                Arguments.of(Initializing,             false),
+                Arguments.of(Connecting,               false),
                 Arguments.of(Unassigned,               false),
                 Arguments.of(Down,                     false),
                 Arguments.of(Maintenance,              false),

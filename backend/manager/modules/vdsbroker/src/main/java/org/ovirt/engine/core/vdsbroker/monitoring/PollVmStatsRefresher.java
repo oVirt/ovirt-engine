@@ -84,11 +84,6 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         case Error:
         case NonOperational:
         case PreparingForMaintenance:
-        // FIXME The below statuses are probably not relevant
-        // for monitoring but it's currently not final.
-        case NonResponsive:
-        case Initializing:
-        case Connecting:
             return true;
         }
     }
