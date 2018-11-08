@@ -31,6 +31,7 @@ import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
+import org.apache.sshd.common.signature.SignatureRSA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,17 @@ public class SSHClient implements Closeable {
      * @return client.
      */
     SshClient createSshClient() {
-        return SshClient.setUpDefaultClient();
+        SshClient sshClient = SshClient.setUpDefaultClient();
+
+        /*
+         * FIXME: We need to enforce only RSA signatures, because all our code around fingerprints assumes only RSA
+         * public keys. This limitation can be removed when we will save all available host public keys into database
+         * and perform host key verification by comparing received key with keys in our database.
+         */
+        sshClient.setSignatureFactories(Arrays.asList(
+                new SignatureRSA.Factory()));
+
+        return sshClient;
     }
 
     /**
