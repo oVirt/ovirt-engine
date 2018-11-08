@@ -48,6 +48,26 @@ From `server.log`
 ```
 See `contrib/httpdumper.jbosscli` for more details.
 
+=== thread-dump.sh
+The script thread-dump.sh allows to run multiple thread dumps with specified
+delay in between each of the dumps. It automacically detects if the engine is
+running and its PID. It then sends kill -3 to the process with relevant pid.
+
+The script provides two options to customize thread dumps:
+
+```bash
+$ ./thread-dump.sh -h
+
+    USAGE
+        ./thread-dump.sh [DUMP_COUNT] [DUMP_DELAY]
+
+        DUMP_COUNT
+            Number of consequent thread dump collections
+
+        DUMP_DELAY
+            Delay in seconds between each thread dump
+```
+
 = TODO
 - should we create an rpm for contrib - ovirt-engine-contrib?
  or just install with the rpm under /.../lib/ovirt-engine/contrib
