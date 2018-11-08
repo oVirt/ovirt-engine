@@ -92,6 +92,11 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected void executeCommand() {
+        if (isManagedBlockStorageDomain()) {
+            activateManageBlockStorageDomain();
+            return;
+        }
+
         if (isCinderStorageDomain()) {
             activateCinderStorageDomain();
             return;
@@ -139,6 +144,14 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     private boolean isAllHostConnectionFailed(List<Pair<Guid, Boolean>> hostsConnectionResults) {
         return hostsConnectionResults.stream().map(Pair::getSecond).noneMatch(Boolean.TRUE::equals);
+    }
+
+    private void activateManageBlockStorageDomain() {
+        StoragePoolIsoMap map = storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
+                getParameters().getStoragePoolId()));
+        map.setStatus(StorageDomainStatus.Active);
+        storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
+        setSucceeded(true);
     }
 
     private void activateCinderStorageDomain() {

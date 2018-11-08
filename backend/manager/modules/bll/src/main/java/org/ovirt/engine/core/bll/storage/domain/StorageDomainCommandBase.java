@@ -433,6 +433,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getStorageDomain().getStorageType().isCinderDomain();
     }
 
+    protected boolean isManagedBlockStorageDomain() {
+        return getStorageDomain().getStorageType().isManagedBlockStorage();
+    }
+
     protected EventQueue getEventQueue() {
         return eventQueue;
     }

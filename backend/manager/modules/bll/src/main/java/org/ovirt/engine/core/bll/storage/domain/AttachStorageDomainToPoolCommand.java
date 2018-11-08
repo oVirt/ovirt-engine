@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationVa
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -92,6 +93,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected void executeCommand() {
+        if (isManagedBlockStorageDomain()) {
+            handleManagedBlockStorageDomain();
+            return;
+        }
         if (isCinderStorageDomain()) {
             handleCinderDomain();
             return;
@@ -218,6 +223,17 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         }
     }
 
+    private void handleManagedBlockStorageDomain() {
+        StorageDomainStatus status = getParameters().getActivate() ? StorageDomainStatus.Active : StorageDomainStatus.Maintenance;
+        StoragePoolIsoMap storagePoolIsoMap =
+                new StoragePoolIsoMap(getStorageDomain().getId(),
+                        getParameters().getStoragePoolId(),
+                        status);
+        storagePoolIsoMapDao.save(storagePoolIsoMap);
+
+        setSucceeded(true);
+    }
+
     private boolean isAllHostConnectionFailed(List<Pair<Guid, Boolean>> hostsConnectionResults) {
         return hostsConnectionResults.stream().map(Pair::getSecond).noneMatch(Boolean.TRUE::equals);
     }
@@ -285,6 +301,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
         if (!validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(getStoragePool().getCompatibilityVersion()))) {
             return false;
+        }
+        if (getStorageDomain().getStorageType().isManagedBlockStorage() &&
+                !FeatureSupported.isManagedBlockDomainSupported(getStoragePool().getCompatibilityVersion())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_ACTIVATE_MANAGED_BLOCK_STORAGE_DOMAIN);
         }
         if (spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()) {
             return checkMasterDomainIsUp();

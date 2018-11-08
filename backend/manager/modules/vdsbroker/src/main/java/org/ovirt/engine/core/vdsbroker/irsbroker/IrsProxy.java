@@ -378,6 +378,7 @@ public class IrsProxy {
                 if (domainInDb.getStorageDomainType() != StorageDomainType.Master
                         && domainInDb.getStatus() != StorageDomainStatus.Locked
                         && !domainInDb.getStorageType().isCinderDomain()
+                        && !domainInDb.getStorageType().isManagedBlockStorage()
                         && !domainsInVds.contains(domainInDb.getId())) {
                     // domain not attached to pool anymore
                     storagePoolIsoMapDao
