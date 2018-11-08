@@ -39,7 +39,22 @@
 #
 # CUSTOMIZATION-END
 #
+
+#
+# Automatic byte compiling outside of /usr/lib(64)?/pythonX.Y/ should be used
+# on Fedora 28+ and EL8 [1], but it would require too much work to support
+# on EL7, so it's turned off
+#
+# [1] https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation#How_we_are_changing_it
+#
+%if 0%{?fedora} || 0%{?rhel} >= 8
+%global use_python_bytecompile 1
 %global _python_bytecompile_extra 0
+%else
+%global use_python_bytecompile 0
+%global _python_bytecompile_extra 1
+%endif
+
 
 # Do not repack .jar files, as it takes a long time and doesn't have a
 # real benefit:
@@ -732,14 +747,23 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 
 # Compile python files
 %if 0%{?with_python2}
+
+%if 0%{?use_python_bytecompile}
 %py_byte_compile %{__python2} %{buildroot}%{engine_data}/
 %py_byte_compile %{__python2} %{buildroot}%{_libexecdir}/
+%endif
+
 %{__python2} -m compileall -f -q -d "%{python2_sitelib}" "%{buildroot}%{python2_sitelib}"
 %{__python2} -O -m compileall -f -q -d "%{python2_sitelib}" "%{buildroot}%{python2_sitelib}"
 %endif
+
 %if 0%{?with_python3}
+
+%if 0%{?use_python_bytecompile}
 %py_byte_compile %{__python3} %{buildroot}%{_libexecdir}/
 %py_byte_compile %{__python3} %{buildroot}%{engine_data}/
+%endif
+
 %{__python3} -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
 %{__python3} -O -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
 %endif
@@ -1124,9 +1148,13 @@ fi
 #
 # engine-host-update.py tool
 #
+%if 0%{?use_python_bytecompile}
 %{engine_data}/bin/engine-host-update.*
 %if 0%{with_python3}
 %{engine_data}/bin/__pycache__/engine-host-update.*
+%endif
+%else
+%{engine_data}/bin/engine-host-update.py
 %endif
 
 %files setup-base
@@ -1152,9 +1180,13 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-setup
 %{engine_data}/setup/bin/ovirt-engine-setup.env
 %{engine_data}/setup/ovirt_engine_setup/*.py*
+
+%if 0%{?use_python_bytecompile}
 %if 0%{with_python3}
 %{engine_data}/setup/ovirt_engine_setup/__pycache__/
 %endif
+%endif
+
 %{engine_data}/setup/plugins/*/base/
 %{engine_state}/backups/
 %{engine_state}/setup/
@@ -1289,10 +1321,16 @@ fi
 %{_bindir}/engine-backup
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
+
+%if 0%{?use_python_bytecompile}
 %{engine_data}/bin/engine-migrate-he.*
 %if 0%{with_python3}
 %{engine_data}/bin/__pycache__/engine-migrate-he.*
 %endif
+%else
+%{engine_data}/bin/engine-migrate-he.py
+%endif
+
 %{engine_backup_default_dir}
 %{engine_backup_log_default_dir}
 
