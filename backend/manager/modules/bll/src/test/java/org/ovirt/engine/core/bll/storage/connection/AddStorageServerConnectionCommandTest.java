@@ -45,7 +45,7 @@ public class AddStorageServerConnectionCommandTest extends
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -60,7 +60,7 @@ public class AddStorageServerConnectionCommandTest extends
                         "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newISCSIConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newISCSIConnection, null);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -82,9 +82,12 @@ public class AddStorageServerConnectionCommandTest extends
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
-        ValidateTestUtils.runAndAssertValidateFailure(command,
+        String guid = Guid.newGuid().toString();
+        doReturn(guid).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
+        doReturn("storage_domain_01").when(command).getStorageNameByConnectionId(guid);
+        List<String> messages = ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+        assertTrue(messages.contains("$connectionId " + guid) && messages.contains("$storageDomainName storage_domain_01"));
     }
 
     @Test
@@ -96,7 +99,7 @@ public class AddStorageServerConnectionCommandTest extends
                         "timeo=30");
         newPosixConnection.setId("");
         parameters.setStorageServerConnection(newPosixConnection);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         Pair<Boolean, Integer> connectResult = new Pair(true, 0);
         doReturn(connectResult).when(command).connectHostToStorage();
         doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getId());
@@ -116,7 +119,7 @@ public class AddStorageServerConnectionCommandTest extends
         newPosixConnection.setId("");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getId());
         doNothing().when(command).saveConnection(newPosixConnection);
 
@@ -134,7 +137,7 @@ public class AddStorageServerConnectionCommandTest extends
         newPosixConnection.setId("");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(null);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getId());
         doNothing().when(command).saveConnection(newPosixConnection);
 
@@ -152,7 +155,6 @@ public class AddStorageServerConnectionCommandTest extends
         newPosixConnection.setId(Guid.newGuid().toString());
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
     }
@@ -180,8 +182,8 @@ public class AddStorageServerConnectionCommandTest extends
        existingConn.setId(Guid.newGuid().toString());
 
        when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(existingConn);
-       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
-       assertTrue(isExists);
+       String isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
+       assertTrue(!isExists.isEmpty());
     }
 
     @Test
@@ -196,8 +198,8 @@ public class AddStorageServerConnectionCommandTest extends
         when(storageConnDao.getAllConnectableStorageSeverConnection(storagePoolId)).thenReturn(connections);
         when(storageConnDao.getAllForStorage(newLocalConnection.getConnection())).thenReturn(connections);
 
-        boolean isExists = command.isConnWithSameDetailsExists(newLocalConnection, storagePoolId);
-        assertTrue(isExists);
+        String isExists = command.isConnWithSameDetailsExists(newLocalConnection, storagePoolId);
+        assertTrue(!isExists.isEmpty());
     }
 
     @Test
@@ -213,8 +215,8 @@ public class AddStorageServerConnectionCommandTest extends
         when(storageConnDao.getAllConnectableStorageSeverConnection(existingLocalConnectionStoragePoolId)).thenReturn(connections);
         when(storageConnDao.getAllForStorage(newLocalConnection.getConnection())).thenReturn(connections);
 
-        boolean isExists = command.isConnWithSameDetailsExists(newLocalConnection, newLocalConnectionStoragePoolId);
-        assertFalse(isExists);
+        String isExists = command.isConnWithSameDetailsExists(newLocalConnection, newLocalConnectionStoragePoolId);
+        assertFalse(!isExists.isEmpty());
     }
 
     @Override

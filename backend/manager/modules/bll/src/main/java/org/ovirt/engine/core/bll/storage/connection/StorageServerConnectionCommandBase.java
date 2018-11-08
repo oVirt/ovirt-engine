@@ -69,7 +69,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         return storageDomains.get(0).getStoragePoolId();
     }
 
-    protected boolean isConnWithSameDetailsExists(StorageServerConnections connection, Guid storagePoolId) {
+    protected String isConnWithSameDetailsExists(StorageServerConnections connection, Guid storagePoolId) {
         List<StorageServerConnections> connections = null;
         if (connection.getStorageType() == StorageType.LOCALFS) {
             List<StorageServerConnections> connectionsForPool = storagePoolId == null ? Collections.emptyList() :
@@ -86,9 +86,21 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
                             : Collections.emptyList();
         }
 
-        boolean isDuplicateConnExists = connections.size() > 1
-                || (connections.size() == 1 && !connections.get(0).getId().equalsIgnoreCase(connection.getId()));
-        return isDuplicateConnExists;
+        return (connections != null && connections.size() > 0 &&
+                connections.get(0) != null &&
+                connections.get(0).getId() != null) ? connections.get(0).getId() : "";
+    }
+
+    protected String getStorageNameByConnectionId(String connectionId) {
+        List<StorageDomain> storageDomainsByConnId = getStorageDomainsByConnId(connectionId);
+
+        if (storageDomainsByConnId != null && storageDomainsByConnId.size() > 0) {
+            if (storageDomainsByConnId.get(0).getStorageStaticData() != null) {
+                return storageDomainsByConnId.get(0).getStorageStaticData().getName();
+            }
+        }
+
+        return "";
     }
 
     protected boolean checkIsConnectionFieldEmpty(StorageServerConnections connection) {

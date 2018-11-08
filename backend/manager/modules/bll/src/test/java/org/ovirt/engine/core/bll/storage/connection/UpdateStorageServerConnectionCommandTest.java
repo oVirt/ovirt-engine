@@ -193,9 +193,12 @@ public class UpdateStorageServerConnectionCommandTest extends
         conn2.setConnection(newNFSConnection.getConnection());
         conn2.setId(Guid.newGuid().toString());
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
-        doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
-        ValidateTestUtils.runAndAssertValidateFailure(command,
+        String guid = Guid.newGuid().toString();
+        doReturn(guid).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
+        doReturn("storage_domain_01").when(command).getStorageNameByConnectionId(guid);
+        List<String> messages = ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
+        assertTrue(messages.contains("$connectionId " + guid) && messages.contains("$storageDomainName storage_domain_01"));
     }
 
     @Test
@@ -221,7 +224,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
         initDomainListForConnection(newNFSConnection.getId(), domain1, domain2);
 
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         List<String> messages =
                 ValidateTestUtils.runAndAssertValidateFailure(command,
                         EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
@@ -246,7 +249,7 @@ public class UpdateStorageServerConnectionCommandTest extends
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
 
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
     }
@@ -419,7 +422,7 @@ public class UpdateStorageServerConnectionCommandTest extends
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
 
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -455,7 +458,7 @@ public class UpdateStorageServerConnectionCommandTest extends
         initDomainListForConnection(newNFSConnection.getId(), domain1);
 
         when(storageConnDao.get(newNFSConnection.getId())).thenReturn(oldNFSConnection);
-        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newNFSConnection, null);
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -477,7 +480,7 @@ public class UpdateStorageServerConnectionCommandTest extends
         parameters.setStorageServerConnection(newPosixConnection);
         when(storageConnDao.get(newPosixConnection.getId())).thenReturn(oldPosixConnection);
 
-        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
+        doReturn("").when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -603,7 +606,7 @@ public class UpdateStorageServerConnectionCommandTest extends
         List<StorageServerConnections> connections = Arrays.asList(connection1, connection2);
 
        when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
+       boolean isExists = !command.isConnWithSameDetailsExists(newNFSConnection, null).isEmpty();
        assertTrue(isExists);
     }
 
@@ -618,8 +621,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
        List<StorageServerConnections> connections = Collections.singletonList(newNFSConnection);
 
-       when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
+       boolean isExists = !command.isConnWithSameDetailsExists(newNFSConnection, null).isEmpty();
         assertFalse(isExists);
     }
 
@@ -634,8 +636,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
        List<StorageServerConnections> connections = Collections.emptyList();
 
-       when(storageConnDao.getAllForStorage(newNFSConnection.getConnection())).thenReturn(connections);
-       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection, null);
+       boolean isExists = !command.isConnWithSameDetailsExists(newNFSConnection, null).isEmpty();
        assertFalse(isExists);
     }
 
@@ -644,19 +645,17 @@ public class UpdateStorageServerConnectionCommandTest extends
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
        StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-
        when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(connection1);
-       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
+       boolean isExists = !command.isConnWithSameDetailsExists(newISCSIConnection, null).isEmpty();
        assertTrue(isExists);
     }
 
     @Test
     public void isConnWithSameDetailsExistCheckSameConn() {
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-
        when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(newISCSIConnection);
-       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
-        assertFalse(isExists);
+       boolean isExists = !command.isConnWithSameDetailsExists(newISCSIConnection, null).isEmpty();
+        assertTrue(isExists);
     }
 
     @Test

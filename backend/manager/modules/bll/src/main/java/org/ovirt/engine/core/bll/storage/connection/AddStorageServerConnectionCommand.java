@@ -83,7 +83,12 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         }
 
         Guid storagePoolId = Guid.isNullOrEmpty(getParameters().getVdsId()) ? null : getVds().getStoragePoolId();
-        if (isConnWithSameDetailsExists(paramConnection, storagePoolId)) {
+        String duplicateConnectionId = isConnWithSameDetailsExists(paramConnection, storagePoolId);
+
+        if (!duplicateConnectionId.isEmpty() && !duplicateConnectionId.equalsIgnoreCase(paramConnection.getId())) {
+            String storageDomainName = getStorageNameByConnectionId(duplicateConnectionId);
+            addValidationMessageVariable("connectionId", duplicateConnectionId);
+            addValidationMessageVariable("storageDomainName", storageDomainName);
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 

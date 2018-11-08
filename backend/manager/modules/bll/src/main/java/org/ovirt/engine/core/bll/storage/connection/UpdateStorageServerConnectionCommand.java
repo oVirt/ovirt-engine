@@ -101,7 +101,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         }
 
         Guid storagePoolId = getStoragePoolIdByFileConnectionId(oldConnection.getId());
-        if (isConnWithSameDetailsExists(newConnectionDetails, storagePoolId)) {
+        String duplicateConnectionId = isConnWithSameDetailsExists(newConnectionDetails, storagePoolId);
+        if (!duplicateConnectionId.isEmpty() && !duplicateConnectionId.equalsIgnoreCase(newConnectionDetails.getId())) {
+            String storageDomainName = getStorageNameByConnectionId(duplicateConnectionId);
+            addValidationMessageVariable("connectionId", duplicateConnectionId);
+            addValidationMessageVariable("storageDomainName", storageDomainName);
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
