@@ -349,16 +349,25 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             org.ovirt.engine.api.model.NetworkAttachment model) {
         Mapper<org.ovirt.engine.api.model.NetworkAttachment, NetworkAttachment> networkAttachmentMapper =
                 getMapper(org.ovirt.engine.api.model.NetworkAttachment.class, NetworkAttachment.class);
-        NetworkAttachment attachment;
+        NetworkAttachment attachment = null;
         if (model.isSetId()) {
-            Guid attachmentId = asGuid(model.getId());
-            attachment = networkAttachmentMapper.map(model, attachmentsById.get(attachmentId));
-        } else {
-            attachment = networkAttachmentMapper.map(model, null);
+            attachment = attachmentsById.get(asGuid(model.getId()));
+        } else if (model.isSetNetwork() && (model.getNetwork().isSetName() || model.getNetwork().isSetId())) {
+            for (Map.Entry<Guid, NetworkAttachment> backendNetworkAttachmentMapEntry : attachmentsById.entrySet()) {
+                NetworkAttachment backendNetworkAttachment = backendNetworkAttachmentMapEntry.getValue();
+                String backendNetworkName = backendNetworkAttachment.getNetworkName();
+                String backendNetworkId = backendNetworkAttachment.getNetworkId().toString();
+                if (backendNetworkName.equals(model.getNetwork().getName()) ||
+                        backendNetworkId.equals(model.getNetwork().getId())) {
+                    attachment = backendNetworkAttachment;
+                    break;
+                }
+            }
         }
 
-        return attachment;
+        return networkAttachmentMapper.map(model,  attachment);
     }
+
 
     public CreateOrUpdateBond mapBonds(BusinessEntityMap<Bond> bonds, HostNic model) {
         Mapper<HostNic, Bond> hostNicMapper = getMapper(HostNic.class, Bond.class);
