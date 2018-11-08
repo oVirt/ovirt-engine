@@ -191,7 +191,8 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             return;
         }
         if (getSelectedItems() != null && getSelectedItems().size() == 1) {
-            GlusterGeoRepSession selectedSession = getSelectedItem();
+            GlusterGeoRepSession selectedSession =
+                    getSelectedItem() == null ? getSelectedItems().get(0) : getSelectedItem();
             GeoRepSessionStatus sessionStatus = selectedSession.getStatus();
             allowStartSessionCommand =
                     sessionStatus == GeoRepSessionStatus.CREATED || sessionStatus == GeoRepSessionStatus.STOPPED;
