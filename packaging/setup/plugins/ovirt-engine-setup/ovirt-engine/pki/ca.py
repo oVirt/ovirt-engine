@@ -517,9 +517,7 @@ class Plugin(plugin.PluginBase):
                         'because they expire soon, or include an invalid '
                         'expiry date, or do not include the subjectAltName '
                         'extension, which can cause them to be rejected by '
-                        'recent browsers.\n'
-                        'If you choose "No", you will be asked again the next '
-                        'time you run Setup.\n'
+                        'recent browsers and up to date hosts.\n'
                         'See {url} for more details.\n'
                         'Renew certificates? '
                         '(@VALUES@) [@DEFAULT@]: '
@@ -531,6 +529,34 @@ class Plugin(plugin.PluginBase):
                     prompt=True,
                     default=None,
                 )
+
+                if not self.environment[oenginecons.PKIEnv.RENEW]:
+                    skip_renewal = dialog.queryBoolean(
+                        dialog=self.dialog,
+                        name='OVESETUP_SKIP_RENEW_PKI_CONFIRM',
+                        note=_(
+                            'Are you really sure that you want to skip the '
+                            'PKI renewal process?\n'
+                            'Please notice that recent openssl and gnutls '
+                            'upgrades can lead hosts refusing this CA cert '
+                            'making them unusable.\n'
+                            'If you choose "Yes", setup will continue and you '
+                            'will be asked again the next '
+                            'time you run this Setup. Otherwise, this process '
+                            'will abort and you will be expected to plan a '
+                            'proper upgrade according to {url}.\n'
+                            'Skip PKI renewal process? '
+                            '(@VALUES@) [@DEFAULT@]: '
+                        ).format(
+                            url=self.environment[
+                                oenginecons.ConfigEnv.PKI_RENEWAL_DOC_URL
+                            ],
+                        ),
+                        prompt=True,
+                        default=False,
+                    )
+                    if not skip_renewal:
+                        raise RuntimeError('Aborted by user')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
