@@ -50,6 +50,12 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
 
         List<VDS> filteredList = new ArrayList<>();
         for (VDS vds : hosts) {
+            // Skip checks if the VM is currently running on the host
+            if (vds.getId().equals(vm.getRunOnVds())) {
+                filteredList.add(vds);
+                continue;
+            }
+
             // Check physical memory needed to start / receive the VM
             // This is probably not needed for all VMs, but QEMU might attempt full
             // allocation without provoked and fail if there is not enough memory

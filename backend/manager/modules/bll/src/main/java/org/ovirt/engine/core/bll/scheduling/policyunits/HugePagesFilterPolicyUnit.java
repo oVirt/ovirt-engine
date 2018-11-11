@@ -50,6 +50,12 @@ public class HugePagesFilterPolicyUnit extends PolicyUnitImpl {
 
         List<VDS> newHosts = new ArrayList<>(hosts.size());
         for (VDS host: hosts) {
+            // Skip checks if the VM is currently running on the host
+            if (host.getId().equals(vm.getRunOnVds())) {
+                newHosts.add(host);
+                continue;
+            }
+
             Map<Integer, Integer> availablePages = subtractMaps(prepareHugePageMap(host),
                     PendingHugePages.collectForHost(getPendingResourceManager(), host.getId()));
 
