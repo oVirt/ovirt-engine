@@ -96,7 +96,7 @@ public class HostUpgradeCheckCallback implements CommandCallback {
     private Guid getHostUpgradeInternalCmdId(List<Guid> childCmdIds) {
         if (checkForHostUpgradeInternalCmdId == null) {
             checkForHostUpgradeInternalCmdId =
-                    findChildCommandByActionType(ActionType.UpgradeHostInternal, childCmdIds);
+                    findChildCommandByActionType(ActionType.HostUpgradeCheckInternal, childCmdIds);
         }
 
         return checkForHostUpgradeInternalCmdId;
