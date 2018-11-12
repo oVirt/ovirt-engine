@@ -49,6 +49,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
         ManagedBlockStorage managedBlockStorage = new ManagedBlockStorage();
         managedBlockStorage.setId(getStorageDomainId());
         managedBlockStorage.setDriverOptions(parameters.getDriverOptions());
+        managedBlockStorage.setDriverSensitiveOptions(parameters.getDriverSensitiveOptions());
         cinderStorageDao.save(managedBlockStorage);
         setSucceeded(true);
     }

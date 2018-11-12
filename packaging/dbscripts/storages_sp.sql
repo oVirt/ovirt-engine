@@ -1352,30 +1352,35 @@ LANGUAGE plpgsql;
 --that functions in inst_sp.sql can be executed successfully.
 CREATE OR REPLACE FUNCTION InsertCinderStorage (
     v_storage_domain_id UUID,
-    v_driver_options JSONB
+    v_driver_options JSONB,
+    v_driver_sensitive_options TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     INSERT INTO cinder_storage (
         storage_domain_id,
-        driver_options
+        driver_options,
+        driver_sensitive_options
         )
     VALUES (
         v_storage_domain_id,
-        v_driver_options
+        v_driver_options,
+        v_driver_sensitive_options
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCinderStorage (
     v_storage_domain_id UUID,
-    v_driver_options JSONB
+    v_driver_options JSONB,
+    v_driver_sensitive_options TEXT
     )
 RETURNS VOID
     AS $PROCEDURE$
 BEGIN
     UPDATE cinder_storage
-    SET driver_options = v_driver_options
+    SET driver_options = v_driver_options,
+        driver_sensitive_options = v_driver_sensitive_options
     WHERE storage_domain_id = v_storage_domain_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

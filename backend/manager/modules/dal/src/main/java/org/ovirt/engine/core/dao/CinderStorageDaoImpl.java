@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,7 +24,10 @@ public class CinderStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage,
     protected MapSqlParameterSource createFullParametersMapper(ManagedBlockStorage storage) {
         return createIdParameterMapper(storage.getId())
                 .addValue("driver_options",
-                        ObjectUtils.mapNullable(storage.getDriverOptions(), JsonHelper::mapToJsonUnchecked));
+                        ObjectUtils.mapNullable(storage.getDriverOptions(), JsonHelper::mapToJsonUnchecked))
+                .addValue("driver_sensitive_options",
+                        DbFacadeUtils.encryptPassword(ObjectUtils.mapNullable(storage.getDriverSensitiveOptions(),
+                                JsonHelper::mapToJsonUnchecked)));
     }
 
     @Override
@@ -40,6 +44,8 @@ public class CinderStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage,
         ManagedBlockStorage entity = new ManagedBlockStorage();
         entity.setId(getGuidDefaultNewGuid(rs, "storage_domain_id"));
         entity.setDriverOptions(ObjectUtils.mapNullable(rs.getString("driver_options"), JsonHelper::jsonToMapUnchecked));
+        entity.setDriverSensitiveOptions(ObjectUtils.mapNullable(DbFacadeUtils.decryptPassword(rs.getString("driver_sensitive_options")),
+                JsonHelper::jsonToMapUnchecked));
         return entity;
     };
 

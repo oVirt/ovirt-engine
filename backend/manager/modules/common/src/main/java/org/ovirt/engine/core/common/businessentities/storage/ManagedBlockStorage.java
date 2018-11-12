@@ -11,13 +11,15 @@ public class ManagedBlockStorage implements BusinessEntity<Guid>, Serializable {
     private static final long serialVersionUID = -649485547437787568L;
     private Guid id;
     private Map<String, Object> driverOptions;
+    private Map<String, Object> driverSensitiveOptions;
 
     public ManagedBlockStorage() {
     }
 
-    public ManagedBlockStorage(Guid id, Map<String, Object> driver_options) {
+    public ManagedBlockStorage(Guid id, Map<String, Object> driver_options, Map<String, Object> driverSensitiveOptions) {
         this.id = id;
         this.driverOptions = driver_options;
+        this.driverSensitiveOptions = driverSensitiveOptions;
     }
 
     @Override
@@ -36,5 +38,13 @@ public class ManagedBlockStorage implements BusinessEntity<Guid>, Serializable {
 
     public void setDriverOptions(Map<String, Object> driverOptions) {
         this.driverOptions = driverOptions;
+    }
+
+    public void setDriverSensitiveOptions(Map<String, Object> driverSensitiveOptions) {
+        this.driverSensitiveOptions = driverSensitiveOptions;
+    }
+
+    public Map<String, Object> getDriverSensitiveOptions() {
+        return this.driverSensitiveOptions;
     }
 }
