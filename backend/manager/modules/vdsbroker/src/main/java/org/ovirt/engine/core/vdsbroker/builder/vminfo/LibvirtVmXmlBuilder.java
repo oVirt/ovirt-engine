@@ -725,6 +725,16 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("retries", "8191");
             writer.writeEndElement();
 
+            if (FeatureSupported.hyperVSynicStimerSupported(vm.getCompatibilityVersion())) {
+                writer.writeStartElement("synic");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+
+                writer.writeStartElement("stimer");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+            }
+
             writer.writeEndElement();
         }
 

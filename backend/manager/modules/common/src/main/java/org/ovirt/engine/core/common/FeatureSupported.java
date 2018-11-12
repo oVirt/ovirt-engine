@@ -342,4 +342,13 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.UseNativeIOForGluster, version);
     }
 
+    /**
+     * @param version
+     *            Check if the Hyper-V KVM enlightenments are supported.
+     * @return <code>true</code> if Hyper-V KVM enlightenments are supported for the given version.
+     */
+    public static boolean hyperVSynicStimerSupported(Version version) {
+        return supportedInConfig(ConfigValues.HyperVSynicStimerSupported, version);
+    }
+
 }

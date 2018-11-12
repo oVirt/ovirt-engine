@@ -1613,6 +1613,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     ForemanResponsePageSize,
 
+    @TypeConverterAttribute(Boolean.class)
+    HyperVSynicStimerSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
