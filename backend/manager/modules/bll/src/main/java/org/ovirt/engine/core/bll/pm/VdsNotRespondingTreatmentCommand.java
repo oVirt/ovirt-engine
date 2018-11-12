@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -177,6 +178,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 return;
             }
 
+            //if an external-status other than OK has been set on the host,
+            //that is considered an indication not to perform automatic
+            //power-management operations on the host.
+            if (!ExternalStatus.Ok.equals(host.getExternalStatus())) {
+                AuditLogable logEntry = createAuditLogableForHost(host);
+                logEntry.addCustomValue("ExternalStatus", host.getExternalStatus().toString());
+                auditLogDirector.log(logEntry, AuditLogType.VDS_AUTO_FENCE_SKIPPED_DUE_TO_EXTERNAL_STATUS);
+                getReturnValue().setSucceeded(false);
+                return;
+            }
             // load cluster fencing policy
             FencingPolicy fencingPolicy = clusterDao.get(getVds().getClusterId()).getFencingPolicy();
             getParameters().setFencingPolicy(fencingPolicy);

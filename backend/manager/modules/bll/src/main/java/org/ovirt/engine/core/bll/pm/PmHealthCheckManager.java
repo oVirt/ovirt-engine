@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
@@ -266,6 +267,16 @@ public class PmHealthCheckManager implements BackendService {
                     new RestartVdsCommand<>(new
                             FenceVdsActionParameters(host.getId()), null);
             if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
+                //if an external-status other than OK has been set on the host,
+                //that is considered an indication not to perform automatic
+                //power-management operations on the host.
+                if (!ExternalStatus.Ok.equals(host.getExternalStatus())) {
+                    log.warn("Host '{}' ({}) was not started by PM Health Check Manager becuse it has external-status: '{}'.",
+                            host.getName(),
+                            host.getId(),
+                            host.getExternalStatus());
+                    continue;
+                }
                 ActionReturnValue
                         retValue = backend.get().runInternalAction(ActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
