@@ -1,4 +1,5 @@
 
+
 #
 # CUSTOMIZATION-BEGIN
 #
@@ -1056,6 +1057,7 @@ fi
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
 %dir %{engine_data}/playbooks
+%dir %{engine_data}/cinderlib
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
 %dir %{engine_etc}/branding
@@ -1326,6 +1328,15 @@ fi
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_etc}/ovirt-fence-kdump-listener.conf.d/
+
+%if 0%{?use_python_bytecompile}
+%{engine_data}/cinderlib/cinderlib-client.*
+%if 0%{with_python3}
+%{engine_data}/cinderlib/__pycache__/cinderlib-client.*
+%endif
+%else
+%{engine_data}/cinderlib/cinderlib-client.py*
+%endif
 
 %{_unitdir}/ovirt-engine-notifier.service
 %{_unitdir}/ovirt-fence-kdump-listener.service

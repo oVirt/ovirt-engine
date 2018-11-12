@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+#
+# Copyright 2018 Red Hat, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+#
+# Refer to the README and COPYING files for full details of the license
+#
+"""
+
+"""
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import argparse
+import json
+import sys
+
+try:
+    import cinderlib as cl
+except ImportError:
+    cl = None
+
+
+class UsageError(Exception):
+    """ Raised when usage is wrong """
+
+
+def main(args=None):
+    if cl is None:
+        sys.stderr.write("cinderlib package not available")
+        sys.exit(1)
+
+    parser = argparse.ArgumentParser(description="oVirt Cinder Library client")
+    subparsers = parser.add_subparsers(title="commands")
+    create_parser = subparsers.add_parser("create_volume",
+                                          help="Create a volume."
+                                               " return CinderLib metadata")
+    create_parser.set_defaults(command=create_volume)
+    create_parser.add_argument("driver", help="The driver parameters")
+    create_parser.add_argument("db_url", help="The database url")
+    create_parser.add_argument("name", help="Name of the volume")
+    create_parser.add_argument("size", help="The size needed for the volume")
+
+    delete_parser = subparsers.add_parser("delete_volume",
+                                          help="Delete a volume."
+                                               " return CinderLib metadata")
+    delete_parser.set_defaults(command=delete_volume)
+    delete_parser.add_argument("driver", help="The driver parameters")
+    delete_parser.add_argument("db_url", help="The database url")
+    delete_parser.add_argument("volume_id", help="The volume id")
+
+    connect_parser = subparsers.add_parser("connect_volume",
+                                           help="Get volume connection info")
+    connect_parser.set_defaults(command=connect_volume)
+    connect_parser.add_argument("driver", help="The driver parameters")
+    connect_parser.add_argument("db_url", help="The database url")
+    connect_parser.add_argument("volume_id", help="The volume id")
+    connect_parser.add_argument("connector_info",
+                                help="The connector information")
+
+    disconnect_parser = subparsers.add_parser("disconnect_volume",
+                                              help="disconnect a volume")
+    disconnect_parser.set_defaults(command=disconnect_volume)
+    disconnect_parser.add_argument("driver", help="The driver parameters")
+    disconnect_parser.add_argument("db_url", help="The database url")
+    disconnect_parser.add_argument("volume_id", help="The volume id")
+
+    args = parser.parse_args()
+    try:
+        args.command(args)
+        sys.exit(0)
+    except Exception as e:
+        sys.stderr.write(str(e))
+        sys.stderr.flush()
+        sys.exit(1)
+
+
+def load_backend(args):
+    persistence_config = {'storage': 'db', 'connection': args.db_url}
+    cl.setup(persistence_config=persistence_config)
+    return cl.Backend(**json.loads(args.driver))
+
+
+def create_volume(args):
+    backend = load_backend(args)
+    backend.create_volume(int(args.size), id=args.name)
+    backend.refresh()
+
+
+def delete_volume(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol.delete()
+
+
+def connect_volume(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+
+    # check if we're already connected
+    for c in vol.connections:
+        provided_host = json.loads(args.connector_info)['host']
+        if provided_host == c.connector_info['host']:
+            conn = c.conn_info
+            break
+    else:
+        conn = (vol.connect(json.loads(args.connector_info))
+                .connection_info['conn'])
+
+    sys.stdout.write(json.dumps(conn))
+    sys.stdout.flush()
+
+
+def disconnect_volume(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+
+    for c in vol.connections:
+        c.disconnect()
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
