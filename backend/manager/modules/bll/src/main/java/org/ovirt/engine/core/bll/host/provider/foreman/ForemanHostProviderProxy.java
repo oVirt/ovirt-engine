@@ -319,8 +319,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "        \"operatingsystem_id\": \"" + hg.getOperatingsystemId() + "\",\n" +
                 "        \"medium_id\": \"" + hg.getMediumId() + "\",\n" +
                 "        \"ptable_id\": \"" + hg.getPtableId() + "\",\n" +
-                "        \"puppet_proxy_id\": \"" + hg.getPuppetProxyId() + "\",\n" +
-                "        \"puppet_ca_proxy_id\": \"" + hg.getPuppetCaProxyId() + "\",\n" +
+                replaceIfExists(hg.getPuppetProxyId(), "        \"puppet_proxy_id\": \"%s \",\n") +
+                replaceIfExists(hg.getPuppetCaProxyId(), "        \"puppet_ca_proxy_id\": \"%s \",\n") +
                 "        \"root_pass\": \"" + rootPassword + "\",\n" +
                 "        \"host_parameters_attributes\": [\n" +
                 "           {\n" +
@@ -352,6 +352,14 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 entityBody,
                 createConnection(DISCOVERED_HOSTS_ENTRY_POINT + "/" + discoverName)
                 );
+    }
+
+    private <T> String replaceIfExists(T input, String replacement) {
+        if (input == null) {
+            return "";
+        }
+
+        return String.format(replacement, input);
     }
 
     @Override

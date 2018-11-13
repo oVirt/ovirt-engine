@@ -25,9 +25,9 @@ public class ForemanHostGroup implements Serializable {
     @JsonProperty("architecture_id")
     private int architectureId;
     @JsonProperty("puppet_proxy_id")
-    private int puppetProxyId;
+    private Integer puppetProxyId;
     @JsonProperty("puppet_ca_proxy_id")
-    private int puppetCaProxyId;
+    private Integer puppetCaProxyId;
     @JsonProperty("puppet_class_ids")
     private int[] puppetClassIds;
     private Map<String, String> parameters;
@@ -199,19 +199,19 @@ public class ForemanHostGroup implements Serializable {
         this.mediumName = mediumName;
     }
 
-    public void setPuppetProxyId(int puppetProxyId) {
+    public void setPuppetProxyId(Integer puppetProxyId) {
         this.puppetProxyId = puppetProxyId;
     }
 
-    public void setPuppetCaProxyId(int puppetCaProxyId) {
+    public void setPuppetCaProxyId(Integer puppetCaProxyId) {
         this.puppetCaProxyId = puppetCaProxyId;
     }
 
-    public int getPuppetProxyId() {
+    public Integer getPuppetProxyId() {
         return puppetProxyId;
     }
 
-    public int getPuppetCaProxyId() {
+    public Integer getPuppetCaProxyId() {
         return puppetCaProxyId;
     }
 }
