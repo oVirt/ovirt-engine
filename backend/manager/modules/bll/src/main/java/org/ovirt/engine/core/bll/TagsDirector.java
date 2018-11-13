@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
@@ -56,11 +56,11 @@ public class TagsDirector implements BackendService, ITagsHandler {
     /**
      * In memory nodes cache for quicker access to each node by ID: O(1) instead O(lnN) of tree
      */
-    private final Map<Guid, Tags> tagsMapByID = new CopyOnAccessMap<>(new HashMap<>());
+    private final Map<Guid, Tags> tagsMapByID = new CopyOnAccessMap<>(new ConcurrentHashMap<>());
     /**
      * In memory nodes cache for quicker access to each node by name
      */
-    private final Map<String, Tags> tagsMapByName = new CopyOnAccessMap<>(new HashMap<>());
+    private final Map<String, Tags> tagsMapByName = new CopyOnAccessMap<>(new ConcurrentHashMap<>());
 
     /**
      * In memory tree initialized during initialization
