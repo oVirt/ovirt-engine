@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -29,8 +31,11 @@ public class DeleteGlusterVolumeCommandTest extends BaseCommandTest {
     @Mock
     GlusterVolumeDao volumeDao;
 
+    @Mock
+    StorageDomainDao storageDao;
     private Guid startedVolumeId = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private Guid stoppedVolumeId = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
+    private Guid storageDomainCheckOfflineVolumeId = new Guid("7bc6f108-c0ef-63ab-ba20-ec41107320f5");
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     /**
@@ -46,6 +51,10 @@ public class DeleteGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGlusterVolume(stoppedVolumeId)).when(volumeDao).getById(stoppedVolumeId);
         doReturn(getGlusterVolume(startedVolumeId)).when(volumeDao).getById(startedVolumeId);
+        doReturn(null).when(storageDao)
+                .getStorageDomainByGlusterVolumeId(stoppedVolumeId);
+        doReturn(new StorageDomain()).when(storageDao)
+                .getStorageDomainByGlusterVolumeId(storageDomainCheckOfflineVolumeId);
     }
 
     private VDS getVds(VDSStatus status) {
@@ -87,4 +96,9 @@ public class DeleteGlusterVolumeCommandTest extends BaseCommandTest {
         assertFalse(cmd.validate());
     }
 
+    @Test
+    public void validateStorageDomainCheckSucceeds() {
+        cmd.setGlusterVolumeId(storageDomainCheckOfflineVolumeId);
+        assertFalse(cmd.validate());
+    }
 }

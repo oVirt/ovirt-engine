@@ -1329,3 +1329,18 @@ BEGIN
     FROM hosted_engine_storage_domains_ids_view;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetStorageDomainByGlusterVolumeId (v_gluster_vol_id UUID)
+RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM storage_domains
+    WHERE storage IN (
+            SELECT id
+            FROM storage_server_connections
+            WHERE gluster_volume_id = v_gluster_vol_id
+            );
+END;$PROCEDURE$
+LANGUAGE plpgsql;

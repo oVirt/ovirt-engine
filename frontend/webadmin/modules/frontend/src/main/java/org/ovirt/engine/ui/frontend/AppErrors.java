@@ -2962,5 +2962,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VAR__ACTION__REPLACE_GLUSTER_BRICK();
 
     String VAR__ACTION__RESET_GLUSTER_BRICK();
+
+    String ACTION_TYPE_GLUSTER_VOLUME_PRESENT_IN_STORAGE_DOMAIN();
 }
 

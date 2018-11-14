@@ -258,4 +258,17 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
     private Guid getStorageDomainId(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
         return getStorageDomains(poolId, type, status).stream().findFirst().map(StorageDomain::getId).orElse(Guid.Empty);
     }
+
+    /**
+     * Retrieves the Storage Domain for the given volume
+     *
+     * @param volumeId
+     *            The volume id
+     * @return The storage domain where the volume is present
+     */
+    public StorageDomain getStorageDomainByGlusterVolumeId(Guid volumeId) {
+        return getCallsHandler().executeRead("GetStorageDomainByGlusterVolumeId",
+                storageDomainRowMapper,
+                getCustomMapSqlParameterSource().addValue("gluster_vol_id", volumeId));
+    }
 }

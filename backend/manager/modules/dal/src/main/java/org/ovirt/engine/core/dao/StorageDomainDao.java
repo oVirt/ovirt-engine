@@ -221,4 +221,13 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
      * @return list of id of the domains
      */
     List<Guid> getHostedEngineStorageDomainIds();
+
+    /**
+     * Retrieves the Storage Domain for the given gluster volume
+     *
+     * @param volumeId
+     *            The gluster volume id
+     * @return The storage domain where the volume is present
+     */
+    StorageDomain getStorageDomainByGlusterVolumeId(Guid volumeId);
 }
