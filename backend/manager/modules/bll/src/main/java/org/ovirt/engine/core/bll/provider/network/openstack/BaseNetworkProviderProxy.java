@@ -105,6 +105,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         if (!getProvider().isRequiringAuthentication()) {
             networkForCreate.setTenantId(DEVICE_OWNER);
         }
+        networkForCreate.setPortSecurityEnabled(network.getProvidedBy().getPortSecurityEnabled());
         return networkForCreate;
     }
 
@@ -205,6 +206,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         }
 
         mapPhysicalNetworkParameters(externalNetwork, network);
+        network.getProvidedBy().setPortSecurityEnabled(externalNetwork.getPortSecurityEnabled());
 
         return network;
     }

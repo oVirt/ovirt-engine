@@ -31,6 +31,8 @@ public class ProviderNetwork implements Serializable {
 
     private String providerNetworkType;
 
+    private Boolean portSecurityEnabled;
+
     public ProviderNetwork() {
     }
 
@@ -114,6 +116,14 @@ public class ProviderNetwork implements Serializable {
 
     public boolean isProviderNetworkVlan() {
         return VLAN_NETWORK.equals(getProviderNetworkType());
+    }
+
+    public Boolean getPortSecurityEnabled() {
+        return portSecurityEnabled;
+    }
+
+    public void setPortSecurityEnabled(Boolean portSecurityEnabled) {
+        this.portSecurityEnabled = portSecurityEnabled;
     }
 
     @Override
