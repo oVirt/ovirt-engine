@@ -70,26 +70,6 @@
     "type" : "interface",
     "name" : "vnet0"
   }, {
-    "index" : "2",
-    "iface" : "ide",
-    "name" : "hdc",
-    "alias" : "ide0-1-0",
-    "specParams" : { },
-    "readonly" : "True",
-    "deviceType" : "disk",
-    "deviceId" : "3a0108a8-2ba5-41f9-b12b-f37773a2b31b",
-    "address" : {
-      "bus" : "1",
-      "controller" : "0",
-      "type" : "drive",
-      "target" : "0",
-      "unit" : "0"
-    },
-    "device" : "cdrom",
-    "shared" : "false",
-    "path" : "",
-    "type" : "disk"
-  }, {
     "poolID" : "00000000-0000-0000-0000-000000000000",
     "volumeInfo" : {
       "domainID" : "6cf52782-fda6-4f70-a814-b00c3a407c7d",
