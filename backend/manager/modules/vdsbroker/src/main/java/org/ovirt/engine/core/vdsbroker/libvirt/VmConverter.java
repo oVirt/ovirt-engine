@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -112,6 +110,7 @@ public class VmConverter {
             device.put(VdsProperties.Type, VmDeviceGeneralType.INTERFACE.getValue());
             device.put(VdsProperties.DeviceId, Guid.newGuid().toString());
             device.put(VdsProperties.Alias, VmDevicesConverter.parseAlias(dev));
+            device.put(VdsProperties.Name, VmDevicesConverter.parseAlias(dev));
             device.put(VdsProperties.MAC_ADDR, DomainXmlUtils.parseMacAddress(dev));
             device.put(VdsProperties.NETWORK, DomainXmlUtils.parseNicNetwork(dev));
             device.put(VdsProperties.NIC_TYPE, DomainXmlUtils.parseNicType(dev));
@@ -122,7 +121,7 @@ public class VmConverter {
     }
 
     private Map<String, Object> parseDisk(XmlNode dev) {
-        switch(DomainXmlUtils.parseAttribute(dev, "type")) {
+        switch(DomainXmlUtils.parseAttribute(dev, "device")) {
         case "disk":
             Map<String, String> uuids = parseDiskUuids(DomainXmlUtils.parseDiskPath(dev));
             if (uuids == null) {
@@ -133,8 +132,8 @@ public class VmConverter {
             device.put(VdsProperties.Device, VdsProperties.Disk);
             device.put(VdsProperties.Alias, VmDevicesConverter.parseAlias(dev));
             device.put(VdsProperties.Format,
-                    "raw".equals(DomainXmlUtils.parseDiskDriver(dev)) ? VolumeFormat.RAW : VolumeFormat.COW);
-            device.put(VdsProperties.INTERFACE, DiskInterface.forName(DomainXmlUtils.parseDiskBus(dev)));
+                    "raw".equals(DomainXmlUtils.parseDiskDriver(dev)) ? "raw" : "cow");
+            device.put(VdsProperties.INTERFACE, DomainXmlUtils.parseDiskBus(dev));
             device.putAll(uuids);
             return device;
         default:
