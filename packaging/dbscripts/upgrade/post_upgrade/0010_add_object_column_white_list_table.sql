@@ -55,7 +55,7 @@ BEGIN
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshkeyfingerprint', 'count_threads_as_cores', 'cpu_threads',
           'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family', 'ssh_port', 'ssh_username', 'boot_time',
-          'pm_detect_kdump', 'protocol'));
+          'pm_detect_kdump', 'protocol', 'vgpu_placement'));
 -- pm_options are missing
 END; $function$
 LANGUAGE plpgsql;

@@ -55,6 +55,7 @@ import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -122,6 +123,8 @@ public class VmInfoBuildUtilsTest {
     private StorageServerConnectionDao storageServerConnectionDao;
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
+    @Mock
+    private VdsStaticDao vdsStaticDao;
     @Mock
     private VdsStatisticsDao vdsStatisticsDao;
     @Mock

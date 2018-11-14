@@ -159,6 +159,10 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableVdsField
     private boolean reinstallRequired;
 
+    @EditableVdsField
+    @Range(min = VgpuPlacement.MIN_VALUE, max = VgpuPlacement.MAX_VALUE)
+    private int vgpuPlacement;
+
     public boolean isAutoRecoverable() {
         return autoRecoverable;
     }
@@ -180,6 +184,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         disablePowerManagementPolicy = false;
         pmKdumpDetection = true;
         hostProviderId = null;
+        vgpuPlacement = VgpuPlacement.CONSOLIDATED.getValue();
     }
 
     public VdsStatic(String hostName, String uniqueId, int port, int sshPort, String sshUsername, Guid clusterId,
@@ -455,6 +460,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.reinstallRequired = reinstallRequired;
     }
 
+    public int getVgpuPlacement() {
+        return vgpuPlacement;
+    }
+
+    public void setVgpuPlacement(int vgpuPlacement) {
+        this.vgpuPlacement = vgpuPlacement;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -484,7 +497,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 kernelCmdlineKvmNested,
                 kernelCmdlinePciRealloc,
                 kernelCmdlineUnsafeInterrupts,
-                reinstallRequired
+                reinstallRequired,
+                vgpuPlacement
         );
     }
 
@@ -524,6 +538,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(kernelCmdlineKvmNested, other.kernelCmdlineKvmNested)
                 && Objects.equals(kernelCmdlinePciRealloc, other.kernelCmdlinePciRealloc)
                 && Objects.equals(kernelCmdlineUnsafeInterrupts, other.kernelCmdlineUnsafeInterrupts)
-                && reinstallRequired == other.reinstallRequired;
+                && reinstallRequired == other.reinstallRequired
+                && vgpuPlacement == other.vgpuPlacement;
     }
 }

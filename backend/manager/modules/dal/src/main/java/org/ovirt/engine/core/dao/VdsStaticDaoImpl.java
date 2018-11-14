@@ -104,7 +104,8 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("openstack_network_provider_id", vds.getOpenstackNetworkProviderId())
                 .addValue("kernel_cmdline", KernelCmdlineColumn.fromVdsStatic(vds).toJson())
                 .addValue("last_stored_kernel_cmdline", vds.getLastStoredKernelCmdline())
-                .addValue("reinstall_required", vds.isReinstallRequired());
+                .addValue("reinstall_required", vds.isReinstallRequired())
+                .addValue("vgpu_placement", vds.getVgpuPlacement());
     }
 
     @Override
@@ -148,6 +149,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVdsStatic(entity);
         entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
         entity.setReinstallRequired(rs.getBoolean("reinstall_required"));
+        entity.setVgpuPlacement(rs.getInt("vgpu_placement"));
         return entity;
     };
 

@@ -1607,6 +1607,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     UseNativeIOForGluster,
 
+    @TypeConverterAttribute(Boolean.class)
+    VgpuPlacementSupported,
+
     @TypeConverterAttribute(Integer.class)
     GlusterVolumeFreeSpaceThresholdInPercent,
 

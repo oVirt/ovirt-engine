@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -126,6 +127,7 @@ public class LibvirtVmXmlBuilder {
     private MemoizingSupplier<VdsStatistics> hostStatisticsSupplier;
     private MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier;
     private MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier;
+    private MemoizingSupplier<VgpuPlacement> hostVgpuPlacementSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, String>> diskMetadata;
@@ -226,10 +228,12 @@ public class LibvirtVmXmlBuilder {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getHostDevices(hostId));
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsStatistics(hostId));
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
+            hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.vgpuPlacement(hostId));
         } else {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> Collections.emptyList());
+            hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
     }
@@ -1155,7 +1159,23 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
 
                 writer.writeEndElement();
-                mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevType));
+
+                String mdevTypeMeta = mdevType;
+                if (FeatureSupported.isVgpuPlacementSupported(vm.getCompatibilityVersion())) {
+                    VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
+                    String vgpuPlacementString;
+                    if (vgpuPlacement == VgpuPlacement.CONSOLIDATED) {
+                        vgpuPlacementString = "compact";
+                    } else if (vgpuPlacement == VgpuPlacement.SEPARATED) {
+                        vgpuPlacementString = "separate";
+                    } else {
+                        log.warn("Unrecognized vGPU placement type (using `{}' instead): {}",
+                                 VgpuPlacement.CONSOLIDATED, vgpuPlacement);
+                        vgpuPlacementString = "compact";
+                    }
+                    mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
+                }
+                mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevTypeMeta));
             }
         }
     }

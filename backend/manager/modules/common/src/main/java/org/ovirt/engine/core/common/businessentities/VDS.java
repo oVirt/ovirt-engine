@@ -1544,6 +1544,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         return vdsStatic.isKernelCmdlineUnsafeInterrupts();
     }
 
+    public int getVgpuPlacement() {
+        return vdsStatic.getVgpuPlacement();
+    }
+
+    public void setVgpuPlacement(int vgpuPlacement) {
+        vdsStatic.setVgpuPlacement(vgpuPlacement);
+    }
+
     public boolean shouldVdsBeFenced() {
         boolean result = false;
 

@@ -642,7 +642,8 @@ CREATE OR REPLACE FUNCTION InsertVdsStatic (
     v_host_provider_id UUID,
     v_openstack_network_provider_id UUID,
     v_kernel_cmdline TEXT,
-    v_last_stored_kernel_cmdline TEXT
+    v_last_stored_kernel_cmdline TEXT,
+    v_vgpu_placement INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -676,7 +677,8 @@ BEGIN
             host_provider_id,
             openstack_network_provider_id,
             kernel_cmdline,
-            last_stored_kernel_cmdline
+            last_stored_kernel_cmdline,
+            vgpu_placement
             )
         VALUES (
             v_vds_id,
@@ -701,7 +703,8 @@ BEGIN
             v_host_provider_id,
             v_openstack_network_provider_id,
             v_kernel_cmdline,
-            v_last_stored_kernel_cmdline
+            v_last_stored_kernel_cmdline,
+            v_vgpu_placement
             );
     END;
 END IF;
@@ -769,7 +772,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_host_provider_id UUID,
     v_openstack_network_provider_id UUID,
     v_kernel_cmdline TEXT,
-    v_reinstall_required BOOLEAN
+    v_reinstall_required BOOLEAN,
+    v_vgpu_placement INTEGER
 )
     RETURNS VOID
     --The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -800,7 +804,8 @@ BEGIN
             ssh_username = v_ssh_username,
             disable_auto_pm = v_disable_auto_pm,
             kernel_cmdline = v_kernel_cmdline,
-            reinstall_required = v_reinstall_required
+            reinstall_required = v_reinstall_required,
+            vgpu_placement = v_vgpu_placement
         WHERE vds_id = v_vds_id;
     END;
 

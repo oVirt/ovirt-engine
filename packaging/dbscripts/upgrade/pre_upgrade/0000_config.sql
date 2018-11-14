@@ -704,6 +704,10 @@ select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProvi
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4.3');
 
+-- vGPU placement
+select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'false', '4.2');
+select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'true', '4.3');
+
 -- engine-backup
 -- not in ConfigValues enum, used on python side, do not delete
 select fn_db_add_config_value('DbJustRestored','0','general');

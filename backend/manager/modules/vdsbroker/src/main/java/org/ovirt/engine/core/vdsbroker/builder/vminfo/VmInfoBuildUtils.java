@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -89,6 +90,7 @@ import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -140,6 +142,7 @@ public class VmInfoBuildUtils {
     private final StorageDomainStaticDao storageDomainStaticDao;
     private final StorageServerConnectionDao storageServerConnectionDao;
     private final VdsNumaNodeDao vdsNumaNodeDao;
+    private final VdsStaticDao vdsStaticDao;
     private final VdsStatisticsDao vdsStatisticsDao;
     private final HostDeviceDao hostDeviceDao;
     private final DiskVmElementDao diskVmElementDao;
@@ -171,6 +174,7 @@ public class VmInfoBuildUtils {
             StorageDomainStaticDao storageDomainStaticDao,
             StorageServerConnectionDao storageServerConnectionDao,
             VdsNumaNodeDao vdsNumaNodeDao,
+            VdsStaticDao vdsStaticDao,
             VdsStatisticsDao vdsStatisticsDao,
             HostDeviceDao hostDeviceDao,
             VmSerialNumberBuilder vmSerialNumberBuilder,
@@ -192,6 +196,7 @@ public class VmInfoBuildUtils {
         this.storageDomainStaticDao = Objects.requireNonNull(storageDomainStaticDao);
         this.storageServerConnectionDao = Objects.requireNonNull(storageServerConnectionDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
+        this.vdsStaticDao = Objects.requireNonNull(vdsStaticDao);
         this.vdsStatisticsDao = Objects.requireNonNull(vdsStatisticsDao);
         this.hostDeviceDao = Objects.requireNonNull(hostDeviceDao);
         this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
@@ -1379,5 +1384,9 @@ public class VmInfoBuildUtils {
                 && device.getSnapshotId() == null;
         // marked as transient disk (file type) and uses cache when snapshotId is not null
         // so native io should not be used
+    }
+
+    public VgpuPlacement vgpuPlacement(Guid hostId) {
+        return VgpuPlacement.forValue(vdsStaticDao.get(hostId).getVgpuPlacement());
     }
 }

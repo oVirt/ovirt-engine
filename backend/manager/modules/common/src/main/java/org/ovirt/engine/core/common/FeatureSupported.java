@@ -351,4 +351,13 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.HyperVSynicStimerSupported, version);
     }
 
+    /**
+     * Check if vGPU placement is supported
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean isVgpuPlacementSupported(Version version) {
+        return supportedInConfig(ConfigValues.VgpuPlacementSupported, version);
+    }
+
 }
