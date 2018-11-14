@@ -2144,5 +2144,10 @@ public interface UIConstants extends Constants {
     String clusterSwitchChangeDisabled();
 
     String externalNetworkInfo();
-}
 
+    String consolidatedTitle();
+
+    String separatedTitle();
+
+    String vgpuPlacementCompatibilityInfo();
+}

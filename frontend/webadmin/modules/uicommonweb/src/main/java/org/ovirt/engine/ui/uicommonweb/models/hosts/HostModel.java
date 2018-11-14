@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -311,6 +312,54 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     public void setConsoleAddressEnabled(EntityModel<Boolean> consoleAddressEnabled) {
         this.consoleAddressEnabled = consoleAddressEnabled;
+    }
+
+    private EntityModel<Boolean> vgpuConsolidatedPlacement;
+
+    public EntityModel<Boolean> getVgpuConsolidatedPlacement() {
+        return vgpuConsolidatedPlacement;
+    }
+
+    public void setVgpuConsolidatedPlacement(EntityModel<Boolean> vgpuConsolidatedPlacement) {
+        this.vgpuConsolidatedPlacement = vgpuConsolidatedPlacement;
+    }
+
+    private EntityModel<Boolean> vgpuSeparatedPlacement;
+
+    public EntityModel<Boolean> getVgpuSeparatedPlacement() {
+        return vgpuSeparatedPlacement;
+    }
+
+    public void setVgpuSeparatedPlacement(EntityModel<Boolean> vgpuSeparatedPlacement) {
+        this.vgpuSeparatedPlacement = vgpuSeparatedPlacement;
+    }
+
+    public VgpuPlacement getVgpuPlacement() {
+        if (vgpuSeparatedPlacement.getEntity()) {
+            return VgpuPlacement.SEPARATED;
+        } else {
+            return VgpuPlacement.CONSOLIDATED;
+        }
+    }
+
+    void setVgpuPlacement(VgpuPlacement vgpuPlacement) {
+        getVgpuSeparatedPlacement().setEntity(vgpuPlacement == VgpuPlacement.SEPARATED);
+        getVgpuConsolidatedPlacement().setEntity(vgpuPlacement == VgpuPlacement.CONSOLIDATED);
+    }
+
+    void setVgpuPlacementChangeability(Version version) {
+        boolean vgpuPlacementEnabled;
+        if (version == null) {
+            vgpuPlacementEnabled = false;
+        } else {
+            vgpuPlacementEnabled = AsyncDataProvider.getInstance().isVgpuPlacementSupported(version);
+        }
+        getVgpuConsolidatedPlacement().setIsChangeable(vgpuPlacementEnabled);
+        getVgpuSeparatedPlacement().setIsChangeable(vgpuPlacementEnabled);
+        if (! vgpuPlacementEnabled) {
+            getVgpuConsolidatedPlacement().setChangeProhibitionReason(constants.vgpuPlacementCompatibilityInfo());
+            getVgpuSeparatedPlacement().setChangeProhibitionReason(constants.vgpuPlacementCompatibilityInfo());
+        }
     }
 
     private EntityModel<Boolean> pmKdumpDetection;
@@ -791,6 +840,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setHostedEngineWarning(new EntityModel<String>(constants.hostedEngineDeploymentCompatibilityWarning()));
 
         setPasswordSectionViewable(true);
+
+        setVgpuConsolidatedPlacement(new EntityModel<>(false));
+        setVgpuSeparatedPlacement(new EntityModel<>(false));
     }
 
     private void updatePmModels() {
@@ -1031,6 +1083,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         getHostedEngineWarning().setIsAvailable(cluster.getCompatibilityVersion().less(Version.v4_0));
         getNetworkProviderModel().setDefaultProviderId(cluster.getDefaultNetworkProviderId());
+
+        setVgpuPlacementChangeability(cluster.getCompatibilityVersion());
     }
 
     protected abstract void cpuVendorChanged();
@@ -1130,6 +1184,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
         getConsoleAddress().setEntity(vds.getConsoleAddress());
         getConsoleAddress().setIsChangeable(consoleAddressEnabled);
+        setVgpuPlacement(VgpuPlacement.forValue(vds.getVgpuPlacement()));
+        setVgpuPlacementChangeability(getCluster().getSelectedItem().getCompatibilityVersion());
 
         if (!showInstallationProperties()) {
             getPkSection().setIsChangeable(false);

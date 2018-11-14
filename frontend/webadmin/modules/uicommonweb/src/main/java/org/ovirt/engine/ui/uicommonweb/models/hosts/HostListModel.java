@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -714,6 +715,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         hostModel.setSpmPriorityValue(null);
         hostModel.getConsoleAddressEnabled().setEntity(false);
         hostModel.getConsoleAddress().setIsChangeable(false);
+        hostModel.setVgpuPlacement(VgpuPlacement.CONSOLIDATED);
 
         AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery<>(returnValue -> hostModel.setPmProxyPreferences(returnValue)));
 
@@ -881,6 +883,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : model.getConsoleAddress().getEntity());
+        host.setVgpuPlacement(model.getVgpuPlacement().getValue());
         Guid oldClusterId = host.getClusterId();
         Guid newClusterId = model.getCluster().getSelectedItem().getId();
         host.setClusterId(newClusterId);

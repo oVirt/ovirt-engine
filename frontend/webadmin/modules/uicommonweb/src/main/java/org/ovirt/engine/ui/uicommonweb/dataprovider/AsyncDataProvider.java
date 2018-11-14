@@ -3354,4 +3354,8 @@ public class AsyncDataProvider {
                         version.getValue()),
                 aQuery);
     }
+
+    public boolean isVgpuPlacementSupported(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.VgpuPlacementSupported, version.getValue());
+    }
 }

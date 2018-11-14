@@ -347,6 +347,20 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField(provided = true)
     @Ignore
+    InfoIcon vgpuPlacementInfoIcon;
+
+    @UiField(provided = true)
+    @Path(value = "vgpuConsolidatedPlacement.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor vgpuConsolidatedPlacementEditor;
+
+    @UiField(provided = true)
+    @Path(value = "vgpuSeparatedPlacement.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor vgpuSeparatedPlacementEditor;
+
+    @UiField(provided = true)
+    @Ignore
     InfoIcon discoveredHostInfoIcon;
 
     @UiField(provided = true)
@@ -477,6 +491,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     private void initInfoIcon() {
         consoleAddressInfoIcon =
                 new InfoIcon(templates.italicText(constants.enableConsoleAddressOverrideHelpMessage()));
+        vgpuPlacementInfoIcon =
+                new InfoIcon(templates.italicText(constants.vgpuPlacementInfoIcon()));
         providerSearchInfoIcon =
                 new InfoIcon(templates.italicText(constants.providerSearchInfo()));
         provisionedHostInfoIcon =
@@ -565,6 +581,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
         consoleAddressEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
+        vgpuConsolidatedPlacementEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        vgpuSeparatedPlacementEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
         hostedEngineDeployActionsEditor = new ListModelListBoxEditor<>(new EnumRenderer<HostedEngineDeployConfiguration.Action>());
     }
 
@@ -622,6 +640,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());
+
+        // Console and GPU tab
         consoleTab.setLabel(constants.consoleButtonLabel());
 
         // Network Provider Tab
@@ -792,6 +812,15 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         });
 
         affinityLabelSelectionWidget.init(object.getLabelList());
+
+        vgpuConsolidatedPlacementEditor.asRadioButton().addValueChangeHandler(event -> {
+            object.getVgpuConsolidatedPlacement().setEntity(vgpuConsolidatedPlacementEditor.asRadioButton().getValue());
+            object.getVgpuSeparatedPlacement().setEntity(vgpuSeparatedPlacementEditor.asRadioButton().getValue());
+        });
+        vgpuSeparatedPlacementEditor.asRadioButton().addValueChangeHandler(event -> {
+            object.getVgpuConsolidatedPlacement().setEntity(vgpuConsolidatedPlacementEditor.asRadioButton().getValue());
+            object.getVgpuSeparatedPlacement().setEntity(vgpuSeparatedPlacementEditor.asRadioButton().getValue());
+        });
     }
 
     private void showDiscoveredHostsWidgets(boolean enabled) {
@@ -1014,10 +1043,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         // ==SPM Tab==
         nextTabIndex = spmTab.setTabIndexes(nextTabIndex);
 
-        // ==Console Tab==
+        // ==Console and GPU Tab==
         nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
         consoleAddressEnabled.setTabIndex(nextTabIndex++);
         consoleAddress.setTabIndex(nextTabIndex++);
+        vgpuConsolidatedPlacementEditor.setTabIndex(nextTabIndex++);
+        vgpuSeparatedPlacementEditor.setTabIndex(nextTabIndex++);
 
         // ==Kernel Tab==
         nextTabIndex = kernelTab.setTabIndexes(nextTabIndex);

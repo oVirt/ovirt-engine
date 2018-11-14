@@ -365,7 +365,23 @@
                                         <ge:StringEntityModelTextBoxEditor ui:field="consoleAddress" usePatternFly="true" />
                                    </b:Column>
                                 </b:Row>
-                            </b:Container>
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <b:Column size="SM_6">
+                                        <g:Label addStyleNames="{style.floatLeft}" text="{constants.vgpuPlacementLabel}" />
+                                        <d:InfoIcon ui:field="vgpuPlacementInfoIcon" addStyleNames="{style.infoIcon}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                      <ge:EntityModelRadioButtonEditor ui:field="vgpuConsolidatedPlacementEditor" label="{constants.vgpuConsolidatedPlacementLabel}" addStyleNames="{style.floatLeft}" />
+                                    </b:Column>
+                               </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                      <ge:EntityModelRadioButtonEditor ui:field="vgpuSeparatedPlacementEditor" label="{constants.vgpuSeparatedPlacementLabel}" addStyleNames="{style.floatLeft}" />
+                                    </b:Column>
+                               </b:Row>
+                           </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

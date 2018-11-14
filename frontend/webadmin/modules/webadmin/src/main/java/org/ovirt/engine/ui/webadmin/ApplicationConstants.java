@@ -570,6 +570,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String consoleButtonLabel();
 
+    String vgpuPlacementLabel();
+
+    String vgpuPlacementInfoIcon();
+
+    String vgpuConsolidatedPlacementLabel();
+
+    String vgpuSeparatedPlacementLabel();
+
     String networkProviderButtonLabel();
 
     String externalNetworkProviderLabel();
