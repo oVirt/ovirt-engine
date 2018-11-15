@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String NAME = "NAME";
@@ -45,6 +46,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String CUSTOM_EMULATED_MACHINE = "CUSTOM_EMULATED_MACHINE";
     public static final String CUSTOM_CPU_TYPE = "CUSTOM_CPU_TYPE";
     public static final String COMPATIBILITY_LEVEL = "COMPATIBILITY_LEVEL";
+    public static final String CUSTOM_COMPATIBILITY_LEVEL = "CUSTOM_COMPATIBILITY_LEVEL";
     public static final String CREATED_BY_USER_ID = "CREATED_BY_USER_ID";
     public static final String NEXT_RUN_CONFIG_EXISTS = "NEXT_RUN_CONFIG_EXISTS";
     public static final String HAS_ILLEGAL_IMAGES = "HAS_ILLEGAL_IMAGES";
@@ -83,6 +85,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         verbs.add(CUSTOM_EMULATED_MACHINE);
         verbs.add(CUSTOM_CPU_TYPE);
         verbs.add(COMPATIBILITY_LEVEL);
+        verbs.add(CUSTOM_COMPATIBILITY_LEVEL);
         verbs.add(CREATED_BY_USER_ID);
         verbs.add(NEXT_RUN_CONFIG_EXISTS);
         verbs.add(HAS_ILLEGAL_IMAGES);
@@ -121,6 +124,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(CUSTOM_EMULATED_MACHINE, String.class);
         getTypeDictionary().put(CUSTOM_CPU_TYPE, String.class);
         getTypeDictionary().put(COMPATIBILITY_LEVEL, String.class);
+        getTypeDictionary().put(CUSTOM_COMPATIBILITY_LEVEL, Version.class);
         getTypeDictionary().put(CREATED_BY_USER_ID, UUID.class);
         getTypeDictionary().put(NEXT_RUN_CONFIG_EXISTS, Boolean.class);
         getTypeDictionary().put(HAS_ILLEGAL_IMAGES, Boolean.class);
@@ -157,6 +161,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CUSTOM_EMULATED_MACHINE, "custom_emulated_machine");
         columnNameDict.put(CUSTOM_CPU_TYPE, "custom_cpu_name");
         columnNameDict.put(COMPATIBILITY_LEVEL, "cluster_compatibility_version");
+        columnNameDict.put(CUSTOM_COMPATIBILITY_LEVEL, "custom_compatibility_version");
         columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
         columnNameDict.put(NEXT_RUN_CONFIG_EXISTS, "next_run_config_exists");
         columnNameDict.put(HAS_ILLEGAL_IMAGES, "has_illegal_images");
