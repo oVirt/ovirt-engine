@@ -26,24 +26,46 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
     Map<String, String> allKeyValueMap;
     Map<String, List<String>> allRegExKeys;
     private Map<String, String> keyValueMap_used = new HashMap<>();
+    private boolean useEditableKey;
 
     @Override
     protected void initLineModel(KeyValueLineModel keyValueLineModel, String key) {
-        if (isKeyValid(key)) {
+        if (useEditableKey) {
+            keyValueLineModel.getValues().setIsAvailable(false);
+            keyValueLineModel.getKeys().setIsAvailable(false);
+            keyValueLineModel.getEditableKey().setIsAvailable(true);
+            keyValueLineModel.getValue().setIsAvailable(true);
+            keyValueLineModel.getValue().setIsChangeable(true);
+            keyValueLineModel.getValue().setEntity("");
+            keyValueLineModel.getEditableKey().setEntity("");
+        } else if (isKeyValid(key)) {
             boolean constrainedValue = allRegExKeys.containsKey(key);
             keyValueLineModel.getValue().setIsAvailable(!constrainedValue);
             keyValueLineModel.getValues().setIsAvailable(constrainedValue);
+            keyValueLineModel.getEditableKey().setIsAvailable(false);
+            keyValueLineModel.getEditableKey().setEntity("");
             if (constrainedValue) {
                 keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
             }
         } else {
             keyValueLineModel.getValue().setIsAvailable(false);
             keyValueLineModel.getValues().setIsAvailable(false);
+            keyValueLineModel.getEditableKey().setIsAvailable(false);
+            keyValueLineModel.getEditableKey().setEntity("");
             keyValueLineModel.getValue().setEntity("");
             keyValueLineModel.getValues().setSelectedItem(null);
             keyValueLineModel.getValues().setItems(null);
         }
     }
+
+    public void useEditableKey(boolean useEditableKey) {
+        this.useEditableKey = useEditableKey;
+    }
+
+    public boolean isEditableKey() {
+        return this.useEditableKey;
+    }
+
 
     protected void setValueByKey(KeyValueLineModel lineModel, String key) {
         if (allRegExKeys.containsKey(key)) {
@@ -120,6 +142,23 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         setKeyValueString(lines);
     }
 
+    public Map<String, Object> serializeToMap() {
+        Map<String, Object> keyValueMap = new HashMap<>();
+
+        if (getItems() == null) {
+            return null;
+        }
+
+        for (KeyValueLineModel keyValueLineModel : getItems()) {
+            if (keyValueLineModel.getEditableKey().getEntity() != null && !keyValueLineModel.getEditableKey().getEntity().equals("")) {
+                keyValueMap.put(keyValueLineModel.getEditableKey().getEntity(),
+                        keyValueLineModel.getValue().getEntity());
+            }
+        }
+
+        return keyValueMap;
+    }
+
     public String serialize() {
         StringBuilder builder = new StringBuilder();
         if (getItems() == null) {
@@ -136,6 +175,8 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
                 builder.append(keyValueLineModel.getValue().getEntity());
             } else if (keyValueLineModel.getValues().getIsAvailable()) {
                 builder.append(keyValueLineModel.getValues().getSelectedItem());
+            } else if (keyValueLineModel.getEditableKey().getIsAvailable()) {
+                builder.append(keyValueLineModel.getEditableKey().getEntity());
             }
             builder.append(PROPERTIES_DELIMETER);
         }
@@ -220,8 +261,10 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
     @Override
     public KeyValueLineModel createNewLineModel(String key) {
         KeyValueLineModel lineModel = new KeyValueLineModel();
-        lineModel.getKeys().setItems(key == null ? getAvailableKeys() : getAvailableKeys(key));
-        lineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
+        if (!useEditableKey) {
+            lineModel.getKeys().setItems(key == null ? getAvailableKeys() : getAvailableKeys(key));
+            lineModel.getKeys().getSelectedItemChangedEvent().addListener(keyChangedListener);
+        }
         initLineModel(lineModel, key);
         return lineModel;
     }
@@ -230,11 +273,16 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
     protected List<KeyValueLineModel> createLineModels(Set<String> usedKeys) {
         List<KeyValueLineModel> lineModels = new ArrayList<>();
 
-        for (String key : usedKeys) {
-            KeyValueLineModel lineModel = createNewLineModel(key);
-            lineModel.getKeys().setSelectedItem(key);
-            setValueByKey(lineModel, key);
+        if (useEditableKey) {
+            KeyValueLineModel lineModel = createNewLineModel(null);
             lineModels.add(lineModel);
+        } else {
+            for (String key : usedKeys) {
+                KeyValueLineModel lineModel = createNewLineModel(key);
+                lineModel.getKeys().setSelectedItem(key);
+                setValueByKey(lineModel, key);
+                lineModels.add(lineModel);
+            }
         }
 
         return lineModels;

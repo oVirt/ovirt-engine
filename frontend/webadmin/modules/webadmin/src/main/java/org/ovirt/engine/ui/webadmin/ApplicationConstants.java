@@ -334,6 +334,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String storagePopupVfsTypeLabel();
 
+    String StoragePopupDriverOptionsLabel();
+
+    String StoragePopupDriverSensitiveOptionsLabel();
+
     String storagePopupMountOptionsLabel();
 
     String storagePopupAdditionalMountOptionsLabel();

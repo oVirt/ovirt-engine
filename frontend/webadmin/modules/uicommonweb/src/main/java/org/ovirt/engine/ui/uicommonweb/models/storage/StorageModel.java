@@ -533,8 +533,8 @@ public class StorageModel extends Model {
                     dataCenter.setStoragePoolFormatType(targetFormat);
                 }
 
-                // If data center has format defined and the selected-item role is Data, choose it.
-                if (getCurrentStorageItem().getRole().isDataDomain()) {
+                // If data center has format defined and the selected-item role is Data, choose it unless this is an Managed block storage.
+                if (getCurrentStorageItem().getRole().isDataDomain() && !getCurrentStorageItem().getType().equals(StorageType.MANAGED_BLOCK_STORAGE)) {
                     formats.add(dataCenter.getStoragePoolFormatType());
                     selectItem = dataCenter.getStoragePoolFormatType();
                 } else if (getCurrentStorageItem().getRole() == StorageDomainType.ISO

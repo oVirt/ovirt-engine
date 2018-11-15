@@ -1563,6 +1563,10 @@ public interface UIConstants extends Constants {
 
     String mountOptionsHint();
 
+    String driverOptionsHint();
+
+    String driverSensitiveOptionsHint();
+
     String eventDetailsTitle();
 
     String hosCPUUnavailable();

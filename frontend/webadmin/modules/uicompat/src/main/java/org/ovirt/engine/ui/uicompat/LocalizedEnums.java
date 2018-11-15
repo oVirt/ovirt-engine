@@ -1345,6 +1345,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String StorageType___POSIXFS();
 
+    String StorageType___MANAGED_BLOCK();
+
     String StorageType___GLUSTERFS();
 
     String StorageType___GLANCE();

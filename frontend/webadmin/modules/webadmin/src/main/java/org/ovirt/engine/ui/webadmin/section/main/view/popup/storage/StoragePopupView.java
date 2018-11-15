@@ -276,6 +276,9 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             case POSIXFS:
                 storageView = new PosixStorageView();
                 break;
+            case MANAGED_BLOCK_STORAGE:
+                storageView = new ManagedBlockStorageView();
+                break;
             case GLUSTERFS:
                 storageView = new GlusterStorageView();
                 break;

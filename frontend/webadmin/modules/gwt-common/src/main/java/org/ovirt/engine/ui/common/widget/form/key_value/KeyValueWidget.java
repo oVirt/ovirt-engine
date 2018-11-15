@@ -64,6 +64,9 @@ public class KeyValueWidget<T extends KeyValueModel> extends AddRemoveRowWidget<
 
     @Override
     protected boolean isGhost(KeyValueLineModel value) {
+        if (model.isEditableKey()) {
+            return false;
+        }
         return !model.isKeyValid(value.getKeys().getSelectedItem());
     }
 

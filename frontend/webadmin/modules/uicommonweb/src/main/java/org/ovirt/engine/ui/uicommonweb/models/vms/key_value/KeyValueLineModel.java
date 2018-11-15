@@ -7,13 +7,16 @@ public class KeyValueLineModel extends KeyLineModel {
 
     ListModel<String> values;
     EntityModel<String> value;
+    EntityModel<String> editableKey;
 
     public KeyValueLineModel() {
         super();
         setValue(new EntityModel<String>());
         setValues(new ListModel<String>());
+        setEditableKey(new EntityModel<String>());
         getValue().setIsAvailable(false);
         getValues().setIsAvailable(false);
+        getEditableKey().setIsAvailable(false);
     }
 
     public ListModel<String> getValues() {
@@ -30,6 +33,14 @@ public class KeyValueLineModel extends KeyLineModel {
 
     public void setValue(EntityModel<String> value) {
         this.value = value;
+    }
+
+    public EntityModel<String> getEditableKey() {
+        return editableKey;
+    }
+
+    public void setEditableKey(EntityModel<String> editableKey) {
+        this.editableKey = editableKey;
     }
 
     @Override

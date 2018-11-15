@@ -29,6 +29,10 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
     @Path(value = "values.selectedItem")
     ListModelListBoxEditor<String> valuesField;
 
+    @UiField
+    @Path(value = "editableKey.entity")
+    StringEntityModelTextBoxEditor editableKeyField;
+
     KeyValueLineWidget() {
         super();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -46,6 +50,7 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
         super.hideLabels();
         valueField.hideLabel();
         valuesField.hideLabel();
+        editableKeyField.hideLabel();
     }
 
     @Override
@@ -53,6 +58,7 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
         super.setUsePatternFly(use);
         valueField.setUsePatternFly(use);
         valuesField.setUsePatternFly(use);
+        editableKeyField.setUsePatternFly(use);
     }
 
     @Override
@@ -66,6 +72,8 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
         keyField.setEnabled(enabled);
         valueField.setEnabled(enabled);
         valuesField.setEnabled(enabled);
+        valuesField.setEnabled(enabled);
+        editableKeyField.setEnabled(enabled);
     }
 
     @Override

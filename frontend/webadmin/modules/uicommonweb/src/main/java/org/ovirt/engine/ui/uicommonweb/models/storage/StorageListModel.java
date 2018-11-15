@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -310,6 +311,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
 
+        items.addAll(AsyncDataProvider.getInstance().getManagedBlockStorageModels());
+
         model.setStorageModels(items);
 
         model.initialize();
@@ -400,6 +403,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             return new PosixStorageModel();
         case GLUSTERFS:
             return new GlusterStorageModel();
+        case MANAGED_BLOCK_STORAGE:
+            return new ManagedBlockStorageModel();
         }
         return null;
     }
@@ -702,6 +707,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             saveLocalStorage();
         } else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
             savePosixStorage();
+        } else if (model.getCurrentStorageItem() instanceof ManagedBlockStorageModel) {
+            saveManagedBlockStorage();
         } else {
             saveSanStorage();
         }
@@ -736,6 +743,17 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getWindow().startProgress();
 
         Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SavePosix"}))).run(); //$NON-NLS-1$
+    }
+
+    private void saveManagedBlockStorage() {
+
+        if (getWindow().getProgress() != null) {
+            return;
+        }
+
+        getWindow().startProgress();
+
+        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SaveManagedBlock"}))).run(); //$NON-NLS-1$
     }
 
     private void saveSanStorage() {
@@ -1060,12 +1078,85 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
     }
 
+    private void saveManagedBlockStorage(TaskContext context) {
+
+        this.context = context;
+
+        StorageDomain selectedItem = getSelectedItem();
+        StorageModel model = (StorageModel) getWindow();
+        boolean isNew = model.getStorage() == null;
+        storageModel = model.getCurrentStorageItem();
+        storageModel.setRole(StorageDomainType.ManagedBlockStorage);
+
+        storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
+        saveBaseStorageProperties(model);
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+
+        if (isNew) {
+            //TODO: Add a query to validate if storage already exists
+            saveNewManagedBlockStorage();
+        } else {
+            updateStorageDomain();
+        }
+    }
+
     private void updateStorageDomain() {
         Frontend.getInstance().runAction(ActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
                 result -> {
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
                 }, this);
+    }
+
+    public void saveNewManagedBlockStorage() {
+
+        StorageModel model = (StorageModel) getWindow();
+        ManagedBlockStorageModel ManagedBlockStorageModel = (ManagedBlockStorageModel) model.getCurrentStorageItem();
+        VDS host = model.getHost().getSelectedItem();
+        hostId = host.getId();
+
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+
+        actionTypes.add(ManagedBlockStorageModel.getAddStorageDomainVdcAction());
+
+        AddManagedBlockStorageDomainParameters parameter = new AddManagedBlockStorageDomainParameters();
+        parameter.setStorageDomain(storageDomain);
+        parameter.setVdsId(host.getId());
+        StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+        parameter.setStoragePoolId(dataCenter.getId());
+        parameter.setDriverOptions(ManagedBlockStorageModel.getDriverOptions().serializeToMap());
+        parameter.setSriverSensitiveOptions(ManagedBlockStorageModel.getDriverSensitiveOptions().serializeToMap());
+
+        parameters.add(parameter);
+
+        IFrontendActionAsyncCallback callback1 = result -> {
+
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            storageListModel.storageId = actionReturnValue.getActionReturnValue();
+
+            // Attach storage to data center as necessary.
+            StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+            StoragePool dataCenter1 = storageModel.getDataCenter().getSelectedItem();
+            if (!dataCenter1.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter1.getId(), storageModel.getActivateDomain().getEntity());
+            }
+
+            storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+        };
+
+        IFrontendActionAsyncCallback failureCallback = result -> {
+
+            StorageListModel storageListModel = (StorageListModel) result.getState();
+            storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
+        };
+
+        Frontend.getInstance().runMultipleActions(actionTypes,
+                parameters,
+                new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1})),
+                failureCallback,
+                this);
     }
 
     public void saveNewPosixStorage() {
@@ -1831,7 +1922,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             savePosixStorage(context);
         } else if ("SaveSan".equals(key)) { //$NON-NLS-1$
             saveSanStorage(context);
-        } else if ("ImportFile".equals(key)) { //$NON-NLS-1$
+        } else if ("SaveManagedBlock".equals(key)) { //$NON-NLS-1$
+            saveManagedBlockStorage(context);
+        }else if ("ImportFile".equals(key)) { //$NON-NLS-1$
             importFileStorage(context);
         } else if ("ImportSan".equals(key)) { //$NON-NLS-1$
             importSanStorage(context);

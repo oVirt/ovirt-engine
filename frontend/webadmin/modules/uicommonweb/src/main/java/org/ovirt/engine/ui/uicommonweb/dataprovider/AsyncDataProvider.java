@@ -202,6 +202,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.ImportFcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportIscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ManagedBlockStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NetworkFilterParameterModel;
@@ -2967,6 +2968,17 @@ public class AsyncDataProvider {
         models.add(localExportStorageModel);
 
         addTypeToStorageModels(StorageDomainType.ImportExport, models);
+
+        return models;
+    }
+
+    public List<IStorageModel> getManagedBlockStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<>();
+
+        ManagedBlockStorageModel managedBlockStorageModel = new ManagedBlockStorageModel();
+        models.add(managedBlockStorageModel);
+
+        addTypeToStorageModels(StorageDomainType.ManagedBlockStorage, models);
 
         return models;
     }

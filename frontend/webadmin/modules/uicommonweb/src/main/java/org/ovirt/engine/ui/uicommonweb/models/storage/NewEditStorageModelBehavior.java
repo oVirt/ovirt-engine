@@ -62,6 +62,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
 
         boolean isExportDomain = item.getRole() == StorageDomainType.ImportExport;
         boolean isIsoDomain = item.getRole() == StorageDomainType.ISO;
+        boolean isManagedBlockDomain = item.getRole() == StorageDomainType.ManagedBlockStorage;
 
         // Local types should not be selectable for shared data centers
         if (isLocalStorage(item) && !dataCenter.isLocal()) {
@@ -84,9 +85,12 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
                 dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
 
+        boolean canAttachManagedBlockDomain = dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
+
         // local storage should only be available in a local DC.
         boolean canAttachLocalStorage = !isLocalStorage(item) || dataCenter.isLocal();
-        if (((isExportDomain && canAttachExportDomain) || (isIsoDomain && canAttachIsoDomain)) && canAttachLocalStorage) {
+        if (((isExportDomain && canAttachExportDomain) || (isIsoDomain && canAttachIsoDomain) ||
+                (isManagedBlockDomain && canAttachManagedBlockDomain)) && canAttachLocalStorage) {
             updateItemSelectability(item, true);
             return;
         }
