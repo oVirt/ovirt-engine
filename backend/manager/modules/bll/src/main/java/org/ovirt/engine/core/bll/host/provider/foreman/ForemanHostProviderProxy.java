@@ -364,6 +364,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 replaceIfExists(hg.getPuppetProxyId(), "        \"puppet_proxy_id\": \"%s \",\n") +
                 replaceIfExists(hg.getPuppetCaProxyId(), "        \"puppet_ca_proxy_id\": \"%s \",\n") +
                 "        \"root_pass\": \"" + rootPassword + "\",\n" +
+                "        \"build\": \"" + Boolean.TRUE + "\",\n" +
                 "        \"host_parameters_attributes\": [\n" +
                 "           {\n" +
                 "                \"name\": \"host_ovirt_id\",\n" +
