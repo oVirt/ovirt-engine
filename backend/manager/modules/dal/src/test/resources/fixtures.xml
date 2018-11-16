@@ -187,7 +187,7 @@
 
   <network_filter filter_id="c477a4cc-f00e-45be-b61f-224766437091" filter_name="TEST_NETWORK_FILTER" version="4.0"/>
   <network_filter filter_id="22510576-a243-468e-bc37-d68f16130b02" filter_name="ovirt-no-filter" version="3.0"/>
-  <network_filter filter_id="3c6f56c2-bd3a-4575-969b-b6cda2d594ad" filter_name="vnic-profile-filter-test" version="3.6"/>
+  <network_filter filter_id="3c6f56c2-bd3a-4575-969b-b6cda2d594ad" filter_name="vnic-profile-filter-test" version="4.0"/>
 
   <vnic_profiles id="fd81f1e1-785b-4579-ab75-1419ebb87052" name="engine_profile" network_id="58d5c1c6-cb15-4832-b2a4-023770607188" network_qos_id="de956031-6be2-43d6-bb90-5191c9253314" port_mirroring="false" passthrough="false" migratable="true" custom_properties="{ &quot;prop1&quot; : &quot;true&quot;, &quot;prop2&quot; : &quot;123456&quot; }" description="vnic profile description" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36" network_filter_id="22510576-a243-468e-bc37-d68f16130b02"/>
   <vnic_profiles id="a667da39-27b0-47ec-a5fa-d4293a62b222" name="engine_profile_pm" network_id="58d5c1c6-cb15-4832-b2a4-023770607188" network_qos_id="de956031-6be2-43d6-bb90-5191c9253315" port_mirroring="true" passthrough="false" migratable="true" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36" network_filter_id="22510576-a243-468e-bc37-d68f16130b02"/>
@@ -822,8 +822,8 @@
   <host_device host_id="afce7a39-8e8c-4819-ba9c-796d316592e6" device_name="pci_0000_00_0a_0" parent_device_name="computer" capability="pci" iommu_group="5" product_name="7500/5520/5500/X58 I/O Hub PCI Express Root Port 10" product_id="0x3411" vendor_name="Intel Corporation" vendor_id="0x8086" is_assignable="false"/>
   <host_device host_id="afce7a39-8e8c-4819-ba9c-796d316592e6" device_name="pci_0000_00_14_2" parent_device_name="computer" capability="pci" iommu_group="6" product_name="7500/5520/5500/X58 I/O Hub Control Status and RAS Registers" product_id="0x3423" vendor_name="Intel Corporation" vendor_id="0x8086" is_assignable="false"/>
 
-  <gluster_config_master config_key="georep-crawl" config_description="Geo-replication session  crawl" minimum_supported_cluster="3.6" config_possible_values="" config_feature="geo_replication"/>
-  <gluster_config_master config_key="use_meta_volume" config_description="Meta volume for the geo-replication session" minimum_supported_cluster="3.6" config_possible_values="true;false" config_feature="geo_replication"/>
+  <gluster_config_master config_key="georep-crawl" config_description="Geo-replication session  crawl" minimum_supported_cluster="4.0" config_possible_values="" config_feature="geo_replication"/>
+  <gluster_config_master config_key="use_meta_volume" config_description="Meta volume for the geo-replication session" minimum_supported_cluster="4.0" config_possible_values="true;false" config_feature="geo_replication"/>
 
   <storage_device id="00000000-0000-0000-0000-000000000001" name="sda" vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" description="DELL PERC H310 (disk)" device_type="SCSI" device_path="/dev/sda" size="3814400" is_free="true" _create_date="2015-02-10 14:49:55.806609" _update_date="2015-02-10 16:35:15.362494"/>
   <storage_device id="00000000-0000-0000-0000-000000000002" name="sdb" vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" description="DELL PERC H310 (disk)" device_type="SCSI" device_path="/dev/sdb" size="34400" is_free="true" _create_date="2015-02-10 14:49:55.806609" _update_date="2015-02-10 16:35:15.362494"/>
