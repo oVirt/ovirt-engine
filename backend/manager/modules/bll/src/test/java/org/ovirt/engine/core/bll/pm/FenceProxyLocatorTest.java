@@ -163,7 +163,7 @@ public class FenceProxyLocatorTest extends BaseCommandTest {
     public void findProxyHostExcludesHostDueToFencingPolicy() {
         mockExistingHosts(createHost());
         FenceProxyLocator locator = setupLocator(new FencingPolicy());
-        setMinSupportedVersionForFencingPolicy(locator, Version.v3_6);
+        setMinSupportedVersionForFencingPolicy(locator, Version.v4_2);
 
         VDS proxyHost = locator.findProxyHost(false);
 
@@ -300,11 +300,11 @@ public class FenceProxyLocatorTest extends BaseCommandTest {
     @Test
     public void testProxyCompatibilityWithFencingPolicy() {
         VDS host = createHost();
-        host.setSupportedClusterLevels("3.6");
+        host.setSupportedClusterLevels("4.2");
         FenceProxyLocator locator = setupLocator();
 
-        assertTrue(locator.isFencingPolicySupported(host, Version.v3_6));
-        assertFalse(locator.isFencingPolicySupported(host, Version.v4_0));
+        assertTrue(locator.isFencingPolicySupported(host, Version.v4_2));
+        assertFalse(locator.isFencingPolicySupported(host, Version.v4_3));
     }
 
     private void mockFencedHost() {
