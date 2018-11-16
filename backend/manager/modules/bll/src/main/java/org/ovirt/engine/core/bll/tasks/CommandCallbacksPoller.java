@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -70,7 +71,7 @@ public class CommandCallbacksPoller implements BackendService {
             if (shouldRepeatEndMethodsOnFail) {
                 callbackInvocationMap.remove(cmdId);
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             if (callback.shouldRepeatEndMethodsOnFail(cmdId)) {
                 if (callbackInvocationMap.getOrDefault(cmdId, new AtomicInteger(0)).get() >
                         repeatEndMethodsOnFailMaxRetries) {
@@ -127,12 +128,18 @@ public class CommandCallbacksPoller implements BackendService {
 
             // Decrement counter; execute if it reaches 0
             callbackTiming.setRemainingDelay(callbackTiming.getRemainingDelay() - pollingRate);
+            ActionType cmdActionType = commandEntity == null ? ActionType.Unknown : commandEntity.getCommandType();
             if (callbackTiming.getRemainingDelay() > 0) {
+                log.debug("The command {} ({}) has remaining delay {}, polling will be skipped.",
+                        cmdActionType,
+                        cmdId,
+                        callbackTiming.getRemainingDelay());
                 continue;
             }
 
             CommandCallback callback = callbackTiming.getCallback();
             CommandStatus status = commandsRepository.getCommandStatus(cmdId);
+            log.debug("Command {} ({}) in status {}", cmdActionType, cmdId, status);
             boolean runCallbackAgain = false;
             boolean errorInCallback = false;
             try {
@@ -142,24 +149,40 @@ public class CommandCallbacksPoller implements BackendService {
                         runCallbackAgain = endCallback(cmdId, callback, status);
                         break;
                     case ACTIVE:
-                        if (commandEntity != null && commandEntity.isExecuted()) {
+                        if (commandEntity == null) {
+                            log.info("Not invoking command's {} doPolling method command entity is null, callback is {}.",
+                                    cmdId,
+                                    callbackTiming.getCallback() == null ? "NULL" : callbackTiming.getCallback().getClass().getCanonicalName());
+                        } else if (commandEntity.isExecuted()) {
+                            log.debug("Invoking command's {} ({}) doPolling method.", cmdActionType, cmdId);
                             callback.doPolling(cmdId, getChildCommandIds(cmdId));
                         }
                         break;
                     case EXECUTION_FAILED:
                         if (callback.pollOnExecutionFailed()) {
+                            log.debug("Invoking command's {} ({}) doPolling method.", cmdActionType, cmdId);
                             callback.doPolling(cmdId, getChildCommandIds(cmdId));
+                        } else {
+                            log.info("Not invoking command's {} ({}) doPolling method callback's pollOnExecutionFailed is false.",
+                                    cmdActionType, cmdId);
                         }
                         break;
                     default:
                         break;
                 }
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 errorInCallback = true;
+                log.info("Exception in invoking callback of command {} ({}): {}",
+                        cmdActionType,
+                        cmdId,
+                        ExceptionUtils.getRootCauseMessage(ex));
+                log.debug("Exception", ex);
                 handleError(ex, status, cmdId);
             } finally {
                 if ((CommandStatus.FAILED == status || (CommandStatus.SUCCEEDED == status && !errorInCallback))
                         && !runCallbackAgain) {
+                    log.debug("Callback of command {} ({}) has been notified, removing command from command repository.",
+                            cmdActionType, cmdId);
                     commandsRepository.updateCallbackNotified(cmdId);
                     iterator.remove();
                     CommandEntity cmdEntity = commandsRepository.getCommandEntity(entry.getKey());
@@ -173,9 +196,14 @@ public class CommandCallbacksPoller implements BackendService {
                         }
                     }
                 } else if (status != commandsRepository.getCommandStatus(cmdId)) {
+                    log.debug("Command {} ({}) status {} has been updated to {}, command will be polled again.",
+                            cmdActionType, cmdId,
+                            commandsRepository.getCommandStatus(cmdId),
+                            status);
                     callbackTiming.setInitialDelay(pollingRate);
                     callbackTiming.setRemainingDelay(pollingRate);
                 } else {
+                    log.debug("Command {} ({}) will be polled again, updating initial and remaining delay.", cmdActionType, cmdId);
                     long maxDelay = Config.<Long>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
                     callbackTiming.setInitialDelay(Math.min(maxDelay, callbackTiming.getInitialDelay() * 2));
                     callbackTiming.setRemainingDelay(callbackTiming.getInitialDelay());
@@ -186,7 +214,7 @@ public class CommandCallbacksPoller implements BackendService {
         commandsRepository.markExpiredCommandsAsFailure();
     }
 
-    private void handleError(Exception ex, CommandStatus status, Guid cmdId) {
+    private void handleError(Throwable ex, CommandStatus status, Guid cmdId) {
         log.error("Error invoking callback method '{}' for '{}' command '{}'",
                 getCallbackMethod(status),
                 status,
@@ -246,6 +274,8 @@ public class CommandCallbacksPoller implements BackendService {
                 cmdEntity.setWaitingForEvent(false);
                 return false;
             }
+            log.debug("The command '{}' is waiting for event and will not be polled until event or timeout",
+                    cmdEntity.getId());
             return true;
         }
         return false;
