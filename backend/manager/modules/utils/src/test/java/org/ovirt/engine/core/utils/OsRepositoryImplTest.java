@@ -50,8 +50,8 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/disk/hotpluggableInterfaces").put("value", DISK_HOTPLUGGABLE_INTERFACES);
         preferences.node("/os/rhel7/devices/watchdog/models").put("value", WATCH_DOG_MODELS);
         preferences.node("/os/rhel7/devices/maxPciDevices").put("value", MAX_PCI_DEVICES);
-        preferences.node("/os/rhel7/resources/minimum/ram").put("value", "1024");
-        preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.6", "512");
+        preferences.node("/os/rhel7/resources/minimum/ram").put("value", "2048");
+        preferences.node("/os/rhel7/resources/minimum/ram").put("value.4.1", "1024");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/cirrus,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
@@ -168,7 +168,7 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetMinimumRam() {
-        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
+        assertEquals(2048, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
     }
 
     @Test
@@ -263,18 +263,18 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testVersionedValue() {
-        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
-        assertEquals(512, OsRepositoryImpl.INSTANCE.getMinimumRam(777, Version.v3_6));
+        assertEquals(2048, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
+        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, Version.v4_1));
     }
 
     @Test
     public void testDerivedVersionedValue() {
-        assertEquals(512, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v3_6));
+        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v4_1));
     }
 
     @Test
     public void testdefaultVersionedValue() {
-        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v4_0));
+        assertEquals(2048, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v4_3));
     }
 
     @Test
@@ -285,12 +285,16 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testHyperVLinux() {
-        assertFalse(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"), Version.v3_6));
+        assertFalse(OsRepositoryImpl.INSTANCE.isHypervEnabled(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"),
+                Version.v4_1));
     }
 
     @Test
     public void testHyperVWindows() {
-        assertTrue(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_7"), Version.v3_6));
+        assertTrue(OsRepositoryImpl.INSTANCE.isHypervEnabled(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_7"),
+                Version.v4_1));
     }
 
     @Test
