@@ -73,7 +73,6 @@ public class VmValidatorTest extends BaseCommandTest {
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfThreadsPerCpu,
                         COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
                         MAX_NUM_THREADS_PER_CPU),
-                MockConfigDescriptor.of(ConfigValues.SriovHotPlugSupported, Version.v3_6, false),
                 MockConfigDescriptor.of(ConfigValues.SriovHotPlugSupported, Version.v4_0, true)
         );
     }
@@ -269,13 +268,6 @@ public class VmValidatorTest extends BaseCommandTest {
     public void allPassthroughNonMigratableNicsAreUnplugged() {
         mockVnics(createNonMigratablePassthroughNics(2, false));
         assertThatAllPassthroughVnicsMigratable(true);
-    }
-
-    @Test
-    public void passthroughVnicsMigrationIsNotSupported() {
-        mockVnics(createMigratablePassthroughNics(1, true));
-        vm.setClusterCompatibilityVersion(Version.v3_6);
-        assertThatAllPassthroughVnicsMigratable(false);
     }
 
     private Stream<VmNetworkInterface> createRegularNics(int numberOfMocks) {
