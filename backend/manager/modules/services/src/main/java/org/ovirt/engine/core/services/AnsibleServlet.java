@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.inject.Inject;
 import javax.naming.InitialContext;
@@ -84,6 +85,14 @@ public class AnsibleServlet extends HttpServlet {
                     )
                     .variableFilePath(variablesFile.toString())
                     .playbook(request.getParameter("playbook") + ".yml");
+
+                // Verify the ansible-playbook exists
+                Path playbook = Paths.get(command.playbook());
+                if (!playbook.toFile().exists()) {
+                    response.sendError(HttpURLConnection.HTTP_INTERNAL_ERROR, "Ansible playbook was not found.");
+                    asyncContext.complete();
+                    return;
+                }
 
                 // Return from servlet:
                 asyncContext.complete();
