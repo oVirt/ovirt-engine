@@ -138,12 +138,21 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
                 }
             }
 
-            if (!commandBase.isExecutedAsChildCommand()) {
-                commandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
-            }
-
-            executionHandler.endJob(commandBase.getExecutionContext(), succeeded);
+            finalizeCommand(commandBase, succeeded);
         }
+    }
+
+    @Override
+    public void finalizeCommand(Guid cmdId, boolean succeeded) {
+        finalizeCommand(getCommand(cmdId), succeeded);
+    }
+
+    private void finalizeCommand(CommandBase<?> command, boolean succeeded) {
+        if (!command.isExecutedAsChildCommand()) {
+            commandCoordinatorUtil.removeAllCommandsInHierarchy(command.getCommandId());
+        }
+
+        executionHandler.endJob(command.getExecutionContext(), succeeded);
     }
 
     @Override

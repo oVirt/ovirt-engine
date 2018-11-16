@@ -76,6 +76,7 @@ public class CommandCallbacksPoller implements BackendService {
                 if (callbackInvocationMap.getOrDefault(cmdId, new AtomicInteger(0)).get() >
                         repeatEndMethodsOnFailMaxRetries) {
                     callbackInvocationMap.remove(cmdId);
+                    callback.finalizeCommand(cmdId, status == CommandStatus.SUCCEEDED);
                     log.error("Failed invoking callback end method '{}' for command '{}' with exception '{}', the"
                                     + " callback is marked for end method retries but max number of retries have been"
                                     + " attempted. The command will be marked as Failed.",

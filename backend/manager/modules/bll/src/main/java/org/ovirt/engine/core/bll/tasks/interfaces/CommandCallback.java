@@ -36,4 +36,17 @@ public interface CommandCallback {
     default boolean shouldRepeatEndMethodsOnFail(Guid cmdId) {
         return false;
     }
+
+    /**
+     * When the onFailed or onSucceeded methods of the callback throw and exception and the method can no longer be
+     * retried as max number of retries have reached, we need a way to clean up the command hierarchy and end the job.
+     * Sub classes can override this method to perform the cleanup logic.
+     * @param cmdId
+     *            The command id
+     * @param succeeded
+     *            the end status of the command
+     */
+    default void finalizeCommand(Guid cmdId, boolean succeeded) {
+        // empty
+    }
 }
