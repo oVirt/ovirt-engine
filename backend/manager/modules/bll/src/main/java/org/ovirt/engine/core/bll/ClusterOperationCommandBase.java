@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.network.DefaultFirewallType;
 import org.ovirt.engine.core.common.network.DefaultSwitchType;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
@@ -276,9 +275,7 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
     protected void setDefaultFirewallTypeIfNeeded() {
         Cluster cluster = getCluster();
         if (cluster.getFirewallType() == null) {
-            FirewallType defaultFirewallType =
-                    DefaultFirewallType.getDefaultFirewallType(cluster.getCompatibilityVersion());
-            cluster.setFirewallType(defaultFirewallType);
+            cluster.setFirewallType(FirewallType.FIREWALLD);
         }
     }
 

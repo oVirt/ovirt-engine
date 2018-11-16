@@ -2953,8 +2953,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_INVALID_OVA_DESTINATION_FOLDER();
 
-    String UNSUPPORTED_FIREWALL_TYPE_FOR_CLUSTER_VERSION();
-
     String CANNOT_MOVE_DISK_SNAPSHOTS();
 
     String CANNOT_MOVE_DISK_TEMPLATE();

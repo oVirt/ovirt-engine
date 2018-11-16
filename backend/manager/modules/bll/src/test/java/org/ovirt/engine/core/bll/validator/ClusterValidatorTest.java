@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -105,25 +104,6 @@ public class ClusterValidatorTest {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
 
         assertThat(validator.versionSupported(), failsWith(VersionSupport.getUnsupportedVersionMessage()));
-    }
-
-    @Test
-    public void invalidClusterFirewallTypeForClusterVersion() {
-        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
-        when(cluster.getFirewallType()).thenReturn(FirewallType.FIREWALLD);
-
-        assertThat(
-            validator.supportedFirewallTypeForClusterVersion(),
-            failsWith(EngineMessage.UNSUPPORTED_FIREWALL_TYPE_FOR_CLUSTER_VERSION)
-        );
-    }
-
-    @Test
-    public void validClusterFirewallTypeForClusterVersion() {
-        when(cluster.getCompatibilityVersion()).thenReturn(Version.v4_0);
-        when(cluster.getFirewallType()).thenReturn(FirewallType.FIREWALLD);
-
-        assertThat(validator.supportedFirewallTypeForClusterVersion(), isValid());
     }
 
     @Test
