@@ -5,7 +5,6 @@
   <vdc_options option_name="UserDefinedVmPropertiesKey3" option_value="" version="general"/>
   <vdc_options option_name="UserDefinedVmPropertiesKey4" option_value="" version="general"/>
   <vdc_options option_name="UserDefinedVmPropertiesKey5" option_value="" version="general"/>
-  <vdc_options option_name="SriovHotPlugSupported" option_value="false" version="3.6"/>
   <vdc_options option_name="MaxAuditLogMessageLength" option_value="1000" version="general"/>
 
   <mac_pools id="8c3a60e9-6a66-40db-84e0-c74077991775" name="Default" description="Default MAC pool" allow_duplicate_mac_addresses="false" default_pool="true"/>

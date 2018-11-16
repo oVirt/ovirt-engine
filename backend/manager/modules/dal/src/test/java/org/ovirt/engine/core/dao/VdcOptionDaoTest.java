@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VdcOption;
 
 public class VdcOptionDaoTest extends BaseDaoTestCase<VdcOptionDao> {
     private static final int INVALID_ID = -1;
-    private static final int OPTION_COUNT = 7;
+    private static final int OPTION_COUNT = 6;
     private VdcOption existingOption;
     private VdcOption newOption;
 
