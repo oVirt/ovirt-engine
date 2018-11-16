@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -201,14 +202,15 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList) {
+        StorageDomain storageDomain = getStorageDomain();
         DestroyImageParameters parameters = new DestroyImageParameters(
                 getVdsId(),
                 getVmId(),
-                getDiskImage().getStoragePoolId(),
-                getDiskImage().getStorageIds().get(0),
+                getParameters().getStoragePoolId(),
+                storageDomain.getId(),
                 imageGroupId,
                 imageList,
-                getDiskImage().isWipeAfterDelete(),
+                storageDomain.getWipeAfterDelete(),
                 false);
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         parameters.setParentParameters(getParameters());
