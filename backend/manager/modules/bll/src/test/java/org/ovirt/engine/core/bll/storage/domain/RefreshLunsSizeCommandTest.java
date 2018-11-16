@@ -77,7 +77,7 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
         sp.setId(spId);
         sp.setStatus(StoragePoolStatus.Up);
         sp.setIsLocal(false);
-        sp.setCompatibilityVersion(Version.v3_6);
+        sp.setCompatibilityVersion(Version.v4_3);
 
         doReturn(sd).when(cmd).getStorageDomain();
         doReturn(sp).when(cmd).getStoragePool();
