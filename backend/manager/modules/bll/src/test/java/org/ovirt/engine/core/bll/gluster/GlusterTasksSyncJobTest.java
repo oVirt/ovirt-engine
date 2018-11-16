@@ -207,8 +207,8 @@ public class GlusterTasksSyncJobTest {
 
     private List<Cluster> getClusters() {
         List<Cluster> list = new ArrayList<>();
-        list.add(createCluster(0, Version.v3_6));
-        list.add(createCluster(1, Version.v4_0));
+        list.add(createCluster(0, Version.v4_2));
+        list.add(createCluster(1, Version.v4_3));
         return list;
     }
 
