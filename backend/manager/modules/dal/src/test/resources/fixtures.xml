@@ -845,11 +845,11 @@
 
   <engine_backup_log scope="db" done_at="2015-02-10 16:35:15.362494" is_passed="true" output_message="OK" fqdn="10.35.1.1" log_path="/etc/share/ovirt-engine/log/engine-backup.log"/>
 
-  <cluster_features feature_id="00000000-0000-0000-0000-000000000001" feature_name="TEST_FEATURE_1" version="3.6" category="1" description="Test Feature-1 for Virt "/>
-  <cluster_features feature_id="00000000-0000-0000-0000-000000000002" feature_name="TEST_FEATURE_2" version="3.6" category="2" description="Test Feature-2 for Gluster"/>
-  <cluster_features feature_id="00000000-0000-0000-0000-000000000003" feature_name="TEST_FEATURE_3" version="3.6" category="255" description="Test Feature-3 for both Virt and Gluster"/>
-  <cluster_features feature_id="00000000-0000-0000-0000-000000000004" feature_name="TEST_FEATURE_4" version="3.6" category="255" description="Test Feature-4 for both Virt and Gluster"/>
-  <cluster_features feature_id="00000000-0000-0000-0000-000000000005" feature_name="TEST_FEATURE_5" version="3.6" category="255" description="Test Feature-5 for both Virt and Gluster"/>
+  <cluster_features feature_id="00000000-0000-0000-0000-000000000001" feature_name="TEST_FEATURE_1" version="4.3" category="1" description="Test Feature-1 for Virt "/>
+  <cluster_features feature_id="00000000-0000-0000-0000-000000000002" feature_name="TEST_FEATURE_2" version="4.3" category="2" description="Test Feature-2 for Gluster"/>
+  <cluster_features feature_id="00000000-0000-0000-0000-000000000003" feature_name="TEST_FEATURE_3" version="4.3" category="255" description="Test Feature-3 for both Virt and Gluster"/>
+  <cluster_features feature_id="00000000-0000-0000-0000-000000000004" feature_name="TEST_FEATURE_4" version="4.3" category="255" description="Test Feature-4 for both Virt and Gluster"/>
+  <cluster_features feature_id="00000000-0000-0000-0000-000000000005" feature_name="TEST_FEATURE_5" version="4.3" category="255" description="Test Feature-5 for both Virt and Gluster"/>
 
   <supported_cluster_features cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" feature_id="00000000-0000-0000-0000-000000000001" is_enabled="true"/>
   <supported_cluster_features cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" feature_id="00000000-0000-0000-0000-000000000002" is_enabled="true"/>

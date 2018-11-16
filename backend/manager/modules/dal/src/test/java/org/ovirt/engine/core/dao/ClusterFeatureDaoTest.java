@@ -25,11 +25,11 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
 
     @Test
     public void testGetClusterFeaturesForVersionAndCategory() {
-        verifyFeaturesReturned(dao.getClusterFeaturesForVersionAndCategory("3.6", ApplicationMode.VirtOnly),
+        verifyFeaturesReturned(dao.getClusterFeaturesForVersionAndCategory("4.3", ApplicationMode.VirtOnly),
                 Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_3", "TEST_FEATURE_4", "TEST_FEATURE_5"));
-        verifyFeaturesReturned(dao.getClusterFeaturesForVersionAndCategory("3.6", ApplicationMode.GlusterOnly),
+        verifyFeaturesReturned(dao.getClusterFeaturesForVersionAndCategory("4.3", ApplicationMode.GlusterOnly),
                 Arrays.asList("TEST_FEATURE_2", "TEST_FEATURE_3", "TEST_FEATURE_4", "TEST_FEATURE_5"));
-        verifyFeaturesReturned(dao.getClusterFeaturesForVersionAndCategory("3.6", ApplicationMode.AllModes),
+        verifyFeaturesReturned(dao.getClusterFeaturesForVersionAndCategory("4.3", ApplicationMode.AllModes),
                 Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_2", "TEST_FEATURE_3", "TEST_FEATURE_4", "TEST_FEATURE_5"));
     }
 
