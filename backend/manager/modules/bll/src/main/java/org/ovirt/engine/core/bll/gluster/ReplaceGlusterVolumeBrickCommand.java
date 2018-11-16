@@ -35,6 +35,7 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__ACTION__REPLACE_GLUSTER_BRICK);
     }
 
     @Override

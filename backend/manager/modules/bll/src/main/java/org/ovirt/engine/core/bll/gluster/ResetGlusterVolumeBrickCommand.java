@@ -39,6 +39,7 @@ public class ResetGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<Glu
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__TYPE__GLUSTER_BRICK);
+        addValidationMessage(EngineMessage.VAR__ACTION__RESET_GLUSTER_BRICK);
     }
 
     @Override

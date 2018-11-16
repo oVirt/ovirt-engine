@@ -151,6 +151,8 @@ public enum EngineMessage {
     VAR__ACTION__SEAL,
     VAR__ACTION__SCHEDULE,
     VAR__ACTION__TRANSFER,
+    VAR__ACTION__REPLACE_GLUSTER_BRICK,
+    VAR__ACTION__RESET_GLUSTER_BRICK,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
