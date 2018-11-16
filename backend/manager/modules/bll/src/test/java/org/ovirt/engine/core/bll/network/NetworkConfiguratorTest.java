@@ -78,8 +78,8 @@ public class NetworkConfiguratorTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-            MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v3_6, false),
-            MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_0, true)
+                MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_1, true)
         );
     }
 
@@ -112,7 +112,7 @@ public class NetworkConfiguratorTest {
         host = new VDS();
         host.setVdsName(HOST_NAME);
         host.setClusterId(CLUSTER_ID);
-        host.setClusterCompatibilityVersion(Version.v4_0);
+        host.setClusterCompatibilityVersion(Version.v4_1);
         host.getInterfaces().add(nic);
 
         underTest = new NetworkConfigurator(host, COMMAND_CONTEXT, auditLogDirector);
@@ -154,13 +154,13 @@ public class NetworkConfiguratorTest {
 
     @Test
     public void createSetupNetworkParamsInLegacyCluster() {
-        createSetupNetworkParamsTest(Version.v3_6, empty());
+        createSetupNetworkParamsTest(Version.v4_0, empty());
     }
 
     @Test
     public void createSetupNetworkParamsInNewCluster() {
         final IpConfiguration actual =
-                createSetupNetworkParamsTest(Version.v4_0, hasSize(1));
+                createSetupNetworkParamsTest(Version.v4_1, hasSize(1));
         assertIpv6Details(actual);
     }
 
