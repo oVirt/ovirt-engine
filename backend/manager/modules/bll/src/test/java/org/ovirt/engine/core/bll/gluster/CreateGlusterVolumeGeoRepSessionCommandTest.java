@@ -30,7 +30,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class CreateGlusterVolumeGeoRepSessionCommandTest extends BaseCommandTest {
-    private static final Version SUPPORTED_VERSION = Version.v3_6;
+    private static final Version SUPPORTED_VERSION = Version.v4_3;
 
     private final String slaveVolumeName = "slaveVol";
     private final Guid masterVolumeId = Guid.newGuid();
