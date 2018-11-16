@@ -80,7 +80,7 @@ public class BaseVmTest {
             .put(LARGE_OS_DEFAULT_ICON_ID, LARGE_OS_DEFAULT_ICON_DATA);
     protected static final IconCacheModelVmBaseMock REVERSE_ICON_CACHE = new IconCacheModelVmBaseMock()
             .put(LARGE_ICON_DATA, LARGE_ICON_ID);
-    protected static final Version CLUSTER_VERSION = Version.ALL.get(0);
+    protected static final Version CLUSTER_VERSION = Version.getLast();
     protected AsyncDataProvider adp;
 
     @BeforeEach

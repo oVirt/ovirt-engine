@@ -109,7 +109,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumOfIoThreads().getEntity()).thenReturn(Integer.toString(NUM_OF_IO_THREADS));
         when(model.getIoThreadsEnabled().getEntity()).thenReturn(true);
         when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
-        when(model.getCustomCompatibilityVersion().getSelectedItem()).thenReturn(Version.v3_6);
+        when(model.getCustomCompatibilityVersion().getSelectedItem()).thenReturn(Version.getLast());
         when(model.getOverrideMigrationPolicy().getEntity()).thenReturn(false);
         when(model.getLease().getSelectedItem()).thenReturn(null);
     }
