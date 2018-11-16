@@ -30,32 +30,32 @@ public class VersionTest {
 
     @Test
     public void compare() {
-        assertTrue(Version.v3_6.compareTo(Version.v4_0) < 0);
-        assertTrue(Version.v4_0.compareTo(Version.v3_6) > 0);
-        assertEquals(0, Version.v3_6.compareTo(new Version("3.6")));
+        assertTrue(Version.v4_2.compareTo(Version.v4_3) < 0);
+        assertTrue(Version.v4_3.compareTo(Version.v4_2) > 0);
+        assertEquals(0, Version.v4_3.compareTo(new Version("4.3")));
     }
 
     @Test
     public void biggerThan() {
-        assertFalse(Version.v3_6.greater(Version.v4_0));
-        assertTrue(Version.v4_0.greater(Version.v3_6));
+        assertFalse(Version.v4_2.greater(Version.v4_3));
+        assertTrue(Version.v4_3.greater(Version.v4_2));
     }
     @Test
     public void smallerThan() {
-        assertTrue(Version.v3_6.less(Version.v4_0));
-        assertFalse(Version.v4_0.less(Version.v3_6));
+        assertTrue(Version.v4_2.less(Version.v4_3));
+        assertFalse(Version.v4_3.less(Version.v4_2));
     }
 
     @Test
     public void biggerThanOrEquals() {
-        assertFalse(Version.v3_6.greaterOrEquals(Version.v4_0));
-        assertTrue(Version.v4_0.greaterOrEquals(Version.v3_6));
-        assertTrue(Version.v4_0.greaterOrEquals(new Version("3.6")));
+        assertFalse(Version.v4_2.greaterOrEquals(Version.v4_3));
+        assertTrue(Version.v4_3.greaterOrEquals(Version.v4_2));
+        assertTrue(Version.v4_3.greaterOrEquals(new Version("4.3")));
     }
     @Test
     public void smallerThanOrEquals() {
-        assertTrue(Version.v3_6.lessOrEquals(new Version("3.6")));
-        assertTrue(Version.v3_6.lessOrEquals(Version.v4_0));
-        assertFalse(Version.v4_0.lessOrEquals(Version.v3_6));
+        assertTrue(Version.v4_3.lessOrEquals(new Version("4.3")));
+        assertTrue(Version.v4_2.lessOrEquals(Version.v4_3));
+        assertFalse(Version.v4_3.lessOrEquals(Version.v4_2));
     }
 }
