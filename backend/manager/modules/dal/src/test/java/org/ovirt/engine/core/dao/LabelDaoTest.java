@@ -43,7 +43,7 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
         Cluster cluster = new Cluster();
         cluster.setName("test-cluster");
         cluster.setId(Guid.newGuid());
-        cluster.setCompatibilityVersion(Version.v3_6);
+        cluster.setCompatibilityVersion(Version.v4_3);
         cluster.setArchitecture(ArchitectureType.x86);
         cluster.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
         cluster.setFirewallType(FirewallType.IPTABLES);
