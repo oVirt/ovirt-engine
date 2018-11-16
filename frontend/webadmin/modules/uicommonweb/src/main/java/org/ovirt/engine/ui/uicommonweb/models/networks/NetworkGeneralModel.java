@@ -18,6 +18,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
     private String description;
     private Guid id;
     private String externalId;
+    private String vdsmName;
 
     public NetworkGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -51,6 +52,8 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
         setVlan(extendedNetwork.getVlanId());
 
         setMtu(extendedNetwork.getMtu());
+
+        setVdsmName(extendedNetwork.getVdsmName());
 
         if (extendedNetwork.isExternal()) {
             setExternalId(extendedNetwork.getProvidedBy().getExternalId());
@@ -136,6 +139,17 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
         if (!Objects.equals(externalId, value)) {
             externalId = value;
             onPropertyChanged(new PropertyChangedEventArgs("External Id")); //$NON-NLS-1$
+        }
+    }
+
+    public String getVdsmName() {
+        return vdsmName;
+    }
+
+    public void setVdsmName(String value) {
+        if (!Objects.equals(vdsmName, value)) {
+            vdsmName = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Vdsm Name")); //$NON-NLS-1$
         }
     }
 }

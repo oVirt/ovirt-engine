@@ -3480,4 +3480,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String vncEncryptionEnabledHelpMessage();
 
     String vncEncryptionLabel();
+
+    String vdsmName();
 }

@@ -53,6 +53,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     ValueLabel<Integer> vlan = new ValueLabel<>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
     ValueLabel<Integer> mtu = new ValueLabel<>(new MtuRenderer());
     StringValueLabel externalId = new StringValueLabel();
+    StringValueLabel vdsmName = new StringValueLabel();
 
     @UiField(provided = true)
     @WithElementId
@@ -75,12 +76,13 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 2, 4);
+        formBuilder = new FormBuilder(formPanel, 2, 5);
         formBuilder.setRelativeColumnWidth(0, 5);
         formBuilder.setRelativeColumnWidth(1, 5);
         formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0), 3, 9);
         formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0), 3, 9);
         formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0), 3, 9);
+        formBuilder.addFormItem(new FormItem(constants.vdsmName(), vdsmName, 3, 0), 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.vmNetwork(), vmNetwork, 0, 1) {
             @Override
@@ -103,7 +105,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
             }
         }, 3, 9);
 
-        formBuilder.addFormItem(new FormItem(constants.externalIdProviderNetwork(), externalId, 3, 0) {
+        formBuilder.addFormItem(new FormItem(constants.externalIdProviderNetwork(), externalId, 4, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getExternalId() != null;
