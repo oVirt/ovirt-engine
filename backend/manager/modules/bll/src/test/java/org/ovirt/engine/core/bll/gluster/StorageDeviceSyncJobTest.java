@@ -36,7 +36,7 @@ import org.ovirt.engine.core.utils.ExecutorServiceExtension;
 
 @ExtendWith({MockitoExtension.class, ExecutorServiceExtension.class})
 public class StorageDeviceSyncJobTest {
-    private static final Guid CLUSTER_GUID_3_6 = new Guid("CC111111-1111-1111-1111-111111111111");
+    private static final Guid CLUSTER_GUID = new Guid("CC111111-1111-1111-1111-111111111111");
 
     private static final Guid HOST_ID_WITH_NEW_DEVICES = new Guid("00000000-0000-0000-0000-000000000000");
     private static final Guid HOST_ID_WITH_DEVICES_DELETED = new Guid("00000000-0000-0000-0000-000000000001");
@@ -66,7 +66,7 @@ public class StorageDeviceSyncJobTest {
     @BeforeEach
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
-        doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID_3_6);
+        doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID);
         doReturn(getStorageDevices(HOST_ID_WITH_NEW_DEVICES)).when(storageDeviceDao)
                 .getStorageDevicesInHost(HOST_ID_WITH_NEW_DEVICES);
         doReturn(getStorageDevices(HOST_ID_WITH_DEVICES_CHANGED)).when(storageDeviceDao)
@@ -145,7 +145,7 @@ public class StorageDeviceSyncJobTest {
 
     private List<Cluster> getClusters() {
         List<Cluster> list = new ArrayList<>();
-        list.add(createCluster(Version.v3_6, CLUSTER_GUID_3_6));
+        list.add(createCluster(Version.v4_3, CLUSTER_GUID));
         return list;
     }
 
