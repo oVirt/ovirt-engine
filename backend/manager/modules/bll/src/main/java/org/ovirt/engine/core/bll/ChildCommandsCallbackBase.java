@@ -46,9 +46,15 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
             switch (commandCoordinatorUtil.getCommandStatus(childCmdId)) {
             case NOT_STARTED:
             case ACTIVE:
-            case EXECUTION_FAILED:
                 logWaitingForChildCommand(child, command);
                 return;
+            case EXECUTION_FAILED:
+                if (shouldExecuteEndMethod(child)) {
+                    logWaitingForChildCommand(child, command);
+                    return;
+                }
+                anyFailed = true;
+                break;
             case FAILED:
                 if (shouldWaitForEndMethodsCompletion(child, command)) {
                     return;
