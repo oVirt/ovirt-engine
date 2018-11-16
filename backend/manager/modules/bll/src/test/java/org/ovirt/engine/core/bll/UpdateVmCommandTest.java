@@ -97,7 +97,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     };
 
     private static final String CPU_ID = "0";
-    private static final Version version = Version.v3_6;
+    private static final Version version = Version.v4_1;
     private static final Guid clusterId = Guid.newGuid();
     protected static final int MAX_MEMORY_SIZE = 4096;
     protected static final int MEMORY_SIZE = 1024;
@@ -358,7 +358,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         prepareVmToPassValidate();
         Cluster newGroup = new Cluster();
         newGroup.setId(Guid.newGuid());
-        newGroup.setCompatibilityVersion(Version.v3_6);
+        newGroup.setCompatibilityVersion(Version.v4_1);
         vmStatic.setClusterId(newGroup.getId());
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
