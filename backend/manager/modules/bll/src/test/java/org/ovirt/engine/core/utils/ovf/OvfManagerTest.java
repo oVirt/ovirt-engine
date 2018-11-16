@@ -82,13 +82,13 @@ public class OvfManagerTest {
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.VdcVersion, "3.0.0.0"),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_1, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_1, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_2, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_2, 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, true)
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_2, true)
         );
     }
 
@@ -187,7 +187,7 @@ public class OvfManagerTest {
     @Test
     public void testVmOvfImportWithoutDbGeneration() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm,  new FullEntityOvfData(vm), Version.v3_6);
+        String xml = manager.exportVm(vm, new FullEntityOvfData(vm), Version.v4_1);
         assertNotNull(xml);
         final VM newVm = new VM();
         assertTrue(xml.contains("Generation"));
@@ -200,7 +200,7 @@ public class OvfManagerTest {
     @Test
     public void testTemplateOvfCreation() throws Exception {
         VmTemplate template = createVmTemplate();
-        String xml = manager.exportTemplate(new FullEntityOvfData(template), Version.v3_6);
+        String xml = manager.exportTemplate(new FullEntityOvfData(template), Version.v4_1);
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newtemplate);
@@ -234,7 +234,7 @@ public class OvfManagerTest {
         ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
         FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vm);
         fullEntityOvfDataForExport.setDiskImages(disks);
-        String xml = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_0);
+        String xml = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_2);
         assertNotNull(xml);
 
         VM newVm = new VM();
@@ -242,7 +242,7 @@ public class OvfManagerTest {
         manager.importVm(xml, newVm, fullEntityOvfData);
         FullEntityOvfData fullEntityOvfDataForExportResult = new FullEntityOvfData(vm);
         fullEntityOvfDataForExportResult.setDiskImages(disks);
-        String newXml = manager.exportVm(vm, fullEntityOvfDataForExportResult, Version.v4_0);
+        String newXml = manager.exportVm(vm, fullEntityOvfDataForExportResult, Version.v4_2);
 
         assertEquals(deleteExportDateValueFromXml(xml), deleteExportDateValueFromXml(newXml));
     }
@@ -253,7 +253,7 @@ public class OvfManagerTest {
         ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
         FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vm);
         fullEntityOvfDataForExport.setDiskImages(disks);
-        String xml = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_0);
+        String xml = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_2);
         assertNotNull(xml);
 
         VM newVm = new VM();
@@ -295,7 +295,7 @@ public class OvfManagerTest {
     }
 
     private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
-        String xml = manager.exportVm(inputVm,  new FullEntityOvfData(inputVm), Version.v3_6);
+        String xml = manager.exportVm(inputVm, new FullEntityOvfData(inputVm), Version.v4_1);
         assertNotNull(xml);
         final VM resultVm = new VM();
         assertTrue(xml.contains("Generation"));
@@ -428,7 +428,7 @@ public class OvfManagerTest {
         ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
         FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vm);
         fullEntityOvfDataForExport.setDiskImages(disks);
-        String ovf = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_0);
+        String ovf = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_2);
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
