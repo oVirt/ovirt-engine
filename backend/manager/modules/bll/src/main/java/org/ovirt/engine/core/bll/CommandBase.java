@@ -21,6 +21,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
@@ -472,7 +473,12 @@ public abstract class CommandBase<T extends ActionParametersBase>
             return;
         }
 
-        compensator.compensate(commandId, getClass().getName(), getCompensationContext());
+        try {
+            compensator.compensate(commandId, getClass().getName(), getCompensationContext());
+        } catch (Throwable t) {
+            log.error("Unable to compensate command {}: {}", commandId, ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
     }
 
     protected void handleStepsOnEnd() {

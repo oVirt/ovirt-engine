@@ -44,7 +44,7 @@ public class CommandCompensator {
             // create an instance of the related command by its class name and command id
             try {
                 compensate((Guid) commandSnapshot.getKey(), (String) commandSnapshot.getValue(), null);
-            } catch (RuntimeException e) {
+            } catch (Throwable e) {
                 log.error(
                         "Failed to run compensation on startup for Command '{}', Command Id '{}': {}",
                         commandSnapshot.getValue(),
