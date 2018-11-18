@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -18,6 +21,15 @@ public class CinderStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage,
     public CinderStorageDaoImpl() {
         super("CinderStorage");
         setProcedureNameForGet("GetCinderStorage");
+    }
+
+    @Override
+    public List<ManagedBlockStorage> getCinderStorageByDrivers(Map<String, Object> driverOptions) {
+        return getCallsHandler().executeReadList("GetCinderStorageByDrivers",
+                cinderStorageDomainStaticRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("driver_options",
+                                ObjectUtils.mapNullable(driverOptions, JsonHelper::mapToJsonUnchecked)));
     }
 
     @Override
@@ -48,5 +60,4 @@ public class CinderStorageDaoImpl extends DefaultGenericDao<ManagedBlockStorage,
                 JsonHelper::jsonToMapUnchecked));
         return entity;
     };
-
 }

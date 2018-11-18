@@ -104,6 +104,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -131,6 +132,7 @@ import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParamete
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
 import org.ovirt.engine.core.common.queries.GetHostsForStorageOperationParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
+import org.ovirt.engine.core.common.queries.GetManagedBlockStorageDomainsByDriversParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
@@ -1796,6 +1798,17 @@ public class AsyncDataProvider {
         }
 
         Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByConnection, param, aQuery);
+    }
+
+    public void getManagedBlockStorageDomainsByDrivers(AsyncQuery<List<ManagedBlockStorage>> aQuery,
+            Map<String, Object> driverOption,
+            Map<String, Object> driverSensitiveOption) {
+        aQuery.converterCallback = new CastingConverter<>();
+
+        Frontend.getInstance()
+                .runQuery(QueryType.GetManagedBlockStorageDomainsByDrivers,
+                        new GetManagedBlockStorageDomainsByDriversParameters(driverOption, driverSensitiveOption),
+                        aQuery);
     }
 
     public void getExistingStorageDomainList(AsyncQuery<List<StorageDomain>> aQuery,

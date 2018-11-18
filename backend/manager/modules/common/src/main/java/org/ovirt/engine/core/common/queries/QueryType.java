@@ -338,6 +338,7 @@ public enum QueryType implements Serializable {
     GetAllMacPools,
     GetStoragePoolByDatacenterName(QueryAuthType.User),
     GetStorageDomainsByConnection,
+    GetManagedBlockStorageDomainsByDrivers,
     GetConnectionsByDataCenterAndStorageType,
     GetStorageDomainsByStoragePoolId(QueryAuthType.User),
     GetStorageDomainsByImageId,

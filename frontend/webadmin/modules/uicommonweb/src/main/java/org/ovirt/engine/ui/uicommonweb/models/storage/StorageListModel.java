@@ -1064,7 +1064,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
                 if (storages != null && storages.size() > 0) {
                     posixModel.getPath().setIsValid(false);
-                    handleDomainAlreadyExists(storages);
+                    handleDomainAlreadyExists(storages.get(0).getStorageName());
                 } else {
                     saveNewPosixStorage();
                 }
@@ -1086,15 +1086,20 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
-        storageModel.setRole(StorageDomainType.ManagedBlockStorage);
+        final ManagedBlockStorageModel managedBlockStorageModel = (ManagedBlockStorageModel) storageModel;
 
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
         saveBaseStorageProperties(model);
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
-            //TODO: Add a query to validate if storage already exists
-            saveNewManagedBlockStorage();
+            AsyncDataProvider.getInstance().getManagedBlockStorageDomainsByDrivers(new AsyncQuery<>(storages -> {
+                if (storages != null && storages.size() > 0) {
+                    handleDomainAlreadyExists(storages.get(0).getId().toString());
+                } else {
+                    saveNewManagedBlockStorage();
+                }
+            }), managedBlockStorageModel.getDriverOptions().serializeToMap(), managedBlockStorageModel.getDriverSensitiveOptions().serializeToMap());
         } else {
             updateStorageDomain();
         }
@@ -1257,7 +1262,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
                 if (storages != null && storages.size() > 0) {
                     nfsModel.getPath().setIsValid(false);
-                    handleDomainAlreadyExists(storages);
+                    handleDomainAlreadyExists(storages.get(0).getStorageName());
                 } else {
                     saveNewNfsStorage();
                 }
@@ -1455,7 +1460,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
 
                 if (storages != null && storages.size() > 0) {
-                    handleDomainAlreadyExists(storages);
+                    handleDomainAlreadyExists(storages.get(0).getStorageName());
                 } else {
                     saveNewLocalStorage();
                 }
@@ -1470,9 +1475,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
     }
 
-    private void handleDomainAlreadyExists(List<StorageDomain> storages) {
-        String storageName = storages.get(0).getStorageName();
-
+    private void handleDomainAlreadyExists(String storageName) {
         onFinish(context,
             false,
             storageModel,

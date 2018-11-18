@@ -1423,3 +1423,15 @@ BEGIN
     WHERE storage_domain_id = v_storage_domain_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetCinderStorageByDrivers (
+    v_driver_options JSONB)
+RETURNS SETOF cinder_storage STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM cinder_storage
+    WHERE driver_options = v_driver_options;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
