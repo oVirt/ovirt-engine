@@ -17,7 +17,17 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
                                                       "Intel Penryn Family", //$NON-NLS-1$
                                                       "AMD Opteron G1", //$NON-NLS-1$
                                                       "AMD Opteron G2", //$NON-NLS-1$
-                                                      "AMD Opteron G3"}; //$NON-NLS-1$
+                                                      "AMD Opteron G3", //$NON-NLS-1$
+                                                      "Intel Nehalem IBRS Family", //$NON-NLS-1$
+                                                      "Intel Westmere IBRS Family", //$NON-NLS-1$
+                                                      "Intel SandyBridge IBRS Family", //$NON-NLS-1$
+                                                      "Intel Haswell-noTSX IBRS Family", //$NON-NLS-1$
+                                                      "Intel Haswell IBRS Family", //$NON-NLS-1$
+                                                      "Intel Broadwell-noTSX IBRS Family", //$NON-NLS-1$
+                                                      "Intel Broadwell IBRS Family", //$NON-NLS-1$
+                                                      "Intel Skylake Client IBRS Family", //$NON-NLS-1$
+                                                      "Intel Skylake Server IBRS Family", //$NON-NLS-1$
+                                                      "AMD EPYC IBPB"}; //$NON-NLS-1$
     private static final String[] versions = new String[]{"4.2",  //$NON-NLS-1$
                                                           "4.1",  //$NON-NLS-1$
                                                           "4.0",  //$NON-NLS-1$

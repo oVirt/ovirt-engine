@@ -56,7 +56,7 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
         }
 
         String customCpu; // full name of the vm cpu
-        Version latestVer = cpuFlagsManagerHandler.getLatestDictionaryVersion();
+        Version compatibilityVer = vm.getCompatibilityVersion();
 
         // Migration checks for a VM with CPU passthrough
         // TODO figure out how to handle hostModel
@@ -93,16 +93,16 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        customCpu = cpuFlagsManagerHandler.getCpuNameByCpuId(customCpu, latestVer); // translate vdsVerb to full cpu name
+        customCpu = cpuFlagsManagerHandler.getCpuNameByCpuId(customCpu, compatibilityVer); // translate vdsVerb to full cpu name
         if(StringUtils.isNotEmpty(customCpu)) { // checks if there's a cpu with the given vdsVerb
 
             /* find compatible hosts */
             for (VDS host : hosts) {
-                ServerCpu cpu = cpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(), latestVer);
+                ServerCpu cpu = cpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(), compatibilityVer);
                 String hostCpuName = cpu == null ? null : cpu.getCpuName();
                 if (StringUtils.isNotEmpty(hostCpuName)) {
-                    if (cpuFlagsManagerHandler.checkIfCpusSameManufacture(customCpu, hostCpuName, latestVer)) { // verify comparison uses only one cpu-level scale
-                        int compareResult = cpuFlagsManagerHandler.compareCpuLevels(customCpu, hostCpuName, latestVer);
+                    if (cpuFlagsManagerHandler.checkIfCpusSameManufacture(customCpu, hostCpuName, compatibilityVer)) { // verify comparison uses only one cpu-level scale
+                        int compareResult = cpuFlagsManagerHandler.compareCpuLevels(customCpu, hostCpuName, compatibilityVer);
                         if (compareResult <= 0) {
                             hostsToRunOn.add(host);
                             log.debug("Host '{}' wasn't filtered out as it has a CPU level ({}) which is higher or equal than the CPU level the VM was run with ({})",
