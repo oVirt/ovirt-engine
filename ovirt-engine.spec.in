@@ -162,7 +162,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %define required_python_lib(l:r:) %{-l*}%{*}%{-r*}
 %endif
 
-%global required_python_lib_openvswitch %{required_python_lib -l python2- openvswitch}
 %global required_python_lib_ovirt_engine_lib %{required_python_lib -l python2- %{name}-lib >= %{version}-%{release}}
 %global required_python_lib_jinja2 %{required_python_lib -l python- jinja2}
 %global required_python_lib_ovirt_setup_lib %{required_python_lib ovirt-setup-lib >= 1.1.1}
@@ -387,10 +386,6 @@ Obsoletes:	%{name}-userportal
 
 # OVS/OVN stuff
 Requires:	pyOpenSSL
-Requires:	openvswitch
-Requires:	openvswitch-ovn-common
-Requires:	openvswitch-ovn-central
-Requires:	%{required_python_lib_openvswitch}
 Requires:	ovirt-provider-ovn >= 1.2.1
 
 # JavaScript and CSS libraries are currently bundled
