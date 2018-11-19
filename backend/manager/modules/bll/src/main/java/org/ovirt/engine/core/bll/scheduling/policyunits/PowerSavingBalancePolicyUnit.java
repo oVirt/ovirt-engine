@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -83,13 +84,15 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         List<VDS> emptyHosts = new ArrayList<>();
         List<VDS> maintenanceHosts = new ArrayList<>();
         List<VDS> downHosts = new ArrayList<>();
+        List<VDS> maintenanceHostsWithOkExternalStatus = new ArrayList<>();
 
-        getHostLists(allHosts, emptyHosts, maintenanceHosts, downHosts);
+        getHostLists(allHosts, emptyHosts, maintenanceHosts, downHosts, maintenanceHostsWithOkExternalStatus);
 
         Pair<VDS, VDSStatus> action = evaluatePowerManagementSituation(
                 cluster,
                 downHosts,
                 maintenanceHosts,
+                maintenanceHostsWithOkExternalStatus,
                 emptyHosts,
                 parameters);
 
@@ -166,10 +169,16 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      * @param emptyHosts Pre-initialized list that will be filled by empty hosts
      * @param maintenanceHosts Pre-initialized list that will be filled by hosts in maintenance
      *                         that have automatic power management still enabled
+     * @param maintenanceHostsWithOkExternalStatus Pre-initialized list that will be filled by
+     *                                             hosts in maintenance status that have PM
+     *                                             enabled and also have 'Ok' external-status
      * @param downHosts Pre-initialized list that will be filled by hosts that are down
-     *                  that have automatic power management still enabled
+     *                  that have automatic power management still enabled, and whose external
+     *                  status is Ok. This external status is important because we do not want
+     *                  hosts with non-Ok external status to be potentially selected for power-up
      */
-    protected void getHostLists(List<VDS> allHosts, List<VDS> emptyHosts, List<VDS> maintenanceHosts, List<VDS> downHosts) {
+    protected void getHostLists(List<VDS> allHosts, List<VDS> emptyHosts, List<VDS> maintenanceHosts,
+            List<VDS> downHosts, List<VDS> maintenanceHostsWithOkExternalStatus) {
         for (VDS vds: allHosts) {
             if (vds.getStatus() == VDSStatus.Up
                     && vds.getVmCount() == 0
@@ -179,7 +188,10 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             } else if (vds.isPowerManagementControlledByPolicy() && !vds.isDisablePowerManagementPolicy()) {
                 if (vds.getStatus() == VDSStatus.Maintenance) {
                     maintenanceHosts.add(vds);
-                } else if (vds.getStatus() == VDSStatus.Down) {
+                    if (ExternalStatus.Ok.equals(vds.getExternalStatus())) {
+                        maintenanceHostsWithOkExternalStatus.add(vds);
+                    }
+                } else if (vds.getStatus() == VDSStatus.Down && ExternalStatus.Ok.equals(vds.getExternalStatus())) {
                     downHosts.add(vds);
                 }
             }
@@ -192,11 +204,14 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
      *
      * @param pmDownHosts hosts that were previously powered down by the power management policy
      * @param pmMaintenanceHosts hosts that were previously powered down by the power management policy
+     * @param pmMaintenanceHostsWithOkExternalStatus hosts that were previously powered down by
+     *                                               the power management policy and have Ok external-status
      * @param emptyHosts hosts that are still up, but contain no Vms
      * @return a pair of VDS to update and the desired VDSStatus to get it to
      */
     protected Pair<VDS, VDSStatus> evaluatePowerManagementSituation(Cluster cluster, List<VDS> pmDownHosts,
                                                                     List<VDS> pmMaintenanceHosts,
+                                                                    List<VDS> pmMaintenanceHostsWithOkExternalStatus,
                                                                     List<VDS> emptyHosts,
                                                                     Map<String, String> parameters) {
         final int requiredReserve = NumberUtils.toInt(
@@ -224,21 +239,23 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             log.info("Cluster '{}' does not have enough spare hosts, but no additional host is available.",
                     cluster.getName());
             return null;
-        } else if (requiredReserve < emptyHosts.size() && pmMaintenanceHosts.size() > 1) {
+        } else if (requiredReserve < emptyHosts.size() && pmMaintenanceHostsWithOkExternalStatus.size() > 1) {
             /* We have enough free hosts so shut some hosts in maintenance down
                keep at least one spare in maintenance during the process.
              */
             log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
-            return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
+            return new Pair<>(pmMaintenanceHostsWithOkExternalStatus.get(0), VDSStatus.Down);
         } else if (requiredReserve < emptyHosts.size()) {
             /* We do have enough empty hosts to put something to maintenance */
 
             /* Find hosts with automatic PM enabled that are not the current SPM */
+            /* and their external-status is OK*/
 
             Optional<VDS> hostsWithAutoPM = emptyHosts.stream()
                     .filter(vds -> !vds.isDisablePowerManagementPolicy()
                                 && vds.getSpmStatus() != VdsSpmStatus.SPM
                                 && vds.isPmEnabled()
+                                && ExternalStatus.Ok.equals(vds.getExternalStatus())
                     ).findFirst();
 
             if (!hostsWithAutoPM.isPresent()) {
@@ -248,12 +265,12 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             } else {
                 return new Pair<>(hostsWithAutoPM.get(), VDSStatus.Maintenance);
             }
-        } else if (requiredReserve == emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
+        } else if (requiredReserve == emptyHosts.size() && !pmMaintenanceHostsWithOkExternalStatus.isEmpty()) {
             /* We have the right amount of empty hosts to start shutting the
                hosts that are resting in maintenance down.
              */
             log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
-            return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
+            return new Pair<>(pmMaintenanceHostsWithOkExternalStatus.get(0), VDSStatus.Down);
         } else if (requiredReserve > emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
             /* We do not have enough free hosts, but we still have some hosts
                in maintenance. We can easily activate those.

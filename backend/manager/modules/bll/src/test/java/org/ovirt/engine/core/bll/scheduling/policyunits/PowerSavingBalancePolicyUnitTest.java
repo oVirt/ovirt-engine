@@ -210,6 +210,6 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         doReturn(new ArrayList<>(hosts.values())).when(vdsDao).getAllForCluster(any());
 
         // disable power management evaluation
-        doReturn(null).when(policyUnit).evaluatePowerManagementSituation(any(), any(), any(), any(), any());
+        doReturn(null).when(policyUnit).evaluatePowerManagementSituation(any(), any(), any(), any(), any(), any());
     }
 }
