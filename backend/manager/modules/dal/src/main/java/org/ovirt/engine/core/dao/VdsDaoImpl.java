@@ -373,6 +373,8 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
                 rs.getString("kernel_features"), JsonHelper::jsonToMapUnchecked));
         entity.setVncEncryptionEnabled(rs.getBoolean("vnc_encryption_enabled"));
         entity.setVgpuPlacement(rs.getInt("vgpu_placement"));
+        entity.setConnectorInfo(ObjectUtils.mapNullable(
+                rs.getString("connector_info"), JsonHelper::jsonToMapUnchecked));
         return entity;
     };
 }

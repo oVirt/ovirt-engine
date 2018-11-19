@@ -268,7 +268,8 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_hosted_engine_configured BOOLEAN,
     v_in_fence_flow BOOLEAN,
     v_kernel_features JSONB,
-    v_vnc_encryption_enabled BOOLEAN
+    v_vnc_encryption_enabled BOOLEAN,
+    v_connector_info JSONB
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -337,7 +338,8 @@ BEGIN
             hosted_engine_configured,
             in_fence_flow,
             kernel_features,
-            vnc_encryption_enabled
+            vnc_encryption_enabled,
+            connector_info
             )
         VALUES (
             v_cpu_cores,
@@ -403,7 +405,8 @@ BEGIN
             v_hosted_engine_configured,
             v_in_fence_flow,
             v_kernel_features,
-            v_vnc_encryption_enabled
+            v_vnc_encryption_enabled,
+            v_connector_info
             );
     END;
 
@@ -493,7 +496,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_hosted_engine_configured BOOLEAN,
     v_in_fence_flow BOOLEAN,
     v_kernel_features JSONB,
-    v_vnc_encryption_enabled BOOLEAN
+    v_vnc_encryption_enabled BOOLEAN,
+    v_connector_info JSONB
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -566,7 +570,8 @@ BEGIN
             hosted_engine_configured = v_hosted_engine_configured,
             in_fence_flow = v_in_fence_flow,
             kernel_features = v_kernel_features,
-            vnc_encryption_enabled = v_vnc_encryption_enabled
+            vnc_encryption_enabled = v_vnc_encryption_enabled,
+            connector_info = v_connector_info
         WHERE vds_id = v_vds_id;
     END;
 

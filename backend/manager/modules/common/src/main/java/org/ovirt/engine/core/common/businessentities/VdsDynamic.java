@@ -204,6 +204,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Map<String, Object> openstackBindingHostIds;
 
+    private Map<String, Object> connectorInfo;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -855,6 +857,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.vncEncryptionEnabled = vncEncryptionEnabled;
     }
 
+    public Map<String, Object> getConnectorInfo() {
+        return connectorInfo;
+    }
+
+    public void setConnectorInfo(Map<String, Object> connectorInfo) {
+        this.connectorInfo = connectorInfo;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -925,7 +935,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 inFenceFlow,
                 kernelFeatures,
                 openstackBindingHostIds,
-                vncEncryptionEnabled
+                vncEncryptionEnabled,
+                connectorInfo
         );
     }
 
@@ -1007,6 +1018,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && inFenceFlow == other.inFenceFlow
                 && Objects.equals(kernelFeatures, other.kernelFeatures)
                 && Objects.equals(openstackBindingHostIds, other.openstackBindingHostIds)
-                && vncEncryptionEnabled == other.vncEncryptionEnabled;
+                && vncEncryptionEnabled == other.vncEncryptionEnabled
+                && Objects.equals(connectorInfo, other.connectorInfo);
     }
 }

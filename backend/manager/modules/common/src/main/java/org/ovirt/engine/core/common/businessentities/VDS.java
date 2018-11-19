@@ -1674,4 +1674,12 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public boolean isVncEncryptionEnabled() {
         return vdsDynamic.isVncEncryptionEnabled();
     }
+
+    public Map<String, Object> getConnectorInfo() {
+        return vdsDynamic.getConnectorInfo();
+    }
+
+    public void setConnectorInfo(Map<String, Object> connectorInfo) {
+        vdsDynamic.setConnectorInfo(connectorInfo);
+    }
 }

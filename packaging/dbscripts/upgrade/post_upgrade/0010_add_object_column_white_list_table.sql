@@ -82,3 +82,4 @@ SELECT fn_db_add_column_to_object_white_list('vds', 'kernel_cmdline');
 SELECT fn_db_add_column_to_object_white_list('vds', 'last_stored_kernel_cmdline');
 SELECT fn_db_add_column_to_object_white_list('vds', 'pretty_name');
 SELECT fn_db_add_column_to_object_white_list('vds', 'hugepages');
+SELECT fn_db_add_column_to_object_white_list('vds', 'connector_info');

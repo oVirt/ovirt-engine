@@ -124,6 +124,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setKernelFeatures(
                 ObjectUtils.mapNullable(rs.getString("kernel_features"), JsonHelper::jsonToMapUnchecked));
         entity.setVncEncryptionEnabled(rs.getBoolean("vnc_encryption_enabled"));
+        entity.setConnectorInfo(
+                ObjectUtils.mapNullable(rs.getString("connector_info"), JsonHelper::jsonToMapUnchecked));
 
         return entity;
     };
@@ -317,7 +319,9 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("in_fence_flow", vds.isInFenceFlow())
                 .addValue("kernel_features",
                         ObjectUtils.mapNullable(vds.getKernelFeatures(), JsonHelper::mapToJsonUnchecked))
-                .addValue("vnc_encryption_enabled", vds.isVncEncryptionEnabled());
+                .addValue("vnc_encryption_enabled", vds.isVncEncryptionEnabled())
+                .addValue("connector_info",
+                    ObjectUtils.mapNullable(vds.getConnectorInfo(), JsonHelper::mapToJsonUnchecked));
     }
 
     @Override
