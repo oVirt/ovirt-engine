@@ -49,6 +49,7 @@ import org.ovirt.engine.api.model.SshAuthenticationMethod;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.model.VgpuPlacement;
 import org.ovirt.engine.api.model.VmSummary;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
@@ -104,6 +105,9 @@ public class HostMapper {
         }
         if (model.isSetDisplay() && model.getDisplay().isSetAddress()) {
             entity.setConsoleAddress("".equals(model.getDisplay().getAddress()) ? null : model.getDisplay().getAddress());
+        }
+        if (model.isSetVgpuPlacement()) {
+            entity.setVgpuPlacement(mapVgpuPlacement(model.getVgpuPlacement()));
         }
         if (model.isSetComment()) {
             entity.setComment(model.getComment());
@@ -294,6 +298,7 @@ public class HostMapper {
         model.setMemory(Long.valueOf(entity.getPhysicalMemMb() == null ? 0 : entity.getPhysicalMemMb()
                 * BYTES_IN_MEGABYTE));
         model.setMaxSchedulingMemory((int) entity.getMaxSchedulingMemory() * BYTES_IN_MEGABYTE);
+        model.setVgpuPlacement(mapVgpuPlacement(entity.getVgpuPlacement()));
 
         if (entity.getLibvirtVersion() != null &&
                 entity.getLibvirtVersion().getMajor() != -1 &&
@@ -680,6 +685,28 @@ public class HostMapper {
                 return SpmStatus.SPM;
             default:
                 return null;
+        }
+    }
+
+    public static VgpuPlacement mapVgpuPlacement(int vgpuPlacement) {
+        switch (org.ovirt.engine.core.common.businessentities.VgpuPlacement.forValue(vgpuPlacement)) {
+            case CONSOLIDATED:
+                return VgpuPlacement.CONSOLIDATED;
+            case SEPARATED:
+                return VgpuPlacement.SEPARATED;
+            default:
+                throw new IllegalArgumentException("Unknown vGPU placement \"" + vgpuPlacement + "\"");
+        }
+    }
+
+    public static int mapVgpuPlacement(VgpuPlacement vgpuPlacement) {
+        switch (vgpuPlacement) {
+            case CONSOLIDATED:
+                return org.ovirt.engine.core.common.businessentities.VgpuPlacement.CONSOLIDATED.getValue();
+            case SEPARATED:
+                return org.ovirt.engine.core.common.businessentities.VgpuPlacement.SEPARATED.getValue();
+            default:
+                throw new IllegalArgumentException("Unknown vGPU placement \"" + vgpuPlacement + "\"");
         }
     }
 
