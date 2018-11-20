@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -7,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -102,11 +105,22 @@ public class ManagedBlockStorageModel extends Model implements IStorageModel {
                 || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached;
     }
 
-    @Override public void prepareForEdit(StorageDomain storage) {
+    @Override
+    public void prepareForEdit(StorageDomain storage) {
         boolean isEditable = isEditable(storage);
+
+        AsyncDataProvider.getInstance().getManagedBlockStorageDomainById(new AsyncQuery<>(managedBlockStorage ->
+            prepareDriverOptionsForEditing(managedBlockStorage.getDriverOptions(), managedBlockStorage.getDriverSensitiveOptions())
+        ), storage.getId());
 
         getContainer().getHost().setIsChangeable(isEditable);
         getDriverOptions().setIsChangeable(isEditable);
         getDriverSensitiveOptions().setIsChangeable(isEditable);
     }
+
+    private void prepareDriverOptionsForEditing(Map<String, Object> driverOptionsMap, Map<String, Object> driverSensitiveOptionsMap) {
+        driverOptions.createLineModelsFromMap(driverOptionsMap);
+        driverSensitiveOptions.createLineModelsFromMap(driverSensitiveOptionsMap);
+    }
+
 }

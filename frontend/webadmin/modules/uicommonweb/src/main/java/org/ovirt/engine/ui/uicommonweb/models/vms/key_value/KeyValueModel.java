@@ -269,6 +269,19 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         return lineModel;
     }
 
+    public void createLineModelsFromMap(Map<String, Object> keyValueMap) {
+        List<KeyValueLineModel> lineModels = new ArrayList<>();
+        if (useEditableKey) {
+            for (Map.Entry<String, Object> entry : keyValueMap.entrySet()) {
+                KeyValueLineModel lineModel = createNewLineModel(null);
+                lineModel.getValue().setEntity(entry.getKey());
+                lineModel.getEditableKey().setEntity((String) entry.getValue());
+                lineModels.add(lineModel);
+            }
+        }
+        setItems(lineModels);
+    }
+
     @Override
     protected List<KeyValueLineModel> createLineModels(Set<String> usedKeys) {
         List<KeyValueLineModel> lineModels = new ArrayList<>();

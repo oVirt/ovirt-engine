@@ -1800,6 +1800,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByConnection, param, aQuery);
     }
 
+    public void getManagedBlockStorageDomainById(AsyncQuery<ManagedBlockStorage> aQuery, Guid cinderStorageId) {
+        runQueryByIdParameter(QueryType.GetManagedBlockStorageDomainById, aQuery, cinderStorageId);
+    }
+
     public void getManagedBlockStorageDomainsByDrivers(AsyncQuery<List<ManagedBlockStorage>> aQuery,
             Map<String, Object> driverOption,
             Map<String, Object> driverSensitiveOption) {

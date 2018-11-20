@@ -339,6 +339,7 @@ public enum QueryType implements Serializable {
     GetStoragePoolByDatacenterName(QueryAuthType.User),
     GetStorageDomainsByConnection,
     GetManagedBlockStorageDomainsByDrivers,
+    GetManagedBlockStorageDomainById,
     GetConnectionsByDataCenterAndStorageType,
     GetStorageDomainsByStoragePoolId(QueryAuthType.User),
     GetStorageDomainsByImageId,

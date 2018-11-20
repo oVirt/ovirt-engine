@@ -954,7 +954,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
-        if (storageDomain == null || storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain == null || (storageDomain.getStorageType().isCinderDomain() && !storageDomain.getStorageType()
+                .isManagedBlockStorage())) {
             return false;
         }
 
