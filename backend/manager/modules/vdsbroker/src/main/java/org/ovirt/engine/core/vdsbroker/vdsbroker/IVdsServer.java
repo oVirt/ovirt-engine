@@ -553,4 +553,6 @@ public interface IVdsServer {
 
     StatusOnlyReturn glusterVolumeResetBrickCommitForce(String volumeName,
             String existingBrickDir);
+
+    DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Map<String, Object> connectionInfo);
 }

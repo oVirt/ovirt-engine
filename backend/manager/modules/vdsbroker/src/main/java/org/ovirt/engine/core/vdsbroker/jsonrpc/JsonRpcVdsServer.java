@@ -44,6 +44,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DomainXmlListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturn;
@@ -2446,5 +2447,17 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Map<String, Object> connectionInfo) {
+        JsonRpcRequest request =
+                new RequestBuilder("ManagedVolume.attach_volume")
+                        .withParameter("vol_id", volumeId.toString())
+                        .withParameter("connection_info", connectionInfo)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        Map<String, Object> info = (Map<String, Object>) response.get("info");
+        return new DeviceInfoReturn(info);
     }
 }
