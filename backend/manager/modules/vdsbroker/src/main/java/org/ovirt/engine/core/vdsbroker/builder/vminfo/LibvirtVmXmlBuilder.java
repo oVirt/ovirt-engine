@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
@@ -75,6 +76,7 @@ import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllersForDomainXml;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
@@ -1976,7 +1978,18 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
             }
             break;
+
+        case MANAGED_BLOCK_STORAGE:
+            ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
+            String path = (String) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.PATH);
+            Map<String, Object> attachment =
+                    (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
+            writer.writeAttributeString("dev", path);
+            diskMetadata.put(dev, Collections.singletonMap("GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN)));
+
+            break;
         }
+
         writer.writeEndElement();
     }
 
@@ -2024,6 +2037,9 @@ public class LibvirtVmXmlBuilder {
         case CINDER:
             // case RBD
             writer.writeAttributeString("type", "network");
+            break;
+        case MANAGED_BLOCK_STORAGE:
+            writer.writeAttributeString("type", "block");
             break;
         }
 

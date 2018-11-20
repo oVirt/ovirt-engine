@@ -8,6 +8,8 @@ public class ManagedBlockStorageDisk extends DiskImage {
 
     private Map<String, Object> device;
 
+    private Map<String, Object> connectionInfo;
+
     @Override
     public DiskStorageType getDiskStorageType() {
         return DiskStorageType.MANAGED_BLOCK_STORAGE;
@@ -24,26 +26,32 @@ public class ManagedBlockStorageDisk extends DiskImage {
         this.device = device;
     }
 
+    public Map<String, Object> getConnectionInfo() {
+        return connectionInfo;
+    }
+
+    public void setConnectionInfo(Map<String, Object> connectionInfo) {
+        this.connectionInfo = connectionInfo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-
         if (!(o instanceof ManagedBlockStorageDisk)) {
             return false;
         }
-
         if (!super.equals(o)) {
             return false;
         }
-
         ManagedBlockStorageDisk that = (ManagedBlockStorageDisk) o;
-        return Objects.equals(device, that.device);
+        return Objects.equals(device, that.device) &&
+                Objects.equals(connectionInfo, that.connectionInfo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), device);
+        return Objects.hash(super.hashCode(), device, connectionInfo);
     }
 }

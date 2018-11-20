@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.EmulatedMachineUtils;
@@ -153,6 +154,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private NumaUtils numaUtils;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -255,7 +258,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             VMStatus status = null;
             try {
                 acquireHostDevicesLock();
-                if (connectLunDisks(getVdsId()) && updateCinderDisksConnections()) {
+                if (connectLunDisks(getVdsId()) && updateCinderDisksConnections() &&
+                        managedBlockStorageCommandUtil.attachManagedBlockStorageDisks(getVm(),
+                                vmHandler, getVds())) {
                     if (!checkRequiredHostDevicesAvailability()) {
                         // if between validate and execute the host-devices were stolen by another VM
                         // (while the host-device lock wasn't being held) we need to bail here

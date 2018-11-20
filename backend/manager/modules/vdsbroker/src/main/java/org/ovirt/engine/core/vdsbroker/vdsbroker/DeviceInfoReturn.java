@@ -7,6 +7,11 @@ import java.util.Objects;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 
 public class DeviceInfoReturn extends StatusReturn {
+    public static final String PATH = "path";
+    public static final String TYPE = "type";
+    public static final String SCSI_WWN = "scsi_wwn";
+    public static final String ATTACHMENT = "attachment";
+
     private Map<String, Object> deviceInfo;
 
     public DeviceInfoReturn(Map<String, Object> innerMap) {
