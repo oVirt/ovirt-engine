@@ -708,12 +708,20 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmDynamic.setGuestAgentNicsHash(guestAgentNicsHash);
     }
 
-    public GuestAgentStatus getGuestAgentStatus() {
-        return vmDynamic.getGuestAgentStatus();
+    public GuestAgentStatus getOvirtGuestAgentStatus() {
+        return vmDynamic.getOvirtGuestAgentStatus();
     }
 
-    public void setGuestAgentStatus(GuestAgentStatus status) {
-        vmDynamic.setGuestAgentStatus(status);
+    public void setOvirtGuestAgentStatus(GuestAgentStatus status) {
+        vmDynamic.setOvirtGuestAgentStatus(status);
+    }
+
+    public GuestAgentStatus getQemuGuestAgentStatus() {
+        return vmDynamic.getQemuGuestAgentStatus();
+    }
+
+    public void setQemuGuestAgentStatus(GuestAgentStatus status) {
+        vmDynamic.setQemuGuestAgentStatus(status);
     }
 
     public int getGuestOsTimezoneOffset() {

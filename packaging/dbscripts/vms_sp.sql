@@ -310,7 +310,8 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_spice_ip VARCHAR(32),
     v_vnc_port INT,
     v_vnc_ip VARCHAR(32),
-    v_guest_agent_status INT,
+    v_ovirt_guest_agent_status INT,
+    v_qemu_guest_agent_status INT,
     v_guest_timezone_offset INT,
     v_guest_timezone_name VARCHAR(255),
     v_guestos_arch INT,
@@ -365,7 +366,8 @@ BEGIN
         spice_ip,
         vnc_port,
         vnc_ip,
-        guest_agent_status,
+        ovirt_guest_agent_status,
+        qemu_guest_agent_status,
         guest_timezone_offset,
         guest_timezone_name,
         guestos_arch,
@@ -418,7 +420,8 @@ BEGIN
         v_spice_ip,
         v_vnc_port,
         v_vnc_ip,
-        v_guest_agent_status,
+        v_ovirt_guest_agent_status,
+        v_qemu_guest_agent_status,
         v_guest_timezone_offset,
         v_guest_timezone_name,
         v_guestos_arch,
@@ -475,7 +478,8 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_spice_ip VARCHAR(32),
     v_vnc_port INT,
     v_vnc_ip VARCHAR(32),
-    v_guest_agent_status INT,
+    v_ovirt_guest_agent_status INT,
+    v_qemu_guest_agent_status INT,
     v_guest_timezone_offset INT,
     v_guest_timezone_name VARCHAR(255),
     v_guestos_arch INT,
@@ -532,7 +536,8 @@ BEGIN
         spice_ip = v_spice_ip,
         vnc_port = v_vnc_port,
         vnc_ip = v_vnc_ip,
-        guest_agent_status = v_guest_agent_status,
+        ovirt_guest_agent_status = v_ovirt_guest_agent_status,
+        qemu_guest_agent_status = v_qemu_guest_agent_status,
         guest_timezone_offset = v_guest_timezone_offset,
         guest_timezone_name = v_guest_timezone_name,
         guestos_arch = v_guestos_arch,
@@ -1649,16 +1654,31 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION UpdateGuestAgentStatus(
+Create or replace FUNCTION UpdateOvirtGuestAgentStatus(
 	v_vm_guid UUID,
-	v_guest_agent_status INTEGER)
+	v_ovirt_guest_agent_status INTEGER)
 RETURNS VOID
 
    AS $procedure$
 BEGIN
       UPDATE vm_dynamic
       SET
-      guest_agent_status = v_guest_agent_status
+      ovirt_guest_agent_status = v_ovirt_guest_agent_status
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateQemuGuestAgentStatus(
+	v_vm_guid UUID,
+	v_qemu_guest_agent_status INTEGER)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vm_dynamic
+      SET
+      qemu_guest_agent_status = v_qemu_guest_agent_status
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;

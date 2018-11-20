@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -213,6 +214,30 @@ public class VmHandlerTest {
 
         // Then
         assertEquals(latestVersion, "4.2.8");
+    }
+
+    @Test
+    public void testIsQemuAgentInAppsList() {
+        // Given
+        String appsWithLinuxAgent = "a-package-1.2.3,qemu-guest-agent-3.2.1,more-packages";
+        // When
+        GuestAgentStatus linuxAgentStatus = vmHandler.isQemuAgentInAppsList(appsWithLinuxAgent);
+        // Then
+        assertEquals(GuestAgentStatus.Exists, linuxAgentStatus);
+
+        // Given
+        String appsWithWindowsAgent = "Important Application,Another application,QEMU guest agent";
+        // When
+        GuestAgentStatus windowsAgentStatus = vmHandler.isQemuAgentInAppsList(appsWithWindowsAgent);
+        // Then
+        assertEquals(GuestAgentStatus.Exists, windowsAgentStatus);
+
+        // Given
+        String appsWithNoLinuxAgent = "a-package-1.2.3,no-guest-agent-3.2.1,more-packages";
+        // When
+        GuestAgentStatus noAgentStatus = vmHandler.isQemuAgentInAppsList(appsWithNoLinuxAgent);
+        // Then
+        assertEquals(GuestAgentStatus.DoesntExist, noAgentStatus);
     }
 
 }

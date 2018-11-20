@@ -100,11 +100,19 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
-    public void updateGuestAgentStatus(Guid vmId, GuestAgentStatus guestAgentStatus) {
-        getCallsHandler().executeModification("UpdateGuestAgentStatus",
+    public void updateOvirtGuestAgentStatus(Guid vmId, GuestAgentStatus ovirtGuestAgentStatus) {
+        getCallsHandler().executeModification("UpdateOvirtGuestAgentStatus",
                 getCustomMapSqlParameterSource()
                         .addValue("vm_guid", vmId)
-                        .addValue("guest_agent_status", guestAgentStatus.getValue()));
+                        .addValue("ovirt_guest_agent_status", ovirtGuestAgentStatus.getValue()));
+    }
+
+    @Override
+    public void updateQemuGuestAgentStatus(Guid vmId, GuestAgentStatus qemuGuestAgentStatus) {
+        getCallsHandler().executeModification("UpdateQemuGuestAgentStatus",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", vmId)
+                        .addValue("qemu_guest_agent_status", qemuGuestAgentStatus.getValue()));
     }
 
     @Override
@@ -195,7 +203,8 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("is_run_once", vm.isRunOnce())
                 .addValue("volatile_run", vm.isVolatileRun())
                 .addValue("cpu_name", vm.getCpuName())
-                .addValue("guest_agent_status", vm.getGuestAgentStatus().getValue())
+                .addValue("ovirt_guest_agent_status", vm.getOvirtGuestAgentStatus().getValue())
+                .addValue("qemu_guest_agent_status", vm.getQemuGuestAgentStatus().getValue())
                 .addValue("current_cd", vm.getCurrentCd())
                 .addValue("reason", vm.getStopReason())
                 .addValue("exit_reason", vm.getExitReason().getValue())
@@ -276,7 +285,8 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setRunOnce(rs.getBoolean("is_run_once"));
         entity.setVolatileRun(rs.getBoolean("volatile_run"));
         entity.setCpuName(rs.getString("cpu_name"));
-        entity.setGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("guest_agent_status")));
+        entity.setOvirtGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("ovirt_guest_agent_status")));
+        entity.setQemuGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("qemu_guest_agent_status")));
         entity.setCurrentCd(rs.getString("current_cd"));
         entity.setStopReason(rs.getString("reason"));
         VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));

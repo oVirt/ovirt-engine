@@ -80,12 +80,20 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
 
 
     /**
-     * Update vm dynamics guest_agent_status field
+     * Update vm dynamics ovirt_guest_agent_status field
      *
      * @param the vm id
      * @param new status
      */
-    void updateGuestAgentStatus(Guid vmId, GuestAgentStatus guestAgentStatus);
+    void updateOvirtGuestAgentStatus(Guid vmId, GuestAgentStatus ovirtGuestAgentStatus);
+
+    /**
+     * Update vm dynamics qemu_guest_agent_status field
+     *
+     * @param the vm id
+     * @param new status
+     */
+    void updateQemuGuestAgentStatus(Guid vmId, GuestAgentStatus qemuGuestAgentStatus);
 
     /**
      * Get value of hash field for every VM in vm_dynamic table.

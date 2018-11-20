@@ -73,7 +73,9 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String cpuName;
 
     @UnchangeableByVdsm
-    private GuestAgentStatus guestAgentStatus;
+    private GuestAgentStatus ovirtGuestAgentStatus;
+    @UnchangeableByVdsm
+    private GuestAgentStatus qemuGuestAgentStatus;
     @UnchangeableByVdsm
     private String emulatedMachine;
     private String currentCd;
@@ -132,7 +134,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 runOnce,
                 volatileRun,
                 cpuName,
-                guestAgentStatus,
+                ovirtGuestAgentStatus,
+                qemuGuestAgentStatus,
                 currentCd,
                 stopReason,
                 exitReason,
@@ -191,7 +194,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && runOnce == other.runOnce
                 && volatileRun == other.volatileRun
                 && Objects.equals(cpuName, other.cpuName)
-                && Objects.equals(guestAgentStatus, other.guestAgentStatus)
+                && Objects.equals(ovirtGuestAgentStatus, other.ovirtGuestAgentStatus)
+                && Objects.equals(qemuGuestAgentStatus, other.qemuGuestAgentStatus)
                 && Objects.equals(currentCd, other.currentCd)
                 && Objects.equals(stopReason, other.stopReason)
                 && exitReason == other.exitReason
@@ -259,7 +263,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         bootSequence = BootSequence.C;
         exitReason = VmExitReason.Unknown;
         graphicsInfos = new HashMap<>();
-        guestAgentStatus = GuestAgentStatus.DoesntExist;
+        ovirtGuestAgentStatus = GuestAgentStatus.DoesntExist;
+        qemuGuestAgentStatus = GuestAgentStatus.DoesntExist;
         guestOsTimezoneName = "";
         guestOsTimezoneOffset = 0;
         guestOsVersion = "";
@@ -303,7 +308,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         lastWatchdogAction = template.getLastWatchdogAction();
         runOnce = template.isRunOnce();
         cpuName = template.getCpuName();
-        guestAgentStatus = template.getGuestAgentStatus();
+        ovirtGuestAgentStatus = template.getOvirtGuestAgentStatus();
+        qemuGuestAgentStatus = template.getQemuGuestAgentStatus();
         emulatedMachine = template.getEmulatedMachine();
         currentCd = template.getCurrentCd();
         stopReason = template.getStopReason();
@@ -558,12 +564,20 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public void setCpuName(String cpuName) {
         this.cpuName = cpuName;
     }
-    public GuestAgentStatus getGuestAgentStatus() {
-        return guestAgentStatus;
+    public GuestAgentStatus getOvirtGuestAgentStatus() {
+        return ovirtGuestAgentStatus;
     }
 
-    public void setGuestAgentStatus(GuestAgentStatus guestAgentStatus) {
-        this.guestAgentStatus = guestAgentStatus;
+    public GuestAgentStatus getQemuGuestAgentStatus() {
+        return qemuGuestAgentStatus;
+    }
+
+    public void setOvirtGuestAgentStatus(GuestAgentStatus ovirtGuestAgentStatus) {
+        this.ovirtGuestAgentStatus = ovirtGuestAgentStatus;
+    }
+
+    public void setQemuGuestAgentStatus(GuestAgentStatus qemuGuestAgentStatus) {
+        this.qemuGuestAgentStatus = qemuGuestAgentStatus;
     }
 
     public String getCurrentCd() {
@@ -748,5 +762,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
         setGuestContainers(vm.getGuestContainers());
         setGuestAgentNicsHash(vm.getGuestAgentNicsHash());
+        setQemuGuestAgentStatus(vm.getQemuGuestAgentStatus());
     }
 }

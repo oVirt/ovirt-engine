@@ -64,7 +64,6 @@ public class VmStatusColumn extends AbstractColumn<VM, VM> {
                 // will be rendered by progress column
                 return null;
             }
-
             return super.getValue(vm);
         }
     }

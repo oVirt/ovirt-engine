@@ -151,7 +151,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
     }
 
     private static boolean isUpdateNeeded(VM vm) {
-        return vm.getStatus() == VMStatus.Up && vm.getGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
+        return vm.getStatus() == VMStatus.Up && vm.getOvirtGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
     }
 
     private static boolean hasPauseError(VM vm) {

@@ -950,15 +950,23 @@ public class VmHandler implements BackendService {
     }
 
     private static final Pattern TOOLS_PATTERN = Pattern.compile(".*rhev-tools\\s+([\\d\\.]+).*");
+    private static final Pattern QEMU_GA_PATTERN = Pattern.compile("(?i:qemu-guest-agent-|QEMU guest agent)");
     // FIXME: currently oVirt-ToolsSetup is not present in app_list when it does
     // ISO_VERSION_PATTERN should address this pattern as well as the TOOLS_PATTERN
     // if the name will be different.
     private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhe?v-toolssetup_(\\d\\.\\d\\_\\d).*");
 
-    private void updateGuestAgentStatus(VM vm, GuestAgentStatus guestAgentStatus) {
-        if (vm.getGuestAgentStatus() != guestAgentStatus) {
-            vm.setGuestAgentStatus(guestAgentStatus);
-            vmDynamicDao.updateGuestAgentStatus(vm.getId(), vm.getGuestAgentStatus());
+    private void updateOvirtGuestAgentStatus(VM vm, GuestAgentStatus ovirtGuestAgentStatus) {
+        if (vm.getOvirtGuestAgentStatus() != ovirtGuestAgentStatus) {
+            vm.setOvirtGuestAgentStatus(ovirtGuestAgentStatus);
+            vmDynamicDao.updateOvirtGuestAgentStatus(vm.getId(), vm.getOvirtGuestAgentStatus());
+        }
+    }
+
+    private void updateQemuGuestAgentStatus(VM vm, GuestAgentStatus qemuGuestAgentStatus) {
+        if (vm.getQemuGuestAgentStatus() != qemuGuestAgentStatus) {
+            vm.setQemuGuestAgentStatus(qemuGuestAgentStatus);
+            vmDynamicDao.updateQemuGuestAgentStatus(vm.getId(), vm.getQemuGuestAgentStatus());
         }
     }
 
@@ -979,19 +987,33 @@ public class VmHandler implements BackendService {
 
         List<VM> vms = vmDao.getAllForStoragePool(poolId);
         for (VM vm : vms) {
-            if (vm.getAppList() != null && vm.getAppList().toLowerCase().contains("rhev-tools")) {
-                Matcher m = TOOLS_PATTERN.matcher(vm.getAppList().toLowerCase());
-                if (m.matches() && m.groupCount() > 0) {
-                    String toolsVersion = m.group(1);
-                    if (toolsVersion.compareTo(latestVersion) < 0) {
-                        updateGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
-                    } else {
-                        updateGuestAgentStatus(vm, GuestAgentStatus.Exists);
-                    }
+            maybeUpdateOvirtGuestAgentStatus(latestVersion, vm);
+            updateQemuGuestAgentStatus(vm, isQemuAgentInAppsList(vm.getAppList()));
+        }
+    }
+
+    private void maybeUpdateOvirtGuestAgentStatus(String latestVersion, VM vm) {
+        if (vm.getAppList() != null && vm.getAppList().toLowerCase().contains("rhev-tools")) {
+            Matcher m = TOOLS_PATTERN.matcher(vm.getAppList().toLowerCase());
+            if (m.matches() && m.groupCount() > 0) {
+                String toolsVersion = m.group(1);
+                if (toolsVersion.compareTo(latestVersion) < 0) {
+                    updateOvirtGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
+                } else {
+                    updateOvirtGuestAgentStatus(vm, GuestAgentStatus.Exists);
                 }
-            } else {
-                updateGuestAgentStatus(vm, GuestAgentStatus.DoesntExist);
             }
+        } else {
+            updateOvirtGuestAgentStatus(vm, GuestAgentStatus.DoesntExist);
+        }
+    }
+
+
+    GuestAgentStatus isQemuAgentInAppsList(String appList) {
+        if (appList != null && QEMU_GA_PATTERN.matcher(appList).find()) {
+            return GuestAgentStatus.Exists;
+        } else {
+            return GuestAgentStatus.DoesntExist;
         }
     }
 

@@ -141,10 +141,10 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
     public void testGuestAgentStatus() {
         Guid vmId = FixturesTool.VM_RHEL5_POOL_51;
         VmDynamic vmDynamic = dao.get(vmId);
-        vmDynamic.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
+        vmDynamic.setOvirtGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
         dao.update(vmDynamic);
         vmDynamic = dao.get(vmId);
-        assertEquals(vmDynamic.getGuestAgentStatus().getValue(), GuestAgentStatus.UpdateNeeded.getValue());
+        assertEquals(vmDynamic.getOvirtGuestAgentStatus().getValue(), GuestAgentStatus.UpdateNeeded.getValue());
     }
 
     @Test
