@@ -206,6 +206,8 @@ select fn_db_add_config_value_for_versions_up_to('ContentType', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('ContentType', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('IsoOnDataDomain', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('IsoOnDataDomain', 'true', '4.3');
+select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.2');
+select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.3');
 select fn_db_add_config_value_for_versions_up_to('ResumeBehaviorSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('ResumeBehaviorSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('MemoryDisksOnDifferentDomainsSupported', 'false', '4.1');

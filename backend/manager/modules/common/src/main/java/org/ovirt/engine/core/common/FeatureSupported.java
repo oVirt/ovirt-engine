@@ -186,6 +186,14 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.VmLeasesSupported, version);
     }
 
+    /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if Managed block domain storage domain is supported for this version.
+     */
+    public static boolean isManagedBlockDomainSupported(Version version) {
+        return supportedInConfig(ConfigValues.ManagedBlockDomainSupported, version);
+    }
+
     public static boolean isAgentChannelNamingSupported(Version version) {
         return supportedInConfig(ConfigValues.AgentChannelNamingSupported, version);
     }

@@ -1489,6 +1489,9 @@ public enum ConfigValues {
     CopyPreallocatedFileBasedDiskSupported,
 
     @TypeConverterAttribute(Boolean.class)
+    ManagedBlockDomainSupported,
+
+    @TypeConverterAttribute(Boolean.class)
     DomainXML,
 
     @TypeConverterAttribute(Boolean.class)
