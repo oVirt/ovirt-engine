@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -319,6 +320,8 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     protected abstract CinderDisk getCinderDisk();
 
+    protected abstract ManagedBlockStorageDisk getManagedBlockDisk();
+
     public void setDefaultInterface() {
         Guid vmId = getVmId();
         if (Guid.isNullOrEmpty(vmId) || getDisk() == null) {
@@ -377,6 +380,9 @@ public abstract class AbstractDiskModel extends DiskModel {
                 case CINDER:
                     domainByDiskType = d -> d.getStorageType() == StorageType.CINDER;
                     break;
+                case MANAGED_BLOCK_STORAGE:
+                    domainByDiskType = d -> d.getStorageType().isManagedBlockStorage();
+                    break;
                 default:
                     domainByDiskType = s -> true;
             }
@@ -399,6 +405,10 @@ public abstract class AbstractDiskModel extends DiskModel {
                         break;
                     case CINDER:
                         setMessage(constants.noCinderStorageDomainsInDC());
+                        getIsModelDisabled().setEntity(true);
+                        break;
+                    case MANAGED_BLOCK_STORAGE:
+                        setMessage(constants.noManagedBlockDomainsInDC());
                         getIsModelDisabled().setEntity(true);
                         break;
                 }
@@ -502,7 +512,8 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     private void updateShareableDiskEnabled() {
         StorageDomain storageDomain = getStorageDomain().getSelectedItem();
-        if (storageDomain != null && StorageType.GLUSTERFS == storageDomain.getStorageType()) {
+        if (storageDomain != null && (StorageType.GLUSTERFS == storageDomain.getStorageType()
+                || storageDomain.getStorageType().equals(StorageType.MANAGED_BLOCK_STORAGE))) {
             getIsShareable().setEntity(false);
             getIsShareable().setIsChangeable(false, constants.shareableDiskNotSupported());
         } else if (getVolumeType().getSelectedItem() == VolumeType.Sparse && storageDomain != null
@@ -1072,6 +1083,12 @@ public abstract class AbstractDiskModel extends DiskModel {
                 updateQuota(diskImage);
                 updateDiskSize(diskImage);
                 setDisk(diskImage);
+                break;
+            case MANAGED_BLOCK_STORAGE:
+                DiskImage managedBlockDisk = getManagedBlockDisk();
+                updateQuota(managedBlockDisk);
+                updateDiskSize(managedBlockDisk);
+                setDisk(managedBlockDisk);
                 break;
         }
 

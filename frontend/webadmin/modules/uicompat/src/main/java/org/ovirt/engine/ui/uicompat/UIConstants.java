@@ -1169,6 +1169,8 @@ public interface UIConstants extends Constants {
 
     String noCinderStorageDomainsInDC();
 
+    String noManagedBlockDomainsInDC();
+
     String relevantDCnotActive();
 
     String hostNameValidationMsg();

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -125,6 +126,11 @@ public class NewDiskModel extends AbstractDiskModel {
     }
 
     @Override
+    protected ManagedBlockStorageDisk getManagedBlockDisk() {
+        return new ManagedBlockStorageDisk();
+    }
+
+    @Override
     public void flush() {
         if (!validate()) {
             return;
@@ -164,8 +170,7 @@ public class NewDiskModel extends AbstractDiskModel {
 
         AddDiskParameters parameters = new AddDiskParameters(getDiskVmElement(), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());
-        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE ||
-                getDiskStorageType().getEntity() == DiskStorageType.CINDER) {
+        if (getDiskStorageType().getEntity().isInternal()) {
             StorageDomain storageDomain = getStorageDomain().getSelectedItem();
             parameters.setStorageDomainId(storageDomain.getId());
         }
@@ -220,8 +225,12 @@ public class NewDiskModel extends AbstractDiskModel {
     protected void updateVolumeType(StorageType storageType) {
         // In case the user didn't select any specific allocation policy, it will be change according to the storage
         // domain type
-        if (!isUserSelectedVolumeType) {
+        if (storageType.isManagedBlockStorage()) {
+            getVolumeType().setSelectedItem(VolumeType.Preallocated);
+            getVolumeType().setIsChangeable(false);
+        } else if (!isUserSelectedVolumeType) {
             getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
+            getVolumeType().setIsChangeable(true);
         }
     }
 

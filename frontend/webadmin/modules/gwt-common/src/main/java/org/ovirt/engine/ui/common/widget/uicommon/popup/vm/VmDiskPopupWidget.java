@@ -349,6 +349,16 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                     }
                 });
 
+        radioButtonPanel.addRadioButton(constants.managedBlockDisk(),
+                disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE,
+                disk.getIsNew(),
+                event -> {
+                    if (disk.getIsNew()) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.MANAGED_BLOCK_STORAGE);
+                        revealDiskPanel(disk);
+                    }
+                });
+
         if (disk.getStorageModel() == null) {
             storageModel = new StorageModel(new NewEditStorageModelBehavior());
 

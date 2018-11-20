@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -115,6 +116,11 @@ public class EditDiskModel extends AbstractDiskModel {
     @Override
     protected CinderDisk getCinderDisk() {
         return (CinderDisk) getDisk();
+    }
+
+    @Override
+    protected ManagedBlockStorageDisk getManagedBlockDisk() {
+        return new ManagedBlockStorageDisk();
     }
 
     @Override

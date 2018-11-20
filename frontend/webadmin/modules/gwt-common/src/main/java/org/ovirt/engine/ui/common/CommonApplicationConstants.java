@@ -1007,6 +1007,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cinderDisk();
 
+    String managedBlockDisk();
+
     String storageIscsiPopupLunToTargetsTabLabel();
 
     String storageIscsiPopupTargetsToLunTabLabel();

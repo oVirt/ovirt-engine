@@ -1218,6 +1218,8 @@ public class AsyncDataProvider {
             default:
                 return VolumeFormat.Unassigned;
             }
+        } else if (storageType.isManagedBlockStorage()) {
+            return volumeType == VolumeType.Preallocated ? VolumeFormat.RAW : VolumeFormat.Unassigned;
         } else {
             return VolumeFormat.Unassigned;
         }
