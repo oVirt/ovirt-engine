@@ -1500,9 +1500,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     ExternalNetworkProviderTimeout,
 
-    @TypeConverterAttribute(Boolean.class)
-    BackupSupported,
-
     @TypeConverterAttribute(Integer.class)
     RepeatEndMethodsOnFailMaxRetries,
 

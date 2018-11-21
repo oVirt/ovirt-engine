@@ -637,11 +637,7 @@ public class StorageModel extends Model {
                 getBackup().setIsAvailable(false);
                 getBackup().setEntity(false);
             } else {
-                boolean backupSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                        ConfigValues.BackupSupported,
-                        getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
-
-                getBackup().setIsAvailable(backupSupported);
+                getBackup().setIsAvailable(true);
                 getBackup().setEntity(isNewStorage() ? false : getStorage().isBackup());
             }
         } else {
