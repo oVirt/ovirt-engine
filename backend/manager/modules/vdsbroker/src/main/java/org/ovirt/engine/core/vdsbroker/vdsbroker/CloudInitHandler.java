@@ -45,7 +45,7 @@ public class CloudInitHandler {
     public List<EngineMessage> validate(VmInit vmInit) {
         // validate only if 'Initial Run' parameters were specified
         // and required payload network protocol is OpenstackMetadata
-        if (vmInit != null && isOpenstackMetadataProtocol(vmInit)) {
+        if (vmInit != null && useOpenstackMetadataProtocol(vmInit)) {
             return new VmInitToOpenStackMetadataAdapter().validate(vmInit);
         }
         return Collections.emptyList();
@@ -110,7 +110,7 @@ public class CloudInitHandler {
 
         files.put("openstack/latest/meta_data.json", metaDataStr.getBytes("UTF-8"));
         files.put("openstack/latest/user_data", userDataStr.getBytes("UTF-8"));
-        if (!StringUtils.isEmpty(networkDataStr) && isOpenstackMetadataProtocol()) {
+        if (!StringUtils.isEmpty(networkDataStr) && useOpenstackMetadataProtocol()) {
             //must not pass an empty file or a file with an empty json to cloud-init-0.7.9-9 because the whole init flow fails
             files.put("openstack/latest/network_data.json", networkDataStr.getBytes("UTF-8"));
             log.debug("cloud-init network_data.json:\n{}", networkDataStr);
@@ -127,19 +127,23 @@ public class CloudInitHandler {
     }
 
     private void storeNetwork() throws UnsupportedEncodingException {
-        if (isOpenstackMetadataProtocol()) {
+        if (useOpenstackMetadataProtocol()) {
             networkData = new VmInitToOpenStackMetadataAdapter().asMap(vmInit);
         } else {
             storeNetworkAsEni();
         }
     }
 
-    private boolean isOpenstackMetadataProtocol() {
-        return isOpenstackMetadataProtocol(vmInit);
+    private boolean useOpenstackMetadataProtocol() {
+        return useOpenstackMetadataProtocol(vmInit);
     }
 
-    private boolean isOpenstackMetadataProtocol(VmInit vmInit) {
-        return OPENSTACK_METADATA.equals(vmInit.getCloudInitNetworkProtocol());
+    /**
+     * Openstack Metadata is the default protocol, so use it if it
+     * is specified explicitly or if no protocol is specified at all.
+     */
+    private boolean useOpenstackMetadataProtocol(VmInit vmInit) {
+        return vmInit.getCloudInitNetworkProtocol() == null || OPENSTACK_METADATA.equals(vmInit.getCloudInitNetworkProtocol());
     }
 
     private void storeHostname() {

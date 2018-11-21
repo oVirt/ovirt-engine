@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.api.model.CloudInitNetworkProtocol.ENI;
+import static org.ovirt.engine.api.model.CloudInitNetworkProtocol.OPENSTACK_METADATA;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +14,7 @@ import org.ovirt.engine.api.model.NicConfigurations;
 import org.ovirt.engine.api.utils.IntegerParser;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpInfoFetcher;
 import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv4InfoFetcher;
 import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv6InfoFetcher;
@@ -204,11 +208,40 @@ public class InitializationMapper {
             VmMapper.map(model.getCloudInit(), entity);
         }
 
+        if (model.isSetCloudInitNetworkProtocol()) {
+            someSubTagSet = true;
+            entity.setCloudInitNetworkProtocol(map(model.getCloudInitNetworkProtocol()));
+        }
+
         if (!someSubTagSet) {
             return null;
         }
 
         return entity;
+    }
+
+    @Mapping(from = org.ovirt.engine.api.model.CloudInitNetworkProtocol.class, to = CloudInitNetworkProtocol.class)
+    public static CloudInitNetworkProtocol map(org.ovirt.engine.api.model.CloudInitNetworkProtocol protocol) {
+        switch (protocol) {
+        case ENI:
+            return CloudInitNetworkProtocol.ENI;
+        case OPENSTACK_METADATA:
+            return CloudInitNetworkProtocol.OPENSTACK_METADATA;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = CloudInitNetworkProtocol.class, to = org.ovirt.engine.api.model.CloudInitNetworkProtocol.class)
+    public static org.ovirt.engine.api.model.CloudInitNetworkProtocol map(CloudInitNetworkProtocol protocol) {
+        switch (protocol) {
+        case ENI:
+            return ENI;
+        case OPENSTACK_METADATA:
+            return OPENSTACK_METADATA;
+        default:
+            return null;
+        }
     }
 
     @Mapping(from = VmInit.class, to = Initialization.class)
@@ -272,6 +305,9 @@ public class InitializationMapper {
         }
         if (entity.getOrgName() != null) {
             model.setOrgName(entity.getOrgName());
+        }
+        if (entity.getCloudInitNetworkProtocol() != null) {
+            model.setCloudInitNetworkProtocol(map(entity.getCloudInitNetworkProtocol()));
         }
         return model;
     }
