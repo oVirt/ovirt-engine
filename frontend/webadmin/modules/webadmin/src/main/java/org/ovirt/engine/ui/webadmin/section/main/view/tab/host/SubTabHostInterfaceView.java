@@ -89,9 +89,9 @@ public class SubTabHostInterfaceView extends AbstractDetailTabListView<VDS, Host
     @Override
     public PatternflyListViewItem<HostInterfaceLineModel> createListViewItem(HostInterfaceLineModel selectedItem) {
         if (!selectedItem.getIsBonded()) {
-            return new HostNetworkInterfaceListViewItem(selectedItem.getInterfaces().get(0).getName(), selectedItem, currentMainModel);
+            return new HostNetworkInterfaceListViewItem(selectedItem.getInterfaces().get(0).getName(), selectedItem);
         } else {
-            return new HostNetworkInterfaceBondedListViewItem(selectedItem, currentMainModel);
+            return new HostNetworkInterfaceBondedListViewItem(selectedItem);
         }
     }
 

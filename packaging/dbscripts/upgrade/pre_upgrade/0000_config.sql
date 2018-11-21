@@ -755,7 +755,6 @@ select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'true', '4.3');
 
-select fn_db_add_config_value_for_versions_up_to('AdPartnerMacSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('OvsSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('DefaultRouteReportedByVdsm', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('DefaultRouteReportedByVdsm', 'true', '4.3');

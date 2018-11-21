@@ -9,11 +9,9 @@ import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.CellTablePopupTableResources;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
@@ -21,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.network.BondedNetworkIcon;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.IconStatusPanel;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -52,9 +49,9 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
     private ExpandableListViewItem slavesExpand;
     private Container slavesContainer;
 
-    public HostNetworkInterfaceBondedListViewItem(HostInterfaceLineModel entity, VDS host) {
+    public HostNetworkInterfaceBondedListViewItem(HostInterfaceLineModel entity) {
         // Since this is a bond entity.getInterface() will not be null.
-        super(entity.getInterface().getName(), entity, host);
+        super(entity.getInterface().getName(), entity);
         expansionLinkContainer.add(createSlavesAdditionalInfo());
         checkBoxPanel.clear();
         checkBoxPanel.add(createBondInterfaceStatusPanel(isInterfaceUp()));
@@ -266,10 +263,8 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         boolean isAdPartnerMacEmpty = partnerMac == null || partnerMac.isEmpty() || partnerMac.equals(INVALID_AD_PARTNER_MAC);
         boolean isIfcUp = InterfaceStatus.UP.equals(bond.getStatistics().getStatus());
         boolean isBond4 = BondMode.BOND4.equals(BondMode.parseBondMode(bond.getBondOptions()));
-        boolean isAdPartnerSupportedForCluster = (Boolean)AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigValues.AdPartnerMacSupported, vds.getClusterCompatibilityVersion().getValue());
 
-        return !isAdPartnerMacEmpty || !isIfcUp || !isBond4 || !isAdPartnerSupportedForCluster;
+        return !isAdPartnerMacEmpty || !isIfcUp || !isBond4;
     }
 
 }

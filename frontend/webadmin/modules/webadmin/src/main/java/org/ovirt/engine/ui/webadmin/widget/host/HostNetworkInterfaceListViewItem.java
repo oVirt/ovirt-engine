@@ -12,7 +12,6 @@ import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.gwtbootstrap3.client.ui.html.Span;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
@@ -72,11 +71,9 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private Container detailedInfoContainer;
     protected FlowPanel expansionLinkContainer = new FlowPanel();
     protected Span interfaceIconSpan;
-    protected VDS vds;
 
-    public HostNetworkInterfaceListViewItem(String name, HostInterfaceLineModel entity, VDS vds) {
+    public HostNetworkInterfaceListViewItem(String name, HostInterfaceLineModel entity) {
         super(name, entity);
-        this.vds = vds;
         applyHostInterfaceSpecificStyles();
         expansionLinkContainer.add(createDetailAdditionalInfo());
         listGroupItem.add(expansionLinkContainer);
