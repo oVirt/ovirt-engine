@@ -160,8 +160,10 @@ public class ImportValidator {
     private boolean handleStorageValidationResult(ValidationResult result, DiskImage disk, Snapshot snapshot,
             Map<Guid, String> failedDisksToImport) {
         if (!result.isValid()) {
-            log.error("Storage Domain '{}', could not be found for memory disk: '{}' in snapshot '{}' (id: '{}')",
+            log.error("Storage Domain '{}' (id: '{}'), could not be found for memory disk: '{}' (id: '{}') in snapshot '{}' (id: '{}')",
+                    disk.getStoragesNames().get(0),
                     disk.getStorageIds().get(0),
+                    disk.getName(),
                     disk.getId(),
                     snapshot.getDescription(),
                     snapshot.getId());
