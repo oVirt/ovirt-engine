@@ -216,10 +216,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.AgentChannelNamingSupported, version);
     }
 
-    public static boolean isLegacyDisplaySupported(Version version) {
-        return supportedInConfig(ConfigValues.LegacyGraphicsDisplay, version);
-    }
-
     /**
      * @param version Compatibility version to check for.
      * @return {@code true} if VDSM trapping of guest reboot is supported.

@@ -731,8 +731,6 @@ select fn_db_add_config_value_for_versions_up_to('MigrationPolicies','[{"id":{"u
 
 select fn_db_add_config_value_for_versions_up_to('SriovHotPlugSupported', 'true', '4.3');
 
-select fn_db_add_config_value_for_versions_up_to('LegacyGraphicsDisplay', 'false', '4.3');
-
 select fn_db_add_config_value_for_versions_up_to('DestroyOnRebootSupported','false','4.1');
 select fn_db_add_config_value_for_versions_up_to('DestroyOnRebootSupported', 'true', '4.3');
 

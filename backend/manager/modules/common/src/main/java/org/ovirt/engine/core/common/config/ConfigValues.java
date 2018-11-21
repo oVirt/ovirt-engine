@@ -1527,9 +1527,6 @@ public enum ConfigValues {
     ExternalNetworkProviderConnectionTimeout,
 
     @TypeConverterAttribute(Boolean.class)
-    LegacyGraphicsDisplay,
-
-    @TypeConverterAttribute(Boolean.class)
     DestroyOnRebootSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Version.class)

@@ -798,14 +798,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             }
             devices.add(struct);
         }
-
-        if (!graphicsInfos.isEmpty() && FeatureSupported.isLegacyDisplaySupported(vm.getCompatibilityVersion())) {
-            String legacyGraphicsType = (graphicsInfos.size() == 2)
-                    ? VdsProperties.QXL
-                    : graphicsTypeToLegacyDisplayType(graphicsInfos.keySet().iterator().next());
-
-            createInfo.put(VdsProperties.display, legacyGraphicsType);
-        }
     }
 
     private void buildVmVideoDevicesFromDb() {
@@ -847,13 +839,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 VmDevice::getDevice,
                 ComparatorUtils.sortLast(VmDeviceType.SPICE.getName()));
         buildVmDevicesFromDb(VmDeviceGeneralType.GRAPHICS, false, extraSpecParams, spiceLastDeviceComparator);
-
-        if (FeatureSupported.isLegacyDisplaySupported(vm.getCompatibilityVersion())) {
-            String legacyDisplay = deriveDisplayTypeLegacy();
-            if (legacyDisplay != null) {
-                createInfo.put(VdsProperties.display, legacyDisplay);
-            }
-        }
     }
 
     private void buildVmDevicesFromDb(VmDeviceGeneralType generalType,
@@ -1038,35 +1023,5 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     private void logUnsupportedInterfaceType() {
         log.error("Unsupported interface type, ISCSI interface type is not supported.");
-    }
-
-    /**
-     * Derives display type from vm configuration, used with legacy vdsm.
-     *
-     * @return either "vnc" or "qxl" string or null if the vm is headless
-     */
-    private String deriveDisplayTypeLegacy() {
-        List<VmDevice> vmDevices =
-                vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS);
-
-        if (vmDevices.isEmpty()) {
-            return null;
-        } else if (vmDevices.size() == 2) { // we have spice & vnc together, we prioritize SPICE
-            return VdsProperties.QXL;
-        }
-
-        GraphicsType deviceType = GraphicsType.fromString(vmDevices.get(0).getDevice());
-        return graphicsTypeToLegacyDisplayType(deviceType);
-    }
-
-    private String graphicsTypeToLegacyDisplayType(GraphicsType graphicsType) {
-        switch (graphicsType) {
-        case SPICE:
-            return VdsProperties.QXL;
-        case VNC:
-            return VdsProperties.VNC;
-        default:
-            return null;
-        }
     }
 }
