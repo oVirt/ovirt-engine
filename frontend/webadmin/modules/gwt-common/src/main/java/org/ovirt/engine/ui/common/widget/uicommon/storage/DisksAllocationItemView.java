@@ -56,7 +56,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @UiField
     @Ignore
-    EnableableFormLabel diskAliasLabel;
+    LabelWithTextTruncation diskAliasLabel;
 
     @UiField
     @Path(value = "alias.entity")
@@ -217,8 +217,6 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @Override
     public void setElementId(String elementId) {
-        diskAliasLabel.setId(
-                ElementIdUtils.createElementId(elementId, "diskName")); //$NON-NLS-1$
         diskAliasEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "diskAlias")); //$NON-NLS-1$
         diskSizeLabel.setId(

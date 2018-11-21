@@ -35,16 +35,11 @@
             overflow: hidden;
         }
 
-        .diskNameLabel {
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
     </ui:style>
     <b:Row>
         <g:FlowPanel addStyleNames="{style.tableStyle}">
             <g:FlowPanel ui:field="diskAliasLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
-                <l:EnableableFormLabel ui:field="diskAliasLabel" addStyleNames="{style.diskNameLabel}" />
+                <l:LabelWithTextTruncation ui:field="diskAliasLabel" />
             </g:FlowPanel>
             <ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
             <g:FlowPanel ui:field="diskSizeLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
