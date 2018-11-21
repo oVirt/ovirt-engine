@@ -891,9 +891,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     GlusterUnSyncedEntriesHistoryLimit,
 
-    @TypeConverterAttribute(Boolean.class)
-    GlusterSelfHealMonitoringSupported,
-
     @Reloadable
     @TypeConverterAttribute(String.class)
     BootstrapMinimalVdsmVersion,

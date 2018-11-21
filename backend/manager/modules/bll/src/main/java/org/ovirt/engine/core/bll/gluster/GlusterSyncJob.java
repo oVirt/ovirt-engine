@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -1103,7 +1102,7 @@ public class GlusterSyncJob extends GlusterJob {
         log.debug("Refreshing Gluster Self Heal Data");
 
         for (Cluster cluster : clusterDao.getAll()) {
-            if (supportsGlusterSelfHealMonitoring(cluster)) {
+            if (cluster.supportsGlusterService()) {
                 try {
                     refreshSelfHealData(cluster);
                 } catch (Exception e) {
@@ -1194,10 +1193,5 @@ public class GlusterSyncJob extends GlusterJob {
         }else{
             return Collections.emptyMap();
         }
-    }
-
-    private boolean supportsGlusterSelfHealMonitoring(Cluster cluster) {
-        return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterSelfHealMonitoring(cluster.getCompatibilityVersion());
     }
 }

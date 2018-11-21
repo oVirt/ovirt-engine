@@ -20,15 +20,6 @@ public class GlusterFeatureSupported {
         return supportedInConfig(ConfigValues.GlusterServicesEnabled, version);
     }
 
-    /**
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> if gluster self-heal monitoring is supported, <code>false</code> if it's not.
-     */
-    public static boolean glusterSelfHealMonitoring(Version version) {
-        return supportedInConfig(ConfigValues.GlusterSelfHealMonitoringSupported, version);
-    }
-
     public static boolean glusterArbiterVolumeSupported(Version version) {
         if (version != null) {
             return supportedInConfig(ConfigValues.GlusterSupportArbiterVolume, version);

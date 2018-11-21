@@ -145,7 +145,6 @@ select fn_db_add_config_value('GlusterPeerStatusRetries', '2', 'general');
 select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHealInfo', '600', 'general');
 select fn_db_add_config_value('GlusterUnSyncedEntriesHistoryLimit', '40', 'general');
-select fn_db_add_config_value_for_versions_up_to('GlusterSelfHealMonitoringSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.3');
 select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'true', '4.3');
