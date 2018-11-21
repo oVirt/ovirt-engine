@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -62,11 +63,11 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @ExtendWith(RandomUtilsSeedingExtension.class)
@@ -95,7 +96,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     private ImportVmCommand<ImportVmParameters> cmd = new ImportVmCommand<>(createParameters(), null);
 
     @Mock
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     @BeforeEach
     public void setUpOsRepository() {
@@ -110,6 +111,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @BeforeEach
     public void setUp() {
         doReturn(null).when(cmd).getCluster();
+        doReturn(emptyList()).when(cloudInitHandler).validate(any());
     }
 
     @Test

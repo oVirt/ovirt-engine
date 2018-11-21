@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.businessentities.network.CloudInitNet
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +43,28 @@ public class CloudInitHandler {
     private final String passwordKey = "password";
 
     public List<EngineMessage> validate(VmInit vmInit) {
-        return new VmInitToOpenStackMetadataAdapter().validate(vmInit);
+        // validate only if 'Initial Run' parameters were specified
+        // and required payload network protocol is OpenstackMetadata
+        if (vmInit != null && isOpenstackMetadataProtocol(vmInit)) {
+            return new VmInitToOpenStackMetadataAdapter().validate(vmInit);
+        }
+        return Collections.emptyList();
     }
 
     private enum CloudInitFileMode {
         FILE,
         NETWORK;
+    }
+
+    /**
+     * c'tor required by Mock framework in tests
+     * and used also by Inject framework in commands.
+     */
+    private CloudInitHandler() {
+        vmInit = null;
+        metaData = null;
+        userData = null;
+        files = null;
     }
 
     public CloudInitHandler (VmInit vmInit){
@@ -118,6 +135,10 @@ public class CloudInitHandler {
     }
 
     private boolean isOpenstackMetadataProtocol() {
+        return isOpenstackMetadataProtocol(vmInit);
+    }
+
+    private boolean isOpenstackMetadataProtocol(VmInit vmInit) {
         return OPENSTACK_METADATA.equals(vmInit.getCloudInitNetworkProtocol());
     }
 

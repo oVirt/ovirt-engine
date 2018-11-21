@@ -64,7 +64,6 @@ import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,6 +81,7 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends VmCommand<T> {
 
@@ -116,7 +116,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
     @Inject
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -163,7 +163,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return validate(new ValidationResult(engineMessage, replacements));
         }
 
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getVm().getVmInit());
+        List<EngineMessage> msgs = cloudInitHandler.validate(getVm().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
         }

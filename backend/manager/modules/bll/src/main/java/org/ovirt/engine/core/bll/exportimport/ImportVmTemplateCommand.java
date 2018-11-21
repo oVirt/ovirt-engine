@@ -64,7 +64,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,6 +81,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -130,7 +130,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     @Inject
     private ImportUtils importUtils;
     @Inject
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     private ImportValidator importValidator;
     private Version effectiveCompatibilityVersion;
@@ -244,7 +244,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             return false;
         }
 
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getVmTemplate().getVmInit());
+        List<EngineMessage> msgs = cloudInitHandler.validate(getVmTemplate().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
         }

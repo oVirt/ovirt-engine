@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,6 +57,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateManagementCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
@@ -82,7 +82,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     @Inject
     private OsRepository osRepository;
     @Inject
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
@@ -219,7 +219,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmTemplateData().getVmInit());
+        List<EngineMessage> msgs = cloudInitHandler.validate(getParameters().getVmTemplateData().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
         }

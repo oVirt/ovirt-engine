@@ -92,7 +92,6 @@ import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.common.vdscommands.LeaseVDSParameters;
@@ -116,6 +115,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
@@ -161,7 +161,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Inject
     private IconUtils iconUtils;
     @Inject
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -1242,7 +1242,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmStaticData().getVmInit());
+        List<EngineMessage> msgs = cloudInitHandler.validate(getParameters().getVm().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
         }

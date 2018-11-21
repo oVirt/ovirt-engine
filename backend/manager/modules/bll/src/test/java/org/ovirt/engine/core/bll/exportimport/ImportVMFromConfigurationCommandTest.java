@@ -42,11 +42,11 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
@@ -93,12 +93,13 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private VmHandler vmHandler;
 
     @Mock
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     @BeforeEach
     public void setUp() throws IOException {
         doReturn(cluster).when(cmd).getCluster();
         doReturn(emptyList()).when(cmd).getImages();
+        doReturn(emptyList()).when(cloudInitHandler).validate(any());
 
         mockCluster();
         setXmlOvfData();

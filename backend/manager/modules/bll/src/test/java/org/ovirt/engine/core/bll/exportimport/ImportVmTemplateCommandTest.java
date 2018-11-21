@@ -50,12 +50,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ImportVmTemplateCommandTest extends BaseCommandTest {
@@ -82,7 +82,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private VmHandler vmHandler;
 
     @Mock
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     @Spy
     @InjectMocks

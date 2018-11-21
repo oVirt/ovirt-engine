@@ -29,11 +29,11 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 @NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
@@ -43,7 +43,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     @Inject
     private VmDynamicDao vmDynamicDao;
     @Inject
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     public RunVmOnceCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
@@ -114,7 +114,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             getParameters().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
         }
 
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmInit());
+        List<EngineMessage> msgs = cloudInitHandler.validate(getParameters().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
         }

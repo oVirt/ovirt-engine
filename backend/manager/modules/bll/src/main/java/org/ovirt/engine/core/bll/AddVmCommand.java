@@ -115,7 +115,6 @@ import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
@@ -137,6 +136,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 /**
  * This class adds a thinly provisioned VM over a template
@@ -167,7 +167,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private VmValidationUtils vmValidationUtils;
 
     @Inject
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -788,7 +788,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmStaticData().getVmInit());
+        List<EngineMessage> msgs = cloudInitHandler.validate(getParameters().getVmStaticData().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
         }

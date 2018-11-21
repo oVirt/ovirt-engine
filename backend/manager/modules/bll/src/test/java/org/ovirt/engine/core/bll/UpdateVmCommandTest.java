@@ -62,7 +62,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -75,6 +74,7 @@ import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 /** A test case for the {@link UpdateVmCommand}. */
 @ExtendWith(MockConfigExtension.class)
@@ -137,7 +137,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private VmHandler vmHandler;
 
     @Mock
-    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
+    private CloudInitHandler cloudInitHandler;
 
     private static Map<String, String> createMigrationMap() {
         Map<String, String> migrationMap = new HashMap<>();
@@ -613,6 +613,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockValidateCustomProperties();
         mockValidatePciAndIdeLimit();
         doReturn(true).when(command).setAndValidateCpuProfile();
+        doReturn(Collections.emptyList()).when(cloudInitHandler).validate(any());
         mockGraphicsDevice();
     }
 
