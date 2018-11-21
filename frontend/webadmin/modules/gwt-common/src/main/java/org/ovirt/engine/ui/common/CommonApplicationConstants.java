@@ -1810,4 +1810,8 @@ public interface CommonApplicationConstants extends Constants {
     String ovaHost();
 
     String ovaDir();
+
+    String cloudInitProtocolLabel();
+
+    String cloudInitProtocolInfo();
 }

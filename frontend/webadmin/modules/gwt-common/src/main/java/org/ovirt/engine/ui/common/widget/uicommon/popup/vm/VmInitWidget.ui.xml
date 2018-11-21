@@ -171,6 +171,9 @@
             <d:AdvancedParametersExpander ui:field="networkExpander"/>
             <g:FlowPanel ui:field="networkExpanderContent" >
               <b:Row>
+                  <w:EntityModelWidgetWithInfo ui:field="cloudInitProtocolEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+              </b:Row>
+              <b:Row>
                 <ge:StringEntityModelTextBoxEditor ui:field="dnsServers" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>

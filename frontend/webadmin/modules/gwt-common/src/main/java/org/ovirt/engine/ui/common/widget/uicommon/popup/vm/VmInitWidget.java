@@ -5,6 +5,7 @@ import java.util.Map;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -19,6 +20,7 @@ import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
@@ -354,7 +356,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Path(value = "networkStartOnBoot.entity")
     @WithElementId
     EntityModelCheckBoxEditor networkStartOnBootEditor;
-
     @UiField
     @Path(value = "dnsServers.entity")
     @WithElementId
@@ -364,6 +365,14 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Path(value = "dnsSearchDomains.entity")
     @WithElementId
     StringEntityModelTextBoxEditor dnsSearchDomains;
+
+    @Path(value = "cloudInitProtocolList.selectedItem")
+    @WithElementId("cloudInitProtocolEditor")
+    ListModelListBoxOnlyEditor<CloudInitNetworkProtocol> cloudInitProtocolEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo cloudInitProtocolEditorWithInfo;
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
@@ -438,6 +447,12 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         ipv4BootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<Ipv4BootProtocol>());
         ipv6BootProtocolEditor = new ListModelListBoxEditor<>(new EnumRenderer<Ipv6BootProtocol>());
+        cloudInitProtocolEditor = new ListModelListBoxOnlyEditor<>(new EnumRenderer<CloudInitNetworkProtocol>(), (source, desiredVisibility) -> true);
+        EnableableFormLabel label = new EnableableFormLabel();
+        label.setText(constants.cloudInitProtocolLabel());
+        cloudInitProtocolEditorWithInfo = new EntityModelWidgetWithInfo(label, cloudInitProtocolEditor);
+        cloudInitProtocolEditorWithInfo.setExplanation(templates.italicText(constants.cloudInitProtocolInfo()));
+
     }
 
     void initComboBoxEditors() {

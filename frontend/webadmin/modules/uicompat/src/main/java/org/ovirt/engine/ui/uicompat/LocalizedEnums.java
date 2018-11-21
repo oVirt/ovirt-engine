@@ -1727,5 +1727,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String BiosType___Q35_SEA_BIOS();
 
     String BiosType___Q35_SECURE_BOOT();
+
+    String CloudInitNetworkProtocol___ENI();
+
+    String CloudInitNetworkProtocol___OPENSTACK_METADATA();
 }
 

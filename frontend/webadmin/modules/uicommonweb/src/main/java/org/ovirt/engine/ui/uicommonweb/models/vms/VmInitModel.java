@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -96,6 +97,7 @@ public class VmInitModel extends Model {
     private UICommand removeAttachmentCommand;
     private ListModel attachmentType;
     private EntityModel<? extends Object> attachmentContent;
+    private ListModel<CloudInitNetworkProtocol> cloudInitProtocol;
 
     private boolean isWindowsOS = false;
     private SortedMap<String, VmInitNetwork> networkMap;
@@ -174,6 +176,7 @@ public class VmInitModel extends Model {
         setAttachmentList(new ListModel());
         setAttachmentType(new ListModel());
         setAttachmentContent(new EntityModel());
+        setCloudInitProtocolList(new ListModel<>());
 
         setAddAttachmentCommand(new UICommand("addAttachment", this)); //$NON-NLS-1$
         setRemoveAttachmentCommand(new UICommand("removeAttachment", this)); //$NON-NLS-1$
@@ -229,6 +232,8 @@ public class VmInitModel extends Model {
         // only add values which are supported by cloud-init. autoconf ('stateless address autconfiguration') is not supported by cloud-init 0.7.9
         getIpv6BootProtocolList().setItems(Arrays.asList(Ipv6BootProtocol.NONE, Ipv6BootProtocol.DHCP, Ipv6BootProtocol.STATIC_IP));
         getIpv6BootProtocolList().setSelectedItem(Ipv6BootProtocol.NONE);
+        getCloudInitProtocolList().setItems(Arrays.asList(CloudInitNetworkProtocol.values()));
+        getCloudInitProtocolList().setSelectedItem(CloudInitNetworkProtocol.OPENSTACK_METADATA);
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
@@ -299,6 +304,7 @@ public class VmInitModel extends Model {
                 getActiveDirectoryOU().setEntity(vmInit.getActiveDirectoryOU());
             }
 
+            getCloudInitProtocolList().setSelectedItem(vmInit.getCloudInitNetworkProtocol());
             initNetworks(vmInit);
         }
 
@@ -562,6 +568,7 @@ public class VmInitModel extends Model {
                 vmInit.setRootPassword(getCloudInitRootPassword().getEntity());
             }
             vmInit.setPasswordAlreadyStored(getCloudInitPasswordSet().getEntity());
+            vmInit.setCloudInitNetworkProtocol(getCloudInitProtocolList().getSelectedItem());
         }
 
         vmInit.setUserName(getUserName().getEntity());
@@ -1215,4 +1222,11 @@ public class VmInitModel extends Model {
         this.networkMap = networkMap;
     }
 
+    public ListModel<CloudInitNetworkProtocol> getCloudInitProtocolList() {
+        return cloudInitProtocol;
+    }
+
+    public void setCloudInitProtocolList(ListModel<CloudInitNetworkProtocol> cloudInitProtocol) {
+        this.cloudInitProtocol = cloudInitProtocol;
+    }
 }
