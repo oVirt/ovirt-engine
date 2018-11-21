@@ -2001,6 +2001,14 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getAllVmsRunningForMultipleVds(AsyncQuery<Map<Guid, List<VM>>> aQuery, List<Guid> vdsIds) {
+        aQuery.converterCallback = new CastingConverter<>();
+
+        Frontend.getInstance().runQuery(QueryType.GetAllVmsRunningForMultipleVds,
+                new IdsQueryParameters(vdsIds),
+                aQuery);
+    }
+
     public void getVmsFromExternalServer(AsyncQuery aQuery,
             Guid dataCenterId,
             Guid vdsId,

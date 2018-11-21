@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.common.view.popup;
 
+import org.gwtbootstrap3.client.ui.constants.AlertType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -80,6 +82,12 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
     @WithElementId
     protected EntityModelCheckBoxEditor stopGlusterServices;
 
+    @UiField
+    FlowPanel pinnedVMsInfoPanel;
+
+    @UiField
+    protected AlertWithIcon pinnedVMsInfoMessage;
+
     @Inject
     public HostMaintenanceConfirmationPopupView(EventBus eventBus) {
         super(eventBus);
@@ -95,6 +103,8 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
         localize();
         driver.initialize(this);
         reasonPanel.setVisible(false);
+        pinnedVMsInfoPanel.setVisible(false);
+        pinnedVMsInfoMessage.setAlertType(AlertType.INFO);
     }
 
     @Override
@@ -174,6 +184,22 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
                 updateReasonVisibility((HostMaintenanceConfirmationModel) sender);
             }
         });
+
+        // Bind "pinnedVMsInfoPanelVisible"
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("pinnedVMsInfoPanelVisible".equals(args.propertyName)) { //$NON-NLS-1$
+                updatePinnedVMsInfoVisibility((HostMaintenanceConfirmationModel) sender);
+            }
+        });
+
+        setPinnedVMsInfoMessage(object.getPinnedVMsInfoMessage());
+        // Bind "pinnedVMsInfoMessage"
+        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("pinnedVMsInfoMessage".equals(args.propertyName)) { //$NON-NLS-1$
+                HostMaintenanceConfirmationModel entity = (HostMaintenanceConfirmationModel) sender;
+                setPinnedVMsInfoMessage(entity.getPinnedVMsInfoMessage());
+            }
+        });
     }
 
     @Override
@@ -183,6 +209,16 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
 
     public void updateReasonVisibility(HostMaintenanceConfirmationModel model) {
         reasonPanel.setVisible(model.getReasonVisible());
+    }
+
+    public void updatePinnedVMsInfoVisibility(HostMaintenanceConfirmationModel model) {
+        pinnedVMsInfoPanel.setVisible(model.getPinnedVMsInfoPanelVisible());
+    }
+
+    public void setPinnedVMsInfoMessage(String message) {
+        String escapedMessage = SafeHtmlUtils.htmlEscape(message != null ? message : ""); //$NON-NLS-1$
+        escapedMessage = escapedMessage.replace("\n", "<br>"); //$NON-NLS-1$ //$NON-NLS-2$
+        pinnedVMsInfoMessage.setHtmlText(SafeHtmlUtils.fromTrustedString(escapedMessage));
     }
 
     protected void localize() {

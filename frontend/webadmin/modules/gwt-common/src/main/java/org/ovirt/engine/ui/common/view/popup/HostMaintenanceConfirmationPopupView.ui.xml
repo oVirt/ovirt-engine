@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
     <ui:style>
         .items {
@@ -25,7 +26,7 @@
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="500px" height="400px">
+    <d:SimpleDialogPanel width="500px" height="500px">
         <d:content>
             <g:FlowPanel addStyleNames="{style.panelPadding}">
                 <g:HTML ui:field="messageHTML" />
@@ -36,6 +37,9 @@
                 <g:HTML ui:field="noteHTML" addStyleNames="{style.noteHTML}"/>
                 <g:FlowPanel ui:field="reasonPanel">
                     <ge:StringEntityModelTextBoxEditor ui:field="reasonEditor" />
+                </g:FlowPanel>
+                <g:FlowPanel ui:field="pinnedVMsInfoPanel">
+                    <w:AlertWithIcon ui:field="pinnedVMsInfoMessage" />
                 </g:FlowPanel>
             </g:FlowPanel>
         </d:content>

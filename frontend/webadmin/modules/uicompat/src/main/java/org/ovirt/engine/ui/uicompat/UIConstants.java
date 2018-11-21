@@ -689,6 +689,8 @@ public interface UIConstants extends Constants {
 
     String areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg();
 
+    String areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeDueToPinnedVmsMsg();
+
     String areYouSureYouWantToRestartTheFollowingHostsMsg();
 
     String areYouSureYouWantToStopTheFollowingHostsMsg();

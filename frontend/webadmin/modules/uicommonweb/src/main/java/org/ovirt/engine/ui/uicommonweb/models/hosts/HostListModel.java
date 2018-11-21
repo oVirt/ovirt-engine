@@ -9,9 +9,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -44,8 +46,10 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -1213,18 +1217,18 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void maintenance() {
         Guid clusterId = getClusterIdOfSelectedHosts();
         if (clusterId == null) {
-            maintenance(false, false);
+            maintenance(false, false, null);
         } else {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
                     cluster -> {
                         if (cluster != null) {
-                            maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService());
+                            maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService(), clusterId);
                         }
                     }), clusterId);
         }
     }
 
-    private void maintenance(boolean isMaintenanceReasonVisible, boolean supportsGlusterService) {
+    private void maintenance(boolean isMaintenanceReasonVisible, boolean supportsGlusterService, Guid clusterId) {
         if (getConfirmWindow() != null) {
             return;
         }
@@ -1247,17 +1251,23 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreGlusterQuorumChecks());
         }
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        ArrayList<String> vdss = new ArrayList<>();
-        for (Object item : getSelectedItems()) {
-            VDS vds = (VDS) item;
-            vdss.add(vds.getName());
-        }
-        model.setItems(vdss);
+        List<String> vdssNames = getSelectedItems().stream().map(d -> d.getName()).collect(Collectors.toList());
+        List<Guid> vdssIds = getSelectedItems().stream().map(d -> d.getId()).collect(Collectors.toList());
+        model.setItems(vdssNames);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirm", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
+
+        // Display existence of pinned/hp VMs warning notification
+        if (clusterId != null) {
+            AsyncDataProvider.getInstance().getAllVmsRunningForMultipleVds(new AsyncQuery<>(vdsToVmsMap -> {
+                if (!vdsToVmsMap.isEmpty()) {
+                    displayPinnedVmsInfoMsg(model, clusterId, vdsToVmsMap);
+                }
+            }), vdssIds);
+        }
     }
 
     public void onMaintenance() {
@@ -2126,5 +2136,77 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         return hostsWithHeDeployed;
+    }
+
+    private void displayPinnedVmsInfoMsg(HostMaintenanceConfirmationModel model, Guid clusterId, Map<Guid, List<VM>> vdsToVmsMap) {
+        AsyncDataProvider.getInstance().getVMsWithVNumaNodesByClusterId(new AsyncQuery<>(returnValue -> {
+            List<VM> vmsWithvNumaNodesConf = returnValue;
+            List<String> pinnedVmsNames = new ArrayList<>();
+            List<Guid> hostsIdsForPinnedVms = new ArrayList<>();
+
+            findHpOrPinnedVms(vdsToVmsMap, vmsWithvNumaNodesConf, pinnedVmsNames, hostsIdsForPinnedVms);
+            formatAndDisplayPinnedVmsMsg(pinnedVmsNames, hostsIdsForPinnedVms, model);
+        }), clusterId);
+    }
+
+    /**
+     * Find pinned/hp VMs running on selected hosts to maintenance and the hosts that those VMs are running on
+     *
+     * @param pinnedVmsNames output parameter that will include list of pinned/Hp vms names identified on selected hosts to maintenance
+     * @param hostsIdsForPinnedVms output parameter that will include list of hosts ids for hosts that pinnedVmsNames are running on
+     */
+    private void findHpOrPinnedVms(Map<Guid, List<VM>> vdsToVmsMap, List<VM> vmsWithvNumaNodesConf, List<String> pinnedVmsNames, List<Guid> hostsIdsForPinnedVms) {
+        Set<Guid> vmsWithPinnedvNumaNodes = getOnlyVmsWithPinnedvNumaNodes(vmsWithvNumaNodesConf);
+
+        for (Map.Entry<Guid, List<VM>> entry : vdsToVmsMap.entrySet()) {
+            List<String> currHostPinnedVmsNames = entry.getValue().stream().filter(v -> isVmHpOrPinningConfigurationEnabled(v, vmsWithPinnedvNumaNodes)).map(v -> v.getName()).collect(Collectors.toList());
+            pinnedVmsNames.addAll(currHostPinnedVmsNames);
+            if (!currHostPinnedVmsNames.isEmpty()) {
+                hostsIdsForPinnedVms.add(entry.getKey());
+            }
+        }
+    }
+
+    /**
+     * Format the message of pinned/high performance VMs existed on selected hosts to maintenance and display it on HostMaintenanceConfirmationModel dialog
+     *
+     */
+    private void formatAndDisplayPinnedVmsMsg(List<String> pinnedVmsNames, List<Guid> hostsIdsForPinnedVms, HostMaintenanceConfirmationModel model) {
+        if (!pinnedVmsNames.isEmpty()) {
+            List<String> hostsNamesForPinnedVms = getSelectedItems().stream().filter(d -> hostsIdsForPinnedVms.contains(d.getId())).map(d -> d.getName()).collect(Collectors.toList());
+
+            String formatedPinnedVMsInfoMsg = ConstantsManager.getInstance().getConstants().areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeDueToPinnedVmsMsg()
+                    + "VM(s): " //$NON-NLS-1$
+                    + String.join(", ", pinnedVmsNames)   //$NON-NLS-1$
+                    + "\nHost(s): " //$NON-NLS-1$
+                    + String.join(", ", hostsNamesForPinnedVms); //$NON-NLS-1$
+            model.setPinnedVMsInfoPanelVisible(true);
+            model.setPinnedVMsInfoMessage(formatedPinnedVMsInfoMsg);
+        }
+    }
+
+    /**
+     * Return VMs that include vNUMA pinning to hosts NUMAs
+     */
+    private Set<Guid> getOnlyVmsWithPinnedvNumaNodes(List<VM> vmsWithvNumaNodesConf) {
+        Set<Guid> vmsWithPinnedvNumaNodes = new HashSet<>();
+
+        for (Iterator<VM> vmIterator = vmsWithvNumaNodesConf.iterator(); vmIterator.hasNext(); ) {
+            final VM vm = vmIterator.next();
+            if (vm.getvNumaNodeList() != null && vm.getvNumaNodeList().stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty())) {
+                vmsWithPinnedvNumaNodes.add(vm.getId());
+            }
+        }
+        return vmsWithPinnedvNumaNodes;
+    }
+
+    /**
+     * Return true if VM includes pinning configuration or if it is a high performance vm type
+     */
+    private boolean isVmHpOrPinningConfigurationEnabled(VM vm, Set<Guid> vmsWithPinnedvNumaNodes) {
+        return vm.getVmType() == VmType.HighPerformance
+                || vm.isUsingCpuPassthrough()
+                || (vm.getCpuPinning() != null && !vm.getCpuPinning().isEmpty())
+                || vmsWithPinnedvNumaNodes.contains(vm.getId());
     }
 }
