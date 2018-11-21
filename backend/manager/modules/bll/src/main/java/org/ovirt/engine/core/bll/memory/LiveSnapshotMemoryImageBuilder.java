@@ -57,7 +57,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     private Guid addMetadataDisk() {
-        DiskImage metadataDisk = MemoryUtils.createSnapshotMetadataDisk(
+        DiskImage metadataDisk = MemoryUtils.createSnapshotMetadataDisk(vm.getName(),
                 MemoryUtils.generateMemoryDiskDescription(vm, snapshotDescription));
         metadataDisk.setWipeAfterDelete(wipeAfterDelete);
         return addDisk(metadataDisk);

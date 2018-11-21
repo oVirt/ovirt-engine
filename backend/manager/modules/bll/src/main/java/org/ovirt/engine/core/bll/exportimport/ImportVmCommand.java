@@ -1266,7 +1266,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (sd == null || disk != null) {
             return null;
         }
-        DiskImage memoryDisk = MemoryUtils.createSnapshotMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
+        DiskImage memoryDisk = MemoryUtils.createSnapshotMetadataDisk(vm.getName(),
+                MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(snapshot.getMetadataDiskId());
         memoryDisk.setImageId(getMemoryDiskImageId(snapshot.getMetadataDiskId()));
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(sd.getId())));

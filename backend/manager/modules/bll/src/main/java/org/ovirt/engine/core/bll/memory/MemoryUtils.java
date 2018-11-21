@@ -34,8 +34,8 @@ public class MemoryUtils {
     private static final String VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
     private static final String VM_HIBERNATION_MEMORY_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
 
-    private static final String VM_SNAPSHOT_METADATA_DISK_ALIAS = "snapshot_metadata";
-    private static final String VM_SNAPSHOT_MEMORY_DISK_ALIAS = "snapshot_memory";
+    private static final String VM_SNAPSHOT_METADATA_DISK_ALIAS = "%s_snapshot_metadata";
+    private static final String VM_SNAPSHOT_MEMORY_DISK_ALIAS = "%s_snapshot_memory";
     private static final String MEMORY_DISK_DESCRIPTION = "Memory snapshot disk for snapshot '%s' of VM '%s' (VM ID: '%s')";
 
     /**
@@ -90,9 +90,9 @@ public class MemoryUtils {
         return Arrays.asList(memoryVolume, dataVolume);
     }
 
-    public static DiskImage createSnapshotMetadataDisk(String diskDescription) {
+    public static DiskImage createSnapshotMetadataDisk(String vmName, String diskDescription) {
         DiskImage image = createMetadataDisk(diskDescription);
-        image.setDiskAlias(VM_SNAPSHOT_METADATA_DISK_ALIAS);
+        image.setDiskAlias(String.format(VM_SNAPSHOT_METADATA_DISK_ALIAS, vmName));
         image.setImageStatus(ImageStatus.OK);
         return image;
     }
@@ -120,7 +120,7 @@ public class MemoryUtils {
 
     public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator, String diskDescription) {
         DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator, diskDescription);
-        image.setDiskAlias(VM_SNAPSHOT_MEMORY_DISK_ALIAS);
+        image.setDiskAlias(String.format(VM_SNAPSHOT_MEMORY_DISK_ALIAS, vm.getName()));
         image.setImageStatus(ImageStatus.OK);
         return image;
     }
