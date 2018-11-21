@@ -32,7 +32,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
@@ -108,7 +107,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -1890,14 +1888,7 @@ public class VdsBrokerObjectsBuilder {
                     Map<String, Object> bridgeProperties = (bridges == null) ? null : bridges.get(interfaceName);
 
                     boolean bridgedNetwork = isBridgedNetwork(networkProperties);
-                    SwitchType switchType = getSwitchType(
-                        host.getSupportedClusterVersionsSet()
-                                .stream()
-                                .filter(v -> Version.getLast().compareTo(v) >= 0)
-                                .max(Comparator.naturalOrder())
-                                .orElse(Version.getLowest()),
-                        networkProperties
-                    );
+                    SwitchType switchType = getSwitchType(networkProperties);
                     HostNetworkQos qos = new HostNetworkQosMapper(networkProperties).deserialize();
 
                     /**
@@ -2311,11 +2302,10 @@ public class VdsBrokerObjectsBuilder {
      * @return {@link SwitchType} obtained from reported network properties.
      * @throws IllegalStateException when switch type is not reported.
      */
-    private static SwitchType getSwitchType(Version clusterVersion, Map<String, Object> networkProperties) {
+    private static SwitchType getSwitchType(Map<String, Object> networkProperties) {
         Object switchType = networkProperties.get(VdsProperties.SWITCH_KEY);
-        boolean switchTypeShouldBeReportedByVdsm = FeatureSupported.ovsSupported(clusterVersion);
 
-        if (switchTypeShouldBeReportedByVdsm && switchType == null) {
+        if (switchType == null) {
             throw new IllegalStateException("Required SwitchType is not reported.");
         }
 

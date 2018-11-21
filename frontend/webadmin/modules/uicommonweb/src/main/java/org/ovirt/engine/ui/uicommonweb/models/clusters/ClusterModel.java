@@ -1492,17 +1492,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-        boolean ovsSupported = isOvsSupported(version);
-        switchType.setIsChangeable(ovsSupported && !getIsEdit(), constants.clusterSwitchChangeDisabled());
-        if (!ovsSupported && switchType.getSelectedItem().equals(SwitchType.OVS)) {
-            switchType.setSelectedItem(SwitchType.LEGACY);
-            switchType.setChangeProhibitionReason(null);
-        }
-    }
-
-    private boolean isOvsSupported(Version version) {
-        AsyncDataProvider instance = AsyncDataProvider.getInstance();
-        return (Boolean) instance.getConfigValuePreConverted(ConfigValues.OvsSupported, version.getValue());
+        switchType.setIsChangeable(!getIsEdit(), constants.clusterSwitchChangeDisabled());
     }
 
     boolean isClusterDetached() {

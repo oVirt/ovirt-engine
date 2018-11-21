@@ -1441,9 +1441,6 @@ public enum ConfigValues {
     SriovHotPlugSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    OvsSupported(ClientAccessLevel.Admin),
-
-    @TypeConverterAttribute(Boolean.class)
     AllowEditingHostedEngine,
 
     @TypeConverterAttribute(Boolean.class)

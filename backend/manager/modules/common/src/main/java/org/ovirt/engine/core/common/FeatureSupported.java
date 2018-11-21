@@ -125,10 +125,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ipv6IscsiSupported, version);
     }
 
-    public static boolean ovsSupported(Version version) {
-        return supportedInConfig(ConfigValues.OvsSupported, version);
-    }
-
     /**
      *
      * @param version Compatibility version to check for.
