@@ -160,16 +160,26 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
                     (asyncTasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId())).size() > 0) {
                 logRunningAsyncTasks(asyncTasks);
-                return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
+                return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL,
+                        String.format("$%s %s", "tasksNames", getTaskActionsFromList(asyncTasks)));
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
                     !getParameters().getIsInternal()
                     && ((asyncTasks = asyncTaskDao.getTasksByEntity(getParameters().getStorageDomainId())).size() > 0 ||
                     commandEntityDao.getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
                 logRunningAsyncTasks(asyncTasks);
-                return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
+                return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS,
+                        String.format("$%s %s", "tasksNames", getTaskActionsFromList(asyncTasks)));
             }
         }
         return true;
+    }
+
+    private String getTaskActionsFromList(List<AsyncTask> tasks) {
+        return tasks.stream()
+                .filter(t -> t.getActionType() != null)
+                .map(t -> t.getActionType().toString())
+                .distinct()
+                .collect(Collectors.joining(", "));
     }
 
     protected boolean validateDomainStatus() {
