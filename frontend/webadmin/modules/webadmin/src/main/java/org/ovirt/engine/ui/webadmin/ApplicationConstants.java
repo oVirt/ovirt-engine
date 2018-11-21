@@ -3365,6 +3365,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostedEngineStorageTooltip();
 
+    String backupStorageTooltip();
+
     String isUnmanaged();
 
     String haActiveTooltip();

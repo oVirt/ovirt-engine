@@ -53,6 +53,10 @@ public class StorageDomainAdditionalStatusColumn extends EntityAdditionalStatusC
             imagesToText.put(getImageSafeHtml(resources.mgmtNetwork()), constants.hostedEngineStorageTooltip());
         }
 
+        if (storageDomain.isBackup()) {
+            imagesToText.put(getImageSafeHtml(resources.storageImage()), constants.backupStorageTooltip());
+        }
+
         return imagesToText;
     }
 

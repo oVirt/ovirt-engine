@@ -203,6 +203,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/Reboot-disabled-13X13.png")
     ImageResource rebootDisabledImage();
 
+    @Source("images/storage.png")
+    ImageResource storageImage();
+
     @Source("images/storages.png")
     ImageResource storagesImage();
 
