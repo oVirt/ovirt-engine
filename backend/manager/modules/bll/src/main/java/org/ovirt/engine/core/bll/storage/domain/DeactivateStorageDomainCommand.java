@@ -156,7 +156,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
         if (getStoragePool().getSpmVdsId() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
-            List<AsyncTask> asyncTasks = null;
+            List<AsyncTask> asyncTasks;
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
                     (asyncTasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId())).size() > 0) {
                 logRunningAsyncTasks(asyncTasks);
