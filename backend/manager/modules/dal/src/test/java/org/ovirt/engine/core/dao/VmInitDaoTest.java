@@ -3,6 +3,8 @@ package org.ovirt.engine.core.dao;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol.ENI;
+import static org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol.OPENSTACK_METADATA;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,12 +47,14 @@ public class VmInitDaoTest extends BaseDaoTestCase<VmInitDao> {
         VmInit result = dao.get(EXISTING_VM);
         assertNotNull(result);
         assertEquals("hostname", result.getHostname());
+        assertEquals(OPENSTACK_METADATA, result.getCloudInitNetworkProtocol());
     }
 
     private void addVmInit() {
         VmInit init = new VmInit();
         init.setId(EXISTING_VM);
         init.setHostname("hostname");
+        init.setCloudInitNetworkProtocol(OPENSTACK_METADATA);
         dao.save(init);
     }
 
@@ -59,11 +63,13 @@ public class VmInitDaoTest extends BaseDaoTestCase<VmInitDao> {
         addVmInit();
         VmInit init = dao.get(EXISTING_VM);
         init.setHostname("newhostname");
+        init.setCloudInitNetworkProtocol(ENI);
         dao.update(init);
 
         VmInit result = dao.get(init.getId());
         assertNotNull(result);
         assertEquals("newhostname", result.getHostname());
+        assertEquals(ENI, result.getCloudInitNetworkProtocol());
     }
 
     @Test

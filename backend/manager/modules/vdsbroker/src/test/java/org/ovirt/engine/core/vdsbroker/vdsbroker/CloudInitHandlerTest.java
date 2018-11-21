@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.utils.JsonHelper;
 
@@ -36,7 +37,8 @@ public class CloudInitHandlerTest {
     @BeforeEach
     public void setUp() {
         vmInit = new VmInit();
-        underTest = new CloudInitHandler(vmInit, CloudInitHandler.NetConfigSourceProtocol.ENI);
+        vmInit.setCloudInitNetworkProtocol(CloudInitNetworkProtocol.ENI);
+        underTest = new CloudInitHandler(vmInit);
     }
 
     @Test

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler.NetConfigSourceProtocol;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -15,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -65,7 +65,8 @@ public class CloudInitHandlerMetadataProtocolTest {
     @ParameterizedTest
     @MethodSource("params")
     public void test(VmInit vmInit, Object expected) {
-        CloudInitHandler underTest = new CloudInitHandler(vmInit, NetConfigSourceProtocol.OPENSTACK_METADATA);
+        vmInit.setCloudInitNetworkProtocol(CloudInitNetworkProtocol.OPENSTACK_METADATA);
+        CloudInitHandler underTest = new CloudInitHandler(vmInit);
         try {
             Map<String, byte[]> actual = underTest.getFileData();
             if (actual.get("openstack/latest/network_data.json") == null) {

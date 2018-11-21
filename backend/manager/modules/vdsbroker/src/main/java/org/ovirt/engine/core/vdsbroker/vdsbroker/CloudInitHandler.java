@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol.OPENSTACK_METADATA;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -36,7 +38,6 @@ public class CloudInitHandler {
     private int nextFileIndex;
     private String interfaces;
     private Map<String, Object> networkData;
-    private final NetConfigSourceProtocol sourceProtocol;
 
     private final String passwordKey = "password";
 
@@ -49,36 +50,12 @@ public class CloudInitHandler {
         NETWORK;
     }
 
-    /**
-     * The protocol of the input of the network configuration to cloud-init.
-     * Cloud-init supports several source protocols as described in
-     *      http://cloudinit.readthedocs.io/en/latest/topics/network-config.html#network-configuration-sources
-     *
-     * ENI has become a legacy protocol that cannot support IPv6.
-     * The Openstack Metadata protocol is a successor. It is described in
-     *      https://specs.openstack.org/openstack/nova-specs/specs/liberty/implemented/metadata-service-network-info.html
-     *
-     */
-    enum NetConfigSourceProtocol {
-        ENI, OPENSTACK_METADATA
-    }
-
-    public CloudInitHandler(VmInit vmInit) {
-        this(vmInit, NetConfigSourceProtocol.OPENSTACK_METADATA);
-    }
-
-    /**
-     * This constructor is just for backward compatibility of ENI flow unit testing !!!
-     * Do not make it public unless you would like to make public the ability
-     * to configure the source protocol of the network details.
-     */
-    CloudInitHandler (VmInit vmInit, NetConfigSourceProtocol sourceProtocol){
+    public CloudInitHandler (VmInit vmInit){
         this.vmInit = vmInit;
         metaData = new HashMap<>();
         userData = new HashMap<>();
         files = new HashMap<>();
         nextFileIndex = 0;
-        this.sourceProtocol = sourceProtocol;
     }
 
 
@@ -116,9 +93,10 @@ public class CloudInitHandler {
 
         files.put("openstack/latest/meta_data.json", metaDataStr.getBytes("UTF-8"));
         files.put("openstack/latest/user_data", userDataStr.getBytes("UTF-8"));
-        if (isOpenstackMetadataProtocol() && !StringUtils.isEmpty(networkDataStr)) {
+        if (!StringUtils.isEmpty(networkDataStr) && isOpenstackMetadataProtocol()) {
             //must not pass an empty file or a file with an empty json to cloud-init-0.7.9-9 because the whole init flow fails
             files.put("openstack/latest/network_data.json", networkDataStr.getBytes("UTF-8"));
+            log.debug("cloud-init network_data.json:\n{}", networkDataStr);
         }
         // mask password for log if exists
         if (metaDataStr.contains(passwordKey) && vmInit != null && vmInit.getRootPassword() != null) {
@@ -128,9 +106,6 @@ public class CloudInitHandler {
         }
         log.debug("cloud-init meta-data:\n{}", metaDataStr);
         log.debug("cloud-init user-data:\n{}", userDataStr);
-        if (isOpenstackMetadataProtocol()) {
-            log.debug("cloud-init network-data:\n{}", networkDataStr);
-        }
         return files;
     }
 
@@ -143,7 +118,7 @@ public class CloudInitHandler {
     }
 
     private boolean isOpenstackMetadataProtocol() {
-        return sourceProtocol == NetConfigSourceProtocol.OPENSTACK_METADATA;
+        return OPENSTACK_METADATA.equals(vmInit.getCloudInitNetworkProtocol());
     }
 
     private void storeHostname() {
@@ -218,6 +193,7 @@ public class CloudInitHandler {
             // Cloud-init will translate this as needed for ifcfg-based systems
             storeNextFile(CloudInitFileMode.NETWORK, "/etc/network/interfaces", interfaces.getBytes("US-ASCII"));
         }
+        log.debug("cloud-init network-interfaces:\n{}", interfaces);
     }
 
     private void storeIpv4(VmInitNetwork iface, StringBuilder output) {

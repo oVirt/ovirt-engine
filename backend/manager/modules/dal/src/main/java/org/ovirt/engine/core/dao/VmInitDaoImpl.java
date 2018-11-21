@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.inject.Named;
@@ -7,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.VmInitUtils;
@@ -76,7 +79,12 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
                 .addValue("user_locale", vmInit.getUserLocale())
                 .addValue("user_name", vmInit.getUserName())
                 .addValue("active_directory_ou", vmInit.getActiveDirectoryOU())
-                .addValue("org_name", vmInit.getOrgName());
+                .addValue("org_name", vmInit.getOrgName())
+                .addValue("cloud_init_network_protocol", getCloudInitNetworkProtocol(vmInit));
+    }
+
+    private String getCloudInitNetworkProtocol(VmInit vmInit) {
+        return vmInit.getCloudInitNetworkProtocol() == null ? null : vmInit.getCloudInitNetworkProtocol().name();
     }
 
     private static final RowMapper<VmInit> vmInitRowMapper = (rs, rowNum) -> {
@@ -101,7 +109,11 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
         entity.setUserName(rs.getString("user_name"));
         entity.setActiveDirectoryOU(rs.getString("active_directory_ou"));
         entity.setOrgName(rs.getString("org_name"));
-
+        entity.setCloudInitNetworkProtocol(getCloudInitNetworkProtocol(rs));
         return entity;
     };
+
+    private static CloudInitNetworkProtocol getCloudInitNetworkProtocol(ResultSet rs) throws SQLException {
+        return rs.getString("cloud_init_network_protocol") == null ? null : CloudInitNetworkProtocol.valueOf(rs.getString("cloud_init_network_protocol"));
+    }
 }

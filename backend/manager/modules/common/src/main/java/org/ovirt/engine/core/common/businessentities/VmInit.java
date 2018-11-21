@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmInit implements Serializable, BusinessEntity<Guid> {
@@ -30,6 +31,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     private String uiLanguage;
     private String systemLocale;
     private String userLocale;
+    private CloudInitNetworkProtocol cloudInitNetworkProtocol;
 
 
     public VmInit() {
@@ -197,5 +199,13 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public boolean hasDnsSearch() {
         return getDnsSearch() != null && !getDnsSearch().isEmpty();
+    }
+
+    public CloudInitNetworkProtocol getCloudInitNetworkProtocol() {
+        return cloudInitNetworkProtocol;
+    }
+
+    public void setCloudInitNetworkProtocol(CloudInitNetworkProtocol protocol) {
+        cloudInitNetworkProtocol = protocol;
     }
 }

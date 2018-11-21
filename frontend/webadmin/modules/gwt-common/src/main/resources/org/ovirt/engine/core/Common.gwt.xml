@@ -121,6 +121,7 @@
         <include name="common/businessentities/network/Tlv.java" />
         <include name="common/businessentities/network/TlvSpecificType.java" />
         <include name="common/businessentities/network/LldpInfo.java"/>
+        <include name="common/businessentities/network/CloudInitNetworkProtocol.java"/>
 
         <include name="common/businessentities/Commented.java" />
         <include name="common/businessentities/Queryable.java" />

@@ -1967,7 +1967,8 @@ Create or replace FUNCTION UpdateVmInit(
     v_user_locale VARCHAR(256),
     v_user_name VARCHAR(256),
     v_active_directory_ou VARCHAR(256),
-    v_org_name VARCHAR(256)
+    v_org_name VARCHAR(256),
+    v_cloud_init_network_protocol VARCHAR(32)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -1989,7 +1990,8 @@ BEGIN
         user_locale = v_user_locale,
         user_name = v_user_name,
         active_directory_ou = v_active_directory_ou,
-        org_name = v_org_name
+        org_name = v_org_name,
+        cloud_init_network_protocol = v_cloud_init_network_protocol
     WHERE vm_id = v_vm_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -2022,7 +2024,8 @@ CREATE OR REPLACE FUNCTION InsertVmInit (
     v_user_locale VARCHAR(256),
     v_user_name VARCHAR(256),
     v_active_directory_ou VARCHAR(256),
-    v_org_name VARCHAR(256)
+    v_org_name VARCHAR(256),
+    v_cloud_init_network_protocol VARCHAR(32)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -2045,7 +2048,8 @@ BEGIN
         user_locale,
         user_name,
         active_directory_ou,
-        org_name
+        org_name,
+        cloud_init_network_protocol
         )
     VALUES (
         v_vm_id,
@@ -2066,7 +2070,8 @@ BEGIN
         v_user_locale,
         v_user_name,
         v_active_directory_ou,
-        v_org_name
+        v_org_name,
+        v_cloud_init_network_protocol
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
