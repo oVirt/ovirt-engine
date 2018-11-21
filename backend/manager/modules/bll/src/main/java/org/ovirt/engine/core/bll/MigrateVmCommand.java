@@ -377,24 +377,23 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Integer maxIncomingMigrations = null;
         Integer maxOutgoingMigrations = null;
 
-        if (FeatureSupported.migrationPoliciesSupported(getVm().getCompatibilityVersion())) {
-            MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
-                    getCluster().getMigrationPolicyId(), getCluster().getCompatibilityVersion());
-            MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
-            ConvergenceConfig convergenceConfig = getVm().getStatus() == VMStatus.Paused
-                    ? filterOutPostcopy(effectiveMigrationPolicy.getConfig())
-                    : effectiveMigrationPolicy.getConfig();
-            convergenceSchedule = ConvergenceSchedule.from(convergenceConfig).asMap();
+        MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
+                getCluster().getMigrationPolicyId(),
+                getCluster().getCompatibilityVersion());
+        MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
+        ConvergenceConfig convergenceConfig = getVm().getStatus() == VMStatus.Paused
+                ? filterOutPostcopy(effectiveMigrationPolicy.getConfig())
+                : effectiveMigrationPolicy.getConfig();
+        convergenceSchedule = ConvergenceSchedule.from(convergenceConfig).asMap();
 
-            maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
-            if (!NoMigrationPolicy.ID.equals(effectiveMigrationPolicy.getId())) {
-                autoConverge = effectiveMigrationPolicy.isAutoConvergence();
-                migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
-            }
-            enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
-
-            maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
+        maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
+        if (!NoMigrationPolicy.ID.equals(effectiveMigrationPolicy.getId())) {
+            autoConverge = effectiveMigrationPolicy.isAutoConvergence();
+            migrateCompressed = effectiveMigrationPolicy.isMigrationCompression();
         }
+        enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
+
+        maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
 
         return new MigrateVDSCommandParameters(getVdsId(),
                 getVmId(),

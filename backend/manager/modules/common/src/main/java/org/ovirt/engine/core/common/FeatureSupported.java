@@ -117,19 +117,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.SriovHotPlugSupported, version);
     }
 
-    /**
-     *
-     * @param version Compatibility version to check for.
-     * @return <code>true</code> iff migration policies are supported in <code>version</code>
-     */
-    public static boolean migrationPoliciesSupported(Version version) {
-        return supportedInConfig(ConfigValues.MigrationPoliciesSupported, version);
-    }
-
-    public static boolean adPartenerMacSupported(Version version) {
-        return supportedInConfig(ConfigValues.AdPartnerMacSupported, version);
-    }
-
     public static boolean ipv6Supported(Version version) {
         return supportedInConfig(ConfigValues.Ipv6Supported, version);
     }

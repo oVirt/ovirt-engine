@@ -2875,24 +2875,6 @@ public class AsyncDataProvider {
         return true;
     }
 
-    public boolean isMigrationPoliciesSupported(Version clusterVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigValues.MigrationPoliciesSupported, clusterVersion.toString());
-    }
-
-    public List<String> getMigrationPoliciesSupportedVersions() {
-        return getSupportedVersions(ConfigValues.MigrationPoliciesSupported);
-    }
-
-    private List<String> getSupportedVersions(ConfigValues option) {
-        List<String> versions = new ArrayList<>();
-        for (Entry<KeyValuePairCompat<ConfigValues, String>, Object> entry : cachedConfigValuesPreConvert.entrySet()) {
-            if (entry.getKey().getKey() == option && (Boolean) entry.getValue()) {
-                versions.add(entry.getKey().getValue());
-            }
-        }
-        return versions;
-    }
-
     public List<IStorageModel> getDataStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<>();
         models.addAll(getFileDataStorageModels());

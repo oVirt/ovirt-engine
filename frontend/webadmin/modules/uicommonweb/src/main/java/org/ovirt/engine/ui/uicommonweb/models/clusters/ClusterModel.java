@@ -1411,7 +1411,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getMigrationPolicies().setSelectedItem(migrationPolicy != null ? migrationPolicy :
                 findMigrationPolicyById(NoMigrationPolicy.ID, policies));
 
-        getMigrationPolicies().updateChangeability(ConfigValues.MigrationPoliciesSupported, version);
+        getMigrationPolicies().setIsChangeable(true);
     }
 
     private MigrationPolicy findFirstNonEmptyMigrationPolicy(List<MigrationPolicy> policies) {
@@ -2157,8 +2157,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
 
         if (getVersion().getSelectedItem() != null) {
-            if (AsyncDataProvider.getInstance().isMigrationPoliciesSupported(getVersion().getSelectedItem())
-                    && MigrationBandwidthLimitType.CUSTOM.equals(getMigrationBandwidthLimitType().getSelectedItem())) {
+            if (MigrationBandwidthLimitType.CUSTOM.equals(getMigrationBandwidthLimitType().getSelectedItem())) {
                 getCustomMigrationNetworkBandwidth().validateEntity(
                         new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
             } else {

@@ -68,17 +68,8 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
                 return;
             }
 
-            if (AsyncDataProvider.getInstance().isMigrationPoliciesSupported(selectedVersion)) {
-                getView().getMigrationBandwidthLimitTypeEditor().setEnabled(true);
-                updateCustomMigrationBandwidthLimitEnabledState(model, null);
-            } else {
-                final String supportedVersions = String.join(", ", AsyncDataProvider.getInstance() //$NON-NLS-1$
-                        .getMigrationPoliciesSupportedVersions());
-                final String message = messages.onlyAvailableInCompatibilityVersions(supportedVersions);
-                getView().getMigrationBandwidthLimitTypeEditor().disable(message);
-                getView().getMigrationBandwidthLimitTypeEditor().setEnabled(false);
-                updateCustomMigrationBandwidthLimitEnabledState(model, message);
-            }
+            getView().getMigrationBandwidthLimitTypeEditor().setEnabled(true);
+            updateCustomMigrationBandwidthLimitEnabledState(model, null);
         });
 
         getModel().getMigrationBandwidthLimitType().getSelectedItemChangedEvent().addListener((ev, sender, args) ->
@@ -121,8 +112,7 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
             return Optional.empty();
         }
 
-        final Optional<Boolean> enabled = Optional.of(AsyncDataProvider.getInstance().isMigrationPoliciesSupported(clusterVersion)
-                && limitType == MigrationBandwidthLimitType.CUSTOM);
+        final Optional<Boolean> enabled = Optional.of(limitType == MigrationBandwidthLimitType.CUSTOM);
         return enabled;
     }
 }

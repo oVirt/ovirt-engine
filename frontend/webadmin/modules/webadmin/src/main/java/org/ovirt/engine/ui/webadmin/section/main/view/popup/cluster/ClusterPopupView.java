@@ -46,7 +46,6 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
@@ -842,7 +841,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         object.getVersion().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (object.getVersion().getSelectedItem() != null) {
                 Version clusterVersion = object.getVersion().getSelectedItem();
-                migrationPolicyDetails.setVisible(AsyncDataProvider.getInstance().isMigrationPoliciesSupported(clusterVersion));
+                migrationPolicyDetails.setVisible(true);
             }
         });
 

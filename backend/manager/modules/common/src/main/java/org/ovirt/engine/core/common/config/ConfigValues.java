@@ -1452,9 +1452,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     DisplayUncaughtUIExceptions(ClientAccessLevel.Admin),
 
-    @TypeConverterAttribute(Boolean.class)
-    MigrationPoliciesSupported(ClientAccessLevel.User),
-
     @TypeConverterAttribute(String.class)
     MigrationPolicies(ClientAccessLevel.Admin),
 
