@@ -7,6 +7,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
@@ -53,6 +54,7 @@ public class AsyncTaskDaoImpl extends BaseDao implements AsyncTaskDao {
         entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
         entity.setTaskType(AsyncTaskType.forValue(rs.getInt("task_type")));
         entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
+        entity.setActionType(ActionType.forValue(rs.getInt("action_type")));
         return entity;
     };
 
