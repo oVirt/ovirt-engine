@@ -108,15 +108,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.DataOperationsByHSM, version);
     }
 
-    /**
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> hotplug/unplug of VFs is supported in this version
-     */
-    public static boolean sriovHotPlugSupported(Version version) {
-        return supportedInConfig(ConfigValues.SriovHotPlugSupported, version);
-    }
-
     public static boolean ipv6Supported(Version version) {
         return supportedInConfig(ConfigValues.Ipv6Supported, version);
     }

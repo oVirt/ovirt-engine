@@ -72,8 +72,7 @@ public class VmValidatorTest extends BaseCommandTest {
                         MAX_NUM_CPUS_PER_SOCKET),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfThreadsPerCpu,
                         COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                        MAX_NUM_THREADS_PER_CPU),
-                MockConfigDescriptor.of(ConfigValues.SriovHotPlugSupported, Version.v4_0, true)
+                        MAX_NUM_THREADS_PER_CPU)
         );
     }
 

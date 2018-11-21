@@ -19,7 +19,6 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.ActionUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -215,9 +214,7 @@ public class VmValidator {
     }
 
     private Predicate<? super VmNetworkInterface> isVnicMigratable(VM vm) {
-        return vnic -> !vnic.isPassthrough() || !vnic.isPlugged()
-                || (FeatureSupported.sriovHotPlugSupported(vm.getClusterCompatibilityVersion())
-                        && getVnicProfile(vnic).isMigratable());
+        return vnic -> !vnic.isPassthrough() || !vnic.isPlugged() || getVnicProfile(vnic).isMigratable();
     }
 
     private VnicProfile getVnicProfile(VmNic vnic) {

@@ -1255,8 +1255,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NETWORK_MAC_ADDRESS_IN_USE_DETAILED();
 
-    String HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED();
-
     String ERROR_GET_STORAGE_DOMAIN_LIST();
 
     String NETWORK_INTERFACE_IN_USE_BY_VM();

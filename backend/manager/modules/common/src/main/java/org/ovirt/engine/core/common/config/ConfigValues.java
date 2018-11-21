@@ -1438,9 +1438,6 @@ public enum ConfigValues {
     AutoImportHostedEngine,
 
     @TypeConverterAttribute(Boolean.class)
-    SriovHotPlugSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     AllowEditingHostedEngine,
 
     @TypeConverterAttribute(Boolean.class)
