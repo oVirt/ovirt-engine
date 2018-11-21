@@ -39,6 +39,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractTextColumn<Disk> lunVendorIdColumn;
     private static AbstractTextColumn<Disk> lunProductIdColumn;
     private static AbstractTextColumn<Disk> interfaceColumn;
+    private static AbstractTextColumn<Disk> logicalNameColumn;
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
@@ -148,6 +149,9 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                 interfaceColumn, constants.interfaceDisk(), all || images || luns || cinder, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
+                logicalNameColumn, constants.logicalNameDisk(), all || images || luns || cinder, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnVisible(
                 statusColumn, constants.statusDisk(), images || cinder || all, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
@@ -172,6 +176,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         lunVendorIdColumn = DisksViewColumns.getLunVendorIdColumn(null);
         lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(null);
         interfaceColumn = DisksViewColumns.getInterfaceColumn(null);
+        logicalNameColumn = DisksViewColumns.getLogicalNameColumn(null);
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(null);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(null);

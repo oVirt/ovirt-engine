@@ -771,6 +771,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String interfaceDisk();
 
+    String logicalNameDisk();
+
     String statusDisk();
 
     String contentDisk();

@@ -328,6 +328,20 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
+    public static AbstractTextColumn<Disk> getLogicalNameColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                if (object.getDiskVmElements().size() == 1) {
+                    return object.getDiskVmElements().iterator().next().getLogicalName();
+                }
+                return null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
     public static final AbstractTextColumn<Disk> getDateCreatedColumn(String sortBy) {
         AbstractTextColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override
