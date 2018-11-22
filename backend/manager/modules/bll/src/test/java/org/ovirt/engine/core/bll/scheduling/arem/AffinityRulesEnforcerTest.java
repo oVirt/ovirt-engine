@@ -335,7 +335,6 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(groupA);
         affinityGroups.add(groupB);
 
-        Set<Guid> expectedConflictingVMs = new HashSet<>();
         Set<AffinityGroup> expectedConflictingAffinityGroups = new HashSet<>();
         expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB));
 
@@ -403,7 +402,6 @@ public class AffinityRulesEnforcerTest {
 
         expectedConflictingAffinityGroups.clear();
         expectedConflictingAffinityGroups.addAll(Arrays.asList(groupA, groupB));
-        expectedConflictingVMs.addAll(Arrays.asList(vm1.getId(), vm2.getId()));
 
         conflicts = AffinityRulesUtils
                 .checkForAffinityGroupHostsConflict(affinityGroups).get(0);
@@ -571,11 +569,10 @@ public class AffinityRulesEnforcerTest {
     }
 
     private void prepareVmDao(VM... vmList) {
-        final List<VM> vms = Arrays.asList(vmList);
         doAnswer(invocation -> {
             final List<VM> selectedVms = new ArrayList<>();
-            final Set<Guid> vmIds = new HashSet<>((List<Guid>) invocation.getArguments()[0]);
-            for (VM vm : vms) {
+            final Set<Guid> vmIds = new HashSet<>(invocation.getArgument(0));
+            for (VM vm : vmList) {
                 if (vmIds.contains(vm.getId())) {
                     selectedVms.add(vm);
                 }
