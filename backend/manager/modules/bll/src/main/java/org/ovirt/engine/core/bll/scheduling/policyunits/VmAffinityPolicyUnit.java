@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -42,12 +41,13 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
 
     /**
      * Get hosts which satisfy affinity groups for a VM.
-     * Returns also the number of nonmigratable VMs running on each host.
+     * Returns also list of VMs running on the host, that are in an affinity group with the VM.
      *
      * @param onlyEnforcing - check only enforcing affinity groups
-     * @return Map containing host ids and the number of nonmigratable VMs running on the host
+     * @return Map containing host ids and a list of VMs running on the host, that are in an affinity group
+     *   with the VM.
      */
-    protected Map<Guid, Integer> getAcceptableHostsWithPriorities(boolean onlyEnforcing,
+    protected Map<Guid, List<VM>> getAcceptableHostsWithVms(boolean onlyEnforcing,
             List<VDS> hosts,
             List<VM> vmGroup,
             PerHostMessages messages) {
@@ -58,7 +58,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
 
         // no affinity groups found for VM group return all hosts
         if (affinityGroups.isEmpty()) {
-            return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> 0));
+            return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> Collections.emptyList()));
         }
 
         Set<Guid> vmIdSet = vmGroup.stream()
@@ -102,7 +102,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
 
         // No entities, all hosts are valid
         if (allVmIdsPositive.isEmpty() && allVmIdsNegative.isEmpty()) {
-            return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> 0));
+            return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> Collections.emptyList()));
         }
 
         // Get all running VMs in cluster
@@ -119,25 +119,18 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
             runningVMsMap.put(pendingVm.getId(), pendingVm);
         }
 
-        Map<Guid, Integer> acceptableHosts = new HashMap<>();
         // Group all hosts for VMs with positive affinity
-        for (Guid id : allVmIdsPositive) {
-            VM runVm = runningVMsMap.get(id);
-            if (runVm != null && runVm.getRunOnVds() != null) {
-                acceptableHosts.merge(runVm.getRunOnVds(),
-                        isVmMigratable(runVm) ? 0 : 1,
-                        (a, b) -> a + b);
-            }
-        }
+        Map<Guid, List<VM>> acceptableHosts = allVmIdsPositive.stream()
+                .map(runningVMsMap::get)
+                .filter(v -> v != null && v.getRunOnVds() != null)
+                .collect(Collectors.groupingBy(VM::getRunOnVds));
 
-        Set<Guid> unacceptableHosts = new HashSet<>();
         // Group all hosts for VMs with negative affinity
-        for (Guid id : allVmIdsNegative) {
-            VM runVm = runningVMsMap.get(id);
-            if (runVm != null && runVm.getRunOnVds() != null) {
-                unacceptableHosts.add(runVm.getRunOnVds());
-            }
-        }
+        Set<Guid> unacceptableHosts = allVmIdsNegative.stream()
+                .map(runningVMsMap::get)
+                .filter(v -> v != null && v.getRunOnVds() != null)
+                .map(VM::getRunOnVds)
+                .collect(Collectors.toSet());
 
         Map<Guid, VDS> hostMap = new HashMap<>();
         for (VDS host : hosts) {
@@ -158,7 +151,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
 
         // No hosts associated with positive affinity, all hosts are applicable.
         if (acceptableHosts.isEmpty()) {
-            acceptableHosts = hosts.stream().collect(Collectors.toMap(h -> h.getId(), h -> 0));
+            acceptableHosts = hosts.stream().collect(Collectors.toMap(VDS::getId, h -> Collections.emptyList()));
         } else if (acceptableHosts.size() > 1) {
             log.warn("Invalid affinity situation was detected while scheduling VMs: {}." +
                             " VMs belonging to the same affinity groups are running on more than one host.",
@@ -174,7 +167,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
             }
         }
 
-        // Remove hosts that contain VMs with negaive affinity to the currently scheduled Vm
+        // Remove hosts that contain VMs with negative affinity to the currently scheduled Vm
         for (Guid id : allVmIdsNegative) {
             VM runVm = runningVMsMap.get(id);
             if (runVm != null && runVm.getRunOnVds() != null
@@ -188,10 +181,6 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
         }
 
         return acceptableHosts;
-    }
-
-    private static boolean isVmMigratable(VM vm) {
-        return (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) && !vm.isHostedEngine();
     }
 
     private String getVmNames(List<VM> vmGroup) {
