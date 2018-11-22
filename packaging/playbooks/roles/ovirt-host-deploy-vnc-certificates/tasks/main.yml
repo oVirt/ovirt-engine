@@ -16,27 +16,42 @@
       - "server-cert.pem"
       - "server-key.pem"
 
+  - name: Create VNC config file for VDSM
+    file:
+      dest: '/var/lib/vdsm/persistence/vnc.conf'
+      state: touch
+      mode: 0644
+      owner: vdsm
+      group: kvm
+
   - name: Modify qemu config file - enable TLS
-    blockinfile:
-      path: '/etc/libvirt/qemu.conf'
+    lineinfile:
+      path: '{{ item }}'
+      line: 'vnc_tls=1'
       state: present
-      marker: '## {mark} configuration section by vdsm-{{ host_deploy_vdsm_version }}'
-      block: |
-        vnc_tls=1
-        vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
     when: host_deploy_vnc_tls|bool
+    with_items:
+      - '/etc/libvirt/qemu.conf'
+      - '/var/lib/vdsm/persistence/vnc.conf'
     notify:
       restart libvirtd
 
   - name: Modify qemu config file - disable TLS
-    blockinfile:
-      path: '/etc/libvirt/qemu.conf'
+    lineinfile:
+      path: '{{ item }}'
+      line: 'vnc_tls=1'
       state: absent
-      marker: '## {mark} configuration section by vdsm-{{ host_deploy_vdsm_version }}'
-      block: |
-        vnc_tls=1
-        vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
     when: not host_deploy_vnc_tls|bool
+    with_items:
+      - '/etc/libvirt/qemu.conf'
+      - '/var/lib/vdsm/persistence/vnc.conf'
+    notify:
+      restart libvirtd
+
+  - name: Modify qemu config file - certificate directory
+    lineinfile:
+      path: '/etc/libvirt/qemu.conf'
+      line: 'vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"'
     notify:
       restart libvirtd
 
