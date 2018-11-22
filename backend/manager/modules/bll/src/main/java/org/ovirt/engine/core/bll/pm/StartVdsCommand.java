@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.pm;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -93,11 +92,6 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     protected void handleSpecificCommandActions() {
-        RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
-                getContext(),
-                getVds()
-        );
-        restartVmsOper.restartVms(getVmList());
     }
 
     @Override
