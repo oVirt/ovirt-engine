@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
@@ -37,10 +37,10 @@ public class VmAffinityFilterPolicyUnit extends VmAffinityPolicyUnit {
             return hosts;
         }
 
-        Map<Guid, Integer> acceptableHosts = getAcceptableHostsWithPriorities(true, hosts, vmGroup, messages);
+        Set<Guid> acceptableHosts = getAcceptableHostsWithVms(true, hosts, vmGroup, messages).keySet();
 
         return hosts.stream()
-                .filter(h -> acceptableHosts.containsKey(h.getId()))
+                .filter(h -> acceptableHosts.contains(h.getId()))
                 .collect(Collectors.toList());
     }
 }

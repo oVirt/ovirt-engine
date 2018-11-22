@@ -60,6 +60,7 @@ public class AffinityRulesEnforcer {
      * 1. Hard VM to Hosts Affinity
      * 2. Hard VM to VM affinity
      * 3. Soft VM to Hosts Affinity
+     * 4. Soft VM to VM affinity
      *
      * @param cluster current cluster
      * @return Iterator returning valid VMs for migration
@@ -78,9 +79,11 @@ public class AffinityRulesEnforcer {
                 // Check hard VM to host affinity
                 .create(() -> vmToHostConflicts.getFirst().iterator())
                 // Check hard VM to VM affinity
-                .append(() -> getCandidateVmsFromVmToVmAffinity(allAffinityGroups, cache))
+                .append(() -> getCandidateVmsFromVmToVmAffinity(allAffinityGroups, true, cache))
                 // Check soft VM to host affinity
                 .append(() -> vmToHostConflicts.getSecond().iterator())
+                // Check soft VM to VM affinity
+                .append(() -> getCandidateVmsFromVmToVmAffinity(allAffinityGroups, false, cache))
 
                 .distinct()
                 .map(cache::getVm)
@@ -228,15 +231,18 @@ public class AffinityRulesEnforcer {
         }
     }
 
-    private Iterator<Guid> getCandidateVmsFromVmToVmAffinity(List<AffinityGroup> allAffinityGroups, Cache cache) {
-        List<AffinityGroup> allHardAffinityGroups = getAllHardAffinityGroupsForVMsAffinity(allAffinityGroups);
+    private Iterator<Guid> getCandidateVmsFromVmToVmAffinity(List<AffinityGroup> allAffinityGroups, boolean onlyEnforcing, Cache cache) {
+        List<AffinityGroup> vmToVmAffinityGroups = allAffinityGroups.stream()
+                .filter(AffinityGroup::isVmAffinityEnabled)
+                .filter(ag -> !onlyEnforcing || ag.isVmEnforcing())
+                .collect(Collectors.toList());
         Set<Set<Guid>> unifiedPositiveAffinityGroups = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(
-                allHardAffinityGroups);
+                vmToVmAffinityGroups);
         List<AffinityGroup> unifiedAffinityGroups = AffinityRulesUtils.setsToAffinityGroups(
                 unifiedPositiveAffinityGroups);
 
         // Add negative affinity groups
-        for (AffinityGroup ag : allHardAffinityGroups) {
+        for (AffinityGroup ag : vmToVmAffinityGroups) {
             if (ag.isVmNegative()) {
                 unifiedAffinityGroups.add(ag);
             }
@@ -256,7 +262,9 @@ public class AffinityRulesEnforcer {
 
         List<AffinityGroup> violatedAffinityGroups = checkForVMAffinityGroupViolations(unifiedAffinityGroups, vms);
         if (violatedAffinityGroups.isEmpty()) {
-            log.debug("No VM affinity group collision detected.");
+            log.debug(onlyEnforcing ?
+                    "No enforcing VM affinity group collision detected." :
+                    "No VM affinity group collision detected.");
             return IteratorUtils.emptyIterator();
         }
 
@@ -442,13 +450,6 @@ public class AffinityRulesEnforcer {
         }
 
         return new ArrayList<>(broken);
-    }
-
-    private List<AffinityGroup> getAllHardAffinityGroupsForVMsAffinity(List<AffinityGroup> allAffinityGroups) {
-        return allAffinityGroups.stream()
-                .filter(AffinityGroup::isVmAffinityEnabled)
-                .filter(AffinityGroup::isVmEnforcing)
-                .collect(Collectors.toList());
     }
 
     private List<AffinityGroup> getAllAffinityGroupsForVMsToHostsAffinity(List<AffinityGroup> allAffinityGroups) {

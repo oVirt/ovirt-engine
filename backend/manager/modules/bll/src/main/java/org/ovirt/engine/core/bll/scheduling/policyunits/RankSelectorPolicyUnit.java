@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -101,33 +102,25 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
                     }
                 }
 
-                // Initialize rank for the best possible host
-                // Single element arrays to avoid final limitation of lambdas
-                final int[] currentRank = { weights.size() };
-                final int[] realRank = { weights.size() };
-                final int[] lastWeight = { Integer.MIN_VALUE };
-                final Integer finalFactor = factor;
-
                 Map<Guid, Integer> scoreDebugMap = new HashMap<>();
 
                 // Sort according to the weight, lower weight (better) first
                 // Assign rank, same weight has to have the same rank number
                 // Rank = the number of hosts with the same or worse weight
-                weights.entrySet().stream()
+                List<Map.Entry<Guid, Integer>> sortedEntries = weights.entrySet().stream()
                         .sorted(Comparator.comparingInt(Entry::getValue))
-                        .forEach(entry -> {
-                            realRank[0]--;
+                        .collect(Collectors.toList());
 
-                            if (entry.getValue() > lastWeight[0]) {
-                                currentRank[0] = realRank[0];
-                                lastWeight[0] = entry.getValue();
-                            }
+                List<Integer> ranks = ListUtils.rankSorted(sortedEntries, Comparator.comparingInt(Entry::getValue));
 
-                            scores.putIfAbsent(entry.getKey(), 0);
-                            scoreDebugMap.put(entry.getKey(), currentRank[0]);
-                            scores.put(entry.getKey(),
-                                    scores.get(entry.getKey()) + finalFactor * currentRank[0]);
-                        });
+                for (int i = 0; i < sortedEntries.size(); i++) {
+                    Guid hostId = sortedEntries.get(i).getKey();
+                    // Invert the number, so that it is equal to the number of hosts with the same or worse weight
+                    int rank = (weights.size() - 1) - ranks.get(i);
+
+                    scoreDebugMap.put(hostId, rank);
+                    scores.merge(hostId, factor * rank, Integer::sum);
+                }
 
                 if (log.isDebugEnabled()) {
                     debug.append(Optional.ofNullable(unit.getKey()).map(Guid::toString).orElse("<unknown>"));
