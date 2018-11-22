@@ -22,7 +22,7 @@ public class AffinityRulesUtils {
      *
      * @param affinityGroups - All affinity groups
      */
-    public static void checkForAffinityGroupConflict(List<AffinityGroup> affinityGroups,
+    private static void checkForAffinityGroupConflict(List<AffinityGroup> affinityGroups,
             List<AffinityGroupConflicts> conflicts) {
 
         Set<Set<Guid>> unifiedPositiveGroups = getUnifiedPositiveAffinityGroups(affinityGroups.stream()
@@ -111,7 +111,7 @@ public class AffinityRulesUtils {
      * @return List of AffinityGroup objects representing the provided unified affinity groups
      */
     static List<AffinityGroup> setsToAffinityGroups(Set<Set<Guid>> uag) {
-        List<AffinityGroup> output = new ArrayList<>();
+        List<AffinityGroup> output = new ArrayList<>(uag.size());
 
         for(Set<Guid> s : uag) {
             AffinityGroup temp = new AffinityGroup();

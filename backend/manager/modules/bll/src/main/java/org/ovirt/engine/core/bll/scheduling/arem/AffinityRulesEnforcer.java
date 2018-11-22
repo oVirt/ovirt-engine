@@ -4,6 +4,7 @@ import static java.util.Collections.min;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
+import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils.AffinityGroupConflicts;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -116,30 +118,7 @@ public class AffinityRulesEnforcer {
         if (candidateVMs.isEmpty()) {
             log.debug("No vm to hosts hard-affinity group violation detected");
         } else {
-            List<AffinityRulesUtils.AffinityGroupConflicts> conflicts = AffinityRulesUtils
-                    .checkForAffinityGroupHostsConflict(allVmToHostsAffinityGroups);
-            for (AffinityRulesUtils.AffinityGroupConflicts conflict : conflicts) {
-                if (conflict.isVmToVmAffinity()) {
-                    log.warn(conflict.getType().getMessage(),
-                            conflict.getVms().stream()
-                                    .map(id -> id.toString())
-                                    .collect(Collectors.joining(",")),
-                            AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
-                            conflict.getNegativeVms().stream()
-                                    .map(id -> id.toString())
-                                    .collect(Collectors.joining(","))
-                    );
-                } else {
-                    log.warn(conflict.getType().getMessage(),
-                            AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
-                            conflict.getHosts().stream()
-                                    .map(id -> id.toString())
-                                    .collect(Collectors.joining(",")),
-                            conflict.getVms().stream()
-                                    .map(id -> id.toString())
-                                    .collect(Collectors.joining(",")));
-                }
-            }
+            logVmToHostConflicts(allVmToHostsAffinityGroups);
         }
 
         for (Guid id : candidateVMs) {
@@ -236,6 +215,32 @@ public class AffinityRulesEnforcer {
                 .collect(Collectors.toList());
     }
 
+    private void logVmToHostConflicts(List<AffinityGroup> groups) {
+        List<AffinityGroupConflicts> conflicts = AffinityRulesUtils.checkForAffinityGroupHostsConflict(groups);
+        for (AffinityGroupConflicts conflict : conflicts) {
+            if (conflict.isVmToVmAffinity()) {
+                log.warn(conflict.getType().getMessage(),
+                        conflict.getVms().stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")),
+                        AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
+                        conflict.getNegativeVms().stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(","))
+                );
+            } else {
+                log.warn(conflict.getType().getMessage(),
+                        AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
+                        conflict.getHosts().stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")),
+                        conflict.getVms().stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")));
+            }
+        }
+    }
+
     private VM chooseNextVmToMigrateFromVMsAffinity(Cluster cluster, List<AffinityGroup> allAffinityGroups) {
 
         List<AffinityGroup> allHardAffinityGroups = getAllHardAffinityGroupsForVMsAffinity(allAffinityGroups);
@@ -257,15 +262,11 @@ public class AffinityRulesEnforcer {
             allVms.addAll(group.getVmIds());
         }
 
-        Map<Guid, VM> vmsMap = vmDao.getVmsByIds(new ArrayList<>(allVms)).stream()
+        Map<Guid, VM> vmsMap = vmDao.getVmsByIds(allVms).stream()
                 .collect(Collectors.toMap(VM::getId, vm -> vm));
 
-        Map<Guid, Guid> vmToHost = vmsMap.values().stream()
-                .filter(vm -> vm.getRunOnVds() != null)
-                .collect(Collectors.toMap(VM::getId, VM::getRunOnVds));
-
         // There is no need to migrate when no collision was detected
-        Set<AffinityGroup> violatedAffinityGroups = checkForVMAffinityGroupViolations(unifiedAffinityGroups, vmToHost);
+        List<AffinityGroup> violatedAffinityGroups = checkForVMAffinityGroupViolations(unifiedAffinityGroups, vmsMap.values());
         if (violatedAffinityGroups.isEmpty()) {
             log.debug("No affinity group collision detected for cluster {}. Standing by.", cluster.getId());
             return null;
@@ -273,10 +274,9 @@ public class AffinityRulesEnforcer {
 
         // Find a VM that is breaking the affinityGroup and can be theoretically migrated
         // - start with bigger Affinity Groups
-        List<AffinityGroup> affGroupsBySize = new ArrayList<>(violatedAffinityGroups);
-        affGroupsBySize.sort(Collections.reverseOrder(new AffinityGroupComparator()));
+        violatedAffinityGroups.sort(Collections.reverseOrder(new AffinityGroupComparator()));
 
-        for (AffinityGroup affinityGroup : affGroupsBySize) {
+        for (AffinityGroup affinityGroup : violatedAffinityGroups) {
             final List<List<Guid>> candidateVmGroups;
 
             if (affinityGroup.isVmPositive()) {
@@ -412,11 +412,15 @@ public class AffinityRulesEnforcer {
      * Detect whether the current VM to VDS assignment violates current Affinity Groups.
      *
      * @param affinityGroups Unified affinity groups
-     * @param vmToHost       Mapping of VM to currently assigned VDS
+     * @param vms            Collection of VMs
      * @return broken AffinityGroups
      */
-    protected static Set<AffinityGroup> checkForVMAffinityGroupViolations(Iterable<AffinityGroup> affinityGroups,
-            Map<Guid, Guid> vmToHost) {
+    private static List<AffinityGroup> checkForVMAffinityGroupViolations(Collection<AffinityGroup> affinityGroups,
+            Collection<VM> vms) {
+
+        Map<Guid, Guid> vmToHost = vms.stream()
+                .filter(vm -> vm.getRunOnVds() != null)
+                .collect(Collectors.toMap(VM::getId, VM::getRunOnVds));
 
         Set<AffinityGroup> broken = new HashSet<>();
 
@@ -465,7 +469,7 @@ public class AffinityRulesEnforcer {
             }
         }
 
-        return broken;
+        return new ArrayList<>(broken);
     }
 
     private List<AffinityGroup> getAllHardAffinityGroupsForVMsAffinity(List<AffinityGroup> allAffinityGroups) {
