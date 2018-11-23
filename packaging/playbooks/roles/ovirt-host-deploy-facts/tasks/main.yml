@@ -3,6 +3,7 @@
   command: "rpm -q vdsm --qf '%{VERSION}'"
   changed_when: false
   register: vdsm_version
+  check_mode: no
   args:
     warn: no
 
