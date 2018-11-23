@@ -35,7 +35,13 @@ public class BackendInstanceTypeGraphicsConsolesResource
 
         BackendGraphicsConsoleHelper.list(this, guid).entrySet()
             .forEach(graphicsInfo ->
-                consoles.getGraphicsConsoles().add(addLinks(populate(VmMapper.map(graphicsInfo, null), entity)))
+                consoles.getGraphicsConsoles().add(addLinks(
+                        populate(VmMapper.map(graphicsInfo, null), entity),
+                        // The suggestedParent parameter is necessary because InstanceType
+                        // is a subclass of Template. Without it the Template class would
+                        // be detected as parent and the link would contain 'null'.
+                        org.ovirt.engine.api.model.InstanceType.class
+                ))
             );
 
         return consoles;

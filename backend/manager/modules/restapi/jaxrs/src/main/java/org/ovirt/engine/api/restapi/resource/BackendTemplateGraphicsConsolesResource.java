@@ -35,7 +35,10 @@ public class BackendTemplateGraphicsConsolesResource
 
         BackendGraphicsConsoleHelper.list(this, guid).entrySet()
             .forEach(graphicsInfo ->
-                consoles.getGraphicsConsoles().add(addLinks(populate(VmMapper.map(graphicsInfo, null), entity)))
+                consoles.getGraphicsConsoles().add(addLinks(
+                        populate(VmMapper.map(graphicsInfo, null), entity),
+                        Template.class
+                ))
             );
 
         return consoles;
