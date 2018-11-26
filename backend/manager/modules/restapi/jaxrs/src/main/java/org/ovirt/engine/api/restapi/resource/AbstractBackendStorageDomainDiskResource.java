@@ -47,6 +47,9 @@ public class AbstractBackendStorageDomainDiskResource
         } else {
             disk = getDelegate().get();
         }
+        if (unregistered) {
+            disk.setActions(null);
+        }
         if (disk.isSetStorageDomains() && !disk.getStorageDomains().getStorageDomains().isEmpty()) {
             for (StorageDomain sd : disk.getStorageDomains().getStorageDomains()) {
                 if (sd.isSetId() && sd.getId().equals(storageDomainId.toString())) {

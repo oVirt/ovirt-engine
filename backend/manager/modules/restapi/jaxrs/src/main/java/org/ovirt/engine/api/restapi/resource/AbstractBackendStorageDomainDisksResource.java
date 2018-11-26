@@ -43,8 +43,10 @@ public class AbstractBackendStorageDomainDisksResource
         boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED, true, false);
         if (unregistered) {
             Guid dataCenterId = BackendDataCenterHelper.lookupByStorageDomainId(this, storageDomainId);
-            return mapCollection(getBackendCollection(QueryType.GetUnregisteredDisks,
+            Disks unregisteredDisks = mapCollection(getBackendCollection(QueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId, dataCenterId)));
+            unregisteredDisks.getDisks().stream().forEach(d -> d.setActions(null));
+            return unregisteredDisks;
         } else {
             return mapCollection(getBackendCollection(QueryType.GetAllDisksByStorageDomainId,
                     new IdQueryParameters(storageDomainId)));
