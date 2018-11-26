@@ -301,7 +301,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setPendingVcpusCount((Integer) rs.getObject("pending_vcpus_count"));
         entity.setCpuOverCommitTimestamp(DbFacadeUtils.fromDate(rs.getTimestamp("cpu_over_commit_time_stamp")));
         entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
-        entity.setVdsStrength(rs.getInt("vds_strength"));
         entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));
         entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
         entity.setVdsSpmId((Integer) rs.getObject("vds_spm_id"));

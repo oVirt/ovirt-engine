@@ -89,7 +89,6 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("vds_name", vds.getName())
                 .addValue("server_SSL_enabled", vds.isServerSslEnabled())
                 .addValue("vds_type", vds.getVdsType())
-                .addValue("vds_strength", vds.getVdsStrength())
                 .addValue("pm_enabled", vds.isPmEnabled())
                 .addValue("pm_proxy_preferences", FenceProxySourceTypeHelper.saveAsString(vds.getFenceProxySources()))
                 .addValue("pm_detect_kdump", vds.isPmKdumpDetection())
@@ -136,7 +135,6 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         entity.setName(rs.getString("vds_name"));
         entity.setServerSslEnabled(rs.getBoolean("server_SSL_enabled"));
         entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
-        entity.setVdsStrength(rs.getInt("vds_strength"));
         entity.setPmEnabled(rs.getBoolean("pm_enabled"));
         entity.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
         entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));

@@ -40,7 +40,7 @@ BEGIN
        table_name = 'vds' and
        column_name in (
           'cluster_id', 'cluster_name', 'cluster_description',
-          'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port', 'vds_strength',
+          'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port',
           'server_ssl_enabled', 'vds_type', 'pm_enabled', 'pm_proxy_preferences', 'vds_spm_priority', 'hooks', 'status', 'cpu_cores',
           'cpu_model', 'cpu_speed_mh', 'if_total_speed', 'kvm_enabled', 'physical_mem_mb',
           'pending_vcpus_count', 'pending_vmem_size', 'mem_commited', 'vm_active', 'vm_count',

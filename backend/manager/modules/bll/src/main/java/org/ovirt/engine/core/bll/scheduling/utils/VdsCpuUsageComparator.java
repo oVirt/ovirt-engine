@@ -23,6 +23,6 @@ public class VdsCpuUsageComparator implements Comparator<VDS>, Serializable {
     }
 
     private int calculateCpuUsage(VDS o1) {
-        return o1.getUsageCpuPercent() * SlaValidator.getEffectiveCpuCores(o1, countThreadsAsCores) / o1.getVdsStrength();
+        return o1.getUsageCpuPercent() * SlaValidator.getEffectiveCpuCores(o1, countThreadsAsCores);
     }
 }

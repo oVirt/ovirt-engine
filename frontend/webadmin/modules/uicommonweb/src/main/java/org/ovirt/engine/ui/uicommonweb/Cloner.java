@@ -232,7 +232,6 @@ public final class Cloner {
         obj.setClusterId(instance.getClusterId());
         obj.setId(instance.getId());
         obj.setVdsName(instance.getName());
-        obj.setVdsStrength(instance.getVdsStrength());
         obj.setVdsType(instance.getVdsType());
         obj.setUniqueId(instance.getUniqueId());
         obj.setVdsSpmPriority(instance.getVdsSpmPriority());

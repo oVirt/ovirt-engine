@@ -903,14 +903,6 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsStatistics.setCpuOverCommitTimeStamp(value);
     }
 
-    public int getVdsStrength() {
-        return vdsStatic.getVdsStrength();
-    }
-
-    public void setVdsStrength(int value) {
-        vdsStatic.setVdsStrength(value);
-    }
-
     @Override
     public Guid getStoragePoolId() {
         return storagePoolId;

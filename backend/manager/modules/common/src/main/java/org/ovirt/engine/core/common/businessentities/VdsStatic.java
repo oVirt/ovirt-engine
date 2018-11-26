@@ -80,8 +80,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private VDSType vdsType;
 
-    private Integer vdsStrength;
-
     @EditableVdsField
     private boolean pmEnabled;
 
@@ -176,7 +174,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public VdsStatic() {
         serverSslEnabled = false;
-        vdsStrength = 100;
         vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
         sshPort = DEFAULT_SSH_PORT;
         sshUsername = DEFAULT_SSH_USERNAME;
@@ -299,15 +296,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setVdsType(VDSType value) {
         vdsType = value;
-    }
-
-    public int getVdsStrength() {
-        return vdsStrength;
-    }
-
-    public void setVdsStrength(int value) {
-        // strength should be between 1 and 100
-        vdsStrength = value < 1 ? 1 : value > 100 ? 100 : value;
     }
 
     public boolean isPmEnabled() {
@@ -494,7 +482,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 serverSslEnabled,
                 uniqueId,
                 clusterId,
-                vdsStrength,
                 vdsType,
                 disablePowerManagementPolicy,
                 hostProviderId,
@@ -534,7 +521,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(serverSslEnabled, other.serverSslEnabled)
                 && Objects.equals(uniqueId, other.uniqueId)
                 && Objects.equals(clusterId, other.clusterId)
-                && Objects.equals(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
                 && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
