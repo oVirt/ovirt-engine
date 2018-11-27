@@ -237,7 +237,8 @@ public class DisksViewColumns {
         @Override
         protected StorageType getRawValue(Disk object) {
             if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
-                    object.getDiskStorageType() != DiskStorageType.CINDER) {
+                    object.getDiskStorageType() != DiskStorageType.CINDER &&
+                    object.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
                 return null;
             }
             DiskImage disk = (DiskImage) object;
@@ -267,7 +268,8 @@ public class DisksViewColumns {
             @Override
             protected Long getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ?
+                        object.getDiskStorageType() == DiskStorageType.CINDER ||
+                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
                         Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
                         : (long) ((LunDisk) object).getLun().getDeviceSize();
             }
@@ -281,14 +283,16 @@ public class DisksViewColumns {
             @Override
             protected VolumeType getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ?
+                        object.getDiskStorageType() == DiskStorageType.CINDER ||
+                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
                         ((DiskImage) object).getVolumeType() : null;
             }
 
             @Override
             public SafeHtml getTooltip(Disk object) {
                 if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
-                        object.getDiskStorageType() != DiskStorageType.CINDER) {
+                        object.getDiskStorageType() != DiskStorageType.CINDER &&
+                        object.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
                     return null;
                 }
 
@@ -347,7 +351,8 @@ public class DisksViewColumns {
             @Override
             protected Date getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ?
+                        object.getDiskStorageType() == DiskStorageType.CINDER ||
+                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
                         ((DiskImage) object).getCreationDate() : null;
             }
         };
@@ -384,7 +389,8 @@ public class DisksViewColumns {
             @Override
             protected ImageStatus getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ?
+                        object.getDiskStorageType() == DiskStorageType.CINDER ||
+                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
                         ((DiskImage) object).getImageStatus() : null;
             }
 
@@ -498,7 +504,8 @@ public class DisksViewColumns {
             @Override
             public String getValue(Disk disk) {
                 return disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        disk.getDiskStorageType() == DiskStorageType.CINDER
+                        disk.getDiskStorageType() == DiskStorageType.CINDER ||
+                        disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
                                 ? ((DiskImage) disk).getImageId().toString() : null;
             }
         };
