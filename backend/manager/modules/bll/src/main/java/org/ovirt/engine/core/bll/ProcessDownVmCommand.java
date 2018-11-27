@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -71,6 +72,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private VmDeviceDao vmDeviceDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
+    @Inject
+    private VmHandler vmHandler;
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
@@ -135,6 +140,8 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
             refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
         }
+
+        managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
     }
 
     private boolean releaseUsedHostDevices() {

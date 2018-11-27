@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectManagedBlockStorageDeviceCommandParameters;
+import org.ovirt.engine.core.common.action.DisconnectManagedBlockStorageDeviceParameters;
 import org.ovirt.engine.core.common.action.SaveManagedBlockStorageDiskDeviceCommandParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -99,6 +100,22 @@ public class ManagedBlockStorageCommandUtil {
         ActionReturnValue actionReturnValue =
                 backend.runInternalAction(ActionType.ConnectManagedBlockStorageDevice, params);
         return actionReturnValue;
+    }
+
+    public void disconnectManagedBlockStorageDisks(VM vm, VmHandler vmHandler) {
+        if (vm.getDiskMap().isEmpty()) {
+            vmHandler.updateDisksFromDb(vm);
+        }
+
+        List<ManagedBlockStorageDisk> disks = DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
+        disks.forEach(disk -> {
+            DisconnectManagedBlockStorageDeviceParameters parameters =
+                    new DisconnectManagedBlockStorageDeviceParameters();
+            parameters.setStorageDomainId(disk.getStorageIds().get(0));
+            parameters.setDiskId(disk.getId());
+            backend.runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, parameters);
+        });
+
     }
 
 }
