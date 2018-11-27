@@ -42,11 +42,12 @@ public class PreferredHostsWeightPolicyUnit extends PolicyUnitImpl {
 
         List<Pair<Guid, Integer>> weights = new ArrayList<>();
         Set<Guid> preferredHosts = new HashSet<>(vm.getDedicatedVmForVdsList());
+        boolean isAnyPreferredHost = preferredHosts.size() > 0;
 
         // Add penalization to hosts that are not in the preferred list
         for (VDS host: hosts) {
-            if (!preferredHosts.contains(host.getId())) {
-                log.info("Penalizing host '{}' because it is not preferred.", host.getName());
+            if (isAnyPreferredHost && !preferredHosts.contains(host.getId())) {
+                log.debug("Penalizing host '{}' because it is not preferred.", host.getName());
                 weights.add(new Pair<Guid, Integer>(host.getId(), 10000)); // TODO externalize weight
             } else {
                 weights.add(new Pair<Guid, Integer>(host.getId(), 0));
