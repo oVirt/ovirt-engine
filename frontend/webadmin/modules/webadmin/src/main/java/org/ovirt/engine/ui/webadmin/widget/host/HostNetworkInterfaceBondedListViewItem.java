@@ -193,12 +193,25 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
 
     protected IsWidget createBondInterfaceStatusPanel(boolean isUp) {
         Bond bond = (Bond) getEntity().getInterface();
-        if(!isAdPartnerMacValid(bond)) {
+        boolean isAdPartnerMacValid = isAdPartnerMacValid(bond);
+        boolean isAdAggregatorIdValid = isAdAggregatorIdValid(bond, getEntity());
+        BondMode bondMode = BondMode.parseBondMode(bond.getBondOptions());
+        if (BondMode.BOND4.equals(bondMode) && (!isAdPartnerMacValid || !isAdAggregatorIdValid)) {
             IconStatusPanel iconStatusPanel = new IconStatusPanel(PatternflyConstants.PFICON_WARNING_TRIANGLE_O,
                     PatternflyConstants.PFICON);
             iconStatusPanel.addStyleName(DOUBLE_SIZE);
             WidgetTooltip tooltip = new WidgetTooltip(iconStatusPanel);
-            tooltip.setHtml(templates.italicWordWrapMaxWidth(constants.bondInMode4HasNoPartnerMac()));
+            StringBuffer message = new StringBuffer();
+            if (!isAdPartnerMacValid) {
+                message.append(constants.bondInMode4HasNoPartnerMac());
+            }
+            if (!isAdPartnerMacValid && !isAdAggregatorIdValid) {
+                message.append(" ");//$NON-NLS-1$
+            }
+            if (!isAdAggregatorIdValid) {
+                message.append(constants.bondInMode4HasInvalidAggregatorId());
+            }
+            tooltip.setHtml(templates.italicWordWrapMaxWidth(message.toString()));
             return tooltip;
         } else {
             return super.createInterfaceStatusPanel(isUp);
@@ -265,6 +278,19 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         boolean isBond4 = BondMode.BOND4.equals(BondMode.parseBondMode(bond.getBondOptions()));
 
         return !isAdPartnerMacEmpty || !isIfcUp || !isBond4;
+    }
+
+    private boolean isAdAggregatorIdValid(Bond bond, HostInterfaceLineModel lineModel) {
+        Integer aggregatorId = bond.getAdAggregatorId();
+        if (aggregatorId == null) {
+            return false;
+        }
+        for (HostInterface nic : lineModel.getInterfaces()) {
+            if (!aggregatorId.equals(nic.getInterface().getAdAggregatorId())) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
