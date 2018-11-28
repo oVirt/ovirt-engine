@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurati
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.SubnetUtils;
+import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
 
 public class NetworkInSyncWithVdsNetworkInterface {
 
@@ -73,15 +74,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
                 cluster.getRequiredSwitchTypeForCluster());
 
         addReportedIpv4Configuration(result);
-
-        /**
-         * TODO: YZ - uncomment the method call after v4.0 is branched out.
-         *
-         * Reporting out-of-sync IPv6 configuration is disabled temporary.
-         * It's planned to be re-enabled after v4.0-beta is released.
-         *
-         * addReportedIpv6Configuration(result);
-         */
+        addReportedIpv6Configuration(result);
 
         boolean reportHostQos = ifaceQos != null || hostNetworkQos != null;
         if (reportHostQos) {
@@ -123,10 +116,9 @@ public class NetworkInSyncWithVdsNetworkInterface {
         return Objects.equals(iface.getIpv6Prefix(), getIpv6PrimaryAddress().getPrefix());
     }
 
-    private boolean isIpv6GatewayInSync() {
-        String gatewayDesiredValue = getIpv6PrimaryAddress().getGateway();
-        String gatewayActualValue = iface.getIpv6Gateway();
-        return Objects.equals(gatewayDesiredValue, gatewayActualValue);
+    private boolean isIpv6AddressInSync(String attachmentValue, String ifaceValue) {
+        IpAddressPredicate p = new IpAddressPredicate(ifaceValue);
+        return p.test(attachmentValue);
     }
 
     private SubnetUtils getsSubnetUtilsInstance() {
@@ -203,11 +195,12 @@ public class NetworkInSyncWithVdsNetworkInterface {
                     isIpv6PrefixInSync());
             result.add(ReportedConfigurationType.IPV6_ADDRESS,
                     iface.getIpv6Address(),
-                    getIpv6PrimaryAddress().getAddress());
+                    getIpv6PrimaryAddress().getAddress(),
+                    isIpv6AddressInSync(getIpv6PrimaryAddress().getAddress(), iface.getIpv6Address()));
             result.add(ReportedConfigurationType.IPV6_GATEWAY,
                     iface.getIpv6Gateway(),
                     getIpv6PrimaryAddress().getGateway(),
-                    isIpv6GatewayInSync());
+                    isIpv6AddressInSync(getIpv6PrimaryAddress().getGateway(), iface.getIpv6Gateway()));
         }
     }
 

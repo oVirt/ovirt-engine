@@ -614,11 +614,55 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
-/*
-    TODO: YZ - uncomment the tests after v4.0 is branched out.
+    @Test
+    public void testIsNetworkInSyncForIpv6Synonyms() {
+        List<String[]> tests = Arrays.asList(
+            // array of [network attachment address, interface address, default route role]
+            new String[] { "2001:0db8:85a3:0000:0000:8a2e:0370:7331", "2001:0db8:85a3:0000:0000:8a2e:0370:7331"},
+            new String[] { "2001:0db8:85a3:0000:0000:8a2e:0370:7331", "2001:db8:85a3::8a2e:370:7331" },
+            new String[] { "2001:db8:85a3::8a2e:370:7331", "2001:0db8:85a3:0000:0000:8a2e:0370:7331" },
+            new String[] { "::", "::0000" },
+            new String[] { "::", "0000::" },
+            new String[] { "::", "0:0:0:0:0:0:0:0" }
+        );
+        for (String[] test : tests) {
+            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+            ipv6Address.setGateway(test[0]);
+            ipv6Address.setAddress(test[0]);
+            iface.setIpv6Gateway(test[1]);
+            iface.setIpv6Address(test[1]);
+            ReportedConfiguration reported = createTestedInstance()
+                    .reportConfigurationsOnHost()
+                    .getReportedConfigurationList()
+                    .stream()
+                    .filter(rc -> rc.getType() == ReportedConfigurationType.IPV6_ADDRESS)
+                    .findFirst()
+                    .get();
+            assertThat(reported.isInSync(), is(true));
+        }
+    }
 
-    Reporting out-of-sync IPv6 configuration is disabled temporary.
-    It's planned to be re-enabled after v4.0-beta is released.
+    @Test
+    public void testIsNetworkInSyncForIpv6GatewayDifferent(){
+        List<String[]> tests = Arrays.asList(
+                // array of [network attachment address, interface address]
+                new String[] { "2001:0db8:85a3::8a2e:0370:7331", "2001:0db8:85a3:0000:8a2e:0370:7332" },
+                new String[] { "::", "::0001" },
+                new String[] { null, "::1" }
+        );
+        for (String[] test : tests) {
+            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+            ipv6Address.setGateway(test[0]);
+            iface.setIpv6Gateway(test[1]);
+            assertThat(createTestedInstance().isNetworkInSync(), is(false));
+        }
+        for (String[] test : tests) {
+            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+            ipv6Address.setAddress(test[0]);
+            iface.setIpv6Address(test[1]);
+            assertThat(createTestedInstance().isNetworkInSync(), is(false));
+        }
+    }
 
     @Test
     public void testIsNetworkInSyncWhenIpv6BootProtocolDifferent() {
@@ -661,55 +705,59 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                 testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
 
         IpV6Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
-        List<ReportedConfiguration> expectedReportedConfigurations = combineReportedConfigurations(
-                createBasicAndQosReportedConfigurations(),
-                new ReportedConfiguration(ReportedConfigurationType.IPV6_BOOT_PROTOCOL,
-                        iface.getIpv6BootProtocol().name(),
-                        primaryAddress.getBootProtocol().name(),
-                        true));
+        List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
+            combineReportedConfigurations(
+                createBasicAndQosReportedConfigurations(), Arrays.asList(
+                    defaultRouteReportedConfiguration(false),
+                    new ReportedConfiguration(ReportedConfigurationType.IPV6_BOOT_PROTOCOL,
+                            iface.getIpv6BootProtocol().name(),
+                            primaryAddress.getBootProtocol().name(),
+                            true))));
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
 
     @Test
     public void testReportConfigurationsOnHostWhenIpv6BootProtocolStatic() {
-        boolean syncIpv6Address = RandomUtils.instance().nextBoolean();
-        boolean syncIpv6Prefix = RandomUtils.instance().nextBoolean();
-        boolean syncIpv6Gateway = RandomUtils.instance().nextBoolean();
-        initIpv6ConfigurationBootProtocolAddress(Ipv6BootProtocol.STATIC_IP, syncIpv6Address);
-        initIpv6ConfigurationBootProtocolPrefix(Ipv6BootProtocol.STATIC_IP, syncIpv6Prefix);
-        initIpv6ConfigurationBootProtocolGateway(Ipv6BootProtocol.STATIC_IP, syncIpv6Gateway);
-        NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
-                createTestedInstanceWithSameNonQosValues();
-        List<ReportedConfiguration> reportedConfigurationList =
-                testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
-        IpV6Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
-        List<ReportedConfiguration> expectedReportedConfigurations = combineReportedConfigurations(
-                createBasicAndQosReportedConfigurations(),
+        for (int i = 0; i < 8; i++) {
+            boolean syncIpv6Address = i % 2 == 0;
+            boolean syncIpv6Prefix = (i / 2 ) % 2 == 0;
+            boolean syncIpv6Gateway = (i / 4) % 2 == 0;
 
-                new ReportedConfiguration(ReportedConfigurationType.IPV6_BOOT_PROTOCOL,
-                        iface.getIpv6BootProtocol().name(),
-                        primaryAddress.getBootProtocol().name(),
-                        true),
-                new ReportedConfiguration(ReportedConfigurationType.IPV6_PREFIX,
-                        Objects.toString(iface.getIpv6Prefix(), null),
-                        Objects.toString(primaryAddress.getPrefix(), null),
-                        syncIpv6Prefix),
-                new ReportedConfiguration(ReportedConfigurationType.IPV6_ADDRESS,
-                        iface.getIpv6Address(),
-                        primaryAddress.getAddress(),
-                        syncIpv6Address),
-                new ReportedConfiguration(ReportedConfigurationType.IPV6_GATEWAY,
-                        iface.getIpv6Gateway(),
-                        primaryAddress.getGateway(),
-                        syncIpv6Gateway));
+            initIpv6ConfigurationBootProtocolAddress(Ipv6BootProtocol.STATIC_IP, syncIpv6Address);
+            initIpv6ConfigurationBootProtocolPrefix(Ipv6BootProtocol.STATIC_IP, syncIpv6Prefix);
+            initIpv6ConfigurationBootProtocolGateway(Ipv6BootProtocol.STATIC_IP, syncIpv6Gateway);
+            NetworkInSyncWithVdsNetworkInterface testedInstanceWithSameNonQosValues =
+                    createTestedInstanceWithSameNonQosValues();
+            List<ReportedConfiguration> reportedConfigurationList =
+                    testedInstanceWithSameNonQosValues.reportConfigurationsOnHost().getReportedConfigurationList();
+            IpV6Address primaryAddress = this.testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress();
+            List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
+                    combineReportedConfigurations(createBasicAndQosReportedConfigurations(), Arrays.asList(
+                            defaultRouteReportedConfiguration(false),
+                            new ReportedConfiguration(ReportedConfigurationType.IPV6_BOOT_PROTOCOL,
+                                    iface.getIpv6BootProtocol().name(),
+                                    primaryAddress.getBootProtocol().name(),
+                                    true),
+                            new ReportedConfiguration(ReportedConfigurationType.IPV6_PREFIX,
+                                    Objects.toString(iface.getIpv6Prefix(), null),
+                                    Objects.toString(primaryAddress.getPrefix(), null),
+                                    syncIpv6Prefix),
+                            new ReportedConfiguration(ReportedConfigurationType.IPV6_ADDRESS,
+                                    iface.getIpv6Address(),
+                                    primaryAddress.getAddress(),
+                                    syncIpv6Address),
+                            new ReportedConfiguration(ReportedConfigurationType.IPV6_GATEWAY,
+                                    iface.getIpv6Gateway(),
+                                    primaryAddress.getGateway(),
+                                    syncIpv6Gateway))));
 
-        for (ReportedConfiguration expectedReportedConfiguration : expectedReportedConfigurations) {
-            assertThat(reportedConfigurationList, hasItem(expectedReportedConfiguration));
+            for (ReportedConfiguration expectedReportedConfiguration : expectedReportedConfigurations) {
+                assertThat(reportedConfigurationList.contains(expectedReportedConfiguration), is(true));
+            }
+            assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
         }
-        assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
-*/
 
     @Test
     public void testDnsResolverConfigurationInSync() {
