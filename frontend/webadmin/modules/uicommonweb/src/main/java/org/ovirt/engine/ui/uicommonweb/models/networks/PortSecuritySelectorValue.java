@@ -3,12 +3,12 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public enum PortSecuritySelectorValue {
+    UNDEFINED(ConstantsManager.getInstance()
+            .getConstants().portSecurityUndefined(), null),
     ENABLED(ConstantsManager.getInstance()
             .getConstants().portSecurityEnabled(), true),
     DISABLED(ConstantsManager.getInstance()
-            .getConstants().portSecurityDisabled(), false),
-    UNDEFINED(ConstantsManager.getInstance()
-            .getConstants().portSecurityUndefined(), null);
+            .getConstants().portSecurityDisabled(), false);
 
     private String description;
 

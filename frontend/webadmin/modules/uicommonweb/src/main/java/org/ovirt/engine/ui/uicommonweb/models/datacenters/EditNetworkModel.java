@@ -80,7 +80,7 @@ public class EditNetworkModel extends NetworkModel {
                                     }
                                 }
                                 stopProgress();
-                            }));
+                            }, true));
         } else {
             getPortSecuritySelector().setSelectedItem(PortSecuritySelectorValue.UNDEFINED);
         }
