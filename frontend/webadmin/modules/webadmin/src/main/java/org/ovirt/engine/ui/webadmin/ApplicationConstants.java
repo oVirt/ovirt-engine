@@ -3365,6 +3365,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String bondInMode4HasNoPartnerMac();
 
+    String bondInMode4HasInvalidAggregatorId();
+
     String GlusterSelfHealOk();
 
     String bondProperties();
