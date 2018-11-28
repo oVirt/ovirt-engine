@@ -68,11 +68,17 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
     private boolean isActiveVds() {
         VDS vds = vdsDao.get(getParameters().getId());
-        if (vds == null || vds.getStatus() != VDSStatus.Up) {
-            getQueryReturnValue().setExceptionString(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString());
-            getQueryReturnValue().setSucceeded(false);
-            return false;
+        if (vds == null) {
+            getQueryReturnValue()
+                    .setExceptionString(EngineMessage.CANNOT_FETCH_STORAGE_DEVICES_HOST_DOESNT_EXIST_ANYMORE.toString());
+        } else if (vds.getStatus() != VDSStatus.Up) {
+            getQueryReturnValue().setExceptionString(String.format(
+                    "Cannot fetch storage devices, host %s is not UP.",
+                    vds.getHostName()));
+        } else {
+            return true;
         }
-        return true;
+        getQueryReturnValue().setSucceeded(false);
+        return false;
     }
 }

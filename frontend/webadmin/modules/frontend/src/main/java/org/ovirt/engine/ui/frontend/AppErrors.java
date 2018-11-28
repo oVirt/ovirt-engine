@@ -1201,6 +1201,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String STORAGE_DOMAIN_DOES_NOT_EXIST();
 
+    String CANNOT_FETCH_STORAGE_DEVICES_HOST_DOESNT_EXIST_ANYMORE();
+
     String NIC_ID_IS_NULL();
 
     String NIC_ID_NOT_EXIST();
