@@ -554,6 +554,7 @@ public enum ActionType {
     // Managed Block Storage
     AddManagedBlockStorageDomain(3230, ActionGroup.CREATE_STORAGE_DOMAIN, false, QuotaDependency.NONE),
     AddManagedBlockStorageDisk(3231, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
+    RemoveManagedBlockStorageDisk(3232, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),

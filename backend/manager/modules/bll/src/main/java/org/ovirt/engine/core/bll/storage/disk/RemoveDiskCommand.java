@@ -415,6 +415,25 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     log.debug("Exception", e);
                 }
                 break;
+            case MANAGED_BLOCK_STORAGE:
+                removeManagedBlockStorageDisk();
+                break;
+        }
+    }
+
+    private void removeManagedBlockStorageDisk() {
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
+                ActionType.RemoveManagedBlockStorageDisk,
+                getParameters(),
+                cloneContextAndDetachFromParent());
+        try {
+            setReturnValue(future.get());
+            setSucceeded(getReturnValue().getSucceeded());
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error removing managed block storage disk '{}': {}",
+                    getDiskImage().getDiskAlias(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
