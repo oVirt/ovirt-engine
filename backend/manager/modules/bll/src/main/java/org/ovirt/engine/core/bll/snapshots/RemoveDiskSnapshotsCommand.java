@@ -218,6 +218,10 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             return false;
         }
 
+        if (!isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
+            return false;
+        }
+
         return true;
     }
 

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
+import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -558,5 +559,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         // If there is a transaction, trigger update after it is committed.
         registerRollbackHandler((TransactionSuccessListener) () -> ovfDataUpdater.triggerNow());
+    }
+
+    /**
+     Verifies that the operation allowed on a managed block storage domain
+     */
+    public boolean isSupportedByManagedBlockStorageDomain(StorageDomain storageDomain) {
+        if (storageDomain.getStorageType().isManagedBlockStorage()) {
+            ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
+                    new ManagedBlockStorageDomainValidator(storageDomain);
+            return validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
+        }
+        return true;
     }
 }

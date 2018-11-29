@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -178,6 +179,12 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                         || !validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks())) {
                     return false;
                 }
+            }
+
+            MultipleStorageDomainsValidator multipleStorageDomainsValidator =
+                    new MultipleStorageDomainsValidator(getStoragePoolId(), imageToDestinationDomainMap.values());
+            if (!validate(multipleStorageDomainsValidator.isSupportedByManagedBlockStorageDomains(getActionType()))) {
+                return false;
             }
 
             if (storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(),

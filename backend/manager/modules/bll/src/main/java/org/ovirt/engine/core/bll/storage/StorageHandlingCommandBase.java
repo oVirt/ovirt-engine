@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandl
 import org.ovirt.engine.core.bll.storage.pool.ActivateDeactivateSingleAsyncOperationFactory;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -624,6 +625,18 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
         return result;
+    }
+
+    /**
+     Verifies that the operation allowed on a managed block storage domain
+     */
+    protected boolean isSupportedByManagedBlockStorageDomain(StorageDomain storageDomain) {
+        if (storageDomain.getStorageType().isManagedBlockStorage()) {
+            ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
+                    new ManagedBlockStorageDomainValidator(storageDomain);
+            return validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
+        }
+        return true;
     }
 
     private Date getDateFromDiskDescription(Map<String, Object> map) {

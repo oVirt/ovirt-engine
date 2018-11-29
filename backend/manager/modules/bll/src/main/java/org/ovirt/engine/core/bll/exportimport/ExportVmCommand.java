@@ -214,14 +214,15 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         if (!handleDestStorageDomain(disksForExport)) {
             return false;
         }
-
+        MultipleStorageDomainsValidator storageDomainsValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
+                ImagesHandler.getAllStorageIdsForImageIds(disksForExport));
         if (!(checkVmInStorageDomain()
                 && validate(new StoragePoolValidator(getStoragePool()).existsAndUp())
                 && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
-                && validate(new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
-                ImagesHandler.getAllStorageIdsForImageIds(disksForExport)).allDomainsExistAndActive()))) {
+                && validate(storageDomainsValidator.allDomainsExistAndActive())
+                && validate(storageDomainsValidator.isSupportedByManagedBlockStorageDomains(getActionType())))) {
             return false;
         }
 

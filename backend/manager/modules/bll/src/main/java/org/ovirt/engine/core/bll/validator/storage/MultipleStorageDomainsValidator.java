@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -153,10 +154,27 @@ public class MultipleStorageDomainsValidator {
         });
     }
 
+    /**
+     * Validates if there is a managed block storage domain and if it supports the operation.
+     * @return {@link ValidationResult#VALID} if there are managed block storage domains that support the operation,
+     * or a {@link ValidationResult} in case there is a managed block storage domain that doesn't support the operation.
+     */
+    public ValidationResult isSupportedByManagedBlockStorageDomains(ActionType actionType) {
+        return validOrFirstFailure(entry -> {
+            StorageDomainValidator storageDomainValidator = getStorageDomainValidator(entry);
+            return storageDomainValidator.isManagedBlockStorage() ?
+                    ((ManagedBlockStorageDomainValidator) storageDomainValidator).isOperationSupportedByManagedBlockStorage(actionType) :
+                    ValidationResult.VALID;
+        });
+    }
+
     /** @return The lazy-loaded validator for the given map entry */
     protected StorageDomainValidator getStorageDomainValidator(Map.Entry<Guid, StorageDomainValidator> entry) {
         if (entry.getValue() == null) {
-            entry.setValue(new StorageDomainValidator(getStorageDomainDao().getForStoragePool(entry.getKey(), storagePoolId)));
+            StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(entry.getKey(), storagePoolId);
+            entry.setValue(storageDomain.getStorageType().isManagedBlockStorage() ?
+                    new ManagedBlockStorageDomainValidator(storageDomain) :
+                    new StorageDomainValidator(storageDomain));
         }
 
         return entry.getValue();

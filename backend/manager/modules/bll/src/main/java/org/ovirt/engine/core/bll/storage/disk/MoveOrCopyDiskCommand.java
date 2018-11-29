@@ -229,6 +229,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return false;
         }
 
+        if (!isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
+            return false;
+        }
+
         // Validate shareable disks moving/copying
         boolean moveOrCopy = isMoveOperation() || isCopyOperation();
         if (moveOrCopy && getImage().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS ) {
@@ -300,11 +304,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_SOURCE_STORAGE_DOMAIN_DOES_CONTAINS_THE_DISK);
             }
         }
-
-        StorageDomainValidator validator =
-                new StorageDomainValidator(storageDomainDao.getForStoragePool(sourceDomainId,
-                        getImage().getStoragePoolId()));
-        return validate(validator.isDomainExistAndActive());
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(sourceDomainId, getImage().getStoragePoolId());
+        StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+        return validate(validator.isDomainExistAndActive()) && isSupportedByManagedBlockStorageDomain(storageDomain);
     }
 
     /**

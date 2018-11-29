@@ -198,6 +198,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         if (isStorageWithSameNameExists()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
         }
+        if (!isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
+            return false;
+        }
         return true;
     }
 

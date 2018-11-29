@@ -410,8 +410,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
         return validate(storageDomainsValidator.allDomainsExistAndActive())
                 && validate(storageDomainsValidator.allDomainsWithinThresholds())
-                && validate(storageDomainsValidator.allDomainsHaveSpaceForMerge(getAllDisksSnapshot(getSourceImages()),
-                                                                                getSnapshotActionType()));
+                && validate(storageDomainsValidator.allDomainsHaveSpaceForMerge(getAllDisksSnapshot(getSourceImages()), getSnapshotActionType()))
+                && validate(storageDomainsValidator.isSupportedByManagedBlockStorageDomains(getActionType()));
     }
 
     /**

@@ -167,7 +167,8 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             StorageDomain storageDomain = storageDomainDao.getForStoragePool(
                     ((DiskImage) disk).getStorageIds().get(0), ((DiskImage) disk).getStoragePoolId());
             StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
-            if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+            if (!validate(storageDomainValidator.isDomainExistAndActive())
+                    || !isSupportedByManagedBlockStorageDomain(storageDomain)) {
                 return false;
             }
         }

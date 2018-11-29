@@ -32,6 +32,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -211,7 +212,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         // In the future, if LUNs get specific checks,
         // or additional storage types are added, other else-if clauses should be added.
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE ||
-                getDisk().getDiskStorageType() == DiskStorageType.CINDER) {
+                getDisk().getDiskStorageType() == DiskStorageType.CINDER ||
+                getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
             return canRemoveDiskBasedOnImageStorageCheck();
         }
 
@@ -221,6 +223,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
+
+        if (getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+            ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
+                    new ManagedBlockStorageDomainValidator(getStorageDomain());
+            retValue = validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
+        }
 
         boolean isVmTemplateType = diskImage.getVmEntityType() != null &&
                 diskImage.getVmEntityType().isTemplateType();

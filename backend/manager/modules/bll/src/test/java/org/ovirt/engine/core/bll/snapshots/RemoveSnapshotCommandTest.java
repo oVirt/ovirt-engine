@@ -26,16 +26,19 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -77,12 +80,20 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @BeforeEach
     public void setUp() {
         mockVm();
+        mockStorageDomain();
         VmValidator vmValidator = spy(new VmValidator(cmd.getVm()));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(anyBoolean());
         doReturn(vmValidator).when(cmd).createVmValidator(any());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
         mockSnapshot(SnapshotType.REGULAR);
         spySdValidator();
+    }
+
+    private void mockStorageDomain(){
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setStorageType(StorageType.NFS);
+        doReturn(storageDomain).when(cmd).getStorageDomain();
+        doReturn(storageDomain).when(cmd).getStorageDomain();
     }
 
     private void mockVm() {
@@ -115,6 +126,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsHaveSpaceForMerge(any(), any());
+        doReturn(ValidationResult.VALID).when(storageDomainsValidator).isSupportedByManagedBlockStorageDomains(ActionType.Unknown);
     }
 
     @Test

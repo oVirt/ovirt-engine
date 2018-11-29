@@ -597,7 +597,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
             if (!validate(storageValidator.allDomainsExistAndActive())
                     || !validate(storageValidator.allDomainsWithinThresholds())
-                    || !validateCinder()) {
+                    || !validateCinder()
+                    || !validate(storageValidator.isSupportedByManagedBlockStorageDomains(getActionType()))) {
                 return false;
             }
         }

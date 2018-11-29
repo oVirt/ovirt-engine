@@ -782,6 +782,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
+            if (!validate(storageDomainsValidator.isSupportedByManagedBlockStorageDomains(getActionType()))) {
+                return false;
+            }
+
             Set<Guid> destImageDomains = getStorageGuidSet();
             destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
             for (Guid destImageDomain : destImageDomains) {

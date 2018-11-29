@@ -109,7 +109,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         DiskValidator diskValidator = createDiskValidator(disk);
         if (diskValidator.isDiskExists().isValid()) {
             return validate(diskValidator.validateUnsupportedDiskStorageType(
-                    DiskStorageType.LUN, DiskStorageType.CINDER));
+                    DiskStorageType.LUN, DiskStorageType.CINDER, DiskStorageType.MANAGED_BLOCK_STORAGE));
         }
         return true;
     }

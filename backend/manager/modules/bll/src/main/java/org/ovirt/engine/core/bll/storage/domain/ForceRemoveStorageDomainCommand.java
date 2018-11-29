@@ -135,6 +135,10 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             returnValue = false;
         }
 
+        if (!isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
+            returnValue = false;
+        }
+
         return returnValue;
     }
 

@@ -64,7 +64,8 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
                 && validate(validator.isNotInStatus(StoragePoolStatus.Uninitialized))
                 && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active)
-                && checkForActiveVds() != null;
+                && checkForActiveVds() != null
+                && isSupportedByManagedBlockStorageDomain(getStorageDomain());
         return returnValue;
     }
 

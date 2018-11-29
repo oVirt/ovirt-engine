@@ -211,6 +211,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     validate(cinderDisksValidator.validateCinderVolumeTypesExist());
         }
 
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
+                && !isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
+            return false;
+        }
+
         return true;
     }
 

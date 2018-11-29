@@ -767,6 +767,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         if (!validate(storageValidator.allDomainsExistAndActive()) ||
                 !performImagesChecks() ||
                 !validate(vmValidator.vmDown()) ||
+                !validate(storageValidator.isSupportedByManagedBlockStorageDomains(getActionType())) ||
                 // if the user choose to commit a snapshot the vm can't have disk snapshots attached to other vms.
                 getSnapshot().getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
             return false;

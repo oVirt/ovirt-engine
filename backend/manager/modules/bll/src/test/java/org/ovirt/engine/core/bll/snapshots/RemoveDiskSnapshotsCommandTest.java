@@ -21,11 +21,13 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -70,6 +72,8 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
     @BeforeEach
     public void setUp() {
+        mockStorageDomain();
+
         doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
         doReturn(mockImages()).when(cmd).getImages();
@@ -82,6 +86,12 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         DiskImagesValidator diskImagesValidator = spy(new DiskImagesValidator(mockImages()));
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any());
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesSnapshotsNotAttachedToOtherVms(false);
+    }
+
+    private void mockStorageDomain(){
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setStorageType(StorageType.NFS);
+        doReturn(storageDomain).when(cmd).getStorageDomain();
     }
 
     private void mockVm() {

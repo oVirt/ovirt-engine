@@ -139,6 +139,10 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
+        if (!isSupportedByManagedBlockStorageDomain(dom)) {
+            return false;
+        }
+
         if (!localFs && !validate(domainPoolValidator.isStorageDomainNotInAnyPool())) {
             return false;
         }

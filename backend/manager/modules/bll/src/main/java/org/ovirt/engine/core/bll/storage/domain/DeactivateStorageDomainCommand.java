@@ -135,6 +135,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             return false;
         }
 
+        if (!isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
+            return false;
+        }
+
         if (!getParameters().getIsInternal()) {
             if (getStorageDomain().isHostedEngineStorage()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);

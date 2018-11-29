@@ -158,9 +158,14 @@ public class AttachDiskToVmCommandTest {
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
     }
 
+    private void mockManagedBlockSupportedValidation() {
+        doReturn(true).when(command).isSupportedByManagedBlockStorageDomain(any());
+    }
+
     private void mockValidators() {
         mockStorageDomainValidator();
         mockDiskVmElementValidator();
+        mockManagedBlockSupportedValidation();
     }
 
     private void mockStoragePoolIsoMap() {

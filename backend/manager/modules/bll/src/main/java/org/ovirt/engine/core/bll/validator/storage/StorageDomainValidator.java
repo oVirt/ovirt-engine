@@ -49,7 +49,7 @@ public class StorageDomainValidator {
     private static final long EMPTY_QCOW_HEADER_SIZE = 1024L * 1024L;
 
     private final Logger log = LoggerFactory.getLogger(StorageDomainValidator.class);
-    private final StorageDomain storageDomain;
+    protected final StorageDomain storageDomain;
 
     public StorageDomainValidator(StorageDomain domain) {
         storageDomain = domain;
@@ -488,6 +488,10 @@ public class StorageDomainValidator {
                     EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN);
         }
         return ValidationResult.VALID;
+    }
+
+    public boolean isManagedBlockStorage() {
+        return storageDomain.getStorageType().isManagedBlockStorage();
     }
 
     private List<VmBase> getRetVal(QueryReturnValue ret) {

@@ -711,7 +711,8 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(allDisks);
         if (!validate(sdValidator.allDomainsExistAndActive())
                 || !validate(sdValidator.allDomainsWithinThresholds())
-                || !validateCinder()) {
+                || !validateCinder()
+                || !validate(sdValidator.isSupportedByManagedBlockStorageDomains(getActionType()))) {
             return false;
         }
 

@@ -181,6 +181,9 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         if (!validate(storageValidator.allDomainsExistAndActive())) {
             return false;
         }
+        if (!validate(storageValidator.isSupportedByManagedBlockStorageDomains(getActionType()))) {
+            return false;
+        }
 
         if (!validate(new VmValidator(getSourceVmFromDb()).vmNotLocked())) {
             return false;

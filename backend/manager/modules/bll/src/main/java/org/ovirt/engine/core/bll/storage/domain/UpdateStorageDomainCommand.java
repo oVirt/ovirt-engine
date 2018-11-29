@@ -58,7 +58,8 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         if (!checkStorageDomainStatusNotEqual(StorageDomainStatus.Locked) ||
                 !validateStorageNameUpdate() ||
                 !validateDiscardAfterDeleteLegal(storageDomainValidator) ||
-                !validateDiskOnBackupDomain(storageDomainValidator)) {
+                !validateDiskOnBackupDomain(storageDomainValidator) ||
+                !isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
             return false;
         }
 

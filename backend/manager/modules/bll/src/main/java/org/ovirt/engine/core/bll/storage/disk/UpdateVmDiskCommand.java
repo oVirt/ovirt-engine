@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
+import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -419,6 +420,14 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             StorageDomainValidator storageDomainValidator = getStorageDomainValidator((DiskImage) getNewDisk());
             if (!validate(storageDomainValidator.isDomainExistAndActive())) {
                 return false;
+            }
+
+            if (storageDomain.getStorageType().isManagedBlockStorage()) {
+                ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
+                        new ManagedBlockStorageDomainValidator(storageDomain);
+                if (!validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()))) {
+                    return false;
+                }
             }
 
             // For size allocation validation, we'll create a dummy with the additional size required.

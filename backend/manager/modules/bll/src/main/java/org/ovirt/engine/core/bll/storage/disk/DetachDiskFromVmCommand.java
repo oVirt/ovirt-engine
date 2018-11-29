@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -81,6 +82,11 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             if (vmDevice.getSnapshotId() == null
                     && diskImageDao.getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
+            }
+            if (disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                if (!validate(isOperationSupportedByManagedBlockStorage((DiskImage) disk, getActionType()))) {
+                    return false;
+                }
             }
         }
         return true;

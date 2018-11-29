@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
@@ -19,8 +20,11 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
+import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -44,6 +48,7 @@ import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -72,6 +77,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     @Inject
     private StorageHelperDirector storageHelperDirector;
@@ -115,6 +122,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
         return storageHelperDirector.getItem(storageType);
+    }
+
+    protected ValidationResult isOperationSupportedByManagedBlockStorage(DiskImage diskImage, ActionType actionType) {
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(
+                diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
+        ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
+                new ManagedBlockStorageDomainValidator(storageDomain);
+        return managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(actionType);
     }
 
     /**

@@ -111,7 +111,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 && checkStorageDomainStatus(StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
                 && isDetachAllowed()
-                && isCinderStorageHasNoDisks();
+                && isCinderStorageHasNoDisks()
+                && isSupportedByManagedBlockStorageDomain(getStorageDomain());
     }
 
     protected boolean isDetachAllowed() {
