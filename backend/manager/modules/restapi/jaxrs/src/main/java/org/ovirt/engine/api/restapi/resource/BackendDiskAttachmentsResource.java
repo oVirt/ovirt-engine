@@ -26,6 +26,7 @@ import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.DiskAttachmentResource;
 import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -225,7 +226,7 @@ public class BackendDiskAttachmentsResource
     private DiskAttachments mapCollection(List<DiskVmElement> entities) {
         DiskAttachments collection = new DiskAttachments();
         for (org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity : entities) {
-            collection.getDiskAttachments().add(addLinks(populate(map(entity), entity)));
+            collection.getDiskAttachments().add(addLinks(populate(map(entity), entity), Vm.class));
         }
         return collection;
     }

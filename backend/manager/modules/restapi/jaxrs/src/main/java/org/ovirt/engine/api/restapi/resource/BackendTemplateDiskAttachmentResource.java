@@ -25,7 +25,7 @@ public class BackendTemplateDiskAttachmentResource
 
     @Override
     public DiskAttachment get() {
-        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), templateId)));
+        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), templateId)), Template.class);
     }
 
     @Override

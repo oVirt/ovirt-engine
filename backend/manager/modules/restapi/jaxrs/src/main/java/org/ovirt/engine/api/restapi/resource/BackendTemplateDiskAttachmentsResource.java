@@ -36,7 +36,7 @@ public class BackendTemplateDiskAttachmentsResource
     private DiskAttachments mapCollection(List<DiskVmElement> entities) {
         DiskAttachments collection = new DiskAttachments();
         for (org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity : entities) {
-            collection.getDiskAttachments().add(addLinks(populate(map(entity), entity)));
+            collection.getDiskAttachments().add(addLinks(populate(map(entity), entity), Template.class));
         }
         return collection;
     }

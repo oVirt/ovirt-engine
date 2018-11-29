@@ -19,6 +19,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.DiskAttachmentResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
@@ -52,7 +53,7 @@ public class BackendDiskAttachmentResource
 
     @Override
     public DiskAttachment get() {
-        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), vmId)));
+        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), vmId)), Vm.class);
     }
 
     @Override
