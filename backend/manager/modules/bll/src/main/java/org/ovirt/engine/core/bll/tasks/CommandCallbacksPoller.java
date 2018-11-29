@@ -108,8 +108,24 @@ public class CommandCallbacksPoller implements BackendService {
         try {
             invokeCallbackMethodsImpl();
         } catch (Throwable t) {
-            log.error("Exception in invokeCallbackMethods: {}", ExceptionUtils.getRootCauseMessage(t));
-            log.debug("Exception", t);
+            logInvocationCallbackError(t);
+        }
+    }
+
+    /**
+     * Ignore any errors that occur during logging. Any exception thrown in invokeCallbackMethods will stop the
+     * method from being invoked again, so we need to wrap all statements in try catch blocks including logging to
+     * eliminate any possibility of exception in the method.
+     * @param throwable
+     *            The exception that needs to be logged
+     */
+    private void logInvocationCallbackError(Throwable throwable) {
+        try {
+            log.error("Exception in invokeCallbackMethods: {}", ExceptionUtils.getRootCauseMessage(throwable));
+            log.debug("Exception", throwable);
+        } catch (Throwable t) {
+            // log the stacktrace to the stdout as the exception was raised somewhere inside logging code
+            t.printStackTrace(System.out);
         }
     }
 
