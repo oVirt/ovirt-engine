@@ -317,8 +317,82 @@ BEGIN
     SELECT *
     FROM qos
     WHERE qos_type = v_qos_type;
+
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllStorageQos (v_user_id UUID)
+RETURNS SETOF qos STABLE AS $PROCEDURE$
+BEGIN
+   RETURN QUERY SELECT *
+      FROM qos WHERE
+        qos_type = 1 AND
+        EXISTS (
+            SELECT 1
+            FROM user_storage_domain_permissions_view
+            INNER JOIN storage_pool
+                ON storage_pool.id = user_storage_domain_permissions_view.entity_id
+            WHERE storage_pool.id = qos.storage_pool_id
+                AND user_storage_domain_permissions_view.user_id = v_user_id
+        );
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllCpuQos (v_user_id UUID)
+RETURNS SETOF qos STABLE AS $PROCEDURE$
+BEGIN
+   RETURN QUERY SELECT *
+      FROM qos WHERE
+        qos_type = 2 AND
+        EXISTS (
+            SELECT 1
+            FROM cpu_profiles
+            INNER JOIN user_cluster_permissions_view
+                ON cpu_profiles.cluster_id = user_cluster_permissions_view.entity_id
+            WHERE cpu_profiles.qos_id = qos.id
+                AND user_cluster_permissions_view.user_id = v_user_id
+        );
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllNetworkQos (v_user_id UUID)
+RETURNS SETOF qos STABLE AS $PROCEDURE$
+BEGIN
+   RETURN QUERY SELECT *
+      FROM qos WHERE
+        qos_type = 3 AND
+        EXISTS (
+            SELECT 1
+            FROM user_vnic_profile_permissions_view
+            INNER JOIN vnic_profiles_view
+                ON vnic_profiles_view.id = user_vnic_profile_permissions_view.entity_id
+            WHERE vnic_profiles_view.network_qos_id = qos.id
+                AND user_vnic_profile_permissions_view.user_id = v_user_id
+        );
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetAllHostNetworkQos ()
+RETURNS SETOF qos STABLE AS $PROCEDURE$
+BEGIN
+   RETURN QUERY SELECT *
+      FROM qos WHERE
+        qos_type = 4 AND
+        EXISTS (
+            SELECT 1
+            FROM user_network_permissions_view
+            INNER JOIN network_view
+                ON network_view.id = user_network_permissions_view.entity_id
+            WHERE network_view.qos_id = qos.id
+                AND user_network_permissions_view.user_id = v_user_id
+        );
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE FUNCTION GetQosByDiskProfiles (v_disk_profile_ids UUID[])
 RETURNS SETOF qos_for_disk_profile_view STABLE AS $PROCEDURE$

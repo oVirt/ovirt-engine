@@ -12,7 +12,7 @@ public class GetAllQosByTypeQuery extends QosQueryBase {
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getQosDao()
-                .getAll());
+                .getAll(getUserID(), getParameters().isFiltered()));
     }
 
 }

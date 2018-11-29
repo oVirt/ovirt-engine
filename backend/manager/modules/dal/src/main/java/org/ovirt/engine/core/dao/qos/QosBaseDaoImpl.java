@@ -32,8 +32,36 @@ public abstract class QosBaseDaoImpl<T extends QosBase> extends DefaultGenericDa
 
     @Override
     public List<T> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("qos_type", getQosType());
+        return getAll(null, false);
+    }
+
+    @Override
+    public List<T> getAll(Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        if (userID != null) {
+            parameterSource = parameterSource.addValue("user_id", userID.getUuid());
+        }
+        if (isFiltered) {
+            switch (getQosType()) {
+                case  NETWORK:
+                    return getCallsHandler().executeReadList("GetAllNetworkQos",
+                        createEntityRowMapper(),
+                        parameterSource);
+                case CPU:
+                    return getCallsHandler().executeReadList("GetAllCpuQos",
+                        createEntityRowMapper(),
+                        parameterSource);
+                case STORAGE:
+                    return getCallsHandler().executeReadList("GetAllStorageQos",
+                        createEntityRowMapper(),
+                        parameterSource);
+                case HOSTNETWORK:
+                    return getCallsHandler().executeReadList("GetAllHostNetworkQos",
+                        createEntityRowMapper(),
+                        parameterSource);
+            }
+        }
+        parameterSource = parameterSource.addValue("qos_type", getQosType());
         return getCallsHandler().executeReadList("GetAllQosByQosType",
                 createEntityRowMapper(),
                 parameterSource);

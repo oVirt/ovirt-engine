@@ -9,4 +9,6 @@ import org.ovirt.engine.core.dao.GenericDao;
 public interface QosDao<T extends QosBase> extends GenericDao<T, Guid> {
 
     public List<T> getAllForStoragePoolId(Guid storagePoolId);
+
+    public List<T> getAll(Guid userID, boolean isFiltered);
 }
