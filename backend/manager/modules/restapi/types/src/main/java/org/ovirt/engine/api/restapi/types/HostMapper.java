@@ -275,6 +275,9 @@ public class HostMapper {
         }
         cpu.setTopology(cpuTopology);
         cpu.setName(entity.getCpuModel());
+        if (entity.getCpuName() != null) {
+            cpu.setType(entity.getCpuName().getCpuName());
+        }
         if (entity.getCpuSpeedMh()!=null) {
             cpu.setSpeed(new BigDecimal(entity.getCpuSpeedMh()));
         }
