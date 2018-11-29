@@ -435,8 +435,15 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Path("kernelCmdlinePciRealloc.entity")
     EntityModelCheckBoxEditor kernelCmdlinePciRealloc;
 
+    @UiField(provided = true)
+    @Path("kernelCmdlineFips.entity")
+    EntityModelCheckBoxEditor kernelCmdlineFips;
+
     @UiField
     InfoIcon kernelCmdlinePciReallocInfoIcon;
+
+    @UiField
+    InfoIcon kernelCmdlineFipsInfoIcon;
 
     @UiField
     @Path("kernelCmdline.entity")
@@ -580,6 +587,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineKvmNested = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
+        kernelCmdlineFips = new EntityModelCheckBoxEditor(Align.RIGHT);
         consoleAddressEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         vgpuConsolidatedPlacementEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
         vgpuSeparatedPlacementEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
@@ -658,6 +666,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineIommuInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineIommuInfoIcon()));
         kernelCmdlineKvmNestedInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineKvmNestedInfoIcon()));
         kernelCmdlinePciReallocInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlinePciReallocInfoIcon()));
+        kernelCmdlineFipsInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineFipsInfoIcon()));
         kernelCmdlineInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineInfoIcon()));
 
         // Affinity Labels Tab
@@ -1052,11 +1061,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         // ==Kernel Tab==
         nextTabIndex = kernelTab.setTabIndexes(nextTabIndex);
-        kernelCmdlineBlacklistNouveau.setTabIndex(nextTabIndex++);
         kernelCmdlineIommu.setTabIndex(nextTabIndex++);
         kernelCmdlineKvmNested.setTabIndex(nextTabIndex++);
         kernelCmdlineUnsafeInterrupts.setTabIndex(nextTabIndex++);
         kernelCmdlinePciRealloc.setTabIndex(nextTabIndex++);
+        kernelCmdlineBlacklistNouveau.setTabIndex(nextTabIndex++);
+        kernelCmdlineFips.setTabIndex(nextTabIndex++);
         kernelCmdlineText.setTabIndex(nextTabIndex++);
 
         // ==Hosted Engine Tab==

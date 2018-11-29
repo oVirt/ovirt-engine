@@ -906,6 +906,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         host.setKernelCmdlineKvmNested(model.getKernelCmdlineKvmNested().getEntity());
         host.setKernelCmdlineUnsafeInterrupts(model.getKernelCmdlineUnsafeInterrupts().getEntity());
         host.setKernelCmdlinePciRealloc(model.getKernelCmdlinePciRealloc().getEntity());
+        host.setKernelCmdlineFips(model.getKernelCmdlineFips().getEntity());
 
 
         cancelConfirm();

@@ -157,6 +157,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private boolean kernelCmdlinePciRealloc;
 
     @EditableVdsField
+    private boolean kernelCmdlineFips;
+
+    @EditableVdsField
     private boolean reinstallRequired;
 
     @EditableVdsField
@@ -451,6 +454,13 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.kernelCmdlinePciRealloc = kernelCmdlinePciRealloc;
     }
 
+    public boolean isKernelCmdlineFips() {
+        return kernelCmdlineFips;
+    }
+
+    public void setKernelCmdlineFips(boolean kernelCmdlineFips) {
+        this.kernelCmdlineFips = kernelCmdlineFips;
+    }
 
     public boolean isReinstallRequired() {
         return reinstallRequired;

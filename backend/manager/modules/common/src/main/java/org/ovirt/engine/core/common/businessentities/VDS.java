@@ -222,6 +222,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setKernelCmdlineIommu(isKernelCmdlineIommu());
         vds.setKernelCmdlineKvmNested(isKernelCmdlineKvmNested());
         vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
+        vds.setKernelCmdlineFips(isKernelCmdlineFips());
         vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
         vds.setGlusterPeerStatus(getGlusterPeerStatus());
         vds.setKernelFeatures(getKernelFeatures());
@@ -1526,6 +1527,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setKernelCmdlinePciRealloc(boolean kernelCmdlinePciRealloc) {
         vdsStatic.setKernelCmdlinePciRealloc(kernelCmdlinePciRealloc);
+    }
+
+    public boolean isKernelCmdlineFips() {
+        return vdsStatic.isKernelCmdlineFips();
+    }
+
+    public void setKernelCmdlineFips(boolean kernelCmdlineFips) {
+        vdsStatic.setKernelCmdlineFips(kernelCmdlineFips);
     }
 
     public void setKernelCmdlineIommu(boolean kernelCmdlineIommu) {

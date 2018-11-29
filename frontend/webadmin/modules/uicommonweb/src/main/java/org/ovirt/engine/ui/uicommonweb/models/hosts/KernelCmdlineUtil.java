@@ -10,13 +10,15 @@ public class KernelCmdlineUtil {
             boolean iommu,
             boolean kvmNested,
             boolean unsafeInterrupts,
-            boolean pciRealloc) {
+            boolean pciRealloc,
+            boolean fips) {
         StringBuilder cmdlineBuilder = new StringBuilder();
         cmdlineBuilder.append(getBlacklistNouveau(cpuVendor, blacklistNouveau));
         cmdlineBuilder.append(getIommu(cpuVendor, iommu));
         cmdlineBuilder.append(getKvmNested(cpuVendor, kvmNested));
         cmdlineBuilder.append(getUnsafeInterrupts(cpuVendor, unsafeInterrupts));
         cmdlineBuilder.append(getPciRealloc(cpuVendor, pciRealloc));
+        cmdlineBuilder.append(getFips(fips));
         return cmdlineBuilder.toString().trim();
     }
 
@@ -101,5 +103,13 @@ public class KernelCmdlineUtil {
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
         }
+    }
+
+    private static String getFips(boolean fips) {
+        if (!fips) {
+            return "";
+        }
+
+        return "fips=1 "; //$NON-NLS-1$
     }
 }

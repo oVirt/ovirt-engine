@@ -243,6 +243,7 @@ public final class Cloner {
         obj.setKernelCmdlineIommu(instance.isKernelCmdlineIommu());
         obj.setKernelCmdlineKvmNested(instance.isKernelCmdlineKvmNested());
         obj.setKernelCmdlinePciRealloc(instance.isKernelCmdlinePciRealloc());
+        obj.setKernelCmdlineFips(instance.isKernelCmdlineFips());
         obj.setKernelCmdlineUnsafeInterrupts(instance.isKernelCmdlineUnsafeInterrupts());
 
         return obj;
