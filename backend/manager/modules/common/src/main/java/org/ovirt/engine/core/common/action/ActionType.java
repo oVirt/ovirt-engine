@@ -558,6 +558,7 @@ public enum ActionType {
     RemoveManagedBlockStorageDisk(3232, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     ConnectManagedBlockStorageDevice(3233, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     SaveManagedBlockStorageDiskDevice(3234, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
+    DisconnectManagedBlockStorageDevice(3235, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     ExtendManagedBlockStorageDiskSize(3237, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     GetManagedBlockStorageStats(3238, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
 
