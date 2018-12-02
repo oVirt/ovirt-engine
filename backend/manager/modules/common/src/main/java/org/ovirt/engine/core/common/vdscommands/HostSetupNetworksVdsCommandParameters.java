@@ -19,6 +19,7 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
     private boolean rollbackOnFailure;
     private int connectivityTimeout;
     private boolean managementNetworkChanged;
+    private boolean commitOnSuccess;
 
     public HostSetupNetworksVdsCommandParameters(VDS host,
             List<HostNetwork> networks,
@@ -94,6 +95,7 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("rollbackOnFailure", isRollbackOnFailure())
+                .append("commitOnSuccess", isCommitOnSuccess())
                 .append("connectivityTimeout", getConnectivityTimeout())
                 .append("networks", getNetworks())
                 .append("removedNetworks", getRemovedNetworks())
@@ -109,5 +111,13 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
 
     public void setManagementNetworkChanged(boolean isManagementNetworkChanged) {
         this.managementNetworkChanged = isManagementNetworkChanged;
+    }
+
+    public boolean isCommitOnSuccess() {
+        return commitOnSuccess;
+    }
+
+    public void setCommitOnSuccess(boolean commitOnSuccess) {
+        this.commitOnSuccess = commitOnSuccess;
     }
 }

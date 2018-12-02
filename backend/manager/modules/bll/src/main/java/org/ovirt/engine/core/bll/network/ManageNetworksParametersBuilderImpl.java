@@ -70,7 +70,7 @@ final class ManageNetworksParametersBuilderImpl extends HostSetupNetworksParamet
                 labeledNetworksToBeAdded.stream(),
                 labeledNetworksToBeRemoved.stream(),
                 updatedNetworks.stream())));
-
+        combinedParams.setCommitOnSuccess(true);
         return combinedParams;
     }
 

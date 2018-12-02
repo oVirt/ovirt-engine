@@ -105,6 +105,7 @@ public final class VdsProperties {
     public static final String BASE_INTERFACE = "iface";
     public static final String CONNECTIVITY_CHECK = "connectivityCheck";
     public static final String CONNECTIVITY_TIMEOUT = "connectivityTimeout";
+    public static final String COMMIT_ON_SUCCESS = "commitOnSuccess";
     public static final String GLOBAL_GATEWAY = "gateway";
     public static final String IPV6_GLOBAL_GATEWAY = "ipv6gateway";
     public static final String IPV4_DEFAULT_ROUTE = "ipv4defaultroute";

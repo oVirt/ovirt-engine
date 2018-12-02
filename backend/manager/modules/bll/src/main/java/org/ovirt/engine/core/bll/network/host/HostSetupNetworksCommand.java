@@ -489,6 +489,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             clusterSwitchType);
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConnectivityTimeout(timeout);
+        hostCmdParams.setCommitOnSuccess(getParameters().isCommitOnSuccess());
         hostCmdParams.setManagementNetworkChanged(isManagementNetworkChanged(networksToConfigure));
         return hostCmdParams;
     }

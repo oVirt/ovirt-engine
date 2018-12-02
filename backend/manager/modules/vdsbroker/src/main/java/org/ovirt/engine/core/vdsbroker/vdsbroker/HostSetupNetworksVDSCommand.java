@@ -170,6 +170,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     private Map<String, Object> generateOptions() {
         Map<String, Object> options = new HashMap<>();
         options.put(VdsProperties.CONNECTIVITY_CHECK, Boolean.toString(getParameters().isRollbackOnFailure()));
+        options.put(VdsProperties.COMMIT_ON_SUCCESS, getParameters().isCommitOnSuccess());
 
         // VDSM uses the connectivity timeout only if 'connectivityCheck' is set to true
         if (getParameters().isRollbackOnFailure()) {

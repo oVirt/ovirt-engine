@@ -1272,6 +1272,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         result.setLabels(hostSetupNetworksParametersData.getLabels());
         result.setRemovedLabels(hostSetupNetworksParametersData.getRemovedLabels());
+        result.setCommitOnSuccess(commitChanges.getEntity());
 
         return result;
     }

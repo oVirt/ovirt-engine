@@ -51,6 +51,7 @@ public abstract class HostSetupNetworksParametersBuilder {
         PersistentHostSetupNetworksParameters parameters = new PersistentHostSetupNetworksParameters(hostId);
         parameters.setRollbackOnFailure(true);
         parameters.setShouldBeLogged(false);
+        parameters.setCommitOnSuccess(true);
         return parameters;
     }
 

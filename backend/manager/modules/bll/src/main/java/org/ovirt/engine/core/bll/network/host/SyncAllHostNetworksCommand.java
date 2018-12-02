@@ -61,6 +61,7 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
         parameters.setNetworkAttachments(unSyncNetworkAttachments);
         parameters.setSequence(parameters.getSequence() + 1);
         parameters.setTotal(parameters.getTotal() + 1);
+        parameters.setCommitOnSuccess(true);
         return parameters;
     }
 }

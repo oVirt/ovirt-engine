@@ -44,6 +44,7 @@ public class PersistentHostSetupNetworksParametersFactory {
         PersistentHostSetupNetworksParameters parameters = new PersistentHostSetupNetworksParameters(hostId);
         parameters.setRollbackOnFailure(true);
         parameters.setShouldBeLogged(false);
+        parameters.setCommitOnSuccess(true);
         parameters.setNetworkNames(getNetworkNames(networksToSync.keySet()));
         parameters.setNetworkAttachments(new ArrayList<>(networksToSync.values()));
 

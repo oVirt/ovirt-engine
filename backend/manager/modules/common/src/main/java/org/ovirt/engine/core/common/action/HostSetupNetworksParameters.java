@@ -39,6 +39,8 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
 
     private boolean rollbackOnFailure = true;
 
+    private boolean commitOnSuccess;
+
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
             message = "VALIDATION_CONNECTIVITY_TIMEOUT_INVALID")
     private Integer conectivityTimeout;
@@ -68,6 +70,8 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
         setRemovedLabels(other.removedLabels);
         setRollbackOnFailure(other.rollbackOnFailure);
         setConectivityTimeout(other.conectivityTimeout);
+        setCommitOnSuccess(other.commitOnSuccess);
+
     }
 
     public boolean isEmptyRequest() {
@@ -150,5 +154,13 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
 
     public Set<String> getRemovedLabels() {
         return removedLabels;
+    }
+
+    public boolean isCommitOnSuccess() {
+        return commitOnSuccess;
+    }
+
+    public void setCommitOnSuccess(boolean commitOnSuccess) {
+        this.commitOnSuccess = commitOnSuccess;
     }
 }
