@@ -28,12 +28,18 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
         AsyncDataProvider.getInstance().getAllAttachableDisks(
                 new AsyncQuery<>(new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelectedDisk)
                 ), getVm().getStoragePoolId(), getVm().getId());
+
+        // Get managed block attachable disks
+        AsyncDataProvider.getInstance().getAllAttachableDisks(
+                new AsyncQuery<>(new InstanceImageGetDisksCallback(DiskStorageType.MANAGED_BLOCK_STORAGE, prevSelectedDisk)
+                ), getVm().getStoragePoolId(), getVm().getId());
     }
 
     public void loadAttachableDisks(Disk prevSelected) {
         doLoadAttachableDisks(new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelected),
                 new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelected),
-                new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelected));
+                new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelected),
+                new InstanceImageGetDisksCallback(DiskStorageType.MANAGED_BLOCK_STORAGE, prevSelected));
     }
 
     class InstanceImageGetDisksCallback extends GetDisksCallback {
