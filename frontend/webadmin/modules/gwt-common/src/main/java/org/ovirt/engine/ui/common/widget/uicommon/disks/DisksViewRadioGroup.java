@@ -32,6 +32,8 @@ public class DisksViewRadioGroup extends FlowPanel {
     RadioButton imagesButton;
     RadioButton lunsButton;
     RadioButton cinderButton;
+    RadioButton managedBlockButton;
+
 
     public DisksViewRadioGroup() {
         Label label = new Label();
@@ -59,12 +61,17 @@ public class DisksViewRadioGroup extends FlowPanel {
         cinderButton.setText(constants.cinderDisksLabel());
         cinderButton.addClickHandler(event -> fireChangeHandlers(DiskStorageType.CINDER));
 
+        managedBlockButton = new RadioButton(GROUP_NAME);
+        managedBlockButton.setText(constants.managedBlockDisksLabel());
+        managedBlockButton.addClickHandler(event -> fireChangeHandlers(DiskStorageType.MANAGED_BLOCK_STORAGE));
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.setDataToggle(Toggle.BUTTONS);
         buttonGroup.add(allButton);
         buttonGroup.add(imagesButton);
         buttonGroup.add(lunsButton);
         buttonGroup.add(cinderButton);
+        buttonGroup.add(managedBlockButton);
 
         buttonGroup.addStyleName("disk-type-buttons-group"); //$NON-NLS-1$
         return buttonGroup;
@@ -86,6 +93,7 @@ public class DisksViewRadioGroup extends FlowPanel {
         return imagesButton.getValue() ? DiskStorageType.IMAGE :
                lunsButton.getValue() ? DiskStorageType.LUN :
                cinderButton.getValue() ? DiskStorageType.CINDER :
+               managedBlockButton.getValue() ? DiskStorageType.MANAGED_BLOCK_STORAGE :
                null;
     }
 
@@ -94,6 +102,7 @@ public class DisksViewRadioGroup extends FlowPanel {
         imagesButton.setValue(diskStorageType == DiskStorageType.IMAGE);
         lunsButton.setValue(diskStorageType == DiskStorageType.LUN);
         cinderButton.setValue(diskStorageType == DiskStorageType.CINDER);
+        managedBlockButton.setValue(diskStorageType == DiskStorageType.MANAGED_BLOCK_STORAGE);
     }
 
 }

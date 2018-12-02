@@ -1135,6 +1135,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cinderDisksLabel();
 
+    String managedBlockDisksLabel();
+
     String currentQuota();
 
     String elementName();

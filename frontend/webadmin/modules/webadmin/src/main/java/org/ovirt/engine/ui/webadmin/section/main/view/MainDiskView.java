@@ -147,38 +147,39 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         boolean images = diskType == DiskStorageType.IMAGE;
         boolean luns = diskType == DiskStorageType.LUN;
         boolean cinder = diskType == DiskStorageType.CINDER;
-        ensureColumnsVisible(all, images, luns, cinder);
+        boolean managedBlock = diskType == DiskStorageType.MANAGED_BLOCK_STORAGE;
+        ensureColumnsVisible(all, images, luns, cinder, managedBlock);
     }
 
-    private void ensureColumnsVisible(boolean all, boolean images, boolean luns, boolean cinder) {
+    private void ensureColumnsVisible(boolean all, boolean images, boolean luns, boolean cinder, boolean managedBlock) {
         getTable().ensureColumnVisible(
-                aliasColumn, constants.aliasDisk(), all || images || luns || cinder,
+                aliasColumn, constants.aliasDisk(), all || images || luns || cinder || managedBlock,
                 "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                idColumn, constants.idDisk(), all || images || luns || cinder,
+                idColumn, constants.idDisk(), all || images || luns || cinder || managedBlock,
                 "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 shareableDiskColumn,
                 new ImageResourceHeader(shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
-                all || images || luns || cinder, "30px"); //$NON-NLS-1$
+                all || images || luns || cinder || managedBlock, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.diskContainersIconColumn, "", all || images || luns || cinder, //$NON-NLS-1$
+                DisksViewColumns.diskContainersIconColumn, "", all || images || luns || cinder || managedBlock, //$NON-NLS-1$
                 "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder,
+                diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder || managedBlock,
                 "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                storageDomainsColumn, constants.storageDomainsDisk(), images || cinder,
+                storageDomainsColumn, constants.storageDomainsDisk(), images || cinder || managedBlock,
                 "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                sizeColumn, constants.provisionedSizeDisk(), all || images || luns || cinder,
+                sizeColumn, constants.provisionedSizeDisk(), all || images || luns || cinder || managedBlock,
                 "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
@@ -186,14 +187,14 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), cinder, "80px"); //$NON-NLS-1$
+                cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), cinder || managedBlock, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                dateCreatedColumn, constants.creationDateDisk(), images || cinder,
+                dateCreatedColumn, constants.creationDateDisk(), images || cinder || managedBlock,
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                statusColumn, constants.statusDisk(), images || cinder || all,
+                statusColumn, constants.statusDisk(), images || cinder || managedBlock|| all,
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
@@ -223,7 +224,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                descriptionColumn, constants.descriptionDisk(), all || images || luns || cinder,
+                descriptionColumn, constants.descriptionDisk(), all || images || luns || cinder || managedBlock,
                 "90px"); //$NON-NLS-1$
     }
 

@@ -674,10 +674,11 @@ public abstract class AbstractDiskModel extends DiskModel {
         boolean isDiskImage = getDiskStorageType().getEntity() == DiskStorageType.IMAGE;
         boolean isLunDisk = getDiskStorageType().getEntity() == DiskStorageType.LUN;
         boolean isCinderDisk = getDiskStorageType().getEntity() == DiskStorageType.CINDER;
+        boolean isManagedBlockDisk = getDiskStorageType().getEntity() == DiskStorageType.MANAGED_BLOCK_STORAGE;
 
-        getSize().setIsAvailable(isDiskImage || isCinderDisk);
-        getSizeExtend().setIsAvailable((isDiskImage || isCinderDisk) && !getIsNew());
-        getStorageDomain().setIsAvailable(isDiskImage || isCinderDisk);
+        getSize().setIsAvailable(isDiskImage || isCinderDisk || isManagedBlockDisk);
+        getSizeExtend().setIsAvailable((isDiskImage || isCinderDisk || isManagedBlockDisk) && !getIsNew());
+        getStorageDomain().setIsAvailable(isDiskImage || isCinderDisk || isManagedBlockDisk);
         getVolumeType().setIsAvailable(isDiskImage);
         getIsWipeAfterDelete().setIsAvailable(isDiskImage);
         updatePassDiscardChangeability();
@@ -939,6 +940,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         switch (getDiskStorageType().getEntity()) {
             case IMAGE:
             case CINDER:
+            case MANAGED_BLOCK_STORAGE:
                 updateStorageDomains(datacenter);
                 break;
             default:
@@ -1177,6 +1179,8 @@ public abstract class AbstractDiskModel extends DiskModel {
                 return  getDiskImage().getStorageIds().get(0);
             case CINDER:
                 return  getCinderDisk().getStorageIds().get(0);
+            case MANAGED_BLOCK_STORAGE:
+                return getManagedBlockDisk().getStorageIds().get(0);
         }
         return null;
     }
