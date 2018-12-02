@@ -27,6 +27,8 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
     Map<String, List<String>> allRegExKeys;
     private Map<String, String> keyValueMap_used = new HashMap<>();
     private boolean useEditableKey;
+    //Available only if using editable key
+    private boolean maskValueField;
 
     @Override
     protected void initLineModel(KeyValueLineModel keyValueLineModel, String key) {
@@ -34,8 +36,11 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
             keyValueLineModel.getValues().setIsAvailable(false);
             keyValueLineModel.getKeys().setIsAvailable(false);
             keyValueLineModel.getEditableKey().setIsAvailable(true);
-            keyValueLineModel.getValue().setIsAvailable(true);
-            keyValueLineModel.getValue().setIsChangeable(true);
+            keyValueLineModel.getPasswordValueField().setIsAvailable(isMaskValueField());
+            keyValueLineModel.getPasswordValueField().setIsChangeable(isMaskValueField());
+            keyValueLineModel.getValue().setIsAvailable(!isMaskValueField());
+            keyValueLineModel.getValue().setIsChangeable(!isMaskValueField());
+            keyValueLineModel.getPasswordValueField().setEntity("");
             keyValueLineModel.getValue().setEntity("");
             keyValueLineModel.getEditableKey().setEntity("");
         } else if (isKeyValid(key)) {
@@ -44,15 +49,19 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
             keyValueLineModel.getValues().setIsAvailable(constrainedValue);
             keyValueLineModel.getEditableKey().setIsAvailable(false);
             keyValueLineModel.getEditableKey().setEntity("");
+            keyValueLineModel.getPasswordValueField().setIsAvailable(false);
+            keyValueLineModel.getPasswordValueField().setEntity("");
             if (constrainedValue) {
                 keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
             }
         } else {
             keyValueLineModel.getValue().setIsAvailable(false);
-            keyValueLineModel.getValues().setIsAvailable(false);
+            keyValueLineModel.getValue().setEntity("");
             keyValueLineModel.getEditableKey().setIsAvailable(false);
             keyValueLineModel.getEditableKey().setEntity("");
-            keyValueLineModel.getValue().setEntity("");
+            keyValueLineModel.getPasswordValueField().setIsAvailable(false);
+            keyValueLineModel.getPasswordValueField().setEntity("");
+            keyValueLineModel.getValues().setIsAvailable(false);
             keyValueLineModel.getValues().setSelectedItem(null);
             keyValueLineModel.getValues().setItems(null);
         }
@@ -66,6 +75,13 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         return this.useEditableKey;
     }
 
+    public boolean isMaskValueField() {
+        return maskValueField;
+    }
+
+    public void setMaskValueField(boolean maskValueField) {
+        this.maskValueField = maskValueField && isEditableKey();
+    }
 
     protected void setValueByKey(KeyValueLineModel lineModel, String key) {
         if (allRegExKeys.containsKey(key)) {
@@ -151,8 +167,14 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
 
         for (KeyValueLineModel keyValueLineModel : getItems()) {
             if (keyValueLineModel.getEditableKey().getEntity() != null && !keyValueLineModel.getEditableKey().getEntity().equals("")) {
-                keyValueMap.put(keyValueLineModel.getEditableKey().getEntity(),
-                        keyValueLineModel.getValue().getEntity());
+                if (keyValueLineModel.getPasswordValueField().getEntity() != null && !keyValueLineModel.getPasswordValueField().getEntity().equals("")) {
+                    keyValueMap.put(keyValueLineModel.getEditableKey().getEntity(),
+                            keyValueLineModel.getPasswordValueField().getEntity());
+                } else {
+                    keyValueMap.put(keyValueLineModel.getEditableKey().getEntity(),
+                            keyValueLineModel.getValue().getEntity());
+                }
+
             }
         }
 
@@ -274,8 +296,12 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         if (useEditableKey) {
             for (Map.Entry<String, Object> entry : keyValueMap.entrySet()) {
                 KeyValueLineModel lineModel = createNewLineModel(null);
-                lineModel.getValue().setEntity(entry.getKey());
-                lineModel.getEditableKey().setEntity((String) entry.getValue());
+                lineModel.getEditableKey().setEntity(entry.getKey());
+                if (isMaskValueField()) {
+                    lineModel.getPasswordValueField().setEntity((String) entry.getValue());
+                } else {
+                    lineModel.getValue().setEntity((String) entry.getValue());
+                }
                 lineModels.add(lineModel);
             }
         }

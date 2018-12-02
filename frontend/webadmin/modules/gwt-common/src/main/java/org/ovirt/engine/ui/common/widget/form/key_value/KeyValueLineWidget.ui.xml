@@ -18,6 +18,7 @@
             <e:ListModelListBoxEditor ui:field="keyField" usePatternFly="true" />
         </b:Column>
         <b:Column size="SM_6">
+            <ge:StringEntityModelPasswordBoxEditor ui:field="passwordValueField" usePatternFly="true" />
             <ge:StringEntityModelTextBoxEditor ui:field="valueField" usePatternFly="true" />
             <e:ListModelListBoxEditor ui:field="valuesField" usePatternFly="true" />
         </b:Column>

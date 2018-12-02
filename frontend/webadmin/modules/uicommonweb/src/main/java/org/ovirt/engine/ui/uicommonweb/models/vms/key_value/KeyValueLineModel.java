@@ -8,15 +8,20 @@ public class KeyValueLineModel extends KeyLineModel {
     ListModel<String> values;
     EntityModel<String> value;
     EntityModel<String> editableKey;
+    EntityModel<String> passwordValueField;
+
 
     public KeyValueLineModel() {
         super();
         setValue(new EntityModel<String>());
         setValues(new ListModel<String>());
         setEditableKey(new EntityModel<String>());
+        setPasswordValueField(new EntityModel<String>());
+
         getValue().setIsAvailable(false);
         getValues().setIsAvailable(false);
         getEditableKey().setIsAvailable(false);
+        getPasswordValueField().setIsAvailable(false);
     }
 
     public ListModel<String> getValues() {
@@ -41,6 +46,14 @@ public class KeyValueLineModel extends KeyLineModel {
 
     public void setEditableKey(EntityModel<String> editableKey) {
         this.editableKey = editableKey;
+    }
+
+    public EntityModel<String> getPasswordValueField() {
+        return passwordValueField;
+    }
+
+    public void setPasswordValueField(EntityModel<String> passwordValueField) {
+        this.passwordValueField = passwordValueField;
     }
 
     @Override

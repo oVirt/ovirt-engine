@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.form.key_value;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
 
@@ -33,6 +34,10 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
     @Path(value = "editableKey.entity")
     StringEntityModelTextBoxEditor editableKeyField;
 
+    @UiField
+    @Path(value = "passwordValueField.entity")
+    StringEntityModelPasswordBoxEditor passwordValueField;
+
     KeyValueLineWidget() {
         super();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -51,6 +56,7 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
         valueField.hideLabel();
         valuesField.hideLabel();
         editableKeyField.hideLabel();
+        passwordValueField.hideLabel();
     }
 
     @Override
@@ -59,6 +65,7 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
         valueField.setUsePatternFly(use);
         valuesField.setUsePatternFly(use);
         editableKeyField.setUsePatternFly(use);
+        passwordValueField.setUsePatternFly(use);
     }
 
     @Override
@@ -74,6 +81,7 @@ public class KeyValueLineWidget extends BaseKeyLineWidget<KeyValueLineModel> {
         valuesField.setEnabled(enabled);
         valuesField.setEnabled(enabled);
         editableKeyField.setEnabled(enabled);
+        passwordValueField.setEnabled(enabled);
     }
 
     @Override

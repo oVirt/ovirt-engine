@@ -82,6 +82,7 @@ public class ManagedBlockStorageModel extends Model implements IStorageModel {
         getDriverSensitiveOptions().setTitle(ConstantsManager.getInstance().getConstants().driverSensitiveOptionsHint());
         getDriverOptions().useEditableKey(true);
         getDriverSensitiveOptions().useEditableKey(true);
+        getDriverSensitiveOptions().setMaskValueField(true);
     }
 
     @Override
