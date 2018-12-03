@@ -71,6 +71,12 @@ public class EditDiskModel extends AbstractDiskModel {
                 getSize().setEntity((int) cinderDisk.getSizeInGigabytes());
                 getSizeExtend().setIsChangeable(true);
                 break;
+            case MANAGED_BLOCK_STORAGE:
+                ManagedBlockStorageDisk managedBlockDisk = (ManagedBlockStorageDisk) getDisk();
+                getDiskStorageType().setEntity(DiskStorageType.MANAGED_BLOCK_STORAGE);
+                getSize().setEntity((int) managedBlockDisk.getSizeInGigabytes());
+                getSizeExtend().setIsChangeable(true);
+                break;
         }
 
         updateReadOnlyChangeability();
@@ -82,7 +88,8 @@ public class EditDiskModel extends AbstractDiskModel {
     protected void datacenter_SelectedItemChanged() {
         super.datacenter_SelectedItemChanged();
         // this needs to be executed after the data center is loaded because the update quota needs both values
-        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE
+                || getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
             Guid storageDomainId = ((DiskImage) getDisk()).getStorageIds().get(0);
             AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery<>(storageDomain -> getStorageDomain().setSelectedItem(storageDomain)), storageDomainId);
         } else if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
@@ -120,7 +127,7 @@ public class EditDiskModel extends AbstractDiskModel {
 
     @Override
     protected ManagedBlockStorageDisk getManagedBlockDisk() {
-        return new ManagedBlockStorageDisk();
+        return (ManagedBlockStorageDisk) getDisk();
     }
 
     @Override
