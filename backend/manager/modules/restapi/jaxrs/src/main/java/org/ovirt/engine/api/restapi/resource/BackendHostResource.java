@@ -310,6 +310,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             parameters.setConectivityTimeout(action.getConnectivityTimeout());
         }
 
+        parameters.setCommitOnSuccess(action.isSetCommitOnSuccess() && action.isCommitOnSuccess());
+
         return parameters;
     }
 
