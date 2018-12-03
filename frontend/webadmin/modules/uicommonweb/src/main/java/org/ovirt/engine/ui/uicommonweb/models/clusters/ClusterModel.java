@@ -708,26 +708,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    private EntityModel<Boolean> enableOptionalReason;
-
-    public EntityModel<Boolean> getEnableOptionalReason() {
-        return enableOptionalReason;
-    }
-
-    public void setEnableOptionalReason(EntityModel<Boolean> value) {
-        this.enableOptionalReason = value;
-    }
-
-    private EntityModel<Boolean> enableHostMaintenanceReason;
-
-    public EntityModel<Boolean> getEnableHostMaintenanceReason() {
-        return enableHostMaintenanceReason;
-    }
-
-    public void setEnableHostMaintenanceReason(EntityModel<Boolean> value) {
-        this.enableHostMaintenanceReason = value;
-    }
-
     private ListModel<FirewallType> firewallType;
 
     public ListModel<FirewallType> getFirewallType() {
@@ -1009,11 +989,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setComment(new EntityModel<>());
         setEnableTrustedService(new EntityModel<>(false));
         setEnableHaReservation(new EntityModel<>(false));
-        setEnableOptionalReason(new EntityModel<>(false));
         setMigrationPolicies(new ListModel<>());
         getMigrationPolicies().getSelectedItemChangedEvent().addListener(this);
-        getEnableOptionalReason().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
-        setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         setGlusterTunedProfile(new ListModel<>());
         setLogMaxMemoryUsedThreshold(new EntityModel<>());

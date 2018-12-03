@@ -1218,18 +1218,18 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void maintenance() {
         Guid clusterId = getClusterIdOfSelectedHosts();
         if (clusterId == null) {
-            maintenance(false, false, null);
+            maintenance(false, null);
         } else {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
                     cluster -> {
                         if (cluster != null) {
-                            maintenance(cluster.isMaintenanceReasonRequired(), cluster.supportsGlusterService(), clusterId);
+                            maintenance(cluster.supportsGlusterService(), clusterId);
                         }
                     }), clusterId);
         }
     }
 
-    private void maintenance(boolean isMaintenanceReasonVisible, boolean supportsGlusterService, Guid clusterId) {
+    private void maintenance(boolean supportsGlusterService, Guid clusterId) {
         if (getConfirmWindow() != null) {
             return;
         }
@@ -1242,7 +1242,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.setMessage(ConstantsManager.getInstance()
                 .getConstants()
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
-        model.setReasonVisible(isMaintenanceReasonVisible);
         if (supportsGlusterService) {
             model.getStopGlusterServices().setIsAvailable(true);
             model.getStopGlusterServices().setEntity(false);

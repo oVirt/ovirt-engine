@@ -83,10 +83,6 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private boolean haReservation;
 
-    private boolean optionalReasonRequired;
-
-    private boolean maintenanceReasonRequired;
-
     private Guid clusterPolicyId;
 
     private String clusterPolicyName;
@@ -345,22 +341,6 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setHaReservation(boolean haReservation) {
         this.haReservation = haReservation;
-    }
-
-    public boolean isOptionalReasonRequired() {
-        return optionalReasonRequired;
-    }
-
-    public void setOptionalReasonRequired(boolean optionalReasonRequired) {
-        this.optionalReasonRequired = optionalReasonRequired;
-    }
-
-    public boolean isMaintenanceReasonRequired() {
-        return maintenanceReasonRequired;
-    }
-
-    public void setMaintenanceReasonRequired(boolean maintenanceReasonRequired) {
-        this.maintenanceReasonRequired = maintenanceReasonRequired;
     }
 
     public boolean isInUpgradeMode(){
@@ -673,7 +653,6 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 migrateCompressed,
                 glusterTunedProfile,
                 addtionalFeaturesSupported,
-                maintenanceReasonRequired,
                 ksmMergeAcrossNumaNodes,
                 customMigrationNetworkBandwidth,
                 migrationBandwidthLimitType,
@@ -733,7 +712,6 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)
                 && Objects.equals(glusterTunedProfile, other.glusterTunedProfile)
-                && Objects.equals(maintenanceReasonRequired, other.maintenanceReasonRequired)
                 && Objects.equals(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
                 && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes
                 && Objects.equals(customMigrationNetworkBandwidth, other.customMigrationNetworkBandwidth)

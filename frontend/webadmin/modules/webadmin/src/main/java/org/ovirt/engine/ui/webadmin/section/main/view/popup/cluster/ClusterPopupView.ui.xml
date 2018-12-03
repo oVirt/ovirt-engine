@@ -273,13 +273,6 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-                                        <ge:EntityModelCheckBoxEditor ui:field="enableOptionalReasonEditor" label="{constants.clusterPolicyEnableReasonLabel}" removeFormGroup="true" usePatternFly="true" />
-                                        <ge:EntityModelCheckBoxEditor ui:field="enableHostMaintenanceReasonEditor" label="{constants.clusterPolicyEnableHostMaintenanceReasonLabel}" removeFormGroup="true" usePatternFly="true" />
-                                    </b:Column>
-                                </b:Row>
-                                <b:Row>
-                                    <b:Column size="SM_12">
                                         <g:Label ui:field="rngLabel"  addStyleNames="{style.smallPanelTitle} {style.groupTitle}" text="{constants.additionalRngSource}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="rngHwrngSourceRequired" label="{constants.rngSourceHwrng}" removeFormGroup="true" usePatternFly="true" />
                                     </b:Column>

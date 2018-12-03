@@ -1351,15 +1351,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         Frontend.getInstance().runMultipleAction(ActionType.CancelConvertVm, parameters);
     }
 
-    private void powerAction(final String actionName, final String title, final String message) {
+    private void powerActionBase(final String actionName, final String title, final String message) {
         Guid clusterId = getClusterIdOfSelectedVms();
         if (clusterId == null) {
-            powerAction(actionName, title, message, false);
+            powerAction(actionName, title, message);
         } else {
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
                     cluster -> {
                         if (cluster != null) {
-                            powerAction(actionName, title, message, cluster.isOptionalReasonRequired());
+                            powerAction(actionName, title, message);
                         }
                     }), clusterId);
         }
@@ -1382,11 +1382,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         return clusterId;
     }
 
-    private void powerAction(String actionName, String title, String message, boolean reasonVisible) {
+    private void powerAction(String actionName, String title, String message) {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(title);
-        model.setReasonVisible(reasonVisible);
 
         if (actionName.equals(SHUTDOWN)) {
             model.setHelpTag(HelpTag.shutdown_virtual_machine);
@@ -1408,7 +1407,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             items.add(vm.getName());
             // If a single VM in status PoweringDown is being stopped the reason field
             // is populated with the current reason so the user can edit it.
-            if (stoppingSingleVM && reasonVisible && VMStatus.PoweringDown.equals(vm.getStatus())) {
+            if (stoppingSingleVM && VMStatus.PoweringDown.equals(vm.getStatus())) {
                 model.getReason().setEntity(vm.getStopReason());
             }
         }
@@ -1455,7 +1454,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void shutdown() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        powerAction(SHUTDOWN,
+        powerActionBase(SHUTDOWN,
                 constants.shutdownVirtualMachinesTitle(),
                 constants.areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
     }
@@ -1468,7 +1467,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void stop() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        powerAction(STOP,
+        powerActionBase(STOP,
                 constants.stopVirtualMachinesTitle(),
                 constants.areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
     }
@@ -1483,8 +1482,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         powerAction(REBOOT,
                 constants.rebootVirtualMachinesTitle(),
-                constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg(),
-                false);
+                constants.areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg());
     }
 
     private void onReboot() {

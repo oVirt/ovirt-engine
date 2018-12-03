@@ -225,8 +225,6 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("detect_emulated_machine", cluster.isDetectEmulatedMachine())
                 .addValue("trusted_service", cluster.supportsTrustedService())
                 .addValue("ha_reservation", cluster.supportsHaReservation())
-                .addValue("optional_reason", cluster.isOptionalReasonRequired())
-                .addValue("maintenance_reason_required", cluster.isMaintenanceReasonRequired())
                 .addValue("cluster_policy_id", cluster.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
                                 SerializationFactory.getSerializer().serialize(cluster.getClusterPolicyProperties()))
@@ -290,8 +288,6 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
         entity.setTrustedService(rs.getBoolean("trusted_service"));
         entity.setHaReservation(rs.getBoolean("ha_reservation"));
-        entity.setOptionalReasonRequired(rs.getBoolean("optional_reason"));
-        entity.setMaintenanceReasonRequired(rs.getBoolean("maintenance_reason_required"));
         entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
         entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
         entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.view.popup;
 
 import org.gwtbootstrap3.client.ui.Column;
-import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -12,7 +11,6 @@ import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
@@ -60,13 +58,6 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     @UiField
     protected AlertWithIcon notePanel;
 
-    @UiField
-    @Path(value = "reason.entity")
-    @WithElementId
-    StringEntityModelTextBoxEditor reasonEditor;
-
-    @UiField
-    Row reasonRow;
 
     @Inject
     public RemoveConfirmationPopupView(EventBus eventBus) {
@@ -80,7 +71,6 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
         driver.initialize(this);
-        reasonRow.setVisible(false);
     }
 
     @Override
@@ -159,17 +149,6 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
                 setNote(entity.getNote());
             }
         });
-
-        // Bind "ReasonVisible"
-        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("ReasonVisible".equals(args.propertyName)) { //$NON-NLS-1$
-                updateReasonVisibility((ConfirmationModel) sender);
-            }
-        });
-    }
-
-    public void updateReasonVisibility(ConfirmationModel model) {
-        reasonRow.setVisible(model.getReasonVisible());
     }
 
     protected void localize() {

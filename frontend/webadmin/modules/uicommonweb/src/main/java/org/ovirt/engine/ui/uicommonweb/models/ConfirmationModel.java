@@ -65,20 +65,6 @@ public class ConfirmationModel extends ListModel {
         reason = value;
     }
 
-    private boolean reasonVisible;
-
-    public boolean getReasonVisible() {
-        return reasonVisible;
-    }
-
-    public void setReasonVisible(boolean value) {
-        if (reasonVisible != value) {
-            reasonVisible = value;
-            onPropertyChanged(new PropertyChangedEventArgs("ReasonVisible")); //$NON-NLS-1$
-        }
-
-    }
-
     private AlertType alertType;
 
     public AlertType getAlertType() {
@@ -100,7 +86,6 @@ public class ConfirmationModel extends ListModel {
         getForce().setIsAvailable(false);
 
         setReason(new EntityModel<String>());
-        setReasonVisible(false);
 
         setAlertType(AlertType.WARNING);
     }

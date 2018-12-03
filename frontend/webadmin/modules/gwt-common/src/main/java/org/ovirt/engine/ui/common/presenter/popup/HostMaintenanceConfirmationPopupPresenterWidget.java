@@ -12,7 +12,6 @@ import com.google.inject.Inject;
 public class HostMaintenanceConfirmationPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<HostMaintenanceConfirmationModel, HostMaintenanceConfirmationPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<HostMaintenanceConfirmationModel> {
-        void updateReasonVisibility(HostMaintenanceConfirmationModel model);
     }
 
     @Inject
@@ -22,19 +21,7 @@ public class HostMaintenanceConfirmationPopupPresenterWidget extends AbstractMod
 
     @Override
     public void init(final HostMaintenanceConfirmationModel model) {
-        updateReasonVisibility(model);
-        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            String propName = args.propertyName;
-
-            if ("ReasonVisible".equals(propName)) { //$NON-NLS-1$
-                updateReasonVisibility(model);
-            }
-        });
         super.init(model);
-    }
-
-    protected void updateReasonVisibility(HostMaintenanceConfirmationModel model) {
-        getView().updateReasonVisibility(model);
     }
 
     @Override

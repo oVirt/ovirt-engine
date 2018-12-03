@@ -74,9 +74,6 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
     @WithElementId
     StringEntityModelTextBoxEditor reasonEditor;
 
-    @UiField
-    FlowPanel reasonPanel;
-
     @UiField(provided = true)
     @Path(value = "stopGlusterServices.entity")
     @WithElementId
@@ -102,7 +99,6 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
         driver.initialize(this);
-        reasonPanel.setVisible(false);
         pinnedVMsInfoPanel.setVisible(false);
         pinnedVMsInfoMessage.setAlertType(AlertType.INFO);
     }
@@ -178,12 +174,6 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
             }
         });
 
-        // Bind "ReasonVisible"
-        object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("ReasonVisible".equals(args.propertyName)) { //$NON-NLS-1$
-                updateReasonVisibility((HostMaintenanceConfirmationModel) sender);
-            }
-        });
 
         // Bind "pinnedVMsInfoPanelVisible"
         object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
@@ -205,10 +195,6 @@ public class HostMaintenanceConfirmationPopupView extends AbstractModelBoundPopu
     @Override
     public void setMessage(String message) {
         messageHTML.setHTML(SafeHtmlUtils.fromString(message != null ? message : "").asString().replace("\n", "<br>"));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
-
-    public void updateReasonVisibility(HostMaintenanceConfirmationModel model) {
-        reasonPanel.setVisible(model.getReasonVisible());
     }
 
     public void updatePinnedVMsInfoVisibility(HostMaintenanceConfirmationModel model) {

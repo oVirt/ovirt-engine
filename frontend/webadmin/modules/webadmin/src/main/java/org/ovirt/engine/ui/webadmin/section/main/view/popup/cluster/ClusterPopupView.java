@@ -217,20 +217,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     @UiField
     @Ignore
-    Label messageLabel;
-
-    @UiField(provided = true)
-    @Path(value = "enableOptionalReason.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor enableOptionalReasonEditor;
-
-    @UiField(provided = true)
-    @Path(value = "enableHostMaintenanceReason.entity")
-    @WithElementId
-    EntityModelCheckBoxEditor enableHostMaintenanceReasonEditor;
-
-    @UiField
-    @Ignore
     Label rngLabel;
 
     @UiField(provided = true)
@@ -699,10 +685,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         enableHaReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        enableOptionalReasonEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
-        enableHostMaintenanceReasonEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
         enableKsm = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableKsm.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
 
@@ -914,7 +896,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Override
     public void setMessage(String message) {
         super.setMessage(message);
-        messageLabel.setText(message);
     }
 
     @Override

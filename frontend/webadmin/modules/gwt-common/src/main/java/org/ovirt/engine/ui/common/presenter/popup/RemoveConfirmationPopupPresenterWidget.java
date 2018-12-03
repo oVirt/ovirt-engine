@@ -12,7 +12,6 @@ import com.google.inject.Inject;
 public class RemoveConfirmationPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ConfirmationModel, RemoveConfirmationPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ConfirmationModel> {
-        void updateReasonVisibility(ConfirmationModel model);
     }
 
     @Inject
@@ -22,20 +21,9 @@ public class RemoveConfirmationPopupPresenterWidget extends AbstractModelBoundPo
 
     @Override
     public void init(final ConfirmationModel model) {
-        updateReasonVisibility(model);
-        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            String propName = args.propertyName;
-
-            if ("ReasonVisible".equals(propName)) { //$NON-NLS-1$
-                updateReasonVisibility(model);
-            }
-        });
         super.init(model);
     }
 
-    protected void updateReasonVisibility(ConfirmationModel model) {
-        getView().updateReasonVisibility(model);
-    }
 
     @Override
     protected void updateHashName(ConfirmationModel model) {

@@ -109,12 +109,7 @@ public class ClusterMapper {
         if (model.isSetHaReservation()) {
             entity.setHaReservation(model.isHaReservation());
         }
-        if (model.isSetOptionalReason()) {
-            entity.setOptionalReasonRequired(model.isOptionalReason());
-        }
-        if (model.isSetMaintenanceReasonRequired()) {
-            entity.setMaintenanceReasonRequired(model.isMaintenanceReasonRequired());
-        }
+
         if (model.isSetBallooningEnabled()) {
             entity.setEnableBallooning(model.isBallooningEnabled());
         }
@@ -231,8 +226,6 @@ public class ClusterMapper {
         model.setTunnelMigration(entity.isTunnelMigration());
         model.setTrustedService(entity.supportsTrustedService());
         model.setHaReservation(entity.supportsHaReservation());
-        model.setOptionalReason(entity.isOptionalReasonRequired());
-        model.setMaintenanceReasonRequired(entity.isMaintenanceReasonRequired());
         model.setBallooningEnabled(entity.isEnableBallooning());
         Ksm ksm = model.getKsm();
         if (ksm == null) {
