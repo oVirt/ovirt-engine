@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -29,10 +29,10 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     final Driver driver = GWT.create(Driver.class);
 
     @UiField
-    Alert warningMessage;
+    AlertWithIcon warningMessage;
 
     @UiField
-    Alert dynamicWarningMessage;
+    AlertWithIcon dynamicWarningMessage;
 
     @UiField(provided = true)
     @Ignore
