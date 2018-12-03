@@ -10,16 +10,6 @@ import org.ovirt.engine.core.compat.Version;
  * Methods should be named by feature and accept version to check against.
  */
 public class GlusterFeatureSupported {
-    /**
-     *
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> if gluster services management feature is enabled, <code>false</code> if it's not.
-     */
-    public static boolean glusterServices(Version version) {
-        return supportedInConfig(ConfigValues.GlusterServicesEnabled, version);
-    }
-
     public static boolean glusterArbiterVolumeSupported(Version version) {
         if (version != null) {
             return supportedInConfig(ConfigValues.GlusterSupportArbiterVolume, version);

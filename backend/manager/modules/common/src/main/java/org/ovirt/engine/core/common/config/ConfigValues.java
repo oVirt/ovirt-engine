@@ -949,9 +949,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     GlusterRefreshRateHooks,
 
-    @TypeConverterAttribute(Boolean.class)
-    GlusterServicesEnabled,
-
     @TypeConverterAttribute(Integer.class)
     GlusterTaskMinWaitForCleanupInMins,
 

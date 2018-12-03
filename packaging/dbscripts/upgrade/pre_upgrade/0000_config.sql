@@ -850,7 +850,6 @@ select fn_db_add_config_value('SpmVmGraceForEvenGuestDistribute', '5', 'general'
 select fn_db_add_config_value('UnsupportedLocalesFilterOverrides', '', 'general');
 select fn_db_add_config_value('VMConsoleTicketTolerance', '10000', 'general');
 
-select fn_db_add_config_value_for_versions_up_to('GlusterServicesEnabled', 'false', '4.3');
 select fn_db_add_config_value_for_versions_up_to('SpiceSecureChannels',
                                                  'smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir',
                                                  '4.3');
