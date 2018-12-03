@@ -240,69 +240,69 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     public AbstractDiskModel() {
-        setSizeExtend(new EntityModel<String>());
+        setSizeExtend(new EntityModel<>());
         getSizeExtend().setEntity("0");  //$NON-NLS-1$
 
-        setIsWipeAfterDelete(new EntityModel<Boolean>());
+        setIsWipeAfterDelete(new EntityModel<>());
         getIsWipeAfterDelete().setEntity(false);
         getIsWipeAfterDelete().getEntityChangedEvent().addListener(this);
 
         getPassDiscard().getEntityChangedEvent().addListener(this);
 
-        setIsShareable(new EntityModel<Boolean>());
+        setIsShareable(new EntityModel<>());
         getIsShareable().setEntity(false);
 
-        setIsPlugged(new EntityModel<Boolean>());
+        setIsPlugged(new EntityModel<>());
         getIsPlugged().setEntity(true);
         getIsPlugged().setIsAvailable(false);
 
-        setIsReadOnly(new EntityModel<Boolean>());
+        setIsReadOnly(new EntityModel<>());
         getIsReadOnly().setEntity(false);
         getIsReadOnly().getEntityChangedEvent().addListener(this);
 
-        setIsUsingScsiReservation(new EntityModel<Boolean>());
+        setIsUsingScsiReservation(new EntityModel<>());
         getIsUsingScsiReservation().setEntity(false);
 
-        setIsScsiPassthrough(new EntityModel<Boolean>());
+        setIsScsiPassthrough(new EntityModel<>());
         getIsScsiPassthrough().setIsAvailable(false);
         getIsScsiPassthrough().setEntity(true);
         getIsScsiPassthrough().getEntityChangedEvent().addListener(this);
 
-        setIsSgIoUnfiltered(new EntityModel<Boolean>());
+        setIsSgIoUnfiltered(new EntityModel<>());
         getIsSgIoUnfiltered().setIsAvailable(false);
         getIsSgIoUnfiltered().setEntity(false);
         getIsSgIoUnfiltered().getEntityChangedEvent().addListener(this);
 
-        setDiskStorageType(new EntityModel<DiskStorageType>());
+        setDiskStorageType(new EntityModel<>());
         getDiskStorageType().setEntity(DiskStorageType.IMAGE);
         getDiskStorageType().getEntityChangedEvent().addListener(this);
 
-        setIsDirectLunDiskAvaialable(new EntityModel<Boolean>());
+        setIsDirectLunDiskAvaialable(new EntityModel<>());
         getIsDirectLunDiskAvaialable().setEntity(true);
 
-        setDataCenter(new ListModel<StoragePool>());
+        setDataCenter(new ListModel<>());
         getDataCenter().setIsAvailable(false);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
 
         getStorageDomain().getSelectedItemChangedEvent().addListener(this);
 
-        setStorageType(new ListModel<StorageType>());
+        setStorageType(new ListModel<>());
         getStorageType().setIsAvailable(false);
         getStorageType().setItems(AsyncDataProvider.getInstance().getStorageTypeList());
         getStorageType().getSelectedItemChangedEvent().addListener(this);
 
-        setHost(new ListModel<VDS>());
+        setHost(new ListModel<>());
         getHost().setIsAvailable(false);
 
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
         getDiskInterface().getSelectedItemChangedEvent().addListener(this);
 
-        setIsVirtioScsiEnabled(new EntityModel<Boolean>());
+        setIsVirtioScsiEnabled(new EntityModel<>());
 
-        setCinderVolumeType(new ListModel<String>());
+        setCinderVolumeType(new ListModel<>());
         getCinderVolumeType().setIsAvailable(false);
 
-        setIsModelDisabled(new EntityModel<Boolean>(false));
+        setIsModelDisabled(new EntityModel<>(false));
     }
 
     public abstract boolean getIsNew();
