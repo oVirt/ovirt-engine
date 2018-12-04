@@ -181,31 +181,17 @@ public class DisksAllocationModel extends EntityModel {
                         if (list == null) {
                             return;
                         }
-                        if (isItem == null) {
-                            for (DiskModel diskModel : getDisks()) {
-                                diskModel.getQuota().setItems(list);
-                                if (diskModel.getDisk() instanceof DiskImage) {
-                                    DiskImage diskImage = (DiskImage) diskModel.getDisk();
-                                    for (Quota quota : list) {
-                                        if (quota.getId().equals(diskImage.getQuotaId())) {
-                                            diskModel.getQuota().setSelectedItem(quota);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            Guid selectedQuota = isItem.getSelectedItem() != null ?
-                                    isItem.getSelectedItem().getId() : null;
-                            selectedQuota = selectedQuota != null ? selectedQuota : diskQuotaId;
 
-                            isItem.setItems(list);
-                            if (selectedQuota != null && list.size() > 1) {
-                                for (Quota quota : list) {
-                                    if (quota.getId().equals(selectedQuota)) {
-                                        isItem.setSelectedItem(quota);
-                                        break;
-                                    }
+                        Guid selectedQuota = isItem.getSelectedItem() != null ?
+                                isItem.getSelectedItem().getId() : null;
+                        selectedQuota = selectedQuota != null ? selectedQuota : diskQuotaId;
+
+                        isItem.setItems(list);
+                        if (selectedQuota != null && list.size() > 1) {
+                            for (Quota quota : list) {
+                                if (quota.getId().equals(selectedQuota)) {
+                                    isItem.setSelectedItem(quota);
+                                    break;
                                 }
                             }
                         }
