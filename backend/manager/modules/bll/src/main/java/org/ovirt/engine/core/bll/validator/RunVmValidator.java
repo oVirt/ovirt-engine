@@ -621,6 +621,7 @@ public class RunVmValidator {
         if (cachedVmImageDisks == null) {
             cachedVmImageDisks = DisksFilter.filterImageDisks(getVmDisks(), ONLY_NOT_SHAREABLE);
             cachedVmImageDisks.addAll(DisksFilter.filterCinderDisks(getVmDisks(), ONLY_PLUGGED));
+            cachedVmImageDisks.addAll(DisksFilter.filterManagedBlockStorageDisks(getVmDisks(), ONLY_PLUGGED));
         }
 
         return cachedVmImageDisks;

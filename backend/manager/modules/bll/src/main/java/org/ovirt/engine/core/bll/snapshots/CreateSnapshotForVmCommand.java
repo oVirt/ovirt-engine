@@ -726,6 +726,8 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         if (cachedImagesDisks == null) {
             cachedImagesDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE,
                     ONLY_SNAPABLE, ONLY_ACTIVE);
+            cachedImagesDisks.addAll(DisksFilter.filterManagedBlockStorageDisks(disks, ONLY_NOT_SHAREABLE,
+                    ONLY_SNAPABLE, ONLY_ACTIVE));
         }
 
         return cachedImagesDisks;

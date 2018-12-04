@@ -252,6 +252,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
             List<Disk> allImages = diskDao.getAllForVm(getVmTemplateId());
             imageTemplates = DisksFilter.filterImageDisks(allImages, ONLY_ACTIVE);
             imageTemplates.addAll(DisksFilter.filterCinderDisks(allImages, ONLY_PLUGGED));
+            imageTemplates.addAll(DisksFilter.filterManagedBlockStorageDisks(allImages, ONLY_PLUGGED));
         }
         return imageTemplates;
     }

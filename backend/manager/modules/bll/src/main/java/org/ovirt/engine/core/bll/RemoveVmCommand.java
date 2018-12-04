@@ -247,6 +247,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         vmImages.addAll(DisksFilter.filterCinderDisks(vmDisks));
+        vmImages.addAll(DisksFilter.filterManagedBlockStorageDisks(vmDisks));
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);

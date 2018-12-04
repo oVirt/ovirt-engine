@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 
 public class DisksFilter {
 
@@ -52,6 +53,12 @@ public class DisksFilter {
      */
     public static final DiskStorageTypePredicate<CinderDisk> ONLY_CINDER =
             new DiskStorageTypePredicate<>(CinderDisk.class);
+
+    /**
+     * Filters out all disks that are not managed block storage disks.
+     */
+    public static final DiskStorageTypePredicate<ManagedBlockStorageDisk> ONLY_MANAGED_BLOCK_STORAGE =
+            new DiskStorageTypePredicate<>(ManagedBlockStorageDisk.class);
 
     /**
      * Filters out all disks that are not snapable (retains only disks that we can take a snapshot of).
@@ -107,6 +114,18 @@ public class DisksFilter {
      */
     public static List<CinderDisk> filterCinderDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_CINDER, predicates);
+    }
+
+    /**
+     * This method filters a list of disks retaining only managed block storage disks and continues to filter the list by the
+     * specified predicates.
+     *
+     * @param disks The collection of disks to filter
+     * @param predicates The predicates to filter by
+     * @return A filtered list of disks
+     */
+    public static List<ManagedBlockStorageDisk> filterManagedBlockStorageDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
+        return filterDisksByStorageType(disks, ONLY_MANAGED_BLOCK_STORAGE, predicates);
     }
 
     /**

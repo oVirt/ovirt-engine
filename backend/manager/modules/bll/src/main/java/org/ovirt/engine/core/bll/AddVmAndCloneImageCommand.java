@@ -163,6 +163,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks, ONLY_PLUGGED);
         allDisks.addAll(cinderDisks);
+        allDisks.addAll(DisksFilter.filterManagedBlockStorageDisks(disks, ONLY_PLUGGED));
         return allDisks;
     }
 

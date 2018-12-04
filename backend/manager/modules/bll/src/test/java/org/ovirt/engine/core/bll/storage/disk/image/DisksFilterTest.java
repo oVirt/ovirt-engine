@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 
 public class DisksFilterTest {
 
@@ -25,8 +26,10 @@ public class DisksFilterTest {
         Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false, false);
         Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true, false);
         Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true, false);
+        Disk managedBlockDisk = createDisk(DiskStorageType.MANAGED_BLOCK_STORAGE, false, false, true, false);
 
-        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk);
+
+        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk, managedBlockDisk);
         List<DiskImage> filteredList = DisksFilter.filterImageDisks(disksList);
 
         assertEquals(1, filteredList.size());
@@ -38,8 +41,10 @@ public class DisksFilterTest {
         Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false, false);
         Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true, false);
         Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true, false);
+        Disk managedBlockDisk = createDisk(DiskStorageType.MANAGED_BLOCK_STORAGE, false, false, true, false);
 
-        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk);
+
+        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk, managedBlockDisk);
         List<LunDisk> filteredList = DisksFilter.filterLunDisks(disksList);
 
         assertEquals(1, filteredList.size());
@@ -51,12 +56,29 @@ public class DisksFilterTest {
         Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false, false);
         Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true, false);
         Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true, false);
+        Disk managedBlockDisk = createDisk(DiskStorageType.MANAGED_BLOCK_STORAGE, false, false, true, false);
 
-        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk);
+
+        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk, managedBlockDisk);
         List<CinderDisk> filteredList = DisksFilter.filterCinderDisks(disksList);
 
         assertEquals(1, filteredList.size());
         assertThat(filteredList, containsInAnyOrder(cinderDisk));
+    }
+
+    @Test
+    public void testFilterNonManagedBlockDiskDisks() {
+        Disk lunDisk = createDisk(DiskStorageType.LUN, false, false, false, false);
+        Disk imageDisk = createDisk(DiskStorageType.IMAGE, false, false, true, false);
+        Disk cinderDisk = createDisk(DiskStorageType.CINDER, false, false, true, false);
+        Disk managedBlockDisk = createDisk(DiskStorageType.MANAGED_BLOCK_STORAGE, false, false, true, false);
+
+
+        List<Disk> disksList = Arrays.asList(lunDisk, imageDisk, cinderDisk, managedBlockDisk);
+        List<ManagedBlockStorageDisk> filteredList = DisksFilter.filterManagedBlockStorageDisks(disksList);
+
+        assertEquals(1, filteredList.size());
+        assertThat(filteredList, containsInAnyOrder(managedBlockDisk));
     }
 
     @Test
@@ -131,6 +153,10 @@ public class DisksFilterTest {
             break;
         case CINDER:
             disk = new CinderDisk();
+            setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
+            break;
+        case MANAGED_BLOCK_STORAGE:
+            disk = new ManagedBlockStorageDisk();
             setDiskImageProperties((DiskImage) disk, isActive, isShareable, isSnapable);
             break;
         }
