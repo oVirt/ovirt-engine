@@ -215,7 +215,7 @@ public class GlusterSnapshotSyncJobTest {
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
-        cluster.setCompatibilityVersion(Version.v4_0);
+        cluster.setCompatibilityVersion(Version.getLast());
 
         return cluster;
     }
@@ -228,7 +228,7 @@ public class GlusterSnapshotSyncJobTest {
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
-        cluster.setCompatibilityVersion(Version.v4_0);
+        cluster.setCompatibilityVersion(Version.getLast());
         list.add(cluster);
 
         return list;
