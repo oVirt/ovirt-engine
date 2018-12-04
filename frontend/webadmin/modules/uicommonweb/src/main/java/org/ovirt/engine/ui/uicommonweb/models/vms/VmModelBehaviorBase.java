@@ -725,39 +725,42 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateQuotaByCluster(final Guid defaultQuota, final String quotaName) {
-        if (getModel().getQuota().getIsAvailable()) {
-            Cluster cluster = getModel().getSelectedCluster();
-            if (cluster == null) {
-                return;
-            }
-            AsyncDataProvider.getInstance().getAllRelevantQuotasForClusterSorted(new AsyncQuery<>(
-                    quotaList -> {
-                        UnitVmModel vmModel = getModel();
-                        if (quotaList == null) {
-                            return;
-                        }
-
-                        if (!quotaList.isEmpty()) {
-                            vmModel.getQuota().setItems(quotaList);
-                        }
-                        if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
-                            boolean hasQuotaInList = false;
-                            if (!quotaList.isEmpty()) {
-                                hasQuotaInList = defaultQuota.equals(quotaList.get(0).getId());
-                            }
-
-                            // Add the quota to the list only in edit mode
-                            if (!hasQuotaInList && !getModel().getIsNew()) {
-                                Quota quota = new Quota();
-                                quota.setId(defaultQuota);
-                                quota.setQuotaName(quotaName);
-                                quotaList.add(0, quota);
-                                vmModel.getQuota().setItems(quotaList);
-                                vmModel.getQuota().setSelectedItem(quota);
-                            }
-                        }
-                    }), cluster.getId(), defaultQuota);
+        Cluster cluster = getModel().getSelectedCluster();
+        if (cluster == null) {
+            return;
         }
+
+        if (!getModel().getQuota().getIsAvailable()) {
+            getModel().getQuota().setItems(null);
+            return;
+        }
+
+        AsyncDataProvider.getInstance().getAllRelevantQuotasForClusterSorted(new AsyncQuery<>(
+                quotaList -> {
+                    UnitVmModel vmModel = getModel();
+                    vmModel.getQuota().setItems(quotaList);
+
+                    if (quotaList == null) {
+                        return;
+                    }
+
+                    if (!Guid.isNullOrEmpty(defaultQuota)) {
+                        boolean hasQuotaInList = false;
+                        if (!quotaList.isEmpty()) {
+                            hasQuotaInList = defaultQuota.equals(quotaList.get(0).getId());
+                        }
+
+                        // Add the quota to the list only in edit mode
+                        if (!hasQuotaInList && !getModel().getIsNew()) {
+                            Quota quota = new Quota();
+                            quota.setId(defaultQuota);
+                            quota.setQuotaName(quotaName);
+                            quotaList.add(0, quota);
+                            vmModel.getQuota().setItems(quotaList);
+                            vmModel.getQuota().setSelectedItem(quota);
+                        }
+                    }
+                }), cluster.getId(), defaultQuota);
     }
 
     protected void updateMemoryBalloon() {
