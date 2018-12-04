@@ -216,6 +216,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         internalNetworkList.setSetupModel(uicommonModel);
         externalNetworkList.setSetupModel(uicommonModel);
         labelsList.setSetupModel(uicommonModel);
+        commitChanges.setEnabled(false);
     }
 
     @Override
