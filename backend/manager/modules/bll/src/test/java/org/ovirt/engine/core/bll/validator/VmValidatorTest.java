@@ -55,7 +55,7 @@ public class VmValidatorTest extends BaseCommandTest {
 
     private VM vm;
 
-    private static final Version COMPAT_VERSION_FOR_CPU_SOCKET_TEST = Version.v4_0;
+    private static final Version COMPAT_VERSION_FOR_CPU_SOCKET_TEST = Version.v4_1;
     private static final int MAX_NUM_CPUS = 16;
     private static final int MAX_NUM_SOCKETS = 4;
     private static final int MAX_NUM_CPUS_PER_SOCKET = 3;
@@ -98,7 +98,7 @@ public class VmValidatorTest extends BaseCommandTest {
     private VM createVm() {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setClusterCompatibilityVersion(Version.v4_0);
+        vm.setClusterCompatibilityVersion(Version.v4_1);
         return vm;
     }
 
@@ -116,7 +116,7 @@ public class VmValidatorTest extends BaseCommandTest {
         doReturn("").
                 when(utils)
                 .getUserDefinedVMProperties(any());
-        doReturn(new HashSet<>(Arrays.asList(Version.v4_0, Version.v4_1, Version.v4_2))).
+        doReturn(new HashSet<>(Arrays.asList(Version.v4_1, Version.v4_2, Version.v4_3))).
                 when(utils)
                 .getSupportedClusterLevels();
         doReturn(utils).when(validator).getVmPropertiesUtils();
