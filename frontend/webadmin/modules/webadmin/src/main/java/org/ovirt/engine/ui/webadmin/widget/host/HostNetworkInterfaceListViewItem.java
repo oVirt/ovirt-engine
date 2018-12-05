@@ -170,7 +170,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         addDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
                 SafeHtmlUtils.fromString(rateRenderer.render(new Double[] {
                         hostInterface.getStatistics().getReceiveRate(),
-                        hostInterface.getSpeed().doubleValue() })), dl);
+                        hostInterface.hasSpeed() ? hostInterface.getSpeed().doubleValue() : 0.0 })), dl);
         dl.addClassName(Styles.PULL_LEFT);
         rxCol.getElement().appendChild(dl);
         FlowPanel divider = new FlowPanel();
@@ -190,7 +190,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
                 SafeHtmlUtils.fromString(rateRenderer.render(new Double[] {
                         hostInterface.getStatistics().getTransmitRate(),
-                        hostInterface.getSpeed().doubleValue() })), dl);
+                        hostInterface.hasSpeed() ? hostInterface.getSpeed().doubleValue() : 0.0 })), dl);
         dl.addClassName(Styles.PULL_LEFT);
         txCol.getElement().appendChild(dl);
         FlowPanel divider = new FlowPanel();
