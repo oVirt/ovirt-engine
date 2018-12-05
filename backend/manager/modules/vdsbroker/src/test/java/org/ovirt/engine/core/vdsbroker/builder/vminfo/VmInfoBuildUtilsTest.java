@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -137,6 +138,8 @@ public class VmInfoBuildUtilsTest {
     private VmSerialNumberBuilder vmSerialNumberBuilder;
     @Mock
     private MultiQueueUtils multiQueueUtils;
+    @Mock
+    private CinderStorageDao cinderStorageDao;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;

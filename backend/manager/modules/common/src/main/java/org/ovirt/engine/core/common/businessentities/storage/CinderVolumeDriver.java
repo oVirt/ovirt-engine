@@ -6,7 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 
 public enum CinderVolumeDriver implements Nameable {
-    RBD("rbd");
+    RBD("rbd"),
+    BLOCK("block");
 
     private String name;
     private static Map<String, CinderVolumeDriver> mappings;

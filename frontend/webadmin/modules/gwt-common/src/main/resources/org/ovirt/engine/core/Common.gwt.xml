@@ -320,6 +320,7 @@
         <include name="common/businessentities/storage/ManagedBlockStorage.java" />
         <include name="common/businessentities/storage/ManagedBlockStorageDisk.java" />
         <include name="common/businessentities/storage/DiskBackup.java" />
+        <include name="common/businessentities/storage/CinderVolumeDriver.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />

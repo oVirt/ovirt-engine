@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeDriver;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -1981,11 +1982,21 @@ public class LibvirtVmXmlBuilder {
 
         case MANAGED_BLOCK_STORAGE:
             ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
+            Map<String, String> metadata = new HashMap<>();
             String path = (String) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.PATH);
-            Map<String, Object> attachment =
-                    (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
+
+            if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.RBD) {
+                // For rbd we need to pass the entire path since we rely on more than a single
+                // variable e.g: /dev/rbd/<pool-name>/<vol-name>
+                metadata = Collections.singletonMap("RBD", path);
+            } else if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.BLOCK) {
+                Map<String, Object> attachment =
+                        (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
+                metadata = Collections.singletonMap("GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN));
+            }
+
             writer.writeAttributeString("dev", path);
-            diskMetadata.put(dev, Collections.singletonMap("GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN)));
+            diskMetadata.put(dev, metadata);
 
             break;
         }

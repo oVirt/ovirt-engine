@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 @Singleton
 public class ManagedBlockStorageCommandUtil {
@@ -35,6 +36,8 @@ public class ManagedBlockStorageCommandUtil {
     private VDSBrokerFrontend resourceManager;
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     public boolean attachManagedBlockStorageDisks(VM vm, VmHandler vmHandler, VDS vds) {
         if (vm.getDiskMap().isEmpty()) {
@@ -56,6 +59,8 @@ public class ManagedBlockStorageCommandUtil {
         saveAttachedHost(disk, vmId, vds.getId());
 
         disk.setDevice((Map<String, Object>) returnValue.getReturnValue());
+        vmInfoBuildUtils.setCinderDriverType(disk);
+
         SaveManagedBlockStorageDiskDeviceCommandParameters parameters =
                 new SaveManagedBlockStorageDiskDeviceCommandParameters();
         parameters.setDevice(disk.getDevice());

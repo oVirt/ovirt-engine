@@ -4,12 +4,15 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ManagedBlockStorageDisk extends DiskImage {
-    private static final long serialVersionUID = -949344024751821482L;
+    private static final long serialVersionUID = -6032118718251114213L;
     public static final String ATTACHED_VDS_ID = "attached_vds_id";
+    public static String DRIVER_VOLUME_TYPE = "driver_volume_type";
 
     private Map<String, Object> device;
 
     private Map<String, Object> connectionInfo;
+
+    private CinderVolumeDriver cinderVolumeDriver;
 
     @Override
     public DiskStorageType getDiskStorageType() {
@@ -35,6 +38,14 @@ public class ManagedBlockStorageDisk extends DiskImage {
         this.connectionInfo = connectionInfo;
     }
 
+    public CinderVolumeDriver getCinderVolumeDriver() {
+        return cinderVolumeDriver;
+    }
+
+    public void setCinderVolumeDriver(CinderVolumeDriver cinderVolumeDriver) {
+        this.cinderVolumeDriver = cinderVolumeDriver;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -48,11 +59,12 @@ public class ManagedBlockStorageDisk extends DiskImage {
         }
         ManagedBlockStorageDisk that = (ManagedBlockStorageDisk) o;
         return Objects.equals(device, that.device) &&
-                Objects.equals(connectionInfo, that.connectionInfo);
+                Objects.equals(connectionInfo, that.connectionInfo) &&
+                cinderVolumeDriver == that.cinderVolumeDriver;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), device, connectionInfo);
+        return Objects.hash(super.hashCode(), device, connectionInfo, cinderVolumeDriver);
     }
 }

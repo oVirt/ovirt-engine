@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -84,6 +85,7 @@ import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
@@ -146,6 +148,7 @@ public class VmInfoBuildUtils {
     private final VdsStatisticsDao vdsStatisticsDao;
     private final HostDeviceDao hostDeviceDao;
     private final DiskVmElementDao diskVmElementDao;
+    private final CinderStorageDao cinderStorageDao;
     private final VmDevicesMonitoring vmDevicesMonitoring;
     private final VmSerialNumberBuilder vmSerialNumberBuilder;
     private final MultiQueueUtils multiQueueUtils;
@@ -180,7 +183,8 @@ public class VmInfoBuildUtils {
             VmSerialNumberBuilder vmSerialNumberBuilder,
             DiskVmElementDao diskVmElementDao,
             VmDevicesMonitoring vmDevicesMonitoring,
-            MultiQueueUtils multiQueueUtils) {
+            MultiQueueUtils multiQueueUtils,
+            CinderStorageDao cinderStorageDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -203,6 +207,7 @@ public class VmInfoBuildUtils {
         this.diskVmElementDao = Objects.requireNonNull(diskVmElementDao);
         this.vmDevicesMonitoring = Objects.requireNonNull(vmDevicesMonitoring);
         this.multiQueueUtils = Objects.requireNonNull(multiQueueUtils);
+        this.cinderStorageDao = Objects.requireNonNull(cinderStorageDao);
     }
 
     @SuppressWarnings("unchecked")
@@ -1382,4 +1387,15 @@ public class VmInfoBuildUtils {
     public VgpuPlacement vgpuPlacement(Guid hostId) {
         return VgpuPlacement.forValue(vdsStaticDao.get(hostId).getVgpuPlacement());
     }
+
+    public void setCinderDriverType(ManagedBlockStorageDisk disk) {
+        Map<String, Object> conn_info = disk.getConnectionInfo();
+
+        if (CinderVolumeDriver.RBD.getName().equals(conn_info.get(ManagedBlockStorageDisk.DRIVER_VOLUME_TYPE))) {
+            disk.setCinderVolumeDriver(CinderVolumeDriver.RBD);
+        } else {
+            disk.setCinderVolumeDriver(CinderVolumeDriver.BLOCK);
+        }
+    }
+
 }
