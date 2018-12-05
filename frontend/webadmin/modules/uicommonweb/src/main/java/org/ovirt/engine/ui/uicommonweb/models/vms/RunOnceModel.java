@@ -800,7 +800,7 @@ public abstract class RunOnceModel extends Model {
 
             if (vm.getDefaultDisplayType() == DisplayType.none) {
                 params.setRunOnceDisplayType(params.getRunOnceGraphics().contains(GraphicsType.SPICE) ? DisplayType.qxl
-                        : DisplayType.cirrus);
+                        : DisplayType.vga);
             }
         }
 

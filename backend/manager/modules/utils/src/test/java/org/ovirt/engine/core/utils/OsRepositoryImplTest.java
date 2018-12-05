@@ -53,7 +53,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "2048");
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.4.1", "1024");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
-        preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/cirrus,SPICE/qxl");
+        preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/vga,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
         preferences.node("/os/rhel7/devices/audio/enabled").put("value", "true");
         preferences.node("/os/rhel7/devices/floppy/support").put("value", "true");
@@ -184,7 +184,7 @@ public class OsRepositoryImplTest {
         boolean containsSameElements = new HashSet<>(supportedGraphicsAndDisplays)
                 .equals(new HashSet<>(Arrays.asList(
                         new Pair<>(GraphicsType.SPICE, DisplayType.qxl),
-                        new Pair<>(GraphicsType.VNC, DisplayType.cirrus))));
+                        new Pair<>(GraphicsType.VNC, DisplayType.vga))));
 
         assertTrue(isSizeCorrect);
         assertTrue(containsSameElements);

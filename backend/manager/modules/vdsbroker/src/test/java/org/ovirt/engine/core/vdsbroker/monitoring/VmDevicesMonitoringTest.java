@@ -184,13 +184,13 @@ public class VmDevicesMonitoringTest {
         final Guid usbControllerId = Guid.newGuid();
         initDevices(
                 getVmDevice(usbControllerId, VM_ID, VmDeviceGeneralType.CONTROLLER, "usb", false),
-                getVmDevice(VIDEO_DEVICE_ID, VM_ID, VmDeviceGeneralType.VIDEO, "cirrus", true),
+                getVmDevice(VIDEO_DEVICE_ID, VM_ID, VmDeviceGeneralType.VIDEO, "vga", true),
                 getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
         );
         initDumpXmls(
                 getDeviceInfo(null, "balloon", "memballoon", null),
                 getDeviceInfo(null, "controller", "virtio-serial", SERIAL_DEVICE_ADDRESS),
-                getDeviceInfo(VIDEO_DEVICE_ID, "video", "cirrus", VIDEO_DEVICE_ADDRESS),
+                getDeviceInfo(VIDEO_DEVICE_ID, "video", "vga", VIDEO_DEVICE_ADDRESS),
                 getDeviceInfo(CDROM_DEVICE_ID, "disk", "cdrom", CDROM_DEVICE_ADDRESS)
         );
 
@@ -237,7 +237,7 @@ public class VmDevicesMonitoringTest {
         Map<String, Object> vmInfo = getDumpXmls(VM_ID,
                 getDeviceInfo(null, "balloon", "memballoon", null),
                 getDeviceInfo(null, "controller", "virtio-serial", SERIAL_DEVICE_ADDRESS),
-                getDeviceInfo(VIDEO_DEVICE_ID, "video", "cirrus", VIDEO_DEVICE_ADDRESS),
+                getDeviceInfo(VIDEO_DEVICE_ID, "video", "vga", VIDEO_DEVICE_ADDRESS),
                 getDeviceInfo(CDROM_DEVICE_ID, "disk", "cdrom", CDROM_DEVICE_ADDRESS)
         );
         change.updateVmFromFullList(vmInfo);

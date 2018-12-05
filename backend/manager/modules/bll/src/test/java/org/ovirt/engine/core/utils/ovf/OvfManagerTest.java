@@ -109,10 +109,10 @@ public class OvfManagerTest {
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
         final List<Pair<GraphicsType, DisplayType>> gndDefaultOs = new ArrayList<>();
-        gndDefaultOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
-        gndDefaultOs.add(new Pair<>(GraphicsType.VNC, DisplayType.cirrus));
+        gndDefaultOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.vga));
+        gndDefaultOs.add(new Pair<>(GraphicsType.VNC, DisplayType.vga));
         final List<Pair<GraphicsType, DisplayType>> gndExistingOs = new ArrayList<>();
-        gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
+        gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.qxl));
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
         when(osRepository.getOsIdByUniqueName(any())).thenAnswer(
@@ -147,7 +147,7 @@ public class OvfManagerTest {
     @Test
     public void testVmOvfCreationDefaultGraphicsDevice() throws Exception {
         VM vm = createVM();
-        vm.setDefaultDisplayType(DisplayType.cirrus);
+        vm.setDefaultDisplayType(DisplayType.vga);
         vm.setVmOs(DEFAULT_OS_ID);
         String xml = manager.exportVm(vm, new FullEntityOvfData(vm), Version.getLast());
         assertNotNull(xml);
@@ -167,7 +167,7 @@ public class OvfManagerTest {
     @Test
     public void testVmOvfCreationDefaultGraphicsDeviceFallbackToSupported() throws Exception {
         VM vm = createVM();
-        vm.setDefaultDisplayType(DisplayType.cirrus);
+        vm.setDefaultDisplayType(DisplayType.qxl);
         vm.setVmOs(EXISTING_OS_ID);
         String xml = manager.exportVm(vm,  new FullEntityOvfData(vm), Version.getLast());
         assertNotNull(xml);

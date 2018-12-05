@@ -1376,7 +1376,7 @@ public class BackendVmsResourceTest
         entity.setDescription(DESCRIPTIONS[index]);
         entity.setCpuPerSocket(4);
         entity.setNumOfSockets(2);
-        entity.setDefaultDisplayType(DisplayType.cirrus);
+        entity.setDefaultDisplayType(DisplayType.qxl);
         entity.setNumOfMonitors(2);
         entity.setVmType(VmType.Server);
         return entity;
