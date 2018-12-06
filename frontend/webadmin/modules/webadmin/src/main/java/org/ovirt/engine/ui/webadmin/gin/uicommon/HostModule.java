@@ -147,7 +147,8 @@ public class HostModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostGeneralModel> modelProvider,
-            final Provider<HostInstallPopupPresenterWidget> installPopupProvider) {
+            final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
+            final Provider<HostUpgradePopupPresenterWidget> hostUpgradePopupPresenterWidgetProvider) {
         DetailTabModelProvider<HostListModel<Void>, HostGeneralModel> result =
                 new DetailTabModelProvider<HostListModel<Void>, HostGeneralModel>(
                         eventBus, defaultConfirmPopupProvider) {
@@ -159,6 +160,15 @@ public class HostModule extends AbstractGinModule {
                         }
 
                         return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostGeneralModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getUpgradeHostCommand()) {
+                            return hostUpgradePopupPresenterWidgetProvider.get();
+                        }
+                        return super.getConfirmModelPopup(source, lastExecutedCommand);
                     }
                 };
         result.setMainModelProvider(mainModelProvider);
