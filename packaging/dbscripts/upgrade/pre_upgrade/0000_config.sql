@@ -135,7 +135,7 @@ select fn_db_add_config_value('WarningLowSpaceIndicator','10','general');
 -- Gluster related
 select fn_db_add_config_value('GlusterRefreshRateHooks', '7200', 'general');
 select fn_db_add_config_value('GlusterRefreshRateLight', '15', 'general');
-select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
+select fn_db_add_config_value('GlusterRefreshRateHeavy', '900', 'general');
 select fn_db_add_config_value('GlusterRefreshRateStorageDevices', '7200', 'general');
 select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
@@ -1174,7 +1174,7 @@ select fn_db_update_default_config_value('MaxPeakNetworkQoSValue', '2048', '3435
 
 -- Increase interval of polling gluster cli for info from 5 to 15 seconds
 select fn_db_update_default_config_value('GlusterRefreshRateLight', '5', '15', 'general', false);
-
+select fn_db_update_default_config_value('GlusterRefreshRateHeavy', '300', '900', 'general', false);
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
