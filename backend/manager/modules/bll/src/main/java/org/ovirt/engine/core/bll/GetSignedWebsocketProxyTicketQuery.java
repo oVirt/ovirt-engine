@@ -34,7 +34,7 @@ public class GetSignedWebsocketProxyTicketQuery<P extends GetSignedWebsocketProx
     private VmDao vmDao;
 
     @Inject
-    static VdsDynamicDao vdsDynamicDao;
+    private VdsDynamicDao vdsDynamicDao;
 
     public GetSignedWebsocketProxyTicketQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
