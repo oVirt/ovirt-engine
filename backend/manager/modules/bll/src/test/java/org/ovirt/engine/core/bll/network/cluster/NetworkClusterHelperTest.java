@@ -11,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -63,6 +64,7 @@ public class NetworkClusterHelperTest {
     public void setUp() {
         networkCluster = createNetworkCluster(CLUSTER_ID, NETWORK_ID1);
         when(networkClusterDao.get(networkCluster.getId())).thenReturn(networkCluster);
+        when(networkClusterDao.getAllForCluster(CLUSTER_ID)).thenReturn(Arrays.asList(networkCluster));
 
         managementNetworkCluster = createNetworkCluster(CLUSTER_ID, MANAGEMENT_NETWORK_ID);
         managementNetwork = createNetwork(MANAGEMENT_NETWORK_ID, MANAGEMENT_NETWORK_NAME);

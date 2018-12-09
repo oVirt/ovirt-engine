@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -92,8 +93,9 @@ public class NetworkClusterHelper {
     public void setStatus(Guid clusterId, final Collection<Network> networks) {
         final RequiredNetworkClusterStatusUpdater requiredNetworkClusterStatusUpdater =
                 new RequiredNetworkClusterStatusUpdater(clusterId);
+        List<NetworkCluster> networkClusters = networkClusterDao.getAllForCluster(clusterId);
         for (Network network : networks) {
-            NetworkCluster networkCluster = networkClusterDao.get(new NetworkClusterId(clusterId, network.getId()));
+            NetworkCluster networkCluster = networkClusters.stream().filter(nc -> nc.getNetworkId().equals(network.getId())).findFirst().orElse(null);
             boolean doUpdateNetworkClusterStatus = networkCluster != null;
             if (doUpdateNetworkClusterStatus) {
                 if (networkCluster.isRequired()) {
