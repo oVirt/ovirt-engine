@@ -76,6 +76,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -118,6 +119,8 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     private VmTemplateDao vmTemplateDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private VmNicDao vmNicDao;
     @Inject
@@ -410,9 +413,54 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
     }
 
+    protected boolean validateLeaseStorageDomain(Guid leaseStorageDomainId) {
+        StorageDomain domain = storageDomainDao.getForStoragePool(leaseStorageDomainId, getStoragePoolId());
+        StorageDomainValidator validator = new StorageDomainValidator(domain);
+        return validate(validator.isDomainExistAndActive()) && validate(validator.isDataDomain());
+    }
+
+    private Guid getVmLeaseToDefaultStorageDomain() {
+        return storageDomainStaticDao.getAllForStoragePool(getStoragePoolId()).stream()
+                .map(StorageDomainStatic::getId)
+                .filter(this::validateLeaseStorageDomain)
+                .findFirst()
+                .orElse(null);
+    }
+
+    protected boolean shouldAddLease(VmTemplate vm) {
+        return vm.getLeaseStorageDomainId() != null;
+    }
+
+    private void handleVmLease() {
+        Guid importedLeaseStorageDomainId = getVmTemplate().getLeaseStorageDomainId();
+        if (importedLeaseStorageDomainId == null) {
+            return;
+        }
+        if (!getVmTemplate().isAutoStartup() || !shouldAddLease(getVmTemplate())) {
+            getVmTemplate().setLeaseStorageDomainId(null);
+            return;
+        }
+        if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
+            getVmTemplate().setLeaseStorageDomainId(null);
+            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_TEMPLATE_WITH_LEASE_COMPAT_VERSION);
+            return;
+        }
+        if (validateLeaseStorageDomain(importedLeaseStorageDomainId)) {
+            return;
+        }
+        getVmTemplate().setLeaseStorageDomainId(getVmLeaseToDefaultStorageDomain());
+        if (getVmTemplate().getLeaseStorageDomainId() == null) {
+            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_TEMPLATE_WITH_LEASE_STORAGE_DOMAIN);
+        } else {
+            log.warn("Setting the lease for the VM Template '{}' to the storage domain '{}', because the storage domain '{}' is unavailable",
+                    getVmTemplate().getId(), getVmTemplate().getLeaseStorageDomainId(), importedLeaseStorageDomainId);
+        }
+    }
+
     @Override
     protected void executeCommand() {
         TransactionSupport.executeInNewTransaction(() -> {
+            handleVmLease();
             initImportClonedTemplateDisks();
             addVmTemplateToDb();
             addPermissionsToDB();
