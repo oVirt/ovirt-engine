@@ -849,10 +849,15 @@ public class SchedulingManager implements BackendService {
             return;
         }
 
-        // Subtract cpu load
-        int hostCpus = SlaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
-        float cpuCoef = ((float) vm.getNumOfCpus()) / ((float) hostCpus);
-        host.setUsageCpuPercent(host.getUsageCpuPercent() - Math.round(vm.getUsageCpuPercent() * cpuCoef));
+        // Using the count of threads instead of count of CPUs,
+        // because the CPU percentage from the host uses threads
+        int hostThreads = host.getCpuThreads();
+        int hostLoad = host.getUsageCpuPercent() * hostThreads;
+        int vmLoad = vm.getUsageCpuPercent() * vm.getNumOfCpus(true);
+
+        host.setUsageCpuPercent(Math.max(
+                Math.round((float) (hostLoad - vmLoad) / (float) hostThreads),
+                0));
 
         // Subtract memory
         host.setMemCommited(host.getMemCommited() - vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
