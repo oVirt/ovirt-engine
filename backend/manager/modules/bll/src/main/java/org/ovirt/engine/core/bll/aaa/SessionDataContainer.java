@@ -382,6 +382,14 @@ public class SessionDataContainer {
         return (String) getData(engineSessionId, SSO_ACCESS_TOKEN_PARAMETER_NAME, false);
     }
 
+    public String getSsoAccessToken(String engineSessionId, boolean mustBeValid) {
+        String ssoToken = getSsoAccessToken(engineSessionId);
+        if (StringUtils.isNotEmpty(ssoToken) && mustBeValid) {
+            ssoToken = getSessionValid(engineSessionId, false) ? ssoToken : null;
+        }
+        return ssoToken;
+    }
+
     public void setSsoOvirtAppApiScope(String engineSessionId, String scope) {
         List<String> scopes = StringUtils.isEmpty(scope) ?
                 Collections.emptyList() :
