@@ -177,6 +177,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             }
 
             getParameters().setCreateSnapshotStage(CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_COMPLETED);
+            persistCommandIfNeeded();
             return true;
         }
 
