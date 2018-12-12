@@ -31,7 +31,6 @@ public class LoginServlet extends HttpServlet {
                     .addParameter(WelcomeUtils.HTTP_PARAM_CLIENT_ID,
                             EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_SSO_CLIENT_ID))
                     .addParameter(WelcomeUtils.HTTP_PARAM_RESPONSE_TYPE, WelcomeUtils.CODE)
-                    .addParameter(WelcomeUtils.HTTP_PARAM_ENGINE_URL, FiltersHelper.getEngineUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_REDIRECT_URI, WelcomeUtils.getOauth2CallbackUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_SCOPE, request.getParameter(WelcomeUtils.SCOPE))
                     .addParameter(WelcomeUtils.HTTP_PARAM_LOCALE, request.getAttribute(WelcomeUtils.LOCALE).toString())
