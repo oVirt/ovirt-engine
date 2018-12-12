@@ -493,7 +493,8 @@ CREATE OR REPLACE FUNCTION Insertstorage_domain_static (
     v_warning_low_space_indicator INT,
     v_critical_space_action_blocker INT,
     v_warning_low_confirmed_space_indicator INT,
-    v_backup BOOLEAN
+    v_backup BOOLEAN,
+    v_block_size INTEGER
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -514,7 +515,8 @@ BEGIN
         warning_low_space_indicator,
         critical_space_action_blocker,
         warning_low_confirmed_space_indicator,
-        backup
+        backup,
+        block_size
         )
     VALUES (
         v_id,
@@ -533,7 +535,8 @@ BEGIN
         v_warning_low_space_indicator,
         v_critical_space_action_blocker,
         v_warning_low_confirmed_space_indicator,
-        v_backup
+        v_backup,
+        v_block_size
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -570,7 +573,8 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     v_warning_low_space_indicator INT,
     v_critical_space_action_blocker INT,
     v_warning_low_confirmed_space_indicator INT,
-    v_backup BOOLEAN
+    v_backup BOOLEAN,
+    v_block_size INTEGER
     )
 RETURNS VOID
     --The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -593,7 +597,8 @@ BEGIN
         warning_low_space_indicator = v_warning_low_space_indicator,
         critical_space_action_blocker = v_critical_space_action_blocker,
         warning_low_confirmed_space_indicator = v_warning_low_confirmed_space_indicator,
-        backup = v_backup
+        backup = v_backup,
+        block_size = v_block_size
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

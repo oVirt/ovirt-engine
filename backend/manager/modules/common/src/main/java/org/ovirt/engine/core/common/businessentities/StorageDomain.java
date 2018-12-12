@@ -118,6 +118,14 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
         getStorageStaticData().setBackup(backup);
     }
 
+    public StorageBlockSize getBlockSize() {
+        return getStorageStaticData().getBlockSize();
+    }
+
+    public void setBlockSize(StorageBlockSize blockSize) {
+        getStorageStaticData().setBlockSize(blockSize);
+    }
+
     @JsonIgnore
     @Override
     public String getName() {

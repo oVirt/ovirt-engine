@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -90,7 +91,8 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
                 .addValue("warning_low_space_indicator", domain.getWarningLowSpaceIndicator())
                 .addValue("critical_space_action_blocker", domain.getCriticalSpaceActionBlocker())
                 .addValue("warning_low_confirmed_space_indicator", domain.getWarningLowConfirmedSpaceIndicator())
-                .addValue("backup", domain.isBackup());
+                .addValue("backup", domain.isBackup())
+                .addValue("block_size", domain.getBlockSize().getValue());
     }
 
     @Override
@@ -117,6 +119,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
         entity.setCriticalSpaceActionBlocker((Integer) rs.getObject("critical_space_action_blocker"));
         entity.setWarningLowConfirmedSpaceIndicator((Integer) rs.getObject("warning_low_confirmed_space_indicator"));
         entity.setBackup(rs.getBoolean("backup"));
+        entity.setBlockSize(StorageBlockSize.forValue(rs.getInt("block_size")));
         return entity;
     };
 }

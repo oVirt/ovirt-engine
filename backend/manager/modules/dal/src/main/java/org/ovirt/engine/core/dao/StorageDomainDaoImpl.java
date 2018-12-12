@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -191,6 +192,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
         entity.setWarningLowConfirmedSpaceIndicator(rs.getInt("warning_low_confirmed_space_indicator"));
         entity.setHostedEngineStorage(rs.getBoolean("is_hosted_engine_storage"));
         entity.setBackup(rs.getBoolean("backup"));
+        entity.setBlockSize(StorageBlockSize.forValue(rs.getInt("block_size")));
         return entity;
     };
 

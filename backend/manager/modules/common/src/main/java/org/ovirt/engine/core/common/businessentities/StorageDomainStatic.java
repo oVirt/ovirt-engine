@@ -47,6 +47,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private StorageFormatType storageFormat;
 
+    private StorageBlockSize blockSize;
+
     private boolean autoRecoverable;
 
     private SANState sanState;
@@ -89,6 +91,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         name = "";
         description = "";
         comment = "";
+        blockSize = StorageBlockSize.BLOCK_512;
     }
 
     @Override
@@ -147,6 +150,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     public void setStorageFormat(StorageFormatType storageFormat) {
         this.storageFormat = storageFormat;
+    }
+
+    public StorageBlockSize getBlockSize() {
+        return blockSize;
+    }
+
+    public void setBlockSize(StorageBlockSize blockSize) {
+        this.blockSize = blockSize;
     }
 
     public boolean isAutoRecoverable() {
@@ -268,6 +279,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 name,
                 storage,
                 storageFormat,
+                blockSize,
                 storagePoolType,
                 storageType,
                 description,
@@ -298,6 +310,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && Objects.equals(name, other.name)
                 && Objects.equals(storage, other.storage)
                 && storageFormat == other.storageFormat
+                && blockSize == other.blockSize
                 && storagePoolType == other.storagePoolType
                 && storageType == other.storageType
                 && sanState == other.sanState
