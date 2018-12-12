@@ -37,7 +37,6 @@ public class SsoSession implements Serializable, Cloneable {
     private ExtMap principalRecord;
     private String loginMessage;
     private String changePasswdMessage;
-    private String engineUrl;
     private String state;
     private boolean reauthenticate;
     private Credentials tempCredentials;
@@ -291,14 +290,6 @@ public class SsoSession implements Serializable, Cloneable {
 
     public void setAuthStack(Stack<InteractiveAuth> authStack) {
         this.authStack = authStack;
-    }
-
-    public String getEngineUrl() {
-        return engineUrl;
-    }
-
-    public void setEngineUrl(String engineUrl) {
-        this.engineUrl = engineUrl;
     }
 
     public String getSessionIdToken() {
