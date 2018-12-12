@@ -50,7 +50,6 @@ public class SsoLoginServlet extends HttpServlet {
                 .addParameter("client_id", EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_ID"))
                 .addParameter("response_type", "code")
                 .addParameter("app_url", request.getParameter("app_url"))
-                .addParameter("engine_url", FiltersHelper.getEngineUrl(request))
                 .addParameter("redirect_uri", redirectUri)
                 .addParameter("scope", scope)
                 .addParameter("source_addr", request.getRemoteAddr());

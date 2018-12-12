@@ -33,7 +33,6 @@ public class WelcomeUtils {
     public static final String SWITCH_USER_URI = "/switch-user";
     public static final String WELCOME_PAGE_JSP_URI = "/WEB-INF/ovirt-engine.jsp";
 
-    public static final String HTTP_PARAM_ENGINE_URL = "engine_url";
     public static final String HTTP_PARAM_LOCALE = "locale";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";

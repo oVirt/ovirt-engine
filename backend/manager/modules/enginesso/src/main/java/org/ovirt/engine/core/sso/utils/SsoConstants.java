@@ -60,7 +60,6 @@ public class SsoConstants {
     public static final String HTTP_PARAM_TOKEN = "token";
     public static final String HTTP_PARAM_TOKENS = "tokens";
     public static final String HTTP_PARAM_APP_URL = "app_url";
-    public static final String HTTP_PARAM_ENGINE_URL = "engine_url";
     public static final String HTTP_PARAM_REDIRECT_URI = "redirect_uri";
     public static final String HTTP_PARAM_SCOPE = "scope";
     public static final String HTTP_PARAM_STATE = "state";
