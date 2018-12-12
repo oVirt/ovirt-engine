@@ -150,6 +150,7 @@
         <include name="common/businessentities/StorageDomainSharedStatus.java" />
         <include name="common/businessentities/StorageDomainStatus.java" />
         <include name="common/businessentities/StorageDomainType.java" />
+        <include name="common/businessentities/StorageBlockSize.java" />
         <include name="common/businessentities/StoragePoolStatus.java" />
         <include name="common/businessentities/StorageFormatType.java" />
         <include name="common/businessentities/TagsVmMap.java" />
