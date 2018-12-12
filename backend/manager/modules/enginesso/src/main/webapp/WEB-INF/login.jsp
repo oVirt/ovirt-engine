@@ -38,7 +38,7 @@
     <div class="obrand_landingBgTop"></div>
     <div class="obrand_landingBgBottom"></div>
 
-    <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoLink">
+    <a href="${applicationScope['ovirt-ssoContext'].getEngineUrl(pageContext.request)}" class="obrand_loginPageLogoLink">
         <span class="obrand_loginPageLogo"></span>
     </a>
     <div class="ovirt-container">
