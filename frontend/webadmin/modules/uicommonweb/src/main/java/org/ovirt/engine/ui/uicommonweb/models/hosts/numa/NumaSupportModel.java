@@ -207,11 +207,15 @@ public class NumaSupportModel extends Model {
     }
 
     public void setVmsWithvNumaNodeList(List<VM> vmsWithvNumaNodeList) {
+        if (!hosts.getSelectedItem().isNumaSupport()) {
+            vmsWithvNumaNodeList.clear();
+        }
         for (Iterator<VM> vmIterator = vmsWithvNumaNodeList.iterator(); vmIterator.hasNext(); ) {
             final VM vm = vmIterator.next();
+
             if (vm.getDedicatedVmForVdsList().isEmpty()
-                    || !vm.getDedicatedVmForVdsList().get(0).equals(getHosts().getSelectedItem().getId())
-                    || vm.getvNumaNodeList() == null) {
+                    || !vm.getDedicatedVmForVdsList().contains(getHosts().getSelectedItem().getId())
+                    || vm.getvNumaNodeList() == null || vm.getvNumaNodeList().isEmpty()) {
                 vmIterator.remove();
             }
         }

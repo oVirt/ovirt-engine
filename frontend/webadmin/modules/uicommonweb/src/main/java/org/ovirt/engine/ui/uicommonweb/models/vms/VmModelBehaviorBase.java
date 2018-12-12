@@ -847,7 +847,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture() && Boolean.FALSE.equals(isAutoAssign)) {
+        if (clusterSupportsHostCpu && !clusterHasPpcArchitecture()
+                && (Boolean.FALSE.equals(isAutoAssign) || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);

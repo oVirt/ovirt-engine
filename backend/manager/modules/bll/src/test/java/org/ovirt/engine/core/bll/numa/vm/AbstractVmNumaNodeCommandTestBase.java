@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.numa.vm;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsDao;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVmNumaNodeDao;
 
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -42,6 +44,9 @@ public abstract class AbstractVmNumaNodeCommandTestBase
 
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
+
+    @Mock
+    private VdsDao vdsDao;
 
     @InjectMocks
     private NumaValidator numaValidator;
@@ -64,6 +69,7 @@ public abstract class AbstractVmNumaNodeCommandTestBase
         initNumaNodes();
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
         mockVmNumaNodeDao(vmNumaNodeDao, existingNumaNodes);
+        mockVdsDao(vdsDao);
 
         doReturn(numaValidator).when(command).getNumaValidator();
 

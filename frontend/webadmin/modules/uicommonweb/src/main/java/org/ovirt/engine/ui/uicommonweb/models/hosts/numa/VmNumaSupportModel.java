@@ -12,15 +12,27 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 public class VmNumaSupportModel extends NumaSupportModel {
 
     private final VM vm;
+    private final VDS host;
 
     public VmNumaSupportModel(List<VDS> hosts, VDS host, Model parentModel, VM vm) {
         super(hosts, host, parentModel);
         this.vm = vm;
+        this.host = host;
     }
 
     @Override
     public void setVmsWithvNumaNodeList(List<VM> vmsWithvNumaNodeList) {
         super.setVmsWithvNumaNodeList(vmsWithvNumaNodeList);
+
+        // Fix displayed VMs list according to model configuration
+        if (getParentModel() instanceof UnitVmModel && host.isNumaSupport()) {
+            UnitVmModel model = (UnitVmModel) getParentModel();
+            if (model.getNumaNodeCount().getEntity() > 0 && !vmsWithvNumaNodeList.contains(vm)) {
+                vmsWithvNumaNodeList.add(vm);
+            } else if (model.getNumaNodeCount().getEntity() == 0) {
+                vmsWithvNumaNodeList.remove(vm);
+            }
+        }
 
         if (Guid.isNullOrEmpty(vm.getId())) {
             if (getParentModel() instanceof UnitVmModel) {
@@ -31,7 +43,6 @@ public class VmNumaSupportModel extends NumaSupportModel {
                     this.getVm().setvNumaNodeList(model.getVmNumaNodes());
                 }
             }
-            vmsWithvNumaNodeList.add(vm);
         } else {
             for (VM vmFromDb : vmsWithvNumaNodeList) {
                 if (vmFromDb.getId().equals(vm.getId())) {

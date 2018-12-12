@@ -4,12 +4,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
+import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsDao;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
@@ -37,19 +42,25 @@ public class NumaValidatorTest {
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
 
+    @Mock
+    private VdsDao vdsDao;
+
     @InjectMocks
     private NumaValidator underTest;
 
-    private ArrayList<VdsNumaNode> vdsNumaNodes;
+    private ArrayList<VdsNumaNode> vdsNumaNodes_host1;
+    private ArrayList<VdsNumaNode> vdsNumaNodes_host2;
     private VM vm;
     private ArrayList<VmNumaNode> vmNumaNodes;
+    private Map<Guid, List<VdsNumaNode>> hostNumaNodesMap;
 
     @BeforeEach
     public void setUp() {
 
-        vdsNumaNodes = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
-        vmNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0, vdsNumaNodes), createVmNumaNode(1)));
-        mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
+        vdsNumaNodes_host1 = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
+        vmNumaNodes = new ArrayList<>(Arrays.asList(createVmNumaNode(0, vdsNumaNodes_host1), createVmNumaNode(1)));
+        mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes_host1);
+        mockVdsDao(vdsDao);
 
         vm = new VM();
         vm.setId(Guid.newGuid());
@@ -75,14 +86,29 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectHostWihtoutNumaSupport() {
-        vdsNumaNodes = new ArrayList(Collections.singletonList(createVdsNumaNode(1)));
-        assertValidationFailure(underTest.validateNumaCompatibility(vm, vm.getvNumaNodeList(), vdsNumaNodes),
+        vdsNumaNodes_host1 = new ArrayList(Collections.singletonList(createVdsNumaNode(1)));
+        hostNumaNodesMap = new HashMap<>();
+        hostNumaNodesMap.put(Guid.newGuid(), vdsNumaNodes_host1);
+
+        assertValidationFailure(underTest.validateNumaCompatibility(vm, vm.getvNumaNodeList(), hostNumaNodesMap),
+                EngineMessage.HOST_NUMA_NOT_SUPPORTED);
+    }
+
+    @Test
+    public void shouldDetectHostWithoutNumaSupportWithTwoPinnedHosts() {
+        vdsNumaNodes_host1 = new ArrayList<>(Arrays.asList(createVdsNumaNode(1)));
+        vdsNumaNodes_host2 = new ArrayList<>(Arrays.asList(createVdsNumaNode(1), createVdsNumaNode(2), createVdsNumaNode(3)));
+        hostNumaNodesMap = new HashMap<>();
+        hostNumaNodesMap.put(Guid.newGuid(), vdsNumaNodes_host1);
+        hostNumaNodesMap.put(Guid.newGuid(), vdsNumaNodes_host1);
+
+        assertValidationFailure(underTest.validateNumaCompatibility(vm, vm.getvNumaNodeList(), hostNumaNodesMap),
                 EngineMessage.HOST_NUMA_NOT_SUPPORTED);
     }
 
     @Test
     public void shouldDetectZeroHostNodes() {
-        vdsNumaNodes.clear();
+        vdsNumaNodes_host1.clear();
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
     }
@@ -91,7 +117,7 @@ public class NumaValidatorTest {
     public void shouldDetectInsufficientMemory() {
         vm.setNumaTuneMode(NumaTuneMode.STRICT);
         vmNumaNodes.get(0).setMemTotal(1000);
-        vdsNumaNodes.get(0).setMemTotal(500);
+        vdsNumaNodes_host1.get(0).setMemTotal(500);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
     }
@@ -105,7 +131,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectTooMuchHostNodes() {
-        vm.setvNumaNodeList(Collections.singletonList(createVmNumaNode(1, vdsNumaNodes)));
+        vm.setvNumaNodeList(Collections.singletonList(createVmNumaNode(1, vdsNumaNodes_host1)));
         vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
@@ -153,13 +179,13 @@ public class NumaValidatorTest {
     public void shouldDetectSufficientMemory() {
         vm.setNumaTuneMode(NumaTuneMode.STRICT);
         vmNumaNodes.get(0).setMemTotal(1000);
-        vdsNumaNodes.get(0).setMemTotal(2000);
+        vdsNumaNodes_host1.get(0).setMemTotal(2000);
         assertTrue(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
     }
 
     @Test
     public void shouldDetectMissingRequiredHostNumaNodes() {
-        vdsNumaNodes.remove(0);
+        vdsNumaNodes_host1.remove(0);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX);
     }
@@ -170,14 +196,13 @@ public class NumaValidatorTest {
 
         vm.setDedicatedVmForVdsList(new ArrayList<>());
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()), EngineMessage
-                .ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+                .ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST);
     }
 
     @Test
-    public void shouldNotDoWithTwoPinnedHost() {
+    public void shouldDoWithTwoPinnedHost() {
         vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
-        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
-                EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
+        assertTrue(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
     }
 
     @Test

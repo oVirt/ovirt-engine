@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
@@ -59,6 +61,10 @@ public class NumaTestUtils {
 
     public static void mockVdsNumaNodeDao(final VdsNumaNodeDao vdsNumaNodeDao, List<VdsNumaNode> vdsNumaNodes) {
         when(vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(any())).thenReturn(vdsNumaNodes);
+    }
+
+    public static void mockVdsDao(final VdsDao vdsDao) {
+        when(vdsDao.get(any())).thenReturn(new VDS());
     }
 
     public static void mockVmNumaNodeDao(final VmNumaNodeDao vmNumaNodeDao, List<VmNumaNode> vmNumaNodes) {

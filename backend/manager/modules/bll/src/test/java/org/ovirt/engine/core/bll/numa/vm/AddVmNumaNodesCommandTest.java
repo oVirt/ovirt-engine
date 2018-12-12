@@ -106,15 +106,14 @@ public class AddVmNumaNodesCommandTest
 
         vm.setDedicatedVmForVdsList(new ArrayList<>());
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
+                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST);
     }
 
     @Test
-    public void canNotDoWithTwoPinnedHost() {
+    public void canDoWithTwoPinnedHost() {
         mockCommandWithVmFromDb();
         vm.setDedicatedVmForVdsList(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
+        assertThat(command.validate()).isTrue();
     }
 
     @Test

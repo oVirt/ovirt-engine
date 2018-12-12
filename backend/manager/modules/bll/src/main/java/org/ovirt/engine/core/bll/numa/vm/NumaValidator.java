@@ -20,26 +20,31 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 
 @Singleton
 public class NumaValidator {
 
     private final VdsNumaNodeDao vdsNumaNodeDao;
+    private final VdsDao vdsDao;
 
     @Inject
-    NumaValidator(VdsNumaNodeDao vdsNumaNodeDao) {
+    NumaValidator(VdsNumaNodeDao vdsNumaNodeDao, VdsDao vdsDao) {
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
+        this.vdsDao = Objects.requireNonNull(vdsDao);
     }
 
     /**
-     * preferred supports single pinned vnuma node (without that VM fails to run in libvirt)
+     * preferred supports single pinned vNUMA node (without that VM fails to run in libvirt)
      */
     private ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
             List<VmNumaNode> vmNumaNodes) {
@@ -62,9 +67,9 @@ public class NumaValidator {
     }
 
     /**
-     * Check if we have enough virtual cpus for the virtual numa nodes
+     * Check if we have enough virtual cpus for the virtual NUMA nodes
      *
-     * @param numaNodeCount number of virtual numa nodes
+     * @param numaNodeCount number of virtual NUMA nodes
      * @param cpuCores      number of virtual cpu cores
      * @return the validation result
      */
@@ -80,10 +85,10 @@ public class NumaValidator {
     }
 
     /**
-     * Check if every CPU is assigned to at most one virtual numa node
+     * Check if every CPU is assigned to at most one virtual NUMA node
      *
      * @param cpuCores    number of virtual cpu cores
-     * @param vmNumaNodes list of virtual numa nodes
+     * @param vmNumaNodes list of virtual NUMA nodes
      * @return the validation result
      */
     private ValidationResult checkVmNumaCpuAssignment(int cpuCores, List<VmNumaNode> vmNumaNodes) {
@@ -124,10 +129,10 @@ public class NumaValidator {
     }
 
     /**
-     * Check if the total memory of numa nodes is less or equal to the total VM memory
+     * Check if the total memory of NUMA nodes is less or equal to the total VM memory
      *
-     * @param vm to check
-     * @param vmNumaNodes list of virtual numa nodes
+     * @param totalVmMemory to check
+     * @param vmNumaNodes list of virtual NUMA nodes
      * @return the validation result
      */
     private ValidationResult checkVmNumaTotalMemory(long totalVmMemory, List<VmNumaNode> vmNumaNodes) {
@@ -148,7 +153,7 @@ public class NumaValidator {
             return ValidationResult.VALID;
         }
 
-        // Numa node size must be a multiple of hugepage size
+        // NUMA node size must be a multiple of hugepage size
         if (vmNumaNodes.stream().allMatch(node -> (node.getMemTotal() * 1024) % hugePageSizeKB.get() == 0)) {
             return ValidationResult.VALID;
         }
@@ -157,7 +162,7 @@ public class NumaValidator {
     }
 
     /**
-     * Check if the provided numa nodes do not containe the same numa node index more than once
+     * Check if the provided NUMA nodes do not containe the same NUMA node index more than once
      *
      * @param vmNumaNodes to check for duplicates
      * @return {@link ValidationResult#VALID} if no duplicates exist
@@ -175,7 +180,7 @@ public class NumaValidator {
     }
 
     /**
-     * Check if the indices of the provided numa nodes are continuous
+     * Check if the indices of the provided NUMA nodes are continuous
      *
      * @param vmNumaNodes to check if indices are continuous
      * @return {@link ValidationResult#VALID} if no indices are missing
@@ -197,8 +202,8 @@ public class NumaValidator {
     }
 
     /**
-     * Check if the numa configuration on the VM is consistent. This only checks the VM and the host pinning. No
-     * compatibility checks regarding the host are performed
+     * Check if the NUMA configuration on the VM is consistent. This only checks the VM and the host pinning. No
+     * compatibility checks regarding host(s) are performed
      *
      * @param vm to check
      * @return validation result
@@ -249,74 +254,63 @@ public class NumaValidator {
     }
 
     /**
-     * Check if a VM can run on specific hostNumaNodes with the provided numa configuration. The numa nodes for
-     * validation need to be passed in separately because the numa nodes are not necessarily part of the VM when the
+     * Check if a VM can run on pinned host(s) with the provided NUMA configuration. The NUMA nodes for
+     * validation need to be passed in separately because the NUMA nodes are not necessarily part of the VM when the
      * validation takes place.
      *
-     * @param vm            with numa nodes
+     * @param vm            with NUMA nodes
      * @param vmNumaNodes   to use for validation
-     * @param hostNumaNodes from a host
-     * @return weather the vm can run on the hostNumaNodes or not
+     * @param hostsNumaNodesMap list of NUMA nodes per each pinned host
+     * @return whether the vm can run on all pinned hosts (hostsNodesMap) or not
      */
-    public ValidationResult validateNumaCompatibility(final VM vm, final List<VmNumaNode> vmNumaNodes, final
-    List<VdsNumaNode>
-            hostNumaNodes) {
+    public ValidationResult validateNumaCompatibility(final VM vm, final List<VmNumaNode> vmNumaNodes,
+    final Map<Guid, List<VdsNumaNode>> hostsNumaNodesMap) {
+        for (Map.Entry<Guid, List<VdsNumaNode>> entry : hostsNumaNodesMap.entrySet()) {
+            Guid pinnedVds = entry.getKey();
+            List<VdsNumaNode> pinnedVdsNumaNodes = entry.getValue();
 
-        if (hostNumaNodes == null || hostNumaNodes.isEmpty()) {
-            return new ValidationResult(EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY);
-        }
+            if (pinnedVdsNumaNodes == null || pinnedVdsNumaNodes.isEmpty()) {
+                return new ValidationResult(EngineMessage.VM_NUMA_PINNED_VDS_NODE_EMPTY,
+                        String.format("$hostName %s", getHostNameOrId(pinnedVds)));
+            }
+            // One node is equal to no NUMA node architecture present
+            if (pinnedVdsNumaNodes.size() == 1) {
+                return new ValidationResult(EngineMessage.HOST_NUMA_NOT_SUPPORTED,
+                        String.format("$hostName %s", getHostNameOrId(pinnedVds)));
+            }
 
-        if (hostNumaNodes.size() == 1) { // One node is equal to no NUMA node architecture present
-            return new ValidationResult(EngineMessage.HOST_NUMA_NOT_SUPPORTED);
-        }
+            final Map<Integer, VdsNumaNode> hostNodeIndexToNodeMap = new HashMap<>();
+            pinnedVdsNumaNodes.forEach(node -> hostNodeIndexToNodeMap.put(node.getIndex(), node));
 
-        final Map<Integer, VdsNumaNode> hostNodeMap = new HashMap<>();
-        for (VdsNumaNode hostNumaNode : hostNumaNodes) {
-            hostNodeMap.put(hostNumaNode.getIndex(), hostNumaNode);
-        }
-        boolean memStrict = vm.getNumaTuneMode() == NumaTuneMode.STRICT;
-        for (VmNumaNode vmNumaNode : vmNumaNodes) {
-            for (Integer pinnedIndex : vmNumaNode.getVdsNumaNodeList()) {
-                if (pinnedIndex == null) {
-                    return new ValidationResult(EngineMessage.VM_NUMA_NODE_PINNED_INDEX_ERROR);
-                }
-                if (!hostNodeMap.containsKey(pinnedIndex)) {
-                    return new ValidationResult(EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX,
-                            String.format("$vdsNodeIndex %d", pinnedIndex));
-                }
-                if (memStrict) {
-                    final VdsNumaNode hostNumaNode = hostNodeMap.get(pinnedIndex);
-                    if (vmNumaNode.getMemTotal() > hostNumaNode.getMemTotal()) {
-                        return new ValidationResult(EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
+            for (VmNumaNode vmNumaNode : vmNumaNodes) {
+                for (Integer vdsPinnedIndex : vmNumaNode.getVdsNumaNodeList()) {
+                    if (vdsPinnedIndex == null) {
+                        return new ValidationResult(EngineMessage.VM_NUMA_NODE_PINNED_INDEX_ERROR);
+                    }
+
+                    if (!hostNodeIndexToNodeMap.containsKey(vdsPinnedIndex)) {
+                        return new ValidationResult(EngineMessage.VM_NUMA_NODE_HOST_NODE_INVALID_INDEX,
+                                String.format("$vdsNodeIndex %d", vdsPinnedIndex),
+                                String.format("$hostName %s", getHostNameOrId(pinnedVds)));
+                    }
+
+                    if (vm.getNumaTuneMode() == NumaTuneMode.STRICT
+                            && vmNumaNode.getMemTotal() > hostNodeIndexToNodeMap.get(vdsPinnedIndex).getMemTotal()) {
+                        return new ValidationResult(EngineMessage.VM_NUMA_NODE_MEMORY_ERROR,
+                                String.format("$vmNodeIndex %d", vmNumaNode.getIndex()),
+                                String.format("$hostName %s", getHostNameOrId(pinnedVds)),
+                                String.format("$hostNodeIndex %d", vdsPinnedIndex));
                     }
                 }
             }
         }
+
         return ValidationResult.VALID;
     }
 
     /**
-     * Check if the VM is pinned to a host and only to a single host
-     *
-     * @param vm to check
-     * @return validation result
-     */
-    public ValidationResult validateVmPinning(final VM vm) {
-
-        //TODO Proper validation for multiple hosts pinnning was never implemented. Implement it.
-        // validate - host pinning is mandatory
-        if (vm.getDedicatedVmForVdsList().isEmpty()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST);
-        }
-        if (vm.getDedicatedVmForVdsList().size() > 1) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_PINNED_TO_MULTIPLE_HOSTS);
-        }
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * Check the whole numa configuration of a VM. The numa nodes for validation need to be passed in separately because
-     * the numa nodes are not necessarily part of the VM when the validation takes place.
+     * Check the whole NUMA configuration of a VM. The NUMA nodes for validation need to be passed in separately because
+     * the NUMA nodes are not necessarily part of the VM when the validation takes place.
      *
      * @param vm          to check comaptiblity with
      * @param vmNumaNodes to use for validation
@@ -327,20 +321,22 @@ public class NumaValidator {
             return ValidationResult.VALID;
         }
 
+        // Check VM's NUMA configuration
         ValidationResult validationResult = validateVmNumaConfig(vm, vmNumaNodes);
         if (!validationResult.isValid()) {
             return validationResult;
         }
 
-        //TODO Proper validation for multiple host pinning
-        validationResult = validateVmPinning(vm);
-        if (!validationResult.isValid()) {
-            return validationResult;
+        // Check if the VM is pinned to at least one host
+        if (vm.getDedicatedVmForVdsList().isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST);
         }
 
-        final List<VdsNumaNode> hostNumaNodes =
-                vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vm.getDedicatedVmForVdsList().get(0));
-        return validateNumaCompatibility(vm, vmNumaNodes, hostNumaNodes);
+        // check that VM's NUMA policy fits all pinned/assigned hosts NUMA policy
+        final Map<Guid, List<VdsNumaNode>> hostsNumaNodesMap = new HashMap<>();
+        vm.getDedicatedVmForVdsList().forEach(vdsId -> hostsNumaNodesMap.put(vdsId, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId)));
+
+        return validateNumaCompatibility(vm, vmNumaNodes, hostsNumaNodesMap);
     }
 
     private String formatMissingIndices(List<Integer> missingIndices) {
@@ -349,5 +345,11 @@ public class NumaValidator {
             str = str + ", ...";
         }
         return str;
+    }
+
+    private String getHostNameOrId(Guid vdsId) {
+        VDS host = vdsDao.get(vdsId);
+
+        return host == null ? vdsId.toString() : host.getName();
     }
 }
