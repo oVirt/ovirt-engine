@@ -104,6 +104,16 @@ def main(args=None):
     save_device_parser.add_argument("volume_id", help="The volume id")
     save_device_parser.add_argument("device", help="The device")
 
+    connection_info_parser = subparsers.add_parser("get_connection_info",
+                                                   help="retrieve volume "
+                                                        "attachment connection"
+                                                        " info")
+    connection_info_parser.set_defaults(command=get_connection_info)
+    connection_info_parser.add_argument("driver",
+                                        help="The driver parameters")
+    connection_info_parser.add_argument("db_url", help="The database url")
+    connection_info_parser.add_argument("volume_id", help="The volume id")
+
     args = parser.parse_args()
     try:
         args.command(args)
@@ -178,6 +188,14 @@ def save_device(args):
     conn = vol.connections[0]
     conn.device_attached(json.loads(args.device))
 
+
+def get_connection_info(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    conn = vol.connections[0]
+
+    sys.stdout.write(json.dumps(conn.connection_info))
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
