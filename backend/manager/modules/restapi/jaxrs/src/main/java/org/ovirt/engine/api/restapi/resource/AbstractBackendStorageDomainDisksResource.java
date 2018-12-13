@@ -111,7 +111,7 @@ public class AbstractBackendStorageDomainDisksResource
         return disk;
     }
 
-    private Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
+    protected Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
         Disks collection = new Disks();
         for (org.ovirt.engine.core.common.businessentities.storage.Disk disk : entities) {
             collection.getDisks().add(addLinks(populate(map(disk), disk)));

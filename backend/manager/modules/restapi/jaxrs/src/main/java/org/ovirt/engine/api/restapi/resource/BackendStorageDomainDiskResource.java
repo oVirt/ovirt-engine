@@ -10,6 +10,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.StorageDomainDiskResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -40,8 +41,7 @@ public class BackendStorageDomainDiskResource
                 Guid dataCenterId = BackendDataCenterHelper.lookupByStorageDomainId(this, storageDomainId);
                 disk = performGet(
                     QueryType.GetUnregisteredDisk,
-                    new GetUnregisteredDiskQueryParameters(guid, storageDomainId, dataCenterId)
-                );
+                    new GetUnregisteredDiskQueryParameters(guid, storageDomainId, dataCenterId), LinkHelper.NO_PARENT);
             } else {
                 // The disk was found in the first get which means it is already registered. We must return nothing since the unregistered
                 // parameter was passed.
