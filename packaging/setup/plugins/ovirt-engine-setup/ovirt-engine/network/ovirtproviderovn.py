@@ -664,6 +664,9 @@ class Plugin(plugin.PluginBase):
                     oengcommcons.FileLocations.
                     OVIRT_ENGINE_PKI_APACHE_CA_CERT,
             },
+            '[NETWORK]': {
+                'port-security-enabled-default': True
+            }
         }
         return self._format_config_file_content(parameters)
 
