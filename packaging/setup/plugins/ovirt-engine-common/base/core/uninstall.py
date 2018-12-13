@@ -255,8 +255,8 @@ class Plugin(plugin.PluginBase):
                     )
                     config.set(
                         section,
-                        prefix + '.md5',
-                        self._digestFile(name, 'md5'),
+                        prefix + '.sha256',
+                        self._digestFile(name, 'sha256'),
                     )
 
         def _addChanges(section, changes):
