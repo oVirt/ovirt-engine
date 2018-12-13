@@ -261,7 +261,8 @@ public enum VDSCommandType {
     GetCapabilitiesAsync("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
     // Managed block storage
-    AttachManagedBlockStorageVolume("org.ovirt.engine.core.vdsbroker.vdsbroker");
+    AttachManagedBlockStorageVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    DetachManagedBlockStorageVolume("org.ovirt.engine.core.vdsbroker.vdsbroker");
 
     String packageName;
 

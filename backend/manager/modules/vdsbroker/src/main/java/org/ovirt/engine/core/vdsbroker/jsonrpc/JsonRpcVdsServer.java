@@ -2520,4 +2520,14 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> info = (Map<String, Object>) response.get("info");
         return new DeviceInfoReturn(info);
     }
+
+    @Override
+    public StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId) {
+        JsonRpcRequest request =
+                new RequestBuilder("ManagedVolume.detach_volume")
+                        .withParameter("vol_id", volumeId.toString())
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
 }

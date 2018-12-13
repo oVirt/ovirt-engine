@@ -567,4 +567,6 @@ public interface IVdsServer {
             String existingBrickDir);
 
     DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Map<String, Object> connectionInfo);
+
+    StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId);
 }
