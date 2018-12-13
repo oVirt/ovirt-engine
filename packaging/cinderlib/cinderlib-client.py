@@ -96,6 +96,14 @@ def main(args=None):
     storage_stats_parser.add_argument("refresh",
                                       help="True if latest data is required")
 
+    save_device_parser = subparsers.add_parser("save_device",
+                                               help="save a device")
+    save_device_parser.set_defaults(command=save_device)
+    save_device_parser.add_argument("driver", help="The driver parameters")
+    save_device_parser.add_argument("db_url", help="The database url")
+    save_device_parser.add_argument("volume_id", help="The volume id")
+    save_device_parser.add_argument("device", help="The device")
+
     args = parser.parse_args()
     try:
         args.command(args)
@@ -162,6 +170,14 @@ def storage_stats(args):
     sys.stdout.write(
         json.dumps(backend.stats(refresh=args.refresh)))
     sys.stdout.flush()
+
+
+def save_device(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    conn = vol.connections[0]
+    conn.device_attached(json.loads(args.device))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
