@@ -374,6 +374,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected void executeCommand() {
         switch (getDisk().getDiskStorageType()) {
             case IMAGE:
+                if (getDisk().getContentType() == DiskContentType.MEMORY_DUMP_VOLUME ||
+                        getDisk().getContentType() == DiskContentType.MEMORY_METADATA_VOLUME) {
+                    ActionReturnValue removeOtherMemoryDiskReturnValue = removeOtherMemoryDisk();
+                    if (removeOtherMemoryDiskReturnValue != null && removeOtherMemoryDiskReturnValue.getSucceeded()) {
+                        getReturnValue().getVdsmTaskIdList().addAll(removeOtherMemoryDiskReturnValue.getInternalVdsmTaskIdList());
+                    }
+                }
                 ActionReturnValue actionReturnValue =
                         runInternalActionWithTasksContext(ActionType.RemoveImage,
                                 buildRemoveImageParameters(getDiskImage()));
@@ -416,6 +423,36 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (!snapshots.isEmpty()) {
             snapshotDao.removeMemoryFromSnapshot(snapshots.get(0).getId());
         }
+    }
+
+    private DiskImage getOtherMemoryDisk() {
+        List<Snapshot> snapshots = snapshotDao.getSnapshotsByMemoryDiskId(getDisk().getId());
+        DiskImage otherMemoryDisk = null;
+
+        if (!snapshots.isEmpty()) {
+            if (getDiskImage().getContentType() == DiskContentType.MEMORY_DUMP_VOLUME) {
+                Disk metadataDisk = diskDao.get(snapshots.get(0).getMetadataDiskId());
+                if (metadataDisk != null) {
+                    otherMemoryDisk = (DiskImage) metadataDisk;
+                }
+            } else {
+                Disk memoryDisk = diskDao.get(snapshots.get(0).getMemoryDiskId());
+                if (memoryDisk != null) {
+                    otherMemoryDisk = (DiskImage) memoryDisk;
+                }
+            }
+        }
+        return otherMemoryDisk;
+    }
+
+    private ActionReturnValue removeOtherMemoryDisk() {
+        DiskImage otherMemoryDisk = getOtherMemoryDisk();
+        if (otherMemoryDisk != null) {
+            log.info("Removing '{}' disk", otherMemoryDisk.getName());
+            return runInternalActionWithTasksContext(ActionType.RemoveImage,
+                    buildRemoveImageParameters(otherMemoryDisk));
+        }
+        return null;
     }
 
     private RemoveImageParameters buildRemoveImageParameters(DiskImage diskImage) {

@@ -53,6 +53,7 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
         if (disk.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME ||
                 disk.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME) {
             notes.add(constants.memoryDisk());
+            notes.add(constants.otherMemoryDiskWillbeRemoved());
         }
 
         if (!notes.isEmpty()) {

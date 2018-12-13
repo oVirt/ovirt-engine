@@ -1789,6 +1789,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String memoryDisk();
 
+    String otherMemoryDiskWillbeRemoved();
+
     String resumeBehavior();
 
     String userNameAboutLabel();
