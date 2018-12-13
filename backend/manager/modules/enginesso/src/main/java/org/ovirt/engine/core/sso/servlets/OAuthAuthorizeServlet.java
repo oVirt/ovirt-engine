@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpStatus;
 import org.ovirt.engine.core.sso.utils.InteractiveAuth;
+import org.ovirt.engine.core.sso.utils.OAuthBadRequestException;
 import org.ovirt.engine.core.sso.utils.OAuthException;
 import org.ovirt.engine.core.sso.utils.SsoConstants;
 import org.ovirt.engine.core.sso.utils.SsoContext;
@@ -40,6 +42,8 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             handleRequest(request, response);
+        } catch (OAuthBadRequestException ex) {
+            response.sendError(HttpStatus.SC_BAD_REQUEST, ex.getMessage());
         } catch (Exception ex) {
             SsoUtils.redirectToErrorPage(request, response, ex);
         }
@@ -49,10 +53,10 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         log.debug("Entered AuthorizeServlet QueryString: {}, Parameters : {}",
                 request.getQueryString(),
                 SsoUtils.getRequestParameters(request));
-        String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE);
+        String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE, true);
 
         if (!responseType.equals("code")) {
-            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+            throw new OAuthBadRequestException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                     String.format(
                             ssoContext.getLocalizationUtils().localize(
                                     SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
@@ -65,11 +69,12 @@ public class OAuthAuthorizeServlet extends HttpServlet {
 
     protected SsoSession buildSsoSession(HttpServletRequest request)
             throws Exception {
-        String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID);
+        String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID, true);
+        String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
+        SsoUtils.validateRedirectUri(request, clientId, redirectUri);
         String scope = SsoUtils.getScopeRequestParameter(request, "");
         String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
         String appUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, "");
-        String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
         String sourceAddr = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SOURCE_ADDR, "UNKNOWN");
         validateClientRequest(request, clientId, scope, redirectUri);
 

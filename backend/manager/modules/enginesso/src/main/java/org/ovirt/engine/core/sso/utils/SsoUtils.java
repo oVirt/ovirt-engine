@@ -222,10 +222,20 @@ public class SsoUtils {
     }
 
     public static String getRequestParameter(HttpServletRequest request, String paramName) throws Exception {
+        return getRequestParameter(request, paramName, false);
+    }
+
+    public static String getRequestParameter(HttpServletRequest request,
+            String paramName,
+            boolean throwBadRequestException) throws Exception {
         String value = request.getParameter(paramName);
         if (value == null) {
-            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
-                    String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
+            OAuthException ex = throwBadRequestException ?
+                    new OAuthBadRequestException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                            String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName)) :
+                    new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                            String.format(SsoConstants.ERR_CODE_INVALID_REQUEST_MSG, paramName));
+            throw ex;
         }
         return value;
     }
@@ -504,6 +514,43 @@ public class SsoUtils {
         }
     }
 
+    public static void validateRedirectUri(HttpServletRequest request, String clientId, String redirectUri) {
+        try {
+            SsoContext ssoContext = getSsoContext(request);
+            ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
+            if (clientInfo == null) {
+                throw new OAuthBadRequestException(SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                        SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
+            }
+            if (!clientInfo.isTrusted()) {
+                throw new OAuthBadRequestException(SsoConstants.ERR_CODE_ACCESS_DENIED,
+                        SsoConstants.ERR_CODE_ACCESS_DENIED_MSG);
+            }
+            if (StringUtils.isNotEmpty(redirectUri) &&
+                    ssoContext.getSsoLocalConfig().getBoolean("SSO_CALLBACK_PREFIX_CHECK")) {
+                List<String> allowedPrefixes = new ArrayList<>(scopeAsList(clientInfo.getCallbackPrefix()));
+                scopeAsList(ssoContext.getSsoLocalConfig().getProperty("SSO_ALTERNATE_ENGINE_FQDNS"))
+                        .forEach(fqdn -> allowedPrefixes.add(String.format("https://%s", fqdn)));
+                boolean isValidUri = false;
+                for (String allowedPrefix : allowedPrefixes) {
+                    if (redirectUri.toLowerCase().startsWith(allowedPrefix.toLowerCase())) {
+                        isValidUri = true;
+                        break;
+                    }
+                }
+                if (!isValidUri) {
+                    throw new OAuthBadRequestException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                            SsoConstants.ERR_REDIRECT_URI_NOTREG_MSG);
+                }
+            }
+        } catch (OAuthBadRequestException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Internal Server Error: {}", ex.getMessage());
+            log.debug("Exception", ex);
+            throw new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, ex.getMessage());
+        }
+    }
     public static void validateClientRequest(
             HttpServletRequest request,
             String clientId,
