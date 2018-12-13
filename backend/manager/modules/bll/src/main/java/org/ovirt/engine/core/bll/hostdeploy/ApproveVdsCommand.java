@@ -55,7 +55,11 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
             setSucceeded(true);
         }
         if (getSucceeded()) {
-            setVdsStatus(VDSStatus.Unassigned);
+            if (getParameters().getActivateHost()) {
+                setVdsStatus(VDSStatus.Unassigned);
+            } else {
+                setVdsStatus(VDSStatus.Maintenance);
+            }
         } else if (getParameters().isApprovedByRegister()) {
             // In case of Approval of oVirt host process, the status of the host is re-initialized to PendingApproval
             setVdsStatus(VDSStatus.PendingApproval);

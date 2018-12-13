@@ -317,6 +317,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             p.setFenceAgents(vds.getFenceAgents());
         }
         p.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+        p.setActivateHost(!VDSStatus.Maintenance.equals(vds.getStatus()));
         ActionReturnValue rc = backend.runInternalAction(ActionType.UpdateVds, p);
 
         if (!rc.getSucceeded()) {

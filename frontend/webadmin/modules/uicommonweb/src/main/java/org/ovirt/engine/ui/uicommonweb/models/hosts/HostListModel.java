@@ -949,6 +949,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             parameters.setHostedEngineDeployConfiguration(
                     new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
             parameters.setAffinityLabels(model.getLabelList().getSelectedItems());
+            parameters.setActivateHost(model.getActivateHostAfterInstall().getEntity());
 
             Frontend.getInstance().runAction(ActionType.AddVds, parameters,
                     result -> {
@@ -1028,6 +1029,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             params.setPassword(model.getUserPassword().getEntity().toString());
         }
         params.setAuthMethod(model.getAuthenticationMethod());
+        params.setActivateHost(model.getActivateHostAfterInstall().getEntity());
 
         Frontend.getInstance().runMultipleAction(ActionType.ApproveVds,
                 new ArrayList<>(Arrays.asList(new ActionParametersBase[]{params})),

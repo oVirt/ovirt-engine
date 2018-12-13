@@ -151,6 +151,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 return doAction(ActionType.UpgradeOvirtNode, params, action);
             }
         }
+        // Installation is only done in maintenance mode, and should by default leave the host in maintenance mode.
+        // this is why the default value for 'activate' here is false (vs in adding or approving a host, where it is 'true')
+        boolean activate = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, BackendHostsResource.ACTIVATE, true, false);
+        params.setActivateHost(activate);
         return doAction(ActionType.UpdateVds,
                         params,
                         action);
@@ -207,6 +211,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 }
             }
         }
+        // by default activate the host after approval
+        boolean activate = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, BackendHostsResource.ACTIVATE, true, true);
+        params.setActivateHost(activate);
 
         return doAction(ActionType.ApproveVds,
                         params,

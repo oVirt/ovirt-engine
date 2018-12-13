@@ -264,6 +264,11 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="activateHostAfterInstallEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
                                     </b:Column>
                                 </b:Row>

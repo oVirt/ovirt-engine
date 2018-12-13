@@ -39,6 +39,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     static final String MIGRATION_TARGET_OF = "migration_target_of";
 
+    public static final String ACTIVATE = "activate";
+
     public BackendHostsResource() {
         super(Host.class, VDS.class);
     }
@@ -105,6 +107,9 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         addParams.setHostedEngineDeployConfiguration(HostResourceParametersUtil.getHostedEngineDeployConfiguration(this));
         addParams = (AddVdsActionParameters) getMapper
             (Host.class, VdsOperationActionParameters.class).map(host, addParams);
+        //default value for 'activate' is true
+        boolean activate = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, ACTIVATE, true, true);
+        addParams.setActivateHost(activate);
         return performCreate(ActionType.AddVds,
                                addParams,
                                new QueryIdResolver<Guid>(QueryType.GetVdsByVdsId, IdQueryParameters.class));

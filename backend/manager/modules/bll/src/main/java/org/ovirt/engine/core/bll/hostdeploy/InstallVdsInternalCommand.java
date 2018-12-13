@@ -216,7 +216,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     runAnsibleHostDeployPlaybook(hostCluster);
 
                     configureManagementNetwork();
-                    if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
+                    if (!getParameters().getActivateHost()) {
                         setVdsStatus(VDSStatus.Maintenance);
                     } else {
                         setVdsStatus(VDSStatus.Initializing);
