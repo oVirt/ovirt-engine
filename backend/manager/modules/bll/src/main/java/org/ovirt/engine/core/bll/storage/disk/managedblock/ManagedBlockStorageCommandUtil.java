@@ -109,13 +109,13 @@ public class ManagedBlockStorageCommandUtil {
 
         List<ManagedBlockStorageDisk> disks = DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
         disks.forEach(disk -> {
+            VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vm.getId()));
             DisconnectManagedBlockStorageDeviceParameters parameters =
                     new DisconnectManagedBlockStorageDeviceParameters();
             parameters.setStorageDomainId(disk.getStorageIds().get(0));
             parameters.setDiskId(disk.getId());
+            parameters.setVdsId((Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.ATTACHED_VDS_ID));
             backend.runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, parameters);
         });
-
     }
-
 }

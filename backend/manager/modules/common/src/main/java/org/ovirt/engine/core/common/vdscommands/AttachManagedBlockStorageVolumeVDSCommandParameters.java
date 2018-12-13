@@ -13,6 +13,10 @@ public class AttachManagedBlockStorageVolumeVDSCommandParameters extends VdsIdAn
     public AttachManagedBlockStorageVolumeVDSCommandParameters() {
     }
 
+    public AttachManagedBlockStorageVolumeVDSCommandParameters(VDS vds) {
+        super(vds);
+    }
+
     public AttachManagedBlockStorageVolumeVDSCommandParameters(VDS vds,
             Map<String, Object> connectionInfo) {
         super(vds);
