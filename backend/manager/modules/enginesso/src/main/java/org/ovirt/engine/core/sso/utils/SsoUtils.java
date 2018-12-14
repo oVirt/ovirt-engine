@@ -540,7 +540,9 @@ public class SsoUtils {
                 }
                 if (!isValidUri) {
                     throw new OAuthBadRequestException(SsoConstants.ERR_CODE_INVALID_REQUEST,
-                            SsoConstants.ERR_REDIRECT_URI_NOTREG_MSG);
+                            ssoContext.getLocalizationUtils().localize(
+                                    SsoConstants.APP_ERROR_REDIRECT_URI_NOTREG_MSG,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
             }
         } catch (OAuthBadRequestException ex) {
