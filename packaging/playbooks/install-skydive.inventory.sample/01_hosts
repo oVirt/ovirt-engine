@@ -1,0 +1,29 @@
+[agents]
+[analyzers]
+
+[skydive:children]
+analyzers
+agents
+
+[skydive:vars]
+skydive_listen_ip=0.0.0.0
+skydive_deployment_mode=package
+skydive_extra_config={'agent.topology.probes': ['ovsdb', 'neutron'], 'agent.topology.neutron.ssl_insecure': true}
+
+skydive_fabric_default_interface=ovirtmgmt
+
+skydive_os_auth_url=https://<ENGINE_FQDN>:35357/v2.0
+skydive_os_service_username=<ovirt-admin-user-name>
+skydive_os_service_password=<ovirt-admin-password>
+skydive_os_service_tenant_name=service
+skydive_os_service_domain_name=Default
+skydive_os_service_region_name=RegionOne
+
+[agents:vars]
+ansible_ssh_private_key_file=/etc/pki/ovirt-engine/keys/engine_id_rsa
+
+[agents:children]
+<host_group>
+
+[analyzers]
+localhost ansible_connection=local

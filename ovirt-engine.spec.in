@@ -1001,6 +1001,10 @@ OVESETUP_RPMDISTRO/jbossPackages=str:ovirt-engine-wildfly,ovirt-engine-wildfly-o
 __EOF__
 %endif
 
+mkdir -p %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample
+ln -s %{engine_data}/../ovirt-engine-metrics/bin/ovirt-engine-hosts-ansible-inventory \
+    %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
+
 
 %preun
 if [ "$1" -eq 0 ]; then
@@ -1296,6 +1300,9 @@ fi
 %{engine_data}/conf/tools-logging.properties
 %{engine_data}/playbooks/ansible.cfg
 %{engine_data}/playbooks/create-brick.yml
+%{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
+%{engine_data}/playbooks/install-skydive.inventory.sample/01_hosts
+%{engine_data}/playbooks/install-skydive.yml
 %{engine_data}/playbooks/ovirt-host-deploy.yml
 %{engine_data}/playbooks/ovirt-host-remove.yml
 %{engine_data}/playbooks/ovirt-host-upgrade.yml

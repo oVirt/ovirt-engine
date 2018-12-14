@@ -1,0 +1,34 @@
+---
+- hosts: agents
+  tasks:
+  - name: Install Skydive Agent Package
+    yum:
+      name: skydive-agent
+      enablerepo:
+      - rhel-7-server-openstack-14-rpms
+      - rhel-7-server-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-rh-common-rpms
+      state: present
+    when: ansible_distribution == 'RedHat'
+
+- hosts: analyzers
+  tasks:
+  - name: Install Skydive Analyzer Package
+    yum:
+      name: skydive-analyzer
+      enablerepo:
+      - rhel-7-server-openstack-14-rpms
+      - rhel-7-server-rpms
+      - rhel-7-server-extras-rpms
+      - rhel-7-server-rh-common-rpms
+      state: present
+    when: ansible_distribution == 'RedHat'
+
+- hosts: all
+  tasks:
+  - name: Enable RDO Repository
+    yum:
+      name: centos-release-openstack-rocky
+      state: present
+    when: ansible_distribution == 'CentOS'
