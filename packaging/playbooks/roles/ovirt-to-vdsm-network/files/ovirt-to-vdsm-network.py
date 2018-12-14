@@ -76,7 +76,7 @@ class DBPlugin(base.Base):
                     dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
                     environment=self.environment,
                 )
-            except RuntimeError as e:
+            except RuntimeError:
                 self.logger.debug(
                     'Existing credential use failed',
                     exc_info=True,
