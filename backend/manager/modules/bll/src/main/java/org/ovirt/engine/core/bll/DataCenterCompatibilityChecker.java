@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
@@ -29,6 +30,19 @@ import org.slf4j.LoggerFactory;
 public class DataCenterCompatibilityChecker implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(DataCenterCompatibilityChecker.class);
+
+    /**
+     * Future engine version, where below mentioned data center versions will not be supported. Administrators need to
+     * upgrade those data centers to newer versions, otherwise they won't be able to upgrade engine to this future
+     * version.
+     */
+    private static final String FUTURE_RELEASE = "4.3";
+
+    /**
+     * Set of versions which will be unsupported in above mentioned future engine release.
+     */
+    private static final HashSet<Version> REMOVED_IN_FUTURE_RELEASE =
+            new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0));
 
     @Inject
     private StoragePoolDao storagePoolDao;
@@ -68,12 +82,19 @@ public class DataCenterCompatibilityChecker implements BackendService {
     }
 
     private void logAlert(Version version, StoragePool storagePool) {
+        AuditLogType msgType;
         AuditLogable auditLog = new AuditLogableImpl();
+        if (REMOVED_IN_FUTURE_RELEASE.contains(storagePool.getCompatibilityVersion())) {
+            msgType = AuditLogType.STORAGE_POOL_REMOVED_IN_NEXT_RELEASE;
+            auditLog.addCustomValue("futureEngineVersion", FUTURE_RELEASE);
+        } else {
+            msgType = AuditLogType.STORAGE_POOL_LOWER_THAN_ENGINE_HIGHEST_CLUSTER_LEVEL;
+            auditLog.addCustomValue("engineVersion", version.toString());
+        }
         auditLog.setStoragePoolId(storagePool.getId());
         auditLog.setStoragePoolName(storagePool.getName());
-        auditLog.addCustomValue("engineVersion", version.toString());
         auditLog.addCustomValue("dcVersion", storagePool.getCompatibilityVersion().toString());
-        auditLogDirector.log(auditLog, AuditLogType.STORAGE_POOL_LOWER_THAN_ENGINE_HIGHEST_CLUSTER_LEVEL);
+        auditLogDirector.log(auditLog, msgType);
     }
 
 }
