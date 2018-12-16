@@ -23,12 +23,8 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        Snapshot snapshot = snapshotDao.get(getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
-
-        if (snapshot != null) {
-            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                    snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
-
+        VM vm = getNextRunVmConfiguration();
+        if (vm != null) {
             // update information that is not saved in the config
             vmHandler.updateDisksFromDb(vm);
             vmHandler.updateVmGuestAgentVersion(vm);
@@ -41,4 +37,15 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
             super.executeQueryCommand();
         }
     }
+
+    protected VM getNextRunVmConfiguration() {
+        Snapshot snapshot = snapshotDao.get(
+                getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
+        if (snapshot == null) {
+            return null;
+        }
+        return snapshotVmConfigurationHelper.getVmFromConfiguration(
+                snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+    }
+
 }

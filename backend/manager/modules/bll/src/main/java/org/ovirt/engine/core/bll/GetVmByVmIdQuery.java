@@ -21,7 +21,7 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = vmDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        VM vm = getVm();
         if (vm != null) {
             // Note that retrieving the VM is already filtered, and if there are no permissions for it, null will be
             // returned.
@@ -29,6 +29,10 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
             updateVMDetails(vm);
             getQueryReturnValue().setReturnValue(vm);
         }
+    }
+
+    protected VM getVm() {
+        return vmDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
     }
 
     protected void updateVMDetails(VM vm) {
