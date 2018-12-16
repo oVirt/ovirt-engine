@@ -105,7 +105,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         columnNameDict.put(EVENT_VOLUME, "gluster_volume_name");
         columnNameDict.put(EVENT_VOLUME_ID, "gluster_volume_id::varchar");
         columnNameDict.put(CORRELATION_ID, "correlation_id");
-        columnNameDict.put(ORIGIN, "origin::varchar");
+        columnNameDict.put(ORIGIN, "origin");
         columnNameDict.put(CUSTOM_EVENT_ID, "custom_event_id::int");
         columnNameDict.put(DELETED, "deleted::boolean");
         // Building the validation dict
