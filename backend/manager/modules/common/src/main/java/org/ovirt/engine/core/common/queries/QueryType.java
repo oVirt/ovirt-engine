@@ -46,6 +46,7 @@ public enum QueryType implements Serializable {
     GetVmDevicesForVm(QueryAuthType.User),
     GetVmsPinnedToHost(QueryAuthType.User),
     GetAllVmsRunningForMultipleVds(QueryAuthType.User),
+    GetVmByVmIdForUpdate(QueryAuthType.User),
 
     // Vds queries
     GetVdsByVdsId,

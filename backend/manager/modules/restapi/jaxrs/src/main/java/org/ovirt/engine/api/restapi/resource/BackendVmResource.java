@@ -168,7 +168,7 @@ public class BackendVmResource
 
         QueryType queryType = isNextRunRequested()
                 ? QueryType.GetVmNextRunConfiguration
-                : QueryType.GetVmByVmId;
+                : QueryType.GetVmByVmIdForUpdate;
 
         Vm vm = performUpdate(
             incoming,

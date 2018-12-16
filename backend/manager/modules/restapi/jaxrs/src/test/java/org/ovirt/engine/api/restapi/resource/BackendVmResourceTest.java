@@ -213,6 +213,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdate() {
         setUpGetEntityExpectations(3);
+        setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -236,6 +237,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateRemovingPayloads() {
         setUpGetEntityExpectations(3);
+        setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetNoPayloadExpectations(0, 1);
@@ -263,6 +265,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateUploadIcon() {
         setUpGetEntityExpectations(3);
+        setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -287,6 +290,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateUseExistingIcons() {
         setUpGetEntityExpectations(3);
+        setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -417,6 +421,7 @@ public class BackendVmResourceTest
 
     private void setUpUdpateVm() {
         setUpGetEntityExpectations(3);
+        setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -433,6 +438,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateMovingCluster() {
         setUpGetEntityExpectations(3);
+        setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
@@ -477,6 +483,7 @@ public class BackendVmResourceTest
 
     private void doTestBadUpdate(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(2);
+        setUpGetEntityForUpdateExpectations(2);
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
@@ -494,6 +501,7 @@ public class BackendVmResourceTest
     @Test
     public void testConflictedUpdate() {
         setUpGetEntityExpectations(2);
+        setUpGetEntityForUpdateExpectations(2);
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
@@ -1163,6 +1171,10 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(times, false);
     }
 
+    protected void setUpGetEntityForUpdateExpectations(int times) {
+        setUpGetEntityExpectations(QueryType.GetVmByVmIdForUpdate, times, false, getEntity(0));
+    }
+
     protected void setUpGetEntityExpectations(int times, boolean notFound) {
         setUpGetEntityExpectations(times, notFound, getEntity(0));
     }
@@ -1176,10 +1188,15 @@ public class BackendVmResourceTest
                 }});
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected void setUpGetEntityExpectations(int times, boolean notFound,
+                                              org.ovirt.engine.core.common.businessentities.VM entity) {
+        setUpGetEntityExpectations(QueryType.GetVmByVmId, times, notFound, entity);
+    }
 
+    private void setUpGetEntityExpectations(QueryType queryType, int times, boolean notFound,
+                                            org.ovirt.engine.core.common.businessentities.VM entity) {
         while (times-- > 0) {
-            setUpGetEntityExpectations(QueryType.GetVmByVmId,
+            setUpGetEntityExpectations(queryType,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
