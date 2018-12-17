@@ -75,7 +75,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setOvaPath(getParameters().getOvaPath());
         parameters.setVmName(getVmName());
         parameters.setDisks(getDisks());
-        parameters.setImageMappings(null);
+        parameters.setImageMappings(getParameters().getImageMappings());
         parameters.setStoragePoolId(getStoragePoolId());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());

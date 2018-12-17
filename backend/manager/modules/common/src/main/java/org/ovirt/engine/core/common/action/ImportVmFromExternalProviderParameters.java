@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,6 +23,7 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private String virtioIsoName;
     private String externalName;
     private Phase importPhase = Phase.CREATE_DISKS;
+    private Map<Guid, Guid> imageMappings;
 
     public ImportVmFromExternalProviderParameters() {
     }
@@ -92,5 +94,13 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
 
     public void setImportPhase(Phase phase) {
         this.importPhase = phase;
+    }
+
+    public Map<Guid, Guid> getImageMappings() {
+        return imageMappings;
+    }
+
+    public void setImageMappings(Map<Guid, Guid> diskMappings) {
+        this.imageMappings = diskMappings;
     }
 }

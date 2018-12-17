@@ -234,6 +234,23 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         return clusterDao.get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
     }
 
+    private void regenerateDiskIds() {
+        if (getParameters().isImportAsNewEntity()) {
+            Map<Guid, Guid> imageMappings = new HashMap<>();
+
+            for (DiskImage disk : getVm().getImages()) {
+                Guid oldImageId = disk.getImageId();
+                generateNewDiskId(getVm().getImages(), disk);
+                updateManagedDeviceMap(disk, getVm().getStaticData().getManagedDeviceMap());
+                // TBD: The OldImageId should be the key for the map, but in the runAnsibleImportOvaPlaybook function
+                // the value is set first and the key is set second. The ordering should be corrected accordingly in the future.
+                imageMappings.put(disk.getImageId(), oldImageId);
+            }
+
+            getParameters().setImageMappings(imageMappings);
+        }
+    }
+
     @Override
     protected List<DiskImage> createDiskDummiesForSpaceValidations(List<DiskImage> disksList) {
         List<DiskImage> dummies = new ArrayList<>(disksList.size());
@@ -260,6 +277,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Override
     protected void processImages() {
+        regenerateDiskIds();
         ArrayList<Guid> diskIds = getVm().getImages().stream()
                 .map(this::adjustDisk)
                 .map(this::createDisk)

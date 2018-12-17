@@ -535,9 +535,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setLock(null);
         getTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
 
-        attachImage();
-
         if (tmpRetValue.getActionReturnValue() != null) {
+            attachImage();
             DiskImage diskImage = tmpRetValue.getActionReturnValue();
             addDiskPermissions(diskImage);
             getReturnValue().setActionReturnValue(diskImage.getId());
