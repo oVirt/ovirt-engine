@@ -27,6 +27,7 @@ Install the following system components:
 - ansible >= 2.4
 - ovirt-ansible-roles
 - ovirt-engine-metrics
+- python-ovirt-engine-sdk4
 - python-flake8 / pyflakes (optional)
 - python-pep8 / pep8 (optional)
 - python-docker-py (optional)
