@@ -292,7 +292,7 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-ui-extensions >= 1.0.0
-Requires:	ansible >= 2.5
+Requires:	ansible >= 2.7.2
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
@@ -308,7 +308,7 @@ Requires:	rxjava
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
-Requires:	ovirt-ansible-roles >= 1.1.2
+Requires:	ovirt-ansible-roles >= 1.1.6
 Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso

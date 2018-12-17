@@ -24,8 +24,8 @@ Install the following system components:
 - ovirt-host-deploy >= 1.1.0
 - ovirt-setup-lib
 - maven-3
-- ansible >= 2.4
-- ovirt-ansible-roles
+- ansible >= 2.7.2
+- ovirt-ansible-roles >= 1.1.6
 - ovirt-engine-metrics
 - python-ovirt-engine-sdk4
 - python-flake8 / pyflakes (optional)
