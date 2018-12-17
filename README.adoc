@@ -24,8 +24,8 @@ Install the following system components:
 - ovirt-js-dependencies
 - ovirt-setup-lib
 - maven-3
-- ansible >= 2.4
-- ovirt-ansible-roles
+- ansible >= 2.7.2
+- ovirt-ansible-roles >= 1.1.6
 - ovirt-engine-metrics
 - python-flake8 / pyflakes (optional)
 - python-pep8 / pep8 (optional)
