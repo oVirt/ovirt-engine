@@ -7,14 +7,11 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> extends VdsBrokerCommand<P> {
     @Inject
     private VdsDao vdsDao;
-
-    private String connectionAction = "disconnect";
 
     public SetVmTicketVDSCommand(P parameters) {
         super(parameters);
@@ -42,10 +39,6 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
         devStruct.put("graphicsType", getParameters().getGraphicsType().name().toLowerCase());
         devStruct.put("password", getParameters().getTicket());
         devStruct.put("ttl", getParameters().getValidTime());
-        if (getParameters().getCompatibilityVersion().less(Version.v4_0)) {
-            // Older Vdsm versions crash when this parameter is not present.
-            devStruct.put("existingConnAction", connectionAction);
-        }
         devStruct.put("disconnectAction", getParameters().getDisconnectAction());
         devStruct.put("params", getUidParams());
 
