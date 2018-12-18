@@ -444,7 +444,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         if (!isVMWithMemoryCompatible(vm)) {
             // message regarding old cluster snapshot will be shown
             Version originalClusterVersion = vm.getClusterCompatibilityVersionOrigin();
-            originalClusterVersion = (originalClusterVersion == null) ? Version.v4_0 : originalClusterVersion;
+            originalClusterVersion = (originalClusterVersion == null) ? Version.v4_1 : originalClusterVersion;
             oldClusterVersionOfSnapshotWithMemory = originalClusterVersion;
         } else {
             oldClusterVersionOfSnapshotWithMemory = null;
