@@ -23,7 +23,7 @@ public class EmulatedMachineUtilsTest {
         return Stream.of(
                 MockConfigDescriptor.of(
                         ConfigValues.ClusterEmulatedMachines,
-                        Version.v4_0,
+                        Version.v4_2,
                         Arrays.asList("pc-i440fx-rhel7.2.0", "pc-i440fx-2.1", "pseries-rhel7.2.0"))
         );
     }
@@ -50,7 +50,7 @@ public class EmulatedMachineUtilsTest {
         final VmBase vmBase = new VmBase();
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
-        vmBase.setCustomCompatibilityVersion(Version.v4_0);
+        vmBase.setCustomCompatibilityVersion(Version.v4_2);
         assertEquals("pc-i440fx-rhel7.2.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
     }
 
