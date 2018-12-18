@@ -78,7 +78,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci,q35/qemu-xhci");
         preferences.node("/os/rhel6/id").put("value", "999");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
-        preferences.node("/os/rhel6/devices/usb/controller").put("value.4.0", "none");
+        preferences.node("/os/rhel6/devices/usb/controller").put("value.4.1", "none");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -352,7 +352,7 @@ public class OsRepositoryImplTest {
     public void testExistingUsbControllerModelWithVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
-                Version.v4_0,
+                Version.v4_1,
                 ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NONE, model);
     }
@@ -361,7 +361,7 @@ public class OsRepositoryImplTest {
     public void testExistingUsbControllerModelWithNonExistingVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
-                Version.v4_1,
+                Version.v4_2,
                 ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NEC_XHCI, model);
     }
