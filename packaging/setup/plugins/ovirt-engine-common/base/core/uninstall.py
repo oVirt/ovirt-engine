@@ -231,6 +231,29 @@ class Plugin(plugin.PluginBase):
         ] = uninstall_lines
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+    )
+    def _validation_changed_files(self):
+        # Log list of files changed outside of engine-setup.
+        # One day might also warn and/or prompt, thus putting in
+        # validation stage, but currently I think it might be too
+        # annoying. Also useful as an example for other plugins
+        # that want to check if specific files changed.
+        changed_files = [
+            f
+            for f, info in self.environment[
+                osetupcons.CoreEnv.UNINSTALL_FILES_INFO
+            ].items()
+            if info['changed']
+        ]
+        if changed_files:
+            self.logger.debug(
+                'The following files were changed outside of '
+                'engine-setup:\n%s',
+                '\n'.join(changed_files)
+            )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CLEANUP,
         priority=plugin.Stages.PRIORITY_LOW,
     )
