@@ -79,7 +79,6 @@ select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
-select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.2.0,pc-i440fx-2.1,pseries-rhel7.2.0','4.0');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
@@ -164,7 +163,6 @@ select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore',
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
 -- Gluster Arbiter Volume --
-select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'true', '4.3');
 
 -- Gluster Eventing--
@@ -182,20 +180,16 @@ select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
-select fn_db_add_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"false"}', '4.0');
 select fn_db_add_config_value('HotPlugCpuSupported','{"x86":"true","ppc":"true"}', '4.1');
 select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported','{"x86":"true","ppc":"true","s390x":"true"}', '4.3');
-select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86":"false","ppc":"false"}', '4.0');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.3');
 select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.3');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
-select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('AgentChannelNamingSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('AgentChannelNamingSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.0');
 select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.1');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.3');
 select fn_db_add_config_value_for_versions_up_to('ReduceVolumeSupported', 'false', '4.1');
@@ -227,7 +221,6 @@ select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'true', '4.3');
 
-select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'true', '4.3');
 
 -- default requirement for rng sources (empty string by default, additional legal value is 'HWRNG')
@@ -343,21 +336,14 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 ', 'general');
 
 
-select fn_db_add_config_value_for_versions_up_to('Ipv6Supported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('Ipv6Supported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('ipv6IscsiSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ipv6IscsiSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('VirtIOScsiIOThread', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('VirtIOScsiIOThread', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('PassDiscardSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('PassDiscardSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('DiscardAfterDeleteSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('DiscardAfterDeleteSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('QcowCompatSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('QcowCompatSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('ReduceDeviceFromStorageDomain', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('ReduceDeviceFromStorageDomain', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('VmLeasesSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('VmLeasesSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('DomainXML', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('DomainXML', 'true', '4.3');
@@ -380,10 +366,8 @@ select fn_db_add_config_value('DefaultManagementNetwork','ovirtmgmt','general');
 select fn_db_add_config_value('MaxAuditLogMessageLength','10000','general');
 select fn_db_add_config_value('MaxBlockDiskSize','8192','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
-select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '16', '4.0');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '254', '4.3');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfThreadsPerCpu', '8', '4.3');
-select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '240', '4.0');
 select fn_db_add_config_value('MaxNumOfVmCpus', '288', '4.1');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '384', '4.3');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '16', '4.3');
@@ -445,23 +429,6 @@ select fn_db_add_config_value('SANWipeAfterDelete','false','general');
 select fn_db_add_config_value('SearchResultsLimit','100','general');
 select fn_db_add_config_value('SendSMPOnRunVm','true','general');
 
-select fn_db_add_config_value('ServerCPUList',
-    '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; '
-        || '4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; '
-        || '5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
-        || '6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; '
-        || '7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; '
-        || '8:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; '
-        || '9:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; '
-        || '10:Intel Broadwell-noTSX Family:vmx,nx,model_Broadwell-noTSX:Broadwell-noTSX:x86_64; '
-        || '11:Intel Broadwell Family:vmx,nx,model_Broadwell:Broadwell:x86_64; '
-        || '2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; '
-        || '3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; '
-        || '4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; '
-        || '5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; '
-        || '6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; '
-        || '3:IBM POWER8:powernv,model_POWER8:POWER8:ppc64;',
-    '4.0');
 select fn_db_add_config_value('ServerCPUList',
     '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; '
         || '4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; '
@@ -725,7 +692,6 @@ select fn_db_add_config_value('UnsupportedLocalesFilter','','general');
 select fn_db_add_config_value('DefaultAutoConvergence','false','general');
 select fn_db_add_config_value('DefaultMigrationCompression','false','general');
 
-select fn_db_add_config_value_for_versions_up_to('MigrationPolicies','[{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827b"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Minimal downtime","description":"A policy that lets the VM migrate in typical situations. The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be aborted. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"abort","params":[]}]}},{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827c"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":true,"enableGuestEvents":true,"name":"Suspend workload if needed","description":"A policy that lets the VM migrate in most situations, including VMs running heavy workloads. On the other hand, the VM may experience a more significant downtime. The migration may still be aborted for extreme workloads. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}}]','4.0');
 select fn_db_add_config_value('MigrationPolicies','[{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827b"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Minimal downtime","description":"A policy that lets the VM migrate in typical situations. The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be aborted. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"abort","params":[]}]}},{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827c"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":true,"enableGuestEvents":true,"name":"Suspend workload if needed","description":"A policy that lets the VM migrate in most situations, including VMs running heavy workloads. On the other hand, the VM may experience a more significant downtime. The migration may still be aborted for extreme workloads. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}},{"id":{"uuid":"a7aeedb2-8d66-4e51-bb22-32595027ce71"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Post-copy migration","description":"The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be switched to post-copy. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"postcopy","params":[]},{"action":"abort","params":[]}]}}]','4.1');
 select fn_db_add_config_value_for_versions_up_to('MigrationPolicies','[{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827b"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Minimal downtime","description":"A policy that lets the VM migrate in typical situations. The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be aborted. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"abort","params":[]}]}},{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827c"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":true,"enableGuestEvents":true,"name":"Suspend workload if needed","description":"A policy that lets the VM migrate in most situations, including VMs running heavy workloads. On the other hand, the VM may experience a more significant downtime. The migration may still be aborted for extreme workloads. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}},{"id":{"uuid":"a7aeedb2-8d66-4e51-bb22-32595027ce71"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Post-copy migration","description":"The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be switched to post-copy. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"postcopy","params":[]},{"action":"abort","params":[]}]}}]','4.3');
 
@@ -770,7 +736,6 @@ select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'tru
 -- Monitoring
 select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
 
-select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'true', '4.3');
 
 -- BIOS Type
@@ -785,7 +750,6 @@ select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'true
 -- not in ConfigValues enum, used on python side, do not delete
 select fn_db_add_config_value('DbJustRestored','0','general');
 
-select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$', '4.0');
 select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^.*$', '4.1');
 select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^](,?[0-9A-Za-z-]+)+$;hugepages=^[0-9]+$', '4.3');
 
@@ -997,18 +961,15 @@ select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
-select fn_db_update_config_value('SupportedClusterLevels','4.0,4.1,4.2,4.3','general');
+select fn_db_update_config_value('SupportedClusterLevels','4.1,4.2,4.3','general');
 select fn_db_update_config_value('SupportedVDSMVersions','4.17,4.18','general');
 select fn_db_update_config_value('VdcVersion','4.1.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','4.1.0.0','general');
-select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','4.0');
 select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','4.1');
-select fn_db_update_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti','4.0');
 select fn_db_update_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti','4.1');
 select fn_db_update_config_value('VdsRefreshRate','3','general');
 select fn_db_update_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
-select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','4.0');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
@@ -1016,13 +977,10 @@ select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"
 select fn_db_update_config_value('DataOperationsByHSM','true','4.1');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.0');
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.0');
 select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');
 select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.0');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.2');
 
@@ -1039,7 +997,6 @@ select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|fal
 select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^.*$;hugepages=^[0-9]+$', '4.2');
 select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z-]+)+$;hugepages=^[0-9]+$', '4.3');
 
-select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.0');
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.1');
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
 select fn_db_update_config_value('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.1');
@@ -1048,37 +1005,6 @@ select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.1');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
 
-select fn_db_update_config_value('ServerCPUList',
-    '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; '
-        || '4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; '
-        || '5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; '
-        || '6:Intel Nehalem IBRS Family:vmx,nx,spec_ctrl,model_Nehalem:Nehalem,+spec-ctrl:x86_64; '
-        || '7:Intel Nehalem IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Nehalem:Nehalem,+spec-ctrl,+ssbd:x86_64; '
-        || '8:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; '
-        || '9:Intel Westmere IBRS Family:aes,vmx,nx,spec_ctrl,model_Westmere:Westmere,+spec-ctrl:x86_64; '
-        || '10:Intel Westmere IBRS SSBD Family:aes,vmx,nx,spec_ctrl,ssbd,model_Westmere:Westmere,+pcid,+spec-ctrl,+ssbd:x86_64; '
-        || '11:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; '
-        || '12:Intel SandyBridge IBRS Family:vmx,nx,spec_ctrl,model_SandyBridge:SandyBridge,+spec-ctrl:x86_64; '
-        || '13:Intel SandyBridge IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_SandyBridge:SandyBridge,+pcid,+spec-ctrl,+ssbd:x86_64; '
-        || '14:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; '
-        || '15:Intel Haswell-noTSX IBRS Family:vmx,nx,spec_ctrl,model_Haswell-noTSX:Haswell-noTSX,+spec-ctrl:x86_64; '
-        || '16:Intel Haswell-noTSX IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Haswell-noTSX:Haswell-noTSX,+spec-ctrl,+ssbd:x86_64; '
-        || '17:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; '
-        || '18:Intel Haswell IBRS Family:vmx,nx,spec_ctrl,model_Haswell:Haswell,+spec-ctrl:x86_64; '
-        || '19:Intel Haswell IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Haswell:Haswell,+spec-ctrl,+ssbd:x86_64; '
-        || '20:Intel Broadwell-noTSX Family:vmx,nx,model_Broadwell-noTSX:Broadwell-noTSX:x86_64; '
-        || '21:Intel Broadwell-noTSX IBRS Family:vmx,nx,spec_ctrl,model_Broadwell-noTSX:Broadwell-noTSX,+spec-ctrl:x86_64; '
-        || '22:Intel Broadwell-noTSX IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Broadwell-noTSX:Broadwell-noTSX,+spec-ctrl,+ssbd:x86_64; '
-        || '23:Intel Broadwell Family:vmx,nx,model_Broadwell:Broadwell:x86_64; '
-        || '24:Intel Broadwell IBRS Family:vmx,nx,spec_ctrl,model_Broadwell:Broadwell,+spec-ctrl:x86_64; '
-        || '25:Intel Broadwell IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Broadwell:Broadwell,+spec-ctrl,+ssbd:x86_64; '
-        || '2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; '
-        || '3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; '
-        || '4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; '
-        || '5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; '
-        || '6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; '
-        || '3:IBM POWER8:powernv,model_POWER8:POWER8:ppc64;',
-    '4.0');
 select fn_db_update_config_value('ServerCPUList',
     '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; '
         || '4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; '
@@ -1265,7 +1191,7 @@ select fn_db_update_default_config_value('GlusterRefreshRateLight', '5', '15', '
 -- and from the update version and beyond, the input value.
 ------------------------------------------------------------------------------------
 -- Gluster Tuned profile --
-select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'virtual-host,rhgs-sequential-io,rhgs-random-io', '4.0');
+select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'virtual-host,rhgs-sequential-io,rhgs-random-io', '4.1');
 
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section

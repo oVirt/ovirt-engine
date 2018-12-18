@@ -822,8 +822,8 @@
   <host_device host_id="afce7a39-8e8c-4819-ba9c-796d316592e6" device_name="pci_0000_00_0a_0" parent_device_name="computer" capability="pci" iommu_group="5" product_name="7500/5520/5500/X58 I/O Hub PCI Express Root Port 10" product_id="0x3411" vendor_name="Intel Corporation" vendor_id="0x8086" is_assignable="false"/>
   <host_device host_id="afce7a39-8e8c-4819-ba9c-796d316592e6" device_name="pci_0000_00_14_2" parent_device_name="computer" capability="pci" iommu_group="6" product_name="7500/5520/5500/X58 I/O Hub Control Status and RAS Registers" product_id="0x3423" vendor_name="Intel Corporation" vendor_id="0x8086" is_assignable="false"/>
 
-  <gluster_config_master config_key="georep-crawl" config_description="Geo-replication session  crawl" minimum_supported_cluster="4.0" config_possible_values="" config_feature="geo_replication"/>
-  <gluster_config_master config_key="use_meta_volume" config_description="Meta volume for the geo-replication session" minimum_supported_cluster="4.0" config_possible_values="true;false" config_feature="geo_replication"/>
+  <gluster_config_master config_key="georep-crawl" config_description="Geo-replication session  crawl" minimum_supported_cluster="4.1" config_possible_values="" config_feature="geo_replication"/>
+  <gluster_config_master config_key="use_meta_volume" config_description="Meta volume for the geo-replication session" minimum_supported_cluster="4.1" config_possible_values="true;false" config_feature="geo_replication"/>
 
   <storage_device id="00000000-0000-0000-0000-000000000001" name="sda" vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" description="DELL PERC H310 (disk)" device_type="SCSI" device_path="/dev/sda" size="3814400" is_free="true" _create_date="2015-02-10 14:49:55.806609" _update_date="2015-02-10 16:35:15.362494"/>
   <storage_device id="00000000-0000-0000-0000-000000000002" name="sdb" vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" description="DELL PERC H310 (disk)" device_type="SCSI" device_path="/dev/sdb" size="34400" is_free="true" _create_date="2015-02-10 14:49:55.806609" _update_date="2015-02-10 16:35:15.362494"/>

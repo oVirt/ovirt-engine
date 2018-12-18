@@ -14,7 +14,6 @@ import org.ovirt.engine.core.compat.Version;
 public class VersionStorageFormatUtil {
     private static final Map<Version, StorageFormatType> versionToFormat = new TreeMap<>();
     static {
-        versionToFormat.put(Version.v4_0, StorageFormatType.V3);
         versionToFormat.put(Version.v4_1, StorageFormatType.V4);
         versionToFormat.put(Version.v4_2, StorageFormatType.V4);
         versionToFormat.put(Version.v4_3, StorageFormatType.V4);
