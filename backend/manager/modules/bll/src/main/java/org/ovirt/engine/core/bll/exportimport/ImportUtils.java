@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -41,13 +40,6 @@ public class ImportUtils {
             return;
         }
 
-        if (Version.v4_0.lessOrEquals(clusterVersion)) {
-            if (removeVideoDevice(VmDeviceType.VNC, VmDeviceType.CIRRUS, vmBase.getManagedDeviceMap())) {
-                vmBase.setDefaultDisplayType(DisplayType.vga);
-                VmDeviceCommonUtils.addVideoDevice(vmBase);
-            }
-        }
-
         List<VmDevice> videoDevs = getDevicesOfType(VmDeviceGeneralType.VIDEO, vmBase.getManagedDeviceMap());
         boolean hasNoGraphics = getDevicesOfType(VmDeviceGeneralType.GRAPHICS, vmBase.getManagedDeviceMap()).isEmpty();
 
@@ -58,24 +50,6 @@ public class ImportUtils {
                 vmBase.getManagedDeviceMap().put(compatibleGraphics.getDeviceId(), compatibleGraphics);
             }
         }
-    }
-
-    private boolean removeVideoDevice(VmDeviceType whenGraphicsExists, VmDeviceType videoToRemove,
-                                                Map<Guid, VmDevice> managedDevicesMap) {
-        if (VmDeviceCommonUtils.isVmDeviceExists(managedDevicesMap, whenGraphicsExists)) {
-            Guid key = null;
-            for (Map.Entry<Guid, VmDevice> graphicsDevice : managedDevicesMap.entrySet()) {
-                if (videoToRemove.getName().equals(graphicsDevice.getValue().getDevice())) {
-                    key = graphicsDevice.getKey();
-                    break;
-                }
-            }
-            if (key != null) {
-                managedDevicesMap.remove(key);
-                return true;
-            }
-        }
-        return false;
     }
 
     private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type, Map<Guid, VmDevice> managedDevicesMap) {
