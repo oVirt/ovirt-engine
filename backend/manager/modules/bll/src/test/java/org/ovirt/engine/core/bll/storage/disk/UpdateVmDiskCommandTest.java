@@ -134,8 +134,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, false),
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true),
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_2, false),
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_3, true),
                 MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8)
         );
     }
@@ -729,7 +729,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskVmElement oldDiskVmElement = new DiskVmElement();
         oldDiskVmElement.setPassDiscard(false);
         doReturn(oldDiskVmElement).when(command).getOldDiskVmElement();
-        command.getStoragePool().setCompatibilityVersion(Version.v4_0);
+        command.getStoragePool().setCompatibilityVersion(Version.v4_2);
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DC_VERSION);
@@ -815,7 +815,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
-        storagePool.setCompatibilityVersion(Version.v4_1);
+        storagePool.setCompatibilityVersion(Version.v4_3);
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;
