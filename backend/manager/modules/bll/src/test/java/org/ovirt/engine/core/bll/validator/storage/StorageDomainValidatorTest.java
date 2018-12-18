@@ -72,8 +72,8 @@ public class StorageDomainValidatorTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_0, false),
-                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_1, true)
+                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_2, false),
+                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_3, true)
         );
     }
 
@@ -208,7 +208,7 @@ public class StorageDomainValidatorTest {
     @Test
     public void discardAfterDeleteSupportedByDcVersion() {
         domain.setDiscardAfterDelete(true);
-        assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_1), isValid());
+        assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_3), isValid());
     }
 
     @Test
@@ -357,7 +357,7 @@ public class StorageDomainValidatorTest {
     @Test
     public void discardAfterDeleteNotSupportedByDcVersion() {
         domain.setDiscardAfterDelete(true);
-        assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_0),
+        assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_2),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION));
     }
 
