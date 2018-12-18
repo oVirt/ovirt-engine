@@ -41,7 +41,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
-                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_2, false),
                 MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
                         new HashSet<>(Collections.singletonList(new Version(3, 0))))
         );

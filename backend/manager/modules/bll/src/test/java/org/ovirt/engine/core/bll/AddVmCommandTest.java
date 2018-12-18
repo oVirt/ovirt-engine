@@ -62,7 +62,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
                 MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
                 MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
                 MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
-                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_2, false),
                 MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
                         new HashSet<>(Collections.singletonList(new Version(3, 0)))),
                 MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
@@ -178,7 +178,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
         doNothing().when(cmd).initTemplateDisks();
         setupCanAddPpcTest();
-        cmd.setEffectiveCompatibilityVersion(Version.v4_0);
+        cmd.setEffectiveCompatibilityVersion(Version.v4_2);
         doReturn(Collections.emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
         initPpcCluster();
         doReturn(true).when(cmd).validateAddVmCommand();

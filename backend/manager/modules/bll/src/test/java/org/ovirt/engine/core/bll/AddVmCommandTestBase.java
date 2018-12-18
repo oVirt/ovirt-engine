@@ -181,7 +181,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected void initCluster() {
         cluster = new Cluster();
         cluster.setClusterId(Guid.newGuid());
-        cluster.setCompatibilityVersion(Version.v4_0);
+        cluster.setCompatibilityVersion(Version.v4_2);
         cluster.setCpuName("Intel Conroe Family");
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setStoragePoolId(STORAGE_POOL_ID);
