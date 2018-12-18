@@ -129,9 +129,23 @@ public interface StorageDomainDao extends Dao, SearchDao<StorageDomain>, AutoRec
      *
      * @param id
      *            the storage domain id
+     *
      * @return the list of storage domains
      */
     List<StorageDomain> getAllForStorageDomain(Guid id);
+
+    /**
+     * Retrieves all storage domains for the specified storage domain id.
+     *
+     * @param id
+     *            the storage domain id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of storage domains
+     */
+    List<StorageDomain> getAllForStorageDomain(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all storage domains.

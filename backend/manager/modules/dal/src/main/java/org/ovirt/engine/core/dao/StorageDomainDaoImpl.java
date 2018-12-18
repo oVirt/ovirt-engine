@@ -106,8 +106,16 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
 
     @Override
     public List<StorageDomain> getAllForStorageDomain(Guid id) {
+        return getAllForStorageDomain(id, null, false);
+    }
+
+    @Override
+    public List<StorageDomain> getAllForStorageDomain(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_storageDomainId",
-                storageDomainRowMapper, getCustomMapSqlParameterSource().addValue("storage_domain_id", id));
+                storageDomainRowMapper, getCustomMapSqlParameterSource()
+                        .addValue("storage_domain_id", id)
+                .addValue("user_id", userID)
+                .addValue("is_filtered", isFiltered));
     }
 
     @Override

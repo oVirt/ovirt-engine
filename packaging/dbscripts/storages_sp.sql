@@ -1148,14 +1148,23 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION Getstorage_domains_List_By_storageDomainId (v_storage_domain_id UUID)
+CREATE OR REPLACE FUNCTION Getstorage_domains_List_By_storageDomainId (v_storage_domain_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domains
-    WHERE storage_domains.id = v_storage_domain_id;
+    WHERE storage_domains.id = v_storage_domain_id
+    AND (
+            NOT v_is_filtered
+            OR EXISTS (
+                SELECT 1
+                FROM user_storage_pool_permissions_view
+                WHERE user_id = v_user_id
+                    AND entity_id = v_storage_domain_id
+                )
+            );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

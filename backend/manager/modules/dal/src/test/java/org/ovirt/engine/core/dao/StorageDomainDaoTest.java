@@ -300,7 +300,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
      */
     @Test
     public void testGetAllForStorageDomainWithInvalidDomain() {
-        List<StorageDomain> result = dao.getAllForStorageDomain(Guid.newGuid());
+        List<StorageDomain> result = dao.getAllForStorageDomain(Guid.newGuid(), PRIVILEGED_USER_ID, false);
         assertTrue(result.isEmpty());
     }
 
@@ -309,8 +309,17 @@ public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
      */
     @Test
     public void testGetAllForStorageDomain() {
-        List<StorageDomain> result = dao.getAllForStorageDomain(existingDomain.getId());
+        List<StorageDomain> result = dao.getAllForStorageDomain(existingDomain.getId(), PRIVILEGED_USER_ID, false);
         assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Ensures that the right set of domains are returned for Unprivileged User.
+     */
+    @Test
+    public void testGetAllForStorageDomainWithPermissionsUnprivilegedUser() {
+        List<StorageDomain> result = dao.getAllForStorageDomain(existingDomain.getId(), UNPRIVILEGED_USER_ID, true);
+        assertTrue(result.isEmpty());
     }
 
     /**

@@ -22,7 +22,7 @@ public class GetStorageDomainListByIdQuery<P extends IdQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        List<StorageDomain> result = storageDomainDao.getAllForStorageDomain(getParameters().getId());
+        List<StorageDomain> result = storageDomainDao.getAllForStorageDomain(getParameters().getId(), getUserID(), getParameters().isFiltered());
         ArrayList<StorageDomain> temp = new ArrayList<>(result);
         for (StorageDomain domain : temp) {
             if (domain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
