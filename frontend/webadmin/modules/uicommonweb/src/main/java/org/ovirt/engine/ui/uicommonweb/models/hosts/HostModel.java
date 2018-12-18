@@ -736,16 +736,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 && hostsWithHeDeployed.get(0).equals(getHostId());
     }
 
-    private EntityModel<String> hostedEngineWarning;
-
-    public EntityModel<String> getHostedEngineWarning() {
-        return hostedEngineWarning;
-    }
-
-    public void setHostedEngineWarning(EntityModel<String> hostedEngineWarning) {
-        this.hostedEngineWarning = hostedEngineWarning;
-    }
-
     public HostModel() {
         setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
             @Override
@@ -859,8 +849,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setHostedEngineHostModel(new HostedEngineHostModel());
         setLabelList(new ListModel<Label>());
         updateLabelList();
-
-        setHostedEngineWarning(new EntityModel<String>(constants.hostedEngineDeploymentCompatibilityWarning()));
 
         setPasswordSectionViewable(true);
 
@@ -1105,7 +1093,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             cpuVendorChanged();
         }
 
-        getHostedEngineWarning().setIsAvailable(cluster.getCompatibilityVersion().less(Version.v4_0));
         getNetworkProviderModel().setDefaultProviderId(cluster.getDefaultNetworkProviderId());
 
         setVgpuPlacementChangeability(cluster.getCompatibilityVersion());

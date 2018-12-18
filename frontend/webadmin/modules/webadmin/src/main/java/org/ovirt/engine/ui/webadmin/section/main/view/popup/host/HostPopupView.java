@@ -278,10 +278,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     DialogTab hostedEngineTab;
 
-    @UiField
-    @Path(value = "hostedEngineWarning.entity")
-    Label hostedEngineWarningLabel;
-
     @UiField(provided=true)
     @Path(value = "hostedEngineHostModel.selectedItem")
     ListModelListBoxEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
@@ -818,14 +814,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         nameEditor.setFocus(true);
 
         hostedEngineTab.setVisible(object.getIsHeSystem() && object.getIsNew());
-
-        object.getHostedEngineWarning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            EntityModel entity = (EntityModel) sender;
-
-            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                hostedEngineWarningLabel.setVisible(entity.getIsAvailable());
-            }
-        });
 
         affinityLabelSelectionWidget.init(object.getLabelList());
 

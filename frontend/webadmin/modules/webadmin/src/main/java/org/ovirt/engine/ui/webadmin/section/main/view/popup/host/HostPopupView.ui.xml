@@ -509,11 +509,6 @@
                             <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
                                     <b:Column size="SM_12">
-                                        <g:Label ui:field="hostedEngineWarningLabel" addStyleNames="{style.warningLabel}"/>
-                                    </b:Column>
-                                </b:Row>
-                                <b:Row>
-                                    <b:Column size="SM_12">
                                         <g:Label text="{constants.hostedEngineDeploymentAction}" />
                                     </b:Column>
                                 </b:Row>
