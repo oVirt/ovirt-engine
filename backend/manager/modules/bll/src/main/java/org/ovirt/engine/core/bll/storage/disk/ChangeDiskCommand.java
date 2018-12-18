@@ -90,7 +90,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     protected void perform() {
         String iface = null;
         int index = 0;
-        if (getVm().getCompatibilityVersion().greaterOrEquals(Version.v4_0)) {
+        if (getVm().getCompatibilityVersion().greaterOrEquals(Version.v4_1)) {
             iface = getVmDeviceUtils().getCdInterface(getVm());
             index = VmDeviceCommonUtils.getCdDeviceIndex(iface);
         }
