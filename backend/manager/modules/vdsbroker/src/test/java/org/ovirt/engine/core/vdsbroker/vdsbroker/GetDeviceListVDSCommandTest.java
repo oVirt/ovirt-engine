@@ -25,8 +25,8 @@ import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 public class GetDeviceListVDSCommandTest {
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, false),
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true)
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_2, false),
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_3, true)
         );
     }
 
@@ -52,7 +52,7 @@ public class GetDeviceListVDSCommandTest {
         Map<String, Object> xlun = new HashMap<>();
         xlun.put(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
-        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_3);
 
         assertEquals(expectedStorageType, lun.getLunType());
     }
@@ -60,7 +60,7 @@ public class GetDeviceListVDSCommandTest {
     @Test
     public void parseLunReturnsUnknownForNoField() {
         Map<String, Object> xlun = new HashMap<>();
-        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_3);
 
         assertEquals(StorageType.UNKNOWN, lun.getLunType());
     }
@@ -88,7 +88,7 @@ public class GetDeviceListVDSCommandTest {
         xlun.put(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new Map[paths.size()]));
 
         // Parse lun
-        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_1);
+        LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, Version.v4_3);
 
         // Go over the directory
         assertEquals(numPaths, lun.getPathCount(), "wrong number of paths");
@@ -108,12 +108,12 @@ public class GetDeviceListVDSCommandTest {
 
     @Test
     public void discardMaxBytesFieldIsParsed() {
-        testDiscardFieldParsing(Version.v4_1, 1024L);
+        testDiscardFieldParsing(Version.v4_3, 1024L);
     }
 
     @Test
     public void discardMaxBytesFieldIsNotParsed() {
-        testDiscardFieldParsing(Version.v4_0, null);
+        testDiscardFieldParsing(Version.v4_2, null);
     }
 
     private void testDiscardFieldParsing(Version poolCompatibilityVersion, Long expectedDiscardMaxSize) {
