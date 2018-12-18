@@ -9,6 +9,22 @@ BUILD_UT=0
 RUN_DAO_TESTS=0
 BUILD_GWT=0
 
+# Check for DB upgrade scripts modifications without the
+# "Allow-db-upgrade-script-changes:Yes" in the patch header
+
+UPGRADE_DIR="packaging/dbscripts/upgrade/"
+SCRIPT_EXPR="[0-9]{2}_[0-9]{2}_[0-9]{4}[a-zA-Z0-9_-]*\.sql"
+KEYWORD="Allow-db-upgrade-script-changes: Yes"
+
+if git show --pretty="format:" --name-status | egrep -q "^M.${UPGRADE_DIR}${SCRIPT_EXPR}" ; then
+    if ! git log -1 --pretty=format:%b | grep -E -iq "${KEYWORD}"; then
+        echo "[ERROR] : Changing an existing upgrade script is dangerous and can cause upgrade problems,
+            if you are doing that in purpose and sure that there is no other way to fix the issue you
+            are working on, please add the key '${KEYWORD}' to your patch commit message."
+        exit 1
+    fi
+fi
+
 common_modules_paths=("backend/manager/modules/searchbackend/" \
                       "backend/manager/modules/common/" \
                       "backend/manager/modules/compat/" )
