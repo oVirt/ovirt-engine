@@ -74,8 +74,8 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_0, false),
-                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_1, true)
+                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_2, false),
+                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_3, true)
         );
     }
 
@@ -118,7 +118,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     public void prepareMocks() {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
-        doReturn(getCluster(true, Version.v4_1)).when(clusterDao).get(any());
+        doReturn(getCluster(true, Version.v4_3)).when(clusterDao).get(any());
     }
 
     private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks){
@@ -177,14 +177,14 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsWithArbiterWithClusterDoesNotArbiterVolume() {
         setVolume(getVolume(3, false, GlusterVolumeType.REPLICATE, 3, true));
-        doReturn(getCluster(true, Version.v4_0)).when(clusterDao).get(any());
+        doReturn(getCluster(true, Version.v4_2)).when(clusterDao).get(any());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_NOT_SUPPORTED);
     }
 
     @Test
     public void validateFailsWithClusterDoesNotSupportGluster() {
-        doReturn(getCluster(false, Version.v4_1)).when(clusterDao).get(any());
+        doReturn(getCluster(false, Version.v4_3)).when(clusterDao).get(any());
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER);
     }
