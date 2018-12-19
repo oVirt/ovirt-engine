@@ -744,13 +744,13 @@ public class FixturesTool {
 
     public static final String NETWORK_FILTER_NAME = "TEST_NETWORK_FILTER";
 
-    public static final Version NETWORK_FILTER_VERSION = new Version("4.0");
+    public static final Version NETWORK_FILTER_VERSION = new Version("4.3");
 
     public static final Guid OVIRT_NO_FILTER_NETWORK_FILTER = new Guid("22510576-a243-468e-bc37-d68f16130b02");
 
     public static final String OVIRT_NO_FILTER_NETWORK_FILTER_NAME = "ovirt-no-filter";
 
-    public static final Version OVIRT_NO_FILTER_MINIMAL_SUPPORTED_VERSION = new Version("3.0");
+    public static final Version OVIRT_NO_FILTER_MINIMAL_SUPPORTED_VERSION = new Version("4.1");
 
     public static final Guid VNIC_PROFILE_NETWORK_FILTER = new Guid("3c6f56c2-bd3a-4575-969b-b6cda2d594ad");
 

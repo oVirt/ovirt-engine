@@ -185,9 +185,9 @@
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
 
-  <network_filter filter_id="c477a4cc-f00e-45be-b61f-224766437091" filter_name="TEST_NETWORK_FILTER" version="4.0"/>
-  <network_filter filter_id="22510576-a243-468e-bc37-d68f16130b02" filter_name="ovirt-no-filter" version="3.0"/>
-  <network_filter filter_id="3c6f56c2-bd3a-4575-969b-b6cda2d594ad" filter_name="vnic-profile-filter-test" version="4.0"/>
+  <network_filter filter_id="c477a4cc-f00e-45be-b61f-224766437091" filter_name="TEST_NETWORK_FILTER" version="4.3"/>
+  <network_filter filter_id="22510576-a243-468e-bc37-d68f16130b02" filter_name="ovirt-no-filter" version="4.1"/>
+  <network_filter filter_id="3c6f56c2-bd3a-4575-969b-b6cda2d594ad" filter_name="vnic-profile-filter-test" version="4.3"/>
 
   <vnic_profiles id="fd81f1e1-785b-4579-ab75-1419ebb87052" name="engine_profile" network_id="58d5c1c6-cb15-4832-b2a4-023770607188" network_qos_id="de956031-6be2-43d6-bb90-5191c9253314" port_mirroring="false" passthrough="false" migratable="true" custom_properties="{ &quot;prop1&quot; : &quot;true&quot;, &quot;prop2&quot; : &quot;123456&quot; }" description="vnic profile description" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36" network_filter_id="22510576-a243-468e-bc37-d68f16130b02"/>
   <vnic_profiles id="a667da39-27b0-47ec-a5fa-d4293a62b222" name="engine_profile_pm" network_id="58d5c1c6-cb15-4832-b2a4-023770607188" network_qos_id="de956031-6be2-43d6-bb90-5191c9253315" port_mirroring="true" passthrough="false" migratable="true" _create_date="2013-07-02 08:38:36" _update_date="2013-07-02 08:38:36" network_filter_id="22510576-a243-468e-bc37-d68f16130b02"/>
