@@ -299,6 +299,10 @@ class CoreEnv(object):
     #   'unremovable': True or False,
     #   'changed': True or False,
     #   'groups': set of: [group_id] . There is also a group 'unremovable'.
+    #   if 'changed' is missing, it's because the file is missing. This can
+    #   be either because we removed it at some point, or the user did.
+    #   Perhaps we should somehow record removals in uninstall files, but
+    #   currently we do not, so can't know what happened.
     # }
     UNINSTALL_FILES_INFO = 'OVESETUP_CORE/uninstallFilesInfo'
 
