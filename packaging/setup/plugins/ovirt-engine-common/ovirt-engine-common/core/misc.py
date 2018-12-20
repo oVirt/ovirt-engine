@@ -22,6 +22,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.cinderlib import constants as oclcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
@@ -48,6 +49,7 @@ class Plugin(plugin.PluginBase):
         ].extend((
             oengcommcons,
             oenginecons,
+            oclcons,
         ))
 
 

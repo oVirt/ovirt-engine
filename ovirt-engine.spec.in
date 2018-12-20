@@ -554,6 +554,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} >= 3.6.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
+Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-imageio-proxy-setup
@@ -741,6 +742,15 @@ Requires:	%{required_python_lib_otopi_devtools}
 
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
+
+%package setup-plugin-cinderlib
+Summary:	Setup and upgrade specific plugins for cinderlib integration database
+Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+Requires:	openssh
+
+%description setup-plugin-cinderlib
+Setup and upgrade specific plugins for cinderlib integration database
 
 %prep
 %setup -c -q
@@ -1267,6 +1277,11 @@ fi
 %{engine_data}/firewalld/vmconsole-proxy/
 %{engine_data}/setup/ovirt_engine_setup/vmconsole_proxy_helper/
 %{engine_data}/setup/plugins/*/vmconsole_proxy_helper/
+
+%files setup-plugin-cinderlib
+%license LICENSE
+%{engine_data}/setup/ovirt_engine_setup/cinderlib/
+%{engine_data}/setup/plugins/*/cinderlib
 
 %files dbscripts
 %license LICENSE

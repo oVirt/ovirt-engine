@@ -224,6 +224,20 @@ DWH_DB_DRIVER="org.postgresql.Driver"
 DWH_DB_URL="jdbc:postgresql://${DWH_DB_HOST}:${DWH_DB_PORT}/${DWH_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
 #
+# Cinderlib Database connection details
+#
+SENSITIVE_KEYS="${SENSITIVE_KEYS},CINDERLIB_DB_PASSWORD"
+CINDERLIB_DB_HOST="localhost"
+CINDERLIB_DB_PORT="5432"
+CINDERLIB_DB_USER="ovirt_cinderlib"
+CINDERLIB_DB_PASSWORD=
+CINDERLIB_DB_DATABASE="ovirt_cinderlib"
+CINDERLIB_DB_SECURED="False"
+CINDERLIB_DB_SECURED_VALIDATION="False"
+CINDERLIB_DB_DRIVER=org.postgresql.Driver
+CINDERLIB_DB_URL="jdbc:postgresql://${CINDERLIB_DB_HOST}:${CINDERLIB_DB_PORT}/${CINDERLIB_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+#
 # Size of the database connection pool:
 #
 ENGINE_DB_MIN_CONNECTIONS=1
