@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.branding.BrandingManager;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
@@ -24,6 +27,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -45,6 +49,9 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
     public ConfigureConsoleOptionsQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     @Override
     protected boolean validateInputs() {
@@ -107,6 +114,11 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         // fill additional SPICE data
         if (options.getGraphicsType() == GraphicsType.SPICE) {
             fillSpice(options);
+        }
+
+        // fill additional VNC data
+        if (options.getGraphicsType() == GraphicsType.VNC) {
+            fillVnc(options);
         }
 
         if (getQueryReturnValue().getSucceeded()) {
@@ -280,6 +292,19 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
                 ? getVdsCertificateSubject()
                 : null);
         options.setSpiceProxy(determineSpiceProxy());
+    }
+
+    private void fillVnc(ConsoleOptions options) {
+        final VdsDynamic host = getHost();
+        boolean useSsl = host != null && host.isVncEncryptionEnabled();
+        options.setUseSsl(useSsl);
+        if (useSsl) {
+            options.setSecurePort(options.getPort());
+        }
+    }
+
+    protected VdsDynamic getHost() {
+        return vdsDynamicDao.get(getCachedVm().getRunOnVds());
     }
 
     private String generateTicket() {

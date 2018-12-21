@@ -60,6 +60,7 @@ public class ConsoleOptions implements Serializable{
      */
     private String ovirtHost;
     private String ssoToken;
+    private boolean useSsl;
 
     public static final int TICKET_VALIDITY_SECONDS = 120;
     public static final int SPICE_USB_DEFAULT_PORT = 32023;
@@ -359,6 +360,14 @@ public class ConsoleOptions implements Serializable{
 
     public void setSsoToken(String ssoToken) {
         this.ssoToken = ssoToken;
+    }
+
+    public boolean isUseSsl() {
+        return useSsl;
+    }
+
+    public void setUseSsl(boolean useSsl) {
+        this.useSsl = useSsl;
     }
 
     public enum WanColorDepth {

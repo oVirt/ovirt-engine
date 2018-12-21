@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
@@ -130,10 +131,34 @@ public class ConfigureConsoleOptionsQueryTest extends
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
+        doReturn(null).when(getQuery()).getHost();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
         verify(backend, times(1)).runAction(eq(ActionType.SetVmTicket), any());
+    }
+
+    @Test
+    public void shouldFillUseSsl() {
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.VNC));
+        when(getQueryParameters().isSetTicket()).thenReturn(true);
+        mockSessionDataContainer();
+        mockGetCaCertificate();
+        doReturn(mockVm(GraphicsType.VNC)).when(getQuery()).getCachedVm();
+
+        ActionReturnValue result = new ActionReturnValue();
+        result.setSucceeded(true);
+        result.setActionReturnValue("nbusr123");
+        doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
+
+        VdsDynamic vds = new VdsDynamic();
+        vds.setVncEncryptionEnabled(true);
+        doReturn(vds).when(getQuery()).getHost();
+
+        getQuery().getQueryReturnValue().setSucceeded(true);
+        getQuery().executeQueryCommand();
+        ConsoleOptions options = getQuery().getQueryReturnValue().getReturnValue();
+        assertTrue(options.isUseSsl());
     }
 
     @Test

@@ -17,9 +17,13 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
     @Override
     public void invokeClient() {
             WebClientConsoleInvoker invoker =
-                    new WebClientConsoleInvoker(CLIENT_PAGE, getConfig(),
-                            getOptions().getHost(), getOptions().getPort(),
-                            getOptions().getTicket(), false, getOptions().getVmName() + NOVNC_TITLE_SUFFIX);
+                    new WebClientConsoleInvoker(CLIENT_PAGE,
+                            getConfig(),
+                            getOptions().getHost(),
+                            getOptions().getPort(),
+                            getOptions().getTicket(),
+                            getOptions().isUseSsl(),
+                            getOptions().getVmName() + NOVNC_TITLE_SUFFIX);
         invoker.invokeClient();
     }
 
