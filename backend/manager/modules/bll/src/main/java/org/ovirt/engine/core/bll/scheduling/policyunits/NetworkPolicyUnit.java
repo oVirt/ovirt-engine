@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -237,7 +238,8 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
-        if (displayNic.getIpv4BootProtocol() == Ipv4BootProtocol.NONE) {
+        if (displayNic.getIpv4BootProtocol() == Ipv4BootProtocol.NONE
+                && displayNic.getIpv6BootProtocol() == Ipv6BootProtocol.NONE) {
             log.warn("Host {} has the display network {} configured with improper boot protocol on interface {}.",
                     host.getName(),
                     displayNetwork.getName(),
