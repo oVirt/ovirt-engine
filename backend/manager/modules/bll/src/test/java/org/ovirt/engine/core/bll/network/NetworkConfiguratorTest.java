@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -17,7 +16,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,14 +43,12 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.InjectorExtension;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class})
@@ -75,13 +71,6 @@ public class NetworkConfiguratorTest {
     private static final int NIC_VLAN_ID = 666;
     private static final int MANAGMENT_NETWORK_VLAN_ID = 777;
     private static final String HOST_NAME = "host name";
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_2, false),
-                MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_3, true)
-        );
-    }
 
     @Mock
     @InjectedMock
@@ -150,11 +139,6 @@ public class NetworkConfiguratorTest {
     public void getIpv6AddressOfNetworkReturnsNullWhenThereIsNoNetworkOfGivenName() {
         nic.setIpv6Address(IPV6_ADDRESS);
         assertThat(underTest.getIpv6AddressOfNetwork(NETWORK_NAME2), nullValue());
-    }
-
-    @Test
-    public void createSetupNetworkParamsInLegacyCluster() {
-        createSetupNetworkParamsTest(Version.v4_2, empty());
     }
 
     @Test

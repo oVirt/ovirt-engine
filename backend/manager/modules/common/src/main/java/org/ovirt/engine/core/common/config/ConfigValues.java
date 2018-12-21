@@ -1447,9 +1447,6 @@ public enum ConfigValues {
     HystrixMonitoringEnabled,
 
     @TypeConverterAttribute(Boolean.class)
-    Ipv6Supported,
-
-    @TypeConverterAttribute(Boolean.class)
     ipv6IscsiSupported,
 
     @TypeConverterAttribute(Boolean.class)
