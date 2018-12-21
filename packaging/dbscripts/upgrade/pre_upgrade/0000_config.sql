@@ -221,8 +221,6 @@ select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'true', '4.3');
 
-select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'true', '4.3');
-
 -- default requirement for rng sources (empty string by default, additional legal value is 'HWRNG')
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', '', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', '', '4.3');
@@ -974,7 +972,6 @@ select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','gene
 select fn_db_update_config_value('AllowEditingHostedEngine','true','general');
 select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
 select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true"}', '4.1');
-select fn_db_update_config_value('DataOperationsByHSM','true','4.1');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true" }','4.1');

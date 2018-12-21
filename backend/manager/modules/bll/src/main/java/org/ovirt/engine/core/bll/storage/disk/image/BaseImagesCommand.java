@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -142,13 +141,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected boolean isDataOperationsByHSM(StorageDomainStatic targetSd) {
-        return FeatureSupported.dataOperationsByHSM(getStoragePool().getCompatibilityVersion()) &&
-               targetSd.getStorageDomainType().isDataDomain();
-    }
-
     protected boolean isDataOperationsByHSM() {
-        return isDataOperationsByHSM(getStorageDomain().getStorageStaticData());
+        return getStorageDomain().getStorageStaticData().getStorageDomainType().isDataDomain();
     }
 
     protected boolean performImageVdsmOperation() {

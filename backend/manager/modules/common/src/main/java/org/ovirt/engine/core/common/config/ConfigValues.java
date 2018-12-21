@@ -1406,9 +1406,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     VMConsoleTicketTolerance,
 
-    @TypeConverterAttribute(Boolean.class)
-    DataOperationsByHSM,
-
     /**
      * In 4.1 gluster libgfapi is supported.
      */

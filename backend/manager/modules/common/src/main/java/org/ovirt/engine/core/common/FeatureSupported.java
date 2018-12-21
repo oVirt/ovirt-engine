@@ -99,15 +99,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.IsSuspendSupported, version, architecture);
     }
 
-    /**
-     * @param version
-     *            Compatibility version to check for.
-     * @return <code>true</code> if data operations by HSM are supported for the given version
-     */
-    public static boolean dataOperationsByHSM(Version version) {
-        return supportedInConfig(ConfigValues.DataOperationsByHSM, version);
-    }
-
     public static boolean ipv6Supported(Version version) {
         return supportedInConfig(ConfigValues.Ipv6Supported, version);
     }
