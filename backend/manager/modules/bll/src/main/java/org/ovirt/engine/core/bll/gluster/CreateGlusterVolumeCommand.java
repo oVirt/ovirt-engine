@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -126,10 +125,6 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         }
 
         if (getVolume().getIsArbiter()){
-            if(!GlusterFeatureSupported.glusterArbiterVolumeSupported(getCluster().getCompatibilityVersion())){
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_NOT_SUPPORTED);
-            }
-
             if(!getVolume().getVolumeType().isReplicatedType() || getVolume().getReplicaCount() != 3){
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_SHOULD_BE_REPLICA_3_VOLUME);
             }

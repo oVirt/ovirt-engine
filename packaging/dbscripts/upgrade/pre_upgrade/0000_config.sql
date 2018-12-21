@@ -162,9 +162,6 @@ select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/
 select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
--- Gluster Arbiter Volume --
-select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'true', '4.3');
-
 -- Gluster Eventing--
 select fn_db_add_config_value_for_versions_up_to('GlusterEventingSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('GlusterEventingSupported', 'true', '4.3');

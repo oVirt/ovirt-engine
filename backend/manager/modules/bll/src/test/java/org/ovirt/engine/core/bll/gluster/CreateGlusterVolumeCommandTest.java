@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -37,7 +35,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith(MockConfigExtension.class)
@@ -71,13 +68,6 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private CreateGlusterVolumeCommand cmd = createTestCommand(getVolume(2, false));
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_2, false),
-                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_3, true)
-        );
-    }
 
     private CreateGlusterVolumeCommand createTestCommand(GlusterVolumeEntity volumeEntity) {
         CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(volumeEntity);
@@ -172,14 +162,6 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         setVolume(getVolume(2, false, GlusterVolumeType.REPLICATE, 2, true));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_SHOULD_BE_REPLICA_3_VOLUME);
-    }
-
-    @Test
-    public void validateFailsWithArbiterWithClusterDoesNotArbiterVolume() {
-        setVolume(getVolume(3, false, GlusterVolumeType.REPLICATE, 3, true));
-        doReturn(getCluster(true, Version.v4_2)).when(clusterDao).get(any());
-        ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_GLUSTER_ARBITER_VOLUME_NOT_SUPPORTED);
     }
 
     @Test
