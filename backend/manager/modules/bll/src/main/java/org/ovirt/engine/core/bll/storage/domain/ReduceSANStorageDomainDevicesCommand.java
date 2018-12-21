@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.BlockStorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -232,12 +231,6 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL,
                     String.format("$storageFormat %1$s", StorageFormatType.V1.toString()));
         }
-
-        if (getStoragePool() != null
-                && !FeatureSupported.reduceDeviceFromStorageDomain(getStoragePool().getCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_REDUCE_DOMAIN_DEVICE_NOT_SUPPORTED);
-        }
-
         return true;
     }
 

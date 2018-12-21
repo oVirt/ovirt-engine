@@ -18,11 +18,8 @@ import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -31,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -101,7 +97,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
         updateStoragePoolFormatType();
         updateAllClustersMacPool();
-        syncAllUsedLunsInStoragePool();
         setSucceeded(true);
     }
 
@@ -126,39 +121,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private boolean shouldSetNewMacPoolOnAllClusters(Guid newMacPoolId) {
         return newMacPoolId != null;
-    }
-
-    /**
-     * Synchronizes all the direct luns that are attached to a vm in the storage pool,
-     * and all the active block storage domains' luns.
-     */
-    private void syncAllUsedLunsInStoragePool() {
-        if (reduceDeviceFromStorageDomainWasIntroduced()) {
-            if (getOldStoragePool().getStatus() == StoragePoolStatus.Up) {
-                /*
-                - We don't want to fail the whole storage pool upgrade because some of the
-                  luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
-                 */
-                runInternalAction(ActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
-            } else {
-                List<DiskLunMap> diskLunMapsForVmsInPool = diskLunMapDao.getDiskLunMapsForVmsInPool(getStoragePoolId());
-                if (!diskLunMapsForVmsInPool.isEmpty()) {
-                    addCustomValue("DirectLunDisksIds", diskLunMapsForVmsInPool.stream()
-                            .map(DiskLunMap::getDiskId)
-                            .map(Guid::toString)
-                            .collect(Collectors.joining(", ")));
-                    auditLogDirector.log(this, AuditLogType.DIRECT_LUNS_COULD_NOT_BE_SYNCED);
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns true iff the reduce device from storage domain was not supported in the old dc, and now it should be.
-     */
-    private boolean reduceDeviceFromStorageDomainWasIntroduced() {
-        return !FeatureSupported.reduceDeviceFromStorageDomain(getOldStoragePool().getCompatibilityVersion()) &&
-                FeatureSupported.reduceDeviceFromStorageDomain(getStoragePool().getCompatibilityVersion());
     }
 
     private void updateQuotaCache() {

@@ -375,10 +375,7 @@ public class StorageModel extends Model {
         if (getCurrentStorageItem() instanceof SanStorageModelBase) {
             SanStorageModelBase sanStorageModel = (SanStorageModelBase) getCurrentStorageItem();
             boolean isMaintenance = !isNewStorage() && getStorage().getStatus() == StorageDomainStatus.Maintenance;
-            sanStorageModel.setReduceDeviceSupported(isMaintenance &&
-                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                    ConfigValues.ReduceDeviceFromStorageDomain,
-                    getDataCenter().getSelectedItem().getCompatibilityVersion().toString()));
+            sanStorageModel.setReduceDeviceSupported(isMaintenance);
             sanStorageModel.updateRemovableLuns();
         }
         updateItemsAvailability();

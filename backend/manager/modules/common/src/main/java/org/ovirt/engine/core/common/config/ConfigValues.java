@@ -1456,9 +1456,6 @@ public enum ConfigValues {
     PassDiscardSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
-    ReduceDeviceFromStorageDomain,
-
-    @TypeConverterAttribute(Boolean.class)
     QemuimgCommitSupported,
 
     @TypeConverterAttribute(Boolean.class)

@@ -124,14 +124,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.PassDiscardSupported, version);
     }
 
-    /**
-     * @param version Compatibility version to check for.
-     * @return {@code true} if reduce device from domain is supported for this version.
-     */
-    public static boolean reduceDeviceFromStorageDomain(Version version) {
-        return supportedInConfig(ConfigValues.ReduceDeviceFromStorageDomain, version);
-    }
-
     public static boolean isQemuimgCommitSupported(Version version) {
         return supportedInConfig(ConfigValues.QemuimgCommitSupported, version);
     }
