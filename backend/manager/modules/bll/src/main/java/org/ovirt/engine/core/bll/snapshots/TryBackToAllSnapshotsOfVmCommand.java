@@ -218,7 +218,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 isRestoreMemory());
 
         // custom preview - without leases
-        if (!isRestoreLease()) {
+        if (!getParameters().isRestoreLease()) {
             vmStaticDao.updateVmLeaseStorageDomainId(getVm().getId(), null);
             return;
         }
@@ -364,7 +364,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     private void initializeSnapshotsLeasesParams() {
-        if (isRestoreLease()) {
+        if (getParameters().isRestoreLease()) {
             Guid activeSnapshotLeaseDomainId = getVm().getStaticData().getLeaseStorageDomainId();
             Guid selectedLeaseDomainId = getParameters().getDstLeaseDomainId();
             LeaseAction leaseAction = null;
@@ -411,11 +411,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return getParameters().isRestoreMemory() &&
                 FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                         getVm().getClusterArch(), getVm().getCompatibilityVersion());
-    }
-
-    private boolean isRestoreLease() {
-        return getParameters().isRestoreLease() &&
-                FeatureSupported.isVmLeasesSupported(getVm().getCompatibilityVersion());
     }
 
     private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {

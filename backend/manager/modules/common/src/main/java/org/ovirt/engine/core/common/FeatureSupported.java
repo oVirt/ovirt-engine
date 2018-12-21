@@ -130,14 +130,6 @@ public class FeatureSupported {
 
     /**
      * @param version Compatibility version to check for.
-     * @return {@code true} if VM leases are supported for this version.
-     */
-    public static boolean isVmLeasesSupported(Version version) {
-        return supportedInConfig(ConfigValues.VmLeasesSupported, version);
-    }
-
-    /**
-     * @param version Compatibility version to check for.
      * @return {@code true} if Managed block domain storage domain is supported for this version.
      */
     public static boolean isManagedBlockDomainSupported(Version version) {

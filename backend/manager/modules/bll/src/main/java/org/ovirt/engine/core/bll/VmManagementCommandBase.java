@@ -171,9 +171,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected boolean canAddLease() {
-        if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
-        }
         if (!getParameters().getVmStaticData().isAutoStartup()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED_WITH_HA_OFF);
         }

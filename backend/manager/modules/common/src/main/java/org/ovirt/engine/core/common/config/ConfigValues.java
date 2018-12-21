@@ -1459,9 +1459,6 @@ public enum ConfigValues {
     Ipv6MigrationProperlyHandled,
 
     @TypeConverterAttribute(Boolean.class)
-    VmLeasesSupported(ClientAccessLevel.User),
-
-    @TypeConverterAttribute(Boolean.class)
     CopyPreallocatedFileBasedDiskSupported,
 
     @TypeConverterAttribute(Boolean.class)

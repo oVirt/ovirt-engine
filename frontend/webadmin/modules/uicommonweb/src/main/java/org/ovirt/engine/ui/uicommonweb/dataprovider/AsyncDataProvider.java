@@ -3286,11 +3286,6 @@ public class AsyncDataProvider {
                 ConfigValues.CopyPreallocatedFileBasedDiskSupported, dataCenterVersion.getValue());
     }
 
-    public boolean isVmLeasesFeatureSupported(Version clusterVersion) {
-        return (Boolean) getConfigValuePreConverted(
-                ConfigValues.VmLeasesSupported, clusterVersion.getValue());
-    }
-
     public void getGlusterVolumesForStorageDomain(AsyncQuery<List<GlusterVolumeEntity>> aQuery) {
         aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(QueryType.GetAllGlusterVolumesForStorageDomain,

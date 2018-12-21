@@ -168,24 +168,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        Version compVer = model.getSelectedCluster().getCompatibilityVersion();
-        if (model.getCustomCompatibilityVersion().getSelectedItem() != null) {
-            compVer = model.getCustomCompatibilityVersion().getSelectedItem();
-        }
-        boolean vmLeasesSupported = AsyncDataProvider.getInstance().isVmLeasesFeatureSupported(compVer);
-        if (!vmLeasesSupported) {
-            model.getLease().setIsChangeable(false, constants.vmLeasesSupported());
+        StorageDomain leaseStorageDomain = model.getLease().getSelectedItem();
+        if (!model.getIsHighlyAvailable().getEntity()) {
+            model.getLease().setIsChangeable(false);
+            model.getLease().setChangeProhibitionReason(constants.vmLeasesNotSupportedWithoutHA());
+        } else if (leaseStorageDomain != null && leaseStorageDomain.getStatus() != StorageDomainStatus.Active) {
+            model.getLease().setIsChangeable(false);
+            model.getLease().setChangeProhibitionReason(constants.cannotEditNotActiveLeaseDomain());
         } else {
-            StorageDomain leaseStorageDomain = model.getLease().getSelectedItem();
-            if (!model.getIsHighlyAvailable().getEntity()) {
-                model.getLease().setIsChangeable(false);
-                model.getLease().setChangeProhibitionReason(constants.vmLeasesNotSupportedWithoutHA());
-            } else if (leaseStorageDomain != null && leaseStorageDomain.getStatus() != StorageDomainStatus.Active) {
-                model.getLease().setIsChangeable(false);
-                model.getLease().setChangeProhibitionReason(constants.cannotEditNotActiveLeaseDomain());
-            } else {
-                model.getLease().setIsChangeable(true);
-            }
+            model.getLease().setIsChangeable(true);
         }
     }
 

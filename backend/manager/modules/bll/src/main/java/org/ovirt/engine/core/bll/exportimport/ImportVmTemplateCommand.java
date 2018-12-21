@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -438,11 +437,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
         if (!getVmTemplate().isAutoStartup() || !shouldAddLease(getVmTemplate())) {
             getVmTemplate().setLeaseStorageDomainId(null);
-            return;
-        }
-        if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-            getVmTemplate().setLeaseStorageDomainId(null);
-            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_TEMPLATE_WITH_LEASE_COMPAT_VERSION);
             return;
         }
         if (validateLeaseStorageDomain(importedLeaseStorageDomainId)) {

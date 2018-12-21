@@ -51,7 +51,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -436,11 +435,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
         if (!getVm().isAutoStartup() || !shouldAddLease(getVm().getStaticData())) {
             getVm().setLeaseStorageDomainId(null);
-            return;
-        }
-        if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-            getVm().setLeaseStorageDomainId(null);
-            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_COMPAT_VERSION);
             return;
         }
         if (validateLeaseStorageDomain(importedLeaseStorageDomainId) &&
