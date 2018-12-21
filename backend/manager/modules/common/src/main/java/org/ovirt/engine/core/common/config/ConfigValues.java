@@ -1456,9 +1456,6 @@ public enum ConfigValues {
     ipv6IscsiSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    GetNamesOfVmsFromExternalProviderSupported(ClientAccessLevel.Admin),
-
-    @TypeConverterAttribute(Boolean.class)
     VirtIOScsiIOThread,
 
     @TypeConverterAttribute(Boolean.class)

@@ -820,10 +820,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             case VMWARE:
             case KVM:
             case XEN:
-                if (AsyncDataProvider.getInstance().isGetNamesOfVmsFromExternalProviderSupported(getDataCenters().getSelectedItem().getCompatibilityVersion())) {
-                    return false;
-                }
-                break;
+                return false;
             default:
         }
         return true;

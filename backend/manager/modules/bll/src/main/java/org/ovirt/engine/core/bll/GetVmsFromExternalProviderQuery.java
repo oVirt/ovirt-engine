@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -39,7 +38,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
 
     private Object getVmsFromExternalProvider() {
         try {
-            if (isGetNamesOfVmsFromExternalProviderSupported() && getParameters().getNamesOfVms() == null) {
+            if (getParameters().getNamesOfVms() == null) {
                 return runVdsCommand(VDSCommandType.GetVmsNamesFromExternalProvider,
                         buildGetRemoteVmsInfoParameters()).getReturnValue();
             } else {
@@ -117,11 +116,5 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
         logable.setStoragePoolName(dataCenter.getName());
         logable.setUserName(String.format("%s@%s", getUser().getLoginName(), getUser().getDomain()));
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC);
-    }
-
-    private boolean isGetNamesOfVmsFromExternalProviderSupported() {
-        return FeatureSupported.isGetNamesOfVmsFromExternalProviderSupported(storagePoolDao
-                .get(getParameters().getDataCenterId())
-                .getCompatibilityVersion());
     }
 }

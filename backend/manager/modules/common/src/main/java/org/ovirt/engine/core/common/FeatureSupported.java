@@ -107,15 +107,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ipv6IscsiSupported, version);
     }
 
-    /**
-     *
-     * @param version Compatibility version to check for.
-     * @return <code>true</code> iff get external VMS names only in 1st phase from external server VMS (v2v) is supported in <code>version</code>
-     */
-    public static boolean isGetNamesOfVmsFromExternalProviderSupported(Version version) {
-        return supportedInConfig(ConfigValues.GetNamesOfVmsFromExternalProviderSupported, version);
-    }
-
     public static boolean virtioScsiIoThread(Version version) {
         return supportedInConfig(ConfigValues.VirtIOScsiIOThread, version);
     }
