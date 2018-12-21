@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -183,20 +182,9 @@ implements SerialChildExecutingCommand {
         image.setVolumeFormat(VolumeFormat.COW);
         image.setVolumeType(VolumeType.Sparse);
         image.setDiskVmElements(image.getDiskVmElements().stream()
-                .map(dve -> {
-                    DiskVmElement copy = DiskVmElement.copyOf(dve, image.getId(), getVmTemplateId());
-                    updatePassDiscardForDiskVmElement(copy);
-                    return copy;
-                })
+                .map(dve -> DiskVmElement.copyOf(dve, image.getId(), getVmTemplateId()))
                 .collect(Collectors.toList()));
         return image;
-    }
-
-    protected void updatePassDiscardForDiskVmElement(DiskVmElement diskVmElement) {
-        if (diskVmElement.isPassDiscard() &&
-                !FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion())) {
-            diskVmElement.setPassDiscard(false);
-        }
     }
 
     private void convert() {

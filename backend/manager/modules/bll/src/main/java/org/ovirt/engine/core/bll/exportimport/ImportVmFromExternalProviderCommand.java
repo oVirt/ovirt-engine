@@ -303,11 +303,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
     protected DiskImage adjustDisk(DiskImage image) {
         image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
         image.setDiskVmElements(image.getDiskVmElements().stream()
-                .map(dve -> {
-                    DiskVmElement copy = DiskVmElement.copyOf(dve, image.getId(), getVmId());
-                    updatePassDiscardForDiskVmElement(copy);
-                    return copy;
-                })
+                .map(dve -> DiskVmElement.copyOf(dve, image.getId(), getVmId()))
                 .collect(Collectors.toList()));
         return image;
     }

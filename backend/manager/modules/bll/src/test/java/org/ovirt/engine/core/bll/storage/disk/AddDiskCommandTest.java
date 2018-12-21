@@ -87,8 +87,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8192),
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true)
+                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8192)
         );
     }
 

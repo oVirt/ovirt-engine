@@ -36,7 +36,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -170,7 +169,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 return false;
             }
 
-            if (!validatePassDiscardSupported(diskVmElementValidator)) {
+            if (!validate(diskVmElementValidator.isPassDiscardSupported(getStorageDomainId()))) {
                 return false;
             }
 
@@ -788,14 +787,5 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected StorageDomainValidator createStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
-    }
-
-    private boolean validatePassDiscardSupported(DiskVmElementValidator diskVmElementValidator) {
-        if (getDiskVmElement().isPassDiscard() &&
-                !FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DC_VERSION,
-                    String.format("$dataCenterVersion %s", getStoragePool().getCompatibilityVersion().toString()));
-        }
-        return validate(diskVmElementValidator.isPassDiscardSupported(getStorageDomainId()));
     }
 }

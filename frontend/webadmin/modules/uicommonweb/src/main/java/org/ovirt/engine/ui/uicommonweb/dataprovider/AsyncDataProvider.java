@@ -3276,11 +3276,6 @@ public class AsyncDataProvider {
                 ConfigValues.ManagedBlockDomainSupported, dataCenterVersion.getValue());
     }
 
-    public boolean isPassDiscardFeatureSupported(Version dataCenterVersion) {
-        return (Boolean) getConfigValuePreConverted(
-                ConfigValues.PassDiscardSupported, dataCenterVersion.getValue());
-    }
-
     public Boolean isCopyPreallocatedFileBasedDiskSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(
                 ConfigValues.CopyPreallocatedFileBasedDiskSupported, dataCenterVersion.getValue());

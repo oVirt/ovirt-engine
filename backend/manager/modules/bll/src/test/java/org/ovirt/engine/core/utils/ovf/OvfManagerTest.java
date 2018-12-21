@@ -87,8 +87,7 @@ public class OvfManagerTest {
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_2, 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_2, 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_2, true)
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16)
         );
     }
 

@@ -34,7 +34,6 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -57,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
@@ -736,13 +734,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         }
         return jobProperties;
-    }
-
-    protected void updatePassDiscardForDiskVmElement(DiskVmElement diskVmElement) {
-        if (diskVmElement.isPassDiscard() &&
-                !FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion())) {
-            diskVmElement.setPassDiscard(false);
-        }
     }
 
     @Override

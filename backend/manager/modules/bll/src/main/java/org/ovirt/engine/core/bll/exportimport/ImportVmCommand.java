@@ -1140,9 +1140,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected void saveDiskVmElement(Guid diskId, Guid vmId, DiskVmElement diskVmElement) {
-        DiskVmElement dve = DiskVmElement.copyOf(diskVmElement, diskId, vmId);
-        updatePassDiscardForDiskVmElement(dve);
-        diskVmElementDao.save(dve);
+        diskVmElementDao.save(DiskVmElement.copyOf(diskVmElement, diskId, vmId));
     }
 
     /** Save the entire image, including it's storage mapping */

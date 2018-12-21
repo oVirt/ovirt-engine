@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
@@ -166,11 +165,10 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             lun.setPeAllocatedCount(IrsBrokerCommand.assignLongValue(xlun, "pe_alloc_count"));
         }
 
-        if (FeatureSupported.passDiscardSupported(compatibilityVersion)) {
-            if (xlun.containsKey("discard_max_bytes")) {
-                lun.setDiscardMaxSize(((Number) xlun.get("discard_max_bytes")).longValue());
-            }
+        if (xlun.containsKey("discard_max_bytes")) {
+            lun.setDiscardMaxSize(((Number) xlun.get("discard_max_bytes")).longValue());
         }
+
         if (xlun.containsKey("vendorID")) {
             lun.setVendorName(xlun.get("vendorID").toString());
         }

@@ -112,14 +112,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.LibgfApiSupported, version);
     }
 
-    /**
-     * @param version Compatibility version to check for.
-     * @return {@code true} if Pass Discard is supported for this version.
-     */
-    public static boolean passDiscardSupported(Version version) {
-        return supportedInConfig(ConfigValues.PassDiscardSupported, version);
-    }
-
     public static boolean isQemuimgCommitSupported(Version version) {
         return supportedInConfig(ConfigValues.QemuimgCommitSupported, version);
     }

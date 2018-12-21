@@ -717,11 +717,6 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     protected void updatePassDiscardAvailability() {
-        if (!AsyncDataProvider.getInstance().isPassDiscardFeatureSupported(
-                getDataCenter().getSelectedItem().getCompatibilityVersion())) {
-            getPassDiscard().setIsAvailable(false);
-            return;
-        }
         if (getIsFloating()) {
             getPassDiscard().setIsAvailable(false);
         } else {

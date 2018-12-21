@@ -8,28 +8,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
 @ExtendWith({MockConfigExtension.class, RandomUtilsSeedingExtension.class})
 public class GetDeviceListVDSCommandTest {
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_2, false),
-                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_3, true)
-        );
-    }
-
     @Test
     public void parseLunReturnsIscsiByDefault() {
         testParseLunForDevtypeField(StorageType.ISCSI, "");
@@ -109,11 +99,6 @@ public class GetDeviceListVDSCommandTest {
     @Test
     public void discardMaxBytesFieldIsParsed() {
         testDiscardFieldParsing(Version.v4_3, 1024L);
-    }
-
-    @Test
-    public void discardMaxBytesFieldIsNotParsed() {
-        testDiscardFieldParsing(Version.v4_2, null);
     }
 
     private void testDiscardFieldParsing(Version poolCompatibilityVersion, Long expectedDiscardMaxSize) {

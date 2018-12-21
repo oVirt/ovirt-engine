@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -108,9 +107,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(getOvfUri(), "read-only", String.valueOf(dve.isReadOnly()));
         _writer.writeAttributeString(getOvfUri(), "shareable", String.valueOf(image.isShareable()));
         _writer.writeAttributeString(getOvfUri(), "boot", String.valueOf(dve.isBoot()));
-        if (FeatureSupported.passDiscardSupported(version)) {
-            _writer.writeAttributeString(getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
-        }
+        _writer.writeAttributeString(getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
         if (image.getDiskAlias() != null) {
             _writer.writeAttributeString(getOvfUri(), "disk-alias", image.getDiskAlias());
         }
@@ -133,9 +130,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         if (lun.getDiskDescription() != null) {
             _writer.writeAttributeString(getOvfUri(), "disk-description", lun.getDiskDescription());
         }
-        if (FeatureSupported.passDiscardSupported(version)) {
-            _writer.writeAttributeString(getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
-        }
+        _writer.writeAttributeString(getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
         _writer.writeAttributeString(getOvfUri(), "fileRef", OvfParser.createLunFile(lun));
         _writer.writeAttributeString(getOvfUri(), "shareable", String.valueOf(lun.isShareable()));
         _writer.writeAttributeString(getOvfUri(), "boot", String.valueOf(dve.isBoot()));

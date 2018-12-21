@@ -62,9 +62,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.put(VdsProperties.Address, getParameters().getAddressMap() != null ?
                 getParameters().getAddressMap() : StringUtils.EMPTY);
         drive.put(VdsProperties.INTERFACE, getParameters().getDiskInterface().getName());
-        if (FeatureSupported.passDiscardSupported(getParameters().getVm().getCompatibilityVersion())) {
-            drive.put(VdsProperties.DISCARD, getParameters().isPassDiscard());
-        }
+        drive.put(VdsProperties.DISCARD, getParameters().isPassDiscard());
 
         int numOfIoThreads = getParameters().getVm().getNumOfIoThreads();
         if (numOfIoThreads != 0 && getParameters().getDiskInterface() == DiskInterface.VirtIO) {

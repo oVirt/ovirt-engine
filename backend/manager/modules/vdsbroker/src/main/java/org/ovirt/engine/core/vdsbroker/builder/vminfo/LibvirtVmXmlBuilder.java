@@ -1791,7 +1791,7 @@ public class LibvirtVmXmlBuilder {
     private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve, int pinTo) {
         writer.writeStartElement("driver");
         writer.writeAttributeString("name", "qemu");
-        if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
+        if (dve.isPassDiscard()) {
             writer.writeAttributeString("discard", "unmap");
         }
         if (pinTo > 0) {
