@@ -9,10 +9,8 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -125,25 +123,22 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
             Guid volumeId,
             DiskImage newDiskImage) {
         if (newDiskImage.getVolumeFormat().equals(VolumeFormat.COW)) {
-            StoragePool sp = storagePoolDao.get(storagePoolId);
             QemuImageInfo qemuImageInfo = null;
-            if (sp != null && FeatureSupported.qcowCompatSupported(sp.getCompatibilityVersion())) {
-                try {
-                    qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
-                            storageDomainId,
-                            diskId,
-                            volumeId,
-                            null,
-                            true);
-                } catch (Exception e) {
-                    // do nothing, an exception string will be returned since qemuImageInfo is null.
-                }
-                if (qemuImageInfo == null) {
-                    getQueryReturnValue().setExceptionString("Failed to fetch qemu image info from storage");
-                    return false;
-                }
-                newDiskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
+            try {
+                qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                        storageDomainId,
+                        diskId,
+                        volumeId,
+                        null,
+                        true);
+            } catch (Exception e) {
+                // do nothing, an exception string will be returned since qemuImageInfo is null.
             }
+            if (qemuImageInfo == null) {
+                getQueryReturnValue().setExceptionString("Failed to fetch qemu image info from storage");
+                return false;
+            }
+            newDiskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
         }
         return true;
     }

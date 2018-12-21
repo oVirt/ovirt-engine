@@ -126,14 +126,6 @@ public class FeatureSupported {
 
     /**
      * @param version Compatibility version to check for.
-     * @return {@code true} if qcow compat is supported for this version.
-     */
-    public static boolean qcowCompatSupported(Version version) {
-        return supportedInConfig(ConfigValues.QcowCompatSupported, version);
-    }
-
-    /**
-     * @param version Compatibility version to check for.
      * @return {@code true} if reduce device from domain is supported for this version.
      */
     public static boolean reduceDeviceFromStorageDomain(Version version) {

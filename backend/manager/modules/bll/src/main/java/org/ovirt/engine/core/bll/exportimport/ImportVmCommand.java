@@ -1023,17 +1023,15 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void setQcowCompat(DiskImage diskImage) {
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
-        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
-            QemuImageInfo qemuImageInfo =
-                    imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
-                            diskImage.getStorageIds().get(0),
-                            diskImage.getId(),
-                            diskImage.getImageId(),
-                            null,
-                            true);
-            if (qemuImageInfo != null) {
-                diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
-            }
+        QemuImageInfo qemuImageInfo =
+                imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                        diskImage.getStorageIds().get(0),
+                        diskImage.getId(),
+                        diskImage.getImageId(),
+                        null,
+                        true);
+        if (qemuImageInfo != null) {
+            diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
         }
         imageDao.update(diskImage.getImage());
     }

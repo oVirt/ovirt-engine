@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -434,16 +433,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid newStorageDomainID,
             Guid hostIdForExecution) {
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
-        if (FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {
-            QemuImageInfo qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
-                    newStorageDomainID,
-                    newImageGroupId,
-                    newImageId,
-                    hostIdForExecution,
-                    hostIdForExecution == null);
-            if (qemuImageInfo != null) {
-                diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
-            }
+        QemuImageInfo qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                newStorageDomainID,
+                newImageGroupId,
+                newImageId,
+                hostIdForExecution,
+                hostIdForExecution == null);
+        if (qemuImageInfo != null) {
+            diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
         }
     }
 

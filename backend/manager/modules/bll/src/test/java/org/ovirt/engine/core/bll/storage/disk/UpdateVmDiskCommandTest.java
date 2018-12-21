@@ -480,7 +480,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ActionReturnValue ret = new ActionReturnValue();
         ret.setSucceeded(false);
         ArrayList<String> msgList = new ArrayList<>();
-        msgList.add(EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION.toString());
         ret.setValidationMessages(msgList);
         when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(), any())).thenReturn(ret);
         mockVdsCommandSetVolumeDescription();

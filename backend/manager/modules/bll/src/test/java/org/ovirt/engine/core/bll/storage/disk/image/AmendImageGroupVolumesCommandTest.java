@@ -4,7 +4,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,16 +27,13 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
-import org.ovirt.engine.core.utils.MockedConfig;
 
 @ExtendWith(MockConfigExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -61,14 +57,6 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
     private StoragePool storagePool;
     private StorageDomain storageDomain;
     private DiskImage diskImage;
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.QcowCompatSupported, Version.v4_2, true));
-    }
-
-    public static Stream<MockConfigDescriptor<?>> mockConfigurationQcowCompatNotSupported() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.QcowCompatSupported, Version.v4_2, false));
-    }
 
     @Spy
     @InjectMocks
@@ -132,12 +120,6 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
     public void testValidationFailsStorageDomainNotUp() {
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
-    }
-
-    @Test
-    @MockedConfig("mockConfigurationQcowCompatNotSupported")
-    public void testValidationFailsAmendNotSupported() {
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION);
     }
 
     @Test
