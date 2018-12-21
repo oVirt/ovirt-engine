@@ -1450,9 +1450,6 @@ public enum ConfigValues {
     ipv6IscsiSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    VirtIOScsiIOThread,
-
-    @TypeConverterAttribute(Boolean.class)
     PassDiscardSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)

@@ -544,8 +544,7 @@ public class VmInfoBuildUtils {
                     Integer controllerInt = Integer.valueOf(controllerStr);
 
                     boolean controllerOutOfRange = controllerInt >= vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm, dve.getDiskInterface());
-                    boolean ioThreadsEnabled = vm.getNumOfIoThreads() > 0 &&
-                            FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion());
+                    boolean ioThreadsEnabled = vm.getNumOfIoThreads() > 0;
 
                     if ((ioThreadsEnabled && !controllerOutOfRange) ||
                             (controllerInt == getDefaultVirtioScsiIndex(vm, dve.getDiskInterface()))) {
@@ -607,12 +606,6 @@ public class VmInfoBuildUtils {
         String controllerStr = address.get(VdsProperties.Controller);
 
         int defaultIndex = getDefaultVirtioScsiIndex(vm, diskInterface);
-        boolean ioThreadsEnabled = FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion());
-
-        if (!ioThreadsEnabled) {
-            // no io threads, only 1 controller allowed and it is the default one
-            return defaultIndex;
-        }
 
         if (StringUtils.isNotEmpty(controllerStr)) {
             int controllerInt = Integer.parseInt(controllerStr);

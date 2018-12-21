@@ -333,7 +333,6 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 
 select fn_db_add_config_value_for_versions_up_to('ipv6IscsiSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ipv6IscsiSupported', 'true', '4.3');
-select fn_db_add_config_value_for_versions_up_to('VirtIOScsiIOThread', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('PassDiscardSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('VmLeasesSupported', 'true', '4.3');
 select fn_db_add_config_value_for_versions_up_to('DomainXML', 'false', '4.1');

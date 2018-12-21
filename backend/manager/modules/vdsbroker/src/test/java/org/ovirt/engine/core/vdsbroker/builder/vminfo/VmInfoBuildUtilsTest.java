@@ -150,8 +150,7 @@ public class VmInfoBuildUtilsTest {
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_1, false),
-                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_2, true),
-                MockConfigDescriptor.of(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true)
+                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_2, true)
         );
     }
 

@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -383,7 +382,7 @@ public class VmDeviceUtils {
      * Add new VirtIO-SCSI controllers to the VM.
      */
     public void addVirtioScsiController(VmBase vm, Version version) {
-        boolean hasIoThreads = vm.getNumOfIoThreads() > 0 && FeatureSupported.virtioScsiIoThread(version);
+        boolean hasIoThreads = vm.getNumOfIoThreads() > 0;
         int numOfScsiControllers = hasIoThreads ? vm.getNumOfIoThreads() : 1;
 
         for (int i = 0; i < numOfScsiControllers; i++) {

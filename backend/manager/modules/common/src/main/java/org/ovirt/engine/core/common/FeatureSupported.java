@@ -103,10 +103,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ipv6IscsiSupported, version);
     }
 
-    public static boolean virtioScsiIoThread(Version version) {
-        return supportedInConfig(ConfigValues.VirtIOScsiIOThread, version);
-    }
-
     /**
      * @param version
      *            Compatibility version to check for.
