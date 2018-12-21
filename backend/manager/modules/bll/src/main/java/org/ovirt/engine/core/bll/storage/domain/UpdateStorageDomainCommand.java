@@ -103,10 +103,6 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     }
 
     private boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
-        if (getStoragePoolId() != null
-                && !validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(getStoragePool().getCompatibilityVersion()))) {
-            return false;
-        }
         return validate(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain());
     }
 

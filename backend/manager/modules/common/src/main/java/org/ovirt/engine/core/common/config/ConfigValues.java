@@ -1465,9 +1465,6 @@ public enum ConfigValues {
     PassDiscardSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
-    DiscardAfterDeleteSupported(ClientAccessLevel.Admin),
-
-    @TypeConverterAttribute(Boolean.class)
     QcowCompatSupported,
 
     @TypeConverterAttribute(Boolean.class)

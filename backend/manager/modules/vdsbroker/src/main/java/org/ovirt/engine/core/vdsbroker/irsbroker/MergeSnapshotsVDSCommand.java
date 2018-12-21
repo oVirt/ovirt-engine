@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.MergeSnapshotsVDSCommandParameters;
@@ -20,7 +19,7 @@ public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParamete
 
     @Override
     protected void executeIrsBrokerCommand() {
-        uuidReturn = mergeSnapshots(getParameters().getStorageDomainId().toString(),
+        uuidReturn = getIrsProxy().mergeSnapshots(getParameters().getStorageDomainId().toString(),
                                                   getParameters().getStoragePoolId().toString(),
                                                   getParameters().getVmId().toString(),
                                                   getParameters().getImageGroupId().toString(),
@@ -37,16 +36,5 @@ public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParamete
                 .setCreationInfo(
                         new AsyncTaskCreationInfo(taskID, AsyncTaskType.mergeSnapshots, getParameters()
                                 .getStoragePoolId()));
-    }
-
-    private OneUuidReturn mergeSnapshots(String storageDomainId, String storagePoolId, String vmId, String imageGroupId,
-            String ancestorId, String successoId, String postZero, boolean discard) {
-        if (FeatureSupported.discardAfterDeleteSupported(
-                storagePoolDao.get(getParameters().getStoragePoolId()).getCompatibilityVersion())) {
-            return getIrsProxy().mergeSnapshots(storageDomainId, storagePoolId, vmId, imageGroupId, ancestorId,
-                    successoId, postZero, discard);
-        }
-        return getIrsProxy().mergeSnapshots(storageDomainId, storagePoolId, vmId, imageGroupId, ancestorId,
-                    successoId, postZero);
     }
 }

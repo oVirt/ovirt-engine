@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -30,13 +29,11 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -245,17 +242,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     private void initStorageDomainDiscardAfterDeleteIfNeeded() {
         if (getStorageDomain().getDiscardAfterDelete() == null) {
-            getStorageDomain().setDiscardAfterDelete(getDefaultDiscardAfterDelete());
+            getStorageDomain().setDiscardAfterDelete(getStorageDomain().getStorageType().isBlockDomain());
         }
-    }
-
-    private boolean getDefaultDiscardAfterDelete() {
-        if (getStorageDomain().getStorageType().isBlockDomain()) {
-            Version compatibilityVersion = VersionStorageFormatUtil.getEarliestVersionSupported(
-                    getStorageDomain().getStorageFormat());
-            return FeatureSupported.discardAfterDeleteSupported(compatibilityVersion);
-        }
-        return false;
     }
 
     protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {

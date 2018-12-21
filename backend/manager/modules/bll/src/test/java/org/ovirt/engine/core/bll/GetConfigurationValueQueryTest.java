@@ -25,8 +25,7 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
 
     public static Stream<MockConfigDescriptor<?>> mockConfigurationForTests() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.PredefinedVMProperties, version, "some string"),
-                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, version, "some other string")
+                MockConfigDescriptor.of(ConfigValues.PredefinedVMProperties, version, "some string")
         );
     }
 

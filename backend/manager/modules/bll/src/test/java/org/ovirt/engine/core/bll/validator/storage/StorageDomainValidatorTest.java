@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,16 +36,13 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.InjectorExtension;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
 /**
@@ -69,13 +65,6 @@ public class StorageDomainValidatorTest {
 
     @Mock
     private VmDynamicDao vmDynamicDao;
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_2, false),
-                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, Version.v4_3, true)
-        );
-    }
 
     @Mock
     @InjectedMock
@@ -203,12 +192,6 @@ public class StorageDomainValidatorTest {
     @Test
     public void getDiscardAfterDeleteLegalForNewBlockStorageDomainPredicateWithUnsupportiveLuns() {
         assertGetDiscardAfterDeleteLegalForNewBlockStorageDomainPredicate(false);
-    }
-
-    @Test
-    public void discardAfterDeleteSupportedByDcVersion() {
-        domain.setDiscardAfterDelete(true);
-        assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_3), isValid());
     }
 
     @Test
@@ -352,13 +335,6 @@ public class StorageDomainValidatorTest {
         ret.setSucceeded(true);
         doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
         assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler), isValid());
-    }
-
-    @Test
-    public void discardAfterDeleteNotSupportedByDcVersion() {
-        domain.setDiscardAfterDelete(true);
-        assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_2),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION));
     }
 
     private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
@@ -39,7 +38,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
@@ -455,15 +453,6 @@ public class StorageDomainValidator {
         }
         return new ValidationResult(
                 EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_SUPPORTED_ONLY_BY_BLOCK_DOMAINS);
-    }
-
-    public ValidationResult isDiscardAfterDeleteSupportedByDcVersion(Version version) {
-        if (storageDomain.getDiscardAfterDelete() && !FeatureSupported.discardAfterDeleteSupported(version)) {
-            return new ValidationResult(
-                    EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION,
-                    String.format("$dataCenterVersion %s", version.toString()));
-        }
-        return ValidationResult.VALID;
     }
 
     public ValidationResult isRunningVmsOrVmLeasesForBackupDomain(VmHandler vmHandler) {

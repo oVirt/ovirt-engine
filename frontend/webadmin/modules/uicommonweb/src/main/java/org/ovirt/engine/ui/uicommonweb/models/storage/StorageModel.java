@@ -603,11 +603,7 @@ public class StorageModel extends Model {
                 return;
             }
 
-            boolean discardAfterDeleteSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                    ConfigValues.DiscardAfterDeleteSupported,
-                    getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
-
-            getDiscardAfterDelete().setIsAvailable(discardAfterDeleteSupported);
+            getDiscardAfterDelete().setIsAvailable(true);
             if (getDiscardAfterDelete().getIsAvailable()) {
                 if (isNewStorage()) {
                     getDiscardAfterDelete().setEntity(true);

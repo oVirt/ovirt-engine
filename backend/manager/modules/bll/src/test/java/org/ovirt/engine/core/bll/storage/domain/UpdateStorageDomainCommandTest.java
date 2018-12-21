@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -186,14 +185,6 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
         EngineMessage message =
                 EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_UNDERLYING_STORAGE;
         when(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain())
-                .thenReturn(new ValidationResult(message));
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, message);
-    }
-
-    @Test
-    public void validateFailsUnSupportedVersionForDiscardAfterDelete() {
-        EngineMessage message = EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION;
-        when(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(any()))
                 .thenReturn(new ValidationResult(message));
         ValidateTestUtils.runAndAssertValidateFailure(cmd, message);
     }

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -294,17 +293,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             return false;
         }
 
-        if (!spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()
-                && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
-            return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
-        }
-        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
-        if (!validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(getStoragePool().getCompatibilityVersion()))) {
-            return false;
-        }
         if (getStorageDomain().getStorageType().isManagedBlockStorage() &&
                 !FeatureSupported.isManagedBlockDomainSupported(getStoragePool().getCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_ACTIVATE_MANAGED_BLOCK_STORAGE_DOMAIN);
+        }
+        if (!spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()
+                && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
+            return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
         if (spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()) {
             return checkMasterDomainIsUp();
