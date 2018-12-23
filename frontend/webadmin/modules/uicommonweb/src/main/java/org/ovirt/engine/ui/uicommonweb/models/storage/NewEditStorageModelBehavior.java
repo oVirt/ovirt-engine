@@ -85,7 +85,9 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
         boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
                 dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
 
-        boolean canAttachManagedBlockDomain = dataCenter.getStatus() != StoragePoolStatus.Uninitialized;
+        boolean canAttachManagedBlockDomain =
+                dataCenter.getStatus() != StoragePoolStatus.Uninitialized && AsyncDataProvider.getInstance()
+                        .isManagedBlockDomainSupported(dataCenter.getCompatibilityVersion());
 
         // local storage should only be available in a local DC.
         boolean canAttachLocalStorage = !isLocalStorage(item) || dataCenter.isLocal();

@@ -3271,6 +3271,11 @@ public class AsyncDataProvider {
                 asyncQuery);
     }
 
+    public boolean isManagedBlockDomainSupported(Version dataCenterVersion) {
+        return (Boolean) getConfigValuePreConverted(
+                ConfigValues.ManagedBlockDomainSupported, dataCenterVersion.getValue());
+    }
+
     public boolean isPassDiscardFeatureSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(
                 ConfigValues.PassDiscardSupported, dataCenterVersion.getValue());
