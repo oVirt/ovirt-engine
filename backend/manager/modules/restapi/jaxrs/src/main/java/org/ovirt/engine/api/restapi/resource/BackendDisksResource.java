@@ -114,13 +114,10 @@ public class BackendDisksResource
 
     @Override
     public Disks list() {
-        if (isFiltered()) {
-            return mapCollection(getBackendCollection(QueryType.GetAllDisksWithSnapshots, new QueryParametersBase()));
-        } else {
-            return mapCollection(getBackendCollection(QueryType.GetAllDisksWithSnapshots,
-                    new QueryParametersBase(),
-                    SearchType.Disk));
-        }
+        //Even when filter=false the stored procedure GetAllDisksWithSnapshots is needed because of the
+        //snapshot aggregation which it provides, so search alone is not enough. This is why in this case
+        //the scenarios of filter=true and filter=false are not separated as they are in many other places
+        return mapCollection(getBackendCollection(QueryType.GetAllDisksWithSnapshots, new QueryParametersBase(), SearchType.Disk));
     }
 
     @Override
