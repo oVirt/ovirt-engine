@@ -435,6 +435,24 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             case CINDER:
                 createDiskBasedOnCinder();
                 break;
+            case MANAGED_BLOCK_STORAGE:
+                createManagedBlockStorageDisk();
+        }
+    }
+
+    private void createManagedBlockStorageDisk() {
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
+                ActionType.AddManagedBlockStorageDisk,
+                getParameters(),
+                cloneContextAndDetachFromParent());
+        try {
+            setReturnValue(future.get());
+            setSucceeded(getReturnValue().getSucceeded());
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error creating Cinder disk '{}': {}",
+                    getParameters().getDiskInfo().getDiskAlias(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 

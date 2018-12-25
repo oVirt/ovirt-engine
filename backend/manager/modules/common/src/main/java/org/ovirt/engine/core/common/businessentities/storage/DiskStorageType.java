@@ -12,7 +12,8 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
 public enum DiskStorageType implements Identifiable {
     IMAGE(0),
     LUN(1),
-    CINDER(2);
+    CINDER(2),
+    MANAGED_BLOCK_STORAGE(3);
 
     private int value;
 
@@ -32,6 +33,7 @@ public enum DiskStorageType implements Identifiable {
         classToType.put(LunDisk.class, LUN);
         classToType.put(DiskImage.class, IMAGE);
         classToType.put(CinderDisk.class, CINDER);
+        classToType.put(ManagedBlockStorageDisk.class, MANAGED_BLOCK_STORAGE);
     }
 
     public static DiskStorageType forClass(Class<? extends Disk> clazz) {
@@ -48,6 +50,6 @@ public enum DiskStorageType implements Identifiable {
     }
 
     public boolean isInternal() {
-        return this == IMAGE || this == CINDER;
+        return this == IMAGE || this == CINDER || this == MANAGED_BLOCK_STORAGE;
     }
 }

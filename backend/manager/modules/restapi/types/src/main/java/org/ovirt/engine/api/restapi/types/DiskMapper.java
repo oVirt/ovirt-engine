@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -45,6 +46,9 @@ public class DiskMapper {
                     break;
                 case IMAGE:
                     engineDisk = new DiskImage();
+                    break;
+                case MANAGED_BLOCK_STORAGE:
+                    engineDisk = new ManagedBlockStorageDisk();
                     break;
                 }
             }
@@ -157,7 +161,8 @@ public class DiskMapper {
         model.setLogicalName(entity.getLogicalName());
         model.setStorageType(map(entity.getDiskStorageType()));
         if (entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.IMAGE ||
-                entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.CINDER) {
+                entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.CINDER ||
+                    entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.MANAGED_BLOCK_STORAGE) {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
             model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new HostStorage()));
@@ -314,6 +319,8 @@ public class DiskMapper {
                 return DiskStorageType.CINDER;
             case LUN:
                 return DiskStorageType.LUN;
+            case MANAGED_BLOCK_STORAGE:
+                return DiskStorageType.MANAGED_BLOCK_STORAGE;
             default:
                 return null;
         }
@@ -353,6 +360,8 @@ public class DiskMapper {
         switch (storageDomainType) {
             case Volume:
                 return DiskStorageType.CINDER;
+            case ManagedBlockStorage:
+                return DiskStorageType.MANAGED_BLOCK_STORAGE;
             default:
                 return DiskStorageType.IMAGE;
         }

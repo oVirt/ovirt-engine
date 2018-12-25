@@ -62,6 +62,7 @@ public final class CommandsFactory {
             "org.ovirt.engine.core.bll.storage.disk.cinder",
             "org.ovirt.engine.core.bll.storage.disk.image",
             "org.ovirt.engine.core.bll.storage.disk.lun",
+            "org.ovirt.engine.core.bll.storage.disk.managedblock",
             "org.ovirt.engine.core.bll.storage.domain",
             "org.ovirt.engine.core.bll.storage.dr",
             "org.ovirt.engine.core.bll.storage.export",

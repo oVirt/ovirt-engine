@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -198,6 +199,9 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                 case CINDER:
                     entity = CinderDiskRowMapper.instance.mapRow(rs, rowNum);
                     break;
+                case MANAGED_BLOCK_STORAGE:
+                    entity = ManagedBlockStorageRowMapper.instance.mapRow(rs, rowNum);
+                    break;
             }
 
             return entity;
@@ -302,6 +306,27 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                 guidList.add(guidToAdd);
             }
             return guidList;
+        }
+    }
+
+    protected static class ManagedBlockStorageRowMapper extends AbstractDiskRowMapper<ManagedBlockStorageDisk> {
+
+        public static final ManagedBlockStorageRowMapper instance = new ManagedBlockStorageRowMapper();
+
+        private ManagedBlockStorageRowMapper() {
+        }
+
+        @Override
+        public ManagedBlockStorageDisk mapRow(ResultSet rs, int rowNum) throws SQLException {
+            ManagedBlockStorageDisk disk = super.mapRow(rs, rowNum);
+            DiskImageRowMapper.instance.mapEntity(rs, disk);
+            return disk;
+        }
+
+
+        @Override
+        protected ManagedBlockStorageDisk createDiskEntity() {
+            return new ManagedBlockStorageDisk();
         }
     }
 

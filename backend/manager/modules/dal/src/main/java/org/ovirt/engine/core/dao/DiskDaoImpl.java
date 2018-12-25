@@ -164,6 +164,7 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
             DiskStorageType diskStorageType = DiskStorageType.forValue(rs.getInt("disk_storage_type"));
 
             switch (diskStorageType) {
+            case MANAGED_BLOCK_STORAGE:
             case IMAGE:
                 disk = DiskImageRowMapper.instance.mapRow(rs, rowNum);
                 break;
