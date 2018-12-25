@@ -116,6 +116,8 @@
 %global engine_tmp %{_localstatedir}/tmp/%{engine_name}
 %global engine_backup_default_dir  %{_localstatedir}/lib/%{engine_name}-backup
 %global engine_backup_log_default_dir  %{_localstatedir}/log/%{engine_name}-backup
+%global engine_rpm_state_dir  %{_localstatedir}/lib/rpm-state/%{name}
+%global engine_setup_rpm_state_flag_file %{engine_rpm_state_dir}/need-engine-setup
 
 %global engine_gid 108
 %global engine_group ovirt
@@ -533,6 +535,19 @@ Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 
 %description setup
 Setup and upgrade scripts for %{ovirt_product_name_short}
+
+%post setup
+# If this is an update, tell the users they need to run engine-setup
+if [ $1 -gt 1 -a -e "%{_sysconfdir}/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf" ]; then
+  touch %{engine_setup_rpm_state_flag_file}
+  echo "Updating ovirt-engine-setup. To update the engine, you need to run: engine-setup"
+fi
+
+%posttrans setup
+if [ -e %{engine_setup_rpm_state_flag_file} -a -e "%{_sysconfdir}/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf" ]; then
+  echo "Updated ovirt-engine-setup. To update the engine, you need to run: engine-setup"
+fi
+rm -f %{engine_setup_rpm_state_flag_file}
 
 %package setup-plugin-ovirt-engine
 Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
@@ -1014,6 +1029,7 @@ mkdir -p %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample
 ln -s %{engine_data}/../ovirt-engine-metrics/bin/ovirt-engine-hosts-ansible-inventory \
     %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
 
+mkdir -p %{buildroot}/%{engine_rpm_state_dir}
 
 %preun
 if [ "$1" -eq 0 ]; then
@@ -1206,6 +1222,7 @@ fi
 
 %files setup
 %license LICENSE
+%dir %{engine_rpm_state_dir}
 
 
 %files setup-plugin-ovirt-engine
