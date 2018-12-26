@@ -818,6 +818,9 @@ select fn_db_add_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*','ge
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'true', '4.3');
 
+-- Managed block storage
+select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

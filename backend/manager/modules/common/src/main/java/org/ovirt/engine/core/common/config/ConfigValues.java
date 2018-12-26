@@ -1461,6 +1461,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ManagedBlockDomainSupported,
 
+    @TypeConverterAttribute(Long.class)
+    CinderlibCommandTimeoutInMinutes,
+
     @TypeConverterAttribute(Boolean.class)
     DomainXML,
 

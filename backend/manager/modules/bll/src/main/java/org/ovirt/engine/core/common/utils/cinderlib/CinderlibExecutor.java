@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +50,7 @@ public class CinderlibExecutor {
         Process process = cinderlibProcessBuilder.start();
         String output = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
         log.info("cinderlib output: {}", output);
-        if (!process.waitFor(2, TimeUnit.MINUTES)) {
+        if (!process.waitFor(Config.getValue(ConfigValues.CinderlibCommandTimeoutInMinutes), TimeUnit.MINUTES)) {
             throw new Exception("cinderlib call timed out");
         }
 
