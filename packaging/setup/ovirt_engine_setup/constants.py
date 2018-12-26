@@ -295,7 +295,7 @@ class CoreEnv(object):
 
     # Information about files that were written by previous engine-setup runs
     # dict of filename: {
-    #   hash type ('md5' or TODO 'sha256'): hash value,
+    #   hash type ('md5' or 'sha256'): hash value,
     #   'unremovable': True or False,
     #   'changed': True or False,
     #   'groups': set of: [group_id] . There is also a group 'unremovable'.

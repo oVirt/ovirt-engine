@@ -169,8 +169,6 @@ class Plugin(plugin.PluginBase):
                             uninstall_files[f['name']][algo] = f[algo]
                         elif uninstall_files[f['name']].get(algo):
                             # If we updated the hash, remove older hashes
-                            # We'll probably not support upgrade from md5
-                            # to sha256, but no harm in trying anyway
                             del uninstall_files[f['name']][algo]
 
             def getLines(section):
