@@ -304,7 +304,9 @@ public class VmInitModel extends Model {
                 getActiveDirectoryOU().setEntity(vmInit.getActiveDirectoryOU());
             }
 
-            getCloudInitProtocolList().setSelectedItem(vmInit.getCloudInitNetworkProtocol());
+            if (vmInit.getCloudInitNetworkProtocol() != null) {
+                getCloudInitProtocolList().setSelectedItem(vmInit.getCloudInitNetworkProtocol());
+            }
             initNetworks(vmInit);
         }
 
