@@ -621,20 +621,29 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
 
+        boolean valid = true;
+
         for (VDS vds : upVdss) {
             if (!VersionSupport.checkClusterVersionSupported(
                     getCluster().getCompatibilityVersion(), vds)) {
+                valid = false;
                 addValidationMessageVariable("host", vds.getName());
-                return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
+                addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
             }
             if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
+                valid = false;
                 addValidationMessageVariable("host", vds.getName());
-                return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+                addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
             }
             if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
+                valid = false;
                 addValidationMessageVariable("host", vds.getName());
-                return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
+                addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
             }
+        }
+
+        if (!valid) {
+            return false;
         }
 
         Set<SupportedAdditionalClusterFeature> additionalClusterFeaturesAdded =
