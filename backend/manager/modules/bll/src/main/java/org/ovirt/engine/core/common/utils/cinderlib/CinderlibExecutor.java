@@ -72,7 +72,8 @@ public class CinderlibExecutor {
         CREATE_VOLUME("create_volume"),
         DELETE_VOLUME("delete_volume"),
         CONNECT_VOLUME("connect_volume"),
-        DISCONNECT_VOLUME("disconnect_volume");
+        DISCONNECT_VOLUME("disconnect_volume"),
+        EXTEND_VOLUME("extend_volume");
 
         private final String commandName;
 

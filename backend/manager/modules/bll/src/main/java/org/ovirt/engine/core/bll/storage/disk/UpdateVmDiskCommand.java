@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
+import org.ovirt.engine.core.common.action.ExtendManagedBlockStorageDiskSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -204,6 +206,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             switch (getOldDisk().getDiskStorageType()) {
                 case IMAGE:
                     extendDiskImageSize();
+                    break;
+                case MANAGED_BLOCK_STORAGE:
+                    extendManagedBlockDiskSize();
                     break;
                 case CINDER:
                     extendCinderDiskSize();
@@ -470,6 +475,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 diskVmElementDao.update(diskVmElementForUpdate);
                 switch (diskForUpdate.getDiskStorageType()) {
                     case IMAGE:
+                    case MANAGED_BLOCK_STORAGE:
                         DiskImage diskImage = (DiskImage) diskForUpdate;
                         diskImage.setQuotaId(getQuotaId());
                         if (unlockImage && diskImage.getImageStatus() == ImageStatus.LOCKED) {
@@ -662,6 +668,33 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         }
     }
 
+    private void extendManagedBlockDiskSize() {
+        lockImageInDb();
+        ManagedBlockStorageDisk newManagedBlockDisk = (ManagedBlockStorageDisk) getNewDisk();
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
+                ActionType.ExtendManagedBlockStorageDiskSize,
+                buildExtendManagedBlockDiskParameters(newManagedBlockDisk),
+                cloneContextAndDetachFromParent());
+        try {
+            setReturnValue(future.get());
+            setSucceeded(getReturnValue().getSucceeded());
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error extending managed block disk '{}': {}",
+                    getNewDisk().getDiskAlias(),
+                    e.getMessage());
+            log.debug("Exception", e);
+        }
+    }
+
+    private ActionParametersBase buildExtendManagedBlockDiskParameters(ManagedBlockStorageDisk newManagedBlockDisk) {
+        ExtendManagedBlockStorageDiskSizeParameters parameters = new ExtendManagedBlockStorageDiskSizeParameters(
+                DiskVmElement.copyOf(getOldDiskVmElement()), newManagedBlockDisk);
+        parameters.setStorageDomainId(newManagedBlockDisk.getStorageIds().get(0));
+        parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return parameters;
+    }
+
     private ActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
         VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
                 DiskVmElement.copyOf(getOldDiskVmElement()), newCinderDisk);
@@ -749,6 +782,10 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         return isDiskStorageType(DiskStorageType.CINDER);
     }
 
+    private boolean isManagedBlockDisk() {
+        return isDiskStorageType(DiskStorageType.MANAGED_BLOCK_STORAGE);
+    }
+
     private boolean isDiskStorageType(DiskStorageType diskStorageType) {
         return getOldDisk() != null && getNewDisk() != null && diskStorageType == getOldDisk().getDiskStorageType();
     }
@@ -810,7 +847,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected boolean isInternalManagedDisk() {
-        return isDiskImage() || isCinderDisk();
+        return isDiskImage() || isCinderDisk() || isManagedBlockDisk();
     }
 
     private QuotaConsumptionParameter generateQuotaConsumeParameters(DiskImage newDiskImage, long sizeInGigabytes) {
@@ -827,6 +864,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         switch (getNewDisk().getDiskStorageType()) {
             case IMAGE:
                 return sizeChanged && vmDeviceForVm.getSnapshotId() == null;
+            case MANAGED_BLOCK_STORAGE:
             case CINDER:
                 return sizeChanged;
         }

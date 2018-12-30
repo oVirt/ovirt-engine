@@ -80,6 +80,14 @@ def main(args=None):
     disconnect_parser.add_argument("db_url", help="The database url")
     disconnect_parser.add_argument("volume_id", help="The volume id")
 
+    extend_parser = subparsers.add_parser("extend_volume",
+                                          help="Extend a volume")
+    extend_parser.set_defaults(command=extend_volume)
+    extend_parser.add_argument("driver", help="The driver parameters")
+    extend_parser.add_argument("db_url", help="The database url")
+    extend_parser.add_argument("volume_id", help="The volume id")
+    extend_parser.add_argument("size", help="The size needed for the volume")
+
     args = parser.parse_args()
     try:
         args.command(args)
@@ -132,6 +140,13 @@ def disconnect_volume(args):
 
     for c in vol.connections:
         c.disconnect()
+
+
+def extend_volume(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol.extend(int(args.size))
+    backend.refresh()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
