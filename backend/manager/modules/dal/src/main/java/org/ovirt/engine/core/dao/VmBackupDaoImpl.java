@@ -1,0 +1,107 @@
+package org.ovirt.engine.core.dao;
+
+import java.util.List;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.ovirt.engine.core.common.businessentities.VmBackup;
+import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+
+/**
+ * {@code VmBackupDaoImpl} provides an implementation of {@link VmBackupDao}.
+ */
+@Named
+@Singleton
+public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implements VmBackupDao {
+
+    VmBackupDaoImpl() {
+        super("VmBackup");
+        setProcedureNameForGet("GetVmBackupByVmBackupId");
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(VmBackup entity) {
+        return createIdParameterMapper(entity.getId())
+                .addValue("vm_id", entity.getVmId())
+                .addValue("from_checkpoint_id", entity.getFromCheckpointId())
+                .addValue("to_checkpoint_id", entity.getToCheckpointId())
+                .addValue("phase", entity.getPhase().getName())
+                .addValue("_create_date", entity.getCreationDate());
+    }
+
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(Guid uuid) {
+        return getCustomMapSqlParameterSource().addValue("backup_id", uuid);
+    }
+
+    @Override
+    protected RowMapper<VmBackup> createEntityRowMapper() {
+        return vmBackupRowMapper;
+    }
+
+    private static final RowMapper<VmBackup> vmBackupRowMapper = (rs, rowNum) -> {
+        VmBackup entity = new VmBackup();
+        entity.setId(getGuid(rs, "backup_id"));
+        entity.setVmId(getGuid(rs, "vm_id"));
+        entity.setFromCheckpointId(getGuid(rs, "from_checkpoint_id"));
+        entity.setToCheckpointId(getGuid(rs, "to_checkpoint_id"));
+        entity.setPhase(VmBackupPhase.forName(rs.getString("phase")));
+        entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
+        return entity;
+    };
+
+    @Override
+    public List<VmBackup> getAllForVm(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", id);
+        return getCallsHandler().executeReadList("GetVmBackupsByVmId", vmBackupRowMapper, parameterSource);
+    }
+
+    @Override
+    public void update(VmBackup entity) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("backup_id", entity.getId())
+                .addValue("vm_id", entity.getVmId())
+                .addValue("from_checkpoint_id", entity.getFromCheckpointId())
+                .addValue("to_checkpoint_id", entity.getToCheckpointId())
+                .addValue("phase", entity.getPhase().getName());
+        getCallsHandler()
+                .executeModification("UpdateVmBackup", parameterSource);
+    }
+
+    @Override
+    public void addDiskToVmBackup(Guid backupId, Guid diskId) {
+        getCallsHandler().executeModification("InsertVmBackupDiskMap",
+                getCustomMapSqlParameterSource()
+                        .addValue("backup_id", backupId)
+                        .addValue("disk_id", diskId));
+    }
+
+    @Override
+    public void addBackupUrlToVmBackup(Guid backupId, Guid diskId, String backupUrl) {
+        getCallsHandler().executeModification("UpdateVmBackupDiskMap",
+                getCustomMapSqlParameterSource()
+                        .addValue("backup_id", backupId)
+                        .addValue("disk_id", diskId)
+                        .addValue("backup_url", backupUrl));
+    }
+
+    @Override
+    public List<DiskImage> getDisksByBackupId(Guid backupId) {
+        return getCallsHandler().executeReadList("GetDisksByVmBackupId",
+                DiskImageDaoImpl.DiskImageRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("backup_id", backupId));
+    }
+
+    @Override
+    public void removeAllDisksFromBackup(Guid backupId) {
+        getCallsHandler().executeModification("DeleteAllVmBackupDiskMapByVmBackupId",
+                getCustomMapSqlParameterSource().addValue("backup_id", backupId));
+    }
+
+}
