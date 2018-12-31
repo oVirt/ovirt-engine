@@ -375,6 +375,9 @@ public enum QueryType implements Serializable {
     GetAllLibvirtSecretsByProviderId,
     GetLibvirtSecretById,
 
+    // Incremental Backup
+    GetAllVmBackupsByVmId,
+
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
 
