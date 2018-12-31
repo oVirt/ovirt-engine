@@ -565,6 +565,9 @@ public enum ActionType {
     CloneSingleManagedBlockDisk(3239, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     RemoveAllManagedBlockStorageDisks(3240, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
 
+    // Incremental Backup
+    StartVmBackup(3300, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
+
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
     RefreshHost(4001, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),

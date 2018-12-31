@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
@@ -333,6 +334,23 @@ public class DiskImagesValidator {
                     ReplacementUtils.replaceWith("ImageIds", existingGuids));
         }
 
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Checks that incremental backup is enabled for all disks.
+     * @return validation result indicating if incremental backup is disabled in any disk.
+     */
+    public ValidationResult incrementalBackupEnabled() {
+        String backupEnabled = diskImages.stream()
+                .filter(d -> d.getBackup() != DiskBackup.Incremental)
+                .map(d -> d.getId().toString())
+                .collect(Collectors.joining(", "));
+
+        if (!backupEnabled.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_DISABLED_FOR_DISKS,
+                    String.format("$ids %s", backupEnabled));
+        }
         return ValidationResult.VALID;
     }
 

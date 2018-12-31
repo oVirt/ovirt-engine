@@ -206,6 +206,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Map<String, Object> connectorInfo;
 
+    private boolean backupEnabled;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -865,6 +867,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.connectorInfo = connectorInfo;
     }
 
+    public Boolean isBackupEnabled() {
+        return backupEnabled;
+    }
+
+    public void setBackupEnabled(Boolean value) {
+        backupEnabled = value;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -936,7 +946,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 kernelFeatures,
                 openstackBindingHostIds,
                 vncEncryptionEnabled,
-                connectorInfo
+                connectorInfo,
+                backupEnabled
         );
     }
 
@@ -1019,6 +1030,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(kernelFeatures, other.kernelFeatures)
                 && Objects.equals(openstackBindingHostIds, other.openstackBindingHostIds)
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
-                && Objects.equals(connectorInfo, other.connectorInfo);
+                && Objects.equals(connectorInfo, other.connectorInfo)
+                && backupEnabled == other.backupEnabled;
     }
 }

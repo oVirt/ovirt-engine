@@ -807,6 +807,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__TRANSFER();
 
+    String VAR__ACTION__BACKUP();
+
     String VAR__HOST_STATUS__UP();
 
     String VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL();

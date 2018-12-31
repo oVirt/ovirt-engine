@@ -1687,5 +1687,11 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         this.isDefaultRouteRoleNetworkAttached = isDefaultRouteRoleNetworkAttached;
     }
 
+    public Boolean isBackupEnabled() {
+        return vdsDynamic.isBackupEnabled();
+    }
 
+    public void setBackupEnabled(Boolean value) {
+        vdsDynamic.setBackupEnabled(value);
+    }
 }
