@@ -126,7 +126,8 @@ public class RoleTreeView {
                                 roleNode(ActionGroup.EDIT_DISK_PROPERTIES, getConstants().allowToChangePropertiesOfTheDiskRoleTreeTooltip()),
                                 roleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO, getConstants().allowToChangeSGIORoleTreeTooltip()),
                                 roleNode(ActionGroup.ACCESS_IMAGE_STORAGE, getConstants().allowAccessImageDomainRoleTreeTooltip()),
-                                roleNode(ActionGroup.DISK_LIVE_STORAGE_MIGRATION, getConstants().allowToLiveMigrateDiskToAnotherStorageDomainRoleTreeTooltip())),
+                                roleNode(ActionGroup.DISK_LIVE_STORAGE_MIGRATION, getConstants().allowToLiveMigrateDiskToAnotherStorageDomainRoleTreeTooltip()),
+                                roleNode(ActionGroup.BACKUP_DISK, getConstants().allowToBackupDiskRoleTreeTooltip())),
                         categoryNode(getConstants().attachDiskProfileRoleTree(),
                                 getConstants().notePermissionsContainingDiskProfileOperationsRoleTreeTooltip(),
                                 roleNode(ActionGroup.ATTACH_DISK_PROFILE, getConstants().allowToAttachDiskProfileToDiskRoleTreeTooltip()) ) );

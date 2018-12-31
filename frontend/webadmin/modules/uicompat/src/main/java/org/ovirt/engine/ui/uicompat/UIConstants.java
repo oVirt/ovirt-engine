@@ -1087,6 +1087,8 @@ public interface UIConstants extends Constants {
 
     String allowToLiveMigrateDiskToAnotherStorageDomainRoleTreeTooltip();
 
+    String allowToBackupDiskRoleTreeTooltip();
+
     String allowToAttachDiskToVmRoleTreeTooltip();
 
     String allowToSparsifyDiskToVmRoleTreeTooltip();
