@@ -1,9 +1,13 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.api.model.DiskBackup.INCREMENTAL;
+import static org.ovirt.engine.api.model.DiskBackup.NONE;
+
 import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskBackup;
 import org.ovirt.engine.api.model.DiskContentType;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -143,6 +147,9 @@ public class DiskMapper {
         if (disk.isSetOpenstackVolumeType() && disk.getOpenstackVolumeType().isSetName()) {
             diskImage.setCinderVolumeType(disk.getOpenstackVolumeType().getName());
         }
+        if (disk.isSetBackup()) {
+            diskImage.setBackup(mapDiskBackup(disk.getBackup()));
+        }
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.Disk.class, to = Disk.class)
@@ -236,6 +243,9 @@ public class DiskMapper {
             }
             volumeType.setName(entity.getCinderVolumeType());
         }
+        if (entity.getBackup() != null) {
+            model.setBackup(mapDiskBackup(entity.getBackup()));
+        }
     }
 
     @Mapping(from = DiskFormat.class, to = String.class)
@@ -253,12 +263,12 @@ public class DiskMapper {
     @Mapping(from = VolumeFormat.class, to = DiskFormat.class)
     public static DiskFormat map(VolumeFormat volumeFormat, DiskFormat template) {
         switch (volumeFormat) {
-        case COW:
-            return DiskFormat.COW;
-        case RAW:
-            return DiskFormat.RAW;
-        default:
-            return null;
+            case COW:
+                return DiskFormat.COW;
+            case RAW:
+                return DiskFormat.RAW;
+            default:
+                return null;
         }
     }
 
@@ -352,6 +362,28 @@ public class DiskMapper {
             return DiskStatus.OK;
         default:
             return null;
+        }
+    }
+
+    private static org.ovirt.engine.core.common.businessentities.storage.DiskBackup mapDiskBackup(DiskBackup diskBackup) {
+        switch (diskBackup) {
+            case NONE:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskBackup.None;
+            case INCREMENTAL:
+                return org.ovirt.engine.core.common.businessentities.storage.DiskBackup.Incremental;
+            default:
+                return null;
+        }
+    }
+
+    private static DiskBackup mapDiskBackup(org.ovirt.engine.core.common.businessentities.storage.DiskBackup diskBackup) {
+        switch (diskBackup) {
+            case None:
+                return NONE;
+            case Incremental:
+                return INCREMENTAL;
+            default:
+                return null;
         }
     }
 
