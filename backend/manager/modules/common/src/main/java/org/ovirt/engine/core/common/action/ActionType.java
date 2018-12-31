@@ -567,6 +567,7 @@ public enum ActionType {
 
     // Incremental Backup
     StartVmBackup(3300, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
+    StopVmBackup(3301, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
