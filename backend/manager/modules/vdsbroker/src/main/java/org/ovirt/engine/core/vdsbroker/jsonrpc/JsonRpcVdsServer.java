@@ -40,6 +40,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.GetDisksListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
@@ -2213,6 +2214,65 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturn thaw(String vmId) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.thaw").withParameter("vmID", vmId)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public GetDisksListReturn startVmBackup(String vmId, String backupId, Map<String, String>[] disks,
+                                            String fromCheckpointId, String toCheckpointId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.start_backup")
+                        .withParameter("vmID", vmId)
+                        .withParameter("backup_id", backupId)
+                        .withParameter("disks", disks)
+                        .withParameter("from_checkpoint_id", fromCheckpointId)
+                        .withParameter("to_checkpoint_id", toCheckpointId)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new GetDisksListReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn stopVmBackup(String vmId, String backupId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.stop_backup")
+                        .withParameter("vmID", vmId)
+                        .withParameter("backup_id", backupId)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public GetDisksListReturn vmBackupInfo(String vmId, String backupId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.backup_info")
+                        .withParameter("vmID", vmId)
+                        .withParameter("backup_id", backupId)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withResponseType(Object[].class);
+        return new GetDisksListReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.redefine_checkpoints")
+                        .withParameter("vmID", vmId)
+                        .withParameter("checkpoints", checkpoints)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn deleteVmCheckpoints(String vmId, String[] checkpointIds) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.delete_checkpoints")
+                        .withParameter("vmID", vmId)
+                        .withParameter("checkpoints", checkpointIds)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
