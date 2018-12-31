@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -52,6 +53,7 @@ public class EditDiskModel extends AbstractDiskModel {
                 getDiskStorageType().setEntity(DiskStorageType.IMAGE);
                 getSize().setEntity((int) diskImage.getSizeInGigabytes());
                 getVolumeType().setSelectedItem(diskImage.getVolumeType());
+                getIsIncrementalBackup().setEntity(diskImage.getBackup() == DiskBackup.Incremental);
 
                 boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
                         ActionUtils.canExecute(Arrays.asList(getVm()), VM.class, ActionType.ExtendImageSize);

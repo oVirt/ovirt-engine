@@ -125,6 +125,9 @@
                     <ge:EntityModelCheckBoxEditor ui:field="isUsingScsiReservationEditor" label="{constants.isUsingScsiReservationEditor}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.withInfoIcon}" />
                     <d:InfoIcon ui:field="scsiReservationInfoIcon" addStyleNames="{style.floatInfoIcon}" visible="false"/>
                 </b:Row>
+                <b:Row>
+                    <ge:EntityModelCheckBoxEditor ui:field="isIncrementalBackupEditor" label="{constants.isIncrementalBackupVmDiskPopup}" removeFormGroup="true" usePatternFly="true" />
+                </b:Row>
             </b:Column>
         </b:Row>
         <b:Row>

@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -73,6 +74,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     private EntityModel<Boolean> isUsingScsiReservation;
     private EntityModel<Boolean> isScsiPassthrough;
     private EntityModel<Boolean> isSgIoUnfiltered;
+    private EntityModel<Boolean> isIncrementalBackup;
     private EntityModel<String> sizeExtend;
     private EntityModel<DiskStorageType> diskStorageType;
     private EntityModel<Boolean> isModelDisabled;
@@ -155,6 +157,14 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public void setIsSgIoUnfiltered(EntityModel<Boolean> isSgIoUnfiltered) {
         this.isSgIoUnfiltered = isSgIoUnfiltered;
+    }
+
+    public EntityModel<Boolean> getIsIncrementalBackup() {
+        return isIncrementalBackup;
+    }
+
+    public void setIsIncrementalBackup(EntityModel<Boolean> isIncrementalBackup) {
+        this.isIncrementalBackup = isIncrementalBackup;
     }
 
     public ListModel<StorageType> getStorageType() {
@@ -273,6 +283,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsSgIoUnfiltered().setIsAvailable(false);
         getIsSgIoUnfiltered().setEntity(false);
         getIsSgIoUnfiltered().getEntityChangedEvent().addListener(this);
+
+        setIsIncrementalBackup(new EntityModel<>());
+        getIsIncrementalBackup().setEntity(false);
 
         setDiskStorageType(new EntityModel<>());
         getDiskStorageType().setEntity(DiskStorageType.IMAGE);
@@ -688,6 +701,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         getDataCenter().setIsAvailable(!isInVm);
         getDiskProfile().setIsAvailable(isDiskImage);
         getCinderVolumeType().setIsAvailable(isCinderDisk);
+        getIsIncrementalBackup().setIsAvailable(isDiskImage);
 
         if (!isDiskImage) {
             previousIsQuotaAvailable = getQuota().getIsAvailable();
@@ -1082,6 +1096,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 if (getDiskProfile().getSelectedItem() != null) {
                     diskImage.setDiskProfileId(getDiskProfile().getSelectedItem().getId());
                 }
+                diskImage.setBackup(getIsIncrementalBackup().getEntity() ? DiskBackup.Incremental : DiskBackup.None);
                 updateQuota(diskImage);
                 updateDiskSize(diskImage);
                 setDisk(diskImage);

@@ -909,6 +909,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String isReadOnlyVmDiskPopup();
 
+    String isIncrementalBackupVmDiskPopup();
+
     String isUsingScsiReservationEditor();
 
     String isScsiPassthroughEditor();
