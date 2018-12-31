@@ -319,6 +319,7 @@
         <include name="common/businessentities/SubchainInfo.java" />
         <include name="common/businessentities/storage/ManagedBlockStorage.java" />
         <include name="common/businessentities/storage/ManagedBlockStorageDisk.java" />
+        <include name="common/businessentities/storage/DiskBackup.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />

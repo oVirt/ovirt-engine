@@ -107,9 +107,12 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
 
     private String cinderVolumeType;
 
+    private DiskBackup backup;
+
     public BaseDisk() {
         propagateErrors = PropagateErrors.Off;
         contentType = DiskContentType.DATA;
+        backup = DiskBackup.None;
         diskDescription = "";
     }
 
@@ -221,6 +224,14 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
         this.contentType = contentType;
     }
 
+    public DiskBackup getBackup() {
+        return backup;
+    }
+
+    public void setBackup(DiskBackup backup) {
+        this.backup = backup;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -232,7 +243,8 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
                 wipeAfterDelete,
                 sgio,
                 cinderVolumeType,
-                contentType
+                contentType,
+                backup
         );
     }
 
@@ -258,6 +270,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
                 && sgio == other.sgio
                 && Objects.equals(cinderVolumeType, other.cinderVolumeType)
-                && contentType == other.contentType;
+                && contentType == other.contentType
+                && backup == other.backup;
     }
 }
