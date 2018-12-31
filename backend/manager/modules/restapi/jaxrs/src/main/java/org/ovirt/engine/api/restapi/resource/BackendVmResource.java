@@ -231,6 +231,11 @@ public class BackendVmResource
         return inject(new BackendVmWatchdogsResource(guid));
     }
 
+    @Override
+    public VmBackupsResource getBackupsResource() {
+        return inject(new BackendVmBackupsResource(guid));
+    }
+
     public VmDisksResource getDisksResource() {
         return inject(new BackendVmDisksResource(guid));
     }
@@ -742,10 +747,5 @@ public class BackendVmResource
     @Override
     public AssignedAffinityLabelsResource getAffinityLabelsResource() {
         return inject(new BackendAssignedAffinityLabelsResource(id, VM::new));
-    }
-
-    @Override
-    public VmBackupsResource getBackupsResource() {
-        return null; // TODO: implement
     }
 }

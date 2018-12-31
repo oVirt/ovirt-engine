@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 public enum VmBackupPhase {
 
-    Initializing("Initializing"),
-    Starting("Starting"),
-    Ready("Ready"),
-    Finalizing("Finalizing");
+    INITIALIZING("Initializing"),
+    STARTING("Starting"),
+    READY("Ready"),
+    FINALIZING("Finalizing");
 
     private String name;
 

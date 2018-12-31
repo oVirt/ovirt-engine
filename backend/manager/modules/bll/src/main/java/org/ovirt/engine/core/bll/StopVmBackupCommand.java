@@ -49,7 +49,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     protected void executeCommand() {
         log.info("Stopping VmBackup '{}'", vmBackup.getId());
         if (stopVmBackup()) {
-            vmBackup.setPhase(VmBackupPhase.Finalizing);
+            vmBackup.setPhase(VmBackupPhase.FINALIZING);
             vmBackupDao.update(vmBackup);
         } else {
             log.info("Failed to stop VmBackup '{}'", vmBackup.getId());

@@ -135,15 +135,15 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         restoreCommandState();
 
         switch (getParameters().getVmBackup().getPhase()) {
-            case Initializing:
-                updateVmBackupPhase(VmBackupPhase.Starting);
+            case INITIALIZING:
+                updateVmBackupPhase(VmBackupPhase.STARTING);
                 break;
 
-            case Starting:
-                updateVmBackupPhase(VmBackupPhase.Ready);
+            case STARTING:
+                updateVmBackupPhase(VmBackupPhase.READY);
                 break;
 
-            case Ready:
+            case READY:
                 return true;
         }
         persistCommandIfNeeded();
@@ -153,7 +153,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     private void executeNextOperation() {
         switch (getParameters().getVmBackup().getPhase()) {
-            case Starting:
+            case STARTING:
                 lockDisks();
                 Map<String, Object> disks = startVmBackup();
                 if (disks != null) {
@@ -163,11 +163,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 }
                 break;
 
-            case Ready:
+            case READY:
                 log.info("Ready to start image transfers using backup URLs");
                 break;
 
-            case Finalizing:
+            case FINALIZING:
                 vmBackupDao.removeAllDisksFromBackup(getParameters().getVmBackup().getId());
                 unlockDisks();
                 setCommandStatus(CommandStatus.SUCCEEDED);
@@ -179,7 +179,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private Guid createVmBackup() {
         final VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setId(getCommandId());
-        vmBackup.setPhase(VmBackupPhase.Initializing);
+        vmBackup.setPhase(VmBackupPhase.INITIALIZING);
         vmBackup.setCreationDate(new Date());
         getParameters().setVmBackup(vmBackup);
         TransactionSupport.executeInNewTransaction(() -> {
@@ -332,7 +332,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 if (!getSucceeded()) {
                     return AuditLogType.VM_BACKUP_FAILED;
                 }
-                if (getParameters().getVmBackup().getPhase() == VmBackupPhase.Finalizing) {
+                if (getParameters().getVmBackup().getPhase() == VmBackupPhase.FINALIZING) {
                     return AuditLogType.VM_BACKUP_SUCCEEDED;
                 }
         }
