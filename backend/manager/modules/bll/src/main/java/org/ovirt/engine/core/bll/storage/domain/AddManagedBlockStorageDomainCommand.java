@@ -3,11 +3,14 @@ package org.ovirt.engine.core.bll.storage.domain;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 
@@ -56,7 +59,13 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
 
     @Override
     protected boolean canAddDomain() {
-        return true;
+        return testStorageConnection();
+    }
+
+    private boolean testStorageConnection() {
+        ActionReturnValue actionReturnValue = runInternalAction(ActionType.GetManagedBlockStorageStats, getParameters());
+        return (actionReturnValue.getSucceeded() && actionReturnValue.getActionReturnValue() != null) ||
+                failValidation(EngineMessage.FAILED_TO_CONNECT_MANAGED_BLOCK_DOMAIN);
     }
 
     @Override

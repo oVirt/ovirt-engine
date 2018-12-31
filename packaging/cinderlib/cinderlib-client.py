@@ -88,6 +88,14 @@ def main(args=None):
     extend_parser.add_argument("volume_id", help="The volume id")
     extend_parser.add_argument("size", help="The size needed for the volume")
 
+    storage_stats_parser = subparsers.add_parser("storage_stats",
+                                                 help="Get the storage status")
+    storage_stats_parser.set_defaults(command=storage_stats)
+    storage_stats_parser.add_argument("driver", help="The driver parameters")
+    storage_stats_parser.add_argument("db_url", help="The database url")
+    storage_stats_parser.add_argument("refresh",
+                                      help="True if latest data is required")
+
     args = parser.parse_args()
     try:
         args.command(args)
@@ -147,6 +155,13 @@ def extend_volume(args):
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     vol.extend(int(args.size))
     backend.refresh()
+
+
+def storage_stats(args):
+    backend = load_backend(args)
+    sys.stdout.write(
+        json.dumps(backend.stats(refresh=args.refresh)))
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
