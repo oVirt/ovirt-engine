@@ -86,6 +86,7 @@ SELECT images.image_guid AS image_guid,
     base_disks.propagate_errors,
     base_disks.sgio AS sgio,
     base_disks.disk_content_type AS disk_content_type,
+    base_disks.backup AS backup,
     image_storage_domain_map.quota_id AS quota_id,
     quota.quota_name AS quota_name,
     storage_pool.quota_enforcement_type,
@@ -209,6 +210,7 @@ SELECT storage_for_image_view.storage_id AS storage_id,
     images_storage_domain_view.propagate_errors AS propagate_errors,
     images_storage_domain_view.sgio AS sgio,
     images_storage_domain_view.disk_content_type AS disk_content_type,
+    images_storage_domain_view.backup AS backup,
     images_storage_domain_view.entity_type AS entity_type,
     images_storage_domain_view.number_of_vms AS number_of_vms,
     images_storage_domain_view.vm_names AS vm_names,
@@ -249,7 +251,8 @@ SELECT storage_impl.*,
     bd.sgio,
     bd.disk_storage_type,
     bd.cinder_volume_type,
-    bd.disk_content_type
+    bd.disk_content_type,
+    bd.backup
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
@@ -432,7 +435,8 @@ SELECT storage_impl.*,
     bd.sgio,
     bd.disk_storage_type,
     bd.cinder_volume_type,
-    bd.disk_content_type
+    bd.disk_content_type,
+    bd.backup
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
@@ -2485,6 +2489,7 @@ SELECT vm_images_view.storage_id,
     vm_images_view.wipe_after_delete,
     vm_images_view.propagate_errors,
     vm_images_view.disk_content_type,
+    vm_images_view.backup,
     vm_images_view.entity_type,
     vm_images_view.number_of_vms,
     vm_images_view.vm_names,

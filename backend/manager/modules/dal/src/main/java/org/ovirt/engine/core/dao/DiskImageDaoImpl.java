@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -255,6 +256,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             entity.setDiskProfileIds(getGuidListFromStringPreserveAllTokens(rs.getString("disk_profile_id")));
             entity.setDiskProfileNames(splitPreserveAllTokens(rs.getString("disk_profile_name")));
             entity.setVolumeClassification(VolumeClassification.forValue(rs.getInt("volume_classification")));
+            entity.setBackup(DiskBackup.forName(rs.getString("backup")));
         }
 
         @Override

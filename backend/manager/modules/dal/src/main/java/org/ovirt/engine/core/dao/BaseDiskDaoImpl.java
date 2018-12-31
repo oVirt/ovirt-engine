@@ -35,7 +35,8 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
                 .addValue("sgio", entity.getSgio())
                 .addValue("disk_storage_type", entity.getDiskStorageType())
                 .addValue("cinder_volume_type", entity.getCinderVolumeType())
-                .addValue("disk_content_type", entity.getContentType().getValue());
+                .addValue("disk_content_type", entity.getContentType().getValue())
+                .addValue("backup", entity.getBackup().getName());
     }
 
     @Override
