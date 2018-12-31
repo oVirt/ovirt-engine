@@ -247,6 +247,13 @@ public enum VDSCommandType {
     PrepareMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),
     FinalizeMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),
 
+    // Incremental Backup
+    StartVmBackup("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    StopVmBackup("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetVmBackupInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    RedefineVmCheckpoints("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    DeleteVmCheckpoints("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+
     /**
      * Get Host capabilities
      */
