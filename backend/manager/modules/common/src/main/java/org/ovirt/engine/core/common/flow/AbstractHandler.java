@@ -40,6 +40,7 @@ public abstract class AbstractHandler<C extends Context> implements Handler<C> {
         case EXCEPTION:
             logger.error("Exception in handler {}", getClass().getCanonicalName(), ctx.getException());
             processCase(onException, ctx, EXCEPTION);
+            break;
         default:
             logger.error("On flow {} handler {} terminated the flow with {}", ctx.getId(), getName(), outcome);
             break;

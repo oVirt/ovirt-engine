@@ -42,7 +42,16 @@ public interface LockManager {
     LockInfo getLockInfo(String key);
 
     /**
-     * Query whether an exclusive lock is present in the {@code LockManager}
+     * <pre>
+     * Query whether an exclusive lock is present in the {@link LockManager}.
+     *
+     * This method is read-only about the locks and should not modify them.
+     * Therefore, the parameter {@link EngineLock} which is provided to this
+     * method, should NOT be auto-closed after this method returns because
+     * that would release the real lock that the parameter is pointing at.
+     * see {@link EngineLock#close()} and {@link AutoCloseable}
+     * </pre>
+     *
      * @param lock - lock with parameters for searching exclusive locks
      * @return true if a lock was found, false otherwise
      */
