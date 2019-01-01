@@ -105,26 +105,7 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
                     returnValue.setSucceeded(true);
                     executeQueryCommand();
                 } catch (RuntimeException ex) {
-                    returnValue.setSucceeded(false);
-                    Throwable th = ex instanceof EngineException ? ex : ex.getCause();
-                    if (th instanceof EngineException) {
-                        EngineException vdcExc = (EngineException) th;
-                        if (vdcExc.getErrorCode() != null && !vdcExc.isUseRootCause()) {
-                            returnValue.setExceptionString(vdcExc.getErrorCode().toString());
-                        } else {
-                            returnValue.setExceptionString(vdcExc.getMessage());
-                        }
-                        log.error("Query '{}' failed: {}",
-                                getClass().getSimpleName(),
-                                vdcExc.getMessage());
-                        log.error("Exception", vdcExc);
-                    } else {
-                        returnValue.setExceptionString(ex.getMessage());
-                        log.error("Query '{}' failed: {}",
-                                getClass().getSimpleName(),
-                                ex.getMessage());
-                        log.error("Exception", ex);
-                    }
+                    handleException(ex, true);
                 } finally {
                     log.debug("Query {} took {} ms", getCommandName(), System.currentTimeMillis() - start);
                 }
@@ -135,6 +116,33 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
             String errMessage = "Query execution failed due to insufficient permissions.";
             log.error(errMessage);
             returnValue.setExceptionString(errMessage);
+        }
+    }
+
+    protected void handleException(RuntimeException ex, boolean printStack) {
+        returnValue.setSucceeded(false);
+        Throwable th = ex instanceof EngineException ? ex : ex.getCause();
+        if (th instanceof EngineException) {
+            EngineException vdcExc = (EngineException) th;
+            if (vdcExc.getErrorCode() != null && !vdcExc.isUseRootCause()) {
+                returnValue.setExceptionString(vdcExc.getErrorCode().toString());
+            } else {
+                returnValue.setExceptionString(vdcExc.getMessage());
+            }
+            log.error("Query '{}' failed: {}",
+                    getClass().getSimpleName(),
+                    vdcExc.getMessage());
+            if (printStack) {
+                log.error("Exception", vdcExc);
+            }
+        } else {
+            returnValue.setExceptionString(ex.getMessage());
+            log.error("Query '{}' failed: {}",
+                    getClass().getSimpleName(),
+                    ex.getMessage());
+            if (printStack) {
+                log.error("Exception", ex);
+            }
         }
     }
 
