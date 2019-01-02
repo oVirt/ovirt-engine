@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -79,7 +81,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private VmDao vmDao;
     @Inject
     private StorageDomainDao storageDomainDao;
-
+    @Inject
+    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     private StorageHelperDirector storageHelperDirector;
 
@@ -112,6 +115,12 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             CinderDisk cinderDisk = (CinderDisk) disk;
             setStorageDomainId(cinderDisk.getStorageIds().get(0));
             getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
+        } else if (disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+            if (commandType == VDSCommandType.HotPlugDisk) {
+                ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
+                setStorageDomainId(managedBlockStorageDisk.getStorageIds().get(0));
+                managedBlockStorageCommandUtil.saveDevices(managedBlockStorageDisk, getVds(), vmDevice);
+            }
         }
         Map<String, String> diskAddressMap = getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.managedblock;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,17 +47,20 @@ public class ManagedBlockStorageCommandUtil {
 
         List<ManagedBlockStorageDisk> disks = DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
         return disks.stream()
-                .allMatch(disk -> this.saveDevices(disk, vds, vm.getId()));
+                .allMatch(disk -> {
+                    VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getImageId(), vm.getId()));
+                    return this.saveDevices(disk, vds, vmDevice);
+                });
     }
 
-    private boolean saveDevices(ManagedBlockStorageDisk disk, VDS vds, Guid vmId) {
+    public boolean saveDevices(ManagedBlockStorageDisk disk, VDS vds, VmDevice vmDevice) {
         VDSReturnValue returnValue = attachManagedBlockStorageDisk(disk, vds);
 
         if (returnValue == null) {
             return false;
         }
 
-        saveAttachedHost(disk, vmId, vds.getId());
+        saveAttachedHost(vmDevice, vds.getId());
 
         disk.setDevice((Map<String, Object>) returnValue.getReturnValue());
         vmInfoBuildUtils.setCinderDriverType(disk);
@@ -71,17 +75,24 @@ public class ManagedBlockStorageCommandUtil {
         return true;
     }
 
-    private void saveAttachedHost(ManagedBlockStorageDisk disk, Guid vmId, Guid vdsId) {
+    private void saveAttachedHost(VmDevice vmDevice, Guid vdsId) {
         TransactionSupport.executeInNewTransaction(() -> {
-            VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vmId));
-            vmDevice.getSpecParams().put(ManagedBlockStorageDisk.ATTACHED_VDS_ID, vdsId);
+            Map<String, Object> specParams = new HashMap<>();
+            specParams.put(ManagedBlockStorageDisk.ATTACHED_VDS_ID, vdsId);
+
+            if (vmDevice.getSpecParams() != null) {
+                vmDevice.getSpecParams().putAll(specParams);
+            } else {
+                vmDevice.setSpecParams(specParams);
+            }
+
             vmDeviceDao.update(vmDevice);
 
             return null;
         });
     }
 
-    private VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
+    public VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
         ActionReturnValue returnValue = getConnectionInfo(disk, vds);
 
         if (!returnValue.getSucceeded()) {

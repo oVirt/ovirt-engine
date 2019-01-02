@@ -27,7 +27,8 @@ public class ManagedBlockStorageDomainValidator extends StorageDomainValidator {
                 ActionType.RemoveStorageDomain,
                 ActionType.UpdateStorageDomain,
                 ActionType.ForceRemoveStorageDomain,
-                ActionType.UpdateVmDisk
+                ActionType.UpdateVmDisk,
+                ActionType.HotPlugDiskToVm
         ));
 
     }
