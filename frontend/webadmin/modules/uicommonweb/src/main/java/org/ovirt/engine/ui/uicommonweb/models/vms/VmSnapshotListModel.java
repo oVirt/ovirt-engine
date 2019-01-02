@@ -789,7 +789,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isVmQualifiedForSnapshotMerge = vm != null && vm.getStatus().isQualifiedForSnapshotMerge();
         boolean isPreviewing = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW);
         boolean isLocked = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.LOCKED);
-        boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
+        boolean isSelected = snapshot != null && snapshot.getType() == SnapshotType.REGULAR;
         boolean isStateless = getItems().stream().anyMatch(s -> s.getType() == SnapshotType.STATELESS);
         boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
 
