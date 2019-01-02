@@ -78,9 +78,10 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
         CinderlibReturnValue returnValue;
 
         try {
-            CinderlibCommandParameters params = new CinderlibCommandParameters(
-                    JsonHelper.mapToJson(managedBlockStorage.getDriverOptions(), false),
-                    extraParams);
+            CinderlibCommandParameters params =
+                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
+                            false),
+                            extraParams);
             returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.DELETE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed to remove volume: {}", e);

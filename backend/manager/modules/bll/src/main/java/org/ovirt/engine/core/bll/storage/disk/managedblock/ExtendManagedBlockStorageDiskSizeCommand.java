@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk.managedblock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,17 +57,13 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
                 SizeConverter.SizeUnit.GiB);
         extraParams.add(Long.toString(sizeInGiB.longValue()));
 
-        Map<String, Object> driverOptions = new HashMap<>(managedBlockStorage.getDriverOptions());
-
-        if (managedBlockStorage.getDriverSensitiveOptions() != null) {
-            driverOptions.putAll(managedBlockStorage.getDriverSensitiveOptions());
-        }
-
         CinderlibReturnValue returnValue;
 
         try {
             CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(driverOptions, false), extraParams);
+                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
+                            false),
+                            extraParams);
             returnValue = cinderlibExecutor.runCommand(CinderlibCommand.EXTEND_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing volume extension", e);

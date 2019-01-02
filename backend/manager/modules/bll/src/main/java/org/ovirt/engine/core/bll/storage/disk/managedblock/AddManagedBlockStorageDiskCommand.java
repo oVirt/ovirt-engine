@@ -85,7 +85,8 @@ public class AddManagedBlockStorageDiskCommand<T extends AddDiskParameters> exte
 
         try {
             CinderlibCommandParameters params =
-                    new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getDriverOptions(),
+                    new CinderlibCommandParameters(JsonHelper.mapToJson(
+                                managedBlockStorage.getAllDriverOptions(),
                             false),
                     extraParams);
             returnValue = cinderlibExecutor.runCommand(CinderlibCommand.CREATE_VOLUME, params);

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -46,5 +47,15 @@ public class ManagedBlockStorage implements BusinessEntity<Guid>, Serializable {
 
     public Map<String, Object> getDriverSensitiveOptions() {
         return this.driverSensitiveOptions;
+    }
+
+    public Map<String, Object> getAllDriverOptions() {
+        Map<String, Object> driverOptions = new HashMap<>(getDriverOptions());
+
+        if (getDriverSensitiveOptions() != null) {
+            driverOptions.putAll(getDriverSensitiveOptions());
+        }
+
+        return driverOptions;
     }
 }
