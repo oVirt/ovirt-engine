@@ -107,6 +107,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
     public void markAsInvalid(List<String> validationHints) {
         super.markAsInvalid(validationHints);
         getValidatedWidgetStyle().setBorderStyle(BorderStyle.SOLID);
+        getValidatedWidgetStyle().setBorderColor("red"); //$NON-NLS-1$
     }
 
     @Override
