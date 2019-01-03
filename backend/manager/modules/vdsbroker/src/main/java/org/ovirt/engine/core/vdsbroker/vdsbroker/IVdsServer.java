@@ -150,7 +150,7 @@ public interface IVdsServer {
             Map<String, String>[] args);
 
     StatusOnlyReturn createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
-            int storageType, String storageFormatType);
+            int storageType, String storageFormatType, Integer blockSize, int maxHosts);
 
     StatusOnlyReturn formatStorageDomain(String sdUUID);
 

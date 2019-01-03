@@ -617,7 +617,9 @@ public class JsonRpcVdsServer implements IVdsServer {
             String domainName,
             String arg,
             int storageType,
-            String storageFormatType) {
+            String storageFormatType,
+            Integer blockSize,
+            int maxHosts) {
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.create").withParameter("storagedomainID", sdUUID)
                         .withParameter("domainType", domainType)
@@ -625,6 +627,8 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("name", domainName)
                         .withParameter("domainClass", storageType)
                         .withOptionalParameter("version", storageFormatType)
+                        .withOptionalParameter("blockSize", blockSize)
+                        .withParameter("maxHosts", maxHosts)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
