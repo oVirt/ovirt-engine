@@ -972,6 +972,12 @@ public class LibvirtVmXmlBuilder {
                 break;
             case CONTROLLER:
                 switch(device.getDevice()) {
+                case "usb":
+                    if (device.getSpecParams().get("model") != null &&
+                            device.getSpecParams().get("model").equals("qemu-xhci")) {
+                        device.getSpecParams().put("ports", 8);
+                    }
+                    break;
                 case "virtio-serial":
                     device.getSpecParams().put("index", 0);
                     device.getSpecParams().put("ports", 16);

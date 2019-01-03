@@ -66,6 +66,7 @@ public class VmDeviceUtils {
 
     private static final String EHCI_MODEL = "ich9-ehci";
     private static final String UHCI_MODEL = "ich9-uhci";
+    private static final String XHCI_MODEL = "qemu-xhci";
     private static final int SLOTS_PER_CONTROLLER = 6;
     private static final int COMPANION_USB_CONTROLLERS = 3;
     private static final int VNC_MIN_MONITORS = 1;
@@ -669,32 +670,46 @@ public class VmDeviceUtils {
 
     /**
      * Add given number of sets of USB controllers suitable for SPICE USB redirection to the VM.
+     * For Q35 we ignore numberOfControllers and always create only one.
      */
     public void addSpiceUsbControllers(Guid vmId, int numberOfControllers) {
-        // For each controller we need to create one EHCI and companion UHCI controllers
-        for (int index = 0; index < numberOfControllers; index++) {
+        VmBase vmBase = getVmBase(vmId);
+
+        if (vmBase.getBiosType().getChipsetType() == ChipsetType.Q35) {
             addManagedDevice(
                     new VmDeviceId(Guid.newGuid(), vmId),
                     VmDeviceGeneralType.CONTROLLER,
                     VmDeviceType.USB,
-                    getSpiceUsbControllerSpecParams(EHCI_MODEL, 1, index),
+                    createSingleUsbControllerSpecParams(XHCI_MODEL),
                     true,
                     false);
-            for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
+
+        } else {
+            // For each EHCI controller we need to create companion UHCI controllers
+            for (int index = 0; index < numberOfControllers; index++) {
                 addManagedDevice(
                         new VmDeviceId(Guid.newGuid(), vmId),
                         VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.USB,
-                        getSpiceUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
+                        createSpiceUsbControllerSpecParams(EHCI_MODEL, 1, index),
                         true,
                         false);
+                for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
+                    addManagedDevice(
+                            new VmDeviceId(Guid.newGuid(), vmId),
+                            VmDeviceGeneralType.CONTROLLER,
+                            VmDeviceType.USB,
+                            createSpiceUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
+                            true,
+                            false);
+                }
             }
         }
     }
-    private Map<String, Object> getSpiceUsbControllerSpecParams(String model, int controllerNumber, int index) {
+
+    private Map<String, Object> createSpiceUsbControllerSpecParams(String model, int controllerNumber, int index) {
         return createUsbControllerSpecParams(model + controllerNumber, index);
     }
-
 
     /**
      * Returns USB controller spec params.
@@ -703,6 +718,15 @@ public class VmDeviceUtils {
         final Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, model);
         specParams.put(VdsProperties.Index, Integer.toString(index));
+        return specParams;
+    }
+
+    /**
+     * Returns single USB controller spec params.
+     */
+    private Map<String, Object> createSingleUsbControllerSpecParams(String model) {
+        final Map<String, Object> specParams = new HashMap<>();
+        specParams.put(VdsProperties.Model, model);
         return specParams;
     }
 
