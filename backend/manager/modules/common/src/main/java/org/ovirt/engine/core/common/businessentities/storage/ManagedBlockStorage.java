@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -57,5 +58,24 @@ public class ManagedBlockStorage implements BusinessEntity<Guid>, Serializable {
         }
 
         return driverOptions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ManagedBlockStorage)) {
+            return false;
+        }
+        ManagedBlockStorage that = (ManagedBlockStorage) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(driverOptions, that.driverOptions) &&
+                Objects.equals(driverSensitiveOptions, that.driverSensitiveOptions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, driverOptions, driverSensitiveOptions);
     }
 }
