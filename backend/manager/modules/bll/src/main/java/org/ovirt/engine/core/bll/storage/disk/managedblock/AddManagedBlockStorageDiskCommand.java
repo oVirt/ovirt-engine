@@ -37,13 +37,9 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @InternalCommandAttribute
 public class AddManagedBlockStorageDiskCommand<T extends AddDiskParameters> extends CommandBase<T> {
-
-    @Inject
-    private ResourceManager resourceManager;
 
     @Inject
     private CinderStorageDao cinderStorageDao;
