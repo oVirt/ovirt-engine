@@ -63,6 +63,10 @@ public class ManagedBlockStorageHelper extends StorageHelperBase {
         updateManagedBlockDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Inactive);
     }
 
+    public void detachManagedStorageDomainFromPool(final StoragePoolIsoMap mapToRemove) {
+        storagePoolIsoMapDao.remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(), mapToRemove.getStoragePoolId()));
+    }
+
     private void updateManagedBlockDomainStatus(final Guid storageDomainId,
             final Guid storagePoolId,
             final StorageDomainStatus storageDomainStatus) {

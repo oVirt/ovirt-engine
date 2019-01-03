@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.ManagedBlockStorageHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -46,6 +47,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     @Inject
     private CINDERStorageHelper cinderStorageHelper;
     @Inject
+    private ManagedBlockStorageHelper managedBlockStorageHelper;
+    @Inject
     private StorageDomainDao storageDomainDao;
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -76,10 +79,21 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected void executeCommand() {
-        if (getStorageDomain().getStorageType().isCinderDomain()) {
-            detachCinderStorageDomain();
-            return;
+        switch (getStorageDomain().getStorageType()) {
+            case CINDER:
+                detachCinderStorageDomain();
+                break;
+            case MANAGED_BLOCK_STORAGE:
+                detachManagedBlockStorageDomain();
+                break;
+            default:
+                detachStorageDomain();
+                break;
+
         }
+    }
+
+    private void detachStorageDomain() {
         log.info("Start detach storage domain");
         changeStorageDomainStatusInTransaction(getStorageDomain().getStoragePoolIsoMapData(),
                 StorageDomainStatus.Detaching);
@@ -98,6 +112,11 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         auditOnExistingLeasesIfExist();
         log.info("End detach storage domain");
         setSucceeded(detachSucceeded);
+    }
+
+    private void detachManagedBlockStorageDomain() {
+        managedBlockStorageHelper.detachManagedStorageDomainFromPool(getStorageDomain().getStoragePoolIsoMapData());
+        setSucceeded(true);
     }
 
     private void updateDetachedMasterStorageDomain() {
