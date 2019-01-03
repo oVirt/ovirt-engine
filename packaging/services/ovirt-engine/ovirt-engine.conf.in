@@ -429,7 +429,7 @@ ENGINE_API_DEFAULT_VERSION="4"
 # When the engine detects a request that is using a deprecated version
 # of the API it will send a message to the audit log explaining it.
 #
-ENGINE_API_DEPRECATED_VERSIONS="3:4.0:4.4"
+ENGINE_API_DEPRECATED_VERSIONS="3:4.0:4.3"
 
 #
 # This flags indicates if 'filtering' should be enabled by default for
