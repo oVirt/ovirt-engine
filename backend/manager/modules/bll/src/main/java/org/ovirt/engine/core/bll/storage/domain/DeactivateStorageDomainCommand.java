@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
+import org.ovirt.engine.core.bll.storage.connection.ManagedBlockStorageHelper;
 import org.ovirt.engine.core.bll.storage.pool.AfterDeactivateSingleAsyncOperationFactory;
 import org.ovirt.engine.core.bll.storage.pool.DisconnectStoragePoolAsyncOperationFactory;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -89,6 +90,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     private VmDao vmDao;
     @Inject
     private CINDERStorageHelper cinderStorageHelper;
+    @Inject
+    private ManagedBlockStorageHelper managedBlockStorageHelper;
 
     private boolean isLastMaster;
 
@@ -265,10 +268,20 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected void executeCommand() {
-        if (isCinderStorageDomain()) {
-            deactivateCinderStorageDomain();
-            return;
+        switch (getStorageDomain().getStorageType()) {
+            case CINDER:
+                deactivateCinderStorageDomain();
+                break;
+            case MANAGED_BLOCK_STORAGE:
+                deactivateManagedBlockStorageDomain();
+                break;
+            default:
+                dectivateStorageDomain();
+                break;
         }
+    }
+
+    private void dectivateStorageDomain() {
         StorageDomainStatus lastStatus = getStorageDomain().getStatus();
         final StoragePoolIsoMap map =
                 storagePoolIsoMapDao.get
@@ -393,6 +406,21 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             notifyAsyncTasks();
         }
 
+        setSucceeded(true);
+    }
+
+    private void deactivateManagedBlockStorageDomain() {
+        List<Pair<Guid, Boolean>> hostsConnectionResults = disconnectHostsInUpToDomainStorageServer();
+        for (Pair<Guid, Boolean> pair : hostsConnectionResults) {
+            if (!pair.getSecond()) {
+                log.error("Failed to deactivate Managed block storage domain '{}'", getStorageDomain().getName());
+                managedBlockStorageHelper.setManagedBlockStorageInactive(getParameters().getStorageDomainId(),
+                        getParameters().getStoragePoolId());
+                return;
+            }
+        }
+        managedBlockStorageHelper.deactivateManagedBlockDomain(getParameters().getStorageDomainId(),
+                getParameters().getStoragePoolId());
         setSucceeded(true);
     }
 
