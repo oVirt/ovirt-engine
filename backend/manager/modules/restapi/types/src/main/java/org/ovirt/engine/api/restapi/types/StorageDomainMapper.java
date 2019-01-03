@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -54,6 +55,9 @@ public class StorageDomainMapper {
         }
         if (model.isSetBackup()) {
             entity.setBackup(model.isBackup());
+        }
+        if (model.isSetBlockSize()) {
+            entity.setBlockSize(StorageBlockSize.forValue(model.getBlockSize()));
         }
         return entity;
     }
@@ -161,6 +165,9 @@ public class StorageDomainMapper {
         // Not supported by sysfs since kernel version 4.12, and thus deprecated.
         model.setSupportsDiscardZeroesData(false);
         model.setBackup(entity.isBackup());
+        if (entity.getStorageStaticData().getBlockSize() != null) {
+            model.setBlockSize(entity.getStorageStaticData().getBlockSize().getValue());
+        }
         return model;
     }
 
