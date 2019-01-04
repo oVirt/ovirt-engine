@@ -67,12 +67,12 @@ public abstract class PolicyUnitImpl {
         this.pendingResourceManager = pendingResourceManager;
     }
 
-    public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
         log.error("Policy unit '{}' filter is not implemented", getPolicyUnit().getName());
         return hosts;
     }
 
-    public List<Pair<Guid, Integer>> score( Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
+    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
 
         return hosts.stream().map(host -> new Pair<>(host.getId(), 1)).collect(Collectors.toList());

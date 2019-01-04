@@ -2,12 +2,11 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -28,10 +27,9 @@ public class ClusterInMaintenanceFilterPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(Cluster cluster,
+    public List<VDS> filter(SchedulingContext context,
             List<VDS> hosts,
             VM vm,
-            Map<String, String> parameters,
             PerHostMessages messages) {
         // Highly available VMs are allowed to start
         if (vm.isAutoStartup()) {

@@ -339,14 +339,13 @@ public class SchedulingManager implements BackendService {
             refreshCachedPendingValues(vdsList);
             subtractRunningVmResources(cluster, vm, vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-            Map<String, String> parameters = createClusterPolicyParameters(cluster);
+            SchedulingContext context = new SchedulingContext(cluster, createClusterPolicyParameters(cluster));
 
             vdsList =
                     runFilters(policy.getFilters(),
-                            cluster,
                             vdsList,
                             vm,
-                            parameters,
+                            context,
                             policy.getFilterPositionMap(),
                             messages,
                             runVmDelayer,
@@ -357,7 +356,7 @@ public class SchedulingManager implements BackendService {
                 return Optional.empty();
             }
 
-            Optional<Guid> bestHost = selectBestHost(cluster, vm, destHostIdList, vdsList, policy, parameters);
+            Optional<Guid> bestHost = selectBestHost(vm, destHostIdList, vdsList, policy, context);
             if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
                 Guid bestHostId = bestHost.get();
                 addPendingResources(vm, bestHostId);
@@ -502,12 +501,11 @@ public class SchedulingManager implements BackendService {
      * @param destHostIdList - used for RunAt preselection, overrides the ordering in vdsList
      * @param availableVdsList - presorted list of hosts (better hosts first) that are available
      */
-    private Optional<Guid> selectBestHost(Cluster cluster,
-            VM vm,
+    private Optional<Guid> selectBestHost(VM vm,
             List<Guid> destHostIdList,
             List<VDS> availableVdsList,
             ClusterPolicy policy,
-            Map<String, String> parameters) {
+            SchedulingContext context) {
         // in case a default destination host was specified and
         // it passed filters, return the first found
         List<VDS> runnableHosts = new LinkedList<>();
@@ -538,15 +536,15 @@ public class SchedulingManager implements BackendService {
             List<Pair<Guid, Integer>> functions = policy.getFunctions();
             Guid selector = Optional.of(policy).map(ClusterPolicy::getSelector).orElse(defaultSelectorGuid);
             PolicyUnitImpl selectorUnit = policyUnits.get(selector);
-            SelectorInstance selectorInstance = selectorUnit.selector(parameters);
+            SelectorInstance selectorInstance = selectorUnit.selector(context.getPolicyParameters());
 
             List<Guid> runnableGuids = runnableHosts.stream().map(VDS::getId).collect(Collectors.toList());
             selectorInstance.init(functions, runnableGuids);
 
             if (!functions.isEmpty()
-                    && shouldWeighClusterHosts(cluster, runnableHosts)) {
-                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, functions, cluster,
-                        runnableHosts, vm, parameters);
+                    && shouldWeighClusterHosts(context.getCluster(), runnableHosts)) {
+                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, functions,
+                        runnableHosts, vm, context);
                 if (bestHostByFunctions.isPresent()) {
                     return bestHostByFunctions;
                 }
@@ -613,14 +611,13 @@ public class SchedulingManager implements BackendService {
         refreshCachedPendingValues(vdsList);
         subtractRunningVmResources(cluster, vm, vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-        Map<String, String> parameters = createClusterPolicyParameters(cluster);
+        SchedulingContext context = new SchedulingContext(cluster, createClusterPolicyParameters(cluster));
 
         vdsList =
                 runFilters(policy.getFilters(),
-                        cluster,
                         vdsList,
                         vm,
-                        parameters,
+                        context,
                         policy.getFilterPositionMap(),
                         messages,
                         noWaitingVmDelayer,
@@ -679,10 +676,9 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runFilters(List<Guid> filters,
-            Cluster cluster,
             List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters,
+            SchedulingContext context,
             Map<Guid, Integer> filterPositionMap,
             List<String> messages,
             RunVmDelayer runVmDelayer,
@@ -715,13 +711,13 @@ public class SchedulingManager implements BackendService {
         }
 
         hostList =
-                runInternalFilters(internalFilters, cluster, hostList, vm, parameters, runVmDelayer, correlationId, result);
+                runInternalFilters(internalFilters, hostList, vm, context, runVmDelayer, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
                 && !externalFilters.isEmpty()
                 && !hostList.isEmpty()) {
-            hostList = runExternalFilters(externalFilters, hostList, vm, parameters, correlationId, result);
+            hostList = runExternalFilters(externalFilters, hostList, vm, context.getPolicyParameters(), correlationId, result);
         }
 
         if (hostList.isEmpty()) {
@@ -732,10 +728,9 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runInternalFilters(List<PolicyUnitImpl> filters,
-            Cluster cluster,
             List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters,
+            SchedulingContext context,
             RunVmDelayer runVmDelayer,
             String correlationId,
             SchedulingResult result) {
@@ -745,7 +740,7 @@ public class SchedulingManager implements BackendService {
             }
             filterPolicyUnit.setRunVmDelayer(runVmDelayer);
             List<VDS> currentHostList = new ArrayList<>(hostList);
-            hostList = filterPolicyUnit.filter(cluster, hostList, vm, parameters, result.getDetails());
+            hostList = filterPolicyUnit.filter(context, hostList, vm, result.getDetails());
             logFilterActions(currentHostList,
                     toIdSet(hostList),
                     EngineMessage.VAR__FILTERTYPE__INTERNAL,
@@ -817,10 +812,9 @@ public class SchedulingManager implements BackendService {
 
     private Optional<Guid> runFunctions(SelectorInstance selector,
             List<Pair<Guid, Integer>> functions,
-            Cluster cluster,
             List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters) {
+            SchedulingContext context) {
         List<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions = new ArrayList<>();
         List<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions = new ArrayList<>();
 
@@ -835,11 +829,10 @@ public class SchedulingManager implements BackendService {
             }
         }
 
-        runInternalFunctions(selector, internalScoreFunctions, cluster, hostList,
-                vm, parameters);
+        runInternalFunctions(selector, internalScoreFunctions, hostList, vm, context);
 
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
-            runExternalFunctions(selector, externalScoreFunctions, hostList, vm, parameters);
+            runExternalFunctions(selector, externalScoreFunctions, hostList, vm, context.getPolicyParameters());
         }
 
         return selector.best();
@@ -847,13 +840,12 @@ public class SchedulingManager implements BackendService {
 
     private void runInternalFunctions(SelectorInstance selector,
             List<Pair<PolicyUnitImpl, Integer>> functions,
-            Cluster cluster,
             List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters) {
+            SchedulingContext context) {
 
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
-            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(cluster, hostList, vm, parameters);
+            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(hostList, vm, context);
             for (Pair<Guid, Integer> result : scoreResult) {
                 selector.record(pair.getFirst().getGuid(), result.getFirst(), result.getSecond());
             }

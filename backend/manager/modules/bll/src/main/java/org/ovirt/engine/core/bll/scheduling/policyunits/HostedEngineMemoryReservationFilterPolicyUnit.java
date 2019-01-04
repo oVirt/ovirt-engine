@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -11,9 +10,9 @@ import javax.inject.Inject;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -55,13 +54,13 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
     }
 
     @Override
-    public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
         // Hosts available for running the `vm`
         Set<VDS> candidateHosts = new HashSet<>();
         // Hosts needed as spares for the hosted engine
         Set<VDS> spares = new HashSet<>();
 
-        final int requiredSpares = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HE_SPARES_COUNT.getDbName()), 0);
+        final int requiredSpares = NumberUtils.toInt(context.getPolicyParameters().get(PolicyUnitParameter.HE_SPARES_COUNT.getDbName()), 0);
 
         // There are no hosts, skip this unit
         if (hosts.isEmpty()) {

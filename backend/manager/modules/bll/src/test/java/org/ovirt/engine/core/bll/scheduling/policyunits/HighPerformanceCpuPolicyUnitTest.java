@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -95,7 +97,7 @@ public class HighPerformanceCpuPolicyUnitTest {
     }
 
     private List<Pair<Guid, Integer>> score() {
-        return unit.score(null, Arrays.asList(host1, host2, host3, host4, host5), vm, null);
+        return unit.score(Arrays.asList(host1, host2, host3, host4, host5), vm, new SchedulingContext(new Cluster(), Collections.emptyMap()));
     }
 
     private VDS createHost(int numOfSockets, int coresPerSocket, int threadsPerCore) {

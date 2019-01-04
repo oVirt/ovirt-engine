@@ -9,8 +9,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,6 +23,8 @@ public class HugePagesFilterPolicyUnitTest {
     VDS host1;
     VM vm;
     VM otherVm;
+
+    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap());
 
     PendingResourceManager pendingResourceManager;
 
@@ -43,11 +47,7 @@ public class HugePagesFilterPolicyUnitTest {
     @Test
     public void testNoHugePages() {
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isNotNull()
                 .isNotEmpty()
                 .contains(host1);
@@ -58,11 +58,7 @@ public class HugePagesFilterPolicyUnitTest {
         vm.setCustomProperties("hugepages=1024");
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isEmpty();
     }
 
@@ -73,11 +69,7 @@ public class HugePagesFilterPolicyUnitTest {
         host1.setHugePages(Collections.singletonList(new HugePage(2048, 50)));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isEmpty();
     }
 
@@ -90,11 +82,7 @@ public class HugePagesFilterPolicyUnitTest {
                 new HugePage(2048, 50)));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isEmpty();
     }
 
@@ -105,11 +93,7 @@ public class HugePagesFilterPolicyUnitTest {
         host1.setHugePages(Collections.singletonList(new HugePage(1024, 50)));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isEmpty();
     }
 
@@ -123,11 +107,7 @@ public class HugePagesFilterPolicyUnitTest {
         pendingResourceManager.addPending(new PendingHugePages(host1, otherVm, 1024, 50));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isEmpty();
     }
 
@@ -141,11 +121,7 @@ public class HugePagesFilterPolicyUnitTest {
         pendingResourceManager.addPending(new PendingHugePages(host1, otherVm, 2048, 1024));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isNotEmpty()
                 .contains(host1);
     }
@@ -162,11 +138,7 @@ public class HugePagesFilterPolicyUnitTest {
         pendingResourceManager.addPending(new PendingHugePages(host1, otherVm, 2048, 1024));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isNotEmpty()
                 .contains(host1);
     }
@@ -178,12 +150,12 @@ public class HugePagesFilterPolicyUnitTest {
         host1.setHugePages(Collections.singletonList(new HugePage(1024, 1024)));
 
         HugePagesFilterPolicyUnit unit = new HugePagesFilterPolicyUnit(null, pendingResourceManager);
-        List<VDS> hosts = unit.filter(null,
-                Collections.singletonList(host1),
-                vm, Collections.emptyMap(), new PerHostMessages());
-
-        assertThat(hosts)
+        assertThat(filter(unit))
                 .isNotEmpty()
                 .contains(host1);
+    }
+
+    private List<VDS> filter(HugePagesFilterPolicyUnit unit) {
+        return unit.filter(context, Collections.singletonList(host1), vm, new PerHostMessages());
     }
 }

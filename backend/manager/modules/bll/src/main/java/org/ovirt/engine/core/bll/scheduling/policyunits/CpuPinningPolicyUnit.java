@@ -3,17 +3,16 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -42,9 +41,9 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(Cluster cluster, final List<VDS> hosts,
+    public List<VDS> filter(final SchedulingContext context,
+            final List<VDS> hosts,
             final VM vm,
-            final Map<String, String> parameters,
             final PerHostMessages messages) {
         final String cpuPinning = vm.getCpuPinning();
 

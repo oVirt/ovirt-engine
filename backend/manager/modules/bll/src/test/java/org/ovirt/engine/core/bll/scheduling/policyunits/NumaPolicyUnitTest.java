@@ -16,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -227,6 +229,6 @@ public class NumaPolicyUnitTest extends NumaPolicyTestBase{
     }
 
     private List<VDS> filter() {
-        return unit.filter(null, hosts, vm, null, new PerHostMessages());
+        return unit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap()), hosts, vm, new PerHostMessages());
     }
 }

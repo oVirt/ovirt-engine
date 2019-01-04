@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -27,13 +28,13 @@ import org.ovirt.engine.core.dao.VmDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseCommandTest {
-    private Cluster cluster;
     private Guid clusterId;
     private List<VDS> hosts;
     private VM vm;
     private VM hostedEngine;
 
     private Map<String, String> parameters;
+    private SchedulingContext context;
     private PerHostMessages messages;
 
     // Unit under test
@@ -71,6 +72,8 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
 
         parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "0");
+        context = new SchedulingContext(cluster, parameters);
+
         messages = new PerHostMessages();
 
         doReturn(hostedEngine).when(vmDao).getHostedEngineVm();
@@ -78,20 +81,20 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
 
     @Test
     public void testNoHosts() {
-        List<VDS> result = policyUnit.filter(cluster, new ArrayList<VDS>(), vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, new ArrayList<VDS>(), vm, messages);
         assertEquals(0, result.size());
     }
 
     @Test
     public void testWithNoRequiredSpares() {
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
     @Test
     public void testWithEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -105,7 +108,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     @Test
     public void testWithoutEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "6");
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -120,7 +123,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     public void testWithoutEnoughSparesFullMemory() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(1, result.size());
         assertEquals("A", result.get(0).getName());
     }
@@ -138,7 +141,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hostedEngine.setOrigin(OriginType.OVIRT);
         doReturn(null).when(vmDao).getHostedEngineVm();
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -154,7 +157,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
         hostedEngine.setClusterId(Guid.SYSTEM);
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -179,7 +182,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -197,7 +200,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(3, result.size());
     }
 
@@ -215,7 +218,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(3, result.size());
     }
 
@@ -235,7 +238,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -255,7 +258,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -277,7 +280,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -301,7 +304,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(6000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -325,7 +328,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(6000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -348,7 +351,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(7000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, hostedEngine, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, hostedEngine, messages);
         assertEquals(5, result.size());
     }
 
@@ -360,7 +363,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     @Test
     public void testHostInMaintenance() {
         hosts.get(0).setHighlyAvailableLocalMaintenance(true);
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 

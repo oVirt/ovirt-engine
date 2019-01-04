@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -34,12 +33,12 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        highUtilization = parameters.containsKey(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()) ?
-                Long.parseLong(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()))
+    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
+        highUtilization = context.getPolicyParameters().containsKey(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()) ?
+                Long.parseLong(context.getPolicyParameters().get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()))
                 : Long.MAX_VALUE;
 
-        return super.score(cluster, hosts, vm, parameters);
+        return super.score(hosts, vm, context);
     }
 
     @Override

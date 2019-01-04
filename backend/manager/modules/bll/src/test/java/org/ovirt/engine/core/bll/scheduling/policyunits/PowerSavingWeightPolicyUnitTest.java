@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -54,7 +55,7 @@ public class PowerSavingWeightPolicyUnitTest extends EvenDistributionWeightPolic
 
     @Override
     protected <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
-        return unit.score(new Cluster(), hosts, vm, parameters).stream()
+        return unit.score(hosts, vm, new SchedulingContext(new Cluster(), parameters)).stream()
                 .min(Comparator.comparing(Pair::getSecond))
                 .map(Pair::getFirst)
                 .orElse(null);

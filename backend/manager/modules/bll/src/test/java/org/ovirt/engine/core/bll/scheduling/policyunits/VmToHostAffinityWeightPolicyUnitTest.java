@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -100,7 +99,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
 
 
     private Map<Guid, Integer> getScoreResults() {
-        List<Pair<Guid, Integer>> weights = unit.score(cluster, hosts, vm, new HashMap<>());
+        List<Pair<Guid, Integer>> weights = unit.score(hosts, vm, context);
         Map<Guid, Integer> results = weights.stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         return results;
     }

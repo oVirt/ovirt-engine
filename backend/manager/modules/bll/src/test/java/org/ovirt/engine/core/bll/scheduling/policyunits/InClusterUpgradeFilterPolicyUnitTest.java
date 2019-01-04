@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -112,9 +114,9 @@ public class InClusterUpgradeFilterPolicyUnitTest {
     }
 
     private List<VDS> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeFilterPolicyUnit.filter(new Cluster(), Arrays.asList(hosts),
+        return inClusterUpgradeFilterPolicyUnit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap()),
+                Arrays.asList(hosts),
                 vm,
-                null,
                 mock(PerHostMessages.class));
     }
 }

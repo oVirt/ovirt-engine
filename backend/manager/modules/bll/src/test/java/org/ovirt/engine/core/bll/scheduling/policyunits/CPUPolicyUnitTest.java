@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -96,10 +98,10 @@ public class CPUPolicyUnitTest {
     }
 
     private List<VDS> filter() {
-        return cpuPolicyUnit.filter(cluster,
+        return cpuPolicyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),
                 Arrays.asList(vdsWithInvalidCpuInfo, vdsWithCores),
                 vm,
-                null, mock(PerHostMessages.class));
+                mock(PerHostMessages.class));
     }
 
 }

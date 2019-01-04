@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -75,7 +77,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     }
 
     protected  <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
-        List<Pair<Guid, Integer>> scores = unit.score(new Cluster(), hosts, vm, null);
+        List<Pair<Guid, Integer>> scores = unit.score(hosts, vm, new SchedulingContext(new Cluster(), Collections.emptyMap()));
         scores.sort(Comparator.comparing(Pair::getSecond));
         return scores.get(0).getFirst();
     }

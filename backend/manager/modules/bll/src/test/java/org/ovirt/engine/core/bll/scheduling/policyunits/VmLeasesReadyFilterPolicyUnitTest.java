@@ -5,7 +5,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
@@ -40,6 +41,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
     VmLeasesReadyFilterPolicyUnit unit = new VmLeasesReadyFilterPolicyUnit(null, null);
 
     private Cluster cluster;
+    private SchedulingContext context;
     private VM vm;
     private VDS host1;
     private VDS host2;
@@ -49,6 +51,8 @@ class VmLeasesReadyFilterPolicyUnitTest {
     public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
+
+        context = new SchedulingContext(cluster, Collections.emptyMap());
 
         vm = new VM();
         vm.setId(Guid.newGuid());
@@ -67,7 +71,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
     @Test
     public void testVmWithoutLease() {
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages())).containsAll(hosts);
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).containsAll(hosts);
     }
 
     @Test
@@ -80,7 +84,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
         setUpMocks();
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages())).containsAll(hosts);
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).containsAll(hosts);
     }
 
     @Test
@@ -93,7 +97,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
         setUpMocks();
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .doesNotContainAnyElementsOf(hosts);
     }
 
@@ -107,7 +111,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
         setUpMocks();
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .containsAll(hosts);
     }
 
@@ -121,7 +125,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
         setUpMocks();
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .doesNotContainAnyElementsOf(hosts);
     }
 
@@ -135,7 +139,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
         setUpMocks();
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host1)
                 .doesNotContain(host2);
     }

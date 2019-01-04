@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,7 +43,7 @@ public class PreferredHostsWeightPolicyUnitTest {
         hosts.add(host2);
         hosts.add(host3);
 
-        List<Pair<Guid, Integer>> weights = unit.score(cluster, hosts, vm, new HashMap<String, String>());
+        List<Pair<Guid, Integer>> weights = unit.score(hosts, vm, new SchedulingContext(cluster, Collections.emptyMap()));
 
         Map<Guid, Integer> results = new HashMap<>();
         for (Pair<Guid, Integer> r: weights) {

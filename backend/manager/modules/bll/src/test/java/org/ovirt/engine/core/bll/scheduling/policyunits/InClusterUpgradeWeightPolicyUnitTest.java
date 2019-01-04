@@ -8,6 +8,7 @@ import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeW
 import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BETTER_WEIGHT;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -171,9 +173,9 @@ public class InClusterUpgradeWeightPolicyUnitTest {
     }
 
     private List<Pair<Guid, Integer>> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeWeightPolicyUnit.score(new Cluster(), Arrays.asList(hosts),
+        return inClusterUpgradeWeightPolicyUnit.score(Arrays.asList(hosts),
                 vm,
-                null);
+                new SchedulingContext(new Cluster(), Collections.emptyMap()));
     }
 
     private static Pair<Guid, Integer> weight(final VDS host, int weight) {
