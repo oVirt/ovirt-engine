@@ -24,13 +24,6 @@
     <url>http://gerrit.ovirt.org/gitweb?p=ovirt-engine.git</url>
   </scm>
 
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-    <relativePath></relativePath>
-  </parent>
-
   <properties>
     <!--
       Since we don't inherit from Engine root POM, we need to specify
