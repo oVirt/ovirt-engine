@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -32,13 +33,13 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
 
-    private Cluster cluster;
     private Guid clusterId;
     private List<VDS> hosts;
     private VM vm;
     private VM hostedEngine;
 
     private Map<String, String> parameters;
+    private SchedulingContext context;
     private PerHostMessages messages;
 
     // Unit under test
@@ -76,27 +77,29 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
 
         parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "0");
+        context = new SchedulingContext(cluster, parameters);
+
         messages = new PerHostMessages();
 
         doReturn(hostedEngine).when(vmDao).getHostedEngineVm();
     }
 
     @Test
-    public void testNoHosts() throws Exception {
-        List<VDS> result = policyUnit.filter(cluster, new ArrayList<VDS>(), vm, parameters, messages);
+    public void testNoHosts() {
+        List<VDS> result = policyUnit.filter(context, new ArrayList<VDS>(), vm, messages);
         assertEquals(0, result.size());
     }
 
     @Test
-    public void testWithNoRequiredSpares() throws Exception {
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+    public void testWithNoRequiredSpares() {
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
     @Test
     public void testWithEnoughSpares() throws Exception {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -110,7 +113,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
     @Test
     public void testWithoutEnoughSpares() throws Exception {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "6");
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -125,7 +128,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
     public void testWithoutEnoughSparesFullMemory() throws Exception {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(1, result.size());
         assertEquals("A", result.get(0).getName());
     }
@@ -143,7 +146,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hostedEngine.setOrigin(OriginType.OVIRT);
         doReturn(null).when(vmDao).getHostedEngineVm();
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -159,7 +162,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
         hostedEngine.setClusterId(Guid.SYSTEM);
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -184,7 +187,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -202,7 +205,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(3, result.size());
     }
 
@@ -220,7 +223,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(3, result.size());
     }
 
@@ -240,7 +243,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -260,7 +263,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -282,7 +285,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -306,7 +309,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(6000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -330,7 +333,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(6000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -353,7 +356,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hosts.get(3).setPhysicalMemMb(7000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = policyUnit.filter(cluster, hosts, hostedEngine, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, hostedEngine, messages);
         assertEquals(5, result.size());
     }
 
@@ -365,7 +368,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
     @Test
     public void testHostInMaintenance() throws Exception {
         hosts.get(0).setHighlyAvailableLocalMaintenance(true);
-        List<VDS> result = policyUnit.filter(cluster, hosts, vm, parameters, messages);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 

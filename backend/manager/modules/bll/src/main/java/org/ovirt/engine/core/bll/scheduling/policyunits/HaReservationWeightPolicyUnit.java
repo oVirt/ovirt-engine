@@ -8,9 +8,9 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.scheduling.HaReservationHandling;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
@@ -44,7 +44,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
+    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
 
         log.debug("Started HA reservation scoring method");
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
@@ -52,11 +52,11 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
         Map<Guid, Integer> hostsHaVmCount = new HashMap<>();
 
         // If the vm is not HA or the cluster is not marked as HA Reservation set default score.
-        if (!vm.isAutoStartup() || !cluster.supportsHaReservation()) {
+        if (!vm.isAutoStartup() || !context.getCluster().supportsHaReservation()) {
             fillDefaultScores(hosts, scores);
         } else {
             // Use a single call to the DB to retrieve all VM in the Cluster and map them by Host id
-            Map<Guid, List<VM>> hostId2HaVmMapping = HaReservationHandling.mapHaVmToHostByCluster(cluster.getId());
+            Map<Guid, List<VM>> hostId2HaVmMapping = HaReservationHandling.mapHaVmToHostByCluster(context.getCluster().getId());
 
             int maxCount = 0;
             for (VDS host : hosts) {
@@ -80,8 +80,8 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 
             // Get scale down param
             Integer scaleDownParameter = 1;
-            if (parameters.get("ScaleDown") != null) {
-                scaleDownParameter = Integer.parseInt(parameters.get(PolicyUnitParameter.SCALE_DOWN.getDbName()));
+            if (context.getPolicyParameters().get("ScaleDown") != null) {
+                scaleDownParameter = Integer.parseInt(context.getPolicyParameters().get(PolicyUnitParameter.SCALE_DOWN.getDbName()));
             } else {
                 scaleDownParameter = Config.<Integer> getValue(ConfigValues.ScaleDownForHaReservation);
             }

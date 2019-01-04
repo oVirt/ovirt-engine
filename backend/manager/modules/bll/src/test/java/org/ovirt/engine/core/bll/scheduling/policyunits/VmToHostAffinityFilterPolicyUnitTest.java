@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -31,7 +30,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         List<AffinityGroup> affinityGroups = new ArrayList<>();
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages())).contains(
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains(
                 host_positive_enforcing,
                 host_negative_enforcing,
                 host_not_in_affinity_group);
@@ -44,7 +43,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group);
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages())).contains
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains
                 (host_positive_enforcing).doesNotContain(host_not_in_affinity_group);
     }
 
@@ -55,7 +54,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         List<AffinityGroup> affinityGroups = Arrays.asList(negative_enforcing_group);
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages())).contains
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains
                 (host_not_in_affinity_group);
     }
 
@@ -66,7 +65,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group, negative_enforcing_group);
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host_positive_enforcing)
                 .doesNotContain(host_negative_enforcing);
     }
@@ -84,6 +83,6 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         List<AffinityGroup> affinityGroups = Arrays.asList(positiveCollisionGroup, negative_enforcing_group);
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages())).isEmpty();
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).isEmpty();
     }
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class ClusterInMaintenanceFilterPolicyUnitTest {
     private VDS host;
     private VM vm;
+    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap());
 
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
@@ -39,7 +42,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
         vm.setAutoStartup(true);
 
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
-        List<VDS> result = unit.filter(null, Collections.singletonList(host), vm, Collections.emptyMap(), new PerHostMessages());
+        List<VDS> result = unit.filter(context, Collections.singletonList(host), vm, new PerHostMessages());
         assertThat(result)
                 .isNotNull()
                 .isNotEmpty()
@@ -52,9 +55,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
         vm.setAutoStartup(true);
 
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
-        List<VDS> result = unit.filter(null,
-                Collections.singletonList(host), vm,
-                Collections.emptyMap(), new PerHostMessages());
+        List<VDS> result = unit.filter(context, Collections.singletonList(host), vm, new PerHostMessages());
         assertThat(result)
                 .isNotNull()
                 .isNotEmpty()
@@ -65,9 +66,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     public void testNonHaCannotStart() throws Exception {
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
         final PerHostMessages messages = new PerHostMessages();
-        List<VDS> result = unit.filter(null,
-                Collections.singletonList(host), vm,
-                Collections.emptyMap(), messages);
+        List<VDS> result = unit.filter(context, Collections.singletonList(host), vm, messages);
         assertThat(result)
                 .isNotNull()
                 .isEmpty();
@@ -80,9 +79,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     public void testNonHaCanMigrate() throws Exception {
         vm.setRunOnVds(Guid.newGuid());
         ClusterInMaintenanceFilterPolicyUnit unit = new ClusterInMaintenanceFilterPolicyUnit(null, null);
-        List<VDS> result = unit.filter(null,
-                Collections.singletonList(host), vm,
-                Collections.emptyMap(), new PerHostMessages());
+        List<VDS> result = unit.filter(context, Collections.singletonList(host), vm, new PerHostMessages());
         assertThat(result)
                 .isNotNull()
                 .isNotEmpty()

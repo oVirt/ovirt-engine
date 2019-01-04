@@ -9,6 +9,7 @@ import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeW
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -18,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -178,9 +180,9 @@ public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
     }
 
     private List<Pair<Guid, Integer>> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeWeightPolicyUnit.score(new Cluster(), Arrays.asList(hosts),
+        return inClusterUpgradeWeightPolicyUnit.score(Arrays.asList(hosts),
                 vm,
-                null);
+                new SchedulingContext(new Cluster(), Collections.emptyMap()));
     }
 
     private static Pair<Guid, Integer> weight(final VDS host, int weight) {

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -107,10 +109,10 @@ public class CPUPolicyUnitTest {
     }
 
     private List<VDS> filter() {
-        return cpuPolicyUnit.filter(cluster,
+        return cpuPolicyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),
                 Arrays.asList(vdsWithInvalidCpuInfo, vdsWithCores),
                 vm,
-                null, mock(PerHostMessages.class));
+                mock(PerHostMessages.class));
     }
 
 }

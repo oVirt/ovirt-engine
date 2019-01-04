@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -26,6 +28,7 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
     AffinityGroupDao affinityGroupDao;
 
     protected Cluster cluster;
+    protected SchedulingContext context;
     protected VM vm;
     protected VDS host_positive_enforcing;
     protected VDS host_negative_enforcing;
@@ -38,6 +41,8 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
     public void setUp() throws Exception {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
+
+        context = new SchedulingContext(cluster, Collections.emptyMap());
 
         vm = new VM();
         vm.setId(Guid.newGuid());

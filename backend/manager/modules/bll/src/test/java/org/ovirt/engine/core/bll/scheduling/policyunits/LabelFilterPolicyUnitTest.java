@@ -7,7 +7,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -17,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
@@ -40,7 +40,7 @@ public class LabelFilterPolicyUnitTest {
     @InjectMocks
     LabelFilterPolicyUnit unit = new LabelFilterPolicyUnit(null, null);
 
-    private Cluster cluster;
+    private SchedulingContext context;
     private VM vm;
     private VDS host1;
     private VDS host2;
@@ -48,8 +48,10 @@ public class LabelFilterPolicyUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        cluster = new Cluster();
+        Cluster cluster = new Cluster();
         cluster.setId(Guid.newGuid());
+
+        context = new SchedulingContext(cluster, Collections.emptyMap());
 
         vm = new VM();
         vm.setId(Guid.newGuid());
@@ -75,7 +77,7 @@ public class LabelFilterPolicyUnitTest {
         List<Label> labels = Collections.singletonList(red);
         doReturn(labels).when(labelDao).getAllByEntityIds(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host1)
                 .doesNotContain(host2);
     }
@@ -93,7 +95,7 @@ public class LabelFilterPolicyUnitTest {
         List<Label> labels = Arrays.asList(red, blue);
         doReturn(labels).when(labelDao).getAllByEntityIds(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .isEmpty();
     }
 
@@ -110,7 +112,7 @@ public class LabelFilterPolicyUnitTest {
         List<Label> labels = Arrays.asList(red, blue);
         doReturn(labels).when(labelDao).getAllByEntityIds(any());
 
-        assertThat(unit.filter(cluster, hosts, vm, new HashMap<>(), new PerHostMessages()))
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host1)
                 .doesNotContain(host2);
     }

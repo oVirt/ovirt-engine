@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -119,9 +121,9 @@ public class InClusterUpgradeFilterPolicyUnitTest extends TestCase {
     }
 
     private List<VDS> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeFilterPolicyUnit.filter(new Cluster(), Arrays.asList(hosts),
+        return inClusterUpgradeFilterPolicyUnit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap()),
+                Arrays.asList(hosts),
                 vm,
-                null,
                 mock(PerHostMessages.class));
     }
 }

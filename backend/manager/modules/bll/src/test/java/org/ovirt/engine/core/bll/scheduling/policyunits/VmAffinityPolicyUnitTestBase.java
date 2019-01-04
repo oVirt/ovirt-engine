@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -39,6 +40,7 @@ public class VmAffinityPolicyUnitTestBase {
     protected VmDao vmDao;
 
     protected Cluster cluster;
+    protected SchedulingContext context;
     protected VDS host1;
     protected VDS host2;
     protected VDS host3;
@@ -52,6 +54,8 @@ public class VmAffinityPolicyUnitTestBase {
     public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
+
+        context = new SchedulingContext(cluster, Collections.emptyMap());
 
         host1 = createHost(cluster);
         host2 = createHost(cluster);

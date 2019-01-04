@@ -24,7 +24,7 @@ public class VmAffinityFilterPolicyUnitTest extends VmAffinityPolicyUnitTestBase
     public void testNoAffinityGroups() {
         List<VDS> hosts = Arrays.asList(host1, host2);
 
-        assertThat(policyUnit.filter(cluster, hosts, newVm, null, new PerHostMessages()))
+        assertThat(policyUnit.filter(context, hosts, newVm, new PerHostMessages()))
                 .containsOnlyElementsOf(hosts);
     }
 
@@ -38,14 +38,14 @@ public class VmAffinityFilterPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
                 vm1, vm2, newVm));
 
-        assertThat(policyUnit.filter(cluster, hosts, newVm, null, new PerHostMessages()))
+        assertThat(policyUnit.filter(context, hosts, newVm, new PerHostMessages()))
                 .containsOnlyElementsOf(hosts);
 
         affinityGroups.clear();
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, true,
                 vm1, vm2, newVm));
 
-        assertThat(policyUnit.filter(cluster, hosts, newVm, null, new PerHostMessages()))
+        assertThat(policyUnit.filter(context, hosts, newVm, new PerHostMessages()))
                 .containsOnlyElementsOf(hosts);
     }
 
@@ -59,7 +59,7 @@ public class VmAffinityFilterPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
                 vm1, vm2, newVm));
 
-        assertThat(policyUnit.filter(cluster, hosts, newVm, null, new PerHostMessages()))
+        assertThat(policyUnit.filter(context, hosts, newVm, new PerHostMessages()))
                 .containsOnly(host2);
 
     }
@@ -75,7 +75,7 @@ public class VmAffinityFilterPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
                 vm1, vm2, vm3, newVm));
 
-        assertThat(policyUnit.filter(cluster, hosts, newVm, null, new PerHostMessages()))
+        assertThat(policyUnit.filter(context, hosts, newVm, new PerHostMessages()))
                 .containsOnly(host2, host3);
     }
 
@@ -90,7 +90,7 @@ public class VmAffinityFilterPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, true,
                 vm1, vm2, newVm));
 
-        assertThat(policyUnit.filter(cluster, hosts, newVm, null, new PerHostMessages()))
+        assertThat(policyUnit.filter(context, hosts, newVm, new PerHostMessages()))
                 .doesNotContain(host1, host3);
     }
 
