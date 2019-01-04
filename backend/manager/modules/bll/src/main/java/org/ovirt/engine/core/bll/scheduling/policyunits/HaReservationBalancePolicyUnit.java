@@ -35,7 +35,6 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
     private static final Logger log = LoggerFactory.getLogger(HaReservationBalancePolicyUnit.class);
 
-    private static final int DEFAULT_OVER_UTILIZATION_VALUE = 200;
     private static final long serialVersionUID = 4926515666890804243L;
 
     public HaReservationBalancePolicyUnit(PolicyUnit policyUnit,
@@ -68,12 +67,9 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
         int optimalHaDistribution = (int) Math.ceil((double) haVmsInCluster / hosts.size());
 
-        int overUtilizationParam = DEFAULT_OVER_UTILIZATION_VALUE;
-        if (parameters.get("OverUtilization") != null) {
-            overUtilizationParam = NumberUtils.toInt(parameters.get("OverUtilization"));
-        } else {
-            overUtilizationParam = Config.<Integer> getValue(ConfigValues.OverUtilizationForHaReservation);
-        }
+        int overUtilizationParam = parameters.get("OverUtilization") != null ?
+                NumberUtils.toInt(parameters.get("OverUtilization")) :
+                Config.<Integer> getValue(ConfigValues.OverUtilizationForHaReservation);
 
         log.debug("optimalHaDistribution value: {}", optimalHaDistribution);
 
@@ -154,7 +150,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
     private enum Condition {
         LESS_THAN,
-        MORE_THAN;
+        MORE_THAN
     }
 
     private List<VM> getMigrableVmsRunningOnVds(final Guid hostId, Map<Guid, List<VM>> hostId2HaVmMapping) {

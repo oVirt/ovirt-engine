@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll.scheduling.arem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +36,7 @@ public class AffinityRulesUtils {
                         Set<Guid> intersection = new HashSet<>(ag.getVmIds());
                         intersection.retainAll(positiveGroup);
                         if (intersection.size() > 1) {
-                            conflicts.add(new AffinityGroupConflicts(new HashSet<>(Arrays.asList(ag)),
+                            conflicts.add(new AffinityGroupConflicts(new HashSet<>(Collections.singletonList(ag)),
                                     AffinityRulesConflicts.VM_TO_VM_AFFINITY_CONFLICTS,
                                     AuditLogType.VM_TO_VM_AFFINITY_CONFLICTS, positiveGroup, intersection)
                             );
@@ -64,10 +64,8 @@ public class AffinityRulesUtils {
          * Initialize the single element groups by taking all VMs that are referenced
          * from any affinity group
          */
-        for(Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext();) {
-            AffinityGroup ag = it.next();
-
-            for(Guid id : ag.getVmIds()) {
+        for (AffinityGroup ag : affinityGroups) {
+            for (Guid id : ag.getVmIds()) {
                 Set<Guid> temp = new HashSet<>();
                 temp.add(id);
                 uag.add(temp);
@@ -118,9 +116,8 @@ public class AffinityRulesUtils {
         for(Set<Guid> s : uag) {
             AffinityGroup temp = new AffinityGroup();
             temp.setVmAffinityRule(EntityAffinityRule.POSITIVE);
-            List<Guid> entities = new ArrayList<>();
 
-            entities.addAll(s);
+            List<Guid> entities = new ArrayList<>(s);
             temp.setVmIds(entities);
             output.add(temp);
         }

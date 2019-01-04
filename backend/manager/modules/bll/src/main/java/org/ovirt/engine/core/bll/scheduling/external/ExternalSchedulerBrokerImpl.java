@@ -36,7 +36,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerImpl.class);
 
-    private XmlRpcClientConfigImpl config = null;
+    private XmlRpcClientConfigImpl config;
 
     @Inject
     private AuditLogDirector auditLogDirector;

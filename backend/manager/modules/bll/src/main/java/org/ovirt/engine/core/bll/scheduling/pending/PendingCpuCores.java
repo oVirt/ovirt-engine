@@ -30,6 +30,7 @@ public class PendingCpuCores extends PendingResource {
         this.coreCount = coreCount;
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object other) {
         return VmSpecificPendingResourceEqualizer.isEqual(this, other);

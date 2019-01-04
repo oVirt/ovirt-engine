@@ -115,7 +115,7 @@ public class InClusterUpgradeWeightPolicyUnit extends PolicyUnitImpl {
     private static List<Pair<Guid, Integer>> noWeights(final List<VDS> hosts) {
         final List<Pair<Guid, Integer>> weights = new ArrayList<>();
         for (final VDS host : hosts) {
-            weights.add(new Pair(host.getId(), BEST_WEIGHT));
+            weights.add(new Pair<>(host.getId(), BEST_WEIGHT));
         }
         return weights;
     }

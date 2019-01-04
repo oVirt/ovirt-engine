@@ -56,8 +56,8 @@ public class ExternalSchedulerBrokerObjectBuilder {
 
         // keys will be status_code, plugin_errors, errors and result
         result.setResultCode((int) castedResult.get("result_code"));
-        Map<String, Object[]> plugin_errors = null;
-        Object[] errors = null;
+        Map<String, Object[]> plugin_errors;
+        Object[] errors;
 
         if (result.getResultCode() != RESULT_OK) {
             plugin_errors = (Map<String, Object[]>) castedResult.get("plugin_errors");

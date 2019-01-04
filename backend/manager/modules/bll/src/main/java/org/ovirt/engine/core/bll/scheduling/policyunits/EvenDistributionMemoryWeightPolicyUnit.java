@@ -53,6 +53,6 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     private float getMaxMemoryOfVdsInCluster(List<VDS> hosts) {
-        return hosts.stream().map(VDS::getFreeVirtualMemory).max(Float::compareTo).get();
+        return hosts.stream().map(VDS::getFreeVirtualMemory).max(Float::compareTo).orElse(0.0f);
     }
 }

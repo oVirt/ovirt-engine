@@ -4,7 +4,6 @@ import static java.util.Collections.min;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -48,11 +47,6 @@ public class AffinityRulesEnforcer {
     private VmDao vmDao;
     @Inject
     private SchedulingManager schedulingManager;
-
-    protected enum FailMode {
-        IMMEDIATELY, // Fail when first violation is detected
-        GET_ALL // Collect all violations
-    }
 
     /**
      * Choose a valid VM for migration by applying affinity rules in the following order:
@@ -271,8 +265,7 @@ public class AffinityRulesEnforcer {
                 .collect(Collectors.toMap(VM::getId, VM::getRunOnVds));
 
         // There is no need to migrate when no collision was detected
-        Set<AffinityGroup> violatedAffinityGroups =
-                checkForVMAffinityGroupViolations(unifiedAffinityGroups, vmToHost, FailMode.GET_ALL);
+        Set<AffinityGroup> violatedAffinityGroups = checkForVMAffinityGroupViolations(unifiedAffinityGroups, vmToHost);
         if (violatedAffinityGroups.isEmpty()) {
             log.debug("No affinity group collision detected for cluster {}. Standing by.", cluster.getId());
             return null;
@@ -281,7 +274,7 @@ public class AffinityRulesEnforcer {
         // Find a VM that is breaking the affinityGroup and can be theoretically migrated
         // - start with bigger Affinity Groups
         List<AffinityGroup> affGroupsBySize = new ArrayList<>(violatedAffinityGroups);
-        Collections.sort(affGroupsBySize, Collections.reverseOrder(new AffinityGroupComparator()));
+        affGroupsBySize.sort(Collections.reverseOrder(new AffinityGroupComparator()));
 
         for (AffinityGroup affinityGroup : affGroupsBySize) {
             final List<List<Guid>> candidateVmGroups;
@@ -339,9 +332,8 @@ public class AffinityRulesEnforcer {
             return false;
         }
 
-        List<Guid> vdsBlackList =
-                candidateVm.getRunOnVds() == null ?
-                        Collections.emptyList() : Arrays.asList(candidateVm.getRunOnVds());
+        List<Guid> vdsBlackList = candidateVm.getRunOnVds() == null ?
+                Collections.emptyList() : Collections.singletonList(candidateVm.getRunOnVds());
 
         boolean canMove = !schedulingManager.canSchedule(cluster,
                 candidateVm,
@@ -424,7 +416,7 @@ public class AffinityRulesEnforcer {
      * @return broken AffinityGroups
      */
     protected static Set<AffinityGroup> checkForVMAffinityGroupViolations(Iterable<AffinityGroup> affinityGroups,
-            Map<Guid, Guid> vmToHost, FailMode mode) {
+            Map<Guid, Guid> vmToHost) {
 
         Set<AffinityGroup> broken = new HashSet<>();
 
@@ -445,10 +437,6 @@ public class AffinityRulesEnforcer {
                         log.debug("Negative affinity rule violated between VMs {} and {} on host {}",
                                 vm, usedHosts.get(host), host);
                         broken.add(affinity);
-
-                        if (mode.equals(FailMode.IMMEDIATELY)) {
-                            return broken;
-                        }
                     } else {
                         usedHosts.put(host, vm);
                     }
@@ -470,10 +458,6 @@ public class AffinityRulesEnforcer {
                         log.debug("Positive affinity rule violated by VM {} running at {} when other VM(s) are at {}",
                                 vm, host, targetHost);
                         broken.add(affinity);
-
-                        if (mode.equals(FailMode.IMMEDIATELY)) {
-                            return broken;
-                        }
                     } else if (targetHost == null) {
                         targetHost = host;
                     }

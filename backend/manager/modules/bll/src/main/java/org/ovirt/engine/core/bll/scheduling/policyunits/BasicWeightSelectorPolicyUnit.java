@@ -54,11 +54,9 @@ public class BasicWeightSelectorPolicyUnit extends PolicyUnitImpl {
 
         @Override
         public Optional<Guid> best() {
-            Optional<Guid> bestHostEntry = weightTable.entrySet().stream()
+            return weightTable.entrySet().stream()
                     .min(Comparator.comparingInt(Entry::getValue))
                     .map(Map.Entry::getKey);
-
-            return bestHostEntry;
         }
     }
 }

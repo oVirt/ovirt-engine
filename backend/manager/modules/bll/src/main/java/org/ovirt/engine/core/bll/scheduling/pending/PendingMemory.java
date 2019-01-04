@@ -30,6 +30,7 @@ public class PendingMemory extends PendingResource {
         this.sizeInMb = sizeInMb;
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object other) {
         return VmSpecificPendingResourceEqualizer.isEqual(this, other);

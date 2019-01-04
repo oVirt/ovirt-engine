@@ -20,6 +20,7 @@ public class PendingVM extends PendingResource {
         super(host, vm);
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object other) {
         return VmSpecificPendingResourceEqualizer.isEqual(this, other);

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -136,12 +135,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
                 affinityGroupDao.getAllAffinityGroupsByClusterId(affinityGroup.getClusterId());
 
         // Replace the existing affinity group by the updated copy
-        for (Iterator<AffinityGroup> it = affinityGroups.iterator(); it.hasNext(); ) {
-            AffinityGroup g = it.next();
-            if (g.getId().equals(affinityGroup.getId())) {
-                it.remove();
-            }
-        }
+        affinityGroups.removeIf(g -> g.getId().equals(affinityGroup.getId()));
         affinityGroups.add(affinityGroup);
 
         List<AffinityRulesUtils.AffinityGroupConflicts> conflicts = AffinityRulesUtils

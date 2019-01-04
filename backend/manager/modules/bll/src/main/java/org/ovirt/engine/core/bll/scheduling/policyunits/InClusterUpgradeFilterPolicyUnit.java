@@ -48,7 +48,7 @@ public class InClusterUpgradeFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        final List<VDS> notOlderHosts = new ArrayList();
+        final List<VDS> notOlderHosts = new ArrayList<>();
         for (VDS host : hosts) {
             final OS hostOs = OS.fromPackageVersionString(host.getHostOs());
             if (!hostOs.isValid()) {

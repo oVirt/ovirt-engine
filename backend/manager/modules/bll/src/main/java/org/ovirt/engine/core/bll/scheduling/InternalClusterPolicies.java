@@ -283,8 +283,7 @@ public class InternalClusterPolicies {
 
     protected static PolicyBuilder createBuilder(String guid) {
         final Guid realGuid = Guid.createGuidFromString(guid);
-        final PolicyBuilder builder = new PolicyBuilder(realGuid);
-        return builder;
+        return new PolicyBuilder(realGuid);
     }
 
     protected static final class PolicyBuilder {

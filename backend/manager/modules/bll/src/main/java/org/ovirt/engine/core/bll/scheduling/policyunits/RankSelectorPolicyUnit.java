@@ -58,7 +58,7 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
 
         @Override
         public void record(Guid policyUnit, Guid host, Integer weight) {
-            weightTable.putIfAbsent(policyUnit, new ArrayList<Pair<Guid, Integer>>());
+            weightTable.putIfAbsent(policyUnit, new ArrayList<>());
             weightTable.get(policyUnit).add(new Pair<>(host, weight));
         }
 

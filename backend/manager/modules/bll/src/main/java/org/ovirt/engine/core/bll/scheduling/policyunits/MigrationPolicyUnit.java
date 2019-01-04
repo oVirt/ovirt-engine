@@ -68,7 +68,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
                 return true; // same as per dst address
             }
 
-            if (srcAddress != null && dstAddress != null && srcAddress.equals(dstAddress)) {
+            if (srcAddress != null && srcAddress.equals(dstAddress)) {
                 log.warn("cannot migrate to VDS {}: resolved address equal to source", dstVds.getHostName());
                 return false;
             }

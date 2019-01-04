@@ -87,13 +87,12 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
 
             // Subtract the pending memory from host nodes
             pendingNodeMemory.forEach((hostNodeIndex, pendingMem) -> {
-                VdsNumaNode node = hostNodes.stream()
+                hostNodes.stream()
                         .filter(n -> n.getIndex() == hostNodeIndex)
-                        .findAny().get();
-
-                node.getNumaNodeStatistics().setMemFree(
-                        node.getNumaNodeStatistics().getMemFree() - pendingMem
-                );
+                        .findAny()
+                        .ifPresent(node -> node.getNumaNodeStatistics().setMemFree(
+                                node.getNumaNodeStatistics().getMemFree() - pendingMem
+                        ));
             });
 
             if (!NumaPinningHelper.findAssignment(vmNumaNodes, hostNodes).isPresent()) {

@@ -79,12 +79,9 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
             }
 
             // Get scale down param
-            Integer scaleDownParameter = 1;
-            if (context.getPolicyParameters().get("ScaleDown") != null) {
-                scaleDownParameter = Integer.parseInt(context.getPolicyParameters().get(PolicyUnitParameter.SCALE_DOWN.getDbName()));
-            } else {
-                scaleDownParameter = Config.<Integer> getValue(ConfigValues.ScaleDownForHaReservation);
-            }
+            Integer scaleDownParameter = context.getPolicyParameters().containsKey(PolicyUnitParameter.SCALE_DOWN.getDbName()) ?
+                    Integer.parseInt(context.getPolicyParameters().get(PolicyUnitParameter.SCALE_DOWN.getDbName())) :
+                    Config.<Integer> getValue(ConfigValues.ScaleDownForHaReservation);
 
             // Set the score pairs
             for (VDS host : hosts) {

@@ -199,7 +199,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         if (overUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
             Cluster cluster = clusterDao.get(overUtilizedHosts.get(0).getClusterId());
-            Collections.sort(overUtilizedHosts, new VdsCpuUsageComparator(
+            overUtilizedHosts.sort(new VdsCpuUsageComparator(
                     cluster != null && cluster.getCountThreadsAsCores()).reversed());
         }
 
@@ -237,7 +237,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         if (underUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
             Cluster cluster = clusterDao.get(underUtilizedHosts.get(0).getClusterId());
-            Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator(
+            underUtilizedHosts.sort(new VdsCpuUsageComparator(
                     cluster != null && cluster.getCountThreadsAsCores()));
         }
 

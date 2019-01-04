@@ -19,10 +19,7 @@ public class SchedulerResult {
             pluginErrors = new HashMap<>();
         }
 
-        if (pluginErrors.get(pluginName) == null) {
-            pluginErrors.put(pluginName, new ArrayList<>());
-        }
-
+        pluginErrors.computeIfAbsent(pluginName, k -> new ArrayList<>());
         pluginErrors.get(pluginName).add(errorMessage);
     }
 
