@@ -1,20 +1,18 @@
 package org.ovirt.engine.core.bll.storage.lease;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.LeaseVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 
 @InternalCommandAttribute
@@ -42,28 +40,38 @@ public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseComma
         return AsyncTaskType.addVmLease;
     }
 
+    @Override protected void executeCommand() {
+        ActionReturnValue retVal = runInternalAction(ActionType.GetVmLeaseInfo, getParameters());
+        if (retVal.getSucceeded() && retVal.getActionReturnValue() != null) {
+            log.info("VM '{}' lease already exists on storage domain '{}': '{}'",
+                    getParameters().getVmId(),
+                    getParameters().getStorageDomainId(),
+                    retVal.getActionReturnValue());
+            getParameters().setVmLeaseInfo(retVal.getActionReturnValue());
+            setSucceeded(true);
+            return;
+        }
+        super.executeCommand();
+    }
+
     @Override
     protected void endSuccessfully() {
         // it would be nicer to get this as part of the tasks rather
         // than initiating another call to the host, this approach is
         // easier and backward compatible though
-        VDSReturnValue retVal = null;
-        try {
-            retVal = runVdsCommand(VDSCommandType.GetVmLeaseInfo,
-                    new VmLeaseVDSParameters(getParameters().getStoragePoolId(),
+        if (getParameters().getVmLeaseInfo() == null) {
+            ActionReturnValue retVal = runInternalAction(ActionType.GetVmLeaseInfo,
+                    new VmLeaseParameters(getParameters().getStoragePoolId(),
                             getParameters().getStorageDomainId(),
                             getParameters().getVmId()));
-        } catch (EngineException e) {
-            log.error("Failure in getting lease info for VM {}, message: {}",
-                    getParameters().getVmId(), e.getMessage());
+
+            if (retVal == null || !retVal.getSucceeded()) {
+                return;
+            }
+            getParameters().setVmLeaseInfo(retVal.getActionReturnValue());
         }
 
-        if (retVal == null || !retVal.getSucceeded()) {
-            log.error("Failed to get info on the lease of VM {}", getParameters().getVmId());
-            return;
-        }
-
-        vmDynamicDao.updateVmLeaseInfo(getParameters().getVmId(), (Map<String, String>) retVal.getReturnValue());
+        vmDynamicDao.updateVmLeaseInfo(getParameters().getVmId(), getParameters().getVmLeaseInfo());
 
         if (getParameters().isHotPlugLease()) {
             boolean hotPlugSucceeded = false;

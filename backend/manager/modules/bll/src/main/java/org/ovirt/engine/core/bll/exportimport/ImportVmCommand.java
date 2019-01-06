@@ -419,11 +419,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return true;
     }
 
-    private Guid addVmLeaseToDefaultStorageDomain() {
+    private Guid findDefaultStorageDomainForVmLease() {
         return storageDomainStaticDao.getAllForStoragePool(getStoragePoolId()).stream()
                 .map(StorageDomainStatic::getId)
                 .filter(this::validateLeaseStorageDomain)
-                .filter(domainId -> addVmLease(domainId, getVm().getId(), false))
                 .findFirst()
                 .orElse(null);
     }
@@ -437,11 +436,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             getVm().setLeaseStorageDomainId(null);
             return;
         }
-        if (validateLeaseStorageDomain(importedLeaseStorageDomainId) &&
-                addVmLease(importedLeaseStorageDomainId, getVm().getId(), false)) {
+        if (validateLeaseStorageDomain(importedLeaseStorageDomainId) ) {
             return;
         }
-        getVm().setLeaseStorageDomainId(addVmLeaseToDefaultStorageDomain());
+        getVm().setLeaseStorageDomainId(findDefaultStorageDomainForVmLease());
         if (getVm().getLeaseStorageDomainId() == null) {
             auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_STORAGE_DOMAIN);
         } else {
@@ -450,10 +448,17 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
     }
 
+    private void addVmLeaseIfNeeded() {
+        if (getVm().getLeaseStorageDomainId() != null) {
+            addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId(), false);
+        }
+    }
+
     @Override
     protected void executeVmCommand() {
         handleVmLease();
         super.executeVmCommand();
+        addVmLeaseIfNeeded();
     }
 
     @Override

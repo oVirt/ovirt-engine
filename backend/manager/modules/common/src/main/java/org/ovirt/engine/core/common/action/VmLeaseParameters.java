@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -11,6 +12,7 @@ public class VmLeaseParameters  extends ActionParametersBase implements Serializ
     private Guid vmId;
     private Guid vdsId;
     private boolean hotPlugLease;
+    private Map<String, String> vmLeaseInfo;
 
     public VmLeaseParameters() {}
 
@@ -58,5 +60,13 @@ public class VmLeaseParameters  extends ActionParametersBase implements Serializ
 
     public void setHotPlugLease(boolean hotPlugLease) {
         this.hotPlugLease = hotPlugLease;
+    }
+
+    public Map<String, String> getVmLeaseInfo() {
+        return vmLeaseInfo;
+    }
+
+    public void setVmLeaseInfo(Map<String, String> vmLeaseInfo) {
+        this.vmLeaseInfo = vmLeaseInfo;
     }
 }
