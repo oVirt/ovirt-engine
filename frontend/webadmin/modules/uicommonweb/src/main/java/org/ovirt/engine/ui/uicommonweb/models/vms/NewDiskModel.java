@@ -155,7 +155,11 @@ public class NewDiskModel extends AbstractDiskModel {
                     diskImage.setSizeInGigabytes(getSize().getEntity());
                 }
                 diskImage.setVolumeType(getVolumeType().getSelectedItem());
-                diskImage.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(diskImage.getVolumeType(), getStorageDomain().getSelectedItem().getStorageType()));
+                // Incremental backup can be enabled only for COW VolumeFormat
+                VolumeFormat volumeFormat = getIsIncrementalBackup().getEntity() ? VolumeFormat.COW :
+                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                                diskImage.getVolumeType(), getStorageDomain().getSelectedItem().getStorageType());
+                diskImage.setVolumeFormat(volumeFormat);
                 break;
         }
     }
