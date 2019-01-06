@@ -12,12 +12,17 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDiskParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
@@ -33,11 +38,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters> extends CommandBase<T> {
 
@@ -58,6 +65,12 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
     @Inject
     private DiskImageDynamicDao diskImageDynamicDao;
+
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     public AddManagedBlockStorageDiskCommand(Guid commandId) {
         super(commandId);
@@ -98,25 +111,48 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         saveDisk(volumeId);
         getReturnValue().setActionReturnValue(volumeId);
         setSucceeded(true);
+        persistCommandIfNeeded();
     }
 
     private void saveDisk(Guid volumeId) {
         ManagedBlockStorageDisk disk = createDisk();
         disk.setImageId(volumeId);
         disk.setId(volumeId);
-
         TransactionSupport.executeInNewTransaction(() -> {
             baseDiskDao.save(disk);
             imageDao.save(disk.getImage());
             imageStorageDomainMapDao.save(new ImageStorageDomainMap(disk.getImageId(),
-                    disk.getStorageIds().get(0), disk.getQuotaId(), disk.getDiskProfileId()));
+                    disk.getStorageIds().get(0),
+                    disk.getQuotaId(),
+                    disk.getDiskProfileId()));
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(disk.getImageId());
             diskImageDynamicDao.save(diskDynamic);
 
+            if (getParameters().getVmId() != null) {
+                // Set correct device id
+                DiskVmElement diskVmElement = getParameters().getDiskVmElement();
+                diskVmElement.getId().setDeviceId(volumeId);
+                addDiskVmElementForDisk(diskVmElement);
+                addManagedDeviceForDisk(volumeId);
+            }
+
             return null;
         });
+    }
+
+    private DiskVmElement addDiskVmElementForDisk(DiskVmElement diskVmElement) {
+        diskVmElementDao.save(diskVmElement);
+        return diskVmElement;
+    }
+
+    protected VmDevice addManagedDeviceForDisk(Guid diskId) {
+        return vmDeviceUtils.addDiskDevice(
+                getParameters().getVmId(),
+                diskId,
+                getParameters().isShouldPlugDiskToVm(),
+                Boolean.TRUE.equals(getParameters().getDiskVmElement().isReadOnly()));
     }
 
     private ManagedBlockStorageDisk createDisk() {
@@ -128,10 +164,12 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         disk.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
         disk.setVolumeType(VolumeType.Unassigned);
         disk.setVolumeFormat(VolumeFormat.RAW);
+        disk.setImageStatus(ImageStatus.OK);
         disk.setCreationDate(new Date());
         disk.setLastModified(new Date());
         disk.setActive(true);
-        disk.setQuotaId(getParameters().getQuotaId());
+        disk.setVmSnapshotId(getParameters().getVmSnapshotId());
+        disk.setDiskVmElements(Collections.singletonList(getParameters().getDiskVmElement()));
 
         return disk;
     }
@@ -159,5 +197,10 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
     @Override
     protected Collection<SubjectEntity> getSubjectEntities() {
         return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getParameters().getStorageDomainId()));
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        setSucceeded(true);
     }
 }

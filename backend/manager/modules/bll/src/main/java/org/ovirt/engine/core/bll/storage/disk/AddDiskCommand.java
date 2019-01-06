@@ -466,7 +466,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         AddManagedBlockStorageDiskParameters parameters =
                 new AddManagedBlockStorageDiskParameters(getDiskVmElement(),
                         getParameters().getDiskInfo(),
-                        shouldDiskBePlugged());
+                        getVm() == null ? false: shouldDiskBePlugged());
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setParentParameters(getParameters());
@@ -535,7 +535,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean useCallback() {
-        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
+        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE ||
+                getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
                 && (parentHasCallback() || !isExecutedAsChildCommand());
     }
 
