@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -480,7 +481,7 @@ public class ImagesHandler {
 
     public static boolean checkImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
-        if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat())) {
+        if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat(), diskInfo.getBackup())) {
             // not supported
             messages.add(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
             messages.add(String.format("$%1$s %2$s", "volumeFormat", diskInfo.getVolumeFormat()));
@@ -490,8 +491,8 @@ public class ImagesHandler {
         return true;
     }
 
-    public static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat) {
-        return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW)
+    public static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
+        return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental)
                 || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
                 || volumeFormat == VolumeFormat.Unassigned
                 || volumeType == VolumeType.Unassigned);
