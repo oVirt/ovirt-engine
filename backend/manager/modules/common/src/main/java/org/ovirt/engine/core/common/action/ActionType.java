@@ -349,6 +349,7 @@ public enum ActionType {
     // Leases
     AddVmLease(1040, QuotaDependency.NONE),
     RemoveVmLease(1041, QuotaDependency.NONE),
+    GetVmLeaseInfo(1047, QuotaDependency.NONE),
 
     // Sync luns
     SyncAllStorageDomainsLuns(1042, QuotaDependency.NONE),
