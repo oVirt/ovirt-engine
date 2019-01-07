@@ -365,7 +365,7 @@ Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	%{required_package_manager_versionlock}
 
 %if 0%{?fedora} >= 29
-Requires	apache-sshd
+Requires:	apache-sshd
 %endif
 
 Requires:	quartz
