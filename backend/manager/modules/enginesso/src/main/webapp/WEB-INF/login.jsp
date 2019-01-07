@@ -26,7 +26,7 @@
     </c:if>
 
     <c:if test="${ssoSession.clientId == null}">
-        <c:redirect url="${applicationScope['ovirt-ssoContext'].getEngineUrl(pageContext.request)}" />
+        <c:redirect url="${applicationScope['ovirt-ssoContext'].engineUrl}" />
     </c:if>
 
     <c:if test="${ssoSession.reauthenticate == true}">
@@ -38,7 +38,7 @@
     <div class="obrand_landingBgTop"></div>
     <div class="obrand_landingBgBottom"></div>
 
-    <a href="/" class="obrand_loginPageLogoLink">
+    <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="obrand_loginPageLogoLink">
         <span class="obrand_loginPageLogo"></span>
     </a>
     <div class="ovirt-container">
