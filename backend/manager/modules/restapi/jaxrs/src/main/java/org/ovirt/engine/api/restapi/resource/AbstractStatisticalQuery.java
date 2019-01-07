@@ -28,8 +28,10 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
     protected static final StatisticUnit BYTES = StatisticUnit.BYTES;
     protected static final StatisticUnit BYTES_PER_SECOND = StatisticUnit.BYTES_PER_SECOND;
     protected static final StatisticUnit BITS_PER_SECOND = StatisticUnit.BITS_PER_SECOND;
+    protected static final StatisticUnit SECONDS = StatisticUnit.SECONDS;
     protected static final ValueType INTEGER = ValueType.INTEGER;
     protected static final ValueType DECIMAL = ValueType.DECIMAL;
+    protected static final ValueType STRING = ValueType.STRING;
 
     protected Class<R> parentType;
     protected R parent;
