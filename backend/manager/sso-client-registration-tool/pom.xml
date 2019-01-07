@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager</artifactId>
-    <version>4.2.8.2</version>
+    <version>4.2.8.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>sso-client-registration-tool</artifactId>
