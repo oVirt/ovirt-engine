@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.snapshots;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.filterManagedBlockStorageDisks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
+import org.ovirt.engine.core.common.action.CreateManagedBlockStorageDiskSnapshotParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotDiskParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -84,6 +86,9 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
                     throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
                 }
                 continue;
+            } else if (disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                createManagedBlockStorageSnapshot(disk);
+                continue;
             }
 
             ActionReturnValue actionReturnValue = runInternalAction(
@@ -124,6 +129,17 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
         return cachedSelectedActiveDisks;
     }
 
+    private void createManagedBlockStorageSnapshot(DiskImage disk) {
+        CreateManagedBlockStorageDiskSnapshotParameters params = new CreateManagedBlockStorageDiskSnapshotParameters();
+        params.setStorageDomainId(disk.getStorageIds().get(0));
+        params.setVolumeId(disk.getImageId());
+        params.setVmId(getVmId());
+        params.setVmSnapshotId(getParameters().getNewActiveSnapshotId());
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        runInternalAction(ActionType.CreateManagedBlockStorageDiskSnapshot, params);
+    }
+
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(LockProperties.Scope.Command);
@@ -145,6 +161,7 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
         List<Disk> disks = diskDao.getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
         allDisks.addAll(imagesHandler.getCinderLeafImages(disks));
+        allDisks.addAll(filterManagedBlockStorageDisks(disks));
         return allDisks;
     }
 

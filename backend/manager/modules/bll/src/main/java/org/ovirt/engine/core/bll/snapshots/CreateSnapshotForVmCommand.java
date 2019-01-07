@@ -119,7 +119,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     @Override
     public void init() {
-        getParameters().setUseCinderCommandCallback(isCinderDisksExist());
+        getParameters().setUseCinderCommandCallback(diskOfTypeExists(DiskStorageType.CINDER));
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         setSnapshotName(getParameters().getDescription());
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
@@ -348,6 +348,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         List<Disk> disks = diskDao.getAllForVm(getVmId());
         List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
         allDisks.addAll(imagesHandler.getCinderLeafImages(disks));
+        allDisks.addAll(imagesHandler.getManagedBlockStorageSnapshots(disks));
         return allDisks;
     }
 
@@ -516,7 +517,13 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     private boolean shouldPerformLiveSnapshot(Snapshot snapshot) {
         return isLiveSnapshotApplicable() && snapshot != null &&
-                (snapshotWithMemory(snapshot) || !getDisksList().isEmpty());
+                (snapshotWithMemory(snapshot) || hasDisksForLiveSnapshot());
+    }
+
+    private boolean hasDisksForLiveSnapshot() {
+        return getDisksList()
+                .stream()
+                .anyMatch(diskImage -> diskImage.getDiskStorageType() == DiskStorageType.IMAGE);
     }
 
     private boolean snapshotWithMemory(Snapshot snapshot) {
@@ -647,8 +654,15 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     }
 
     private boolean shouldFreezeOrThawVm() {
-        return isLiveSnapshotApplicable() && isCinderDisksExist() &&
+        return isLiveSnapshotApplicable() &&
+                (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) &&
                 getParameters().getParentCommand() != ActionType.LiveMigrateDisk;
+    }
+
+    private boolean diskOfTypeExists(DiskStorageType type) {
+        return getDisksList()
+                .stream()
+                .anyMatch(disk -> type.equals(disk.getDiskStorageType()));
     }
 
     private MemoryImageBuilder createMemoryImageBuilder() {
@@ -727,15 +741,9 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         if (cachedImagesDisks == null) {
             cachedImagesDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE,
                     ONLY_SNAPABLE, ONLY_ACTIVE);
-            cachedImagesDisks.addAll(DisksFilter.filterManagedBlockStorageDisks(disks, ONLY_NOT_SHAREABLE,
-                    ONLY_SNAPABLE, ONLY_ACTIVE));
         }
 
         return cachedImagesDisks;
-    }
-
-    private boolean isCinderDisksExist() {
-        return !DisksFilter.filterCinderDisks(getDisksList()).isEmpty();
     }
 
     private boolean isSpecifiedDisksExist(Set<Guid> disks) {

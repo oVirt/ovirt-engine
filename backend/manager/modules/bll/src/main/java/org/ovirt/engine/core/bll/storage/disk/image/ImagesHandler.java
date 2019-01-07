@@ -662,6 +662,10 @@ public class ImagesHandler {
         return disks.stream().filter(DisksFilter.ONLY_CINDER).map(d -> getSnapshotLeaf(d.getId())).collect(Collectors.toList());
     }
 
+    public List<DiskImage> getManagedBlockStorageSnapshots(List<Disk> disks) {
+        return disks.stream().filter(DisksFilter.ONLY_MANAGED_BLOCK_STORAGE).map(d -> getSnapshotLeaf(d.getId())).collect(Collectors.toList());
+    }
+
     public void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
                                                                          final ImageStatus status,
                                                                          ImageStatus statusForCompensation,
