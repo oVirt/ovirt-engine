@@ -34,6 +34,8 @@ public class ErrorMessageHelper {
                 status = Status.CONFLICT;
             } else if (statuses.contains(Status.INTERNAL_SERVER_ERROR)) {
                 status = Status.INTERNAL_SERVER_ERROR;
+            } else if (statuses.contains(Status.FORBIDDEN)) {
+                status = Status.FORBIDDEN;
             }
         }
         return status;
