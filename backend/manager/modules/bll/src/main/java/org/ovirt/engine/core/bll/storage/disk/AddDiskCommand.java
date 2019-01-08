@@ -288,6 +288,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 (getParameters().isSkipDomainCheck() || validate(storageDomainValidator.isDomainExistAndActive())) &&
                 validateShareableDiskOnGlusterDomain() &&
                 checkImageConfiguration() &&
+                validate(storageDomainValidator.domainIsValidDestination()) &&
                 validate(storageDomainValidator.hasSpaceForNewDisk(getDiskImageInfo())) &&
                 validate(storageDomainValidator.isDomainWithinThresholds()) &&
                 checkExceedingMaxBlockDiskSize() &&
