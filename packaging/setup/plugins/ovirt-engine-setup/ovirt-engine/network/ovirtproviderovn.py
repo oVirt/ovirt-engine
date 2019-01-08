@@ -76,10 +76,6 @@ class Plugin(plugin.PluginBase):
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
 
-    # TODO: OVN north db will be temporarily configured to
-    # connect over TCP, not SSL.
-    # This is because of OVN bug: 1446538
-    # Once the bug is fixed, the connection can be moved to SSL
     OVN_NORTH_DB_CONFIG = OvnDbConfig(
         'OVN NORTH DB',
         '6641',
