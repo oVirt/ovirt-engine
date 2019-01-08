@@ -44,7 +44,7 @@ public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorage
         }
 
         CinderlibReturnValue returnValue = null;
-        Map<String, Object> storageStats;
+        Map<String, Object> storageStats = null;
 
         try {
             CinderlibCommandParameters params =
@@ -53,7 +53,9 @@ public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorage
                             Collections.singletonList(Boolean.TRUE.toString()));
             returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.STORAGE_STATS, params);
 
-            storageStats = JsonHelper.jsonToMap(returnValue.getOutput());
+            if(returnValue.getSucceed()) {
+                storageStats = JsonHelper.jsonToMap(returnValue.getOutput());
+            }
         } catch (Exception e) {
             log.error("Failed to fetch Managed block storage stats, output: '{}', '{}'",
                     returnValue != null ? returnValue.getOutput() : "", e);
