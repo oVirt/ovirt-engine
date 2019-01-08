@@ -118,7 +118,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         getTable().enableColumnResizing();
 
         aliasColumn = DisksViewColumns.getAliasColumn(DiskConditionFieldAutoCompleter.ALIAS);
-        sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
+        sizeColumn = DisksViewColumns.getSizeColumn(null);
         actualSizeColumn = DisksViewColumns.getActualSizeColumn(null);
         allocationColumn = DisksViewColumns.getAllocationColumn(constants.empty());
         dateCreatedColumn = DisksViewColumns.getDateCreatedColumn(DiskConditionFieldAutoCompleter.CREATION_DATE);
