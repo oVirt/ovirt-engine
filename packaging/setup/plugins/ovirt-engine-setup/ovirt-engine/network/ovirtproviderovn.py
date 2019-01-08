@@ -532,6 +532,8 @@ class Plugin(plugin.PluginBase):
                     ovn_db_config.key_file,
                     ovn_db_config.cert_file,
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                    'TLSv1.2',
+                    'HIGH',
                 ),
                 _(
                     'Failed to configure {name} with SSL'
