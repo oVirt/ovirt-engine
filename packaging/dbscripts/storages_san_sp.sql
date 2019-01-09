@@ -309,7 +309,8 @@ BEGIN
     INNER JOIN storage_domain_static
         ON storage_pool_iso_map.storage_id = storage_domain_static.id
     WHERE storage_pool_id = v_storage_pool_id
-        AND storage_domain_static.storage_type != 9;-- filter Cinder storage domains
+        AND storage_domain_static.storage_type != 9
+        AND storage_domain_static.storage_type != 10; -- filter Cinder and Managed block storage domains
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
