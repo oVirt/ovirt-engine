@@ -606,6 +606,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         diskToUpdate.setDiskDescription(getNewDisk().getDiskDescription());
         diskToUpdate.setShareable(getNewDisk().isShareable());
         diskToUpdate.setSgio(getNewDisk().getSgio());
+        diskToUpdate.setBackup(getNewDisk().getBackup());
 
         dveToUpdate.setBoot(getDiskVmElement().isBoot());
         dveToUpdate.setDiskInterface(getDiskVmElement().getDiskInterface());
