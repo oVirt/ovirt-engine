@@ -16,9 +16,6 @@ public class ManagementNetworkAttachmentModel extends NetworkAttachmentModel {
             HostNetworkQos networkQos,
             DnsResolverConfiguration reportedDnsResolverConfiguration) {
         super(network, nic, networkAttachment, networkQos, reportedDnsResolverConfiguration);
-
-        getIpv4Gateway().setIsAvailable(true);
-        getIpv6Gateway().setIsAvailable(true);
     }
 
     @Override

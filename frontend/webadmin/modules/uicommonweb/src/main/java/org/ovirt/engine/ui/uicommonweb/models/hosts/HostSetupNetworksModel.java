@@ -395,8 +395,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         networkAttachment,
                         networkQos,
                         reportedDnsResolverConfiguration);
-                networkAttachmentModel.getIpv4Gateway().setIsAvailable(true);
-                networkAttachmentModel.getIpv6Gateway().setIsAvailable(false);
             }
 
             networkAttachmentModel.getQosOverridden().setIsAvailable(true);

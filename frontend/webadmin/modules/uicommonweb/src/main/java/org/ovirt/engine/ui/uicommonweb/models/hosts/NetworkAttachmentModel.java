@@ -78,12 +78,12 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         setIsToSync(new EntityModel<Boolean>());
         setBootProtocolsAvailable(true);
 
-        getIpv4Gateway().setIsAvailable(false);
+        getIpv4Gateway().setIsAvailable(true);
         getIpv4Address().setIsChangeable(false);
         getIpv4Subnet().setIsChangeable(false);
         getIpv4Gateway().setIsChangeable(false);
 
-        getIpv6Gateway().setIsAvailable(false);
+        getIpv6Gateway().setIsAvailable(true);
         getIpv6Address().setIsChangeable(false);
         getIpv6Prefix().setIsChangeable(false);
         getIpv6Gateway().setIsChangeable(false);
