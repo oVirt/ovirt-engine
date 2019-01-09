@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -104,17 +103,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
-        boolean succeeded = false;
-        try {
-            succeeded = ansibleExecutor.runCommand(command).getAnsibleReturnCode() == AnsibleReturnCode.OK;
-        } catch (IOException | InterruptedException e) {
-            log.error("Invalid target for OVA (directory={}, host={}): {}",
-                    getParameters().getDirectory(),
-                    getVdsName(),
-                    e.getMessage());
-            log.debug("Exception", e);
-        }
-
+        boolean succeeded = ansibleExecutor.runCommand(command).getAnsibleReturnCode() == AnsibleReturnCode.OK;
         return succeeded ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_OVA_DESTINATION_FOLDER,
                         String.format("$vdsName %s", getVdsName()),

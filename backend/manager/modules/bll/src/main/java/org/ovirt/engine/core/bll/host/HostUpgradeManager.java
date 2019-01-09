@@ -11,10 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.hostdeploy.VdsDeployBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -60,7 +58,11 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
             ansibleReturnValue = ansibleExecutor.runCommand(command);
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
-                String error = String.format("Failed to run check-update of host '%1$s'.", host.getHostName());
+                String error = String.format(
+                    "Failed to run check-update of host '%1$s'. Error: %2$s",
+                    host.getHostName(),
+                    ansibleReturnValue.getStderr()
+                );
                 log.error(error);
                 throw new RuntimeException(error);
             }
@@ -114,24 +116,18 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public void update(final VDS host) {
-        Cluster cluster = clusterDao.get(host.getClusterId());
-        try {
-            AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(host.getHostName())
-                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-host-mgmt-ansible")
-                .logFileName(host.getHostName())
-                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
-                .variables(new Pair<>("host_deploy_vnc_tls", cluster.isVncEncryptionEnabled() ? "true" : "false"))
-                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
-            if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
-                String error = String.format("Failed to update host '%1$s'.", host.getHostName());
-                log.error(error);
-                throw new RuntimeException(error);
-            }
-        } catch (InterruptedException | IOException ex) {
-            throw new RuntimeException(ex);
+        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+            .hostnames(host.getHostName())
+            // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
+            .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+            .logFilePrefix("ovirt-host-mgmt-ansible")
+            .logFileName(host.getHostName())
+            .logFileSuffix(CorrelationIdTracker.getCorrelationId())
+            .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
+        if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+            String error = String.format("Failed to update host '%1$s'.", host.getHostName());
+            log.error(error);
+            throw new RuntimeException(error);
         }
     }
 }

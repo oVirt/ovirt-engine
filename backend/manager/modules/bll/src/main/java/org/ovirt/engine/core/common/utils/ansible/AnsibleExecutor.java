@@ -46,12 +46,8 @@ public class AnsibleExecutor {
      *            the command to be executed
      * @return return
      *            code of ansible-playbook
-     * @throws IOException
-     *            when the execution of the command fails
-     * @throws InterruptedException
-     *            when the execution of the command fails
      */
-    public AnsibleReturnValue runCommand(AnsibleCommandBuilder command) throws IOException, InterruptedException {
+    public AnsibleReturnValue runCommand(AnsibleCommandBuilder command) {
         int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         return runCommand(command, timeout);
     }
@@ -65,28 +61,23 @@ public class AnsibleExecutor {
      *            timeout in minutes to wait for command to finish
      * @return return
      *            code of ansible-playbook
-     * @throws IOException
-     *            when the execution of the command fails
-     * @throws InterruptedException
-     *            when the execution of the command fails
      */
-    public AnsibleReturnValue runCommand(
-        AnsibleCommandBuilder command,
-        int timeout
-    ) throws IOException, InterruptedException {
+    public AnsibleReturnValue runCommand(AnsibleCommandBuilder command, int timeout) {
         log.trace("Enter AnsibleExecutor::runCommand");
         AnsibleReturnValue returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
 
         Path inventoryFile = null;
         Process ansibleProcess = null;
         File stdoutFile = new File("/dev/null");
+        File stderrFile = new File("/dev/null");
         try {
             // Create a temporary inventory file if user didn't specified it:
             inventoryFile = createInventoryFile(command);
 
-            // Create file where stdout will be redirected:
+            // Create file where stdout/stderr will be redirected:
             if (command.stdoutCallback() != null) {
                 stdoutFile = Files.createTempFile("playbook-out", ".tmp").toFile();
+                stderrFile = Files.createTempFile("playbook-err", ".tmp").toFile();
             }
 
             // Build the command:
@@ -97,7 +88,8 @@ public class AnsibleExecutor {
                 .command(ansibleCommand)
                 .directory(command.playbookDir().toFile())
                 .redirectErrorStream(command.stdoutCallback() == null)
-                .redirectOutput(stdoutFile);
+                .redirectOutput(stdoutFile)
+                .redirectError(stderrFile);
 
             // Set environment variables:
             ansibleProcessBuilder.environment()
@@ -122,6 +114,7 @@ public class AnsibleExecutor {
             returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
             if (command.stdoutCallback() != null) {
                 returnValue.setStdout(new String(Files.readAllBytes(stdoutFile.toPath())));
+                returnValue.setStderr(new String(Files.readAllBytes(stderrFile.toPath())));
             }
         } catch (Throwable t) {
             log.error(
@@ -136,6 +129,7 @@ public class AnsibleExecutor {
             log.info("Ansible playbook command has exited with value: {}", returnValue.getAnsibleReturnCode());
             removeFile(inventoryFile);
             removeFile(stdoutFile.toPath());
+            removeFile(stderrFile.toPath());
         }
 
         log.trace("Exit AnsibleExecutor::runCommand");
@@ -161,7 +155,7 @@ public class AnsibleExecutor {
     }
 
     private void removeFile(Path path) {
-        if (path != null) {
+        if (path != null && !path.equals(Paths.get("/dev/null"))) {
             try {
                 Files.delete(path);
             } catch (IOException ex) {

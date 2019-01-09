@@ -106,7 +106,7 @@ public class AnsibleServlet extends HttpServlet {
                 if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                     log.error("Error while executing ansible-playbook command.");
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 log.error("Error while reading variables.", e);
                 response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
                 asyncContext.complete();

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -116,15 +115,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK);
 
-        boolean succeeded = false;
-        AnsibleReturnValue ansibleReturnValue = null;
-        try {
-            ansibleReturnValue = ansibleExecutor.runCommand(command);
-            succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
-        } catch (IOException | InterruptedException e) {
-            log.debug("Failed to extract OVA", e);
-        }
-
+        AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(command);
+        boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to extract OVA. Please check logs for more details: {}", command.logFile());
             return false;

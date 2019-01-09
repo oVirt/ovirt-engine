@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -171,17 +170,14 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .stdoutCallback(AnsibleConstants.IMAGE_MEASURE_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
 
-        boolean succeeded = false;
-        AnsibleReturnValue ansibleReturnValue = null;
-        try {
-            ansibleReturnValue = ansibleExecutor.runCommand(command);
-            succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
-        } catch (IOException | InterruptedException e) {
-            log.debug("Failed to measure image", e);
-        }
-
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
-            log.error("Failed to measure image. Please check logs for more details: {}", command.logFile());
+            log.error(
+                "Failed to measure image: {}. Please check logs for more details: {}",
+                ansibleReturnValue.getStderr(),
+                command.logFile()
+            );
             throw new EngineException(EngineError.GeneralException, "Failed to measure image");
         }
 
@@ -208,13 +204,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
-        boolean succeeded = false;
-        try {
-            succeeded = ansibleExecutor.runCommand(command).getAnsibleReturnCode() == AnsibleReturnCode.OK;
-        } catch (IOException | InterruptedException e) {
-            log.debug("Failed to create OVA", e);
-        }
-
+        boolean succeeded = ansibleExecutor.runCommand(command).getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to create OVA. Please check logs for more details: {}", command.logFile());
         }

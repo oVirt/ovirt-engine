@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 import static org.ovirt.engine.core.common.businessentities.ExternalNetworkPluginType.OVIRT_PROVIDER_OVN;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -237,7 +236,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
     }
 
-    private void runAnsibleHostDeployPlaybook(Cluster hostCluster) throws IOException, InterruptedException {
+    private void runAnsibleHostDeployPlaybook(Cluster hostCluster) {
         // TODO: Remove when we remove support for legacy oVirt node:
         if (getVds().getVdsType().equals(VDSType.oVirtVintageNode)) {
             log.warn("Skipping Ansible runner, because it isn't supported for legacy oVirt node.");

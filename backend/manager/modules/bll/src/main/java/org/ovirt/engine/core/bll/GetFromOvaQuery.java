@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,17 +60,10 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
                 .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
-        boolean succeeded = false;
-        AnsibleReturnValue ansibleReturnValue = null;
-        try {
-            ansibleReturnValue = ansibleExecutor.runCommand(command);
-            succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
-        } catch (IOException | InterruptedException e) {
-            log.debug("Failed to query OVA info", e);
-        }
-
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
-            log.error("Failed to query OVA info");
+            log.error("Failed to query OVA info: {}", ansibleReturnValue.getStderr());
             throw new EngineException(EngineError.GeneralException, "Failed to query OVA info");
         }
 

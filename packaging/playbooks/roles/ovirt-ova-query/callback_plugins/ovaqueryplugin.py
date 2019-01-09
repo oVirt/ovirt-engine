@@ -23,6 +23,13 @@ class CallbackModule(CallbackBase):
     def v2_playbook_on_stats(self, stats):
         self._display.display(self.ovf)
 
-    v2_runner_on_failed = v2_runner_on_ok
-    v2_runner_on_unreachable = v2_runner_on_ok
+    def v2_runner_on_failed(self, result, ignore_errors=False):
+        self._handle_exception(result._result, use_stderr=True)
+        self._display.display(
+            "fatal: [%s]: FAILED! => %s" % (
+                result._host.get_name(), self._dump_results(result._result)
+            ), stderr=True
+        )
+
+    v2_runner_on_unreachable = v2_runner_on_failed
     v2_runner_on_skipped = v2_runner_on_ok

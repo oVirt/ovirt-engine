@@ -32,6 +32,11 @@ public class AnsibleReturnValue {
      */
     private String stdout;
 
+    /**
+     * Stderr of playbook execution. It is set only if user is using custom stdout callback plugin.
+     */
+    private String stderr;
+
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode) {
         this(ansibleReturnCode, null);
     }
@@ -49,11 +54,19 @@ public class AnsibleReturnValue {
         return stdout;
     }
 
+    public String getStderr() {
+        return stderr;
+    }
+
     public void setAnsibleReturnCode(AnsibleReturnCode ansibleReturnCode) {
         this.ansibleReturnCode = ansibleReturnCode;
     }
 
     public void setStdout(String stdout) {
         this.stdout = stdout;
+    }
+
+    public void setStderr(String stderr) {
+        this.stderr = stderr;
     }
 }
