@@ -614,6 +614,29 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
+    /**
+     * Any gateway ("::") on the interface is the same as "no gateway"
+     * which is designated on the network attachment as 'null'
+     * any gateway ("::") on the vds interface is the same as "no gateway"
+     * which is designated on the network attachment as 'null'.
+     * But vice versa is not a valid situation, there should not be a
+     * null value on the vds interface.
+     */
+    @Test
+    public void testIsNetworkInSyncWhenIpv6GatewayNone(){
+        List<Object[]> tests = Arrays.asList(
+                // array of [network attachment address, interface address, expected sync]
+                new Object[] { null, "::" , Boolean.TRUE},
+                new Object[] { "::", null , Boolean.FALSE }
+        );
+        for (Object[] test : tests) {
+            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+            ipv6Address.setGateway((String) test[0]);
+            iface.setIpv6Gateway((String) test[1]);
+            assertThat(createTestedInstance().isNetworkInSync(), is((Boolean) test[2]));
+        }
+    }
+
     @Test
     public void testIsNetworkInSyncForIpv6Synonyms() {
         List<String[]> tests = Arrays.asList(

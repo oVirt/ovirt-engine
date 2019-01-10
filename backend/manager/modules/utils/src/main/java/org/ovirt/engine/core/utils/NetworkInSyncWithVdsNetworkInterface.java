@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
+import static org.ovirt.engine.core.utils.network.predicate.IpUnspecifiedPredicate.ipUnspecifiedPredicate;
 import static org.ovirt.engine.core.utils.network.predicate.IsDefaultRouteOnInterfacePredicate.isDefaultRouteOnInterfacePredicate;
 
 import java.util.Collections;
@@ -118,7 +119,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
     private boolean isIpv6AddressInSync(String attachmentValue, String ifaceValue) {
         IpAddressPredicate p = new IpAddressPredicate(ifaceValue);
-        return p.test(attachmentValue);
+        return p.test(attachmentValue) || (ipUnspecifiedPredicate().test(ifaceValue) && attachmentValue == null);
     }
 
     private SubnetUtils getsSubnetUtilsInstance() {
