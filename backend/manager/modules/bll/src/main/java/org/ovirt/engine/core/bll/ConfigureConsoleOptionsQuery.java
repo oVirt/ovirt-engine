@@ -135,6 +135,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         if (getParameters().isSetTicket()) {
             options.setTicket(generateTicket());
         }
+        options.setTitle(getCachedVm().getName());
         options.setToggleFullscreenHotKey(Config.getValue(ConfigValues.ConsoleToggleFullScreenKeys));
         options.setReleaseCursorHotKey(Config.getValue(ConfigValues.ConsoleReleaseCursorKeys));
         options.setRemapCtrlAltDelete(Config.getValue(ConfigValues.RemapCtrlAltDelDefault));

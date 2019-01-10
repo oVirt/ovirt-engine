@@ -100,7 +100,7 @@ public class ConsoleOptions implements Serializable{
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = title + ":%d"; //$NON-NLS-1$
     }
 
     public String getVmName() {
