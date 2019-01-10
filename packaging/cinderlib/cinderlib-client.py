@@ -132,6 +132,13 @@ def main(args=None):
     clone_parser.add_argument("volume_id", help="The source volume id")
     clone_parser.add_argument("cloned_vol_id", help="The cloned volume id")
 
+    create_snapshot_parser = subparsers.add_parser("create_snapshot",
+                                                   help="create snapshot ")
+    create_snapshot_parser.set_defaults(command=create_snapshot)
+    create_snapshot_parser.add_argument("driver",
+                                        help="The driver parameters")
+    create_snapshot_parser.add_argument("db_url", help="The database url")
+    create_snapshot_parser.add_argument("volume_id", help="The volume id")
     args = parser.parse_args()
     try:
         args.command(args)
@@ -221,6 +228,16 @@ def clone_volume(args):
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     vol.clone(id=args.cloned_vol_id)
     backend.refresh()
+
+
+def create_snapshot(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    snap = vol.create_snapshot()
+    sys.stdout.write(snap.id)
+    sys.stdout.flush()
+    backend.refresh()
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
