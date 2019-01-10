@@ -139,6 +139,17 @@ def main(args=None):
                                         help="The driver parameters")
     create_snapshot_parser.add_argument("db_url", help="The database url")
     create_snapshot_parser.add_argument("volume_id", help="The volume id")
+
+    remove_snapshot_parser = subparsers.add_parser("remove_snapshot",
+                                                   help="remove a snapshot ")
+    remove_snapshot_parser.set_defaults(command=remove_snapshot)
+    remove_snapshot_parser.add_argument("driver",
+                                        help="The driver parameters")
+    remove_snapshot_parser.add_argument("db_url", help="The database url")
+    remove_snapshot_parser.add_argument("snapshot_id", help="The snapshot id")
+    remove_snapshot_parser.add_argument("volume_id", help="Snapshots's "
+                                                          "volume id")
+
     args = parser.parse_args()
     try:
         args.command(args)
@@ -237,6 +248,13 @@ def create_snapshot(args):
     sys.stdout.write(snap.id)
     sys.stdout.flush()
     backend.refresh()
+
+
+def remove_snapshot(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
+    snap.delete()
 
 
 if __name__ == '__main__':

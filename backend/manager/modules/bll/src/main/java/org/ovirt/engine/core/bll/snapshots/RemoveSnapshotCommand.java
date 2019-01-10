@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -210,7 +211,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private void removeImages() {
         List<CinderDisk> cinderDisks = new ArrayList<>();
+        List <ManagedBlockStorageDisk> managedBlockDisks = new ArrayList<>();
         for (final DiskImage source : getSourceImages()) {
+            if (source.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                managedBlockDisks.add((ManagedBlockStorageDisk) source);
+                continue;
+            }
             if (source.getDiskStorageType() == DiskStorageType.CINDER) {
                 cinderDisks.add((CinderDisk) source);
                 continue;
@@ -248,6 +254,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (!cinderDisks.isEmpty()) {
             handleCinderSnapshotDisks(cinderDisks);
         }
+
+        managedBlockDisks.forEach(disk -> removeManagedBlockSnapshot(disk));
+    }
+
+    private void removeManagedBlockSnapshot(ManagedBlockStorageDisk disk) {
+        ImagesContainterParametersBase params = buildRemoveCinderSnapshotDiskParameters(disk);
+        params.setImageGroupID(disk.getId());
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        runInternalAction(ActionType.RemoveManagedBlockStorageSnapshot, params);
     }
 
     private void handleCinderSnapshotDisks(List<CinderDisk> cinderDisks) {
@@ -286,11 +301,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return parameters;
     }
 
-    private ImagesContainterParametersBase buildRemoveCinderSnapshotDiskParameters(CinderDisk cinderDisk) {
+    private ImagesContainterParametersBase buildRemoveCinderSnapshotDiskParameters(DiskImage disk) {
         ImagesContainterParametersBase removeCinderSnapshotParams =
-                new ImagesContainterParametersBase(cinderDisk.getImageId());
-        removeCinderSnapshotParams.setDestinationImageId(cinderDisk.getImageId());
-        removeCinderSnapshotParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
+                new ImagesContainterParametersBase(disk.getImageId());
+        removeCinderSnapshotParams.setDestinationImageId(disk.getImageId());
+        removeCinderSnapshotParams.setStorageDomainId(disk.getStorageIds().get(0));
         removeCinderSnapshotParams.setParentCommand(getActionType());
         removeCinderSnapshotParams.setParentParameters(getParameters());
         return removeCinderSnapshotParams;

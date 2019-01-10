@@ -230,7 +230,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, ActionType snapshotActionType) {
-        if (storageDomain.getStorageType().isCinderDomain()) {
+        if (storageDomain.getStorageType().isCinderDomain() || storageDomain.getStorageType().isManagedBlockStorage()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();

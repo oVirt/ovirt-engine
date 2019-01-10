@@ -85,7 +85,8 @@ public class CinderlibExecutor {
         GET_CONNECTION_INFO("get_connection_info"),
         STORAGE_STATS("storage_stats"),
         CLONE_VOLUME("clone_volume"),
-        CREATE_SNAPSHOT("create_snapshot");
+        CREATE_SNAPSHOT("create_snapshot"),
+        REMOVE_SNAPSHOT("remove_snapshot");
 
         private final String commandName;
 
