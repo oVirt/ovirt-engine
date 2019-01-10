@@ -8,8 +8,6 @@ public class ExtendManagedBlockStorageDiskSizeParameters extends VmDiskOperation
 
     private static final long serialVersionUID = 5002115812827491485L;
 
-    private Long extendSize;
-
     private Guid storageDomainId;
 
     public ExtendManagedBlockStorageDiskSizeParameters() {
@@ -17,14 +15,6 @@ public class ExtendManagedBlockStorageDiskSizeParameters extends VmDiskOperation
 
     public ExtendManagedBlockStorageDiskSizeParameters(DiskVmElement diskVmElement, Disk diskInfo) {
         super(diskVmElement, diskInfo);
-    }
-
-    public Long getExtendSize() {
-        return extendSize;
-    }
-
-    public void setExtendSize(Long extendSize) {
-        this.extendSize = extendSize;
     }
 
     public Guid getStorageDomainId() {
