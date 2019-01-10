@@ -5,6 +5,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 
 public class AddManagedBlockStorageDomainParameters extends StorageDomainManagementParameter {
+
+    private static final long serialVersionUID = -304900139667873828L;
     public static final String VOLUME_BACKEND_NAME = "volume_backend_name";
 
     private Map<String, Object> driverOptions;

@@ -5,6 +5,8 @@ import java.util.Map;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ConnectManagedBlockStorageDeviceCommandParameters extends ActionParametersBase {
+    private static final long serialVersionUID = 8073878919797807510L;
+
     private Guid storageDomainId;
     private Map<String, Object> connectorInfo;
     private Guid diskId;
