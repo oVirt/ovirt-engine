@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,26 +41,5 @@ public class ConnectManagedBlockStorageDeviceCommandParameters extends ActionPar
 
     public void setDiskId(Guid diskId) {
         this.diskId = diskId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof ConnectManagedBlockStorageDeviceCommandParameters)) {
-            return false;
-        }
-
-        ConnectManagedBlockStorageDeviceCommandParameters that = (ConnectManagedBlockStorageDeviceCommandParameters) o;
-        return Objects.equals(storageDomainId, that.storageDomainId) &&
-                Objects.equals(connectorInfo, that.connectorInfo) &&
-                Objects.equals(diskId, that.diskId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(storageDomainId, connectorInfo, diskId);
     }
 }
