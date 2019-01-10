@@ -121,12 +121,12 @@ public class BackendStorageDomainsResource
         return response;
     }
 
-    private Response addCinderDomain(ActionType action,
+    private Response addManagedBlockStorageDomain(ActionType action,
             StorageDomainStatic entity,
             String driverName,
             Properties driverOptions,
             Properties driverSensitiveOptions) {
-        return performCreate(action, getCinderAddParams(entity, driverName, driverOptions, driverSensitiveOptions), ID_RESOLVER);
+        return performCreate(action, getManagedBlockStorageAddParams(entity, driverName, driverOptions, driverSensitiveOptions), ID_RESOLVER);
     }
 
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
@@ -321,7 +321,7 @@ public class BackendStorageDomainsResource
             resp = addDomain(ActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case MANAGED_BLOCK_STORAGE:
-            resp = addCinderDomain(ActionType.AddManagedBlockStorageDomain,
+            resp = addManagedBlockStorageDomain(ActionType.AddManagedBlockStorageDomain,
                     entity,
                     storageDomain.getStorage().getDriverName(),
                     storageDomain.getStorage().getDriverOptions(),
@@ -549,7 +549,10 @@ public class BackendStorageDomainsResource
         return params;
     }
 
-    private AddManagedBlockStorageDomainParameters getCinderAddParams(StorageDomainStatic entity, String driverName, Properties driverOptions, Properties driverSensitiveOptions) {
+    private AddManagedBlockStorageDomainParameters getManagedBlockStorageAddParams(StorageDomainStatic entity,
+            String driverName,
+            Properties driverOptions,
+            Properties driverSensitiveOptions) {
         AddManagedBlockStorageDomainParameters params = new AddManagedBlockStorageDomainParameters();
         Map<String, Object> driverOptionsMap = new HashMap<>(CustomPropertiesParser.toObjectsMap(driverOptions));
         driverOptionsMap.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, driverName);
