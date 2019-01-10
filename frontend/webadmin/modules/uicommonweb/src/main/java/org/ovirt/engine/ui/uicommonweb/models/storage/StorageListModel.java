@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -1135,7 +1136,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         parameter.setVdsId(host.getId());
         StoragePool dataCenter = model.getDataCenter().getSelectedItem();
         parameter.setStoragePoolId(dataCenter.getId());
-        parameter.setDriverOptions(ManagedBlockStorageModel.getDriverOptions().serializeToMap());
+        Map<String, Object> driverOptions = ManagedBlockStorageModel.getDriverOptions().serializeToMap();
+        driverOptions.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, storageDomain.getStorageName());
+        parameter.setDriverOptions(driverOptions);
         parameter.setSriverSensitiveOptions(ManagedBlockStorageModel.getDriverSensitiveOptions().serializeToMap());
 
         parameters.add(parameter);

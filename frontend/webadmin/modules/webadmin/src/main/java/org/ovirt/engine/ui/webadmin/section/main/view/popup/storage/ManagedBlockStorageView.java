@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 
 public class ManagedBlockStorageView extends AbstractStorageView<ManagedBlockStorageModel> {
 
-    private static final String VOLUME_BACKEND_NAME = "volume_backend_name"; //$NON-NLS-1$
+    private static final String VOLUME_DRIVER = "volume_driver"; //$NON-NLS-1$
 
     interface Driver extends UiCommonEditorDriver<ManagedBlockStorageModel, ManagedBlockStorageView> {
     }
@@ -60,12 +60,13 @@ public class ManagedBlockStorageView extends AbstractStorageView<ManagedBlockSto
         driverOptionsEditor.edit(object.getDriverOptions());
         driverSensitiveOptionsEditor.edit(object.getDriverSensitiveOptions());
 
-        //In case of a new storage domain, set the first parameter to volume_backend_name which is required
+        // In case of a new storage domain, set the first parameter to VOLUME_DRIVER
+        // which is required and common to all drivers
         Collection<KeyValueLineModel> keyValueLineModelCollection = driverOptionsEditor.getModel().getItems();
         KeyValueLineModel keyValueLineModel = keyValueLineModelCollection.iterator().next();
         if (keyValueLineModelCollection.size() == 1 && keyValueLineModel != null
                 && keyValueLineModel.getEditableKey().getEntity().equals("")) {
-             keyValueLineModel.getEditableKey().setEntity(VOLUME_BACKEND_NAME);
+             keyValueLineModel.getEditableKey().setEntity(VOLUME_DRIVER);
         }
     }
 
