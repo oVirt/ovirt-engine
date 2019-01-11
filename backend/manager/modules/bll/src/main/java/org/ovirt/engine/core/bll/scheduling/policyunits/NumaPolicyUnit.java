@@ -2,18 +2,15 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
-import org.ovirt.engine.core.bll.scheduling.pending.PendingNumaMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -73,20 +70,7 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
             //        For now, we use the same algorithm as for STRICT mode.
             //        This will cause the host to be filtered out even in some cases when INTERLEAVE nodes could fit.
 
-            List<VdsNumaNode> hostNodes = host.getNumaNodeList();
-            Map<Integer, Long> pendingNodeMemory = PendingNumaMemory.collectForHost(getPendingResourceManager(), host.getId());
-
-            // Subtract the pending memory from host nodes
-            pendingNodeMemory.forEach((hostNodeIndex, pendingMem) -> {
-                hostNodes.stream()
-                        .filter(n -> n.getIndex() == hostNodeIndex)
-                        .findAny()
-                        .ifPresent(node -> node.getNumaNodeStatistics().setMemFree(
-                                node.getNumaNodeStatistics().getMemFree() - pendingMem
-                        ));
-            });
-
-            if (!NumaPinningHelper.findAssignment(vmNumaNodes, hostNodes).isPresent()) {
+            if (!NumaPinningHelper.findAssignment(vmNumaNodes, host.getNumaNodeList()).isPresent()) {
                 log.debug("Host '{}' cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes",
                         host.getName());
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NOT_MEMORY_PINNED_NUMA.toString());
