@@ -37,7 +37,6 @@ public abstract class PolicyUnitImpl {
     }
 
     private final PolicyUnit policyUnit;
-    protected RunVmDelayer runVmDelayer;
     protected PendingResourceManager pendingResourceManager;
 
     @Inject
@@ -92,10 +91,6 @@ public abstract class PolicyUnitImpl {
 
     public final PolicyUnit getPolicyUnit() {
         return policyUnit;
-    }
-
-    public void setRunVmDelayer(RunVmDelayer runVmDelayer) {
-        this.runVmDelayer = runVmDelayer;
     }
 
     public PendingResourceManager getPendingResourceManager() {

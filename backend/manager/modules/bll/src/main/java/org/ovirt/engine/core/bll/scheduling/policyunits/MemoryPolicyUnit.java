@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
-import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -93,28 +92,10 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             }
         }
 
-        // Wait a while, to see if pending memory was freed on some host
-        if (canDelay && resultList.isEmpty()) {
-            log.debug("Not enough memory on hosts. Delaying...");
-
-            overcommitFailed.clear();
-
-            runVmDelayer.delay(filteredList.stream()
-                    .map(VDS::getId)
-                    .collect(Collectors.toList()));
-
-            for (VDS vds : filteredList) {
-                // Refresh pending memory
-                int pendingMemory = PendingOvercommitMemory.collectForHost(getPendingResourceManager(), vds.getId());
-                vds.setPendingVmemSize(pendingMemory);
-
-                // Check logical memory using overcommit, pending and guaranteed memory rules
-                if (slaValidator.hasOvercommitMemoryToRunVM(vds, vm)) {
-                    resultList.add(vds);
-                } else {
-                    overcommitFailed.add(vds);
-                }
-            }
+        // Wait a while and restart the scheduling
+        if (context.isCanDelay() && !context.isShouldDelay() && canDelay && resultList.isEmpty()) {
+            context.setShouldDelay(true);
+            return Collections.emptyList();
         }
 
         for (VDS vds : overcommitFailed) {

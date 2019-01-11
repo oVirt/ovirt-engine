@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
-import static org.ovirt.engine.core.common.config.ConfigValues.VdsRefreshRate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -24,7 +22,6 @@ import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
-import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -62,7 +59,6 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
-import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +68,7 @@ import com.woorea.openstack.base.client.OpenStackResponseException;
  * Base class for asynchronous running process handling
  */
 public abstract class RunVmCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> implements
-        IVdsAsyncCommand, RunVmDelayer {
+        IVdsAsyncCommand {
 
     private static final Logger log = LoggerFactory.getLogger(RunVmCommandBase.class);
     protected boolean _isRerun;
@@ -324,66 +320,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         schedulingManager.clearPendingVm(vm);
         if (vdsId != null) {
             getBlockingQueue(vdsId).offer(Boolean.TRUE);
-        }
-    }
-
-    /**
-     * throttle bulk run of VMs by waiting for the update of run-time to kick in and fire <br>
-     * the DecreasePendingVms event.
-     * @see VdsEventListener
-     * @see HostMonitoring
-     */
-    @Override
-    public void delay(Guid vdsId) {
-        log.debug("Try to wait for te engine update the host memory and cpu stats");
-
-        try {
-            // time out waiting for an update is the highest between the refresh rate and the last update elapsed time
-            // but still no higher than a configurable max to prevent very long updates to stall command.
-            long t = Math.max(
-                    resourceManager.getVdsManager(vdsId).getLastUpdateElapsed(),
-                    TimeUnit.SECONDS.toMillis(Config.<Long> getValue(VdsRefreshRate)));
-            t = Math.min(Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
-
-            // wait for the run-time refresh to decrease any current powering-up VMs
-            getBlockingQueue(vdsId).poll(t, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            // ignore
-        }
-    }
-
-    @Override
-    public void delay(List<Guid> vdsIds) {
-        if (vdsIds.isEmpty()) {
-            return;
-        }
-
-        log.debug("Try to wait for the engine to update memory and cpu stats");
-
-        long maxUpdateElapsed = vdsIds.stream()
-                .mapToLong(vdsId -> resourceManager.getVdsManager(vdsId).getLastUpdateElapsed())
-                .max().getAsLong();
-
-        long maxWaitTime = Math.min(
-                Math.max(maxUpdateElapsed,
-                        TimeUnit.SECONDS.toMillis(Config.<Long> getValue(VdsRefreshRate))),
-                Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis));
-
-        long endTime = System.currentTimeMillis() + maxWaitTime;
-
-        // Wait on all queues sequentially
-        for (Guid vdsId : vdsIds) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime >= endTime) {
-                break;
-            }
-
-            try {
-                // wait for the run-time refresh to decrease any current powering-up VMs
-                getBlockingQueue(vdsId).poll(endTime - currentTime, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                // ignore
-            }
         }
     }
 

@@ -839,7 +839,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getPredefinedVdsIdListToRunOn(),
                         new SchedulingParameters(),
                         new ArrayList<>(),
-                        this,
+                        true,
                         getCorrelationId());
         setVdsId(vdsToRunOn.orElse(null));
         if (vdsToRunOn.isPresent()) {
