@@ -9,6 +9,7 @@ public class HeatMapData {
     private List<HeatMapBlock> cpu;
     private List<HeatMapBlock> memory;
     private List<HeatMapBlock> storage;
+    private List<HeatMapBlock> vdoSavings;
 
     public List<HeatMapBlock> getCpu() {
         return cpu;
@@ -34,4 +35,11 @@ public class HeatMapData {
         this.storage = storage;
     }
 
+    public List<HeatMapBlock> getVdoSavings() {
+        return vdoSavings;
+    }
+
+    public void setVdoSavings(List<HeatMapBlock> vdoSavings) {
+        this.vdoSavings = vdoSavings;
+    }
 }
