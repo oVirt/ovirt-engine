@@ -70,16 +70,20 @@ public class AnsibleServlet extends HttpServlet {
                 return;
             }
 
+            // Build the engine_url, taking proxy configs into account
+            EngineLocalConfig config = EngineLocalConfig.getInstance();
+            String engineUrl = String.format(
+                "https://%s:%s/ovirt-engine/api",
+                config.getHost(),
+                config.isProxyEnabled() ? config.getProxyHttpsPort() : config.getHttpsPort()
+            );
+
             Path variablesFile = null;
             try {
-                EngineLocalConfig config = EngineLocalConfig.getInstance();
                 variablesFile = createVariablesFile(request);
                 AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                     .variables(
-                        new Pair<>(
-                            "engine_url",
-                            String.format("https://%s:%s/ovirt-engine/api", config.getHost(), config.getHttpsPort())
-                        ),
+                        new Pair<>("engine_url", engineUrl),
                         new Pair<>("engine_token", token),
                         new Pair<>("engine_insecure", "true") // TODO: use CA
                     )
@@ -90,8 +94,6 @@ public class AnsibleServlet extends HttpServlet {
                 Path playbook = Paths.get(command.playbook());
                 if (!playbook.toFile().exists()) {
                     response.sendError(HttpURLConnection.HTTP_INTERNAL_ERROR, "Ansible playbook was not found.");
-                    asyncContext.complete();
-                    return;
                 }
 
                 // Return from servlet:
