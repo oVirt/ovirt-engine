@@ -5,11 +5,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.utils.Pair;
 
 public class SchedulingContext {
     private final Cluster cluster;
+    private final List<PolicyUnitImpl> internalFilters = new ArrayList<>();
+    private final List<PolicyUnitImpl> externalFilters = new ArrayList<>();
+    private final List<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions = new ArrayList<>();
+    private final List<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions = new ArrayList<>();
+
     private final Map<String, String> policyParameters;
     private final SchedulingParameters schedulingParameters;
+    private boolean shouldWeighClusterHosts;
 
     /**
      * This field is set, if it is possible to delay the scheduling.
@@ -38,12 +45,36 @@ public class SchedulingContext {
         return cluster;
     }
 
+    public List<PolicyUnitImpl> getInternalFilters() {
+        return internalFilters;
+    }
+
+    public List<PolicyUnitImpl> getExternalFilters() {
+        return externalFilters;
+    }
+
+    public List<Pair<PolicyUnitImpl, Integer>> getInternalScoreFunctions() {
+        return internalScoreFunctions;
+    }
+
+    public List<Pair<PolicyUnitImpl, Integer>> getExternalScoreFunctions() {
+        return externalScoreFunctions;
+    }
+
     public Map<String, String> getPolicyParameters() {
         return policyParameters;
     }
 
     public SchedulingParameters getSchedulingParameters() {
         return schedulingParameters;
+    }
+
+    public boolean isShouldWeighClusterHosts() {
+        return shouldWeighClusterHosts;
+    }
+
+    public void setShouldWeighClusterHosts(boolean shouldWeighClusterHosts) {
+        this.shouldWeighClusterHosts = shouldWeighClusterHosts;
     }
 
     public boolean isCanDelay() {

@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -37,6 +37,7 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerBroker;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.WeightResultEntry;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuLoad;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingNumaMemory;
@@ -149,6 +150,8 @@ public class SchedulingManager implements BackendService {
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
 
     private final Guid defaultSelectorGuid = InternalPolicyUnits.getGuid(RankSelectorPolicyUnit.class);
+
+    private final int vcpuLoadPerCore = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
 
     private PendingResourceManager getPendingResourceManager() {
         return pendingResourceManager;
@@ -320,8 +323,8 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    public Optional<Guid> schedule(Cluster cluster,
-            VM vm,
+    public Map<Guid, Guid> schedule(Cluster cluster,
+            List<VM> vms,
             List<Guid> hostBlackList,
             List<Guid> hostWhiteList,
             List<Guid> destHostIdList,
@@ -335,48 +338,93 @@ public class SchedulingManager implements BackendService {
             checkAllowOverbooking(cluster);
             lockCluster(cluster.getId());
             List<VDS> hosts = fetchHosts(cluster.getId(), hostBlackList, hostWhiteList);
-            vmHandler.updateVmStatistics(vm);
-            fetchNumaNodes(vm, hosts);
+            vms.forEach(vmHandler::updateVmStatistics);
+            fetchNumaNodes(vms, hosts);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             SchedulingContext context = new SchedulingContext(cluster,
                     createClusterPolicyParameters(cluster),
                     schedulingParameters);
 
-            Supplier<Optional<Guid>> findBestHost = () -> {
+            splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
+            splitFunctions(policy.getFunctions(), context);
+            context.setShouldWeighClusterHosts(shouldWeighClusterHosts(cluster));
+
+            Function<VM, Optional<Guid>> findBestHost = vm -> {
                 context.getMessages().clear();
                 refreshCachedPendingValues(hosts);
                 return selectHost(policy, hosts, vm, destHostIdList, context, correlationId);
             };
 
-            Optional<Guid> bestHost = findBestHost.get();
-            if (delayWhenNeeded && !bestHost.isPresent() && context.isShouldDelay()) {
-                log.debug("Delaying scheduling...");
-                runVmDelayer.delay(hosts.stream().map(VDS::getId).collect(Collectors.toList()));
-                context.setCanDelay(false);
-                bestHost = findBestHost.get();
-            }
+            Map<Guid, VDS> hostsMap = hosts.stream().collect(Collectors.toMap(VDS::getId, h -> h));
 
-            if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
+            Set<Guid> hostsToNotifyPending = new HashSet<>();
+            List<Runnable> vfsUpdates = new ArrayList<>();
+            Map<Guid, Guid> vmToHostAssignment = new HashMap<>();
+            for (VM vm : vms) {
+                Optional<Guid> bestHost = findBestHost.apply(vm);
+                // The delay is executed only once
+                if (delayWhenNeeded && context.isShouldDelay()) {
+                    log.debug("Delaying scheduling...");
+                    runVmDelayer.delay(hosts.stream().map(VDS::getId).collect(Collectors.toList()));
+                    context.setCanDelay(false);
+                    bestHost = findBestHost.apply(vm);
+                }
+
+                if (!bestHost.isPresent()) {
+                    continue;
+                }
+
+                vmToHostAssignment.put(vm.getId(), bestHost.get());
+
+                if (bestHost.get().equals(vm.getRunOnVds())) {
+                    continue;
+                }
+
                 Guid bestHostId = bestHost.get();
-                VDS host = hosts.stream()
-                        .filter(h -> h.getId().equals(bestHostId))
-                        .findFirst().get();
+                VDS host = hostsMap.get(bestHostId);
+                Map<Integer, Long> numaConsumption = vmNumaRequirements(vm, host);
+                updateHostNumaNodes(host, numaConsumption);
 
-                addPendingResources(vm, host);
-                markVfsAsUsedByVm(vm, bestHostId);
+                addPendingResources(vm, bestHostId, numaConsumption);
+                hostsToNotifyPending.add(bestHostId);
+                vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
             }
 
+            hostsToNotifyPending.forEach(hostId -> getPendingResourceManager().notifyHostManagers(hostId));
+            vfsUpdates.forEach(Runnable::run);
             messages.addAll(context.getMessages());
-            return bestHost;
+            return vmToHostAssignment;
         } catch (InterruptedException e) {
             log.error("scheduling interrupted, correlation Id: {}: {}", correlationId, e.getMessage());
             log.debug("Exception: ", e);
-            return Optional.empty();
+            return Collections.emptyMap();
         } finally {
             releaseCluster(cluster.getId());
 
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
+    }
+
+    public Optional<Guid> schedule(Cluster cluster,
+            VM vm,
+            List<Guid> hostBlackList,
+            List<Guid> hostWhiteList,
+            List<Guid> destHostIdList,
+            SchedulingParameters schedulingParameters,
+            List<String> messages,
+            boolean delayWhenNeeded,
+            String correlationId) {
+        Map<Guid, Guid> res = schedule(cluster,
+                Collections.singletonList(vm),
+                hostBlackList,
+                hostWhiteList,
+                destHostIdList,
+                schedulingParameters,
+                messages,
+                delayWhenNeeded,
+                correlationId);
+
+        return Optional.ofNullable(res.get(vm.getId()));
     }
 
     private Optional<Guid> selectHost(ClusterPolicy policy,
@@ -385,11 +433,9 @@ public class SchedulingManager implements BackendService {
             List<Guid> destHostIdList,
             SchedulingContext context,
             String correlationId) {
-        List<VDS> hostList = runFilters(policy.getFilters(),
-                        hosts,
+        List<VDS> hostList = runFilters(hosts,
                         vm,
                         context,
-                        policy.getFilterPositionMap(),
                         true,
                         correlationId);
 
@@ -410,44 +456,74 @@ public class SchedulingManager implements BackendService {
         return keepOnlyWhitelistedHosts(vdsList, whiteList);
     }
 
-    private void fetchNumaNodes(VM vm, List<VDS> hosts) {
-        vm.setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId()));
+    private void fetchNumaNodes(List<VM> vms, List<VDS> hosts) {
+        // TODO - fetch numa nodes for all VMs in 1 DB call
+        for (VM vm : vms) {
+            vm.setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId()));
+        }
 
         for (VDS host : hosts) {
             host.setNumaNodeList(vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+
+            // Subtracting pending memory, so the scheduling units don't have to consider it
+            Map<Integer, Long> pendingNumaMemory = PendingNumaMemory.collectForHost(pendingResourceManager, host.getId());
+            for (VdsNumaNode node : host.getNumaNodeList()) {
+                long memFree = node.getNumaNodeStatistics().getMemFree();
+                long memPending = pendingNumaMemory.getOrDefault(node.getIndex(), 0L);
+                node.getNumaNodeStatistics().setMemFree(memFree - memPending);
+            }
         }
     }
 
-    private void addPendingResources(VM vm, VDS host) {
-        Guid hostId = host.getId();
+    private void updateHostNumaNodes(VDS host, Map<Integer, Long> numaConsumption) {
+        for (VdsNumaNode node : host.getNumaNodeList()) {
+            long memFree = node.getNumaNodeStatistics().getMemFree();
+            long memNeeded = numaConsumption.getOrDefault(node.getIndex(), 0L);
+            node.getNumaNodeStatistics().setMemFree(memFree - memNeeded);
+        }
+    }
+
+    private void addPendingResources(VM vm, Guid hostId, Map<Integer, Long> numaConsumption) {
         getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, vm.getNumOfCpus()));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
         getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
 
-        addPendingNumaMemory(vm, host);
+        int cpuLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null ?
+                vm.getUsageCpuPercent() * vm.getNumOfCpus() :
+                vcpuLoadPerCore * vm.getNumOfCpus();
+
+        getPendingResourceManager().addPending(new PendingCpuLoad(hostId, vm, cpuLoad));
+
+        /*
+         * Adds NUMA node assignment to pending resources.
+         *
+         * The assignment is only one of the possible assignments.
+         * The real one used by libvirt can be different, but the engine does not know it.
+         *
+         * When starting many VMs with NUMA pinning, it may happen that some of them will
+         * not pass scheduling, even if they could fit on the host.
+         */
+        if (vm.getNumaTuneMode() != NumaTuneMode.PREFERRED) {
+            numaConsumption.forEach((nodeIndex, neededMemory) -> {
+                getPendingResourceManager().addPending(new PendingNumaMemory(hostId, vm, nodeIndex, neededMemory));
+            });
+        }
 
         // Add pending records for all specified hugepage sizes
         for (Map.Entry<Integer, Integer> hugepage: HugePageUtils.getHugePages(vm.getStaticData()).entrySet()) {
             getPendingResourceManager().addPending(new PendingHugePages(hostId, vm,
                     hugepage.getKey(), hugepage.getValue()));
         }
-
-        getPendingResourceManager().notifyHostManagers(hostId);
     }
 
-    /**
-     * Adds NUMA node assignment to pending resources.
-     *
-     * The assignment is only one of the possible assignments.
-     * The real one used by libvirt can be different, but the engine does not know it.
-     *
-     * When starting many VMs with NUMA pinning, it may happen that some of them will
-     * not pass scheduling, even if they could fit on the host.
-     */
-    private void addPendingNumaMemory(VM vm, VDS host) {
+    private Map<Integer, Long> vmNumaRequirements(VM vm, VDS host) {
         if (vm.getNumaTuneMode() == NumaTuneMode.PREFERRED) {
-            return;
+            return Collections.emptyMap();
+        }
+
+        if (host.getId().equals(vm.getRunOnVds())) {
+            return Collections.emptyMap();
         }
 
         List<VmNumaNode> vmNodes = vm.getvNumaNodeList();
@@ -466,27 +542,21 @@ public class SchedulingManager implements BackendService {
         }
 
         if (!nodeAssignment.isPresent()) {
-            return;
+            return Collections.emptyMap();
         }
 
-        Map<Integer, Long> hostNodePending = new HashMap<>(hostNodes.size());
+        Map<Integer, Long> result = new HashMap<>(hostNodes.size());
         for (VmNumaNode vmNode: vmNodes) {
+            Integer hostNodeIndex = nodeAssignment.get().get(vmNode.getIndex());
             // Ignore unpinned numa nodes
-            if (vmNode.getVdsNumaNodeList().isEmpty()) {
+            if (hostNodeIndex == null) {
                 continue;
             }
 
-            int hostNodeIndex = nodeAssignment.get().get(vmNode.getIndex());
-            long vmNodeMem = vmNode.getMemTotal();
-
-            hostNodePending.merge(hostNodeIndex, vmNodeMem, Long::sum);
+            result.merge(hostNodeIndex, vmNode.getMemTotal(), Long::sum);
         }
 
-        for (Map.Entry<Integer, Long> entry: hostNodePending.entrySet()) {
-            int hostNodeIndex = entry.getKey();
-            long pendingMemory = entry.getValue();
-            getPendingResourceManager().addPending(new PendingNumaMemory(host.getId(), vm, hostNodeIndex, pendingMemory));
-        }
+        return result;
     }
 
     private void releaseCluster(Guid cluster) {
@@ -585,10 +655,8 @@ public class SchedulingManager implements BackendService {
             List<Guid> runnableGuids = runnableHosts.stream().map(VDS::getId).collect(Collectors.toList());
             selectorInstance.init(functions, runnableGuids);
 
-            if (!functions.isEmpty()
-                    && shouldWeighClusterHosts(context.getCluster(), runnableHosts)) {
-                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, functions,
-                        runnableHosts, vm, context);
+            if (!functions.isEmpty() && context.isShouldWeighClusterHosts()) {
+                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, runnableHosts, vm, context);
                 if (bestHostByFunctions.isPresent()) {
                     return bestHostByFunctions;
                 }
@@ -622,11 +690,10 @@ public class SchedulingManager implements BackendService {
 
     /**
      * Checks whether scheduler should weigh hosts/or skip weighing:
-     * * More than one host (it's trivial to weigh a single host).
-     * * optimize for speed is enabled for the cluster, and there are less than configurable requests pending (skip
-     * weighing in a loaded setup).
+     * * optimize for speed is enabled for the cluster, and there are less than
+     *   configurable requests pending (skip weighing in a loaded setup).
      */
-    private boolean shouldWeighClusterHosts(Cluster cluster, List<VDS> vdsList) {
+    private boolean shouldWeighClusterHosts(Cluster cluster) {
         Integer threshold = Config.<Integer>getValue(ConfigValues.SpeedOptimizationSchedulingThreshold);
         // threshold is crossed only when cluster is configured for optimized for speed
         boolean crossedThreshold =
@@ -639,8 +706,37 @@ public class SchedulingManager implements BackendService {
                     cluster.getName(),
                     threshold);
         }
-        return vdsList.size() > 1
-                && !crossedThreshold;
+        return !crossedThreshold;
+    }
+
+    public Map<Guid, List<VDS>> canSchedule(Cluster cluster,
+            List<VM> vms,
+            List<Guid> vdsBlackList,
+            List<Guid> vdsWhiteList,
+            SchedulingParameters schedulingParameters,
+            List<String> messages) {
+        List<VDS> hosts = fetchHosts(cluster.getId(), vdsBlackList, vdsWhiteList);
+        refreshCachedPendingValues(hosts);
+        vms.forEach(vmHandler::updateVmStatistics);
+        fetchNumaNodes(vms, hosts);
+        ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
+        SchedulingContext context = new SchedulingContext(cluster,
+                createClusterPolicyParameters(cluster),
+                schedulingParameters);
+        splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
+
+        Map<Guid, List<VDS>> res = new HashMap<>();
+        for (VM vm : vms) {
+            List<VDS> filteredHosts = runFilters(hosts,
+                    vm,
+                    context,
+                    false,
+                    null);
+
+            res.put(vm.getId(), filteredHosts);
+        }
+        messages.addAll(context.getMessages());
+        return res;
     }
 
     public List<VDS> canSchedule(Cluster cluster,
@@ -649,25 +745,14 @@ public class SchedulingManager implements BackendService {
             List<Guid> vdsWhiteList,
             SchedulingParameters schedulingParameters,
             List<String> messages) {
-        List<VDS> hosts = fetchHosts(cluster.getId(), vdsBlackList, vdsWhiteList);
-        refreshCachedPendingValues(hosts);
-        vmHandler.updateVmStatistics(vm);
-        fetchNumaNodes(vm, hosts);
-        ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-        SchedulingContext context = new SchedulingContext(cluster,
-                createClusterPolicyParameters(cluster),
-                schedulingParameters);
+        Map<Guid, List<VDS>> res = canSchedule(cluster,
+                Collections.singletonList(vm),
+                vdsBlackList,
+                vdsWhiteList,
+                schedulingParameters,
+                messages);
 
-        List<VDS> result = runFilters(policy.getFilters(),
-                hosts,
-                vm,
-                context,
-                policy.getFilterPositionMap(),
-                false,
-                null);
-
-        messages.addAll(context.getMessages());
-        return result;
+        return res.getOrDefault(vm.getId(), Collections.emptyList());
     }
 
     private Map<String, String> createClusterPolicyParameters(Cluster cluster) {
@@ -718,31 +803,12 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<VDS> runFilters(List<Guid> filters,
-            List<VDS> hostList,
+    private List<VDS> runFilters(List<VDS> hostList,
             VM vm,
             SchedulingContext context,
-            Map<Guid, Integer> filterPositionMap,
             boolean shouldRunExternalFilters,
             String correlationId) {
         SchedulingResult result = new SchedulingResult();
-        List<PolicyUnitImpl> internalFilters = new ArrayList<>();
-        List<PolicyUnitImpl> externalFilters = new ArrayList<>();
-
-        // Create a local copy so we can manipulate it
-        filters = new ArrayList<>(filters);
-
-        sortFilters(filters, filterPositionMap);
-        for (Guid filter : filters) {
-            PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
-            if (filterPolicyUnit.getPolicyUnit().isInternal()) {
-                internalFilters.add(filterPolicyUnit);
-            } else {
-                if (filterPolicyUnit.getPolicyUnit().isEnabled()) {
-                    externalFilters.add(filterPolicyUnit);
-                }
-            }
-        }
 
         /* Short circuit filters if there are no hosts at all */
         if (hostList.isEmpty()) {
@@ -751,14 +817,13 @@ public class SchedulingManager implements BackendService {
             return hostList;
         }
 
-        hostList =
-                runInternalFilters(internalFilters, hostList, vm, context, correlationId, result);
+        hostList = runInternalFilters(hostList, vm, context, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
-                && !externalFilters.isEmpty()
+                && !context.getExternalFilters().isEmpty()
                 && !hostList.isEmpty()) {
-            hostList = runExternalFilters(externalFilters, hostList, vm, context.getPolicyParameters(), correlationId, result);
+            hostList = runExternalFilters(hostList, vm, context, correlationId, result);
         }
 
         if (hostList.isEmpty()) {
@@ -768,13 +833,42 @@ public class SchedulingManager implements BackendService {
         return hostList;
     }
 
-    private List<VDS> runInternalFilters(List<PolicyUnitImpl> filters,
-            List<VDS> hostList,
+    private void splitFilters(List<Guid> filters, Map<Guid, Integer> filterPositionMap, SchedulingContext context) {
+        // Create a local copy so we can manipulate it
+        filters = new ArrayList<>(filters);
+
+        sortFilters(filters, filterPositionMap);
+        for (Guid filter : filters) {
+            PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
+            if (filterPolicyUnit.getPolicyUnit().isInternal()) {
+                context.getInternalFilters().add(filterPolicyUnit);
+            } else {
+                if (filterPolicyUnit.getPolicyUnit().isEnabled()) {
+                    context.getExternalFilters().add(filterPolicyUnit);
+                }
+            }
+        }
+    }
+
+    private void splitFunctions(List<Pair<Guid, Integer>> functions, SchedulingContext context) {
+        for (Pair<Guid, Integer> pair : functions) {
+            PolicyUnitImpl currentPolicy = policyUnits.get(pair.getFirst());
+            if (currentPolicy.getPolicyUnit().isInternal()) {
+                context.getInternalScoreFunctions().add(new Pair<>(currentPolicy, pair.getSecond()));
+            } else {
+                if (currentPolicy.getPolicyUnit().isEnabled()) {
+                    context.getExternalScoreFunctions().add(new Pair<>(currentPolicy, pair.getSecond()));
+                }
+            }
+        }
+    }
+
+    private List<VDS> runInternalFilters(List<VDS> hostList,
             VM vm,
             SchedulingContext context,
             String correlationId,
             SchedulingResult result) {
-        for (PolicyUnitImpl filterPolicyUnit : filters) {
+        for (PolicyUnitImpl filterPolicyUnit : context.getInternalFilters()) {
             if (hostList.isEmpty()) {
                 break;
             }
@@ -813,22 +907,21 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<VDS> runExternalFilters(List<PolicyUnitImpl> filters,
-            List<VDS> hostList,
+    private List<VDS> runExternalFilters(List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters,
+            SchedulingContext context,
             String correlationId,
             SchedulingResult result) {
 
         List<Guid> hostIDs = hostList.stream().map(VDS::getId).collect(Collectors.toList());
 
-        List<String> filterNames = filters.stream()
+        List<String> filterNames = context.getExternalFilters().stream()
                 .filter(f -> !f.getPolicyUnit().isInternal())
                 .map(f -> f.getPolicyUnit().getName())
                 .collect(Collectors.toList());
 
         List<Guid> filteredIDs =
-                externalBroker.runFilters(filterNames, hostIDs, vm.getId(), parameters);
+                externalBroker.runFilters(filterNames, hostIDs, vm.getId(), context.getPolicyParameters());
         logFilterActions(hostList,
                 new HashSet<>(filteredIDs),
                 EngineMessage.VAR__FILTERTYPE__EXTERNAL,
@@ -850,40 +943,25 @@ public class SchedulingManager implements BackendService {
     }
 
     private Optional<Guid> runFunctions(SelectorInstance selector,
-            List<Pair<Guid, Integer>> functions,
             List<VDS> hostList,
             VM vm,
             SchedulingContext context) {
-        List<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions = new ArrayList<>();
-        List<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions = new ArrayList<>();
+        runInternalFunctions(selector, hostList, vm, context);
 
-        for (Pair<Guid, Integer> pair : functions) {
-            PolicyUnitImpl currentPolicy = policyUnits.get(pair.getFirst());
-            if (currentPolicy.getPolicyUnit().isInternal()) {
-                internalScoreFunctions.add(new Pair<>(currentPolicy, pair.getSecond()));
-            } else {
-                if (currentPolicy.getPolicyUnit().isEnabled()) {
-                    externalScoreFunctions.add(new Pair<>(currentPolicy, pair.getSecond()));
-                }
-            }
-        }
-
-        runInternalFunctions(selector, internalScoreFunctions, hostList, vm, context);
-
-        if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) && !externalScoreFunctions.isEmpty()) {
-            runExternalFunctions(selector, externalScoreFunctions, hostList, vm, context.getPolicyParameters());
+        if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) &&
+                !context.getExternalFilters().isEmpty()) {
+            runExternalFunctions(selector, hostList, vm, context);
         }
 
         return selector.best();
     }
 
     private void runInternalFunctions(SelectorInstance selector,
-            List<Pair<PolicyUnitImpl, Integer>> functions,
             List<VDS> hostList,
             VM vm,
             SchedulingContext context) {
 
-        for (Pair<PolicyUnitImpl, Integer> pair : functions) {
+        for (Pair<PolicyUnitImpl, Integer> pair : context.getInternalScoreFunctions()) {
             List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(context, hostList, vm);
             for (Pair<Guid, Integer> result : scoreResult) {
                 selector.record(pair.getFirst().getGuid(), result.getFirst(), result.getSecond());
@@ -892,18 +970,17 @@ public class SchedulingManager implements BackendService {
     }
 
     private void runExternalFunctions(SelectorInstance selector,
-            List<Pair<PolicyUnitImpl, Integer>> functions,
             List<VDS> hostList,
             VM vm,
-            Map<String, String> parameters) {
+            SchedulingContext context) {
         List<Guid> hostIDs = hostList.stream().map(VDS::getId).collect(Collectors.toList());
 
-        List<Pair<String, Integer>> scoreNameAndWeight = functions.stream()
+        List<Pair<String, Integer>> scoreNameAndWeight = context.getExternalScoreFunctions().stream()
                 .filter(pair -> !pair.getFirst().getPolicyUnit().isInternal())
                 .map(pair -> new Pair<>(pair.getFirst().getName(), pair.getSecond()))
                 .collect(Collectors.toList());
 
-        Map<String, Guid> nameToGuidMap = functions.stream()
+        Map<String, Guid> nameToGuidMap = context.getExternalScoreFunctions().stream()
                 .filter(pair -> !pair.getFirst().getPolicyUnit().isInternal())
                 .collect(Collectors.toMap(pair -> pair.getFirst().getPolicyUnit().getName(),
                         pair -> pair.getFirst().getPolicyUnit().getId()));
@@ -912,7 +989,7 @@ public class SchedulingManager implements BackendService {
                 externalBroker.runScores(scoreNameAndWeight,
                         hostIDs,
                         vm.getId(),
-                        parameters);
+                        context.getPolicyParameters());
 
         sumScoreResults(selector, nameToGuidMap, externalScores);
     }

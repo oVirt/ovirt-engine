@@ -1285,7 +1285,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         }
     }
 
-    public float getFreeVirtualMemory() {
+    private float getFreeVirtualMemory() {
         if (getMemCommited() != null && getPhysicalMemMb() != null && getReservedMem() != null) {
             float freeMemory = (getMaxVdsMemoryOverCommit() * getPhysicalMemMb() / 100.0f)
                     - getMemCommited()

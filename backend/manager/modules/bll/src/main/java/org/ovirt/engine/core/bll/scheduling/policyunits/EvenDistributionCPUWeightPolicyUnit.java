@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
-import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuLoad;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -37,56 +39,76 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         boolean countThreadsAsCores = context.getCluster().getCountThreadsAsCores();
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
+        List<Guid> hostsWithMaxScore = new ArrayList<>();
         for (VDS vds : hosts) {
-            scores.add(new Pair<>(vds.getId(), calcHostScore(vds, vm, countThreadsAsCores)));
+            Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
+            if (effectiveCpuCores == null || vds.getUsageCpuPercent() == null) {
+                hostsWithMaxScore.add(vds.getId());
+                continue;
+            }
+
+            int score = (int)Math.round(calcHostLoadPerCore(vds, vm, effectiveCpuCores));
+            scores.add(new Pair<>(vds.getId(), score));
         }
+
+        stretchScores(scores);
+        scores.addAll(hostsWithMaxScore.stream()
+            .map(id -> new Pair<>(id, getMaxSchedulerWeight()))
+            .collect(Collectors.toList()));
+
         return scores;
     }
 
-    private double calcHostLoadPerCore(VDS vds, VM vm, int hostCores) {
+    protected double calcHostLoadPerCore(VDS vds, VM vm, int hostCores) {
+        return calcHostLoadPerCore(vds, vm, hostCores, null);
+    }
+
+    protected double calcHostLoadPerCore(VDS vds, VM vm, int hostCores, Integer hostLoad) {
         if (vds.getId().equals(vm.getRunOnVds())) {
             return vds.getUsageCpuPercent();
         }
-
         int vcpu = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
-        int spmCpu = (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
-                .<Integer>getValue(ConfigValues.SpmVCpuConsumption);
-
-        double hostCpu = vds.getUsageCpuPercent();
-        double pendingVcpus = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
-
-        double hostLoad = hostCpu * hostCores;
+        hostLoad = hostLoad != null ? hostLoad : calcHostLoad(vds, hostCores, vcpu);
 
         // If the VM is running, use its current CPU load, otherwise use the config value
         double vmLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
                 vm.getUsageCpuPercent() * vm.getNumOfCpus() :
                 vcpu * vm.getNumOfCpus();
 
-        double addedLoad = vcpu * (pendingVcpus + spmCpu);
-
-        return (hostLoad + vmLoad + addedLoad) / hostCores;
+        return (hostLoad + vmLoad) / hostCores;
     }
 
-    /**
-     * Calculate a single host weight score according to various parameters.
-     *
-     * @param vds                     host on which the score is calculated for
-     * @param vm                      virtual machine to be deployed at a selected host by score
-     * @param countThreadsAsCores     true - count threads as cores , false - otherwise
-     * @return weight score for a single host
-     */
-    protected int calcHostScore(VDS vds, VM vm, boolean countThreadsAsCores) {
-        Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
-        if (effectiveCpuCores == null || vds.getUsageCpuPercent() == null) {
-            return getMaxSchedulerWeight() - 1;
+    protected int calcHostLoad(VDS host, int hostCores) {
+        return calcHostLoad(host, hostCores, Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage));
+    }
+
+    protected int calcHostLoad(VDS host, int hostCores, int vcpuLoadPerCore) {
+        int spmCpu = (host.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
+                .<Integer>getValue(ConfigValues.SpmVCpuConsumption);
+
+        int hostLoad = host.getUsageCpuPercent() * hostCores;
+        int pendingCpuLoad = PendingCpuLoad.collectForHost(getPendingResourceManager(), host.getId());
+
+        return hostLoad + pendingCpuLoad + vcpuLoadPerCore * spmCpu;
+    }
+
+    protected void stretchScores(List<Pair<Guid, Integer>> scores) {
+        if (scores.isEmpty()) {
+            return;
         }
 
-        double loadPerCore = calcHostLoadPerCore(vds, vm, effectiveCpuCores);
+        IntSummaryStatistics stats = scores.stream().collect(Collectors.summarizingInt(Pair::getSecond));
+        // Avoid division by 0
+        if (stats.getMin() == stats.getMax()) {
+            scores.forEach(p -> p.setSecond(1));
+            return;
+        }
 
-        // Scale so that 110 %  maps to MaxSchedulerWeight - 2
-        double score = loadPerCore * (getMaxSchedulerWeight() - 2) / 110.0;
-
-        // rounding the result and adding one to avoid zero
-        return Math.min((int) Math.round(score) + 1, getMaxSchedulerWeight() - 1);
+        // Stretch the scores to fit to interval [1, maxSchedulerScore]
+        for (Pair<Guid, Integer> pair : scores) {
+            double coef = (double)(pair.getSecond() - stats.getMin()) / (double)(stats.getMax() - stats.getMin());
+            int newScore = (int) Math.round(1 + coef * (getMaxSchedulerWeight() - 1));
+            pair.setSecond(newScore);
+        }
     }
 }

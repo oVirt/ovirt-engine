@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -25,8 +28,6 @@ import org.ovirt.engine.core.compat.Guid;
 )
 public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPolicyUnit {
 
-    private long highUtilization;
-
     public PowerSavingCPUWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -34,20 +35,37 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
 
     @Override
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
-        highUtilization = context.getPolicyParameters().containsKey(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()) ?
+        long highUtilization = context.getPolicyParameters().containsKey(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()) ?
                 Long.parseLong(context.getPolicyParameters().get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()))
                 : Long.MAX_VALUE;
 
-        return super.score(context, hosts, vm);
-    }
+        boolean countThreadsAsCores = context.getCluster().getCountThreadsAsCores();
+        List<Pair<Guid, Integer>> scores = new ArrayList<>();
+        List<Guid> hostsWithMaxScore = new ArrayList<>();
+        for (VDS vds : hosts) {
+            Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
+            if (effectiveCpuCores == null || vds.getUsageCpuPercent() == null) {
+                hostsWithMaxScore.add(vds.getId());
+                continue;
+            }
 
-    @Override
-    protected int calcHostScore(VDS vds, VM vm, boolean countThreadsAsCores) {
-        // If the host is overutilized, return the worst score
-        if (vds.getUsageCpuPercent() == null || vds.getUsageCpuPercent() > highUtilization) {
-            return getMaxSchedulerWeight() - 1;
+            // If the host is overutilized, return the worst score
+            int hostLoad = calcHostLoad(vds, effectiveCpuCores);
+            if (hostLoad > highUtilization * effectiveCpuCores) {
+                hostsWithMaxScore.add(vds.getId());
+                continue;
+            }
+
+            // Using negative score
+            int score = -(int)Math.round(calcHostLoadPerCore(vds, vm, effectiveCpuCores, hostLoad));
+            scores.add(new Pair<>(vds.getId(), score));
         }
 
-        return (getMaxSchedulerWeight() - 1) - super.calcHostScore(vds, vm, countThreadsAsCores);
+        stretchScores(scores);
+        scores.addAll(hostsWithMaxScore.stream()
+                .map(id -> new Pair<>(id, getMaxSchedulerWeight()))
+                .collect(Collectors.toList()));
+
+        return scores;
     }
 }
