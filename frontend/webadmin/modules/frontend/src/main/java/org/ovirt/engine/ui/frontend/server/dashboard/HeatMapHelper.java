@@ -6,6 +6,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.ClusterDwhDao;
+import org.ovirt.engine.ui.frontend.server.dashboard.dao.GlusterVolumeEngineDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.dao.StorageDomainDwhDao;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.ClusterResourceAverage;
 import org.ovirt.engine.ui.frontend.server.dashboard.models.StorageDomainAverage;
@@ -34,4 +35,12 @@ public class HeatMapHelper {
         return nodes;
     }
 
+    public static List<HeatMapBlock> getVdoSavings(DataSource engineDataSource) throws DashboardDataException {
+        List<HeatMapBlock> vols = new ArrayList<>();
+        GlusterVolumeEngineDao dao = new GlusterVolumeEngineDao(engineDataSource);
+        for (VDOVolumeDetails vdo : dao.getVdoVolumesSavingsList()) {
+            vols.add(new HeatMapBlock(vdo.getVolumeName(), vdo.getVdoSavings()));
+        }
+        return vols;
+    }
 }

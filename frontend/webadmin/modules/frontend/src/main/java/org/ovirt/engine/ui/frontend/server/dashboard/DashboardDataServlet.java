@@ -357,6 +357,7 @@ public class DashboardDataServlet extends HttpServlet {
         HeatMapData utilization = new HeatMapData();
         HeatMapHelper.getCpuAndMemory(utilization, dwhDataSource);
         utilization.setStorage(HeatMapHelper.getStorage(dwhDataSource));
+        utilization.setVdoSavings(HeatMapHelper.getVdoSavings(engineDataSource));
         return utilization;
     }
 
