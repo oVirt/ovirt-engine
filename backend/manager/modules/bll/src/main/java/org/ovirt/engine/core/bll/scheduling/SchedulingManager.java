@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -125,6 +126,8 @@ public class SchedulingManager implements BackendService {
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
     @Inject
+    private RunVmDelayer runVmDelayer;
+    @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
 
@@ -142,8 +145,6 @@ public class SchedulingManager implements BackendService {
     private final Object policyUnitsLock = new Object();
 
     private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<>();
-
-    private final RunVmDelayer noWaitingVmDelayer = new NonWaitingDelayer();
 
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
 
@@ -326,44 +327,38 @@ public class SchedulingManager implements BackendService {
             List<Guid> destHostIdList,
             SchedulingParameters schedulingParameters,
             List<String> messages,
-            RunVmDelayer runVmDelayer,
+            boolean delayWhenNeeded,
             String correlationId) {
         prepareClusterLock(cluster.getId());
         try {
             log.debug("Scheduling started, correlation Id: {}", correlationId);
             checkAllowOverbooking(cluster);
             lockCluster(cluster.getId());
-            List<VDS> vdsList = vdsDao
-                    .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
-            vdsList = removeBlacklistedHosts(vdsList, hostBlackList);
-            vdsList = keepOnlyWhitelistedHosts(vdsList, hostWhiteList);
-            refreshCachedPendingValues(vdsList);
+            List<VDS> hosts = fetchHosts(cluster.getId(), hostBlackList, hostWhiteList);
             vmHandler.updateVmStatistics(vm);
-            fetchNumaNodes(vm, vdsList);
+            fetchNumaNodes(vm, hosts);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             SchedulingContext context = new SchedulingContext(cluster,
                     createClusterPolicyParameters(cluster),
                     schedulingParameters);
 
-            vdsList =
-                    runFilters(policy.getFilters(),
-                            vdsList,
-                            vm,
-                            context,
-                            policy.getFilterPositionMap(),
-                            messages,
-                            runVmDelayer,
-                            true,
-                            correlationId);
+            Supplier<Optional<Guid>> findBestHost = () -> {
+                context.getMessages().clear();
+                refreshCachedPendingValues(hosts);
+                return selectHost(policy, hosts, vm, destHostIdList, context, correlationId);
+            };
 
-            if (vdsList.isEmpty()) {
-                return Optional.empty();
+            Optional<Guid> bestHost = findBestHost.get();
+            if (delayWhenNeeded && !bestHost.isPresent() && context.isShouldDelay()) {
+                log.debug("Delaying scheduling...");
+                runVmDelayer.delay(hosts.stream().map(VDS::getId).collect(Collectors.toList()));
+                context.setCanDelay(false);
+                bestHost = findBestHost.get();
             }
 
-            Optional<Guid> bestHost = selectBestHost(vm, destHostIdList, vdsList, policy, context);
             if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
                 Guid bestHostId = bestHost.get();
-                VDS host = vdsList.stream()
+                VDS host = hosts.stream()
                         .filter(h -> h.getId().equals(bestHostId))
                         .findFirst().get();
 
@@ -371,6 +366,7 @@ public class SchedulingManager implements BackendService {
                 markVfsAsUsedByVm(vm, bestHostId);
             }
 
+            messages.addAll(context.getMessages());
             return bestHost;
         } catch (InterruptedException e) {
             log.error("scheduling interrupted, correlation Id: {}: {}", correlationId, e.getMessage());
@@ -381,6 +377,37 @@ public class SchedulingManager implements BackendService {
 
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
+    }
+
+    private Optional<Guid> selectHost(ClusterPolicy policy,
+            List<VDS> hosts,
+            VM vm,
+            List<Guid> destHostIdList,
+            SchedulingContext context,
+            String correlationId) {
+        List<VDS> hostList = runFilters(policy.getFilters(),
+                        hosts,
+                        vm,
+                        context,
+                        policy.getFilterPositionMap(),
+                        true,
+                        correlationId);
+
+        if (hostList.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (context.isCanDelay() && context.isShouldDelay()) {
+            return Optional.empty();
+        }
+
+        return selectBestHost(vm, destHostIdList, hostList, policy, context);
+    }
+
+    private List<VDS> fetchHosts(Guid clusterId, List<Guid> blackList, List<Guid> whiteList) {
+        List<VDS> vdsList = vdsDao.getAllForClusterWithStatus(clusterId, VDSStatus.Up);
+        vdsList = removeBlacklistedHosts(vdsList, blackList);
+        return keepOnlyWhitelistedHosts(vdsList, whiteList);
     }
 
     private void fetchNumaNodes(VM vm, List<VDS> hosts) {
@@ -622,30 +649,25 @@ public class SchedulingManager implements BackendService {
             List<Guid> vdsWhiteList,
             SchedulingParameters schedulingParameters,
             List<String> messages) {
-        List<VDS> vdsList = vdsDao
-                .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
-        vdsList = removeBlacklistedHosts(vdsList, vdsBlackList);
-        vdsList = keepOnlyWhitelistedHosts(vdsList, vdsWhiteList);
-        refreshCachedPendingValues(vdsList);
+        List<VDS> hosts = fetchHosts(cluster.getId(), vdsBlackList, vdsWhiteList);
+        refreshCachedPendingValues(hosts);
         vmHandler.updateVmStatistics(vm);
-        fetchNumaNodes(vm, vdsList);
+        fetchNumaNodes(vm, hosts);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         SchedulingContext context = new SchedulingContext(cluster,
                 createClusterPolicyParameters(cluster),
                 schedulingParameters);
 
-        vdsList =
-                runFilters(policy.getFilters(),
-                        vdsList,
-                        vm,
-                        context,
-                        policy.getFilterPositionMap(),
-                        messages,
-                        noWaitingVmDelayer,
-                        false,
-                        null);
+        List<VDS> result = runFilters(policy.getFilters(),
+                hosts,
+                vm,
+                context,
+                policy.getFilterPositionMap(),
+                false,
+                null);
 
-        return vdsList;
+        messages.addAll(context.getMessages());
+        return result;
     }
 
     private Map<String, String> createClusterPolicyParameters(Cluster cluster) {
@@ -701,8 +723,6 @@ public class SchedulingManager implements BackendService {
             VM vm,
             SchedulingContext context,
             Map<Guid, Integer> filterPositionMap,
-            List<String> messages,
-            RunVmDelayer runVmDelayer,
             boolean shouldRunExternalFilters,
             String correlationId) {
         SchedulingResult result = new SchedulingResult();
@@ -726,13 +746,13 @@ public class SchedulingManager implements BackendService {
 
         /* Short circuit filters if there are no hosts at all */
         if (hostList.isEmpty()) {
-            messages.add(EngineMessage.SCHEDULING_NO_HOSTS.name());
-            messages.addAll(result.getReasonMessages());
+            context.getMessages().add(EngineMessage.SCHEDULING_NO_HOSTS.name());
+            context.getMessages().addAll(result.getReasonMessages());
             return hostList;
         }
 
         hostList =
-                runInternalFilters(internalFilters, hostList, vm, context, runVmDelayer, correlationId, result);
+                runInternalFilters(internalFilters, hostList, vm, context, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
@@ -742,8 +762,8 @@ public class SchedulingManager implements BackendService {
         }
 
         if (hostList.isEmpty()) {
-            messages.add(EngineMessage.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
-            messages.addAll(result.getReasonMessages());
+            context.getMessages().add(EngineMessage.SCHEDULING_ALL_HOSTS_FILTERED_OUT.name());
+            context.getMessages().addAll(result.getReasonMessages());
         }
         return hostList;
     }
@@ -752,14 +772,12 @@ public class SchedulingManager implements BackendService {
             List<VDS> hostList,
             VM vm,
             SchedulingContext context,
-            RunVmDelayer runVmDelayer,
             String correlationId,
             SchedulingResult result) {
         for (PolicyUnitImpl filterPolicyUnit : filters) {
             if (hostList.isEmpty()) {
                 break;
             }
-            filterPolicyUnit.setRunVmDelayer(runVmDelayer);
             List<VDS> currentHostList = new ArrayList<>(hostList);
             hostList = filterPolicyUnit.filter(context, hostList, vm, result.getDetails());
             logFilterActions(currentHostList,

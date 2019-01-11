@@ -209,7 +209,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getDestinationHostList(),
                         new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
                         messages,
-                        this,
+                        true,
                         getCorrelationId());
         messages.forEach(this::addValidationMessage);
         return vdsToRunOn;

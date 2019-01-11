@@ -12,11 +12,10 @@
 
      <Match>
        <!--
-        findbugs complain that we are not using the getBlockingQueue() return value,
-        by calling getBlockingQueue() we also set the synchronized queue.
-        In this case we have no use for the return queue, only to set it.
+        findbugs complain that we are not using the BlockingQueue::poll return value.
+        The poll() is only used to wait for host stats refresh.
        -->
-       <Class name="org.ovirt.engine.core.bll.RunVmCommandBase" />
+       <Class name="org.ovirt.engine.core.bll.scheduling.RunVmDelayer" />
        <Method name="delay"/>
        <Bug code="RV"/>
      </Match>
