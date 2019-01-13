@@ -821,6 +821,8 @@ select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', '
 -- Managed block storage
 select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');
 
+select fn_db_add_config_value('NumOfPciExpressPorts', '16', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

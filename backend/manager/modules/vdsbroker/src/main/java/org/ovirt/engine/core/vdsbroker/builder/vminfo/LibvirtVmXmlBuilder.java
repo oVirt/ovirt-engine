@@ -948,6 +948,8 @@ public class LibvirtVmXmlBuilder {
         boolean spiceExists = false;
         boolean balloonExists = false;
         boolean forceRefreshDevices = false;
+        boolean pciERootExists = false;
+        int pciEPorts = 0;
         for (VmDevice device : devices) {
             if (!device.isPlugged()) {
                 continue;
@@ -986,6 +988,13 @@ public class LibvirtVmXmlBuilder {
                     device.setDevice(VdsProperties.Scsi);
                     device.getSpecParams().put("index", virtioScsiIndex++);
                     device.getSpecParams().put("model", "virtio-scsi");
+                    break;
+                case "pci":
+                    if ("pcie-root".equals(device.getSpecParams().get("model"))) {
+                        pciERootExists = true;
+                    } else if ("pcie-root-port".equals(device.getSpecParams().get("model"))) {
+                        pciEPorts++;
+                    }
                     break;
                 }
                 writeController(device);
@@ -1063,6 +1072,11 @@ public class LibvirtVmXmlBuilder {
 
         if (spiceExists) {
             writeSpiceVmcChannel();
+        }
+
+        if (vm.getClusterArch().getFamily() == ArchitectureType.x86
+                && vm.getBiosType().getChipsetType() == ChipsetType.Q35) {
+            writePciEControllers(pciERootExists, pciEPorts);
         }
 
         updateBootOrder(diskDevices, cdromDevices, interfaceDevices);
@@ -1682,6 +1696,23 @@ public class LibvirtVmXmlBuilder {
                     return null;
                 })
                 .filter(Objects::nonNull);
+    }
+
+    private void writePciEControllers(boolean rootExists, int ports) {
+        if (!rootExists) {
+            writer.writeStartElement("controller");
+            writer.writeAttributeString("type", "pci");
+            writer.writeAttributeString("model", "pcie-root");
+            writer.writeEndElement();
+        }
+
+        int numOfPorts = Config.<Integer> getValue(ConfigValues.NumOfPciExpressPorts);
+        for (int i = ports; i < numOfPorts; i++) {
+            writer.writeStartElement("controller");
+            writer.writeAttributeString("type", "pci");
+            writer.writeAttributeString("model", "pcie-root-port");
+            writer.writeEndElement();
+        }
     }
 
     private void writeController(VmDevice device) {

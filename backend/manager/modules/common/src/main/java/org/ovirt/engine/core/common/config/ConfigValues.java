@@ -1571,6 +1571,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     HyperVSynicStimerSupported,
 
+    @TypeConverterAttribute(Integer.class)
+    NumOfPciExpressPorts,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
