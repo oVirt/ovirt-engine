@@ -573,6 +573,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
 
         final RemoveStorageModel model = new RemoveStorageModel();
+        StorageDomain storageDomain = getSelectedItem();
+        if (storageDomain != null && storageDomain.getStorageType().isManagedBlockStorage()) {
+            model.getFormat().setIsChangeable(false);
+        }
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeStoragesTitle());
         model.setHelpTag(HelpTag.remove_storage);

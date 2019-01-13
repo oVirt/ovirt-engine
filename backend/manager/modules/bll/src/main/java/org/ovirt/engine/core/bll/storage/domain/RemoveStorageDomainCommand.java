@@ -147,8 +147,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
-        if (getParameters().getDoFormat() && !localFs && isStorageDomainAttached(dom)) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+        if (getParameters().getDoFormat()) {
+            if (dom.getStorageType().isManagedBlockStorage()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_FORMAT_MANAGED_BLOCK_STORAGE_DOMAIN);
+            } else if (!localFs && isStorageDomainAttached(dom)) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+            }
         }
 
         if (dom.getStorageType().isOpenStackDomain()) {
