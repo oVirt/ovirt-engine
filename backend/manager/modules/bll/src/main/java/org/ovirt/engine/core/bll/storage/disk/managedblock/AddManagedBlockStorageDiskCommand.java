@@ -70,7 +70,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddDiskParameters> exte
     @Override
     protected void executeCommand() {
         ManagedBlockStorage managedBlockStorage = cinderStorageDao.get(getParameters().getStorageDomainId());
-        Guid volumeId = Guid.newGuid();
+        Guid volumeId = getParameters().getDiskInfo().getId();
         List<String> extraParams = new ArrayList<>();
         extraParams.add(volumeId.toString());
         Number sizeInGiB = SizeConverter.convert(getParameters().getDiskInfo().getSize(),
