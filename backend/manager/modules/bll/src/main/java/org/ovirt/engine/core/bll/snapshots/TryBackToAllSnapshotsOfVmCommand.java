@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
+import org.ovirt.engine.core.common.action.CreateManagedBlockStorageDiskSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -122,7 +124,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         // No need to filter the images for partial preview as being done in the execute phase since the callback can
         // also support no child commands, this should be changed once all commands will facilitate the CoCo
         // infrastructure.
-        getParameters().setUseCinderCommandCallback(!DisksFilter.filterCinderDisks(getImagesToPreview()).isEmpty());
+        getParameters().setUseCinderCommandCallback(!DisksFilter.filterCinderDisks(getImagesToPreview()).isEmpty() ||
+                !DisksFilter.filterManagedBlockStorageDisks(getImagesToPreview()).isEmpty());
     }
 
     @Override
@@ -298,6 +301,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         });
 
         initializeSnapshotsLeasesParams();
+        final List<ManagedBlockStorageDisk> managedBlockStorageDisks = new ArrayList<>();
 
         if (!filteredImages.isEmpty()) {
             vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
@@ -306,6 +310,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 @Override
                 public Void runInTransaction() {
                     for (DiskImage image : filteredImages) {
+                        if (image.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                            managedBlockStorageDisks.add((ManagedBlockStorageDisk) image);
+                            continue;
+                        }
                         if (image.getDiskStorageType() == DiskStorageType.CINDER) {
                             cinderDisks.add((CinderDisk)image);
                             continue;
@@ -339,6 +347,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             !tryBackAllCinderDisks(cinderDisks, newActiveSnapshotId)) {
                         throw new EngineException(EngineError.CINDER_ERROR, "Failed to preview a snapshot!");
                     }
+
+                    managedBlockStorageDisks.forEach(disk -> tryBackToManagedBlockSnapshot(disk, newActiveSnapshotId));
+
                     return null;
                 }
 
@@ -361,6 +372,18 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         }
 
         setSucceeded(true);
+    }
+
+    private void tryBackToManagedBlockSnapshot(DiskImage image, Guid newActiveSnapshotId) {
+        CreateManagedBlockStorageDiskSnapshotParameters params =
+                new CreateManagedBlockStorageDiskSnapshotParameters();
+        params.setVolumeId(image.getId());
+        params.setImageId(image.getImageId());
+        params.setVmSnapshotId(newActiveSnapshotId);
+        params.setStorageDomainId(image.getStorageIds().get(0));
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        runInternalAction(ActionType.TryBackToManagedBlockSnapshot, params);
     }
 
     private void initializeSnapshotsLeasesParams() {
@@ -476,7 +499,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return true;
     }
 
-    private CreateCinderSnapshotParameters buildCinderChildCommandParameters(CinderDisk cinderDisk, Guid newSnapshotId) {
+    private CreateCinderSnapshotParameters buildCinderChildCommandParameters(DiskImage cinderDisk, Guid newSnapshotId) {
         CreateCinderSnapshotParameters createParams = new CreateCinderSnapshotParameters(cinderDisk.getImageId());
         createParams.setContainerId(cinderDisk.getId());
         createParams.setStorageDomainId(cinderDisk.getStorageIds().get(0));
@@ -494,8 +517,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
             // Filter out shareable/nonsnapable disks
             List<CinderDisk> CinderImagesToPreview = DisksFilter.filterCinderDisks(imagesToPreview);
+            List<ManagedBlockStorageDisk> managedBlockStorageDisks = DisksFilter.filterManagedBlockStorageDisks(imagesToPreview);
             imagesToPreview = DisksFilter.filterImageDisks(imagesToPreview, ONLY_NOT_SHAREABLE, ONLY_SNAPABLE);
             imagesToPreview.addAll(CinderImagesToPreview);
+            imagesToPreview.addAll(managedBlockStorageDisks);
         }
         return imagesToPreview;
     }

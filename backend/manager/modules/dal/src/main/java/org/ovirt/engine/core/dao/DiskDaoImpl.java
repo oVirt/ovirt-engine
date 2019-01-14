@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDaoImpl.CinderDiskRowMapper;
 import org.ovirt.engine.core.dao.DiskImageDaoImpl.DiskImageRowMapper;
+import org.ovirt.engine.core.dao.DiskImageDaoImpl.ManagedBlockStorageRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -165,6 +166,9 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
 
             switch (diskStorageType) {
             case MANAGED_BLOCK_STORAGE:
+                disk = ManagedBlockStorageRowMapper.instance.mapRow(rs, rowNum);
+                break;
+
             case IMAGE:
                 disk = DiskImageRowMapper.instance.mapRow(rs, rowNum);
                 break;

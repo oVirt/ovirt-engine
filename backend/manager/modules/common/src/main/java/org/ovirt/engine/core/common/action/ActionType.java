@@ -566,6 +566,7 @@ public enum ActionType {
     RemoveAllManagedBlockStorageDisks(3240, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     CreateManagedBlockStorageDiskSnapshot(3241, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     RemoveManagedBlockStorageSnapshot(3242, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
+    TryBackToManagedBlockSnapshot(3243, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
 
     // Incremental Backup
     StartVmBackup(3300, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),

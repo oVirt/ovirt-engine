@@ -149,6 +149,21 @@ def main(args=None):
     remove_snapshot_parser.add_argument("snapshot_id", help="The snapshot id")
     remove_snapshot_parser.add_argument("volume_id", help="Snapshots's "
                                                           "volume id")
+    create_volume_from_snapshot_parser = \
+        subparsers.add_parser("create_volume_from_snapshot",
+                              help="create a volume from a snapshot")
+    create_volume_from_snapshot_parser.set_defaults(
+        command=create_volume_from_snapshot)
+    create_volume_from_snapshot_parser.add_argument("driver",
+                                                    help="The driver "
+                                                         "parameters")
+    create_volume_from_snapshot_parser.add_argument("db_url",
+                                                    help="The database url")
+    create_volume_from_snapshot_parser.add_argument("volume_id",
+                                                    help="Snapshots's "
+                                                         "volume id")
+    create_volume_from_snapshot_parser.add_argument("snapshot_id",
+                                                    help="The snapshot id")
 
     args = parser.parse_args()
     try:
@@ -256,6 +271,14 @@ def remove_snapshot(args):
     snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
     snap.delete()
 
+
+def create_volume_from_snapshot(args):
+    backend = load_backend(args)
+    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
+    new_vol = snap.create_volume()
+    sys.stdout.write(new_vol.id)
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

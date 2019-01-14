@@ -148,7 +148,7 @@ public class ManagedBlockStorageCommandUtil {
 
     private ActionReturnValue getConnectionInfo(ManagedBlockStorageDisk disk, VDS vds) {
         ConnectManagedBlockStorageDeviceCommandParameters params = new ConnectManagedBlockStorageDeviceCommandParameters();
-        params.setDiskId(disk.getId());
+        params.setDiskId(disk.getImageId());
         params.setStorageDomainId(disk.getStorageIds().get(0));
         params.setConnectorInfo(vds.getConnectorInfo());
         ActionReturnValue actionReturnValue =

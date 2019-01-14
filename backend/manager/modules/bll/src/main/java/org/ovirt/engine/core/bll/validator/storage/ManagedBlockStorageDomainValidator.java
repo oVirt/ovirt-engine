@@ -38,7 +38,8 @@ public class ManagedBlockStorageDomainValidator {
                 ActionType.RemoveVmTemplate,
                 ActionType.CloneVm,
                 ActionType.CreateSnapshotForVm,
-                ActionType.RemoveSnapshot
+                ActionType.RemoveSnapshot,
+                ActionType.TryBackToAllSnapshotsOfVm
         ));
         EngineLocalConfig config = EngineLocalConfig.getInstance();
         isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(CINDERLIB_DB_ENABLE));
