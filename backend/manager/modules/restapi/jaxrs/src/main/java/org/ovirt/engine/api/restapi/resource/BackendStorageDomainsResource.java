@@ -123,10 +123,9 @@ public class BackendStorageDomainsResource
 
     private Response addManagedBlockStorageDomain(ActionType action,
             StorageDomainStatic entity,
-            String driverName,
             Properties driverOptions,
             Properties driverSensitiveOptions) {
-        return performCreate(action, getManagedBlockStorageAddParams(entity, driverName, driverOptions, driverSensitiveOptions), ID_RESOLVER);
+        return performCreate(action, getManagedBlockStorageAddParams(entity, driverOptions, driverSensitiveOptions), ID_RESOLVER);
     }
 
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
@@ -323,7 +322,6 @@ public class BackendStorageDomainsResource
         case MANAGED_BLOCK_STORAGE:
             resp = addManagedBlockStorageDomain(ActionType.AddManagedBlockStorageDomain,
                     entity,
-                    storageDomain.getStorage().getDriverName(),
                     storageDomain.getStorage().getDriverOptions(),
                     storageDomain.getStorage().getDriverSensitiveOptions());
             break;
@@ -550,12 +548,11 @@ public class BackendStorageDomainsResource
     }
 
     private AddManagedBlockStorageDomainParameters getManagedBlockStorageAddParams(StorageDomainStatic entity,
-            String driverName,
             Properties driverOptions,
             Properties driverSensitiveOptions) {
         AddManagedBlockStorageDomainParameters params = new AddManagedBlockStorageDomainParameters();
         Map<String, Object> driverOptionsMap = new HashMap<>(CustomPropertiesParser.toObjectsMap(driverOptions));
-        driverOptionsMap.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, driverName);
+        driverOptionsMap.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, entity.getName());
         params.setDriverOptions(driverOptionsMap);
         params.setSriverSensitiveOptions(CustomPropertiesParser.toObjectsMap(driverSensitiveOptions));
         entity.setStorage(Guid.Empty.toString());
