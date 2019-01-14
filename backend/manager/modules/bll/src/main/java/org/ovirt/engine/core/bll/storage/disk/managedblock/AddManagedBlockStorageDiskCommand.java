@@ -14,16 +14,15 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.util.ManagedBlockStorageDiskUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDiskParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -37,10 +36,8 @@ import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.CinderStorageDao;
-import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -61,10 +58,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
     private ImageDao imageDao;
 
     @Inject
-    private ImageStorageDomainMapDao imageStorageDomainMapDao;
-
-    @Inject
-    private DiskImageDynamicDao diskImageDynamicDao;
+    private ManagedBlockStorageDiskUtil managedBlockStorageDiskUtil;
 
     @Inject
     private DiskVmElementDao diskVmElementDao;
@@ -121,14 +115,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         TransactionSupport.executeInNewTransaction(() -> {
             baseDiskDao.save(disk);
             imageDao.save(disk.getImage());
-            imageStorageDomainMapDao.save(new ImageStorageDomainMap(disk.getImageId(),
-                    disk.getStorageIds().get(0),
-                    disk.getQuotaId(),
-                    disk.getDiskProfileId()));
-
-            DiskImageDynamic diskDynamic = new DiskImageDynamic();
-            diskDynamic.setId(disk.getImageId());
-            diskImageDynamicDao.save(diskDynamic);
+            managedBlockStorageDiskUtil.saveDisk(disk);
 
             if (getParameters().getVmId() != null) {
                 // Set correct device id
