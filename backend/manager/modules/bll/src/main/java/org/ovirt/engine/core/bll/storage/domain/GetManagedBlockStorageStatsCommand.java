@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage.disk.managedblock;
+package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.Collection;
 import java.util.Collections;
