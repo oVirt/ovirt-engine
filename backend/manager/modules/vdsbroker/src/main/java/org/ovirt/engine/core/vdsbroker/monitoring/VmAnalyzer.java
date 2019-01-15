@@ -397,7 +397,7 @@ public class VmAnalyzer {
         auditLog(logable, type);
     }
 
-    private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
+    private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExitReason) {
         if (dbVm.getStatus() != VMStatus.MigratingFrom) {
             if (dbVm.getStatus() != VMStatus.Suspended) {
                 // if the VM is set to down then the actual exit fields were set and we don't want to
@@ -407,7 +407,7 @@ public class VmAnalyzer {
                         VMStatus.Down,
                         alreadyDown ? dbVm.getExitStatus() : exitStatus,
                         alreadyDown ? dbVm.getExitMessage() : exitMessage,
-                        alreadyDown ? dbVm.getExitReason() : vmExistReason);
+                        alreadyDown ? dbVm.getExitReason() : vmExitReason);
             }
             saveDynamic(dbVm);
             resetVmStatistics();

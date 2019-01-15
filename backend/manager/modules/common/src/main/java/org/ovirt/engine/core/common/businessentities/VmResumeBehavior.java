@@ -4,7 +4,7 @@ package org.ovirt.engine.core.common.businessentities;
  * If the storage, on which this virtual machine has some disks gets
  * unresponsive, the virtual machine gets paused.
  *
- * This are the possible options, what should happen with the virtual machine
+ * These are the possible options, what should happen with the virtual machine
  * in the moment the storage gets available again.
  */
 public enum VmResumeBehavior {
