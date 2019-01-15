@@ -1,7 +1,33 @@
 - hosts: all
   remote_user: root
 
+  pre_tasks:
+    - block:
+      # Check if certificates need re-enrollment:
+      - name: Check host certificate
+        command: |
+          '/usr/bin/openssl'
+          'verify'
+          '-CAfile'
+          "{{ item.ca }}"
+          "{{ item.cert }}"
+        with_items:
+          - 'ca': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_ca_file }}"
+            'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
+          - 'ca': "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_ca_file }}"
+            'cert': "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_cert_file }}"
+          - 'ca': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"
+            'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_cert_file }}"
+        register: iscorrect
+
+      - name: Set enrollment variable
+        set_fact:
+          do_host_cert_enrollment: "{{ 'error' in iscorrect.results | map(attribute='stdout') | join(' ') }}"
+      when: not ansible_check_mode
+
   roles:
+    - name: ovirt-host-enroll-certificate
+      when: do_host_cert_enrollment is defined and do_host_cert_enrollment
     - name: ovirt-host-upgrade
     - name: ovirt-host-deploy-vnc-certificates
       when: not ansible_check_mode

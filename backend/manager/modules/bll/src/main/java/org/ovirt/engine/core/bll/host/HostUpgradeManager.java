@@ -13,6 +13,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -24,7 +27,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.JsonHelper;
+import org.ovirt.engine.core.utils.PKIResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +39,8 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     public static final int MAX_NUM_OF_DISPLAYED_UPDATES = 10;
 
     private static Logger log = LoggerFactory.getLogger(HostUpgradeManager.class);
+
+    private EngineLocalConfig config = EngineLocalConfig.getInstance();
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -123,6 +130,19 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             .logFilePrefix("ovirt-host-mgmt-ansible")
             .logFileName(host.getHostName())
             .logFileSuffix(CorrelationIdTracker.getCorrelationId())
+            .variables(
+                // PKI variables:
+                new Pair<>("ovirt_pki_dir", config.getPKIDir()),
+                new Pair<>("ovirt_vds_hostname", host.getHostName()),
+                new Pair<>("ovirt_engine_usr", config.getUsrDir()),
+                new Pair<>("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName)),
+                new Pair<>("ovirt_vdscertificatevalidityinyears", Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears)),
+                new Pair<>("ovirt_signcerttimeoutinseconds", Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds)),
+                new Pair<>("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM)),
+                new Pair<>("ovirt_ca_key",  PKIResources.getCaCertificate().toString(
+                    PKIResources.Format.OPENSSH_PUBKEY
+                ).replace("\n", ""))
+            )
             .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
         if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             String error = String.format("Failed to update host '%1$s'.", host.getHostName());
