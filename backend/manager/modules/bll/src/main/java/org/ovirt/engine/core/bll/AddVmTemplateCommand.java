@@ -87,6 +87,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -176,6 +177,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private VmTemplate cachedBaseTemplate;
     private List<CinderDisk> cinderDisks;
+    private List<ManagedBlockStorageDisk> managedBlockStorageDisks;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -295,6 +297,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             cinderDisks = DisksFilter.filterCinderDisks(images);
         }
         return cinderDisks;
+    }
+
+    private List<ManagedBlockStorageDisk> getManagedBlockStorageDisks() {
+        if (managedBlockStorageDisks == null) {
+            managedBlockStorageDisks = DisksFilter.filterManagedBlockStorageDisks(images);
+        }
+        return managedBlockStorageDisks;
     }
 
     @Override
@@ -770,6 +779,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
             List<DiskImage> diskImagesToCheck = DisksFilter.filterImageDisks(images, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
             diskImagesToCheck.addAll(cinderDisks);
+            diskImagesToCheck.addAll(getManagedBlockStorageDisks());
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
                     !validate(diskImagesValidator.diskImagesNotLocked())) {

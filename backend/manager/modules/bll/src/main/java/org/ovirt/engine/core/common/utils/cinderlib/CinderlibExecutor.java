@@ -78,7 +78,8 @@ public class CinderlibExecutor {
         EXTEND_VOLUME("extend_volume"),
         SAVE_DEVICE("save_device"),
         GET_CONNECTION_INFO("get_connection_info"),
-        STORAGE_STATS("storage_stats");
+        STORAGE_STATS("storage_stats"),
+        CLONE_VOLUME("clone_volume");
 
         private final String commandName;
 
