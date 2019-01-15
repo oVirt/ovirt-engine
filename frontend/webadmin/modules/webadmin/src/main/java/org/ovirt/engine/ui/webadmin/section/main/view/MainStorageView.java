@@ -52,7 +52,7 @@ public class MainStorageView extends AbstractMainWithDetailsTableView<StorageDom
 
         StorageDomainSharedStatusColumn sharedStatusColumn = new StorageDomainSharedStatusColumn();
         sharedStatusColumn.setContextMenuTitle(constants.sharedStatusStorage());
-        getTable().addColumn(sharedStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(sharedStatusColumn, constants.storageDomainStatus(), "45px"); //$NON-NLS-1$
 
         StorageDomainAdditionalStatusColumn additionalStatusColumn = new StorageDomainAdditionalStatusColumn();
         additionalStatusColumn.setContextMenuTitle(constants.additionalStatusStorage());

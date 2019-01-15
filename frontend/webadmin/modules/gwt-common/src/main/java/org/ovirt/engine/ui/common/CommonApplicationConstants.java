@@ -1816,4 +1816,6 @@ public interface CommonApplicationConstants extends Constants {
     String cloudInitProtocolLabel();
 
     String cloudInitProtocolInfo();
+
+    String storageDomainStatus();
 }
