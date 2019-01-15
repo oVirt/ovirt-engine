@@ -1,0 +1,5 @@
+- include_tasks: "{{ item }}.yml"
+  with_items:
+    - loadconfig
+    - vdsm
+    - vmconsole

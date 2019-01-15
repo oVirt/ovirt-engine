@@ -1345,6 +1345,7 @@ fi
 %{engine_data}/playbooks/install-skydive.inventory.sample/01_hosts
 %{engine_data}/playbooks/install-skydive.yml
 %{engine_data}/playbooks/ovirt-host-deploy.yml
+%{engine_data}/playbooks/ovirt-host-enroll-certificate.yml
 %{engine_data}/playbooks/ovirt-host-remove.yml
 %{engine_data}/playbooks/ovirt-host-upgrade.yml
 %{engine_data}/playbooks/ovirt-ova-export.yml

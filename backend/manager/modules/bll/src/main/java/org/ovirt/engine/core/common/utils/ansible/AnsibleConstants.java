@@ -46,6 +46,11 @@ public class AnsibleConstants {
     public static final String HOST_UPGRADE_PLAYBOOK = "ovirt-host-upgrade.yml";
 
     /**
+     * This is name of file which executes the host-enroll-certificate via Ansible.
+     */
+    public static final String HOST_ENROLL_CERTIFICATE = "ovirt-host-enroll-certificate.yml";
+
+    /**
      * This is name of callback plugin which is used to run update in check mode.
      */
     public static final String HOST_UPGRADE_CALLBACK_PLUGIN = "hostupgradeplugin";

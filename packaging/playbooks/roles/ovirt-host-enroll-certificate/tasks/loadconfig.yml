@@ -1,0 +1,30 @@
+- name: Check if VDSM config file exists
+  stat:
+    path: "{{ ovirt_vdsm_config_file }}"
+  register: vdsm_conf_stat
+
+- block:
+  - name: Temporary file for vdsm configuration
+    tempfile:
+      state: file
+      suffix: tempvdsmtrustore
+    register: tempvdsmconf
+    delegate_to: localhost
+
+  - name: Load vdsm trust store location
+    fetch:
+      src: "{{ ovirt_vdsm_config_file }}"
+      dest: "{{ tempvdsmconf.path }}"
+      flat: yes
+
+  - name: Set VDSM truststore path
+    set_fact:
+      ovirt_vdsm_trust_store: "{{ lookup('ini', 'trust_store_path section=vars file=' ~ tempvdsmconf.path) or ovirt_vdsm_trust_store }}"
+
+  when: vdsm_conf_stat.stat.exists
+  always:
+    - name: Remove temp VDSM config file
+      file:
+        state: absent
+        path: "{{ tempvdsmconf.path }}"
+      when: tempvdsmconf is defined

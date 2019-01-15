@@ -1,0 +1,45 @@
+ovirt_enrollment_type: inline
+
+# VDSM config file path:
+ovirt_vdsm_config_file: '/etc/vdsm/vdsm.conf'
+
+# Certificate paths:
+## vdsm
+ovirt_libvirt_default_trust_store: '/etc/pki/libvirt'
+ovirt_vdsm_trust_store: '/etc/pki/vdsm'
+## Vmconsole
+ovirt_vmconsole_store: '/etc/pki/ovirt-vmconsole'
+
+# Certificate files (relative to certificate paths):
+## vdsm
+ovirt_vdsm_cert_file: 'certs/vdsmcert.pem'
+ovirt_vdsm_spice_cert_file: 'libvirt-spice/server-cert.pem'
+ovirt_libvirt_default_client_cert_file: 'clientcert.pem'
+## vmconsole
+ovirt_vmconsole_cert_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa-cert.pub'
+
+# Certificate keys (relative to certificate paths):
+## vdsm
+ovirt_vdsm_key_file: 'keys/vdsmkey.pem'
+ovirt_vdsm_spice_key_file: 'libvirt-spice/server-key.pem'
+ovirt_libvirt_default_client_key_file: 'private/clientkey.pem'
+ovirt_vdsm_key_pending_file: 'keys/vdsmkey.pending.pem'
+## Vmconsole
+ovirt_vmconsole_key_pending_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa.pending'
+ovirt_vmconsole_key_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa'
+
+# CA files (relative to certificate paths):
+## vdsm
+ovirt_vdsm_spice_ca_file: 'libvirt-spice/ca-cert.pem'
+ovirt_libvirt_default_client_ca_file: '../CA/cacert.pem'
+ovirt_vdsm_ca_file: 'certs/cacert.pem'
+## vmconsole
+ovirt_vmconsole_ca_file: "{{ ovirt_vmconsole_store }}/ca.pub"
+
+# VDSM private key variables:
+ovirt_vdsm_key_size: 2048
+ovirt_vdsm_key_type: rsa
+
+# vm-console private key variables:
+ovirt_vmconsole_key_size: 2048
+ovirt_vmconsole_key_type: rsa

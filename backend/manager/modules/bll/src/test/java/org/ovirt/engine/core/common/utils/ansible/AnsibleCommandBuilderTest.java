@@ -146,9 +146,9 @@ public class AnsibleCommandBuilderTest {
                 IGNORE_SSH_CONFIG,
                 ANSIBLE_LOG_LEVEL,
                 PRIVATE_KEY,
-                "--extra-vars=a=1",
-                "--extra-vars=b=2",
-                "--extra-vars=c=3",
+                "--extra-vars=a=\"1\"",
+                "--extra-vars=b=\"2\"",
+                "--extra-vars=c=\"3\"",
                 ANSIBLE_PLAYBOOK_FULL_PATH
             ),
             command
@@ -177,8 +177,8 @@ public class AnsibleCommandBuilderTest {
                 "--private-key=/mykey",
                 "--inventory=/myinventory",
                 "--limit=mylimit",
-                "--extra-vars=a=1",
-                "--extra-vars=b=2",
+                "--extra-vars=a=\"1\"",
+                "--extra-vars=b=\"2\"",
                 ANSIBLE_PLAYBOOK_FULL_PATH
             ),
             command

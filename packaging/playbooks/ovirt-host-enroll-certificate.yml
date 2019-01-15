@@ -1,0 +1,5 @@
+- hosts: all
+  remote_user: root
+
+  roles:
+    - ovirt-host-enroll-certificate

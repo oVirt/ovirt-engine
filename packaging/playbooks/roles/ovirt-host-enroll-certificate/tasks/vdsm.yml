@@ -1,0 +1,134 @@
+# LEGACY-BEGIN
+# old vdsm-bootstrap implementations touched
+# spice pki directory explicitly, so we need to revert
+# to something sane.
+# rhbz#1008328
+#
+- name: Set proper spice pki directory
+  file:
+    path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"
+    mode: 0755
+    owner: 'vdsm'
+    group: 'kvm'
+# LEGACY-END
+
+- block:
+  - name: Create vdsm key temporary file
+    tempfile:
+      state: file
+      suffix: vdsm
+    register: vdsmkey
+
+  - name: Generate vdsm CSR
+    command: |
+      '/usr/bin/openssl'
+      'req'
+      '-new'
+      '-newkey'
+      '{{ ovirt_vdsm_key_type }}:{{ ovirt_vdsm_key_size }}'
+      '-nodes'
+      '-subj'
+      '/'
+      '-keyout'
+      '{{ vdsmkey.path }}'
+    register: csr
+
+  - block:
+    - name: Create vdsm keys directory
+      file:
+        dest: "{{ vdsm_truststore ~ '/' ~ vdsm_key_pending_file | dirname }}"
+        state: directory
+        owner: 'vdsm'
+        group: 'kvm'
+        mode: 0700
+
+    - name: Create vdsm key pending file
+      copy:
+        src: "{{ vdsmkey.path }}"
+        dest: "{{ vdsm_truststore }}/{{ vdsm_key_pending_file }}"
+        owner: root
+        mode: 0400
+        remote_src: yes
+    when: "ovirt_enrollment_type == certificate_enrollment_request"
+
+  - block:
+    - name: Copy vdsm CSR
+      copy:
+        content: "{{ csr.stdout }}"
+        dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}.req"
+      delegate_to: localhost
+
+    - name: Run PKI enroll request for vdsm
+      command: |
+         "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
+         "--name={{ ovirt_vds_hostname }}"
+         "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
+         "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
+         "--timeout={{ ovirt_signcerttimeoutinseconds }}"
+      register: certrequest
+      delegate_to: localhost
+
+    - name: Prepare directories for vdsm certificate files
+      file:
+        dest: "{{ filedest }}"
+        state: directory
+        owner: 'vdsm'
+        group: 'kvm'
+      with_items:
+        - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_vdsm_ca_file | dirname }}"
+        - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_vdsm_key_file | dirname }}"
+        - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_vdsm_spice_cert_file | dirname }}"
+        - "{{ ovirt_libvirt_default_trust_store ~ '/' ~ ovirt_libvirt_default_client_key_file | dirname }}"
+        - "{{ ovirt_libvirt_default_trust_store ~ '/' ~ ovirt_libvirt_default_client_ca_file | dirname }}"
+      loop_control:
+        loop_var: filedest
+
+    - name: Add vdsm cacert files
+      copy:
+        content: "{{ ovirt_ca_cert }}"
+        dest: "{{ filedest }}"
+        owner: 'root'
+      with_items:
+        - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_ca_file }}"
+        - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"
+        - "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_ca_file }}"
+      loop_control:
+        loop_var: filedest
+
+    - name: Add vdsm cert files
+      copy:
+        src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}.cer"
+        dest: "{{ filedest }}"
+        owner: 'root'
+        remote_src: no
+      with_items:
+        - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
+        - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_cert_file }}"
+        - "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_cert_file }}"
+      loop_control:
+        loop_var: filedest
+
+    - name: Set vdsm key path
+      set_fact:
+        vdsmkey_path: "{{ ovirt_vdsm_trust_store~'/'~ovirt_vdsm_key_pending_file if ovirt_enrollment_type == certificate_enrollment_accept else vdsmkey.path  }}"
+
+    - name: Add vdsm key files
+      copy:
+        src: "{{ vdsmkey_path }}"
+        dest: "{{ filedest }}"
+        owner: 'root'
+        mode: 0440
+        remote_src: yes
+      with_items:
+        - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_key_file }}"
+        - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_key_file }}"
+        - "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_key_file }}"
+      loop_control:
+        loop_var: filedest
+    when: "ovirt_enrollment_type != certificate_enrollment_request"
+
+  always:
+    - name: Remove temp file
+      file:
+        state: absent
+        path: "{{ vdsmkey.path }}"

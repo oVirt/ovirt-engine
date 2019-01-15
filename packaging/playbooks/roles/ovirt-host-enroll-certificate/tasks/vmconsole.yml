@@ -1,0 +1,91 @@
+- name: Find ovirt-vmconsole user
+  getent:
+    database: passwd
+    key: ovirt-vmconsole
+
+- block:
+  - name: Create vmconsole key temporary file
+    tempfile:
+      state: file
+      suffix: vmconsole
+    register: vmconsolekey
+
+  - name: Generate vmconsole CSR
+    command: |
+      '/usr/bin/openssl'
+      'req'
+      '-new'
+      '-newkey'
+      '{{ ovirt_vmconsole_key_type }}:{{ ovirt_vmconsole_key_size }}'
+      '-nodes'
+      '-subj'
+      '/'
+      '-keyout'
+      '{{ vmconsolekey.path }}'
+    register: csr
+
+  - block:
+    - name: Copy vmconsole key pending file
+      copy:
+        src: "{{ vmconsolekey.path }}"
+        dest: "{{ vmconsole_truststore }}/{{ vmconsole_key_pending_file }}"
+        owner: root
+        mode: 0400
+        remote_src: yes
+    when: "ovirt_enrollment_type == certificate_enrollment_request"
+
+  - block:
+    - name: Copy vmconsole CSR
+      copy:
+        content: "{{ csr.stdout }}"
+        dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ssh.req"
+      delegate_to: localhost
+
+    - name: Run PKI enroll request for vmconsole
+      command: |
+         "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
+         "--name={{ ovirt_vds_hostname }}-ssh"
+         "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
+         "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
+         "--timeout={{ ovirt_signcerttimeoutinseconds }}"
+      delegate_to: localhost
+
+    - name: Run PKI enroll OpenSSH cert for vmconsole
+      command: |
+         "{{ ovirt_engine_usr }}/bin/pki-enroll-openssh-cert.sh"
+         "--name={{ ovirt_vds_hostname }}-ssh"
+         "--id={{ ovirt_vds_hostname }}"
+         "--principals={{ ovirt_vds_hostname }}"
+         "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
+      delegate_to: localhost
+
+    - name: Add vmconsole cacert files
+      copy:
+        content: "{{ ovirt_ca_key }}"
+        dest: "{{ item }}"
+
+    - name: Add cert files
+      copy:
+        src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ssh-cert.pub"
+        dest: "{{ ovirt_vmconsole_cert_file }}"
+        remote_src: no
+
+    - name: Set vmconsole key path
+      set_fact:
+        vmconsolekey_path: "{{ ovirt_vmconsole_trust_store~'/'~ovirt_vmconsole_key_pending_file if ovirt_enrollment_type == certificate_enrollment_accept else vmconsolekey.path  }}"
+
+    - name: Add vmconsole key file
+      copy:
+        src: "{{ vmconsolekey_path }}"
+        dest: "{{ ovirt_vmconsole_key_file }}"
+        owner: 'ovirt-vmconsole'
+        group: 'ovirt-vmconsole'
+        mode: 0400
+        remote_src: yes
+    when: "ovirt_enrollment_type != certificate_enrollment_request"
+
+  always:
+    - name: Remove temp file
+      file:
+        state: absent
+        path: "{{ vmconsolekey.path }}"
