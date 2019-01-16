@@ -41,6 +41,7 @@ import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
+import org.ovirt.engine.api.resource.VmBackupsResource;
 import org.ovirt.engine.api.resource.VmCdromsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
@@ -741,5 +742,10 @@ public class BackendVmResource
     @Override
     public AssignedAffinityLabelsResource getAffinityLabelsResource() {
         return inject(new BackendAssignedAffinityLabelsResource(id, VM::new));
+    }
+
+    @Override
+    public VmBackupsResource getBackupsResource() {
+        return null; // TODO: implement
     }
 }
