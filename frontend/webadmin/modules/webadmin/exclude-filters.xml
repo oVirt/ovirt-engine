@@ -276,7 +276,7 @@
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
-        This calss is GWT generated code
+        This class is GWT generated code
 
         findbugs reason:
         Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)

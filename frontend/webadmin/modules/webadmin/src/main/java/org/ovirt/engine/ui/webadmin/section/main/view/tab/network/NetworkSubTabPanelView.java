@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
@@ -18,12 +19,14 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final NetworkActionPanelPresenterWidget actionPanel;
     private final SimpleTabPanel tabPanel;
 
     @Inject
     public NetworkSubTabPanelView(NetworkBreadCrumbsPresenterWidget breadCrumbs,
             NetworkActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
+        this.actionPanel = actionPanel;
+        this.tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
         actionPanel.removeButton(actionPanel.getNewButtonDefinition());
         actionPanel.removeButton(actionPanel.getImportButtonDefinition());
@@ -42,6 +45,11 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
     @Override
     protected AbstractTabPanel getTabPanel() {
         return tabPanel;
+    }
+
+    @Override
+    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+        return actionPanel;
     }
 
 }

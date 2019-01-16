@@ -12,7 +12,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.AddActionButtonEvent;
-import org.ovirt.engine.ui.common.presenter.AddKebabMenuListItemEvent;
 import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
@@ -130,6 +129,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             // Someone set search string before we were instantiated, update the search string.
             applySearchString(searchString);
         }
+
         Scheduler.get().scheduleDeferred(() -> {
             addPluginActionButtons(actionButtonPluginHandler.getButtons(getProxy().getNameToken()), false);
             addPluginActionButtons(actionButtonPluginHandler.getMenuItems(getProxy().getNameToken()), true);
@@ -139,18 +139,10 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
                 if (getProxy().getNameToken().equals(event.getHistoryToken())) {
                     List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
                     pluginActionButtonList.add(event.getButtonDefinition());
-                    addPluginActionButtons(pluginActionButtonList, false);
+                    addPluginActionButtons(pluginActionButtonList, event.isAddToKebabMenu());
                 }
             }
         ));
-        registerHandler(getEventBus().addHandler(AddKebabMenuListItemEvent.getType(),
-                event -> {
-                    if (getProxy().getNameToken().equals(event.getHistoryToken())) {
-                        List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
-                        pluginActionButtonList.add(event.getButtonDefinition());
-                        addPluginActionButtons(pluginActionButtonList, true);
-                    }
-                }));
 
         if (hasSearchPanelPresenterWidget()) {
             setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
@@ -287,7 +279,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
         if (hasActionPanelPresenterWidget()) {
-            for(ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
+            for (ActionButtonDefinition<?> buttonDef : pluginActionButtonList) {
                 if (isMenuItem) {
                     getActionPanelPresenterWidget().addMenuListItem((ActionButtonDefinition) buttonDef);
                 } else {
@@ -313,4 +305,5 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         builder.with(parameters);
         placeManager.revealPlace(builder.build());
     }
+
 }

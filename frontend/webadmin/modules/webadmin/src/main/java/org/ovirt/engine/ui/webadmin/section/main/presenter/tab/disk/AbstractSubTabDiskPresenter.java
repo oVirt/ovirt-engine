@@ -21,7 +21,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabDiskPresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<Disk>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <Disk, DiskListModel, D, V, P> {
+        extends AbstractSubTabPresenter<Disk, DiskListModel, D, V, P> {
 
     public AbstractSubTabDiskPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<DiskListModel, D> modelProvider, DiskMainSelectedItems selectedItems,

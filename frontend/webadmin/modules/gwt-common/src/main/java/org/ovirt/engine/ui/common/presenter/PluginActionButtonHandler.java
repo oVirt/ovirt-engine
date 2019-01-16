@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class PluginActionButtonHandler {
+
     private final Map<String, List<ActionButtonDefinition<?>>> buttonDefinitionMap = new HashMap<>();
     private final Map<String, List<ActionButtonDefinition<?>>> menuItemDefinitionMap = new HashMap<>();
 
@@ -19,22 +20,16 @@ public class PluginActionButtonHandler {
     public PluginActionButtonHandler(EventBus eventBus) {
         eventBus.addHandler(AddActionButtonEvent.getType(),
             event -> {
-                List<ActionButtonDefinition<?>> buttonDefinitionList = buttonDefinitionMap.get(event.getHistoryToken());
-                if (buttonDefinitionList == null) {
-                    buttonDefinitionList = new ArrayList<>();
-                    buttonDefinitionMap.put(event.getHistoryToken(), buttonDefinitionList);
+                Map<String, List<ActionButtonDefinition<?>>> buttonMap = event.isAddToKebabMenu()
+                        ? menuItemDefinitionMap : buttonDefinitionMap;
+                List<ActionButtonDefinition<?>> buttonList = buttonMap.get(event.getHistoryToken());
+
+                if (buttonList == null) {
+                    buttonList = new ArrayList<>();
+                    buttonMap.put(event.getHistoryToken(), buttonList);
                 }
-                buttonDefinitionList.add(event.getButtonDefinition());
+                buttonList.add(event.getButtonDefinition());
             });
-        eventBus.addHandler(AddKebabMenuListItemEvent.getType(),
-                event -> {
-                    List<ActionButtonDefinition<?>> buttonDefinitionList = menuItemDefinitionMap.get(event.getHistoryToken());
-                    if (buttonDefinitionList == null) {
-                        buttonDefinitionList = new ArrayList<>();
-                        menuItemDefinitionMap.put(event.getHistoryToken(), buttonDefinitionList);
-                    }
-                    buttonDefinitionList.add(event.getButtonDefinition());
-                });
     }
 
     /**

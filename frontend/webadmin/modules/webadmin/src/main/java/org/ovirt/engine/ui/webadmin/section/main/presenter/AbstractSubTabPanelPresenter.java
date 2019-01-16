@@ -1,12 +1,20 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.ui.common.presenter.AbstractMainSelectedItems;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
+import org.ovirt.engine.ui.common.presenter.PluginActionButtonHandler;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -32,9 +40,18 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
 
         void setTabVisible(TabData tabData, boolean visible);
 
+        ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget();
+
     }
 
+    @Inject
+    private PluginActionButtonHandler actionButtonPluginHandler;
+
+    @Inject
+    private WebAdminPlaceManager placeManager;
+
     private final Map<TabData, Model> detailTabToModelMapping = new HashMap<>();
+    private boolean pluginActionButtonsInitialized = false;
 
     public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
             Object tabContentSlot,
@@ -86,10 +103,33 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Model detailModel = entry.getValue();
             updateTabVisibility(tabData, detailModel);
         }
+
+        if (!pluginActionButtonsInitialized) {
+            String currentPlaceToken = placeManager.getCurrentPlaceRequest().getNameToken();
+            String mainPlace = currentPlaceToken.substring(0,
+                    currentPlaceToken.indexOf(WebAdminApplicationPlaces.SUB_TAB_PREFIX));
+
+            addPluginActionButtons(actionButtonPluginHandler.getButtons(mainPlace), false);
+            addPluginActionButtons(actionButtonPluginHandler.getMenuItems(mainPlace), true);
+            pluginActionButtonsInitialized = true;
+        }
     }
 
     private void updateTabVisibility(TabData tabData, Model model) {
         getView().setTabVisible(tabData, model.getIsAvailable());
+    }
+
+    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
+        ActionPanelPresenterWidget<?, ?> actionPanel = getView().getActionPanelPresenterWidget();
+        if (actionPanel != null) {
+            for (ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
+                if (isMenuItem) {
+                    actionPanel.addMenuListItem((ActionButtonDefinition) buttonDef);
+                } else {
+                    actionPanel.addActionButton((ActionButtonDefinition) buttonDef);
+                }
+            }
+        }
     }
 
 }

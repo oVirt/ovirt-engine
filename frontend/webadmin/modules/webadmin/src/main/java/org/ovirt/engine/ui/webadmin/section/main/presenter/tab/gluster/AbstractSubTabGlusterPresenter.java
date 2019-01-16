@@ -17,7 +17,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabGlusterPresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<GlusterVolumeEntity>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <GlusterVolumeEntity, VolumeListModel, D, V, P> {
+        extends AbstractSubTabPresenter<GlusterVolumeEntity, VolumeListModel, D, V, P> {
 
     public AbstractSubTabGlusterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<VolumeListModel, D> modelProvider, VolumeMainSelectedItems selectedItems,

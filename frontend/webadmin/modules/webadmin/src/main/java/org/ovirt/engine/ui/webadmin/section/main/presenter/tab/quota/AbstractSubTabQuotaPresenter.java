@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabQuotaPresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<Quota>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <Quota, QuotaListModel, D, V, P> {
+        extends AbstractSubTabPresenter<Quota, QuotaListModel, D, V, P> {
 
     public AbstractSubTabQuotaPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<QuotaListModel, D> modelProvider, QuotaMainSelectedItems selectedItems,

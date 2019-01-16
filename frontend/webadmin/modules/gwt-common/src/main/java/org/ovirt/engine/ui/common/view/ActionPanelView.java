@@ -222,11 +222,6 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     @Override
-    public boolean hasActionButtons() {
-        return !actionItemMap.isEmpty();
-    }
-
-    @Override
     public void setFilterResult(IsWidget result) {
         filterResults.add(result);
     }

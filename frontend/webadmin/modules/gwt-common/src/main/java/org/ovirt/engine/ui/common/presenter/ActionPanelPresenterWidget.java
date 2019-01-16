@@ -58,11 +58,6 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         void updateActionButton(boolean isVisible, boolean isEnabled, ActionButtonDefinition<T> buttonDef);
 
         /**
-         * @return {@code true} if this action panel has at least one action button, {@code false} otherwise.
-         */
-        boolean hasActionButtons();
-
-        /**
          * Add a dividing line to the kebab menu.
          */
         void addDividerToKebab();
@@ -162,9 +157,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
     public void addComboActionButtonWithContexts(ActionButtonDefinition<T> buttonDef, List<ActionButtonDefinition<T>> subActions) {
         ActionButton newButton = getView().addDropdownComboActionButton(buttonDef, subActions, this);
         actionButtonDefinitions.add(buttonDef);
-        for (ActionButtonDefinition ab : subActions) {
-            actionButtonDefinitions.add(ab);
-        }
+        actionButtonDefinitions.addAll(subActions);
         initButton(buttonDef, newButton);
     }
 
@@ -174,8 +167,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
     }
 
     protected void updateActionButton(ActionButtonDefinition<T> buttonDef) {
-        boolean isVisible = buttonDef.isAccessible(getSelectedItems())
-                && buttonDef.isVisible(getSelectedItems());
+        boolean isVisible = buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems());
         boolean isEnabled = buttonDef.isEnabled(getSelectedItems());
         getView().updateActionButton(isVisible, isEnabled, buttonDef);
     }
@@ -192,13 +184,6 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
     void addSelectionChangeListener(IEventListener<EventArgs> itemSelectionChangeHandler) {
         dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
         dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
-    }
-
-    /**
-     * @return {@code true} if this action panel has at least one action button, {@code false} otherwise.
-     */
-    boolean hasActionButtons() {
-        return getView().hasActionButtons();
     }
 
     protected M getModel() {
