@@ -53,6 +53,9 @@ class Plugin(plugin.PluginBase):
         self._enabled = False
         self.uninstall_files = []
 
+    def _subjectComponentEscape(self, s):
+        return outil.escape(s, '/\\')
+
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
@@ -276,6 +279,11 @@ class Plugin(plugin.PluginBase):
                     for s in subject.as_text(
                         flags=XN_FLAG_SEP_MULTILINE,
                     ).splitlines()
+                ),
+                '--san=DNS:%s' % (
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.RenameEnv.FQDN],
+                    ),
                 ),
             ),
         )
