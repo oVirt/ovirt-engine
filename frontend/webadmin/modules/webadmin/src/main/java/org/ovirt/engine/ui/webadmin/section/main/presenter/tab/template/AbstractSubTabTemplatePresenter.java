@@ -17,7 +17,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabTemplatePresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<VmTemplate>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <VmTemplate, TemplateListModel, D, V, P> {
+        extends AbstractSubTabPresenter<VmTemplate, TemplateListModel, D, V, P> {
 
     public AbstractSubTabTemplatePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<TemplateListModel, D> modelProvider, TemplateMainSelectedItems selectedItems,

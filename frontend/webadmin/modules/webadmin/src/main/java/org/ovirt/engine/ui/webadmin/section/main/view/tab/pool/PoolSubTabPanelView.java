@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.pool;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
@@ -20,12 +21,14 @@ public class PoolSubTabPanelView extends AbstractSubTabPanelView implements Pool
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final PoolActionPanelPresenterWidget actionPanel;
     private final SimpleTabPanel tabPanel;
 
     @Inject
     public PoolSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel> breadCrumbs,
             PoolActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
+        this.actionPanel = actionPanel;
+        this.tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
         actionPanel.removeButton(actionPanel.getNewButtonDefinition());
     }
@@ -43,6 +46,11 @@ public class PoolSubTabPanelView extends AbstractSubTabPanelView implements Pool
     @Override
     protected AbstractTabPanel getTabPanel() {
         return tabPanel;
+    }
+
+    @Override
+    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+        return actionPanel;
     }
 
 }

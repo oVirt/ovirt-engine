@@ -82,21 +82,23 @@
        <Class name="org.ovirt.engine.ui.common.presenter.AddActionButton" />
        <Bug code="UuF"/>
      </Match>
+
        <!--
-        findbugs complains of unused field in class.
-        This is a GWT class and used to generate code
+        findbugs complain of using Boolean constructor instead of Boolean.valueOf
+        This class is GWT generated code
 
         findbugs reason:
-        UuF: Unused field (UUF_UNUSED_FIELD)
+        Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
        -->
      <Match>
-       <Class name="org.ovirt.engine.ui.common.presenter.AddKebabMenuListItem" />
-       <Bug code="UuF"/>
+       <Class name="org.ovirt.engine.ui.common.presenter.AddActionButtonEvent" />
+       <Method name="hashCode"/>
+       <Bug pattern="DM_BOOLEAN_CTOR"/>
      </Match>
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
-        This calss is GWT generated code
+        This class is GWT generated code
 
         findbugs reason:
         Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
@@ -109,7 +111,7 @@
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
-        This calss is GWT generated code
+        This class is GWT generated code
 
         findbugs reason:
         Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
@@ -122,7 +124,7 @@
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
-        This calss is GWT generated code
+        This class is GWT generated code
 
         findbugs reason:
         Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
@@ -260,7 +262,7 @@
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
-        This calss is GWT generated code
+        This class is GWT generated code
 
         findbugs reason:
         Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
@@ -273,7 +275,7 @@
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf
-        This calss is GWT generated code
+        This class is GWT generated code
 
         findbugs reason:
         Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)

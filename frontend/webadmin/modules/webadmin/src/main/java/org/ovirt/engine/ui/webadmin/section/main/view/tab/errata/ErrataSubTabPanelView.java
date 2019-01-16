@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.errata;
 
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
@@ -24,7 +25,7 @@ public class ErrataSubTabPanelView extends AbstractSubTabPanelView implements Er
     public ErrataSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel> breadCrumbs,
             DetailTabLayout detailTabLayout) {
         // No errata action panel.
-        tabPanel = new SimpleTabPanel(breadCrumbs, null, detailTabLayout);
+        this.tabPanel = new SimpleTabPanel(breadCrumbs, null, detailTabLayout);
         initWidget(getTabPanel());
     }
 
@@ -41,6 +42,11 @@ public class ErrataSubTabPanelView extends AbstractSubTabPanelView implements Er
     @Override
     protected AbstractTabPanel getTabPanel() {
         return tabPanel;
+    }
+
+    @Override
+    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+        return null;
     }
 
 }

@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabNetworkPresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<NetworkView>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <NetworkView, NetworkListModel, D, V, P> {
+        extends AbstractSubTabPresenter<NetworkView, NetworkListModel, D, V, P> {
 
     public AbstractSubTabNetworkPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<NetworkListModel, D> modelProvider, NetworkMainSelectedItems selectedItems,

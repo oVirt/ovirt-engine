@@ -17,7 +17,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabStoragePresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<StorageDomain>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <StorageDomain, StorageListModel, D, V, P> {
+        extends AbstractSubTabPresenter<StorageDomain, StorageListModel, D, V, P> {
 
     public AbstractSubTabStoragePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<StorageListModel, D> modelProvider, StorageMainSelectedItems selectedItems,

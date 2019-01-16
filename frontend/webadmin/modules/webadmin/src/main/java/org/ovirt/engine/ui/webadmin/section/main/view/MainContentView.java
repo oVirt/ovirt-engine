@@ -9,8 +9,8 @@ import com.google.inject.Inject;
 
 public class MainContentView extends AbstractView implements MainContentPresenter.ViewDef {
 
-    private final FlowPanel contentContainer = new FlowPanel();
     private final FlowPanel container = new FlowPanel();
+    private final FlowPanel contentContainer = new FlowPanel();
     private final FlowPanel overlayContainer = new FlowPanel();
 
     @Inject

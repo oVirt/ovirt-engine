@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public abstract class AbstractSubTabVnicProfilePresenter<D extends HasEntity<?>,
     V extends AbstractSubTabPresenter.ViewDef<VnicProfileView>, P extends TabContentProxyPlace<?>>
-        extends AbstractSubTabPresenter <VnicProfileView, VnicProfileListModel, D, V, P> {
+        extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel, D, V, P> {
 
     public AbstractSubTabVnicProfilePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<VnicProfileListModel, D> modelProvider, VnicProfileMainSelectedItems selectedItems,
