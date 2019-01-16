@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -186,7 +187,11 @@ public final class NetworkUtils {
     public static String getIpAddress(String url) {
         try {
             final URI uri = new URI(url);
-            return InetAddress.getByName(uri.getHost()).getHostAddress();
+            return Arrays.stream(InetAddress.getAllByName(uri.getHost()))
+                    .filter(inetAddress -> !inetAddress.isLinkLocalAddress())
+                    .findFirst()
+                    .map(InetAddress::getHostAddress)
+                    .orElse(null);
         } catch (URISyntaxException | UnknownHostException ex) {
             final String msg = "Failed to resolve ip from URL '{}'";
             log.warn(msg, " Details: '{}' ", url, ex.getCause());

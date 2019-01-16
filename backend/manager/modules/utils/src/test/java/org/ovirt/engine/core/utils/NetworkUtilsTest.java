@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
+import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
 
 @ExtendWith(RandomUtilsSeedingExtension.class)
 public class NetworkUtilsTest {
@@ -98,11 +100,21 @@ public class NetworkUtilsTest {
         return networkCluster;
     }
 
+    private boolean isIpv6Literal(String host) {
+        return StringUtils.countMatches(host, ":") > 1;
+    }
+
+    private String createUrl(String host) {
+        return String.format("https://%s/someting",
+                isIpv6Literal(host) ? String.format("[%s]", host) : host);
+    }
+
     @Test
     public void getIpAddressTest() {
-        final String IP_ADDRESS = "192.0.2.1";
-        final String URL = String.format("https://%s/someting", IP_ADDRESS);
-        assertEquals(IP_ADDRESS, NetworkUtils.getIpAddress(URL));
+        assertTrue(new IpAddressPredicate("192.0.2.1").test(NetworkUtils.getIpAddress(createUrl("192.0.2.1"))));
+        assertTrue(new IpAddressPredicate("2001:db8::1").test(NetworkUtils.getIpAddress(createUrl("2001:db8::1"))));
+        assertNull(NetworkUtils.getIpAddress(createUrl("fe80::1")));
+        assertNull(NetworkUtils.getIpAddress(createUrl("169.254.0.1")));
     }
 
     @Test
