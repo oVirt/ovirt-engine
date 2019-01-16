@@ -113,6 +113,7 @@ public class NetworkUtilsTest {
     public void getIpAddressTest() {
         assertTrue(new IpAddressPredicate("192.0.2.1").test(NetworkUtils.getIpAddress(createUrl("192.0.2.1"))));
         assertTrue(new IpAddressPredicate("2001:db8::1").test(NetworkUtils.getIpAddress(createUrl("2001:db8::1"))));
+        assertTrue(new IpAddressPredicate("2001:db8::1").test(NetworkUtils.getIpAddress(createUrl("2001:db8::1%1"))));
         assertNull(NetworkUtils.getIpAddress(createUrl("fe80::1")));
         assertNull(NetworkUtils.getIpAddress(createUrl("169.254.0.1")));
     }

@@ -187,11 +187,12 @@ public final class NetworkUtils {
     public static String getIpAddress(String url) {
         try {
             final URI uri = new URI(url);
-            return Arrays.stream(InetAddress.getAllByName(uri.getHost()))
+            final String ip = Arrays.stream(InetAddress.getAllByName(uri.getHost()))
                     .filter(inetAddress -> !inetAddress.isLinkLocalAddress())
                     .findFirst()
                     .map(InetAddress::getHostAddress)
                     .orElse(null);
+            return stripIpv6ZoneIndex(ip);
         } catch (URISyntaxException | UnknownHostException ex) {
             final String msg = "Failed to resolve ip from URL '{}'";
             log.warn(msg, " Details: '{}' ", url, ex.getCause());
