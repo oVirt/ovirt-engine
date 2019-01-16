@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.CONFIRM_CONNECTIVITY;
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.POLL;
+import static org.ovirt.engine.core.utils.NetworkUtils.hasIpv6PrimaryAddress;
+import static org.ovirt.engine.core.utils.network.predicate.IsDefaultRouteOnInterfacePredicate.isDefaultRouteOnInterfacePredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -641,6 +643,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return getParameters().getNetworkAttachments();
         }
 
+        if (hasIpv6PrimaryAddress(previousDefaultRouteNetworkAttachment)) {
+            previousDefaultRouteNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
+        }
+
         List<NetworkAttachment> extendedAttachments = getParameters().getNetworkAttachments();
         NetworkAttachment potentialyMissingAttachment = getPotentialyMissingAttachment(
                 currentDefaultRouteNetworkCluster == null ? null : currentDefaultRouteNetworkCluster.getNetworkId(),
@@ -682,7 +688,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private VdsNetworkInterface findPreviousDefaultRouteNic() {
         List<VdsNetworkInterface> existingNics = getExistingNics();
         return existingNics.stream()
-                .filter(VdsNetworkInterface::isIpv4DefaultRoute)
+                .filter(isDefaultRouteOnInterfacePredicate())
                 .findFirst()
                 .orElse(null);
     }
@@ -891,7 +897,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private void persistNetworkChanges(final VDS updatedHost) {
         TransactionSupport.executeInNewTransaction(() -> {
             UserConfiguredNetworkData userConfiguredNetworkData =
-                    new UserConfiguredNetworkData(getParameters().getNetworkAttachments(),
+                    new UserConfiguredNetworkData(getAttachmentsWithMissingUpdatedDefaultRoute(),
                             getParameters().getRemovedNetworkAttachments(),
                             applyUserConfiguredNics());
 

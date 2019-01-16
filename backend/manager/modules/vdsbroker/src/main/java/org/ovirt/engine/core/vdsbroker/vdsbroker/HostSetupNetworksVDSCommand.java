@@ -33,6 +33,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
     private static final String DEFAULT_ROUTE = "defaultRoute";
+    private static final String UNSPECIFIED_IPV6_ADDRESS = "::";
     private static final Set<Ipv6BootProtocol> IPV6_AUTOCONF_PROTOCOL_SET = EnumSet.of(AUTOCONF, POLY_DHCP_AUTOCONF);
     private static final Set<Ipv6BootProtocol> IPV6_DHCP_PROTOCOL_SET = EnumSet.of(DHCP, POLY_DHCP_AUTOCONF);
 
@@ -127,8 +128,18 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         opts.put(DHCPV6_AUTOCONF, IPV6_AUTOCONF_PROTOCOL_SET.contains(ipv6BootProtocol));
         if (Ipv6BootProtocol.STATIC_IP == ipv6BootProtocol) {
             putIfNotEmpty(opts, "ipv6addr", getIpv6Address(attachment));
-            putIfNotEmpty(opts, "ipv6gateway", attachment.getIpv6Gateway());
+            opts.put("ipv6gateway", selectIpv6Gateway(attachment));
         }
+    }
+
+    /**
+     * An Ipv6 gateway should be passed to vdsm only if the attachment is also the default route role network of the cluster.
+     * Otherwise, the gateway should be reset explicitly to 'unspecified' to guarantee that there is only one gateway on each
+     * host. This in turn ensures that there is a single ipv6 default route entry in the ipv6 routing tables of the host.
+     */
+    private String selectIpv6Gateway(HostNetwork attachment) {
+        boolean isIpv6DefaultRouteAttachment = attachment.isDefaultRoute() && attachment.getIpv6Gateway() != null;
+        return isIpv6DefaultRouteAttachment ? attachment.getIpv6Gateway() : UNSPECIFIED_IPV6_ADDRESS;
     }
 
     private String getIpv6Address(HostNetwork attachment) {

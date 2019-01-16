@@ -202,6 +202,25 @@ public final class NetworkUtils {
     }
 
     /**
+     * converts a string with an IPv4 or IPv6 address into an {@link InetAddress}
+     * object. if conversion is not possible returns null
+     *
+     * @param ipAddress string with an IPv4 or IPv6 address
+     * @return {@link InetAddress} object representing the specified ipAddress or null
+     */
+    public static InetAddress toInetAddressOrNull(String ipAddress) {
+        if (ipAddress == null) {
+            return null;
+        } else {
+            try {
+                return InetAddress.getByName(ipAddress);
+            } catch (UnknownHostException e) {
+                return null;
+            }
+        }
+    }
+
+    /**
      * returns whether the network has a role in the cluster
      *
      * @return whether the network has a role (display, migration or gluster) in the cluster
@@ -249,5 +268,9 @@ public final class NetworkUtils {
 
     public static String stripIpv6ZoneIndex(String ip) {
         return ip == null ? null : ip.lastIndexOf('%') < 0 ? ip : ip.substring(0, ip.lastIndexOf('%'));
+    }
+
+    public static boolean hasIpv6PrimaryAddress(NetworkAttachment a) {
+        return a != null && a.getIpConfiguration() != null && a.getIpConfiguration().getIpv6PrimaryAddress() != null;
     }
 }
