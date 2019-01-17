@@ -331,6 +331,7 @@ public class BackendVmsResource extends
 
         Guid clusterId = namedCluster(vm) ? getCluster(vm).getId() : asGuid(vm.getCluster().getId());
         ImportVmFromConfParameters parameters = new ImportVmFromConfParameters();
+        vmConfiguration.setVmtGuid(Guid.Empty);
         parameters.setVm(vmConfiguration);
         parameters.setClusterId(clusterId);
         if (initialization.isSetRegenerateIds()) {
