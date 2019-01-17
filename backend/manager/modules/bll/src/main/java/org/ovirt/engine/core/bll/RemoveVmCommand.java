@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveAllManagedBlockStorageDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
@@ -55,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -92,6 +94,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
 
     private List<CinderDisk> cinderDisks;
+
+    private List<ManagedBlockStorageDisk> managedBlockDisks;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -167,6 +171,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 unremovedDisks = removeVmImages(diskImages).getActionReturnValue();
             }
             unremovedDisks.addAll(removeCinderDisks());
+            unremovedDisks.addAll(removeManageBlockDisks());
             if (!unremovedDisks.isEmpty()) {
                 processUnremovedDisks(unremovedDisks);
                 return false;
@@ -247,7 +252,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         vmImages.addAll(DisksFilter.filterCinderDisks(vmDisks));
-        vmImages.addAll(DisksFilter.filterManagedBlockStorageDisks(vmDisks));
+        vmImages.addAll(getManagedBlockDisks());
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
@@ -402,6 +407,38 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
         return failedRemoveCinderDisks;
+    }
+
+    /**
+     * The following method will perform a removing of all managed block disks from vm
+     */
+    private Collection<ManagedBlockStorageDisk> removeManageBlockDisks() {
+        Collection<ManagedBlockStorageDisk> failedRemoveManagedBlockDisks;
+        List<ManagedBlockStorageDisk> managedBlockDisks = getManagedBlockDisks();
+        if (managedBlockDisks.isEmpty()) {
+            return Collections.emptyList();
+        }
+        RemoveAllManagedBlockStorageDisksParameters param =
+                new RemoveAllManagedBlockStorageDisksParameters(getVmId(), managedBlockDisks);
+        param.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
+                ActionType.RemoveAllManagedBlockStorageDisks,
+                withRootCommandInfo(param),
+                cloneContextAndDetachFromParent());
+        try {
+            failedRemoveManagedBlockDisks = future.get().getActionReturnValue();
+        } catch (InterruptedException | ExecutionException e) {
+            failedRemoveManagedBlockDisks = managedBlockDisks;
+            log.error("Exception", e);
+        }
+        return failedRemoveManagedBlockDisks;
+    }
+
+    private List<ManagedBlockStorageDisk> getManagedBlockDisks() {
+        if (managedBlockDisks == null) {
+            managedBlockDisks = DisksFilter.filterManagedBlockStorageDisks(getVm().getDiskMap().values());
+        }
+        return managedBlockDisks;
     }
 
     private List<CinderDisk> getCinderDisks() {
