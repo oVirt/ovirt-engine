@@ -27,7 +27,9 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -52,6 +54,12 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
+    @Inject
+    private ClusterDao clusterDao;
 
     @Override
     protected boolean validateInputs() {
@@ -134,6 +142,9 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         options.setSmartcardEnabled(getCachedVm().isSmartcardEnabled());
         if (getParameters().isSetTicket()) {
             options.setTicket(generateTicket());
+            if (isKernelFips()) {
+                options.setUsername(ConfigureConsoleOptionsParams.VNC_USERNAME_PREFIX + getCachedVm().getId());
+            }
         }
         options.setTitle(getCachedVm().getName());
         options.setToggleFullscreenHotKey(Config.getValue(ConfigValues.ConsoleToggleFullScreenKeys));
@@ -308,6 +319,14 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         return vdsDynamicDao.get(getCachedVm().getRunOnVds());
     }
 
+    protected boolean isKernelFips() {
+        return vdsStaticDao.get(getCachedVm().getRunOnVds()).isKernelCmdlineFips();
+    }
+
+    protected boolean isVncEncryptionEnabled() {
+        return clusterDao.getByName(getCachedVm().getClusterName()).isVncEncryptionEnabled();
+    }
+
     private String generateTicket() {
         SetVmTicketParameters parameters = new SetVmTicketParameters(
                 getParameters().getOptions().getVmId(),
@@ -337,7 +356,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         getQueryReturnValue().setExceptionString(EngineMessage.SETTING_VM_TICKET_FAILED.name());
     }
 
-    private String getVdsCertificateSubject() {
+    protected String getVdsCertificateSubject() {
         return backend.runInternalQuery(
                 QueryType.GetVdsCertificateSubjectByVmId,
                 new IdQueryParameters(getCachedVm().getId())).getReturnValue();
@@ -358,6 +377,12 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
                     QueryType.GetManagementInterfaceAddressByVmId,
                     new IdQueryParameters(getCachedVm().getId()));
             result = returnValue.getReturnValue();
+        } else if (getParameters().getOptions().getGraphicsType() == GraphicsType.VNC
+                   && (isKernelFips() || isVncEncryptionEnabled())) {
+            // If VNC encyption is enabled (at cluster level or because of FIPS mode)
+            // the console descriptor must contain host name,
+            // to match TLS certificate for connection
+            result = getCachedVm().getRunOnVdsName();
         }
 
         return result;

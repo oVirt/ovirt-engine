@@ -5,6 +5,8 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 
 public class ConfigureConsoleOptionsParams extends ConsoleOptionsParams {
 
+    public static final String VNC_USERNAME_PREFIX = "vnc-";
+
     boolean setTicket = false;
 
     private String engineBaseUrl;

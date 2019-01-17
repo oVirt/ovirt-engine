@@ -37,6 +37,10 @@ public class ConsoleDescriptorGenerator {
             configBuilder.append(generateSpicePart(options));
         }
 
+        if (options.getGraphicsType() == GraphicsType.VNC) {
+            configBuilder.append(generateVncPart(options));
+        }
+
         String remoteViewerSupportedVersions = options.getRemoteViewerSupportedVersions();
         String remoteViewerNewerVersionUrl = options.getRemoteViewerNewerVersionUrl();
         if (!StringHelper.isNullOrEmpty(remoteViewerSupportedVersions) && !StringHelper.isNullOrEmpty(remoteViewerNewerVersionUrl)) {
@@ -100,6 +104,16 @@ public class ConsoleDescriptorGenerator {
 
         if (!StringHelper.isNullOrEmpty(options.getSslChanels())) {
             configBuilder.append("\nsecure-channels=").append(formatSecureChannels(options.getSslChanels()));
+        }
+
+        return configBuilder.toString();
+    }
+
+    private static String generateVncPart(ConsoleOptions options) {
+        StringBuilder configBuilder = new StringBuilder();
+
+        if (!StringHelper.isNullOrEmpty(options.getUsername())) {
+            configBuilder.append("\nusername=").append(options.getUsername());
         }
 
         return configBuilder.toString();

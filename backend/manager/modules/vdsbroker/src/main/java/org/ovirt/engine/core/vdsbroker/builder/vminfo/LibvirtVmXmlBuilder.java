@@ -1621,8 +1621,11 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("port", String.valueOf(LIBVIRT_PORT_AUTOSELECT));
         writer.writeAttributeString("autoport", "yes");
         // TODO: defaultMode
-        writer.writeAttributeString("passwd", "*****");
-        writer.writeAttributeString("passwdValidTo", "1970-01-01T00:00:01");
+        if (graphicsType == GraphicsType.SPICE
+                || /* VNC && */ !vmInfoBuildUtils.isKernelFipsMode(hostStatisticsSupplier.get().getId())) {
+            writer.writeAttributeString("passwd", "*****");
+            writer.writeAttributeString("passwdValidTo", "1970-01-01T00:00:01");
+        }
 
         Network displayNetwork = vmInfoBuildUtils.getDisplayNetwork(vm);
         if (displayNetwork == null) {

@@ -132,6 +132,8 @@ public class ConfigureConsoleOptionsQueryTest extends
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
         doReturn(null).when(getQuery()).getHost();
+        doReturn(false).when(getQuery()).isKernelFips();
+        doReturn(false).when(getQuery()).isVncEncryptionEnabled();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
@@ -154,11 +156,37 @@ public class ConfigureConsoleOptionsQueryTest extends
         VdsDynamic vds = new VdsDynamic();
         vds.setVncEncryptionEnabled(true);
         doReturn(vds).when(getQuery()).getHost();
+        doReturn(false).when(getQuery()).isKernelFips();
+        doReturn(false).when(getQuery()).isVncEncryptionEnabled();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
         ConsoleOptions options = getQuery().getQueryReturnValue().getReturnValue();
         assertTrue(options.isUseSsl());
+    }
+
+    @Test
+    public void shouldFillUsernameInFipsMode() {
+        when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.VNC));
+        when(getQueryParameters().isSetTicket()).thenReturn(true);
+        mockSessionDataContainer();
+        mockGetCaCertificate();
+        doReturn(mockVm(GraphicsType.VNC)).when(getQuery()).getCachedVm();
+
+        ActionReturnValue result = new ActionReturnValue();
+        result.setSucceeded(true);
+        result.setActionReturnValue("nbusr123");
+        doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
+
+        VdsDynamic vds = new VdsDynamic();
+        vds.setVncEncryptionEnabled(true);
+        doReturn(vds).when(getQuery()).getHost();
+        doReturn(true).when(getQuery()).isKernelFips();
+
+        getQuery().getQueryReturnValue().setSucceeded(true);
+        getQuery().executeQueryCommand();
+        ConsoleOptions options = getQuery().getQueryReturnValue().getReturnValue();
+        assertEquals("vnc-00000000-0000-0000-0000-000000000000", options.getUsername());
     }
 
     @Test
@@ -274,6 +302,7 @@ public class ConfigureConsoleOptionsQueryTest extends
         vm.setId(Guid.Empty);
         vm.getGraphicsInfos().put(graphicsType, new GraphicsInfo().setIp("host").setPort(5901));
         vm.setStatus(VMStatus.Up);
+        vm.setRunOnVdsName("some.host");
         return vm;
     }
 

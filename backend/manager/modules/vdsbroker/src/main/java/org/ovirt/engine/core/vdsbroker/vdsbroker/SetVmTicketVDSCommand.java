@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -49,6 +50,9 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
         Map<String, String> params = new HashMap<>();
         params.put("userName", getParameters().getUserName());
         params.put("userId", getParameters().getUserId().toString());
+        Boolean fips = getAndSetVdsStatic().isKernelCmdlineFips();
+        params.put("fips", fips.toString());
+        params.put("vncUsername", ConfigureConsoleOptionsParams.VNC_USERNAME_PREFIX + getParameters().getVmId());
         return params;
     }
 

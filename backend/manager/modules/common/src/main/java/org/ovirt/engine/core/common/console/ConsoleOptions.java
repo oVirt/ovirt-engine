@@ -21,6 +21,7 @@ public class ConsoleOptions implements Serializable{
     private String host;
     private Integer port;
     private String ticket;
+    private String username;
     private String title;
     private String vmName;
     private boolean remapCtrlAltDelete;
@@ -123,6 +124,10 @@ public class ConsoleOptions implements Serializable{
         return ticket;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void setHost(String host) {
         this.host = host;
     }
@@ -133,6 +138,10 @@ public class ConsoleOptions implements Serializable{
 
     public void setTicket(String ticket) {
         this.ticket = ticket;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isRemapCtrlAltDelete() {
