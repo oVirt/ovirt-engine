@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
@@ -199,6 +200,8 @@ public abstract class OvfOvirtReader extends OvfReader {
                             String cinderVolumeType = node.attributes.get("ovf:cinder_volume_type").getValue();
                             disk.setCinderVolumeType(cinderVolumeType);
                         }
+                    } else if (diskStorageType.equals(DiskStorageType.MANAGED_BLOCK_STORAGE.name())) {
+                        disk = new ManagedBlockStorageDisk();
                     }
                 }
             }
