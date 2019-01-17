@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveAllManagedBlockStorageDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -280,11 +282,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         }
         List<Disk> templateImages = diskDao.getAllForVm(getVmTemplateId());
         final List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(templateImages);
+        final List<ManagedBlockStorageDisk> managedBlockDisks = DisksFilter.filterManagedBlockStorageDisks(templateImages);
         final List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateImages, ONLY_ACTIVE);
         // Set VM to lock status immediately, for reducing race condition.
         vmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 
-        if (!diskImages.isEmpty() || !cinderDisks.isEmpty()) {
+        if (!diskImages.isEmpty() || !cinderDisks.isEmpty() || !managedBlockDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {
                 if (!diskImages.isEmpty() && removeVmTemplateImages()) {
                     vmHandler.removeVmInitFromDB(getVmTemplate());
@@ -292,6 +295,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
                 }
                 if (!cinderDisks.isEmpty()) {
                     removeCinderDisks(cinderDisks);
+                    setSucceeded(true);
+                }
+                if (!managedBlockDisks.isEmpty()) {
+                    removeManagedBlockDisks(managedBlockDisks);
                     setSucceeded(true);
                 }
                 return null;
@@ -331,6 +338,23 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         RemoveAllVmCinderDisksParameters removeParam = new RemoveAllVmCinderDisksParameters(getVmTemplateId(), cinderDisks);
         Future<ActionReturnValue> future =
                 commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveAllVmCinderDisks,
+                        withRootCommandInfo(removeParam),
+                        cloneContextAndDetachFromParent());
+        try {
+            future.get().getActionReturnValue();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Exception", e);
+        }
+    }
+
+    /**
+     * The following method performs a removing of all managed block disks from vm.
+     */
+    private void removeManagedBlockDisks(List<ManagedBlockStorageDisk> managedBlockDisks) {
+        RemoveAllManagedBlockStorageDisksParameters removeParam =
+                new RemoveAllManagedBlockStorageDisksParameters(getVmTemplateId(), managedBlockDisks);
+        Future<ActionReturnValue> future =
+                commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveAllManagedBlockStorageDisks,
                         withRootCommandInfo(removeParam),
                         cloneContextAndDetachFromParent());
         try {
