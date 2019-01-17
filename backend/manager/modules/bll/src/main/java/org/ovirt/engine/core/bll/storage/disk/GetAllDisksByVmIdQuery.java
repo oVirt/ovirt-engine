@@ -39,7 +39,8 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
         List<Disk> disks = new ArrayList<>();
         for (Disk disk : allDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE
-                    || disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                    || disk.getDiskStorageType() == DiskStorageType.CINDER
+                    || disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId()));
             }
