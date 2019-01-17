@@ -2,4 +2,6 @@
   remote_user: root
 
   roles:
-    - ovirt-host-upgrade
+    - name: ovirt-host-upgrade
+    - name: ovirt-host-deploy-vnc-certificates
+      when: not ansible_check_mode
