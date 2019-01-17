@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -75,34 +77,39 @@ public class AffinityRulesEnforcementManager implements BackendService {
         try {
             log.debug("Affinity Rules Enforcement Manager interval reached.");
 
-            final List<VM> vmCandidates = new ArrayList<>();
+            final List<Iterator<VM>> vmCandidatesPerCluster = new ArrayList<>();
             for (Cluster cluster : clusterDao.getWithoutMigratingVms()) {
                 if (!cluster.isInUpgradeMode()) {
-                    final VM candidate = rulesEnforcer.chooseNextVmToMigrate(cluster);
-                    if (candidate != null) {
-                        vmCandidates.add(candidate);
+                    vmCandidatesPerCluster.add(rulesEnforcer.chooseVmsToMigrate(cluster));
+                }
+            }
+
+            // Migrate 1 VM from each cluster
+            for (Iterator<VM> candidates : vmCandidatesPerCluster) {
+                while (candidates.hasNext()) {
+                    VM vm = candidates.next();
+                    if (migrateVM(vm)) {
+                        break;
                     }
                 }
             }
 
-            // Trigger migrations
-            for (VM vm : vmCandidates) {
-                migrateVM(vm);
-            }
         } catch (Throwable t) {
             log.error("Exception in refreshing affinity rules: {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
         }
     }
 
-    protected void migrateVM(final VM vmToMigrate) {
+    protected boolean migrateVM(final VM vmToMigrate) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate.getId());
 
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_AFFINITY_ENFORCEMENT));
 
-        backend.runInternalAction(ActionType.BalanceVm,
+        ActionReturnValue res = backend.runInternalAction(ActionType.BalanceVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());
+
+        return res.getSucceeded();
     }
 
     private void scheduleJobs(long regularInterval, long initialInterval) {

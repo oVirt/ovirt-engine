@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.businessentities.VMStatus.Up;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -111,19 +111,23 @@ public class AffinityRulesEnforcerTest {
     public void shouldNotTryToMigrateWhenNotSchedulable() {
         when(schedulingManager.canSchedule(eq(cluster), any(VM.class), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4));
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+        assertThat(getVmsToMigrate()).isEmpty();
         affinityGroups.clear();
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
                 Arrays.asList(host2, host3), vm1));
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+        assertThat(getVmsToMigrate()).isEmpty();
     }
 
     @Test
-    public void shouldMigrateFromHostWithLessHosts() {
+    public void shouldFirstMigrateFromHostWithLessVms() {
         AffinityGroup positiveGroup =
                 createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4);
         affinityGroups.add(positiveGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
+
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm4),
+                Arrays.asList(vm1, vm2)
+        ));
     }
 
     @Test
@@ -134,8 +138,9 @@ public class AffinityRulesEnforcerTest {
                 vm2, vm3, vm6);
         affinityGroups.add(negativeUnsatisfiedGroup);
         affinityGroups.add(positiveSatisfiedGroup);
-        VM candidate = enforcer.chooseNextVmToMigrate(cluster);
-        assertThat(candidate).isIn(vm2, vm3);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm2, vm3)
+        ));
 
         positiveSatisfiedGroup =
                 createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
@@ -148,14 +153,14 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.clear();
         affinityGroups.add(negativeUnsatisfiedGroup);
         affinityGroups.add(positiveSatisfiedGroup);
-
-        candidate = enforcer.chooseNextVmToMigrate(cluster);
-        assertThat(candidate).isIn(vm5, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm5, vm6)
+        ));
     }
 
     @Test
     public void shouldDoNothingWithoutGroups() {
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+        assertThat(getVmsToMigrate()).isEmpty();
     }
 
     @Test
@@ -164,7 +169,7 @@ public class AffinityRulesEnforcerTest {
         AffinityGroup negativeGroup = createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, vm1, vm4);
         affinityGroups.add(positiveGroup);
         affinityGroups.add(negativeGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+        assertThat(getVmsToMigrate()).isEmpty();
 
         positiveGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE, true,
                 Arrays.asList(host1), vm1, vm2, vm3);
@@ -174,16 +179,23 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.clear();
         affinityGroups.add(positiveGroup);
         affinityGroups.add(negativeGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
+        assertThat(getVmsToMigrate()).isEmpty();
     }
 
     @Test
     public void shouldMigrateMoreThanOneHost() {
-        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3,
-                vm4, vm5, vm6));
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm4, vm5, vm6));
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm4),
+                Arrays.asList(vm5, vm6),
+                Arrays.asList(vm1, vm2, vm3)
+        ));
+
         vm4.setRunOnVds(host1.getId());
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm5, vm6),
+                Arrays.asList(vm1, vm2, vm3, vm4)
+        ));
     }
 
     @Test
@@ -192,38 +204,46 @@ public class AffinityRulesEnforcerTest {
         AffinityGroup smallGroup = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm2, vm5);
         affinityGroups.add(bigGroup);
         affinityGroups.add(smallGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm1, vm4, vm6),
+                Arrays.asList(vm2, vm5)
+        ));
 
         affinityGroups.clear();
         affinityGroups.add(smallGroup);
         affinityGroups.add(bigGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
-
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm1, vm4, vm6),
+                Arrays.asList(vm2, vm5)
+        ));
     }
 
     @Test
     public void shouldFixVmWithMostViolationsFirst() {
-        AffinityGroup groupA =
-                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
-                                .POSITIVE, true,
-                        Arrays.asList(host2), vm1, vm2);
-        AffinityGroup groupB =
-                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
-                                .POSITIVE, true,
-                        Arrays.asList(host3), vm1, vm2);
-        AffinityGroup groupC =
-                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule
-                        .POSITIVE, true, Arrays.asList(host1), vm4);
+        AffinityGroup groupA = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE,
+                true, Arrays.asList(host2), vm1, vm2);
+        AffinityGroup groupB = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE,
+                true, Arrays.asList(host3), vm1, vm2);
+        AffinityGroup groupC = createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, EntityAffinityRule.POSITIVE,
+                true, Arrays.asList(host1), vm4);
+
         affinityGroups.clear();
         affinityGroups.add(groupA);
         affinityGroups.add(groupB);
         affinityGroups.add(groupC);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm4),
+                Arrays.asList(vm1, vm2)
+        ));
+
         affinityGroups.clear();
         affinityGroups.add(groupB);
         affinityGroups.add(groupC);
         affinityGroups.add(groupA);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isEqualTo(vm4);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm4),
+                Arrays.asList(vm1, vm2)
+        ));
     }
 
     @Test
@@ -241,12 +261,18 @@ public class AffinityRulesEnforcerTest {
                 createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm2, vm5);
         affinityGroups.add(lowIdGroup);
         affinityGroups.add(highIdGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm2, vm5);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm2, vm5),
+                Arrays.asList(vm1, vm4)
+        ));
 
         affinityGroups.clear();
         affinityGroups.add(highIdGroup);
         affinityGroups.add(lowIdGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm2, vm5);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm2, vm5),
+                Arrays.asList(vm1, vm4)
+        ));
 
         // Bigger groups should always come first
         affinityGroups.clear();
@@ -254,7 +280,10 @@ public class AffinityRulesEnforcerTest {
                 createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm4, vm6);
         affinityGroups.add(highIdGroup);
         affinityGroups.add(biggestIdGroup);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm4, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm1, vm4, vm6),
+                Arrays.asList(vm2, vm5)
+        ));
     }
 
     @Test
@@ -264,16 +293,14 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3,
                 vm5, vm6));
 
-        // Say no to the first scheduling attempt and yes to the second one, to force the enforcer
-        // to check every possible candidate
-        when(schedulingManager.canSchedule(eq(cluster), any(VM.class), any(), any(), any(), any())).thenReturn(Collections.emptyList(), Arrays.asList(host1));
+        // Say no when scheduling vm6
+        when(schedulingManager.canSchedule(eq(cluster), eq(vm6), any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
         // There is no fixed order so we only know that one of those VMs will be selected for migration
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
-
-        // Verify that the enforcer tried to schedule both candidate VMs.
-        verify(schedulingManager).canSchedule(eq(cluster), eq(vm5), any(), any(), any(), any());
-        verify(schedulingManager).canSchedule(eq(cluster), eq(vm6), any(), any(), any(), any());
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm5),
+                Arrays.asList(vm1, vm2, vm3)
+        ));
     }
 
     @Test
@@ -283,7 +310,9 @@ public class AffinityRulesEnforcerTest {
         // vm1 cannot be scheduled
         when(schedulingManager.canSchedule(eq(cluster), eq(vm1), any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm5, vm6)
+        ));
 
         affinityGroups.clear();
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm4, vm5, vm6));
@@ -292,7 +321,9 @@ public class AffinityRulesEnforcerTest {
         when(schedulingManager.canSchedule(eq(cluster), ArgumentMatchers.<VM>argThat(vm -> Arrays.asList(vm4, vm5, vm6).contains(vm)),
                 any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm2, vm3)
+        ));
     }
 
     @Test
@@ -490,11 +521,15 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm5, vm6));
 
         vm6.setOrigin(OriginType.HOSTED_ENGINE);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm1, vm2, vm3)
+        ));
 
         vm6.setOrigin(OriginType.RHEV);
         vm3.setOrigin(OriginType.HOSTED_ENGINE);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm5, vm6)
+        ));
     }
 
     @Test
@@ -502,11 +537,15 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm5, vm6));
 
         vm6.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm1, vm2, vm3)
+        ));
 
         vm6.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm3.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm5, vm6)
+        ));
     }
 
     @Test
@@ -518,7 +557,9 @@ public class AffinityRulesEnforcerTest {
                 .build()
         );
 
-        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm4, vm5);
+        assertVmsToMigrateGroups(Arrays.asList(
+                Arrays.asList(vm4, vm5)
+        ));
     }
 
     private Cluster createCluster() {
@@ -559,8 +600,12 @@ public class AffinityRulesEnforcerTest {
         return ag;
     }
 
-    private AffinityGroup createAffinityGroup(Cluster cluster, EntityAffinityRule vmAffinityRule, EntityAffinityRule
-            vdsRule, boolean isVdsEnforcing, List<VDS> vdsList, VM... vmList) {
+    private AffinityGroup createAffinityGroup(Cluster cluster,
+            EntityAffinityRule vmAffinityRule,
+            EntityAffinityRule vdsRule,
+            boolean isVdsEnforcing,
+            List<VDS> vdsList,
+            VM... vmList) {
         AffinityGroup ag = createAffinityGroup(cluster, vmAffinityRule, vmList);
         ag.setVdsIds(vdsList.stream().map(VDS::getId).collect(Collectors.toList()));
         ag.setVdsAffinityRule(vdsRule);
@@ -579,5 +624,27 @@ public class AffinityRulesEnforcerTest {
             }
             return selectedVms;
         }).when(vmDao).getVmsByIds(any());
+    }
+
+    private List<VM> getVmsToMigrate() {
+        List<VM> res = new ArrayList<>();
+        enforcer.chooseVmsToMigrate(cluster).forEachRemaining(res::add);
+        return res;
+    }
+
+    private void assertVmsToMigrateGroups(List<List<VM>> groups) {
+        int size = groups.stream()
+                .mapToInt(Collection::size)
+                .sum();
+
+        List<VM> vmsToMigrate = getVmsToMigrate();
+        assertThat(vmsToMigrate).hasSize(size);
+
+        int vmIndex = 0;
+        for (List<VM> group : groups) {
+            int groupSize = group.size();
+            assertThat(vmsToMigrate.subList(vmIndex, vmIndex + groupSize)).containsOnlyElementsOf(group);
+            vmIndex += groupSize;
+        }
     }
 }

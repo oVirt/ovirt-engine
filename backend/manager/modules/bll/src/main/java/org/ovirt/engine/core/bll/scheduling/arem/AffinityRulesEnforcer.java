@@ -9,14 +9,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils.AffinityGroupConflicts;
@@ -26,10 +28,12 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.ovirt.engine.core.utils.Pipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,22 +57,35 @@ public class AffinityRulesEnforcer {
     /**
      * Choose a valid VM for migration by applying affinity rules in the following order:
      * <p>
-     * 1.VM to Hosts Affinity
-     * 2.VM to VM affinity
+     * 1. Hard VM to Hosts Affinity
+     * 2. Hard VM to VM affinity
+     * 3. Soft VM to Hosts Affinity
      *
      * @param cluster current cluster
-     * @return Valid VM for migration, null otherwise
+     * @return Iterator returning valid VMs for migration
      */
-    public VM chooseNextVmToMigrate(Cluster cluster) {
+    public Iterator<VM> chooseVmsToMigrate(Cluster cluster) {
         List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId());
         List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
         allAffinityGroups.addAll(affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
 
-        Optional<VM> vm = chooseNextVmToMigrateFromVMsToHostsAffinity(cluster, allAffinityGroups);
-        if (vm.isPresent()) {
-            return vm.get();
-        }
-        return chooseNextVmToMigrateFromVMsAffinity(cluster, allAffinityGroups);
+        Cache cache = new Cache();
+
+        Pair<Iterable<Guid>, Iterable<Guid>> vmToHostConflicts =
+                getCandidateVmsFromVmsToHostAffinity(allAffinityGroups, cache);
+
+        return Pipeline
+                // Check hard VM to host affinity
+                .create(() -> vmToHostConflicts.getFirst().iterator())
+                // Check hard VM to VM affinity
+                .append(() -> getCandidateVmsFromVmToVmAffinity(allAffinityGroups, cache))
+                // Check soft VM to host affinity
+                .append(() -> vmToHostConflicts.getSecond().iterator())
+
+                .distinct()
+                .map(cache::getVm)
+                .filter(vm -> isVmMigrationValid(cluster, vm))
+                .iterator();
     }
 
     private List<AffinityGroup> affinityGroupsFromLabels(List<Label> labels, Guid clusterId) {
@@ -98,73 +115,43 @@ public class AffinityRulesEnforcer {
      * 1.Candidate VMs violating enforcing affinity to hosts.
      * 2.Candidate VMs violating non enforcing affinity to hosts.
      *
-     * @param cluster           Current cluster
      * @param allAffinityGroups All affinity groups for the current cluster.
-     * @return Valid VM for migration by VM to host affinity, empty result otherwise
+     * @return Pair of streams. The first contains VMs breaking hard vm to host affinity,
+     *   the second contains VMs breaking soft vm to host affinity.
      */
-    private Optional<VM> chooseNextVmToMigrateFromVMsToHostsAffinity(Cluster cluster, List<AffinityGroup>
-            allAffinityGroups) {
-
+    private Pair<Iterable<Guid>, Iterable<Guid>> getCandidateVmsFromVmsToHostAffinity(List<AffinityGroup> allAffinityGroups, Cache cache) {
         List<AffinityGroup> allVmToHostsAffinityGroups = getAllAffinityGroupsForVMsToHostsAffinity(allAffinityGroups);
-
         if (allVmToHostsAffinityGroups.isEmpty()) {
-            return Optional.empty();
-        }
-        Map<Guid, VM> vmsMap = getRunningVMsMap(allVmToHostsAffinityGroups);
-
-        List<Guid> candidateVMs =
-                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, true);
-
-        if (candidateVMs.isEmpty()) {
-            log.debug("No vm to hosts hard-affinity group violation detected");
-        } else {
-            logVmToHostConflicts(allVmToHostsAffinityGroups);
+            return new Pair<>(IteratorUtils::emptyIterator,  IteratorUtils::emptyIterator);
         }
 
-        for (Guid id : candidateVMs) {
-            VM candidateVM = vmsMap.get(id);
-            if (isVmMigrationValid(cluster, candidateVM)) {
-                return Optional.of(candidateVM);
-            }
-        }
-
-        candidateVMs =
-                getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, false);
-
-        if (candidateVMs.isEmpty()) {
-            log.debug("No vm to hosts soft-affinity group violation detected");
-        }
-
-        for (Guid id : candidateVMs) {
-            VM candidateVM = vmsMap.get(id);
-            if (isVmMigrationValid(cluster, candidateVM)) {
-                return Optional.of(candidateVM);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * Create a VM id to VM object map from the affinity groups list input.
-     * The map will contain only running VMs and each VM will appear only once.
-     * <p>
-     * Example: Given affinity group 1 containing VM ids {1,2,3} and affinity group 2 containing VM ids {3,4}
-     * the resultant map would be {(1,Vm1),(2,Vm2),(3,Vm3),(4,Vm4)}.
-     *
-     * @param allVMtoHostsAffinityGroups All VM to hosts affinity groups for the current cluster
-     * @return VMs map with key: id, value: associated vm object
-     */
-    private Map<Guid, VM> getRunningVMsMap(List<AffinityGroup> allVMtoHostsAffinityGroups) {
-        List<Guid> vmIds = allVMtoHostsAffinityGroups.stream()
+        List<Guid> vmIds = allVmToHostsAffinityGroups.stream()
                 .map(AffinityGroup::getVmIds)
                 .flatMap(List::stream)
                 .distinct()
                 .collect(Collectors.toList());
 
-        return vmDao.getVmsByIds(vmIds).stream()
-                .filter(VM::isRunning)
-                .collect(Collectors.toMap(VM::getId, vm -> vm));
+        cache.fetchVms(vmIds);
+
+        Iterable<Guid> vmsBreakingHardAffinity = () -> {
+            List<Guid> candidateVMs = getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, cache, true);
+            if (candidateVMs.isEmpty()) {
+                log.debug("No vm to hosts hard-affinity group violation detected");
+            } else {
+                logVmToHostConflicts(allVmToHostsAffinityGroups);
+            }
+            return candidateVMs.iterator();
+        };
+
+        Iterable<Guid> vmsBreakingSoftAffinity = () -> {
+            List<Guid> candidateVMs = getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, cache, false);
+            if (candidateVMs.isEmpty()) {
+                log.debug("No vm to hosts soft-affinity group violation detected");
+            }
+            return candidateVMs.iterator();
+        };
+
+        return new Pair<>(vmsBreakingHardAffinity, vmsBreakingSoftAffinity);
     }
 
     /**
@@ -173,12 +160,13 @@ public class AffinityRulesEnforcer {
      * sorted according to the number of violations (descending).
      *
      * @param allVMtoHostsAffinityGroups VM to Host affinity groups.
-     * @param vmsMap                     VMs map with key: vm id , value: associated vm object.
+     * @param cache                   cache of VMs
      * @param isVdsAffinityEnforcing     true - Hard affinity constraint, false - Soft affinity constraint.
      * @return list of candidate VMs for migration by VM to Host affinities.
      */
     private List<Guid> getVmToHostsAffinityGroupCandidates(List<AffinityGroup> allVMtoHostsAffinityGroups,
-            Map<Guid, VM> vmsMap, boolean isVdsAffinityEnforcing) {
+            Cache cache,
+            boolean isVdsAffinityEnforcing) {
         Map<Guid, Integer> vmToHostsAffinityMap = new HashMap<>();
 
         // Iterate over all affinity groups and check the currently running
@@ -190,9 +178,8 @@ public class AffinityRulesEnforcer {
                     Set<Guid> affHosts = new HashSet<>(g.getVdsIds());
                     g.getVmIds()
                             .forEach(vm_id -> {
-                                VM vm = vmsMap.get(vm_id);
-
-                                if (vm == null) {
+                                VM vm = cache.getVm(vm_id);
+                                if (vm == null || vm.getRunOnVds() == null) {
                                     return;
                                 }
 
@@ -241,8 +228,7 @@ public class AffinityRulesEnforcer {
         }
     }
 
-    private VM chooseNextVmToMigrateFromVMsAffinity(Cluster cluster, List<AffinityGroup> allAffinityGroups) {
-
+    private Iterator<Guid> getCandidateVmsFromVmToVmAffinity(List<AffinityGroup> allAffinityGroups, Cache cache) {
         List<AffinityGroup> allHardAffinityGroups = getAllHardAffinityGroupsForVMsAffinity(allAffinityGroups);
         Set<Set<Guid>> unifiedPositiveAffinityGroups = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(
                 allHardAffinityGroups);
@@ -262,49 +248,37 @@ public class AffinityRulesEnforcer {
             allVms.addAll(group.getVmIds());
         }
 
-        Map<Guid, VM> vmsMap = vmDao.getVmsByIds(allVms).stream()
-                .collect(Collectors.toMap(VM::getId, vm -> vm));
+        cache.fetchVms(allVms);
 
-        // There is no need to migrate when no collision was detected
-        List<AffinityGroup> violatedAffinityGroups = checkForVMAffinityGroupViolations(unifiedAffinityGroups, vmsMap.values());
+        List<VM> vms = allVms.stream()
+                .map(cache::getVm)
+                .collect(Collectors.toList());
+
+        List<AffinityGroup> violatedAffinityGroups = checkForVMAffinityGroupViolations(unifiedAffinityGroups, vms);
         if (violatedAffinityGroups.isEmpty()) {
-            log.debug("No affinity group collision detected for cluster {}. Standing by.", cluster.getId());
-            return null;
+            log.debug("No VM affinity group collision detected.");
+            return IteratorUtils.emptyIterator();
         }
 
         // Find a VM that is breaking the affinityGroup and can be theoretically migrated
         // - start with bigger Affinity Groups
         violatedAffinityGroups.sort(Collections.reverseOrder(new AffinityGroupComparator()));
 
-        for (AffinityGroup affinityGroup : violatedAffinityGroups) {
-            final List<List<Guid>> candidateVmGroups;
-
-            if (affinityGroup.isVmPositive()) {
-                candidateVmGroups = groupVmsViolatingPositiveAg(affinityGroup, vmsMap);
-                log.info("Positive affinity group violation detected");
-            } else if (affinityGroup.isVmNegative()) {
-                candidateVmGroups = groupVmsViolatingNegativeAg(affinityGroup, vmsMap);
-                log.info("Negative affinity group violation detected");
-            } else {
-                continue;
-            }
-
-            // Look for a valid VM to migrate on all hosts
-            for(List<Guid> group : candidateVmGroups) {
-                Collections.shuffle(group);
-
-                for(Guid vmId : group) {
-                    VM vm = vmsMap.get(vmId);
-                    if (isVmMigrationValid(cluster, vm)) {
-                        return vm;
+        return violatedAffinityGroups.stream()
+                .flatMap(affinityGroup -> {
+                    if (affinityGroup.isVmPositive()) {
+                        log.info("Positive affinity group violation detected");
+                        return groupVmsViolatingPositiveAg(affinityGroup, cache);
+                    } else {
+                        log.info("Negative affinity group violation detected");
+                        return groupVmsViolatingNegativeAg(affinityGroup, cache);
                     }
-                }
-            }
-
-        }
-
-        // No possible migration..
-        return null;
+                })
+                .flatMap(group -> {
+                    Collections.shuffle(group);
+                    return group.stream();
+                })
+                .iterator();
     }
 
     /**
@@ -357,14 +331,13 @@ public class AffinityRulesEnforcer {
      * and sort groups by size from largest to smallest
      *
      * @param affinityGroup broken affinity rule
-     * @param vmsMap        VM id to VM assignments
-     * @return a list of groups of vms which are candidates for migration
+     * @param cache      cache of VMs
+     * @return a stream of groups of vms which are candidates for migration
      */
-    private List<List<Guid>> groupVmsViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, VM> vmsMap) {
-        return groupVmsByHostFiltered(vmsMap, affinityGroup.getVmIds()).values().stream()
+    private Stream<List<Guid>> groupVmsViolatingNegativeAg(AffinityGroup affinityGroup, Cache cache) {
+        return groupVmsByHostFiltered(cache, affinityGroup.getVmIds()).values().stream()
                 .filter(s -> s.size() > 1)
-                .sorted(Comparator.<List>comparingInt(List::size).reversed())
-                .collect(Collectors.toList());
+                .sorted(Comparator.<List>comparingInt(List::size).reversed());
     }
 
     /**
@@ -374,22 +347,21 @@ public class AffinityRulesEnforcer {
      * Ex.: Host1: [A, B, C, D]  Host2: [E, F]  -> returns [[E,F],[A,B,C,D]]
      *
      * @param affinityGroup broken affinity group
-     * @param vmsMap        VM id to VM assignments
-     * @return a list of groups of vms which are candidates for migration
+     * @param cache      cache of VMs
+     * @return a stream of groups of vms which are candidates for migration
      */
-    private List<List<Guid>> groupVmsViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, VM> vmsMap) {
-        return groupVmsByHostFiltered(vmsMap, affinityGroup.getVmIds()).values().stream()
-                .sorted(Comparator.comparingInt(List::size))
-                .collect(Collectors.toList());
+    private Stream<List<Guid>> groupVmsViolatingPositiveAg(AffinityGroup affinityGroup, Cache cache) {
+        return groupVmsByHostFiltered(cache, affinityGroup.getVmIds()).values().stream()
+                .sorted(Comparator.comparingInt(List::size));
     }
 
-    private Map<Guid, List<Guid>> groupVmsByHostFiltered(Map<Guid, VM> vmsMap, List<Guid> vms) {
+    private Map<Guid, List<Guid>> groupVmsByHostFiltered(Cache cache, List<Guid> vms) {
         // Hosts containing nonmigratable VMs will be removed from result
         Set<Guid> removedHosts = new HashSet<>();
 
         Map<Guid, List<Guid>> res = new HashMap<>();
         for(Guid vmId : vms) {
-            VM vm = vmsMap.get(vmId);
+            VM vm = cache.getVm(vmId);
 
             Guid host = vm.getRunOnVds();
             if (host == null) {
@@ -500,6 +472,26 @@ public class AffinityRulesEnforcer {
 
             // Merged affinity groups do not have an ID, so use the VM with the tiniest ID instead
             return diff != 0 ? diff : min(thisEntityIds).compareTo(min(otherEntityIds));
+        }
+    }
+
+    private class Cache {
+        private Map<Guid, VM> vms = new HashMap<>();
+
+        public VM getVm(Guid id) {
+            if (!vms.containsKey(id)) {
+                vms.put(id, vmDao.get(id));
+            }
+            return vms.get(id);
+        }
+
+        public void fetchVms(Collection<Guid> ids) {
+            List<Guid> missingIds = ids.stream()
+                    .filter(id -> !vms.containsKey(id))
+                    .collect(Collectors.toList());
+
+            vmDao.getVmsByIds(missingIds)
+                    .forEach(vm -> vms.put(vm.getId(), vm));
         }
     }
 }

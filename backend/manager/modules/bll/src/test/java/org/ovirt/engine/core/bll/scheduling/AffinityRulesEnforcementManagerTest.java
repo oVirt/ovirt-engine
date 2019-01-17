@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -83,8 +84,13 @@ public class AffinityRulesEnforcementManagerTest {
         cluster2 = createCluster();
         when(clusterDao.getWithoutMigratingVms()).thenReturn(Arrays.asList(cluster1, cluster2));
 
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster1))).thenReturn(vm1);
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster2))).thenReturn(vm2);
+        when(rulesEnforcer.chooseVmsToMigrate(eq(cluster1))).thenReturn(Collections.singletonList(vm1).iterator());
+        when(rulesEnforcer.chooseVmsToMigrate(eq(cluster2))).thenReturn(Collections.singletonList(vm2).iterator());
+
+        ActionReturnValue returnValue = new ActionReturnValue();
+        returnValue.setSucceeded(true);
+
+        when(backend.runInternalAction(any(), any(), any())).thenReturn(returnValue);
 
         arem.wakeup();
     }
@@ -100,7 +106,9 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldMigrateOneVmPerCluster() {
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster1))).thenReturn(vm1, mock(VM.class), mock(VM.class));
+        when(rulesEnforcer.chooseVmsToMigrate(eq(cluster1)))
+                .thenReturn(Arrays.asList(vm1, mock(VM.class), mock(VM.class)).iterator());
+
         arem.refresh();
         verify(arem, times(1)).migrateVM(eq(vm1));
         verify(arem, times(1)).migrateVM(eq(vm2));
@@ -128,7 +136,7 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Test
     public void shouldNotMigrateVmOnClusterTwoWhenEnforced() {
-        when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster2))).thenReturn(null);
+        when(rulesEnforcer.chooseVmsToMigrate(eq(cluster2))).thenReturn(null);
         arem.refresh();
         verify(arem).migrateVM(vm1);
         verify(arem, times(1)).migrateVM(any());

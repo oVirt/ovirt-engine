@@ -17,6 +17,7 @@
     <module name="javax.transaction.api"/>
     <module name="org.apache.commons.beanutils"/>
     <module name="org.apache.commons.codec"/>
+    <module name="org.apache.commons.collections"/>
     <module name="org.apache.commons.compress"/>
     <module name="org.apache.commons.httpclient"/>
     <module name="org.apache.commons.lang"/>
