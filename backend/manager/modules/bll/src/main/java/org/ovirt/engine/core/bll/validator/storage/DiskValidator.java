@@ -116,6 +116,13 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult validateDiskSize() {
+        if (disk.getSize() == 0) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SIZE_ZERO);
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult validRemovableHostedEngineDisks(VM vm) {
         return isHostedEngineDirectLunDisk() || !vm.isHostedEngine()
                 ? ValidationResult.VALID

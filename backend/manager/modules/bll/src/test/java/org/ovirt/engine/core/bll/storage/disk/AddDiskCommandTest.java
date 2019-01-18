@@ -164,7 +164,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSucceedsOnDiskDomainCheckWhenEmptyStorageGuidInParams() {
+    public void validateFailsOnDiskDomainCheckWhenEmptyStorageGuidInParams() {
         initializeCommand(Guid.Empty);
         Guid storageId = Guid.newGuid();
 
@@ -174,6 +174,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         mockMaxPciSlots();
 
+        command.setStorageDomainId(Guid.Empty);
         ValidateTestUtils.runAndAssertValidateFailure
                 (command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
     }
@@ -221,6 +222,22 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void validateFailsOnSizeZero() {
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId);
+        DiskImage image = new DiskImage();
+        image.setSize(0);
+        command.getParameters().setDiskInfo(image);
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+        mockInterfaceList();
+        mockMaxPciSlots();
+        mockVm();
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.ACTION_TYPE_FAILED_DISK_SIZE_ZERO);
+    }
+
+    @Test
     public void validateSpaceValidationSucceeds() {
         Guid storageId = Guid.newGuid();
         initializeCommand(storageId, VolumeType.Preallocated);
@@ -255,7 +272,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         DiskImage disk = new DiskImage();
         disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize));
-        command.getParameters().setStorageDomainId(storageId);
         command.getParameters().setDiskInfo(disk);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
@@ -275,7 +291,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         Guid storageId = Guid.newGuid();
         DiskImage disk = new DiskImage();
         disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2L);
-        command.getParameters().setStorageDomainId(storageId);
         command.getParameters().setDiskInfo(disk);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
@@ -294,9 +309,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         DiskImage image = new DiskImage();
         image.setShareable(true);
         image.setVolumeFormat(VolumeFormat.RAW);
+        image.setSize(1);
         Guid storageId = Guid.newGuid();
         command.getParameters().setDiskInfo(image);
-        command.getParameters().setStorageDomainId(storageId);
 
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
@@ -317,7 +332,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         image.setVolumeFormat(VolumeFormat.COW);
         Guid storageId = Guid.newGuid();
         command.getParameters().setDiskInfo(image);
-        command.getParameters().setStorageDomainId(storageId);
 
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
@@ -335,7 +349,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         image.setVolumeFormat(VolumeFormat.RAW);
         Guid storageId = Guid.newGuid();
         command.getParameters().setDiskInfo(image);
-        command.getParameters().setStorageDomainId(storageId);
 
         mockVm();
         mockStorageDomain(storageId, StorageType.GLUSTERFS);
@@ -359,6 +372,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private void initializeCommand(Guid storageId, VolumeType volumeType) {
         AddDiskParameters parameters = command.getParameters();
         DiskImage disk = new DiskImage();
+        disk.setSize(1);
         disk.setVolumeType(volumeType);
         parameters.setDiskInfo(disk);
         command.getParameters().setStorageDomainId(storageId);
@@ -480,6 +494,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType) {
+        command.getParameters().setStorageDomainId(storageId);
+
         StoragePool storagePool = mockStoragePool();
         Guid storagePoolId = storagePool.getId();
 
@@ -510,6 +526,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         LUNs lun = new LUNs();
         lun.setLUNId("lunid");
         lun.setLunType(StorageType.ISCSI);
+        lun.setDeviceSize(1);
         StorageServerConnections connection = new StorageServerConnections();
         connection.setIqn("a");
         connection.setConnection("0.0.0.0");
@@ -637,7 +654,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         command.getParameters().setDiskInfo(disk);
         command.getParameters().setVdsId(vds.getId());
         command.setVds(vds);
-
         mockVm();
         mockMaxPciSlots();
         mockInterfaceList();
@@ -695,7 +711,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         command.getParameters().setDiskInfo(disk);
         command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.IDE);
-
         VM vm = mockVm();
 
         mockMaxPciSlots();
@@ -721,7 +736,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         command.getParameters().setDiskInfo(disk);
         command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.SATA);
-
         VM vm = mockVm();
 
         mockMaxPciSlots();
@@ -779,7 +793,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         disk.setSgio(ScsiGenericIO.UNFILTERED);
         command.getParameters().setDiskInfo(disk);
         command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.VirtIO_SCSI);
-
         mockVm();
         mockMaxPciSlots();
 
@@ -805,12 +818,11 @@ public class AddDiskCommandTest extends BaseCommandTest {
     @Test
     public void testValidateSuccessOnAddFloatingDiskWithPlugUnset() {
         DiskImage disk = new DiskImage();
-
+        disk.setSize(1);
         command.getParameters().setDiskInfo(disk);
         command.getParameters().setVmId(Guid.Empty);
         command.getParameters().setPlugDiskToVm(false);
         Guid storageId = Guid.newGuid();
-        command.getParameters().setStorageDomainId(storageId);
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
@@ -853,6 +865,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockEntities(storageId);
 
         Guid quotaId = Guid.newGuid();
+        ((DiskImage)command.getParameters().getDiskInfo()).setSize(1);
         ((DiskImage)command.getParameters().getDiskInfo()).setQuotaId(quotaId);
 
         doReturn(ValidationResult.VALID).when(quotaValidator).isValid();

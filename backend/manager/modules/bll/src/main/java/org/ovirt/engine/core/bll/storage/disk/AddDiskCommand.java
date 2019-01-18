@@ -190,34 +190,31 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
-        if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            if (!checkIfImageDiskCanBeAdded(vm, diskVmElementValidator)) {
-                return false;
-            }
-
-            return setAndValidateDiskProfiles();
+        switch (getParameters().getDiskInfo().getDiskStorageType()) {
+            case IMAGE:
+                if (!checkIfImageDiskCanBeAdded(vm, diskVmElementValidator)) {
+                    return false;
+                }
+                return setAndValidateDiskProfiles() &&
+                        validate(diskValidator.validateDiskSize());
+            case LUN:
+                return checkIfLunDiskCanBeAdded(diskValidator) &&
+                        validate(diskValidator.validateDiskSize());
+            case CINDER:
+                CinderDisk cinderDisk = (CinderDisk) getParameters().getDiskInfo();
+                cinderDisk.setStorageIds(new ArrayList<>(Collections.singletonList(getStorageDomainId())));
+                StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
+                CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisk);
+                return validate(storageDomainValidator.isDomainExistAndActive()) &&
+                        validate(cinderDisksValidator.validateCinderDiskLimits()) &&
+                        validate(cinderDisksValidator.validateCinderVolumeTypesExist()) &&
+                        validate(diskValidator.validateDiskSize());
+            case MANAGED_BLOCK_STORAGE:
+                return isSupportedByManagedBlockStorageDomain(getStorageDomain()) &&
+                        validate(diskValidator.validateDiskSize());
+            default:
+                return true;
         }
-
-        if (DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
-            return checkIfLunDiskCanBeAdded(diskValidator);
-        }
-
-        if (DiskStorageType.CINDER == getParameters().getDiskInfo().getDiskStorageType()) {
-            CinderDisk cinderDisk = (CinderDisk) getParameters().getDiskInfo();
-            cinderDisk.setStorageIds(new ArrayList<>(Collections.singletonList(getStorageDomainId())));
-            StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
-            CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisk);
-            return validate(storageDomainValidator.isDomainExistAndActive()) &&
-                    validate(cinderDisksValidator.validateCinderDiskLimits()) &&
-                    validate(cinderDisksValidator.validateCinderVolumeTypesExist());
-        }
-
-        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
-                && !isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
-            return false;
-        }
-
-        return true;
     }
 
     protected boolean validateVm() {
