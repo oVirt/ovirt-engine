@@ -8,7 +8,9 @@ public class FencingPolicyMapper {
     @Mapping(from = FencingPolicy.class, to = org.ovirt.engine.core.common.businessentities.FencingPolicy.class)
     public static org.ovirt.engine.core.common.businessentities.FencingPolicy map(FencingPolicy model, org.ovirt.engine.core.common.businessentities.FencingPolicy template) {
         org.ovirt.engine.core.common.businessentities.FencingPolicy entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.FencingPolicy();
-        entity.setFencingEnabled(model.isEnabled());
+        if(model.isSetEnabled()) {
+            entity.setFencingEnabled(model.isEnabled());
+        }
         if (model.isSetSkipIfSdActive()) {
             entity.setSkipFencingIfSDActive(model.getSkipIfSdActive().isEnabled());
         }
