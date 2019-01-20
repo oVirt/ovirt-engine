@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.AddManagedBlockStorageDiskParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
@@ -39,7 +39,7 @@ import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-public class AddManagedBlockStorageDiskCommand<T extends AddDiskParameters> extends CommandBase<T> {
+public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageDiskParameters> extends CommandBase<T> {
 
     @Inject
     private CinderStorageDao cinderStorageDao;

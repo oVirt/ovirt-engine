@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddManagedBlockStorageDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -448,7 +449,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private void createManagedBlockStorageDisk() {
         Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.AddManagedBlockStorageDisk,
-                getParameters(),
+                buildManagedBlockParams(),
                 cloneContextAndDetachFromParent());
         try {
             setReturnValue(future.get());
@@ -459,6 +460,24 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     e.getMessage());
             log.debug("Exception", e);
         }
+    }
+
+    private ActionParametersBase buildManagedBlockParams() {
+        AddManagedBlockStorageDiskParameters parameters =
+                new AddManagedBlockStorageDiskParameters(getDiskVmElement(),
+                        getParameters().getDiskInfo(),
+                        shouldDiskBePlugged());
+        parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
+        parameters.setStorageDomainId(getParameters().getStorageDomainId());
+        parameters.setParentParameters(getParameters());
+        parameters.setParentCommand(getActionType());
+
+        if (getVm() != null) {
+            parameters.setVmSnapshotId(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
+            parameters.setVmId(getVmId());
+        }
+
+        return parameters;
     }
 
     protected void setDiskAlias() {
