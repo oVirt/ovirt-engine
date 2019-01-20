@@ -69,7 +69,7 @@ public class ManagedBlockStorageCommandUtil {
         }
         return disks.stream()
                 .allMatch(disk -> {
-                    VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getImageId(), vm.getId()));
+                    VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vm.getId()));
                     return this.saveDevices(disk, vds, vmDevice, isLiveMigration);
                 });
     }

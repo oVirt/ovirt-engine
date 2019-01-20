@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
+import org.ovirt.engine.core.common.action.RestoreAllManagedBlockSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -153,8 +155,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         boolean succeeded = removeLeaseIfNeeded();
 
         List<CinderDisk> cinderDisksToRestore = new ArrayList<>();
+        List<ManagedBlockStorageDisk> managedBlockStorageDisksToRestore = new ArrayList<>();
         for (DiskImage image : imagesToRestore) {
             if (image.getImageStatus() != ImageStatus.ILLEGAL) {
+                if (image.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                    managedBlockStorageDisksToRestore.add((ManagedBlockStorageDisk) image);
+                    continue;
+                }
+
                 if (image.getDiskStorageType() == DiskStorageType.CINDER) {
                     cinderDisksToRestore.add((CinderDisk) image);
                     continue;
@@ -182,7 +190,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         removeSnapshotsFromDB();
         succeeded = updateLeaseInfoIfNeeded() && succeeded;
 
-        if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
+        if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty() ||
+                !managedBlockStorageDisksToRestore.isEmpty()) {
+            restoreManagedBlockSnapshot(managedBlockStorageDisksToRestore);
             deleteOrphanedImages(cinderDisksToRemove);
             if (!restoreCinderDisks(removedSnapshot.getId(),
                     cinderDisksToRestore,
@@ -197,6 +207,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         setSucceeded(succeeded);
+    }
+
+    private void restoreManagedBlockSnapshot(List<ManagedBlockStorageDisk> images) {
+        RestoreAllManagedBlockSnapshotsParameters params = new RestoreAllManagedBlockSnapshotsParameters();
+        params.setManagedBlockStorageDisks(images);
+        params.setSnapshotAction(getParameters().getSnapshotAction());
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+
+        runInternalAction(ActionType.RestoreAllManagedBlockSnapshots, params);
     }
 
     private void initializeSnapshotsLeasesDomainIds() {
@@ -515,7 +536,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
             getParameters().setImages((List<DiskImage>) CollectionUtils.union(imagesFromPreviewSnapshot, intersection));
             imagesFromPreviewSnapshot.forEach(image -> {
-                if (image.getDiskStorageType() != DiskStorageType.CINDER) {
+                if (image.getDiskStorageType() != DiskStorageType.CINDER
+                        && image.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
                     imagesToRestore.add(image);
                 } else {
                     List<DiskImage> cinderDiskFromPreviewSnapshot = intersection.stream().filter(diskImage->

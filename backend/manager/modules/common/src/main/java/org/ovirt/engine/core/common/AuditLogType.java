@@ -1483,6 +1483,7 @@ public enum AuditLogType {
 
     // Managed Block Storage
     CONNECTOR_INFO_MISSING_ON_VDS(10772, AuditLogSeverity.ERROR),
+    UNDO_SNAPSHOT_FAILURE_PARTIAL(10773, AuditLogSeverity.ERROR),
 
     //Affinity Rules Enforcement Manager
     AFFINITY_RULES_ENFORCEMENT_MANAGER_START(10780, AuditLogSeverity.NORMAL),

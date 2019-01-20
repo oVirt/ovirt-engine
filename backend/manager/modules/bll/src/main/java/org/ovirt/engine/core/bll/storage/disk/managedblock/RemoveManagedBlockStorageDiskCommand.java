@@ -98,7 +98,12 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
             imageStorageDomainMapDao.remove(disk.getImageId());
             imageDao.remove(disk.getImageId());
             diskImageDynamicDao.remove(disk.getImageId());
-            baseDiskDao.remove(disk.getId());
+
+            // Make sure it's a base disk and not a cloned volume
+            if (disk.getImageId() == disk.getId()) {
+                baseDiskDao.remove(disk.getId());
+            }
+
             return null;
         });
     }
