@@ -90,11 +90,10 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     @Override
     protected boolean validate() {
-        if (disk == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
-        }
-
         DiskValidator oldDiskValidator = new DiskValidator(disk);
+        if (!validate(oldDiskValidator.isDiskExists())){
+            return false;
+        }
         ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
         if (!isHostedEngineDisk.isValid()) {
             return validate(isHostedEngineDisk);
@@ -280,8 +279,9 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permsList == null) {
             permsList = super.getPermissionCheckSubjects();
-            Guid diskId = disk == null ? null : disk.getId();
-            permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
+            if (disk != null) {
+                permsList.add(new PermissionSubject(disk.getId(), VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
+            }
         }
         return permsList;
     }
