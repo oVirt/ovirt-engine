@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -141,6 +142,7 @@ public class DbFacade {
             put(DiskVmElement.class, DiskVmElementDao.class);
             put(DiskImage.class, BaseDiskDao.class);
             put(CinderDisk.class, BaseDiskDao.class);
+            put(ManagedBlockStorageDisk.class, BaseDiskDao.class);
             put(DiskImageDynamic.class, DiskImageDynamicDao.class);
             put(VmNic.class, VmNicDao.class);
             put(VmNetworkInterface.class, VmNicDao.class);

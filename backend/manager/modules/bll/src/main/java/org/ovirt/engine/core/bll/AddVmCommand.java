@@ -103,6 +103,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -1303,8 +1304,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 }
             }
 
-            // Clone volumes for Cinder disk templates
+            // Clone volumes for Cinder and Managed block disks templates
             addVmCinderDisks(templateDisks);
+            addManagedBlockDisks(templateDisks);
         }
         return true;
     }
@@ -1345,7 +1347,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         Map<Guid, Guid> diskImageMap = new HashMap<>();
         for (CinderDisk cinderDisk : cinderDisks) {
-            ImagesContainterParametersBase params = buildCloneCinderDiskCommandParameters(cinderDisk);
+            ImagesContainterParametersBase params = buildImagesContainterParameters(cinderDisk);
             ActionReturnValue actionReturnValue = runInternalAction(
                     ActionType.CloneSingleCinderDisk,
                     params,
@@ -1362,9 +1364,32 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
     }
 
-    private ImagesContainterParametersBase buildCloneCinderDiskCommandParameters(CinderDisk cinderDisk) {
-        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(cinderDisk.getImageId());
-        DiskImage templateDisk = diskInfoDestinationMap.get(cinderDisk.getId());
+    protected void addManagedBlockDisks(Collection<DiskImage> templateDisks) {
+        List<ManagedBlockStorageDisk> managedBlockDisks = DisksFilter.filterManagedBlockStorageDisks(templateDisks);
+        if (managedBlockDisks.isEmpty()) {
+            return;
+        }
+        Map<Guid, Guid> diskImageMap = new HashMap<>();
+        for (ManagedBlockStorageDisk managedBlockDisk : managedBlockDisks) {
+            ImagesContainterParametersBase params = buildImagesContainterParameters(managedBlockDisk);
+            ActionReturnValue actionReturnValue = runInternalAction(
+                    ActionType.CloneSingleManagedBlockDisk,
+                    params,
+                    cloneContext().withoutExecutionContext().withoutLock());
+            if (!actionReturnValue.getSucceeded()) {
+                log.error("Error cloning Managed block disk '{}': {}", managedBlockDisk.getDiskAlias());
+                getReturnValue().setFault(actionReturnValue.getFault());
+                return;
+            }
+            Guid imageId = actionReturnValue.getActionReturnValue();
+            diskImageMap.put(managedBlockDisk.getId(), imageId);
+        }
+        srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
+    }
+
+    private ImagesContainterParametersBase buildImagesContainterParameters(DiskImage srcDisk) {
+        ImagesContainterParametersBase createParams = new ImagesContainterParametersBase(srcDisk.getImageId());
+        DiskImage templateDisk = diskInfoDestinationMap.get(srcDisk.getId());
         createParams.setDiskAlias(templateDisk.getDiskAlias());
         createParams.setStorageDomainId(templateDisk.getStorageIds().get(0));
         createParams.setEntityInfo(getParameters().getEntityInfo());
