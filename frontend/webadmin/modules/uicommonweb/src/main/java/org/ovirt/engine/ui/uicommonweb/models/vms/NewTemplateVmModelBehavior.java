@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -182,7 +183,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 continue;
             }
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                    disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                    disk.getDiskStorageType() == DiskStorageType.CINDER ||
+                    disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
                 imageDisks.add(disk);
             }
         }
@@ -219,6 +221,16 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     volumeTypes.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
                     diskModel.setVolumeType(volumeTypes);
                     diskModel.getAlias().setEntity(cinderDisk.getDiskAlias());
+                    diskModel.getVolumeFormat().setIsChangeable(false);
+                    break;
+            case MANAGED_BLOCK_STORAGE:
+                    ManagedBlockStorageDisk managedBlockDisk = (ManagedBlockStorageDisk) disk;
+                    diskModel.setSize(new EntityModel<>((int) managedBlockDisk.getSizeInGigabytes()));
+                    ListModel managedBlockVolumeTypes = new ListModel();
+                    managedBlockVolumeTypes.setItems(new ArrayList<>(Arrays.asList(VolumeType.Preallocated)),
+                                VolumeType.Preallocated);
+                    diskModel.setVolumeType(managedBlockVolumeTypes);
+                    diskModel.getAlias().setEntity(managedBlockDisk.getDiskAlias());
                     diskModel.getVolumeFormat().setIsChangeable(false);
                     break;
             }
@@ -340,27 +352,35 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         for (DiskModel diskModel : diskImages) {
                             diskModel.getStorageDomain().setItems(activeStorageDomainList);
                         }
-                        List<DiskModel> cinderDisks = Linq.filterDisksByType(disks, DiskStorageType.CINDER);
-                        if (!cinderDisks.isEmpty()) {
-                            Collection<StorageDomain> cinderStorageDomains =
-                                    Linq.filterStorageDomainsByStorageType(storageDomains, StorageType.CINDER);
-                            initStorageDomainsForCinderDisks(cinderDisks, cinderStorageDomains);
-                        }
+                        initStorageDomainForType(StorageType.CINDER, DiskStorageType.CINDER, disks, storageDomains);
+                        initStorageDomainForType(StorageType.MANAGED_BLOCK_STORAGE, DiskStorageType.MANAGED_BLOCK_STORAGE, disks, storageDomains);
                     }
                 }),
                 vm.getStoragePoolId(),
                 ActionGroup.CREATE_TEMPLATE);
     }
 
-    private void initStorageDomainsForCinderDisks(List<DiskModel> cinderDisks, Collection<StorageDomain> cinderStorageDomains) {
-        for (DiskModel diskModel : cinderDisks) {
-            CinderDisk cinderDisk = (CinderDisk) diskModel.getDisk();
+    private void initStorageDomainForType(StorageType storageType,
+            DiskStorageType diskStorageType,
+            ArrayList<DiskModel> disks,
+            List<StorageDomain> storageDomains) {
+        List<DiskModel> disksModels = Linq.filterDisksByType(disks, diskStorageType);
+        if (!disksModels.isEmpty()) {
+            Collection<StorageDomain> storageDomainsByStorageType =
+                    Linq.filterStorageDomainsByStorageType(storageDomains, storageType);
+            initStorageDomainsForDisks(disksModels, storageDomainsByStorageType);
+        }
+    }
+
+    private void initStorageDomainsForDisks(List<DiskModel> diskModels, Collection<StorageDomain> storageDomains) {
+        for (DiskModel diskModel : diskModels) {
+            DiskImage diskImage = (DiskImage) diskModel.getDisk();
             diskModel.getStorageDomain().setItems(Linq.filterStorageDomainById(
-                    cinderStorageDomains, cinderDisk.getStorageIds().get(0)));
+                    storageDomains, diskImage.getStorageIds().get(0)));
 
             diskModel.getDiskProfile().setIsChangeable(false);
             diskModel.getDiskProfile().setChangeProhibitionReason(
-                    ConstantsManager.getInstance().getConstants().notSupportedForCinderDisks());
+                    ConstantsManager.getInstance().getConstants().notSupportedForCinderOrManagedBlockDisks());
         }
     }
 

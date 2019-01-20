@@ -2011,7 +2011,7 @@ public interface UIConstants extends Constants {
 
     String geoReplicationRecommendedConfigViolation();
 
-    String notSupportedForCinderDisks();
+    String notSupportedForCinderOrManagedBlockDisks();
 
     String registerDisksTitle();
 
