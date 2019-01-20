@@ -162,6 +162,6 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
 
     @Override
     protected Collection<SubjectEntity> getSubjectEntities() {
-        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getStorageDomainId()));
+        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getParameters().getStorageDomainId()));
     }
 }

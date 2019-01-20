@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -358,30 +357,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 }),
                 vm.getStoragePoolId(),
                 ActionGroup.CREATE_TEMPLATE);
-    }
-
-    private void initStorageDomainForType(StorageType storageType,
-            DiskStorageType diskStorageType,
-            ArrayList<DiskModel> disks,
-            List<StorageDomain> storageDomains) {
-        List<DiskModel> disksModels = Linq.filterDisksByType(disks, diskStorageType);
-        if (!disksModels.isEmpty()) {
-            Collection<StorageDomain> storageDomainsByStorageType =
-                    Linq.filterStorageDomainsByStorageType(storageDomains, storageType);
-            initStorageDomainsForDisks(disksModels, storageDomainsByStorageType);
-        }
-    }
-
-    private void initStorageDomainsForDisks(List<DiskModel> diskModels, Collection<StorageDomain> storageDomains) {
-        for (DiskModel diskModel : diskModels) {
-            DiskImage diskImage = (DiskImage) diskModel.getDisk();
-            diskModel.getStorageDomain().setItems(Linq.filterStorageDomainById(
-                    storageDomains, diskImage.getStorageIds().get(0)));
-
-            diskModel.getDiskProfile().setIsChangeable(false);
-            diskModel.getDiskProfile().setChangeProhibitionReason(
-                    ConstantsManager.getInstance().getConstants().notSupportedForCinderOrManagedBlockDisks());
-        }
     }
 
     private void disableNewTemplateModel(String errMessage) {
