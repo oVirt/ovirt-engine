@@ -22,6 +22,7 @@ import org.ovirt.engine.core.sso.utils.AuthResult;
 import org.ovirt.engine.core.sso.utils.AuthenticationException;
 import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
 import org.ovirt.engine.core.sso.utils.Credentials;
+import org.ovirt.engine.core.sso.utils.ExternalOIDCUtils;
 import org.ovirt.engine.core.sso.utils.NegotiateAuthUtils;
 import org.ovirt.engine.core.sso.utils.NonInteractiveAuth;
 import org.ovirt.engine.core.sso.utils.OAuthException;
@@ -72,22 +73,22 @@ public class OAuthTokenServlet extends HttpServlet {
                 issueTokenForAuthCode(request, response, scope);
                 break;
             case "password":
-                handlePasswordGrantType(request, response, scope);
+                if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                    ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
+                } else {
+                    handlePasswordGrantType(request, response, scope);
+                }
                 break;
             case "urn:ovirt:params:oauth:grant-type:http":
-                throwExceptionIfExternalAuthEnabled(request);
-                issueTokenUsingHttpHeaders(request, response);
+                if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                    ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
+                } else {
+                    issueTokenUsingHttpHeaders(request, response);
+                }
                 break;
             default:
                 throw new OAuthException(SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE,
                         SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG);
-        }
-    }
-
-    private void throwExceptionIfExternalAuthEnabled(HttpServletRequest request) {
-        if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-            throw new OAuthException(SsoConstants.ERR_CODE_BAD_REQUEST_EXTERNAL_AUTH_ENABLED_TYPE,
-                    SsoConstants.ERR_CODE_BAD_REQUEST_EXTERNAL_AUTH_ENABLED_MSG);
         }
     }
 
@@ -136,7 +137,6 @@ public class OAuthTokenServlet extends HttpServlet {
         if (SsoUtils.scopeAsList(scope).contains("ovirt-ext=token:login-on-behalf")) {
             issueTokenForLoginOnBehalf(request, response, scope);
         } else {
-            throwExceptionIfExternalAuthEnabled(request);
             issueTokenForPasswd(request, response, scope);
         }
     }

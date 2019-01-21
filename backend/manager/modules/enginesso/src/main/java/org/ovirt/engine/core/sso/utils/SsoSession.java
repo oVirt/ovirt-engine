@@ -24,6 +24,7 @@ public class SsoSession implements Serializable, Cloneable {
     private String appUrl;
     private String authorizationCode;
     private String accessToken;
+    private String refreshToken;
     private long validTo;
     private String userId;
     private String scope;
@@ -127,6 +128,14 @@ public class SsoSession implements Serializable, Cloneable {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public String getAppUrl() {

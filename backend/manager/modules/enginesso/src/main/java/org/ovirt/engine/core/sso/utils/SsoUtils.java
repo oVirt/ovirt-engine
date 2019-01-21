@@ -402,6 +402,12 @@ public class SsoUtils {
         return credentials;
     }
 
+    public static Credentials getCredentials(HttpServletRequest request) throws Exception {
+        return SsoUtils.translateUser(SsoUtils.getRequestParameter(request, "username"),
+                SsoUtils.getRequestParameter(request, "password"),
+                getSsoContext(request));
+    }
+
     public static boolean areCredentialsValid(HttpServletRequest request, Credentials credentials)
             throws AuthenticationException {
         return areCredentialsValid(request, credentials, false);

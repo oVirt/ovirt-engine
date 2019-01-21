@@ -297,6 +297,21 @@ ENGINE_SSO_CLIENT_SECRET=
 # authentication profiles and will only use the users and groups from the external provider.
 ENGINE_SSO_ENABLE_EXTERNAL_SSO=false
 
+# Client id to use for external OIDC server.
+EXTERNAL_OIDC_CLIENT_ID=
+
+# Client password to use for external OIDC server.
+EXTERNAL_OIDC_CLIENT_SECRET=
+
+# The token end point to use for external OIDC server.
+EXTERNAL_OIDC_TOKEN_END_POINT=
+
+# The user info end point to use for external OIDC server.
+EXTERNAL_OIDC_USER_INFO_END_POINT=
+
+# The logout end point to use for external OIDC server.
+EXTERNAL_OIDC_LOGOUT_END_POINT=
+
 # The mod_auth_openidc logout endpoint that is used by engine to logout of the user session.
 ENGINE_SSO_EXTERNAL_SSO_LOGOUT_URI="${ENGINE_URI}/callback"
 
@@ -345,6 +360,40 @@ ENGINE_SSO_SERVICE_CONNECTION_RETRY_COUNT=3
 
 # The number of milliseconds after which a connection in the pool has to be validated when communicating with SSO.
 ENGINE_SSO_SERVICE_CONNECTION_VALIDATE_AFTER_INACTIVITY=100
+
+# level of protocol supported by the external OIDC server.
+EXTERNAL_OIDC_SSL_PROTOCOL=TLS
+
+# Enable host verification.
+EXTERNAL_OIDC_SSL_VERIFY_HOST=true
+
+# Enable chain verification
+EXTERNAL_OIDC_SSL_VERIFY_CHAIN=true
+
+# The maximum size of the pool of HTTP connections that the engine uses
+# to communicate with the external OIDCO service:
+EXTERNAL_OIDC_CLIENT_POOL_SIZE=10
+
+# Read Timeout for outgoing communications with the external OIDC server.
+EXTERNAL_OIDC_READ_TIMEOUT=0
+
+# Connect Timeout for outgoing communications with external OIDC server.
+EXTERNAL_OIDC_CONNECT_TIMEOUT=0
+
+# The maximum number of times a method will be retried when communicating with external OIDC.
+EXTERNAL_OIDC_CONNECTION_RETRY_COUNT=3
+
+# The number of milliseconds after which a connection in the pool has to be validated when communicating with external OIDC.
+EXTERNAL_OIDC_CONNECTION_VALIDATE_AFTER_INACTIVITY=100
+
+# The trust store type
+EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE_TYPE="${ENGINE_PKI_TRUST_STORE_TYPE}"
+
+# The trust store containing the certificate of the external OIDC server.
+EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE="${ENGINE_PKI_TRUST_STORE}"
+
+# The password for the trust store containing the certificate of the external OIDC server.
+EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE_PASSWORD="${ENGINE_PKI_TRUST_STORE_PASSWORD}"
 
 #
 # SSO Configuration

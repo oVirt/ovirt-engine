@@ -60,6 +60,11 @@ public class TokenCleanupUtility {
                     log.debug("Unable to cleanup SsoSession: {}", ex.getMessage());
                 }
             }
+            if (ssoContext.getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                log.debug("Existing Session found for token: {}, invalidating session on external OP",
+                        ssoSession.getAccessToken());
+                ExternalOIDCUtils.logout(ssoContext, ssoSession.getRefreshToken());
+            }
             invokeAuthnLogout(ssoContext, ssoSession);
             SsoUtils.notifyClientsOfLogoutEvent(ssoContext,
                     associateClientIds,
