@@ -351,6 +351,8 @@ public class StorageDomainMapper {
             return StorageType.GLANCE;
         case CINDER:
             return StorageType.CINDER;
+        case MANAGED_BLOCK_STORAGE:
+            return StorageType.MANAGED_BLOCK_STORAGE;
         default:
             return null;
         }
