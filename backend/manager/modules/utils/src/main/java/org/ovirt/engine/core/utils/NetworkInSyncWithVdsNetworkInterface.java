@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
+import static org.ovirt.engine.core.utils.network.predicate.IsDefaultRouteOnInterfacePredicate.isDefaultRouteOnInterfacePredicate;
 
 import java.util.Collections;
 import java.util.List;
@@ -90,14 +91,18 @@ public class NetworkInSyncWithVdsNetworkInterface {
         }
 
         addDnsConfiguration(result);
-
-        boolean defaultRouteReportedByVdsm = FeatureSupported.isDefaultRouteReportedByVdsm(cluster.getCompatibilityVersion());
-        result.add(DEFAULT_ROUTE,
-                iface.isIpv4DefaultRoute(),
-                isDefaultRouteNetwork,
-                !defaultRouteReportedByVdsm || Objects.equals(iface.isIpv4DefaultRoute(), isDefaultRouteNetwork));
+        addReportedDefaultRouteConfiguration(result);
 
         return result;
+    }
+
+    private void addReportedDefaultRouteConfiguration(ReportedConfigurations result) {
+        boolean defaultRouteReportedByVdsm = FeatureSupported.isDefaultRouteReportedByVdsm(cluster.getCompatibilityVersion());
+        boolean isDefaultRouteInterface = isDefaultRouteOnInterfacePredicate().test(iface);
+        result.add(DEFAULT_ROUTE,
+                isDefaultRouteInterface,
+                isDefaultRouteNetwork,
+                !defaultRouteReportedByVdsm || Objects.equals(isDefaultRouteInterface, isDefaultRouteNetwork));
     }
 
     private boolean isNetworkMtuInSync() {

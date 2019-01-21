@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.ovirt.engine.core.utils.network.predicate.IsDefaultRouteOnInterfacePredicate.isDefaultRouteOnInterfacePredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     private static final String IPV6_ADDRESS = "ipv6 address";
     private static final Integer IPV6_PREFIX = 666;
-    private static final String IPV6_GATEWAY = "ipv6 gateway";
+    private static final String IPV6_GATEWAY = "2001:db8:ca3:2::1";
 
     private VdsNetworkInterface iface;
     private Network network;
@@ -269,10 +270,11 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     private ReportedConfiguration defaultRouteReportedConfiguration(boolean expectedValue) {
+        boolean isDefaultRouteInterface = isDefaultRouteOnInterfacePredicate().test(iface);
         return new ReportedConfiguration(ReportedConfigurationType.DEFAULT_ROUTE,
-                iface.isIpv4DefaultRoute(),
+                isDefaultRouteInterface,
                 expectedValue,
-                Objects.equals(iface.isIpv4DefaultRoute(), expectedValue));
+                Objects.equals(isDefaultRouteInterface, expectedValue));
     }
 
     @Test
@@ -330,6 +332,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testReportConfigurationsOnHostWhenDnsConfigurationResolverOutOfSync() {
         iface.setIpv4DefaultRoute(true);
+        iface.setIpv4Gateway(IPV4_GATEWAY);
         //cannot use initIpv4ConfigurationBootProtocol because of 'randomized tests' technique.
         iface.setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
         IPv4Address address = new IPv4Address();
@@ -600,7 +603,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testIsNetworkInSyncWhenIpv6GatewayEqual(){
         initIpv6ConfigurationBootProtocolGateway(Ipv6BootProtocol.STATIC_IP, true);
-        assertThat(createTestedInstance().isNetworkInSync(), is(true));
+        assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
     }
 
     @Test
@@ -777,6 +780,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         iface.setIpv4DefaultRoute(true);
         //cannot use initIpv4ConfigurationBootProtocol because of 'randomized tests' technique.
         iface.setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
+        iface.setIpv4Gateway(IPV4_GATEWAY);
         IPv4Address address = new IPv4Address();
         address.setBootProtocol(Ipv4BootProtocol.DHCP);
         testedNetworkAttachment.getIpConfiguration().setIPv4Addresses(Collections.singletonList(address));
@@ -789,6 +793,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testDnsResolverConfigurationNonDefaultRouteNetwork() {
         iface.setIpv4DefaultRoute(true);
+        iface.setIpv6Gateway(IPV6_GATEWAY);
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
         testedNetworkAttachment.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
         assertThat(createTestedInstance(false, sampleDnsResolverConfiguration).isNetworkInSync(), is(false));
@@ -797,6 +802,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testDefaultRouteNonDefaultRouteNetwork() {
         iface.setIpv4DefaultRoute(true);
+        iface.setIpv6Gateway(IPV6_GATEWAY);
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
         assertThat(createTestedInstance(false, sampleDnsResolverConfiguration).isNetworkInSync(), is(false));
     }
@@ -804,6 +810,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     @Test
     public void testDefaultRouteWhenInSync() {
         iface.setIpv4DefaultRoute(true);
+        iface.setIpv4Gateway(IPV4_GATEWAY);
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
         assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
     }
@@ -819,6 +826,51 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         cluster.setCompatibilityVersion(Version.v4_1);
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
         assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
+    }
+
+    @Test void testDefaultRouteSync() {
+        boolean IN_SYNC = Boolean.TRUE;
+        boolean OUT_OF_SYNC = !IN_SYNC;
+        boolean IPV4_DEF_ROUTE = Boolean.TRUE;
+        boolean DEF_ROUTE_ROLE_NET = Boolean.TRUE;
+        List<Object[]> tests = Arrays.asList(
+                // interface is default route from any, network is default route - in sync
+                new Object[] {IPV4_DEF_ROUTE, null, null, DEF_ROUTE_ROLE_NET, IN_SYNC},
+                new Object[] {IPV4_DEF_ROUTE, null, "::", DEF_ROUTE_ROLE_NET, IN_SYNC},
+                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", DEF_ROUTE_ROLE_NET, IN_SYNC },
+                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, null, DEF_ROUTE_ROLE_NET, IN_SYNC },
+                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+                new Object[] {IPV4_DEF_ROUTE, null, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+                new Object[] {!IPV4_DEF_ROUTE, null, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+                // interface is default route from any, network is not default route - out of sync
+                new Object[] {IPV4_DEF_ROUTE, null, null, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+                new Object[] {IPV4_DEF_ROUTE, null, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+                new Object[] {!IPV4_DEF_ROUTE, null, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
+                // interface is not default route, network is not default route - in sync
+                new Object[] {!IPV4_DEF_ROUTE, null, null, !DEF_ROUTE_ROLE_NET, IN_SYNC},
+                new Object[] {!IPV4_DEF_ROUTE, null, "::", !DEF_ROUTE_ROLE_NET, IN_SYNC},
+                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, null, !DEF_ROUTE_ROLE_NET, IN_SYNC},
+                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", !DEF_ROUTE_ROLE_NET, IN_SYNC},
+                // interface is not default route, network is default route - out of sync
+                new Object[] {!IPV4_DEF_ROUTE, null, null, DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+                new Object[] {!IPV4_DEF_ROUTE, null, "::", DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
+                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
+                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, null, DEF_ROUTE_ROLE_NET, OUT_OF_SYNC}
+        );
+        for (Object[] test : tests) {
+            iface.setIpv4DefaultRoute((Boolean) test[0]);
+            iface.setIpv4Gateway((String) test[1]);
+            iface.setIpv6Gateway((String) test[2]);
+            initIpv4Configuration();
+            initIpv6Configuration();
+            testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress().setGateway((String) test[1]);
+            testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway((String) test[2]);
+            assertThat(createTestedInstance((Boolean) test[3], sampleDnsResolverConfiguration).isNetworkInSync(), is((Boolean) test[4]));
+        }
     }
 
     @Test
