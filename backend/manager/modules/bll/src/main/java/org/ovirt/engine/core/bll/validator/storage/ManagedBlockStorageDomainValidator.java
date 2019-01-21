@@ -21,6 +21,7 @@ public class ManagedBlockStorageDomainValidator extends StorageDomainValidator {
                 ActionType.AddManagedBlockStorageDomain,
                 ActionType.ActivateStorageDomain,
                 ActionType.DeactivateStorageDomain,
+                ActionType.DeactivateStorageDomainWithOvfUpdate,
                 ActionType.AttachStorageDomainToPool,
                 ActionType.DetachStorageDomainFromPool,
                 ActionType.RemoveStorageDomain,
