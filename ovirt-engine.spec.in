@@ -790,7 +790,7 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 #
 install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
-# see also relevant %dir line to set permissions
+# see also relevant %%dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
 install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup}
 install -dm 755 "%{buildroot}/%{engine_cache}"
@@ -1380,6 +1380,105 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Mon Jan 21 2019 Sandro Bonazzola <sbonazzo@redhat.com> - 4.3.0
+- Bump version to 4.3.0
+
+* Mon Jan 07 2019 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.8.2
+- Bump version to 4.2.8.2
+
+* Mon Dec 10 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.8.1
+- Bump version to 4.2.8.1
+
+* Mon Nov 26 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.8
+- Bump version to 4.2.8
+
+* Tue Oct 16 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.7.3
+- Bump version to 4.2.7.3
+
+* Mon Oct 01 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.7.2
+- Bump version to 4.2.7.2
+
+* Fri Sep 21 2018 Martin Perina <mperina@redhat.com> - 4.2.7.1
+- Bump version to 4.2.7.1
+
+* Mon Sep 17 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.7
+- Bump version to 4.2.7
+
+* Fri Aug 24 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.6.4
+- Bump version to 4.2.6.4
+
+* Tue Aug 14 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.6.3
+- Bump version to 4.2.6.3
+
+* Sun Aug 12 2018 - Yedidyah Bar David <didi@redhat.com> - 4.2.6.2
+- Bump version to 4.2.6.2
+
+* Fri Aug 10 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.6.1
+- Bump version to 4.2.6.1
+
+* Wed Aug 01 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.6
+- Bump version to 4.2.6
+
+* Wed Jul 18 2018 Lev Veyde <lveyde@redhat.com> - 4.2.5.2
+- Bump version to 4.2.5.2
+
+* Thu Jul 05 2018 Lev Veyde <lveyde@redhat.com> - 4.2.5.1
+- Bump version to 4.2.5.1
+
+* Wed Jun 27 2018 Lev Veyde <lveyde@redhat.com> - 4.2.5
+- Bump version to 4.2.5
+
+* Mon Jun 18 2018 Lev Veyde <lveyde@redhat.com> - 4.2.4.5
+- Bump version to 4.2.4.5
+
+* Thu Jun 14 2018 Martin Perina <mperina@redhat.com> - 4.2.4.4
+- Bump version to 4.2.4.4
+
+* Tue Jun 12 2018 Lev Veyde <lveyde@redhat.com> - 4.2.4.3
+- Bump version to 4.2.4.3
+
+* Tue Jun 05 2018 Lev Veyde <lveyde@redhat.com> - 4.2.4.2
+- Bump version to 4.2.4.2
+
+* Tue May 29 2018 Lev Veyde <lveyde@redhat.com> - 4.2.4.1
+- Bump version to 4.2.4.1
+
+* Wed May 23 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.4
+- Bump version to 4.2.4
+
+* Wed Apr 25 2018 Lev Veyde <lveyde@redhat.com> - 4.2.3.3
+- Bump version to 4.2.3.3
+
+* Tue Apr 17 2018 Lev Veyde <lveyde@redhat.com> - 4.2.3.2
+- Bump version to 4.2.3.2
+
+* Mon Apr 16 2018 Lev Veyde <lveyde@redhat.com> - 4.2.3.1
+- Bump version to 4.2.3.1
+
+* Mon Apr 09 2018 Lev Veyde <lveyde@redhat.com> - 4.2.3
+- Bump version to 4.2.3
+
+* Thu Mar 29 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.6
+- Bump version to 4.2.2.6
+
+* Tue Mar 20 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.5
+- Bump version to 4.2.2.5
+
+* Thu Mar 15 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.4
+- Bump version to 4.2.2.4
+
+* Mon Mar 12 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.3
+- Bump version to 4.2.2.3
+
+* Wed Feb 28 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.2
+- Bump version to 4.2.2.2
+
+* Mon Feb 19 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.1
+- Bump version to 4.2.2.1
+
+* Tue Feb 13 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2
+- Bump version to 4.2.2
+
 * Mon Jan 29 2018 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.1.4
 - Bump version to 4.2.1.4
 
