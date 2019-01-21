@@ -15,11 +15,16 @@ import org.ovirt.engine.core.common.action.ConnectManagedBlockStorageDeviceComma
 import org.ovirt.engine.core.common.action.SaveManagedBlockStorageDiskDeviceCommandParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Singleton
 public class ManagedBlockStorageCommandUtil {
@@ -27,6 +32,8 @@ public class ManagedBlockStorageCommandUtil {
     private BackendInternal backend;
     @Inject
     private VDSBrokerFrontend resourceManager;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     public boolean attachManagedBlockStorageDisks(VM vm, VmHandler vmHandler, VDS vds) {
         if (vm.getDiskMap().isEmpty()) {
@@ -35,15 +42,17 @@ public class ManagedBlockStorageCommandUtil {
 
         List<ManagedBlockStorageDisk> disks = DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
         return disks.stream()
-                .allMatch(disk -> this.saveDevices(disk, vds));
+                .allMatch(disk -> this.saveDevices(disk, vds, vm.getId()));
     }
 
-    private boolean saveDevices(ManagedBlockStorageDisk disk, VDS vds) {
+    private boolean saveDevices(ManagedBlockStorageDisk disk, VDS vds, Guid vmId) {
         VDSReturnValue returnValue = attachManagedBlockStorageDisk(disk, vds);
 
         if (returnValue == null) {
             return false;
         }
+
+        saveAttachedHost(disk, vmId, vds.getId());
 
         disk.setDevice((Map<String, Object>) returnValue.getReturnValue());
         SaveManagedBlockStorageDiskDeviceCommandParameters parameters =
@@ -56,6 +65,15 @@ public class ManagedBlockStorageCommandUtil {
         return true;
     }
 
+    private void saveAttachedHost(ManagedBlockStorageDisk disk, Guid vmId, Guid vdsId) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vmId));
+            vmDevice.getSpecParams().put(ManagedBlockStorageDisk.ATTACHED_VDS_ID, vdsId);
+            vmDeviceDao.update(vmDevice);
+
+            return null;
+        });
+    }
 
     private VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
         ActionReturnValue returnValue = getConnectionInfo(disk, vds);
