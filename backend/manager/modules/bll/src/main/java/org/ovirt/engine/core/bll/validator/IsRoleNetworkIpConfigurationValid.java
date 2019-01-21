@@ -30,7 +30,7 @@ public class IsRoleNetworkIpConfigurationValid {
             return false;
         }
 
-        if (networkCluster.isMigration()) {
+        if (networkCluster.isMigration() || networkCluster.isDefaultRoute()) {
             return hasBootProtocolOtherThanNoneOnIpConfigurationOfAnyIpVersion(ipConfiguration);
         }
 
@@ -56,7 +56,7 @@ public class IsRoleNetworkIpConfigurationValid {
      * must be in sync with {@link #validate(NetworkAttachment)}
      */
     public boolean validateAddressesOnExistingNic(VdsNetworkInterface nic) {
-        if (networkCluster.isMigration()) {
+        if (networkCluster.isMigration() || networkCluster.isDefaultRoute()) {
             return StringUtils.isNotEmpty(nic.getIpv4Address()) || StringUtils.isNotEmpty(nic.getIpv6Address());
         }
         return StringUtils.isNotEmpty(nic.getIpv4Address());
