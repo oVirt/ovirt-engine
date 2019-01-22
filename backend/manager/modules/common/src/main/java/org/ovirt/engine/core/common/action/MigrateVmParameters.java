@@ -20,6 +20,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     protected Date totalMigrationTime;
     private Guid targetClusterId;
     private String reason;
+    private boolean ignoreHardVmToVmAffinity;
 
     public MigrateVmParameters() {
     }
@@ -116,5 +117,13 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public boolean isIgnoreHardVmToVmAffinity() {
+        return ignoreHardVmToVmAffinity;
+    }
+
+    public void setIgnoreHardVmToVmAffinity(boolean ignoreHardVmToVmAffinity) {
+        this.ignoreHardVmToVmAffinity = ignoreHardVmToVmAffinity;
     }
 }

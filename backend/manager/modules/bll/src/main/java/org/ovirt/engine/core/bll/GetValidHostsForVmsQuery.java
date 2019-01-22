@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -45,7 +46,7 @@ public class GetValidHostsForVmsQuery<P extends GetValidHostsForVmsParameters> e
         Map<Guid, VDS> hostMap = new HashMap<>();
 
         List<Set<Guid>> hostsLists = vms.stream()
-            .map(vm -> schedulingManager.canSchedule(cluster, vm, blackList, whiteList, messages))
+            .map(vm -> schedulingManager.canSchedule(cluster, vm, blackList, whiteList, new SchedulingParameters(), messages))
             .map(hosts -> addToMap(hostMap, hosts))
             .map(this::getIdSet)
             .collect(Collectors.toList());

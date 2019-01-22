@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -28,7 +29,7 @@ public class HugePagesFilterPolicyUnitTest {
     VM vm;
     VM otherVm;
 
-    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap());
+    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters());
 
     PendingResourceManager pendingResourceManager;
 

@@ -13,6 +13,7 @@ import java.util.Map;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -50,7 +51,7 @@ public class PreferredHostsWeightPolicyUnitTest {
         hosts.add(host2);
         hosts.add(host3);
 
-        List<Pair<Guid, Integer>> weights = unit.score(hosts, vm, new SchedulingContext(cluster, Collections.emptyMap()));
+        List<Pair<Guid, Integer>> weights = unit.score(hosts, vm, new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters()));
 
         Map<Guid, Integer> results = new HashMap<>();
         for (Pair<Guid, Integer> r: weights) {

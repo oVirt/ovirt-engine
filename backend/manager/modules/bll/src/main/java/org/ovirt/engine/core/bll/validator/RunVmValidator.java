@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -148,7 +149,7 @@ public class RunVmValidator {
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    validate(validateDisksPassDiscard(vm), messages) &&
                    !getSchedulingManager().canSchedule(
-                           cluster, vm, vdsBlackList, vdsWhiteList, messages).isEmpty();
+                           cluster, vm, vdsBlackList, vdsWhiteList, new SchedulingParameters(), messages).isEmpty();
         }
 
         return
@@ -168,7 +169,7 @@ public class RunVmValidator {
                 validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
                 !getSchedulingManager().canSchedule(
-                        cluster, vm, vdsBlackList, vdsWhiteList, messages).isEmpty();
+                        cluster, vm, vdsBlackList, vdsWhiteList, new SchedulingParameters(), messages).isEmpty();
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {

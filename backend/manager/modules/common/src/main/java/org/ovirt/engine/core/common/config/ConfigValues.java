@@ -1138,6 +1138,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     GlusterSupportArbiterVolume,
 
+    @TypeConverterAttribute(Boolean.class)
+    IgnoreVmToVmAffinityForHostMaintenance,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     GlusterPeerStatusRetries,

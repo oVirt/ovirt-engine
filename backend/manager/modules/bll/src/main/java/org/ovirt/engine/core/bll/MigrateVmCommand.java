@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
 import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
@@ -208,6 +209,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsBlackList(),
                         getVdsWhiteList(),
                         getDestinationHostList(),
+                        new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
                         messages,
                         this,
                         getCorrelationId());
@@ -849,6 +851,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
+                        new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
                         getReturnValue().getValidationMessages()).isEmpty();
     }
 

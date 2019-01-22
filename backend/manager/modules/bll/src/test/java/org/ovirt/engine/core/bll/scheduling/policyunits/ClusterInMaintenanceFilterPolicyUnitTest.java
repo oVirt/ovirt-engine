@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,7 +22,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class ClusterInMaintenanceFilterPolicyUnitTest {
     private VDS host;
     private VM vm;
-    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap());
+    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters());
 
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));

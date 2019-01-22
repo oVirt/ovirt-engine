@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -862,6 +863,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getRunVdssList(),
                         getVdsWhiteList(),
                         getPredefinedVdsIdListToRunOn(),
+                        new SchedulingParameters(),
                         new ArrayList<>(),
                         this,
                         getCorrelationId());

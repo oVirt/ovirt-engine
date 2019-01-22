@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -77,7 +78,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
 
         parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "0");
-        context = new SchedulingContext(cluster, parameters);
+        context = new SchedulingContext(cluster, parameters, new SchedulingParameters());
 
         messages = new PerHostMessages();
 

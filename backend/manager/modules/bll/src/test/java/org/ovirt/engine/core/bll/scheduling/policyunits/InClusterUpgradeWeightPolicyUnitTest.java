@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -182,7 +183,7 @@ public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
     private List<Pair<Guid, Integer>> filter(final VM vm, final VDS... hosts) {
         return inClusterUpgradeWeightPolicyUnit.score(Arrays.asList(hosts),
                 vm,
-                new SchedulingContext(new Cluster(), Collections.emptyMap()));
+                new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()));
     }
 
     private static Pair<Guid, Integer> weight(final VDS host, int weight) {
