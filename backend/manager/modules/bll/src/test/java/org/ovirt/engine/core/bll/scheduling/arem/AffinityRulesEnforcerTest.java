@@ -97,12 +97,12 @@ public class AffinityRulesEnforcerTest {
 
         when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenReturn(affinityGroups);
 
-        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any())).thenReturn(Arrays.asList(host1));
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any(), any())).thenReturn(Arrays.asList(host1));
     }
 
     @Test
     public void shouldNotTryToMigrateWhenNotSchedulable() {
-        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4));
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
         affinityGroups.clear();
@@ -259,14 +259,14 @@ public class AffinityRulesEnforcerTest {
 
         // Say no to the first scheduling attempt and yes to the second one, to force the enforcer
         // to check every possible candidate
-        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any())).thenReturn(Collections.emptyList(), Arrays.asList(host1));
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any(), any())).thenReturn(Collections.emptyList(), Arrays.asList(host1));
 
         // There is no fixed order so we only know that one of those VMs will be selected for migration
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
 
         // Verify that the enforcer tried to schedule both candidate VMs.
-        verify(schedulingManager).canSchedule(eq(cluster), eq(vm5), any(), any(), any());
-        verify(schedulingManager).canSchedule(eq(cluster), eq(vm6), any(), any(), any());
+        verify(schedulingManager).canSchedule(eq(cluster), eq(vm5), any(), any(), any(), any());
+        verify(schedulingManager).canSchedule(eq(cluster), eq(vm6), any(), any(), any(), any());
     }
 
     @Test
@@ -274,7 +274,7 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm5, vm6));
 
         // vm1 cannot be scheduled
-        when(schedulingManager.canSchedule(eq(cluster), eq(vm1), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(schedulingManager.canSchedule(eq(cluster), eq(vm1), any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
 
@@ -283,7 +283,7 @@ public class AffinityRulesEnforcerTest {
 
         // cannot schedule vm4, vm5 and vm6
         when(schedulingManager.canSchedule(eq(cluster), argThat(vm -> Arrays.asList(vm4, vm5, vm6).contains(vm)),
-                any(), any(), any())).thenReturn(Collections.emptyList());
+                any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
     }

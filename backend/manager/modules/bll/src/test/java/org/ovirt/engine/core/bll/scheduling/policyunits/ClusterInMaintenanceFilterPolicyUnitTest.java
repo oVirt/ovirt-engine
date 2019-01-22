@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -17,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ClusterInMaintenanceFilterPolicyUnitTest {
     private VDS host;
     private VM vm;
-    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap());
+    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters());
 
     @BeforeEach
     public void setUp() {

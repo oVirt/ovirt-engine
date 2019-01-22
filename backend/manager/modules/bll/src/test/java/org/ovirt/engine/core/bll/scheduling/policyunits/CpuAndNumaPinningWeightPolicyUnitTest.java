@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -141,6 +142,6 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
     }
 
     private List<Pair<Guid, Integer>> score() {
-        return unit.score(hosts, vm, new SchedulingContext(new Cluster(), Collections.emptyMap()));
+        return unit.score(hosts, vm, new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()));
     }
 }

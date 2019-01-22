@@ -1129,6 +1129,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     SchedulerOverBookingThreshold(ClientAccessLevel.Admin),
 
+    @TypeConverterAttribute(Boolean.class)
+    IgnoreVmToVmAffinityForHostMaintenance,
+
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     GlusterPeerStatusRetries,

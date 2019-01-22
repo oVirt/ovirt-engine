@@ -38,6 +38,8 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -46,6 +48,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
@@ -339,7 +342,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         } else if (!validateNoActiveImageTransfers(vds)) {
                             result = false;
                         } else if (!clusters.get(vds.getClusterId()).isInUpgradeMode()) {
-                            result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
+                            result = handlePositiveEnforcingAffinityGroup(vdsId, vms, clusters.get(vds.getClusterId()).getCompatibilityVersion());
                         }
                     }
                 }
@@ -498,7 +501,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
      * @param runningVms current running vms on host
      * @return true if migration is possible, false - otherwise
      */
-    private boolean handlePositiveEnforcingAffinityGroup(Guid vdsId, List<VM> runningVms) {
+    private boolean handlePositiveEnforcingAffinityGroup(Guid vdsId, List<VM> runningVms, Version compatibilityVersion) {
+        if (Config.getValue(ConfigValues.IgnoreVmToVmAffinityForHostMaintenance, compatibilityVersion.getValue())) {
+            return true;
+        }
 
         List<AffinityGroup> affinityGroups =
                 affinityGroupDao.getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);

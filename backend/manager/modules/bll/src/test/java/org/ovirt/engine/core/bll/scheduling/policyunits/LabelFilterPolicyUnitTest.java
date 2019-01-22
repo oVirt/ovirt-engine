@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
@@ -43,7 +44,7 @@ public class LabelFilterPolicyUnitTest {
         Cluster cluster = new Cluster();
         cluster.setId(Guid.newGuid());
 
-        context = new SchedulingContext(cluster, Collections.emptyMap());
+        context = new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters());
 
         vm = new VM();
         vm.setId(Guid.newGuid());

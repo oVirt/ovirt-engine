@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -125,6 +126,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 vm,
                 blacklist, //blacklist only contains the host we're putting to maintenance
                 Collections.emptyList(), //no whitelist
+                new SchedulingParameters(),
                 new ArrayList<>()
         ).isEmpty();
     }
@@ -161,6 +163,11 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
         boolean forceMigration = !getParameters().isInternal();
         MigrateVmParameters parameters = new MigrateVmParameters(forceMigration, vm.getId());
+        parameters.setIgnoreHardVmToVmAffinity(Config.<Boolean>getValue(
+                ConfigValues.IgnoreVmToVmAffinityForHostMaintenance,
+                vm.getCompatibilityVersion().getValue()
+        ));
+
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
         return runInternalAction(ActionType.MigrateVm,
                 parameters,

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -315,8 +316,12 @@ public class AffinityRulesEnforcer {
                 candidateVm.getRunOnVds() == null ?
                         Collections.emptyList() : Arrays.asList(candidateVm.getRunOnVds());
 
-        boolean canMove = !schedulingManager.canSchedule(cluster, candidateVm,
-                vdsBlackList, Collections.emptyList(), new ArrayList<>()).isEmpty();
+        boolean canMove = !schedulingManager.canSchedule(cluster,
+                candidateVm,
+                vdsBlackList,
+                Collections.emptyList(),
+                new SchedulingParameters(),
+                new ArrayList<>()).isEmpty();
 
         if (canMove) {
             log.debug("VM {} is a viable candidate for solving the affinity group violation situation.",

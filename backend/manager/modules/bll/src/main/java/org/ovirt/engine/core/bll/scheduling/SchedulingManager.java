@@ -324,6 +324,7 @@ public class SchedulingManager implements BackendService {
             List<Guid> hostBlackList,
             List<Guid> hostWhiteList,
             List<Guid> destHostIdList,
+            SchedulingParameters schedulingParameters,
             List<String> messages,
             RunVmDelayer runVmDelayer,
             String correlationId) {
@@ -339,7 +340,9 @@ public class SchedulingManager implements BackendService {
             refreshCachedPendingValues(vdsList);
             subtractRunningVmResources(cluster, vm, vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-            SchedulingContext context = new SchedulingContext(cluster, createClusterPolicyParameters(cluster));
+            SchedulingContext context = new SchedulingContext(cluster,
+                    createClusterPolicyParameters(cluster),
+                    schedulingParameters);
 
             vdsList =
                     runFilters(policy.getFilters(),
@@ -603,6 +606,7 @@ public class SchedulingManager implements BackendService {
             VM vm,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
+            SchedulingParameters schedulingParameters,
             List<String> messages) {
         List<VDS> vdsList = vdsDao
                 .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
@@ -611,7 +615,9 @@ public class SchedulingManager implements BackendService {
         refreshCachedPendingValues(vdsList);
         subtractRunningVmResources(cluster, vm, vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-        SchedulingContext context = new SchedulingContext(cluster, createClusterPolicyParameters(cluster));
+        SchedulingContext context = new SchedulingContext(cluster,
+                createClusterPolicyParameters(cluster),
+                schedulingParameters);
 
         vdsList =
                 runFilters(policy.getFilters(),
