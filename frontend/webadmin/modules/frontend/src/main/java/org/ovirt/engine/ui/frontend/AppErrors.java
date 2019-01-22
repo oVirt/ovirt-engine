@@ -503,6 +503,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String CLUSTER_VERSION_CHANGE_VM_PREVIEW();
 
+    String CLUSTER_VERSION_CHANGE_VM_NEXT_RUN();
+
     String ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY();
 
     String ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH();

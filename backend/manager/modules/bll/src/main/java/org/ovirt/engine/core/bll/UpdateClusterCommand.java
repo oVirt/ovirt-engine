@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -69,6 +70,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -110,6 +112,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private VmStaticDao vmStaticDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
+    @Inject
+    private SnapshotDao snapshotDao;
     @Inject
     private NetworkClusterDao networkClusterDao;
     @Inject
@@ -586,6 +590,15 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             if (!vmInPreviewNames.isEmpty()) {
                 return failValidation(EngineMessage.CLUSTER_VERSION_CHANGE_VM_PREVIEW, vmInPreviewNames);
             }
+
+            List<String> vmWithNextRunNames = vmList.stream()
+                    .filter(vm -> !vm.isDown())
+                    .filter(this::hasNextRunConfiguration)
+                    .map(VM::getName)
+                    .collect(Collectors.toList());
+            if (!vmWithNextRunNames.isEmpty()) {
+                return failValidation(EngineMessage.CLUSTER_VERSION_CHANGE_VM_NEXT_RUN, vmWithNextRunNames);
+            }
         }
 
         isAddedToStoragePool = oldCluster.getStoragePoolId() == null
@@ -742,6 +755,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         return true;
+    }
+
+    private boolean hasNextRunConfiguration(VM vm) {
+        return snapshotDao.exists(vm.getId(), Snapshot.SnapshotType.NEXT_RUN);
     }
 
     @Override
