@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
@@ -11,6 +12,7 @@ public class RestoreAllManagedBlockSnapshotsParameters extends VmOperationParame
 
     private SnapshotActionEnum snapshotAction;
     private List<ManagedBlockStorageDisk> managedBlockStorageDisks;
+    private List<Guid> snapshotsToRemove = new ArrayList<>();
 
     public RestoreAllManagedBlockSnapshotsParameters() {
     }
@@ -43,5 +45,13 @@ public class RestoreAllManagedBlockSnapshotsParameters extends VmOperationParame
 
     public void setManagedBlockStorageDisks(List<ManagedBlockStorageDisk> managedBlockStorageDisks) {
         this.managedBlockStorageDisks = managedBlockStorageDisks;
+    }
+
+    public List<Guid> getSnapshotsToRemove() {
+        return snapshotsToRemove;
+    }
+
+    public void setSnapshotsToRemove(List<Guid> snapshotsToRemove) {
+        this.snapshotsToRemove = snapshotsToRemove;
     }
 }

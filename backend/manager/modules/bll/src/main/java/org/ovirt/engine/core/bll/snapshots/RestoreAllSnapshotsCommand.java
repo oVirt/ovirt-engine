@@ -566,7 +566,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 List<DiskImage> cinderDiskFromPreviewSnapshot = imagesFromPreviewSnapshot.stream().filter(diskImage->
                         diskImage.getId().equals(image.getId())).collect(Collectors.toList());
                 if (!cinderDiskFromPreviewSnapshot.isEmpty()) {
-                    if (image.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    if (image.getDiskStorageType() == DiskStorageType.IMAGE ||
+                            image.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
                         imagesToRestore.add(image);
                     } else if (image.getDiskStorageType() == DiskStorageType.CINDER){
                         CinderDisk cinderVolume = getInitialCinderVolumeToDelete(image);

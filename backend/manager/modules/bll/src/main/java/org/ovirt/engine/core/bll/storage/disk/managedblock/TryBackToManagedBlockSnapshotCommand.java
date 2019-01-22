@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.util.ManagedBlockStorageDiskUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.CreateManagedBlockStorageDiskSnapshotParameters;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.utils.cinderlib.CinderlibExecutor;
 import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.CinderStorageDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.utils.JsonHelper;
@@ -39,6 +41,9 @@ public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockSt
 
     @Inject
     private DiskImageDao diskImageDao;
+
+    @Inject
+    private DiskDao diskDao;
 
     @Inject
     private ImageDao imageDao;
@@ -100,6 +105,7 @@ public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockSt
         TransactionSupport.executeInNewTransaction(() -> {
             ManagedBlockStorageDisk newVolume =
                     initNewVolume(getParameters().getDestinationImageId());
+            managedBlockStorageDiskUtil.updateOldImageAsActive(Snapshot.SnapshotType.PREVIEW, false, newVolume);
             imageDao.save(newVolume.getImage());
             managedBlockStorageDiskUtil.saveDisk(newVolume);
             return null;
@@ -108,11 +114,7 @@ public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockSt
 
     private ManagedBlockStorageDisk initNewVolume(Guid volumeId) {
         ManagedBlockStorageDisk currentActiveVolume =
-                (ManagedBlockStorageDisk) diskImageDao.get(getParameters().getVolumeId());
-        currentActiveVolume.setActive(false);
-        imageDao.update(currentActiveVolume.getImage());
-        ManagedBlockStorageDisk snapshotLeaf =
-                (ManagedBlockStorageDisk) imagesHandler.getSnapshotLeaf(getParameters().getVolumeId());
+                (ManagedBlockStorageDisk) diskDao.get(getParameters().getVolumeId());
 
         currentActiveVolume.setVolumeFormat(VolumeFormat.RAW);
         currentActiveVolume.setImageStatus(ImageStatus.LOCKED);
@@ -122,7 +124,7 @@ public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockSt
         currentActiveVolume.setLastModifiedDate(new Date());
         currentActiveVolume.setDiskProfileId(getParameters().getDiskProfileId());
         currentActiveVolume.setImageId(volumeId);
-        currentActiveVolume.setParentId(snapshotLeaf.getImageId());
+        currentActiveVolume.setParentId(getParameters().getImageId());
         currentActiveVolume.setActive(true);
 
         return currentActiveVolume;

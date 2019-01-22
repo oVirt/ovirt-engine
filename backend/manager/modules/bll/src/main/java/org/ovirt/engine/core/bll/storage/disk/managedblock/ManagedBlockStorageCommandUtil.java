@@ -99,7 +99,7 @@ public class ManagedBlockStorageCommandUtil {
         SaveManagedBlockStorageDiskDeviceCommandParameters parameters =
                 new SaveManagedBlockStorageDiskDeviceCommandParameters();
         parameters.setDevice(disk.getDevice());
-        parameters.setDiskId(disk.getId());
+        parameters.setDiskId(disk.getImageId());
         parameters.setStorageDomainId(disk.getStorageIds().get(0));
         ActionReturnValue saveDeviceReturnValue =
                 backend.runInternalAction(ActionType.SaveManagedBlockStorageDiskDevice, parameters);
@@ -171,7 +171,7 @@ public class ManagedBlockStorageCommandUtil {
         DisconnectManagedBlockStorageDeviceParameters parameters =
                 new DisconnectManagedBlockStorageDeviceParameters();
         parameters.setStorageDomainId(disk.getStorageIds().get(0));
-        parameters.setDiskId(disk.getId());
+        parameters.setDiskId(disk.getImageId());
 
         Guid vdsId = (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.ATTACHED_VDS_ID);
 
