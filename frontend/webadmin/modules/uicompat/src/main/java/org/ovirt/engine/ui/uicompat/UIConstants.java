@@ -2129,11 +2129,11 @@ public interface UIConstants extends Constants {
 
     String forceRemoveCinderProvider();
 
-    String all();
+    String both();
 
-    String runningOnHost();
+    String runningOnCurrentHost();
 
-    String pinnedToHost();
+    String pinnedToCurrentHost();
 
     String replaceBrickWarning();
 

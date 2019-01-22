@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.FragmentParams;
@@ -50,6 +51,8 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
     private ViewRadioGroup<HostVmFilter> viewRadioGroup;
 
+    private AbstractTextColumn<VM> attachmentToCurHostColumn;
+
     @Inject
     public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(modelProvider);
@@ -67,13 +70,13 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
     private FlowPanel createOverheadPanel() {
         Label label = new Label();
-        label.setText(constants.vms() + ":"); //$NON-NLS-1$
+        label.setText(constants.vmFilters() + ":"); //$NON-NLS-1$
         label.addStyleName(Styles.PULL_LEFT);
         label.getElement().getStyle().setMarginTop(3, Style.Unit.PX);
         label.getElement().getStyle().setMarginRight(5, Style.Unit.PX);
 
         viewRadioGroup = new ViewRadioGroup<>(Arrays.asList(HostVmFilter.values()));
-        viewRadioGroup.setSelectedValue(HostVmFilter.ALL);
+        viewRadioGroup.setSelectedValue(HostVmFilter.RUNNING_ON_CURRENT_HOST);
         viewRadioGroup.addChangeHandler(selection -> onFilterChange(selection));
 
         FlowPanel overheadPanel = new FlowPanel();
@@ -110,6 +113,18 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         VmTypeColumn typeColumn = new VmTypeColumn();
         typeColumn.setContextMenuTitle(constants.typeVm());
         getTable().addColumn(typeColumn, constants.empty(), "60px"); //$NON-NLS-1$
+
+        attachmentToCurHostColumn = new AbstractTextColumn<VM>() {
+            @Override
+            public String getValue(VM object) {
+                Guid vdsId = getDetailModel().getEntity().getId();
+                boolean pinned = object.getDedicatedVmForVdsList() != null ? object.getDedicatedVmForVdsList().contains(vdsId) : false;
+                boolean running = object.getRunOnVds() != null? object.getRunOnVds().equals(vdsId) : false;
+                return pinned ? (running? constants.runningAndPinnedOnCurHost() : constants.pinnedToCurHost()) : constants.runningOnCurHost();
+            }
+        };
+        attachmentToCurHostColumn.makeSortable();
+        getTable().addColumn(attachmentToCurHostColumn, constants.attachmentToCurHost(), "200px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override
@@ -196,6 +211,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     }
 
     private void onFilterChange(HostVmFilter selected) {
+        getTable().ensureColumnVisible(attachmentToCurHostColumn, constants.attachmentToCurHost(), selected == HostVmFilter.BOTH);
         getDetailModel().setViewFilterType(selected);
     }
 

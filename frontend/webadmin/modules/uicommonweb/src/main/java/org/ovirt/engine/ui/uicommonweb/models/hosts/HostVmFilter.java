@@ -14,7 +14,23 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public enum HostVmFilter implements ViewFilter<HostVmFilter> {
-    ALL(ConstantsManager.getInstance().getConstants().all()) {
+    RUNNING_ON_CURRENT_HOST(ConstantsManager.getInstance().getConstants().runningOnCurrentHost()) {
+        @Override
+        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
+            // During the migration, the VM should be visible on source host (Migrating From), and also
+            // on destination host (Migrating To)
+            AsyncDataProvider.getInstance().getVmsRunningOnOrMigratingToVds(aQuery, hostId);
+        }
+    },
+
+    PINNED_TO_CURRENT_HOST(ConstantsManager.getInstance().getConstants().pinnedToCurrentHost()) {
+        @Override
+        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
+            AsyncDataProvider.getInstance().getVmsPinnedToHost(aQuery, hostId);
+        }
+    },
+
+    BOTH(ConstantsManager.getInstance().getConstants().both()) {
         @Override
         public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
             Set<VM> resultSet = new HashSet<>();
@@ -28,24 +44,8 @@ public enum HostVmFilter implements ViewFilter<HostVmFilter> {
                 }
             };
 
-            RUNNING_ON_HOST.executeQuery(hostId, new AsyncQuery<>(callback));
-            PINNED_TO_HOST.executeQuery(hostId, new AsyncQuery<>(callback));
-        }
-    },
-
-    RUNNING_ON_HOST(ConstantsManager.getInstance().getConstants().runningOnHost()) {
-        @Override
-        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
-            // During the migration, the VM should be visible on source host (Migrating From), and also
-            // on destination host (Migrating To)
-            AsyncDataProvider.getInstance().getVmsRunningOnOrMigratingToVds(aQuery, hostId);
-        }
-    },
-
-    PINNED_TO_HOST(ConstantsManager.getInstance().getConstants().pinnedToHost()) {
-        @Override
-        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
-            AsyncDataProvider.getInstance().getVmsPinnedToHost(aQuery, hostId);
+            RUNNING_ON_CURRENT_HOST.executeQuery(hostId, new AsyncQuery<>(callback));
+            PINNED_TO_CURRENT_HOST.executeQuery(hostId, new AsyncQuery<>(callback));
         }
     };
 

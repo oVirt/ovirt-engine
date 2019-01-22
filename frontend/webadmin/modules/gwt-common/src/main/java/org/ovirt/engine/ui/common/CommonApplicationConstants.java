@@ -1149,6 +1149,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String vms();
 
+    String vmFilters();
+
     String maxAssignedVmsPerUser();
 
     String spmPriority();

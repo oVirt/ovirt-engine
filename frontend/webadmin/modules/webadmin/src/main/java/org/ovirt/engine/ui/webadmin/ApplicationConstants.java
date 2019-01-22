@@ -1450,6 +1450,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterVm();
 
+    String attachmentToCurHost();
+
+    String runningOnCurHost();
+
+    String pinnedToCurHost();
+
+    String runningAndPinnedOnCurHost();
+
     String allowPartial();
 
     String dcVm();
