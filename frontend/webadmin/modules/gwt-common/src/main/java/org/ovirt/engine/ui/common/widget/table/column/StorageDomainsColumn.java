@@ -16,7 +16,8 @@ public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements Co
     @Override
     public String getValue(Disk object) {
         if (object.getDiskStorageType() != DiskStorageType.IMAGE
-                && object.getDiskStorageType() != DiskStorageType.CINDER) {
+                && object.getDiskStorageType() != DiskStorageType.CINDER
+                && object.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
             return constants.empty();
         }
 

@@ -879,6 +879,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             boolean isDataCenterAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isGeneralAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isCinderStorage = storage.getStorageType().isCinderDomain();
+            boolean isManagedBlockStorage = storage.getStorageType().isManagedBlockStorage();
             boolean isGlusterStorage = storage.getStorageType() == StorageType.GLUSTERFS;
 
             boolean isRegsiterEntityListModelSelected =
@@ -899,7 +900,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             vmRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskImageRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
-            diskListModel.setIsAvailable(isDataStorage || isCinderStorage);
+            diskListModel.setIsAvailable(isDataStorage || isCinderStorage || isManagedBlockStorage);
             registerDiskListModel.setIsAvailable(isCinderStorage);
             snapshotListModel.setIsAvailable(isDataStorage || isCinderStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
