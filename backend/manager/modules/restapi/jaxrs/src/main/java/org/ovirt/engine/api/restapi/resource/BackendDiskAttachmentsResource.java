@@ -226,7 +226,15 @@ public class BackendDiskAttachmentsResource
     private DiskAttachments mapCollection(List<DiskVmElement> entities) {
         DiskAttachments collection = new DiskAttachments();
         for (org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity : entities) {
-            collection.getDiskAttachments().add(addLinks(populate(map(entity), entity), Vm.class));
+            DiskAttachment diskAttachment = addLinks(populate(map(entity), entity), Vm.class);
+            /*
+             * Href of the diskattachment must be set manually due to a bug (https://bugzilla.redhat.com/1647018).
+             * The bug is the result of an exceptional case where the same entity (disk-attachment)
+             * has the same parent (vm) in 2 different locations in the API, causing ambiguity
+             * in the link generation process.
+             */
+            diskAttachment.setHref("/ovirt-engine/api/vms/" + vmId.toString() + "/diskattachments/" + diskAttachment.getId());
+            collection.getDiskAttachments().add(diskAttachment);
         }
         return collection;
     }

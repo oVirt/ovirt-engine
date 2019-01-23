@@ -53,7 +53,15 @@ public class BackendDiskAttachmentResource
 
     @Override
     public DiskAttachment get() {
-        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), vmId)), Vm.class);
+        DiskAttachment diskAttachment = performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), vmId)), Vm.class);
+        /*
+         * Href of the diskattachment must be set manually due to a bug (https://bugzilla.redhat.com/1647018).
+         * The bug is the result of an exceptional case where the same entity (disk-attachment)
+         * has the same parent (vm) in 2 different locations in the API, causing ambiguity
+         * in the link generation process.
+         */
+        diskAttachment.setHref("/ovirt-engine/api/vms/" + vmId.toString() + "/diskattachments/" + diskAttachment.getId());
+        return diskAttachment;
     }
 
     @Override
