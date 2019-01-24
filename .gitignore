@@ -74,6 +74,7 @@ packaging/setup/ovirt_engine_setup/websocket_proxy/config.py
 packaging/sys-etc/logrotate.d/ovirt-engine
 packaging/sys-etc/logrotate.d/ovirt-engine-notifier
 packaging/sys-etc/logrotate.d/ovirt-engine-setup
+packaging/cinderlib/config.py
 
 # dbscripts
 ###########################

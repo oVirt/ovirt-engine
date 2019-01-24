@@ -1,0 +1,7 @@
+The ssh_known_hosts file is to be used for cinder drivers which require
+ssh access to the storage and expect it to be present, amongst those drivers
+are HP and NetApp.
+
+To manually add entries you can use:
+$ ssh-keyscan <host> >> /etc/ovirt-engine/cinderlib/ssh_known_hosts
+

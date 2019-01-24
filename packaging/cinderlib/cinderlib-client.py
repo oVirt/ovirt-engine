@@ -28,6 +28,7 @@ from __future__ import print_function
 
 import argparse
 import json
+import os
 import sys
 import traceback
 
@@ -35,6 +36,11 @@ import requests
 
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+import config
+
+
+from ovirt_engine import configfile
 
 try:
     import cinderlib as cl
@@ -48,6 +54,15 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class UsageError(Exception):
     """ Raised when usage is wrong """
+
+conf = configfile.ConfigFile([config.ENGINE_DEFAULTS])
+
+
+def get_ssh_known_hosts():
+    ssh_dir = os.path.join(conf.get('ENGINE_ETC'), 'cinderlib')
+    ssh_file = os.path.join(ssh_dir, 'ssh_known_hosts')
+
+    return ssh_file
 
 
 def main(args=None):
@@ -177,7 +192,9 @@ def main(args=None):
 
 def load_backend(args):
     persistence_config = {'storage': 'db', 'connection': args.db_url}
-    cl.setup(persistence_config=persistence_config)
+    cl.setup(file_locks_path=conf.get('ENGINE_TMP'),
+             persistence_config=persistence_config,
+             ssh_hosts_key_file=get_ssh_known_hosts())
     return cl.Backend(**json.loads(args.driver))
 
 

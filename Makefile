@@ -261,6 +261,7 @@ GENERATED = \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
+	packaging/cinderlib/config.py \
 	$(NULL)
 
 all: \

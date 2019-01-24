@@ -1085,11 +1085,11 @@ fi
 %dir %{engine_data}/bin
 %dir %{engine_data}/brands
 %dir %{engine_data}/conf
+%dir %{engine_data}/cinderlib
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
 %dir %{engine_data}/playbooks
-%dir %{engine_data}/cinderlib
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
 %dir %{engine_etc}/branding
@@ -1099,6 +1099,20 @@ fi
 %{engine_data}/brands/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
+%{engine_etc}/cinderlib/
+%config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
+
+%if 0%{?use_python_bytecompile}
+%{engine_data}/cinderlib/cinderlib-client.*
+%{engine_data}/cinderlib/config.*
+%if 0%{with_python3}
+%{engine_data}/cinderlib/__pycache__/cinderlib-client.*
+%{engine_data}/cinderlib/__pycache__/config.*
+%endif
+%else
+%{engine_data}/cinderlib/cinderlib-client.py*
+%{engine_data}/cinderlib/config.py*
+%endif
 
 #
 # ATTENTION:
@@ -1368,14 +1382,6 @@ fi
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_etc}/ovirt-fence-kdump-listener.conf.d/
 
-%if 0%{?use_python_bytecompile}
-%{engine_data}/cinderlib/cinderlib-client.*
-%if 0%{with_python3}
-%{engine_data}/cinderlib/__pycache__/cinderlib-client.*
-%endif
-%else
-%{engine_data}/cinderlib/cinderlib-client.py*
-%endif
 
 %{_unitdir}/ovirt-engine-notifier.service
 %{_unitdir}/ovirt-fence-kdump-listener.service
