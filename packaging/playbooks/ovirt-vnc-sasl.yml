@@ -1,0 +1,5 @@
+- hosts: all
+  remote_user: root
+
+  roles:
+    - role: ovirt-host-setup-vnc-sasl
