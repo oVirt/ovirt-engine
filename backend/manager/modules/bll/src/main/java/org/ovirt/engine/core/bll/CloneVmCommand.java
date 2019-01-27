@@ -132,6 +132,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
             diskImagesFromConfiguration = DisksFilter.filterImageDisks(loadedImages, ONLY_SNAPABLE, ONLY_ACTIVE);
             diskImagesFromConfiguration.addAll(DisksFilter.filterCinderDisks(loadedImages, ONLY_PLUGGED));
+            diskImagesFromConfiguration.addAll(DisksFilter.filterManagedBlockStorageDisks(loadedImages, ONLY_PLUGGED));
         }
         return diskImagesFromConfiguration;
     }

@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -374,6 +375,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     protected boolean addVmImages() {
         int numberOfStartedCopyTasks = 0;
         List<DiskImage> cinderDisks = new ArrayList<>();
+        List<DiskImage> managedBlockDisks = new ArrayList<>();
         try {
             if (!getAdjustedDiskImagesFromConfiguration().isEmpty()) {
                 lockEntities();
@@ -391,26 +393,35 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                             saveIllegalDisk(diskImage);
                         }
                     } else {// Only legal images can be copied
-                        if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
-                            CinderDisk cinder = (CinderDisk) diskImage;
-                            cinder.setVmSnapshotId(getVmSnapshotId());
-                            cinderDisks.add(cinder);
-                            continue;
+                        switch (diskImage.getDiskStorageType()) {
+                            case CINDER:
+                                CinderDisk cinder = (CinderDisk) diskImage;
+                                cinder.setVmSnapshotId(getVmSnapshotId());
+                                cinderDisks.add(cinder);
+                                break;
+                            case MANAGED_BLOCK_STORAGE:
+                                ManagedBlockStorageDisk managedBlockDisk = (ManagedBlockStorageDisk) diskImage;
+                                managedBlockDisk.setVmSnapshotId(getVmSnapshotId());
+                                managedBlockDisks.add(managedBlockDisk);
+                                break;
+                            default:
+                                copyDiskImage(diskImage,
+                                        diskImage.getStorageIds().get(0),
+                                        diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
+                                        diskInfoDestinationMap.get(diskImage.getId()).getDiskProfileId(),
+                                        getActionType());
+                                numberOfStartedCopyTasks++;
+                                break;
                         }
-                        copyDiskImage(diskImage,
-                                diskImage.getStorageIds().get(0),
-                                diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
-                                diskInfoDestinationMap.get(diskImage.getId()).getDiskProfileId(),
-                                getActionType());
-                        numberOfStartedCopyTasks++;
                     }
                 }
                 addVmCinderDisks(cinderDisks);
+                addManagedBlockDisks(managedBlockDisks);
             }
         } finally {
             // If no tasks were created, endAction will not be called, but
             // it is still needed to unlock the entities
-            if ((numberOfStartedCopyTasks == 0) && cinderDisks.isEmpty()) {
+            if ((numberOfStartedCopyTasks == 0) && cinderDisks.isEmpty() && managedBlockDisks.isEmpty()) {
                 unlockEntities();
             }
         }
