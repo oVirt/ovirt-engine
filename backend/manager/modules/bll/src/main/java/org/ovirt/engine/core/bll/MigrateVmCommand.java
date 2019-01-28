@@ -844,12 +844,35 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
                 && validate(new DiskImagesValidator(callFilterImageDisks(vm)).diskImagesNotLocked())
-                && !schedulingManager.canSchedule(getCluster(),
-                        getVm(),
-                        getVdsBlackList(),
-                        getVdsWhiteList(),
-                        new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
-                        getReturnValue().getValidationMessages()).isEmpty();
+                && canScheduleVm();
+    }
+
+    private boolean canScheduleVm() {
+        boolean result = !schedulingManager.canSchedule(getCluster(),
+                getVm(),
+                getVdsBlackList(),
+                getVdsWhiteList(),
+                new SchedulingParameters(),
+                getReturnValue().getValidationMessages()).isEmpty();
+
+        if (result) {
+            // If it is possible to migrate VM without breaking affinity, do not ignore it.
+            getParameters().setIgnoreHardVmToVmAffinity(false);
+            return true;
+        }
+
+        // If the migration is caused by moving a host to maintenance,
+        // it is possible to ignore VM affinity groups.
+        if (getParameters().isIgnoreHardVmToVmAffinity()) {
+            return !schedulingManager.canSchedule(getCluster(),
+                    getVm(),
+                    getVdsBlackList(),
+                    getVdsWhiteList(),
+                    new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
+                    getReturnValue().getValidationMessages()).isEmpty();
+        }
+
+        return false;
     }
 
     @Override
