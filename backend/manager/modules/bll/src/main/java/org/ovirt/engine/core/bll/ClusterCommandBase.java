@@ -11,7 +11,12 @@ import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public abstract class ClusterCommandBase<T extends ClusterParametersBase> extends CommandBase<T> {
 
@@ -23,6 +28,16 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     private ClusterDao clusterDao;
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+    @Inject
+    private ClusterFeatureDao clusterFeatureDao;
+    @Inject
+    private SupportedHostFeatureDao hostFeatureDao;
 
     private Cluster cluster;
 
@@ -37,6 +52,19 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
 
     protected ClusterValidator getClusterValidator(Cluster cluster) {
         return new ClusterValidator(clusterDao, storagePoolDao, cluster, cpuFlagsManagerHandler);
+    }
+
+    protected ClusterValidator getClusterValidator(Cluster cluster, Cluster newCluster) {
+        return new ClusterValidator(clusterDao,
+                storagePoolDao,
+                cluster,
+                cpuFlagsManagerHandler,
+                newCluster,
+                vdsDao,
+                vmDao,
+                glusterVolumeDao,
+                clusterFeatureDao,
+                hostFeatureDao);
     }
 
     @Override

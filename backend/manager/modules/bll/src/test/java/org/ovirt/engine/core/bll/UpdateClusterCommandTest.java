@@ -156,6 +156,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void legalArchitectureChange() {
         createCommandWithDefaultCluster();
         cpuExists();
@@ -190,6 +191,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void legalCpuUpdate() {
         createCommandWithDifferentCpuName();
         cpuExists();
@@ -204,7 +206,7 @@ public class UpdateClusterCommandTest {
     @Test
     public void invalidCpuSelection() {
         createCommandWithDefaultCluster();
-        validateFailedWithReason(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
+        validateFailedWithReason(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_ILLEGAL);
     }
 
     @Test
@@ -232,6 +234,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void versionDecreaseNoHostsOrNetwork() {
         createCommandWithOlderVersion();
         setupCpu();
@@ -310,7 +313,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
-    @MockedConfig("configForDetachedClusterMovesToDcWithExistingManagementNetwork")
+    @MockedConfig("configForClusterWithVirtGlusterAndDetachedClusterMovesToDc")
     public void detachedClusterMovesToDcWithExistingManagementNetwork() {
 
         newDefaultManagementNetworkFound();
@@ -321,6 +324,14 @@ public class UpdateClusterCommandTest {
         storagePoolIsLocalFS();
 
         initAndAssertValidation(true);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> configForClusterWithVirtGlusterAndDetachedClusterMovesToDc() {
+        return Stream.concat(
+                Stream.concat(mockConfiguration(),
+                        Stream.of(MockConfigDescriptor.of(ConfigValues.AllowClusterWithVirtGlusterEnabled,
+                                Boolean.FALSE))),
+                Stream.of(MockConfigDescriptor.of(ConfigValues.AutoRegistrationDefaultClusterID, Guid.Empty)));
     }
 
     public static Stream<MockConfigDescriptor<?>> configForDetachedClusterMovesToDcWithExistingManagementNetwork() {
@@ -369,6 +380,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void clusterWithNoCpu() {
         createCommandWithNoCpuName();
         when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
@@ -399,6 +411,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void disableVirtWhenVmsExist() {
         createCommandWithGlusterEnabled();
         when(clusterDao.get(any())).thenReturn(createDefaultCluster());
@@ -411,6 +424,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void disableGlusterWhenVolumesExist() {
         createCommandWithVirtEnabled();
         when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
@@ -432,6 +446,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void enableNewAddtionalFeatureWhenHostSupports() {
         createCommandWithAddtionalFeature();
         when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
@@ -443,6 +458,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void shouldCheckIfClusterCanBeUpgraded() {
         createCommandWithDefaultCluster();
         cpuExists();
@@ -454,6 +470,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void shouldCheckIfClusterUpgradeIsDone() {
         createCommandWithDefaultCluster();
         Cluster oldCluster = oldGroupFromDb();
@@ -467,6 +484,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void shouldStayInUpgradeMode() {
         createCommandWithDefaultCluster();
         Cluster oldCluster = oldGroupFromDb();
@@ -497,6 +515,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void hwrngAdditionalRngDeviceUsed() {
         final Cluster cluster = createDefaultCluster();
         cluster.setAdditionalRngSources(Collections.singleton(VmRngDevice.Source.HWRNG));
@@ -506,6 +525,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void randomAdditionalRngDeviceUsed() {
         final Cluster cluster = createDefaultCluster();
         cluster.setAdditionalRngSources(Collections.singleton(VmRngDevice.Source.RANDOM));
@@ -515,6 +535,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void memoryOptimizationWithoutKsmOrBallooning(){
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(150);
@@ -526,6 +547,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void memoryOptimizationLowerThenZeroWithoutKsmOrBallooning(){
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(-52);
@@ -537,6 +559,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void memoryOptimizationWithoutBallooning(){
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(0);
@@ -548,6 +571,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void memoryOptimizationWithoutKsm(){
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(200);
@@ -559,6 +583,7 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void memoryOptimizationWithKsmAndBallooning(){
         final Cluster cluster = createDefaultCluster();
         cluster.setMaxVdsMemoryOverCommit(200);

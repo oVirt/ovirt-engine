@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -40,10 +39,8 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -54,7 +51,6 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -509,232 +505,123 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     protected boolean validate() {
-        if (oldCluster == null) {
-            return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
+        ClusterValidator clusterValidator = getClusterValidator(oldCluster, getCluster());
+        boolean returnValue = validate(clusterValidator.oldClusterIsValid());
+        if (returnValue) {
+            returnValue = validate(clusterValidator.newNameUnique())
+                    && validate(clusterValidator.newClusterVersionSupported())
+                    && validate(clusterValidator.decreaseClusterWithHosts())
+                    && validate(clusterValidator.decreaseClusterBeneathDc(getClusterValidator(oldCluster)))
+                    && validate(clusterValidator.canChangeStoragePool())
+                    && validate(clusterValidator.cpuNotFound(checkIfCpusExist()))
+                    && validate(clusterValidator.updateCpuIllegal(checkIfCpusExist(),
+                            checkIfCpusSameManufacture(oldCluster)))
+                    && validate(clusterValidator.architectureIsLegal(isArchitectureUpdatable()))
+                    && validate(clusterValidator.cpuUpdatable())
+                    && validate(clusterValidator.vmInPrev())
+                    && validateManagementNetworkAndAdditionToStoragePool()
+                    && validate(clusterValidator.vdsUp())
+                    && validate(clusterValidator.hostsDown(getParameters().isForceResetEmulatedMachine()))
+                    && canUpdateCompatibilityVersionOrCpu()
+                    && validate(clusterValidator.updateSupportedFeatures())
+                    && hasSuspendedVms()
+                    && validate(clusterValidator.addMoreThanOneHost())
+                    && validate(clusterValidator.defaultClusterOnLocalfs())
+                    && validate(clusterValidator.oneServiceEnabled())
+                    && validate(clusterValidator.mixedClusterServicesSupportedForNewCluster())
+                    && validate(clusterValidator.disableVirt())
+                    && validate(clusterValidator.disableGluster())
+                    && validate(clusterValidator.setTrustedAttestation())
+                    && validate(clusterValidator.migrationOnError(getArchitecture()))
+                    && validateClusterPolicy(oldCluster)
+                    && validateConfiguration();
         }
+        return returnValue;
+    }
 
-        // if the name was changed then make sure the new name is unique
-        if (!Objects.equals(oldCluster.getName(), getCluster().getName())
-                && !isClusterUnique(getCluster().getName())) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_DO_ACTION_NAME_IN_USE);
+    private void addValidationVarAndMessage(String varName, Object varValue, EngineMessage message) {
+        addValidationMessageVariable(varName, varValue);
+        addValidationMessage(message);
+    }
+
+    private boolean validateConfiguration() {
+        ClusterValidator newClusterValidator = getClusterValidator(getCluster());
+        if (!validate(newClusterValidator.rngSourcesAllowed())
+                || !validate(newClusterValidator.memoryOptimizationConfiguration())
+                || !validate(moveMacs.canMigrateMacsToAnotherMacPool(oldCluster, getNewMacPoolId()))
+                || !validateDefaultNetworkProvider()) {
+            return false;
         }
+        return true;
+    }
 
-        if (!VersionSupport.checkVersionSupported(getCluster().getCompatibilityVersion())) {
-            return failValidation(VersionSupport.getUnsupportedVersionMessage());
-        }
-
-        allForCluster = vdsDao.getAllForCluster(oldCluster.getId());
-        // decreasing of compatibility version is only allowed when no hosts exists, and not beneath the DC version
-        if (getCluster().getCompatibilityVersion().compareTo(oldCluster.getCompatibilityVersion()) < 0) {
-            if (!allForCluster.isEmpty()) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_CLUSTER_WITH_HOSTS_COMPATIBILITY_VERSION);
-            }
-
-            if (oldCluster.getStoragePoolId() != null) {
-                ClusterValidator validator = getClusterValidator(oldCluster);
-                if (!validate(validator.dataCenterVersionMismatch())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
-                }
-            }
-
-        }
-
-        if (oldCluster.getStoragePoolId() != null
-                && !oldCluster.getStoragePoolId().equals(getCluster().getStoragePoolId())) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_CHANGE_STORAGE_POOL);
-        }
-
-        // If both original Cpu and new Cpu are null, don't check Cpu validity
-        boolean allVdssInMaintenance = areAllVdssInMaintenance(allForCluster);
-        // Validate the cpu only if the cluster supports Virt
-        if (getCluster().supportsVirtService()
-                && (! "".equals(oldCluster.getCpuName()) || ! "".equals(getCluster().getCpuName()))) {
-            // Check that cpu exist
-            if (!checkIfCpusExist()) {
-                addValidationMessage(EngineMessage.VAR__TYPE__CLUSTER);
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
-            } else {
-                // if cpu changed from intel to amd (or backwards) and there are
-                // vds in this cluster, cannot update
-                if (!StringUtils.isEmpty(oldCluster.getCpuName())
-                        && !checkIfCpusSameManufacture(oldCluster)
-                        && !allVdssInMaintenance) {
-                    return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_ILLEGAL);
-                }
-            }
-        }
-
-        List<VM> vmList = vmDao.getAllForCluster(oldCluster.getId());
-        boolean hasVmOrHost = !vmList.isEmpty() || !allForCluster.isEmpty();
-
-        // cannot change the processor architecture while there are attached hosts or VMs to the cluster
-        if (getCluster().supportsVirtService()
-                && !isArchitectureUpdatable()
-                && hasVmOrHost) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL);
-        }
-
-        boolean sameCpuNames = Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName());
-        boolean isOldCPUEmpty = StringUtils.isEmpty(oldCluster.getCpuName());
-
-        if (!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable(oldCluster) && hasVmOrHost) {
-            return failValidation(EngineMessage.CLUSTER_CPU_IS_NOT_UPDATABLE);
-        }
-
-        if (!oldCluster.getCompatibilityVersion().equals(getCluster().getCompatibilityVersion())) {
-            List<String> vmInPreviewNames = vmList.stream()
-                    .filter(VM::isPreviewSnapshot)
-                    .map(VM::getName)
-                    .collect(Collectors.toList());
-            // can't change cluster version when a VM is in preview
-            if (!vmInPreviewNames.isEmpty()) {
-                return failValidation(EngineMessage.CLUSTER_VERSION_CHANGE_VM_PREVIEW, vmInPreviewNames);
-            }
-
-            List<String> vmWithNextRunNames = vmList.stream()
-                    .filter(vm -> !vm.isDown())
-                    .filter(this::hasNextRunConfiguration)
-                    .map(VM::getName)
-                    .collect(Collectors.toList());
-            if (!vmWithNextRunNames.isEmpty()) {
-                return failValidation(EngineMessage.CLUSTER_VERSION_CHANGE_VM_NEXT_RUN, vmWithNextRunNames);
-            }
-        }
-
+    private boolean validateManagementNetworkAndAdditionToStoragePool() {
         isAddedToStoragePool = oldCluster.getStoragePoolId() == null
                 && getCluster().getStoragePoolId() != null;
-
         if (isAddedToStoragePool && !validateManagementNetwork()) {
             return false;
         }
+        return true;
+    }
 
-        List<VDS> upVdss = allForCluster.stream()
-                .filter(v -> v.getStatus() == VDSStatus.Up)
-                .collect(Collectors.toList());
-        if (!upVdss.isEmpty()) {
-            if (isAddedToStoragePool) {
-                return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_VDS_UP);
-            }
-
-            if (getParameters().isForceResetEmulatedMachine()) {
-                return failValidation(EngineMessage.CLUSTER_HOSTS_MUST_BE_DOWN);
-            }
-        }
-
-        boolean valid = true;
-
-        for (VDS vds : upVdss) {
-            if (!VersionSupport.checkClusterVersionSupported(
-                    getCluster().getCompatibilityVersion(), vds)) {
-                valid = false;
-                addValidationMessageVariable("host", vds.getName());
-                addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
-            }
-            if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
-                valid = false;
-                addValidationMessageVariable("host", vds.getName());
-                addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
-            }
-            if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
-                valid = false;
-                addValidationMessageVariable("host", vds.getName());
-                addValidationMessage(EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
-            }
-        }
-
-        if (!valid) {
-            return false;
-        }
-
-        Set<SupportedAdditionalClusterFeature> additionalClusterFeaturesAdded =
-                getAdditionalClusterFeaturesAdded();
-        // New Features cannot be enabled if all up hosts are not supporting the selected feature
-        if (CollectionUtils.isNotEmpty(additionalClusterFeaturesAdded)
-                && !checkClusterFeaturesSupported(upVdss, additionalClusterFeaturesAdded)) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_SUPPORTED_FEATURES_WITH_LOWER_HOSTS);
-        }
-
+    private boolean hasSuspendedVms() {
         boolean notDownVms = false;
-        boolean hasVms = !vmList.isEmpty();
-
+        List<VM> vmList = vmDao.getAllForCluster(oldCluster.getId());
+        boolean sameCpuNames = Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName());
         if (!sameCpuNames) {
             for (VM vm : vmList) {
-                if (vm.getStatus() == VMStatus.Suspended) {
+                VMStatus vmStatus = vm.getStatus();
+                if (vmStatus == VMStatus.Suspended) {
                     return failValidation(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
                 }
-                if (vm.getStatus() != VMStatus.Down) {
+                if (vmStatus != VMStatus.Down) {
                     notDownVms = true;
                     break;
                 }
             }
+            /**
+             * Upgrade of CPU in same compatibility level is allowed if
+             * there are running VMs - but we should warn they cannot not be hibernated
+             */
             if (notDownVms) {
-                int compareResult = compareCpuLevels(oldCluster);
-                if (compareResult > 0) {
-                    // Upgrade of CPU in same compatibility level is allowed if
-                    // there are running VMs - but we should warn they cannot not be hibernated
+                if (compareCpuLevels(oldCluster) > 0) {
                     addCustomValue("Cluster", getParameters().getCluster().getName());
                     auditLogDirector.log(this,
                             AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
                 }
             }
         }
-
-        if (getCluster().getStoragePoolId() != null) {
-            StoragePool storagePool = storagePoolDao.get(getCluster().getStoragePoolId());
-            if (oldCluster.getStoragePoolId() == null && storagePool.isLocal()) {
-                // we allow only one cluster in localfs data center
-                if (!clusterDao.getAllForStoragePool(getCluster().getStoragePoolId()).isEmpty()) {
-                    return failValidation(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
-                }
-                if (Config.getValue(ConfigValues.AutoRegistrationDefaultClusterID).equals(getCluster().getId())) {
-                    return failValidation(EngineMessage.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
-                }
-            }
-        }
-
-        if (!getCluster().supportsGlusterService() && !getCluster().supportsVirtService()) {
-            return failValidation(EngineMessage.CLUSTER_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
-        }
-
-        if (getCluster().supportsGlusterService() && getCluster().supportsVirtService()
-                && !isAllowClusterWithVirtGluster()) {
-            return failValidation(EngineMessage.CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
-        }
-
-        if (hasVms && !getCluster().supportsVirtService()) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
-        }
-
-        if (!getCluster().supportsGlusterService()) {
-            List<GlusterVolumeEntity> volumes = glusterVolumeDao.getByClusterId(getCluster().getId());
-            if (volumes != null && !volumes.isEmpty()) {
-                return failValidation(EngineMessage.CLUSTER_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
-            }
-        }
-
-        if (getCluster().supportsTrustedService() && Config.<String> getValue(ConfigValues.AttestationServer).equals("")) {
-            return failValidation(EngineMessage.CLUSTER_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
-        }
-
-        if (!FeatureSupported.isMigrationSupported(getArchitecture(), getCluster().getCompatibilityVersion())
-                && getCluster().getMigrateOnError() != MigrateOnErrorOptions.NO) {
-            return failValidation(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED);
-        }
-
-        if (!validateClusterPolicy(oldCluster)) {
-            return false;
-        }
-
-        ClusterValidator clusterValidator = getClusterValidator(getCluster());
-
-        if (!validate(clusterValidator.rngSourcesAllowed())
-                || !validate(clusterValidator.memoryOptimizationConfiguration())
-                || !validate(moveMacs.canMigrateMacsToAnotherMacPool(oldCluster, getNewMacPoolId()))
-                || !validateDefaultNetworkProvider()) {
-            return false;
-        }
-
         return true;
+    }
+
+    private boolean canUpdateCompatibilityVersionOrCpu() {
+        allForCluster = vdsDao.getAllForCluster(oldCluster.getId());
+        List<VDS> upVdss = allForCluster.stream()
+                .filter(v -> v.getStatus() == VDSStatus.Up)
+                .collect(Collectors.toList());
+        boolean valid = true;
+        for (VDS vds : upVdss) {
+            if (!VersionSupport.checkClusterVersionSupported(
+                    getCluster().getCompatibilityVersion(), vds)) {
+                valid = false;
+                addValidationVarAndMessage("host",
+                        vds.getName(),
+                        EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
+            }
+            if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
+                valid = false;
+                addValidationVarAndMessage("host",
+                        vds.getName(),
+                        EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+            }
+            if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
+                valid = false;
+                addValidationVarAndMessage("host",
+                        vds.getName(),
+                        EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
+            }
+        }
+        return valid;
     }
 
     protected boolean isSupportedEmulatedMachinesMatchClusterLevel(VDS vds) {
