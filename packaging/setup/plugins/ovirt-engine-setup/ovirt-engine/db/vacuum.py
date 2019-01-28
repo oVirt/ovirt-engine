@@ -89,7 +89,7 @@ class Plugin(plugin.PluginBase):
                 ' depending on this setup health and the'
                 '\nconfiguration of the db vacuum process.'
                 '\nSee'
-                ' https://www.postgresql.org/docs/10/static/sql-vacuum.html'
+                ' https://www.postgresql.org/docs/10/sql-vacuum.html'
                 '\n(@VALUES@) [@DEFAULT@]: '
             ).format(
                 db=self.environment[
