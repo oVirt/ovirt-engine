@@ -30,10 +30,19 @@ import argparse
 import json
 import sys
 
+import requests
+
+
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
 try:
     import cinderlib as cl
 except ImportError:
     cl = None
+
+
+# Silence SSL warnings for older versions
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 class UsageError(Exception):
