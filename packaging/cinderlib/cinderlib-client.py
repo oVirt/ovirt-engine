@@ -28,6 +28,7 @@ from __future__ import print_function
 
 import argparse
 import json
+import logging
 import os
 import sys
 import traceback
@@ -47,9 +48,10 @@ try:
 except ImportError:
     cl = None
 
-
 # Silence SSL warnings for older versions
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+logger = None
 
 
 class UsageError(Exception):
@@ -185,27 +187,47 @@ def main(args=None):
         args.command(args)
         sys.exit(0)
     except Exception as e:
+        setup_logger()
+        logger.error("Failure occurred when trying to run command '%s': %s",
+                     sys.argv[1], e)
         sys.stderr.write(traceback.format_exc(e))
         sys.stderr.flush()
         sys.exit(1)
+
+
+def setup_logger():
+    logging.log_file = os.path.join(conf.get('ENGINE_LOG'),
+                                    'cinderlib', 'cinderlib.log')
+    logging.config.fileConfig("logger.conf", disable_existing_loggers=True)
+    logging.captureWarnings(True)
+    global logger
+    logger = logging.getLogger()
 
 
 def load_backend(args):
     persistence_config = {'storage': 'db', 'connection': args.db_url}
     cl.setup(file_locks_path=conf.get('ENGINE_TMP'),
              persistence_config=persistence_config,
-             ssh_hosts_key_file=get_ssh_known_hosts())
+             ssh_hosts_key_file=get_ssh_known_hosts(),
+             disable_logs=False)
+
+    # Setup logging here to not have our logger overridden by cinderlib's
+    setup_logger()
+
     return cl.Backend(**json.loads(args.driver))
 
 
 def create_volume(args):
     backend = load_backend(args)
+    logger.info("Creating volume '%s', with size '%s' GB",
+                args.volume_id, args.size)
     backend.create_volume(int(args.size), id=args.volume_id)
     backend.refresh()
 
 
 def delete_volume(args):
     backend = load_backend(args)
+    logger.info("Deleting volume '%s'")
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     vol.delete()
 
@@ -213,11 +235,15 @@ def delete_volume(args):
 def connect_volume(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    logger.info("Connecting volume '%s', to host with info %r", args.volume_id,
+                args.connector_info)
 
     # check if we're already connected
     for c in vol.connections:
         provided_host = json.loads(args.connector_info)['host']
         if provided_host == c.connector_info['host']:
+            logger.info("Volume '%s' already connected to host '%s'",
+                        args.volume_id, provided_host)
             conn = c.conn_info
             break
     else:
@@ -231,6 +257,7 @@ def connect_volume(args):
 def disconnect_volume(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    logger.info("Disconnecting volume '%s'", args.volume_id)
 
     for c in vol.connections:
         c.disconnect()
@@ -239,12 +266,14 @@ def disconnect_volume(args):
 def extend_volume(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    logger.info("Extending volume '%s' by %s GB", args.volume_id, args.size)
     vol.extend(int(args.size))
     backend.refresh()
 
 
 def storage_stats(args):
     backend = load_backend(args)
+    logger.info("Fetch backend stats")
     sys.stdout.write(
         json.dumps(backend.stats(refresh=args.refresh)))
     sys.stdout.flush()
@@ -254,11 +283,13 @@ def save_device(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     conn = vol.connections[0]
+    logger.info("Saving connection %r for volume '%s'", conn, vol.id)
     conn.device_attached(json.loads(args.device))
 
 
 def get_connection_info(args):
     backend = load_backend(args)
+    logger.info("Fetch volume '%s' connetion info", args.volume_id)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     conn = vol.connections[0]
 
@@ -269,6 +300,7 @@ def get_connection_info(args):
 def clone_volume(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    logger.info("Cloning volume '%s' to '%s'", vol.id, args.cloned_vol_id)
     vol.clone(id=args.cloned_vol_id)
     backend.refresh()
 
@@ -276,7 +308,9 @@ def clone_volume(args):
 def create_snapshot(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    logger.info("Creating snapshot for volume '%s'", args.volume_id)
     snap = vol.create_snapshot()
+    logger.info("Created snapshot id: '%s'", snap.id)
     sys.stdout.write(snap.id)
     sys.stdout.flush()
     backend.refresh()
@@ -285,6 +319,8 @@ def create_snapshot(args):
 def remove_snapshot(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    logger.info("Removing volume '%s' snapshot '%s'",
+                args.volume_id, args.snapshot_id)
     snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
     snap.delete()
 
@@ -293,7 +329,10 @@ def create_volume_from_snapshot(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
+    logger.info("Creating new volume from snapshot '%s' of volume '%s'",
+                args.snapshot_id, args.volume_id)
     new_vol = snap.create_volume()
+    logger.info("Created volume id: '%s'", new_vol.id)
     sys.stdout.write(new_vol.id)
     sys.stdout.flush()
 

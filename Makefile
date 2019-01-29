@@ -579,6 +579,7 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ansible"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ova"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/cinderlib"
 
 	touch "$(DESTDIR)$(PKG_STATE_DIR)/.ssh/config"
 

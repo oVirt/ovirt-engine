@@ -53,3 +53,11 @@
 	nocreate
 	rotate 1
 }
+
+"@ENGINE_LOG@/cinderlib"/*.log {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 12
+}
