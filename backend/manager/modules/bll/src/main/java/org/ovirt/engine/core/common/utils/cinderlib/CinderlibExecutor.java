@@ -23,20 +23,22 @@ public class CinderlibExecutor {
     private static final Logger log = LoggerFactory.getLogger(CinderlibExecutor.class);
     private static final String CINDERLIB_PREFIX = "./cinderlib-client.py";
     private static final String CINDERLIB_DIR = "/cinderlib";
-    private static final String ENGINE_DB_USER = "ENGINE_DB_USER";
-    private static final String ENGINE_DB_PASSWORD = "ENGINE_DB_PASSWORD";
-    private static final String ENGINE_DB_HOST= "ENGINE_DB_HOST";
-    private static final String ENGINE_DB_PORT="ENGINE_DB_PORT";
-    private final String urlTemplate = "postgresql+psycopg2://%s:%s@%s:%s/cinder";
+    private static final String CINDERLIB_DB_USER = "CINDERLIB_DB_USER";
+    private static final String CINDERLIB_DB_PASSWORD = "CINDERLIB_DB_PASSWORD";
+    private static final String CINDERLIB_DB_HOST= "CINDERLIB_DB_HOST";
+    private static final String CINDERLIB_DB_PORT="CINDERLIB_DB_PORT";
+    private static final String CINDERLIB_DB_DATABASE = "CINDERLIB_DB_DATABASE";
+    private final String urlTemplate = "postgresql+psycopg2://%s:%s@%s:%s/%s";
     private String url;
     private File cinderlibDir;
 
     @PostConstruct
     private void init() {
-        url = String.format(urlTemplate, config.getProperty(ENGINE_DB_USER),
-                config.getProperty(ENGINE_DB_PASSWORD),
-                config.getProperty(ENGINE_DB_HOST),
-                config.getProperty(ENGINE_DB_PORT));
+        url = String.format(urlTemplate, config.getProperty(CINDERLIB_DB_USER),
+                config.getProperty(CINDERLIB_DB_PASSWORD),
+                config.getProperty(CINDERLIB_DB_HOST),
+                config.getProperty(CINDERLIB_DB_PORT),
+                config.getProperty(CINDERLIB_DB_DATABASE));
         cinderlibDir = Paths.get(config.getUsrDir().getAbsolutePath() + CINDERLIB_DIR).toFile();
     }
 
