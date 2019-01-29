@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
-import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -1114,7 +1113,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         getDisk().setWipeAfterDelete(getIsWipeAfterDelete().getEntity());
         getDisk().setShareable(getIsShareable().getEntity());
         getDisk().setPlugged(getIsPlugged().getEntity());
-        getDisk().setPropagateErrors(PropagateErrors.Off);
 
         if (getVm() != null) {
             getDiskVmElement().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : false);
