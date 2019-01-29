@@ -1480,6 +1480,9 @@ public enum AuditLogType {
     USER_FAILED_TO_THAW_VM(10770, AuditLogSeverity.WARNING),
     VDS_CANNOT_CONNECT_TO_GLUSTERFS(10771, AuditLogSeverity.ERROR),
 
+    // Managed Block Storage
+    CONNECTOR_INFO_MISSING_ON_VDS(10772, AuditLogSeverity.ERROR),
+
     //Affinity Rules Enforcement Manager
     AFFINITY_RULES_ENFORCEMENT_MANAGER_START(10780, AuditLogSeverity.NORMAL),
     AFFINITY_RULES_ENFORCEMENT_MANAGER_INTERVAL_REACHED(10781, AuditLogSeverity.NORMAL),

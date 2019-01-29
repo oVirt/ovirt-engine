@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectManagedBlockStorageDeviceCommandParameters;
@@ -26,6 +27,9 @@ import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeV
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
@@ -40,6 +44,8 @@ public class ManagedBlockStorageCommandUtil {
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public boolean attachManagedBlockStorageDisks(VM vm, VmHandler vmHandler, VDS vds) {
         if (vm.getDiskMap().isEmpty()) {
@@ -47,6 +53,13 @@ public class ManagedBlockStorageCommandUtil {
         }
 
         List<ManagedBlockStorageDisk> disks = DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
+        if (!disks.isEmpty() && vds.getConnectorInfo() == null) {
+            AuditLogable event = new AuditLogableImpl();
+            event.addCustomValue("VdsName", vds.getName());
+            event.addCustomValue("VmName", vm.getName());
+            auditLogDirector.log(event, AuditLogType.CONNECTOR_INFO_MISSING_ON_VDS);
+            return false;
+        }
         return disks.stream()
                 .allMatch(disk -> {
                     VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getImageId(), vm.getId()));
