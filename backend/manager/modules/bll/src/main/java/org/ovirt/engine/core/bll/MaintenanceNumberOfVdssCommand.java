@@ -475,6 +475,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private boolean validateGlusterParams(Set<Guid> clustersAsSet) {
         boolean result = true;
         List<String> volumesWithoutQuorum = new ArrayList<>();
+        if (!getParameters().isStopGlusterService()) {
+            // if gluster services are not stopped as part of maintenance, the quorum checks are not needed
+            return true;
+        }
         for (Guid clusterId : clustersAsSet) {
             Cluster cluster = clusterDao.get(clusterId);
             if (cluster.supportsGlusterService()) {
