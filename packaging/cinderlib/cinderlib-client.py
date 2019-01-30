@@ -62,7 +62,7 @@ def main(args=None):
     create_parser.set_defaults(command=create_volume)
     create_parser.add_argument("driver", help="The driver parameters")
     create_parser.add_argument("db_url", help="The database url")
-    create_parser.add_argument("name", help="Name of the volume")
+    create_parser.add_argument("volume_id", help="The volume id")
     create_parser.add_argument("size", help="The size needed for the volume")
 
     delete_parser = subparsers.add_parser("delete_volume",
@@ -149,7 +149,7 @@ def load_backend(args):
 
 def create_volume(args):
     backend = load_backend(args)
-    backend.create_volume(int(args.size), id=args.name)
+    backend.create_volume(int(args.size), id=args.volume_id)
     backend.refresh()
 
 
