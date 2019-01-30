@@ -443,6 +443,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 break;
             case MANAGED_BLOCK_STORAGE:
                 createManagedBlockStorageDisk();
+                break;
         }
     }
 
@@ -535,8 +536,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean useCallback() {
-        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE ||
-                getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
+        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
                 && (parentHasCallback() || !isExecutedAsChildCommand());
     }
 
