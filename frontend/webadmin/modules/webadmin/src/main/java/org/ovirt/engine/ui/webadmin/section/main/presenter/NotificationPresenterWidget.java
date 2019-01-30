@@ -23,8 +23,6 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
         void clear();
         void show();
         void hide();
-        void showButtons();
-        boolean isButtonsVisible();
         HasClickHandlers getDismissAllButton();
         HasClickHandlers getDoNotDisturb10Minutes();
         HasClickHandlers getDoNotDisturb1Hour();
@@ -49,7 +47,10 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
     public NotificationPresenterWidget(ClientStorage clientStorage, EventBus eventBus, NotificationPresenterWidget.ViewDef view) {
         super(eventBus, view);
         this.clientStorage = clientStorage;
-        updateVisibility();
+        getView().hide();
+        if (notifications.size() > 0) {
+            getView().show();
+        }
     }
 
     @Override
@@ -109,7 +110,7 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
 
         notifications.add(notification);
         getView().showNotification(notification);
-        updateVisibility();
+        getView().show();
 
         return notification;
     }
@@ -117,7 +118,7 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
     private void dismissAll() {
         notifications.clear();
         getView().clear();
-        updateVisibility();
+        getView().hide();
     }
 
     private void doNotDisturb(double time) {
@@ -146,28 +147,12 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
         sessionDoNotDisturb = true;
     }
 
-    private void updateVisibility() {
-
-        // toggles visibility of the entire panel and the button panel within.
-        // entire panel visible when 1+ notification
-        // button panel visible when 3+ notifications, and if 3 are achieved,
-        // buttons are shown and remain showing until back down to 0 notifications
-
-        if (notifications.size() > 0) {
-            getView().show();
-            if (!getView().isButtonsVisible() && notifications.size() > 2) {
-                getView().showButtons();
-            }
-        } else {
-            getView().hide();
-        }
-
-    }
-
     public void hideNotification(ToastNotification notification) {
         notifications.remove(notification);
         getView().removeNotification(notification);
-        updateVisibility();
+        if (notifications.size() == 0) {
+            getView().hide();
+        }
     }
 
 }

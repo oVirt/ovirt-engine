@@ -45,9 +45,9 @@ Notifications
 }
 
 .notif_doNotDisturbDropDownMenu {
-    top: auto;
-    right: 0;
-    left: inherit;
+    position: absolute !important;
+    top: 35px !important;
+    left: 289px !important;
 }
 
 .notif_buttonContainer {

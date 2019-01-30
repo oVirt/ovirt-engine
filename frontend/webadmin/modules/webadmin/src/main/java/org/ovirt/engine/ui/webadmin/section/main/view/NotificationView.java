@@ -51,8 +51,6 @@ public class NotificationView extends AbstractView implements NotificationPresen
     @UiField
     Anchor dismissAllButton;
 
-    private boolean buttonsVisible = false;
-
     public NotificationView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -96,29 +94,19 @@ public class NotificationView extends AbstractView implements NotificationPresen
     @Override
     public void clear() {
         toastsContainer.clear();
+        buttonContainer.setVisible(false);
     }
 
     @Override
     public void show() {
         notificationsPanel.setVisible(true);
+        buttonContainer.setVisible(true);
     }
 
     @Override
     public void hide() {
         notificationsPanel.setVisible(false);
         buttonContainer.setVisible(false);
-        buttonsVisible = false;
-    }
-
-    @Override
-    public void showButtons() {
-        buttonContainer.setVisible(true);
-        buttonsVisible = true;
-    }
-
-    @Override
-    public boolean isButtonsVisible() {
-        return buttonsVisible;
     }
 
 }
