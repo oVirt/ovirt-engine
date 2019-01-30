@@ -29,6 +29,7 @@ from __future__ import print_function
 import argparse
 import json
 import sys
+import traceback
 
 import requests
 
@@ -136,7 +137,7 @@ def main(args=None):
         args.command(args)
         sys.exit(0)
     except Exception as e:
-        sys.stderr.write(str(e))
+        sys.stderr.write(traceback.format_exc(e))
         sys.stderr.flush()
         sys.exit(1)
 

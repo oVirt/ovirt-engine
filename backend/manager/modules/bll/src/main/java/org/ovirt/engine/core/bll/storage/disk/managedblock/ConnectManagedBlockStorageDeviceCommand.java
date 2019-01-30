@@ -53,6 +53,9 @@ public class ConnectManagedBlockStorageDeviceCommand<T extends ConnectManagedBlo
                             extraParams);
             CinderlibReturnValue returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.CONNECT_VOLUME, params);
+            if (!returnValue.getSucceed()) {
+                return;
+            }
             getReturnValue().setActionReturnValue(JsonHelper.jsonToMap(returnValue.getOutput()));
         } catch (Exception e) {
             log.error("Failed executing volume connection", e);

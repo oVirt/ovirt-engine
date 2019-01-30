@@ -49,6 +49,9 @@ public class GetConnectionInfoForManagedBlockStorageDiskCommand<T extends Connec
                     extraParams);
             CinderlibReturnValue returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.GET_CONNECTION_INFO, params);
+            if (!returnValue.getSucceed()) {
+                return;
+            }
             getReturnValue().setActionReturnValue(JsonHelper.jsonToMap(returnValue.getOutput()));
         } catch (Exception e) {
             log.error("Failed executing volume creation", e);

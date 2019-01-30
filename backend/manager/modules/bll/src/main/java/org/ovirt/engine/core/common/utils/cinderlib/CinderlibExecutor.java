@@ -49,12 +49,15 @@ public class CinderlibExecutor {
 
         Process process = cinderlibProcessBuilder.start();
         String output = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
-        log.info("cinderlib output: {}", output);
         if (!process.waitFor(Config.getValue(ConfigValues.CinderlibCommandTimeoutInMinutes), TimeUnit.MINUTES)) {
             throw new Exception("cinderlib call timed out");
         }
-
         CinderlibReturnValue returnValue = new CinderlibReturnValue(process.exitValue(), output);
+        if (!returnValue.getSucceed()) {
+            log.error("cinderlib execution failed: {}", output);
+        } else {
+            log.info("cinderlib output: {}", output);
+        }
         return returnValue;
     }
 
