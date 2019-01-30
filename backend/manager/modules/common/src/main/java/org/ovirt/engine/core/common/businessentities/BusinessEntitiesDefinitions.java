@@ -95,7 +95,7 @@ public final class BusinessEntitiesDefinitions {
 
     // General descriptions
     public static final int GENERAL_NETWORK_ADDR_SIZE = 50;
-    public static final int MAX_SUPPORTED_DNS_CONFIGURATIONS = 2;
+    public static final int MAX_SUPPORTED_DNS_CONFIGURATIONS = 3;
     public static final int GENERAL_SUBNET_SIZE = 20;
     public static final int GENERAL_GATEWAY_SIZE = 20;
     public static final int GENERAL_TIME_ZONE_SIZE = 40;
