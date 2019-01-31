@@ -73,6 +73,8 @@ public class EditNetworkModel extends NetworkModel {
                             new AsyncQuery<QueryReturnValue>(result -> {
                                 Network network = result.getReturnValue();
                                 if (network != null) {
+                                    network.getProvidedBy().setPhysicalNetworkId(
+                                            getNetwork().getProvidedBy().getPhysicalNetworkId());
                                     getNetwork().setProvidedBy(network.getProvidedBy());
                                     initEnablePortSecurity();
                                     if (!getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
