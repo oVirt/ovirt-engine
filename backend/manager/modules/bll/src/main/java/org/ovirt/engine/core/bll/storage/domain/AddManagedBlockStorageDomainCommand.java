@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
@@ -59,6 +60,9 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
 
     @Override
     protected boolean canAddDomain() {
+        if (!ManagedBlockStorageDomainValidator.isDataBaseInitialized()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CINDERLIB_DATA_BASE_REQUIRED);
+        }
         return testStorageConnection();
     }
 
