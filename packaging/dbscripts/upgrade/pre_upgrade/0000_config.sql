@@ -525,6 +525,7 @@ select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 --Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('EncryptHostCommunication','true','general');
 select fn_db_add_config_value('VdsmSSLProtocol','TLS','general');
+select fn_db_add_config_value('VdsmSSLCiphers', 'HIGH:!aNULL', 'general');
 select fn_db_add_config_value('ExternalCommunicationProtocol','TLSv1.2','general');
 select fn_db_add_config_value('VdsRequestQueueName','jms.topic.vdsm_requests','general');
 select fn_db_add_config_value('VdsResponseQueueName','jms.topic.vdsm_responses','general');

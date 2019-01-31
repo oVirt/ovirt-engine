@@ -91,7 +91,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
                                 "%svars/ssl_ciphers",
                                 VdsmEnv.CONFIG_PREFIX
                         ),
-                        "HIGH"
+                        Config.<String> getValue(ConfigValues.VdsmSSLCiphers)
                 );
             } else {
                 // send noop when the variable is not sent as ovirt host deploy is waiting for engine to send something

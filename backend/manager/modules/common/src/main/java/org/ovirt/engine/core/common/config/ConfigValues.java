@@ -255,6 +255,8 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     VdsmSSLProtocol,
     @TypeConverterAttribute(String.class)
+    VdsmSSLCiphers,
+    @TypeConverterAttribute(String.class)
     ExternalCommunicationProtocol,
     @TypeConverterAttribute(String.class)
     VdsRequestQueueName,
