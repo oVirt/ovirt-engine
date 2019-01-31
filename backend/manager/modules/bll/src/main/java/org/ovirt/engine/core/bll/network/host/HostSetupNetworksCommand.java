@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.CONFIRM_CONNECTIVITY;
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.POLL;
+import static org.ovirt.engine.core.utils.NetworkUtils.areDifferentId;
 import static org.ovirt.engine.core.utils.NetworkUtils.hasIpv6PrimaryAddress;
 import static org.ovirt.engine.core.utils.network.predicate.IsDefaultRouteOnInterfacePredicate.isDefaultRouteOnInterfacePredicate;
 
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
+import org.ovirt.engine.core.bll.network.cluster.ManageNetworkClustersCommand;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
@@ -290,6 +292,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getParameters(),
                 getExistingNics(),
                 getExistingAttachments(),
+                selectNetworkAttachmentForValidatation(),
                 getNetworkBusinessEntityMap(),
                 networkClusterDao,
                 networkDao,
@@ -302,6 +305,24 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 backend);
 
         return validator.validate();
+    }
+
+    /**
+     * if default route role was changed, the networkCluster has already been updated in the db by {@link ManageNetworkClustersCommand}
+     * so in both flows the current default route role attachment can be found via the networkCluster
+     * the {@link VdsNetworkInterface}s have not been updated yet, so previous default route role can be found from them
+     *
+     * if prev and curr are different - pass null to skip validation because default route role has been changed and need to allow setup networks to happen
+     * if same - this is an update\addition of attachment and need to validate ipv6 gateway setting is legal
+     *
+     * @return network attachment to use in ipv6 gateway validation
+     */
+    private NetworkAttachment selectNetworkAttachmentForValidatation() {
+        NetworkAttachment currDefaultRouteNetworkAttachment = findAttachmentByNetworkClusterId(
+                findCurrentDefaultRouteNetworkForCluster());
+        NetworkAttachment prevDefaultRouteNetworkAttachment = findNetworkAttachmentByNetworkName(
+                findPreviousDefaultRouteNic(), getExistingAttachments());
+        return areDifferentId(prevDefaultRouteNetworkAttachment, currDefaultRouteNetworkAttachment) ? null : prevDefaultRouteNetworkAttachment;
     }
 
     @Override
@@ -628,23 +649,15 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private List<NetworkAttachment> getAttachmentsWithMissingUpdatedDefaultRoute() {
         NetworkCluster currentDefaultRouteNetworkCluster = findCurrentDefaultRouteNetworkForCluster();
-        NetworkAttachment currentDefaultRouteNetworkAttachment = currentDefaultRouteNetworkCluster == null ? null
-                : findNetworkAttachmentBy(
-                        networkIdAttachmentPredicate(currentDefaultRouteNetworkCluster.getNetworkId()),
-                        getExistingAttachments());
+        NetworkAttachment currentDefaultRouteNetworkAttachment =
+            findAttachmentByNetworkClusterId(currentDefaultRouteNetworkCluster);
 
         VdsNetworkInterface previousDefaultRouteNic = findPreviousDefaultRouteNic();
-        NetworkAttachment previousDefaultRouteNetworkAttachment = previousDefaultRouteNic == null ? null
-                : findNetworkAttachmentBy(networkNameAttachmentPredicate(previousDefaultRouteNic.getNetworkName()),
-                        getExistingAttachments());
+        NetworkAttachment previousDefaultRouteNetworkAttachment = findNetworkAttachmentByNetworkName(previousDefaultRouteNic, getExistingAttachments());
 
         if (currentDefaultRouteNetworkAttachment != null && previousDefaultRouteNetworkAttachment != null
                 && currentDefaultRouteNetworkAttachment.getId().equals(previousDefaultRouteNetworkAttachment.getId())) {
             return getParameters().getNetworkAttachments();
-        }
-
-        if (hasIpv6PrimaryAddress(previousDefaultRouteNetworkAttachment)) {
-            previousDefaultRouteNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
         }
 
         List<NetworkAttachment> extendedAttachments = getParameters().getNetworkAttachments();
@@ -654,7 +667,21 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 previousDefaultRouteNetworkAttachment);
         addAttachmentIfMissing(potentialyMissingAttachment, extendedAttachments);
 
+        NetworkAttachment previousExtendedDefaultRouteAttachment = findNetworkAttachmentByNetworkName(previousDefaultRouteNic, extendedAttachments);
+        if (hasIpv6PrimaryAddress(previousExtendedDefaultRouteAttachment)) {
+            previousExtendedDefaultRouteAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
+        }
+
         return extendedAttachments;
+    }
+
+    private NetworkAttachment findNetworkAttachmentByNetworkName(VdsNetworkInterface iface, List<NetworkAttachment> attachments) {
+        return iface == null ? null : findNetworkAttachmentBy(networkNameAttachmentPredicate(iface.getNetworkName()), attachments);
+    }
+
+    private NetworkAttachment findAttachmentByNetworkClusterId(NetworkCluster networkCluster) {
+        return networkCluster == null ? null : findNetworkAttachmentBy(
+            networkIdAttachmentPredicate(networkCluster.getNetworkId()), getExistingAttachments());
     }
 
     private Predicate<NetworkAttachment> networkIdAttachmentPredicate(Guid networkId) {

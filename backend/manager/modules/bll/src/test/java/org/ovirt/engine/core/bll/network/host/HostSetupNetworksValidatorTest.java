@@ -605,7 +605,7 @@ public class HostSetupNetworksValidatorTest {
     private void initMockNetworkAttachmentIpConfigurationValidator(EngineMessage engineMessage,
             Collection<String> replacements) {
         ValidationResult validationResult = new ValidationResult(engineMessage, replacements);
-        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any()))
+        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any(), any()))
                 .thenReturn(validationResult);
     }
 
@@ -1918,6 +1918,7 @@ public class HostSetupNetworksValidatorTest {
                 params,
                 existingInterfaces,
                 existingAttachments,
+                null,
                 new BusinessEntityMap<>(networks),
                 networkClusterDaoMock,
                 networkDaoMock,

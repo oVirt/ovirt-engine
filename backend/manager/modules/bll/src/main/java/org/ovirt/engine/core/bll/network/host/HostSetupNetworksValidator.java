@@ -76,6 +76,7 @@ public class HostSetupNetworksValidator {
     private VDS host;
     private BusinessEntityMap<VdsNetworkInterface> existingInterfacesMap;
     private List<NetworkAttachment> existingAttachments;
+    private NetworkAttachment currentDefaultRouteNetworkAttachment;
     private List<VdsNetworkInterface> removedBondVdsNetworkInterface;
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
     private List<NetworkAttachment> removedNetworkAttachments;
@@ -98,6 +99,7 @@ public class HostSetupNetworksValidator {
             HostSetupNetworksParameters params,
             List<VdsNetworkInterface> existingInterfaces,
             List<NetworkAttachment> existingAttachments,
+            NetworkAttachment currentDefaultRouteNetworkAttachment,
             BusinessEntityMap<Network> networkBusinessEntityMap,
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
@@ -112,6 +114,7 @@ public class HostSetupNetworksValidator {
         this.host = host;
         this.params = params;
         this.existingAttachments = existingAttachments;
+        this.currentDefaultRouteNetworkAttachment = currentDefaultRouteNetworkAttachment;
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
@@ -701,7 +704,8 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : nicActuallyExistsOrReferencesNewBond(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(existingAttachmentsById.get(attachment.getId()));
-            vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(params.getNetworkAttachments());
+            vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(
+                params.getNetworkAttachments(), currentDefaultRouteNetworkAttachment);
 
             boolean attachmentUpdated = !isNewAttachment(attachment.getId());
             if (attachmentUpdated) {

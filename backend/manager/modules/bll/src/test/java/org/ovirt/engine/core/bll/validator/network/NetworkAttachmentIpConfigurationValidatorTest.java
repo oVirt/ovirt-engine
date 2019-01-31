@@ -43,7 +43,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
 
     @Test
     public void checkNullIpConfiguration() {
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(EngineMessage.NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION,
                         ReplacementUtils.createSetVariableString(
                                 NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
@@ -54,7 +54,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     @Test
     public void checkMissingBothAddresses() {
         initIpConfiguration();
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(EngineMessage.NETWORK_ATTACHMENT_MISSING_IP_CONFIGURATION,
                         ReplacementUtils.createSetVariableString(
                                 NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
@@ -67,7 +67,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
         initIpConfiguration();
         initIpv6ConfigurationDetails(Ipv6BootProtocol.AUTOCONF, false, false);
 
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
@@ -75,13 +75,13 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
         initIpConfiguration();
         initIpv4ConfigurationDetails(Ipv4BootProtocol.DHCP, false, false);
 
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
     public void checkMissingV4BootProtocol() {
         initIpv4ConfigurationWithPrimaryAddress();
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
                         ReplacementUtils.createSetVariableString(
                                 NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
@@ -92,7 +92,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     @Test
     public void checkMissingV6BootProtocol() {
         initIpv6ConfigurationWithPrimaryAddress();
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_MISSING_BOOT_PROTOCOL,
                         ReplacementUtils.createSetVariableString(
                                 NetworkAttachmentIpConfigurationValidator.VAR_NETWORK_NAME, NETWORK_NAME),
@@ -124,7 +124,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     public void checkMissingIpv4AddressDetailsBootProtocolStatic() {
         final boolean initAddress = random.nextBoolean();
         initIpv4ConfigurationDetails(Ipv4BootProtocol.STATIC_IP, initAddress, !initAddress);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
                         ReplacementUtils.createSetVariableString(
@@ -137,7 +137,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     public void checkMissingIpv6AddressDetailsBootProtocolStatic() {
         final boolean initAddress = random.nextBoolean();
         initIpv6ConfigurationDetails(Ipv6BootProtocol.STATIC_IP, initAddress, !initAddress);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_MISSING_IP_ADDRESS_DETAILS,
                         ReplacementUtils.createSetVariableString(
@@ -152,7 +152,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
         initIpv6Address();
         setIpv6BootProtocol(Ipv6BootProtocol.AUTOCONF);
 
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
@@ -161,37 +161,37 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
         initIpv4Address();
         setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
 
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
     public void checkValidIpv4ConfigurationDHCPBootProtocol() {
         initIpv4ConfigurationDetails(Ipv4BootProtocol.DHCP, false, false);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
     public void checkValidIpv6ConfigurationDHCPBootProtocol() {
         initIpv6ConfigurationDetails(Ipv6BootProtocol.AUTOCONF, false, false);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
     public void checkValidIpv4ConfigurationStaticBootProtocol() {
         initIpv4ConfigurationDetails(Ipv4BootProtocol.STATIC_IP, true, true);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     @Test
     public void checkValidIpv6ConfigurationStaticBootProtocol() {
         initIpv6ConfigurationDetails(Ipv6BootProtocol.STATIC_IP, true, true);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments), isValid());
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null), isValid());
     }
 
     private void checkIncompatibleIpv4AddressDetailsBootProtocol(Ipv4BootProtocol ipv4BootProtocol) {
         final boolean initAddress = random.nextBoolean();
         initIpv4ConfigurationDetails(ipv4BootProtocol, initAddress, !initAddress);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
                         ReplacementUtils.createSetVariableString(
@@ -205,7 +205,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     private void checkIncompatibleIpv6AddressDetailsBootProtocol(Ipv6BootProtocol ipv6BootProtocol) {
         final boolean initAddress = random.nextBoolean();
         initIpv6ConfigurationDetails(ipv6BootProtocol, initAddress, !initAddress);
-        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments),
+        assertThat(underTest.validateNetworkAttachmentIpConfiguration(networkAttachments, null),
                 failsWith(
                         EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_INCOMPATIBLE_BOOT_PROTOCOL_AND_IP_ADDRESS_DETAILS,
                         ReplacementUtils.createSetVariableString(

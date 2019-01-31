@@ -334,7 +334,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         boolean isChangeable = bootProtocolsAvailable && getIsStaticIpv6Address();
         getIpv6Address().setIsChangeable(isChangeable);
         getIpv6Prefix().setIsChangeable(isChangeable);
-        getIpv6Gateway().setIsChangeable(isChangeable);
+        getIpv6Gateway().setIsChangeable(isChangeable && getNetwork().getCluster().isDefaultRoute());
     }
 
     public boolean validate() {

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.validator.network;
 
+import static org.ovirt.engine.core.utils.NetworkUtils.areDifferentId;
+import static org.ovirt.engine.core.utils.NetworkUtils.hasIpv6Gateway;
+
 import java.util.Collection;
 
 import javax.inject.Singleton;
@@ -23,7 +26,7 @@ public class NetworkAttachmentIpConfigurationValidator {
     static final String VAR_BOOT_PROTOCOL = "BootProtocol";
 
     public ValidationResult validateNetworkAttachmentIpConfiguration(
-            Collection<NetworkAttachment> attachmentsToConfigure) {
+            Collection<NetworkAttachment> attachmentsToConfigure, NetworkAttachment currentDefaultRouteNetworkAttachment) {
         for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
             IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
             if (ipConfiguration == null
@@ -38,7 +41,7 @@ public class NetworkAttachmentIpConfigurationValidator {
             if (!ipv4ValidationResult.isValid()) {
                 return ipv4ValidationResult;
             }
-            final ValidationResult ipv6ValidationResult = validateIpv6Configuration(networkAttachment);
+            final ValidationResult ipv6ValidationResult = validateIpv6Configuration(networkAttachment, currentDefaultRouteNetworkAttachment);
             if (!ipv6ValidationResult.isValid()) {
                 return ipv6ValidationResult;
             }
@@ -81,7 +84,7 @@ public class NetworkAttachmentIpConfigurationValidator {
         return ValidationResult.VALID;
     }
 
-    private ValidationResult validateIpv6Configuration(NetworkAttachment networkAttachment) {
+    private ValidationResult validateIpv6Configuration(NetworkAttachment networkAttachment, NetworkAttachment currentDefaultRouteAttachment) {
         final IpConfiguration ipConfiguration = networkAttachment.getIpConfiguration();
         if (!ipConfiguration.hasIpv6PrimaryAddressSet()) {
             return ValidationResult.VALID;
@@ -103,6 +106,12 @@ public class NetworkAttachmentIpConfigurationValidator {
                         networkName,
                         nicName);
             }
+            if (nonDefaultRouteAttachmentHasIpv6Gateway(networkAttachment, currentDefaultRouteAttachment)) {
+                return incompleteIpConfigurationValidationResult(
+                        EngineMessage.NETWORK_ATTACHMENT_IP_CONFIGURATION_STATIC_BOOT_PROTOCOL_IPV6_GATEWAY_ON_NON_DEFAULT_ROUTE_ROLE,
+                        networkName,
+                        nicName);
+            }
         } else {
             if (!isEmptyIpv6AddressDetails(ipv6Address)) {
                 return new ValidationResult(
@@ -113,6 +122,13 @@ public class NetworkAttachmentIpConfigurationValidator {
             }
         }
         return ValidationResult.VALID;
+    }
+
+    private boolean nonDefaultRouteAttachmentHasIpv6Gateway(NetworkAttachment networkAttachment, NetworkAttachment currentDefaultRoute) {
+        if (currentDefaultRoute == null) {
+            return false;
+        }
+        return areDifferentId(networkAttachment, currentDefaultRoute) && hasIpv6Gateway(networkAttachment);
     }
 
     private boolean isEmptyIpv4AddressDetails(IPv4Address iPv4Address) {

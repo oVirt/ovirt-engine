@@ -5,13 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
 
 @ExtendWith(RandomUtilsSeedingExtension.class)
@@ -129,5 +134,31 @@ public class NetworkUtilsTest {
         assertEquals("",            NetworkUtils.stripIpv6ZoneIndex("%"));
         assertEquals("",            NetworkUtils.stripIpv6ZoneIndex(""));
         assertNull(NetworkUtils.stripIpv6ZoneIndex(null));
+    }
+
+    @Test
+    void testAreDifferentIds() {
+
+        boolean DIFF = true;
+        boolean SAME = !DIFF;
+        NetworkAttachment na1 = new NetworkAttachment();
+        NetworkAttachment na2 = new NetworkAttachment();
+        NetworkAttachment naNullId = new NetworkAttachment();
+        na1.setId(Guid.newGuid());
+        na2.setId(Guid.newGuid());
+
+        List<Object[]> tests = Arrays.asList(
+                new Object[] { SAME, na1, na1 },
+                new Object[] { DIFF, null, null },
+                new Object[] { DIFF, na1, null },
+                new Object[] { DIFF, null, na2 },
+                new Object[] { DIFF, naNullId, naNullId },
+                new Object[] { DIFF, na1, naNullId },
+                new Object[] { DIFF, naNullId, na2 },
+                new Object[] { DIFF, na1, na2 }
+        );
+        for (Object[] test : tests) {
+            assertEquals(test[0], NetworkUtils.areDifferentId((NetworkAttachment) test[1], (NetworkAttachment) test[2]));
+        }
     }
 }

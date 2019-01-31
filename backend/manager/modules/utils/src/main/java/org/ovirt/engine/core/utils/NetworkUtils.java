@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils;
 
 import static java.util.stream.Collectors.toList;
+import static org.ovirt.engine.core.utils.network.predicate.IpUnspecifiedPredicate.ipUnspecifiedPredicate;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -272,5 +273,18 @@ public final class NetworkUtils {
 
     public static boolean hasIpv6PrimaryAddress(NetworkAttachment a) {
         return a != null && a.getIpConfiguration() != null && a.getIpConfiguration().getIpv6PrimaryAddress() != null;
+    }
+
+    public static boolean hasIpv6Gateway(NetworkAttachment a) {
+        return hasIpv6PrimaryAddress(a) &&
+            !ipUnspecifiedPredicate().test(a.getIpConfiguration().getIpv6PrimaryAddress().getGateway());
+    }
+
+    private static boolean areSameId(NetworkAttachment a, NetworkAttachment b) {
+        return a != null && b != null && a.getId() != null && a.getId().equals(b.getId());
+    }
+
+    public static boolean areDifferentId(NetworkAttachment a, NetworkAttachment b) {
+        return !areSameId(a, b);
     }
 }
