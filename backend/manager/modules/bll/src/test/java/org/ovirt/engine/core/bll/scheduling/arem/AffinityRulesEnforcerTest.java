@@ -27,6 +27,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -35,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
@@ -44,6 +47,8 @@ public class AffinityRulesEnforcerTest {
 
     @Mock
     private AffinityGroupDao affinityGroupDao;
+    @Mock
+    private LabelDao labelDao;
     @Mock
     private SchedulingManager schedulingManager;
     @Mock
@@ -71,6 +76,8 @@ public class AffinityRulesEnforcerTest {
 
     private final List<AffinityGroup> affinityGroups = new ArrayList<>();
 
+    private final List<Label> labels = new ArrayList<>();
+
     @InjectMocks
     private AffinityRulesEnforcer enforcer;
 
@@ -96,7 +103,7 @@ public class AffinityRulesEnforcerTest {
         prepareVmDao(vm1, vm2, vm3, vm4, vm5, vm6);
 
         when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenReturn(affinityGroups);
-
+        when(labelDao.getAllByClusterId(any())).thenReturn(labels);
         when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any(), any())).thenReturn(Arrays.asList(host1));
     }
 
@@ -502,6 +509,18 @@ public class AffinityRulesEnforcerTest {
         vm6.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm3.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+    }
+
+    @Test
+    public void shouldMigrateBasedOnLabel() {
+        labels.add(new LabelBuilder()
+                .id(Guid.newGuid())
+                .name("Test Lable")
+                .entities(vm1, vm4, vm5, host1)
+                .build()
+        );
+
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm4, vm5);
     }
 
     private Cluster createCluster() {

@@ -139,6 +139,24 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetAllLabelsForCluster (v_cluster_id UUID)
+RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT labels_map_view.*
+    FROM labels_map_view
+    WHERE label_id IN (
+        SELECT DISTINCT label_id
+        FROM labels_map
+            LEFT JOIN vds_static ON vds_static.vds_id = labels_map.vds_id
+            LEFT JOIN vm_static ON vm_static.vm_guid = labels_map.vm_id
+        WHERE vds_static.cluster_id = v_cluster_id OR
+            vm_static.cluster_id = v_cluster_id
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetLabelByName (v_label_name varchar(50))
 RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
 BEGIN

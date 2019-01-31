@@ -20,10 +20,13 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.slf4j.Logger;
@@ -39,6 +42,8 @@ public class AffinityRulesEnforcer {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
     @Inject
     private VmDao vmDao;
     @Inject
@@ -60,12 +65,34 @@ public class AffinityRulesEnforcer {
      */
     public VM chooseNextVmToMigrate(Cluster cluster) {
         List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId());
+        List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
+        allAffinityGroups.addAll(affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
 
         Optional<VM> vm = chooseNextVmToMigrateFromVMsToHostsAffinity(cluster, allAffinityGroups);
         if (vm.isPresent()) {
             return vm.get();
         }
         return chooseNextVmToMigrateFromVMsAffinity(cluster, allAffinityGroups);
+    }
+
+    private List<AffinityGroup> affinityGroupsFromLabels(List<Label> labels, Guid clusterId) {
+        return labels.stream()
+                .map(label -> {
+                    AffinityGroup group = new AffinityGroup();
+                    group.setId(label.getId());
+                    group.setClusterId(clusterId);
+                    group.setName("Label: " + label.getName());
+
+                    group.setVdsAffinityRule(EntityAffinityRule.POSITIVE);
+                    group.setVdsEnforcing(true);
+                    group.setVmAffinityRule(EntityAffinityRule.DISABLED);
+
+                    group.setVmIds(new ArrayList<>(label.getVms()));
+                    group.setVdsIds(new ArrayList<>(label.getHosts()));
+
+                    return group;
+                })
+                .collect(Collectors.toList());
     }
 
     /**

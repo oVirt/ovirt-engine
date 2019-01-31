@@ -47,6 +47,14 @@ public interface LabelDao extends Dao {
     List<Label> getAllByEntityIds(Iterable<Guid> ids);
 
     /**
+     * Retrieves all labels that are attached to hosts and VMs in given cluster.
+     *
+     * @param clusterId ID of the cluster
+     * @return the list of labels
+     */
+    List<Label> getAllByClusterId(Guid clusterId);
+
+    /**
      * Retrieves multiple labels by id
      *
      * @param ids

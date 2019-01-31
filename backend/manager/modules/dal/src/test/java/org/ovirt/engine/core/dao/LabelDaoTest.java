@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 import com.google.common.collect.Lists;
 
@@ -35,30 +37,18 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
     @Inject
     private ClusterDao clusterDao;
 
+    @Inject
+    private CpuProfileDao cpuProfileDao;
+
+    private Guid cluster1 = FixturesTool.CLUSTER_RHEL6_NFS;
+    private Guid cluster2 = FixturesTool.CLUSTER_RHEL6_NFS_2;
+
     private VdsStatic host;
 
     @BeforeEach
     @Override
     public void setUp() {
-        Cluster cluster = new Cluster();
-        cluster.setName("test-cluster");
-        cluster.setId(Guid.newGuid());
-        cluster.setCompatibilityVersion(Version.v4_3);
-        cluster.setArchitecture(ArchitectureType.x86);
-        cluster.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
-        cluster.setFirewallType(FirewallType.IPTABLES);
-        cluster.setLogMaxMemoryUsedThreshold(95);
-        cluster.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
-
-        clusterDao.save(cluster);
-
-        host = new VdsStatic();
-        host.setId(Guid.newGuid());
-        host.setName("test-host");
-        host.setHostName("host-ip");
-        host.setClusterId(cluster.getId());
-
-        vdsDao.save(host);
+        host = createAndSaveHost("test-host", cluster1);
     }
 
     @Test
@@ -179,6 +169,40 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
 
         assertNotNull(read);
         assertEquals(2, read.size());
+    }
+
+    @Test
+    public void testCreateAndGetByClusterId() {
+        Label label1 = new LabelBuilder()
+                .name("test label")
+                .entity(host)
+                .build();
+
+        VdsStatic host2 = createAndSaveHost("host2", cluster2);
+        Label label2 = new LabelBuilder()
+                .name("test label 2")
+                .entity(host2)
+                .build();
+
+        VmStatic vm1 = createAndSaveVm(cluster1);
+        Label label3 = new LabelBuilder()
+                .name("test label 3")
+                .entity(vm1)
+                .build();
+
+        VmStatic vm2 = createAndSaveVm(cluster2);
+        Label label4 = new LabelBuilder()
+                .name("test label 4")
+                .entity(vm2)
+                .build();
+
+        dao.save(label1);
+        dao.save(label2);
+        dao.save(label3);
+        dao.save(label4);
+
+        List<Label> read = dao.getAllByClusterId(cluster1);
+        assertThat(read).containsOnly(label1, label3);
     }
 
     @Test
@@ -354,11 +378,43 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
     }
 
     private VmStatic createAndSaveVm() {
+        return createAndSaveVm(cluster1);
+    }
+
+    private VmStatic createAndSaveVm(Guid clusterId) {
         VmStatic vm = new VmStatic();
         vm.setId(Guid.newGuid());
+        vm.setClusterId(clusterId);
+        vm.setCpuProfileId(cpuProfileDao.getAllForCluster(clusterId).get(0).getId());
 
         vmDao.save(vm);
 
         return vm;
+    }
+
+    private VdsStatic createAndSaveHost(String name, Guid clusterId) {
+        VdsStatic host = new VdsStatic();
+        host.setId(Guid.newGuid());
+        host.setName(name);
+        host.setHostName(name);
+        host.setClusterId(clusterId);
+        vdsDao.save(host);
+
+        return host;
+    }
+
+    private Cluster createAndSaveCluster(String name) {
+        Cluster cluster = new Cluster();
+        cluster.setName(name);
+        cluster.setId(Guid.newGuid());
+        cluster.setCompatibilityVersion(Version.v4_3);
+        cluster.setArchitecture(ArchitectureType.x86);
+        cluster.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
+        cluster.setFirewallType(FirewallType.IPTABLES);
+        cluster.setLogMaxMemoryUsedThreshold(95);
+        cluster.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.PERCENTAGE);
+
+        clusterDao.save(cluster);
+        return cluster;
     }
 }

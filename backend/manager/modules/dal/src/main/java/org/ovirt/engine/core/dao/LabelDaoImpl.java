@@ -98,6 +98,15 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
     }
 
     @Override
+    public List<Label> getAllByClusterId(Guid clusterId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId);
+
+        return getCallsHandler()
+                .executeReadList("GetAllLabelsForCluster", labelRowMapper, parameterSource);
+    }
+
+    @Override
     public List<Label> getAllByIds(Iterable<Guid> ids) {
         List<UUID> uuids = new ArrayList<>();
         for (Guid guid: ids) {
