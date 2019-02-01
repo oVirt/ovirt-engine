@@ -98,7 +98,7 @@ public class HighPerformanceCpuPolicyUnitTest {
     }
 
     private List<Pair<Guid, Integer>> score() {
-        return unit.score(Arrays.asList(host1, host2, host3, host4, host5), vm, new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()));
+        return unit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()), Arrays.asList(host1, host2, host3, host4, host5), vm);
     }
 
     private VDS createHost(int numOfSockets, int coresPerSocket, int threadsPerCore) {

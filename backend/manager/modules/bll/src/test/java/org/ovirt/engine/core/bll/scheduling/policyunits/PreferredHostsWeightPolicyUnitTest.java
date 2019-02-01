@@ -44,7 +44,7 @@ public class PreferredHostsWeightPolicyUnitTest {
         hosts.add(host2);
         hosts.add(host3);
 
-        List<Pair<Guid, Integer>> weights = unit.score(hosts, vm, new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters()));
+        List<Pair<Guid, Integer>> weights = unit.score(new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters()), hosts, vm);
 
         Map<Guid, Integer> results = new HashMap<>();
         for (Pair<Guid, Integer> r: weights) {

@@ -72,7 +72,7 @@ public abstract class PolicyUnitImpl {
         return hosts;
     }
 
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
 
         return hosts.stream().map(host -> new Pair<>(host.getId(), 1)).collect(Collectors.toList());

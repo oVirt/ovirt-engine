@@ -33,12 +33,12 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         highUtilization = context.getPolicyParameters().containsKey(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()) ?
                 Long.parseLong(context.getPolicyParameters().get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()))
                 : Long.MAX_VALUE;
 
-        return super.score(hosts, vm, context);
+        return super.score(context, hosts, vm);
     }
 
     @Override

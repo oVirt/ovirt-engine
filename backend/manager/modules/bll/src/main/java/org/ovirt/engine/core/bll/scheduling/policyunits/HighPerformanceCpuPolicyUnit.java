@@ -35,7 +35,7 @@ public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         return hosts.stream()
                 .map(host -> new Pair<>(host.getId(), hostScore(vm, host)))
                 .collect(Collectors.toList());

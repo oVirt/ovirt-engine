@@ -48,7 +48,7 @@ public class NumaWeightPolicyUnit extends PolicyUnitImpl {
      * by filter policy units.
      */
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         // This unit only applies to VMs without NUMA nodes.
         // VMs with NUMA nodes should use NUMA pinning to have good performance.
         if (!vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId()).isEmpty()) {

@@ -96,7 +96,7 @@ public class NumaWeightPolicyUnitTest {
     }
 
     private List<Pair<Guid, Integer>> score() {
-        return unit.score(Arrays.asList(host1, host2, host3), vm, new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()));
+        return unit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()), Arrays.asList(host1, host2, host3), vm);
     }
 
     private VDS createHost(boolean numaSupport, long nodeCountWhereVmFits) {

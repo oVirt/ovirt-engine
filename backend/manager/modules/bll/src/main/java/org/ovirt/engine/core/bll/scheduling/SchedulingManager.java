@@ -851,7 +851,7 @@ public class SchedulingManager implements BackendService {
             SchedulingContext context) {
 
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
-            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(hostList, vm, context);
+            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(context, hostList, vm);
             for (Pair<Guid, Integer> result : scoreResult) {
                 selector.record(pair.getFirst().getGuid(), result.getFirst(), result.getSecond());
             }
