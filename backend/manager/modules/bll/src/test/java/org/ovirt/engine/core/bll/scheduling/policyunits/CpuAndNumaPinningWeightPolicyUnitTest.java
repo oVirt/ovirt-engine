@@ -142,6 +142,6 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
     }
 
     private List<Pair<Guid, Integer>> score() {
-        return unit.score(hosts, vm, new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()));
+        return unit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()), hosts, vm);
     }
 }

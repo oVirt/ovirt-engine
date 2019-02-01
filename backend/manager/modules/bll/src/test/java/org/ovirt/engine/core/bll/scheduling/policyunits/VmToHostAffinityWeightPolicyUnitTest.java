@@ -99,7 +99,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
 
 
     private Map<Guid, Integer> getScoreResults() {
-        List<Pair<Guid, Integer>> weights = unit.score(hosts, vm, context);
+        List<Pair<Guid, Integer>> weights = unit.score(context, hosts, vm);
         Map<Guid, Integer> results = weights.stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         return results;
     }

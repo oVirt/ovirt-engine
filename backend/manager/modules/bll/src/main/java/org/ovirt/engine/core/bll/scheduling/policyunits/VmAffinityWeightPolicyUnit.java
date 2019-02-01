@@ -32,7 +32,7 @@ public class VmAffinityWeightPolicyUnit extends VmAffinityPolicyUnit {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, SchedulingContext context) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         Map<Guid, Integer> acceptableHosts = getAcceptableHostsWithPriorities(false,
                 hosts,
                 vm,

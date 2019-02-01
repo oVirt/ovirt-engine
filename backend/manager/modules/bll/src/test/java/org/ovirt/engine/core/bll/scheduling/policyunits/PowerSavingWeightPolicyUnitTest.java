@@ -56,7 +56,7 @@ public class PowerSavingWeightPolicyUnitTest extends EvenDistributionWeightPolic
 
     @Override
     protected <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
-        return unit.score(hosts, vm, new SchedulingContext(new Cluster(), parameters, new SchedulingParameters())).stream()
+        return unit.score(new SchedulingContext(new Cluster(), parameters, new SchedulingParameters()), hosts, vm).stream()
                 .min(Comparator.comparing(Pair::getSecond))
                 .map(Pair::getFirst)
                 .orElse(null);

@@ -174,9 +174,9 @@ public class InClusterUpgradeWeightPolicyUnitTest {
     }
 
     private List<Pair<Guid, Integer>> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeWeightPolicyUnit.score(Arrays.asList(hosts),
-                vm,
-                new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()));
+        return inClusterUpgradeWeightPolicyUnit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()),
+                Arrays.asList(hosts),
+                vm);
     }
 
     private static Pair<Guid, Integer> weight(final VDS host, int weight) {
