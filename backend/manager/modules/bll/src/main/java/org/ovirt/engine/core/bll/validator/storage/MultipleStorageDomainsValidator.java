@@ -163,7 +163,7 @@ public class MultipleStorageDomainsValidator {
         return validOrFirstFailure(entry -> {
             StorageDomainValidator storageDomainValidator = getStorageDomainValidator(entry);
             return storageDomainValidator.isManagedBlockStorage() ?
-                    ((ManagedBlockStorageDomainValidator) storageDomainValidator).isOperationSupportedByManagedBlockStorage(actionType) :
+                    ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(actionType) :
                     ValidationResult.VALID;
         });
     }
@@ -172,9 +172,7 @@ public class MultipleStorageDomainsValidator {
     protected StorageDomainValidator getStorageDomainValidator(Map.Entry<Guid, StorageDomainValidator> entry) {
         if (entry.getValue() == null) {
             StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(entry.getKey(), storagePoolId);
-            entry.setValue(storageDomain.getStorageType().isManagedBlockStorage() ?
-                    new ManagedBlockStorageDomainValidator(storageDomain) :
-                    new StorageDomainValidator(storageDomain));
+            entry.setValue(new StorageDomainValidator(storageDomain));
         }
 
         return entry.getValue();

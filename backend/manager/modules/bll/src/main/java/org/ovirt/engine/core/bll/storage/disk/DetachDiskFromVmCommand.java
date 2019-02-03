@@ -87,7 +87,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
                 return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
             }
             if (disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
-                if (!validate(isOperationSupportedByManagedBlockStorage((DiskImage) disk, getActionType()))) {
+                if (!validate(isOperationSupportedByManagedBlockStorage(getActionType()))) {
                     return false;
                 }
             }

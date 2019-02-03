@@ -60,7 +60,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
 
     @Override
     protected boolean canAddDomain() {
-        if (!ManagedBlockStorageDomainValidator.isDataBaseInitialized()) {
+        if (!validate(ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CINDERLIB_DATA_BASE_REQUIRED);
         }
         return testStorageConnection();

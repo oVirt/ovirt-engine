@@ -423,9 +423,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             }
 
             if (storageDomain.getStorageType().isManagedBlockStorage()) {
-                ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
-                        new ManagedBlockStorageDomainValidator(storageDomain);
-                if (!validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()))) {
+                if (!validate(ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()))) {
                     return false;
                 }
             }

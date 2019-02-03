@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainVali
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -133,12 +132,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return storageHelperDirector.getItem(storageType);
     }
 
-    protected ValidationResult isOperationSupportedByManagedBlockStorage(DiskImage diskImage, ActionType actionType) {
-        StorageDomain storageDomain = storageDomainDao.getForStoragePool(
-                diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
-        ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
-                new ManagedBlockStorageDomainValidator(storageDomain);
-        return managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(actionType);
+    protected ValidationResult isOperationSupportedByManagedBlockStorage(ActionType actionType) {
+        return ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(actionType);
     }
 
     /**

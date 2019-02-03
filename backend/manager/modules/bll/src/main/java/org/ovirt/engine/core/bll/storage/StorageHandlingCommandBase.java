@@ -632,9 +632,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      */
     protected boolean isSupportedByManagedBlockStorageDomain(StorageDomain storageDomain) {
         if (storageDomain.getStorageType().isManagedBlockStorage()) {
-            ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
-                    new ManagedBlockStorageDomainValidator(storageDomain);
-            return validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
+            return validate(ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
         }
         return true;
     }

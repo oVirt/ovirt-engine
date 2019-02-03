@@ -225,9 +225,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         DiskImage diskImage = getDiskImage();
 
         if (getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
-            ManagedBlockStorageDomainValidator managedBlockStorageDomainValidator =
-                    new ManagedBlockStorageDomainValidator(getStorageDomain());
-            retValue = validate(managedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
+            retValue = validate(ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
         }
 
         boolean isVmTemplateType = diskImage.getVmEntityType() != null &&
