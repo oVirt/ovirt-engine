@@ -64,7 +64,12 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        addStyles();
         driver.initialize(this);
+    }
+
+    private void addStyles() {
+        latch.addLabelStyleName("confirmCheckBoxLabel"); //$NON-NLS-1$
     }
 
     @Override
