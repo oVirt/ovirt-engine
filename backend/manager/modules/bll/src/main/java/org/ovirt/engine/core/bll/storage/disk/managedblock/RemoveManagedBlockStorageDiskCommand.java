@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -57,12 +56,6 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
 
     public RemoveManagedBlockStorageDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    @Override
-    protected void init() {
-        DiskImage image = diskImageDao.get(getParameters().getDiskId());
-        getParameters().setStorageDomainId(image.getStorageIds().get(0));
     }
 
     @Override
