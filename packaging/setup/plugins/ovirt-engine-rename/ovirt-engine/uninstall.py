@@ -76,7 +76,7 @@ class Plugin(plugin.PluginBase):
             for f, info in self.environment[
                 osetupcons.CoreEnv.UNINSTALL_FILES_INFO
             ].items()
-            if info['changed']
+            if info.get('changed')
         ]
 
         self.logger.info(_('The following files will be updated:'))
