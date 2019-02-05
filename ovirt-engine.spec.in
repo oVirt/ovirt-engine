@@ -294,7 +294,7 @@ Requires:	%{name}-tools = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
-Requires:	%{name}-ui-extensions >= 1.0.0
+Requires:	%{name}-ui-extensions >= 1.0.3
 Requires:	ansible >= 2.7.2
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
