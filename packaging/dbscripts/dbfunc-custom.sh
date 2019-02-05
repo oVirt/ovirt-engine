@@ -14,19 +14,14 @@ dbfunc_common_hook_init_insert_data() {
 	local clusterid="58cfb470-03b9-01d0-03b9-0000000001e7"
 	local gen_clusterid=$(dbfunc_get_psql_result "select uuid_generate_v1();")
 
-	# Replace static UUIDs with generated ones
-	sed -i "s/'${spid}'/'${gen_spid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
-	sed -i "s/'${clusterid}'/'${gen_clusterid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
-
-	# Apply changes to database
-        for script in $(ls "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*insert_*.sql); do
-	    echo "Inserting data from ${script} ..."
-	    dbfunc_psql_die --file="${script}" > /dev/null
-        done
-
-	# Restore previous static UUIDs
-	sed -i "s/'${gen_spid}'/'${spid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
-	sed -i "s/'${gen_clusterid}'/'${clusterid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
+	for script in $(ls "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*insert_*.sql); do
+		echo "Inserting data from ${script} ..."
+		cat "${script}" | \
+			sed \
+				-e "s/'${spid}'/'${gen_spid}'/g" \
+				-e "s/'${clusterid}'/'${gen_clusterid}'/g" | \
+			dbfunc_psql_die --file=- > /dev/null
+	done
 }
 
 dbfunc_common_hook_pre_upgrade() {
