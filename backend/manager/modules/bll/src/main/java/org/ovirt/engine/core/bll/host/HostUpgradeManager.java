@@ -11,8 +11,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.hostdeploy.VdsDeployBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleVerbosity;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.slf4j.Logger;
@@ -39,6 +42,9 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Inject
     private AnsibleExecutor ansibleExecutor;
+
+    @Inject
+    private ClusterDao clusterDao;
 
     @Override
     public HostUpgradeManagerResult checkForUpdates(final VDS host) {
@@ -108,6 +114,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public void update(final VDS host) {
+        Cluster cluster = clusterDao.get(host.getClusterId());
         try {
             AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(host.getHostName())
@@ -116,6 +123,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 .logFilePrefix("ovirt-host-mgmt-ansible")
                 .logFileName(host.getHostName())
                 .logFileSuffix(CorrelationIdTracker.getCorrelationId())
+                .variables(new Pair<>("host_deploy_vnc_tls", cluster.isVncEncryptionEnabled() ? "true" : "false"))
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
             if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format("Failed to update host '%1$s'.", host.getHostName());
