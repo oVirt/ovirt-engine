@@ -237,7 +237,7 @@ class Plugin(plugin.PluginBase):
             for name, info in self.environment[
                 osetupcons.CoreEnv.UNINSTALL_FILES_INFO
             ].items()
-            if info['changed']
+            if info.get('changed')
         ]
 
         if changed:
