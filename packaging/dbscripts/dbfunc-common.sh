@@ -23,7 +23,7 @@ dbfunc_common_hook_sequence_numbers_update() {
 
 #cleans db by dropping all objects
 dbfunc_common_schema_drop() {
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	local statement
 	statement="$(
 		dbfunc_psql_die --command="select * from generate_drop_all_seq_syntax();"
@@ -32,17 +32,17 @@ dbfunc_common_schema_drop() {
 		dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
 		dbfunc_psql_die --command="select * from generate_drop_all_user_types_syntax();"
 	)" || exit 1
-	dbfunc_psql_die --command="${statement}" > /dev/null
+	dbfunc_psql_die_v --command="${statement}" > /dev/null
 }
 
 dbfunc_common_restore_permissions() {
 	local permissions="$1"
-	echo "Applying custom users permissions on database objects..."
+	dbfunc_output "Applying custom users permissions on database objects..."
 	if ! local output=$(dbfunc_psql_allow_errors --command="${permissions}" 2>&1); then
-		echo "While running:"
-		echo "${permissions}"
-		echo "Output was:"
-		echo "${output}"
+		dbfunc_output "While running:"
+		dbfunc_output "${permissions}"
+		dbfunc_output "Output was:"
+		dbfunc_output "${output}"
 		local fatal=$(echo "${output}" | grep -v 'ERROR: *relation [^ ]* does not exist')
 		[ -n "${fatal}" ] && die "Errors while restoring custom permissions: ${fatal}"
 	fi
@@ -51,9 +51,9 @@ dbfunc_common_restore_permissions() {
 dbfunc_common_schema_apply() {
         dbfunc_common_check_uuid_extension_installation
 	# check database connection
-	dbfunc_psql_die --command="select 1;" > /dev/null
+	dbfunc_psql_die_v --command="select 1;" > /dev/null
 
-	echo "Creating schema ${DBFUNC_DB_USER}@${DBFUNC_DB_HOST}:${DBFUNC_DB_PORT}/${DBFUNC_DB_DATABASE}"
+	dbfunc_output "Creating schema ${DBFUNC_DB_USER}@${DBFUNC_DB_HOST}:${DBFUNC_DB_PORT}/${DBFUNC_DB_DATABASE}"
 	if [ "$(dbfunc_psql_statement_parsable "
 		select count(*) as count
 		from pg_catalog.pg_tables
@@ -61,12 +61,12 @@ dbfunc_common_schema_apply() {
 			tablename = 'schema_version' and
 			schemaname = 'public'
 	")" -eq 0 ]; then
-		echo "Creating fresh schema"
+		dbfunc_output "Creating fresh schema"
 		_dbfunc_common_schema_create
 	fi
 
 	local permissions
-	echo "Saving custom users permissions on database objects..."
+	dbfunc_output "Saving custom users permissions on database objects..."
 	permissions="$(_dbfunc_common_get_custom_user_permissions)" || exit $?
 
 	_dbfunc_common_schema_upgrade
@@ -77,7 +77,7 @@ dbfunc_common_schema_apply() {
 dbfunc_common_schema_refresh() {
 	local permissions
 
-	echo "Saving custom users permissions on database objects..."
+	dbfunc_output "Saving custom users permissions on database objects..."
 	permissions="$(_dbfunc_common_get_custom_user_permissions)" || exit $?
 
 	_dbfunc_common_schema_refresh_drop
@@ -99,9 +99,9 @@ dbfunc_common_check_uuid_extension_installation() {
                     name = 'uuid-ossp' and
                     installed_version IS NOT NULL
         ")" -eq 0 ]; then
-                echo "uuid-ossp extension is missing"
-                echo "Please install uuid-ossp extension in the database by running:"
-                echo "'CREATE EXTENSION \"uuid-ossp\";'"
+                dbfunc_output "uuid-ossp extension is missing"
+                dbfunc_output "Please install uuid-ossp extension in the database by running:"
+                dbfunc_output "'CREATE EXTENSION \"uuid-ossp\";'"
                 exit 1
         fi
 }
@@ -133,7 +133,7 @@ _dbfunc_common_language_create() {
 			where lanname='${lang}'
 		"
 	)" -eq 0 ]; then
-		dbfunc_psql_die --command="create language '${lang}';" > /dev/null
+		dbfunc_psql_die_v --command="create language '${lang}';" > /dev/null
 	fi
 }
 
@@ -155,16 +155,16 @@ _dbfunc_common_schema_create() {
 	_dbfunc_common_language_create "plpgsql"
 
 	#set database min error level
-	dbfunc_psql_die --command="ALTER DATABASE \"${DBFUNC_DB_DATABASE}\" SET client_min_messages=ERROR;" > /dev/null
+	dbfunc_psql_die_v --command="ALTER DATABASE \"${DBFUNC_DB_DATABASE}\" SET client_min_messages=ERROR;" > /dev/null
 
-	echo "Creating tables..."
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_tables.sql" > /dev/null
+	dbfunc_output "Creating tables..."
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_tables.sql" > /dev/null
 
-	echo "Creating functions..."
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
+	dbfunc_output "Creating functions..."
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
 
-	echo "Creating common functions..."
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	dbfunc_output "Creating common functions..."
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 
 	#inserting initial data
 	dbfunc_common_hook_init_insert_data
@@ -176,7 +176,7 @@ _dbfunc_common_schema_create() {
 _dbfunc_common_schema_upgrade() {
 
         dbfunc_common_check_uuid_extension_installation
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/04_00_0000_set_version.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/04_00_0000_set_version.sql" > /dev/null
 
 	local files="$(_dbfunc_common_get_files "upgrade" 1)"
 	if [ -n "${files}" ]; then
@@ -185,7 +185,7 @@ _dbfunc_common_schema_upgrade() {
 		local updated=0
 		_dbfunc_common_validate_version_uniqueness
 		if [ -z "${DBFUNC_COMMON_MD5FILE}" ] || ! _dbfunc_common_is_view_or_sp_changed; then
-			echo "upgrade script detected a change in Config, View or Stored Procedure..."
+			dbfunc_output "upgrade script detected a change in Config, View or Stored Procedure..."
 			_dbfunc_common_run_pre_upgrade
 			updated=1
 		fi
@@ -199,7 +199,7 @@ _dbfunc_common_schema_upgrade() {
 			checksum="$(md5sum "${file}" | cut -d " " -f1)"
 			ver="$(_dbfunc_common_get_file_version "${file}")"
 			if [ "${ver}" -le "${current}" ] ; then
-				echo "Skipping upgrade script ${file}, its version ${ver} is <= current version ${current}"
+				dbfunc_output "Skipping upgrade script ${file}, its version ${ver} is <= current version ${current}"
 			else
 				before="$(_dbfunc_common_get_db_time)"
 				# we should remove leading zero in order not to treat number as octal
@@ -220,7 +220,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 				# check if script was already installed with other version name.
 				local installed_version="$(_dbfunc_common_get_installed_version "${checksum}")"
 				if [ -n "${installed_version}" ]; then
-					echo "Skipping upgrade script ${file}, already installed by ${installed_version}"
+					dbfunc_output "Skipping upgrade script ${file}, already installed by ${installed_version}"
 					state="SKIPPED"
 					after="$(_dbfunc_common_get_db_time)"
 					last="${xver}"
@@ -245,7 +245,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 						exit "${code}"
 					fi
 				fi
-				dbfunc_psql_die --command="
+				dbfunc_psql_die_v --command="
 					insert into schema_version(
 						version,
 						script,
@@ -277,7 +277,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 		if [ "${updated}" -eq 1 ]; then
 			_dbfunc_common_run_post_upgrade
 		else
-			echo "database is up to date."
+			dbfunc_output "database is up to date."
 		fi
 	fi
 }
@@ -285,33 +285,35 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 #drops views before upgrade or refresh operations
 _dbfunc_common_views_drop() {
 	# common stored procedures are executed first (for new added functions to be valid)
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
-	dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();" | \
-		dbfunc_psql_die > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	statement="$(
+		dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();"
+	)" || exit 1
+	dbfunc_psql_die_v --command="${statement}" > /dev/null
 }
 
 #drops sps before upgrade or refresh operations
 _dbfunc_common_sps_drop() {
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	local statement
 	statement="$(
 		dbfunc_psql_die --command="select * from generate_drop_all_functions_syntax();"
 	)" || exit 1
-	dbfunc_psql_die --command="${statement}" > /dev/null
+	dbfunc_psql_die_v --command="${statement}" > /dev/null
 
 	# recreate generic functions
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_functions.sql" > /dev/null
 }
 
 #refreshes sps
 _dbfunc_common_sps_refresh() {
-	echo "Creating stored procedures..."
+	dbfunc_output "Creating stored procedures..."
 	local file
 	find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name '*sp.sql' | sort | while read file; do
-		echo "Creating stored procedures from ${file}..."
-		dbfunc_psql_die --file="${file}" > /dev/null
+		dbfunc_output "Creating stored procedures from ${file}..."
+		dbfunc_psql_die_v --file="${file}" > /dev/null
 	done || exit $?
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 }
 
 _dbfunc_common_get_custom_user_permissions() {
@@ -325,7 +327,7 @@ _dbfunc_common_run_pre_upgrade() {
 	#Dropping all views & sps
 	_dbfunc_common_schema_refresh_drop
 	# common stored procedures are executed first (for new added functions to be valid)
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	#update sequence numers
 	dbfunc_common_hook_sequence_numbers_update
 	#run pre upgrade scripts
@@ -341,11 +343,11 @@ _dbfunc_common_run_post_upgrade() {
 	#run custom materialized views if exists
 	custom_materialized_views_file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/post_upgrade/custom/create_materialized_views.sql"
 	if [ -f "${custom_materialized_views_file}" ]; then
-		echo "running custom materialized views from '${custom_materialized_views_file}'..."
-		if ! dbfunc_psql --file="${custom_materialized_views_file}"; then
+		dbfunc_output "running custom materialized views from '${custom_materialized_views_file}'..."
+		if ! dbfunc_psql_v --file="${custom_materialized_views_file}"; then
 			#drop all custom views
-			dbfunc_psql --command="select DropAllCustomMaterializedViews();" > /dev/null
-			echo "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
+			dbfunc_psql_v --command="select DropAllCustomMaterializedViews();" > /dev/null
+			dbfunc_output "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
 		fi
 	fi
 }
@@ -369,8 +371,8 @@ _dbfunc_common_run_required_scripts() {
 		local sql="$(echo "${line}" | cut -d " " -f2)"
 		echo "${sql}" | grep -q "_sp.sql" || \
 			die "invalid source file ${sql} in ${file}, source files must end with '_sp.sql'"
-		echo "Running helper functions from '${sql}' for '${file}'"
-		dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/${sql}" > /dev/null
+		dbfunc_output "Running helper functions from '${sql}' for '${file}'"
+		dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/${sql}" > /dev/null
 	done < "${script}"
 }
 
@@ -379,14 +381,14 @@ _dbfunc_common_run_file() {
 	local extension=$(echo "${file}" | sed 's/^.*\.//')
 	if [ -x "${file}" ] && [ "${extension}" != "sql" ]; then
 		# delegate all DBFUNC_ vars in subshell
-		echo "Running upgrade shell script '${file}'..."
+		dbfunc_output "Running upgrade shell script '${file}'..."
 		(
 			eval "$(set | grep '^DBFUNC_' | sed 's/^\([^=]*\)=.*/export \1/')"
 			"${file}" || die "Failed to run '${file}' shell script."
 		)
 	else
-		echo "Running upgrade sql script '${file}'..."
-		dbfunc_psql_die --file="${file}" > /dev/null
+		dbfunc_output "Running upgrade sql script '${file}'..."
+		dbfunc_psql_die_v --file="${file}" > /dev/null
 	fi
 }
 
@@ -419,7 +421,7 @@ _dbfunc_common_set_last_version() {
 			where state in ('INSTALLED','SKIPPED')
 		"
 	)"
-	dbfunc_psql_die --command="
+	dbfunc_psql_die_v --command="
 		update schema_version
 		set current=(id=${id});
 	" > /dev/null

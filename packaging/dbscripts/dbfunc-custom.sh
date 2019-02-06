@@ -15,7 +15,7 @@ dbfunc_common_hook_init_insert_data() {
 	local gen_clusterid=$(dbfunc_get_psql_result "select uuid_generate_v1();")
 
 	for script in $(ls "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*insert_*.sql); do
-		echo "Inserting data from ${script} ..."
+		dbfunc_output "Inserting data from ${script} ..."
 		cat "${script}" | \
 			sed \
 				-e "s/'${spid}'/'${gen_spid}'/g" \
@@ -26,20 +26,20 @@ dbfunc_common_hook_init_insert_data() {
 
 dbfunc_common_hook_pre_upgrade() {
 	if [ -n "${DBFUNC_CUSTOM_CLEAN_TASKS}" ]; then
-		echo "Cleaning tasks metadata..."
-		dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/delete_async_tasks_and_compensation_data.sql" > /dev/null
+		dbfunc_output "Cleaning tasks metadata..."
+		dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/delete_async_tasks_and_compensation_data.sql" > /dev/null
 	fi
 }
 
 #refreshes views
 dbfunc_common_hook_views_refresh() {
-	echo "Creating views..."
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_views.sql" > /dev/null
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_dwh_views.sql" > /dev/null
+	dbfunc_output "Creating views..."
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_views.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_dwh_views.sql" > /dev/null
 }
 
 # Materilized views functions, override with empty implementation on DBs that not supporting that
 
 dbfunc_common_hook_sequence_numbers_update() {
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/update_sequence_numbers.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/update_sequence_numbers.sql" > /dev/null
 }

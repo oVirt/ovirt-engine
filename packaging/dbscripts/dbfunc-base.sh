@@ -27,6 +27,14 @@ dbfunc_cleanup() {
 	:
 }
 
+dbfunc_output() {
+	local m="$1"
+	local outf=/dev/stdout
+	local timestamp="$(date +"%Y-%m-%d %H:%M:%S,%3N%z")"
+	[ -n "${DBFUNC_LOGFILE}" ] && outf="${DBFUNC_LOGFILE}"
+	printf "%s\n" "${timestamp} ${m}" >> "${outf}"
+}
+
 dbfunc_psql_raw() {
 	LC_ALL="C" "${PSQL}" \
 		-w \
@@ -47,6 +55,21 @@ dbfunc_psql() {
 }
 
 dbfunc_psql_die() {
+	dbfunc_psql "$@" || die "Cannot execute sql command: $*"
+}
+
+# These log/output calls to them. Do not use if the output is sql
+# that is fed back to psql.
+dbfunc_psql_v() {
+	dbfunc_output "dbfunc_psql $*"
+	dbfunc_psql_raw \
+		--set ON_ERROR_STOP=1 \
+		${DBFUNC_VERBOSE:+--echo-all} \
+		"$@"
+}
+
+dbfunc_psql_die_v() {
+	dbfunc_output "dbfunc_psql_die $*"
 	dbfunc_psql "$@" || die "Cannot execute sql command: $*"
 }
 
