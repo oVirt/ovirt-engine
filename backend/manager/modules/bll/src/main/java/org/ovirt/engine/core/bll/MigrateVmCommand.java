@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
 import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
 import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -105,6 +106,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private DiskDao diskDao;
     @Inject
     private HostNetworkQosDao hostNetworkQosDao;
+    @Inject
+    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -245,7 +248,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getParameters().setTotalMigrationTime(new Date());
             getParameters().resetStartTime();
 
-            if (unplugPassthroughNics() && connectLunDisks(getDestinationVdsId()) && migrateVm()) {
+            if (unplugPassthroughNics() && connectLunDisks(getDestinationVdsId()) &&
+                    attachManagedBlockDiskToDest() &&
+                    migrateVm()) {
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 return true;
             }
@@ -714,6 +719,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return nic.getStatistics().getStatus() == InterfaceStatus.UP;
     }
 
+    private boolean attachManagedBlockDiskToDest() {
+        if (DisksFilter.filterManagedBlockStorageDisks(getVm().getDiskList()).isEmpty()) {
+            return true;
+        }
+
+        return managedBlockStorageCommandUtil
+                .attachManagedBlockStorageDisks(getVm(), vmHandler, getDestinationVds(), true);
+    }
+
     /**
      * command succeeded and VM is up => migration done
      * command succeeded and VM is not up => migration started
@@ -994,6 +1008,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void reportCompleted() {
         try {
             vmDynamicDao.clearMigratingToVds(getVmId());
+            managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
         } finally {
             super.reportCompleted();
         }

@@ -6,6 +6,7 @@ import java.util.Objects;
 public class ManagedBlockStorageDisk extends DiskImage {
     private static final long serialVersionUID = -6032118718251114213L;
     public static final String ATTACHED_VDS_ID = "attached_vds_id";
+    public static final String DEST_VDS_ID = "dest_vds_id";
     public static String DRIVER_VOLUME_TYPE = "driver_volume_type";
 
     private Map<String, Object> device;
