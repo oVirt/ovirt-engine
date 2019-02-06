@@ -533,8 +533,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean useCallback() {
-        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
-                && (parentHasCallback() || !isExecutedAsChildCommand());
+        return (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE
+                && (parentHasCallback() || !isExecutedAsChildCommand())) ||
+                getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
     }
 
     private void createDiskBasedOnImage() {
