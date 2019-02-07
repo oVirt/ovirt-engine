@@ -526,7 +526,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         LUNs lun = new LUNs();
         lun.setLUNId("lunid");
         lun.setLunType(StorageType.ISCSI);
-        lun.setDeviceSize(1);
         StorageServerConnections connection = new StorageServerConnections();
         connection.setIqn("a");
         connection.setConnection("0.0.0.0");

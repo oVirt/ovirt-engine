@@ -117,7 +117,7 @@ public class DiskValidator {
     }
 
     public ValidationResult validateDiskSize() {
-        if (disk.getSize() == 0) {
+        if (disk.getDiskStorageType() != DiskStorageType.LUN && disk.getSize() == 0) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SIZE_ZERO);
         }
         return ValidationResult.VALID;
