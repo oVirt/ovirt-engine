@@ -129,25 +129,39 @@ public class VmPoolHandler implements BackendService {
     }
 
     public Stream<Guid> selectPrestartedVms(Guid vmPoolId, boolean isStatefulPool, ErrorProcessor errorProcessor) {
+        return selectPrestartedVms(vmPoolId, isStatefulPool, errorProcessor, false);
+    }
+
+    public Stream<Guid> selectPrestartedVms(Guid vmPoolId, boolean isStatefulPool, ErrorProcessor errorProcessor, boolean leaveLocked) {
         return selectVms(vmPoolId,
                 VMStatus.Up,
                 vmId -> isPrestartedVmFree(vmId, isStatefulPool, errorProcessor),
-                false);
+                leaveLocked);
     }
 
     public Stream<Guid> selectNonPrestartedVms(Guid vmPoolId, ErrorProcessor errorProcessor) {
+        return selectNonPrestartedVms(vmPoolId, errorProcessor, true);
+    }
+
+    public Stream<Guid> selectNonPrestartedVms(Guid vmPoolId, ErrorProcessor errorProcessor, boolean leaveLocked) {
         return selectVms(vmPoolId,
                 VMStatus.Down,
                 vmId -> isNonPrestartedVmFree(vmId, errorProcessor),
-                true);
+                leaveLocked);
     }
 
     public Guid selectPrestartedVm(Guid vmPoolId, boolean isStatefulPool, ErrorProcessor errorProcessor) {
-        return selectPrestartedVms(vmPoolId, isStatefulPool, errorProcessor).findFirst().orElse(Guid.Empty);
+        return selectPrestartedVms(vmPoolId, isStatefulPool, errorProcessor, false)
+                .findFirst()
+                .map(vmId -> acquireVm(vmId, true))
+                .orElse(Guid.Empty);
     }
 
     public Guid selectNonPrestartedVm(Guid vmPoolId, ErrorProcessor errorProcessor) {
-        return selectNonPrestartedVms(vmPoolId, errorProcessor).findFirst().orElse(Guid.Empty);
+        return selectNonPrestartedVms(vmPoolId, errorProcessor, false)
+                .findFirst()
+                .map(vmId -> acquireVm(vmId, true))
+                .orElse(Guid.Empty);
     }
 
     /**
