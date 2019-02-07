@@ -143,7 +143,8 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     @Override
     protected void executeCommand() {
         storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
-        if (storageDomainNameChanged && getStoragePool() != null) {
+        if (storageDomainNameChanged && getStoragePool() != null &&
+                !getStorageDomain().getStorageType().isManagedBlockStorage()) {
             runVdsCommand(
                             VDSCommandType.SetStorageDomainDescription,
                             new SetStorageDomainDescriptionVDSCommandParameters(getStoragePool().getId(),
