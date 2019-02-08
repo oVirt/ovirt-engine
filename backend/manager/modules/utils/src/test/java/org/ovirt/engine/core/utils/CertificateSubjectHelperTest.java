@@ -15,9 +15,33 @@ public class CertificateSubjectHelperTest {
         return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"));
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockEmptyOrganization() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, ""));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockNullOrganization() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, null));
+    }
+
     @Test
     public void testGetCertificateSubject() {
         final String CERTIFICATE_SUBJECT = "O=ORG,CN=HOSTNAME";
+        String certificateSubject = CertificateSubjectHelper.getCertificateSubject("HOSTNAME");
+        assertEquals(CERTIFICATE_SUBJECT, certificateSubject);
+    }
+
+    @Test
+    @MockedConfig("mockEmptyOrganization")
+    public void testGetCertificateSubjectEmptyOrg() {
+        final String CERTIFICATE_SUBJECT = "CN=HOSTNAME";
+        String certificateSubject = CertificateSubjectHelper.getCertificateSubject("HOSTNAME");
+        assertEquals(CERTIFICATE_SUBJECT, certificateSubject);
+    }
+
+    @Test
+    @MockedConfig("mockNullOrganization")
+    public void testGetCertificateSubjectNullOrg() {
+        final String CERTIFICATE_SUBJECT = "CN=HOSTNAME";
         String certificateSubject = CertificateSubjectHelper.getCertificateSubject("HOSTNAME");
         assertEquals(CERTIFICATE_SUBJECT, certificateSubject);
     }
