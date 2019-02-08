@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.network.NetworkAttachmentIpConfigurationValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidatorResolver;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
@@ -88,6 +89,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -670,6 +673,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         NetworkAttachment previousExtendedDefaultRouteAttachment = findNetworkAttachmentByNetworkName(previousDefaultRouteNic, extendedAttachments);
         if (hasIpv6PrimaryAddress(previousExtendedDefaultRouteAttachment)) {
             previousExtendedDefaultRouteAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
+            auditLog(auditEventRemoveIpv6Gateway(previousExtendedDefaultRouteAttachment),
+                    AuditLogType.NETWORK_REMOVING_IPV6_GATEWAY_FROM_OLD_DEFAULT_ROUTE_ROLE_ATTACHMENT);
         }
 
         return extendedAttachments;
@@ -979,4 +984,11 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return false;
     }
 
+    private AuditLogable auditEventRemoveIpv6Gateway(NetworkAttachment attachment) {
+        AuditLogable event = new AuditLogableImpl();
+        event.setClusterId(getCluster().getId());
+        event.setClusterName(getCluster().getName());
+        event.addCustomValue("NetworkName", attachment.getNetworkName());
+        return event;
+    }
 }
