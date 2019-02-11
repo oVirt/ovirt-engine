@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.lease;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -50,11 +52,17 @@ public class GetVmLeaseInfoCommand<T extends VmLeaseParameters> extends CommandB
     @Override
     protected void executeCommand() {
         VDSReturnValue retVal;
+        VmLeaseVDSParameters vmLeaseVDSParameters = new VmLeaseVDSParameters(
+                getParameters().getStoragePoolId(),
+                getParameters().getStorageDomainId(),
+                getParameters().getVmId());
+
+        if (getParameters().isFailureExpected()) {
+            vmLeaseVDSParameters.setExpectedEngineErrors(Collections.singleton(EngineError.GeneralException));
+        }
+
         try {
-            retVal = runVdsCommand(VDSCommandType.GetVmLeaseInfo,
-                    new VmLeaseVDSParameters(getParameters().getStoragePoolId(),
-                            getParameters().getStorageDomainId(),
-                            getParameters().getVmId()));
+            retVal = runVdsCommand(VDSCommandType.GetVmLeaseInfo, vmLeaseVDSParameters);
         } catch (EngineException e) {
             log.error("Failure in getting lease info for VM '{}' from storage domains '{}', message: {}",
                     getParameters().getVmId(),
