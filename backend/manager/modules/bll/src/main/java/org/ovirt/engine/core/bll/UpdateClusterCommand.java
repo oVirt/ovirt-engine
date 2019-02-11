@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
@@ -128,6 +129,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private VmHandler vmHandler;
     @Inject
     private VmInitDao vmInitDao;
+    @Inject
+    private SnapshotsManager snapshotsManager;
 
     private List<VDS> allForCluster;
 
@@ -416,18 +419,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private void updateVms() {
         for (VmStatic vm : vmsLockedForUpdate) {
-            VmManagementParametersBase updateParams = new VmManagementParametersBase(vm);
-            /*
-            Locking by UpdateVmCommand is disabled since VMs are already locked in #getExclusiveLocks method.
-            This logic relies on assumption that UpdateVmCommand locks exactly only updated VM.
-             */
-            updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
-            updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
-            updateParams.setCompensationEnabled(true);
-
             ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVm,
-                    updateParams,
+                    createUpdateVmParameters(vm),
                     cloneContextWithNoCleanupCompensation());
 
             if (!result.getSucceeded()) {
@@ -440,6 +434,28 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 failedUpgradeEntities.put(vm.getName(), getFailedMessage(messages));
             }
         }
+    }
+
+    private VmManagementParametersBase createUpdateVmParameters(VmStatic originalVmStatic) {
+        VmManagementParametersBase updateParams;
+
+        VM nextRunVM = vmHandler.getNextRunVmConfiguration(originalVmStatic.getId(), null, false, true);
+        if (nextRunVM == null) {
+            updateParams = new VmManagementParametersBase(originalVmStatic);
+        } else {
+            updateParams = vmHandler.createVmManagementParametersBase(nextRunVM);
+        }
+        /*
+        Locking by UpdateVmCommand is disabled since VMs are already locked in #getExclusiveLocks method.
+        This logic relies on assumption that UpdateVmCommand locks exactly only updated VM.
+         */
+        updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+        if (nextRunVM == null || originalVmStatic.getCustomCompatibilityVersion() == null) {
+            updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
+        }
+        updateParams.setCompensationEnabled(true);
+
+        return updateParams;
     }
 
     private void logFailedUpgrades() {
