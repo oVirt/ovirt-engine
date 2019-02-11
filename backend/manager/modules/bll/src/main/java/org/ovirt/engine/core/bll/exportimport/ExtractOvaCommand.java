@@ -104,7 +104,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                     new Pair<>("ovirt_import_ova_path", getParameters().getOvaPath()),
                     new Pair<>("ovirt_import_ova_disks", diskPaths.stream()
                             .map(path -> String.format("'%s'", path))
-                            .collect(Collectors.joining(", ", "[", "]"))),
+                            .collect(Collectors.joining(",", "[", "]"))),
                     new Pair<>("ovirt_import_ova_image_mappings", getImageMappings().entrySet().stream()
                             .map(e -> String.format("\"%s\": \"%s\"", e.getValue().toString(), e.getKey().toString()))
                             .collect(Collectors.joining(", ", "'{", "}'")))

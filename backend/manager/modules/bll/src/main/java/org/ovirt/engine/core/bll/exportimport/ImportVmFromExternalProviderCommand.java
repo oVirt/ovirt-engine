@@ -240,7 +240,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
             for (DiskImage disk : getVm().getImages()) {
                 Guid oldImageId = disk.getImageId();
-                generateNewDiskId(getVm().getImages(), disk);
+                generateNewDiskId(disk);
                 updateManagedDeviceMap(disk, getVm().getStaticData().getManagedDeviceMap());
                 // TBD: The OldImageId should be the key for the map, but in the runAnsibleImportOvaPlaybook function
                 // the value is set first and the key is set second. The ordering should be corrected accordingly in the future.
