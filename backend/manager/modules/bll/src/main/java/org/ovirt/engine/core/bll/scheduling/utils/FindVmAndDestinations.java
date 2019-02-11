@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -74,21 +73,6 @@ public class FindVmAndDestinations {
     }
 
     /**
-     * The predicted CPU the CPU that the VM will take considering
-     * how many cores it has and how many cores the host has.
-     * @return
-     *          predicted vm cpu
-     */
-    protected int getPredictedVmCpu(VM vm, VDS vds, boolean countThreadsAsCores) {
-        Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
-        if (vm.getUsageCpuPercent() != null && effectiveCpuCores != null) {
-            return (vm.getUsageCpuPercent() * vm.getNumOfCpus())
-                    / effectiveCpuCores;
-        }
-        return 0;
-    }
-
-    /**
      * Return all VMs that run on a hosts and can be migrated away.
      *
      * This method is to be considered private. It is protected to be available
@@ -127,7 +111,12 @@ public class FindVmAndDestinations {
                 continue;
             }
 
-            int predictedVmCpu = getPredictedVmCpu(vm, vds, cluster.getCountThreadsAsCores());
+            // Using host threads, so the predicted VM cpu is consistent
+            // with the percentage that vdsm returns
+            int predictedVmCpu = (vm.getUsageCpuPercent() != null && vds.getCpuThreads() != null) ?
+                    (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / vds.getCpuThreads() :
+                    0;
+
             if (vds.getUsageCpuPercent() + predictedVmCpu <= highCpuUtilization
                     && vds.getMaxSchedulingMemory() - vm.getMemSizeMb() > minimalFreeMemory) {
                 result.add(vds);
