@@ -13,6 +13,7 @@ public class VmLeaseParameters  extends ActionParametersBase implements Serializ
     private Guid vdsId;
     private boolean hotPlugLease;
     private Map<String, String> vmLeaseInfo;
+    private boolean failureExpected;
 
     public VmLeaseParameters() {}
 
@@ -68,5 +69,13 @@ public class VmLeaseParameters  extends ActionParametersBase implements Serializ
 
     public void setVmLeaseInfo(Map<String, String> vmLeaseInfo) {
         this.vmLeaseInfo = vmLeaseInfo;
+    }
+
+    public boolean isFailureExpected() {
+        return failureExpected;
+    }
+
+    public void setFailureExpected(boolean failureExpected) {
+        this.failureExpected = failureExpected;
     }
 }

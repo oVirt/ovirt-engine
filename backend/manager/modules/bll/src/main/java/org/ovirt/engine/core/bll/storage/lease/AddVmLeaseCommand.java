@@ -41,6 +41,10 @@ public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseComma
     }
 
     @Override protected void executeCommand() {
+        getParameters().setFailureExpected(true);
+        log.info("Verify that VM '{}' lease doesn't exists on storage domain '{}'",
+                getParameters().getVmId(),
+                getParameters().getStorageDomainId());
         ActionReturnValue retVal = runInternalAction(ActionType.GetVmLeaseInfo, getParameters());
         if (retVal.getSucceeded() && retVal.getActionReturnValue() != null) {
             log.info("VM '{}' lease already exists on storage domain '{}': '{}'",
@@ -51,6 +55,10 @@ public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseComma
             setSucceeded(true);
             return;
         }
+        getParameters().setFailureExpected(false);
+        log.info("Creating new VM '{}' lease, because the VM lease doesn't exists on storage domain '{}'",
+                getParameters().getVmId(),
+                getParameters().getStorageDomainId());
         super.executeCommand();
     }
 
