@@ -132,22 +132,26 @@ public class ManagedBlockStorageCommandUtil {
         return actionReturnValue;
     }
 
-    public void disconnectManagedBlockStorageDisks(VM vm, VmHandler vmHandler) {
+    public boolean disconnectManagedBlockStorageDisks(VM vm, VmHandler vmHandler) {
         if (vm.getDiskMap().isEmpty()) {
             vmHandler.updateDisksFromDb(vm);
         }
 
-        List<ManagedBlockStorageDisk> disks = DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
-        disks.forEach(disk -> disconnectManagedBlockStorageDisk(vm, disk));
+        List<ManagedBlockStorageDisk> disks =
+                DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
+        return disks.stream().allMatch(disk -> disconnectManagedBlockStorageDisk(vm, disk));
     }
 
-    public void disconnectManagedBlockStorageDisk(VM vm, DiskImage disk) {
+    public boolean disconnectManagedBlockStorageDisk(VM vm, DiskImage disk) {
         VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vm.getId()));
         DisconnectManagedBlockStorageDeviceParameters parameters =
                 new DisconnectManagedBlockStorageDeviceParameters();
         parameters.setStorageDomainId(disk.getStorageIds().get(0));
         parameters.setDiskId(disk.getId());
         parameters.setVdsId((Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.ATTACHED_VDS_ID));
-        backend.runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, parameters);
+        ActionReturnValue returnValue =
+                backend.runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, parameters);
+
+        return returnValue.getSucceeded();
     }
 }
