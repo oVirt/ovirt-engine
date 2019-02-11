@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
@@ -31,4 +32,11 @@ public abstract class AbstractFullDateTimeColumn<T> extends AbstractRenderedText
         super(new FullDateTimeRenderer(includeTime));
     }
 
+    /**
+     * Enables default <em>client-side</em> sorting for this column, by the Date Time ordering of the displayed text.
+     */
+    @Override
+    public void makeSortable() {
+        makeSortable(Comparator.nullsFirst(Comparator.comparing(this::getRawValue)));
+    }
 }

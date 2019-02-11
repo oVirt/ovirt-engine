@@ -346,8 +346,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumn<Disk> getDateCreatedColumn(String sortBy) {
-        AbstractTextColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
+    public static final AbstractFullDateTimeColumn<Disk> getDateCreatedColumn(String sortBy) {
+        AbstractFullDateTimeColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override
             protected Date getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ||
