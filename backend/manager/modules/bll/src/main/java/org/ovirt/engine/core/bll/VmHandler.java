@@ -611,7 +611,7 @@ public class VmHandler implements BackendService {
         }
     }
 
-    private VmManagementParametersBase createVmManagementParametersBase(VM vm) {
+    public VmManagementParametersBase createVmManagementParametersBase(VM vm) {
         VmManagementParametersBase params = new VmManagementParametersBase(vm);
         List<VmDevice> devices = new ArrayList<>(vm.getManagedVmDeviceMap().values());
 
