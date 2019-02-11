@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -148,6 +149,18 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      */
     protected VmCommand(Guid commandId) {
         super(commandId);
+    }
+
+    protected boolean validate() {
+        if (!super.validate()) {
+            return false;
+        }
+        VM vm = getVm();
+        if (vm != null && vm.getOrigin() == OriginType.HOSTED_ENGINE && !isSystemSuperUser()) {
+            addValidationMessage(EngineMessage.NON_ADMIN_USER_NOT_AUTHORIZED_TO_PERFORM_ACTION_ON_HE);
+            return false;
+        }
+        return true;
     }
 
     @Override

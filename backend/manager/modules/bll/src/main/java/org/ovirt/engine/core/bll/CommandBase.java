@@ -11,11 +11,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -166,6 +168,10 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     @Inject
     private CommandCompensator compensator;
+
+    @Named
+    @Inject
+    private Predicate<Guid> isSystemSuperUserPredicate;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -1137,6 +1143,10 @@ public abstract class CommandBase<T extends ActionParametersBase>
         parentParameters.setExecutionReason(parameters.getExecutionReason());
         parentParameters.setCommandType(parentCommandType);
         return parentParameters;
+    }
+
+    public boolean isSystemSuperUser() {
+        return isSystemSuperUserPredicate.test(getCurrentUser().getId());
     }
 
     private boolean executeWithoutTransaction() {

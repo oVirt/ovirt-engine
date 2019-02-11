@@ -217,6 +217,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setVmMemSizeMb(MEMORY_SIZE);
         vm.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
+        vm.setOrigin(OriginType.OVIRT);
 
         doReturn(group).when(command).getCluster();
         doReturn(vm).when(command).getVm();
@@ -228,6 +229,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
         doReturn(numaValidator).when(command).getNumaValidator();
         doReturn(quotaValidator).when(command).createQuotaValidator(any());
+        doReturn(Boolean.TRUE).when(command).isSystemSuperUser();
 
         command.init();
     }
@@ -588,6 +590,14 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE);
+    }
+
+    @Test
+    public void testUpdateFailOnHostedEngineVmWithNonSuperUser() {
+        doReturn(Boolean.FALSE).when(command).isSystemSuperUser();
+        vm.setOrigin(OriginType.HOSTED_ENGINE);
+        ValidateTestUtils.runAndAssertValidateFailure(
+                command, EngineMessage.NON_ADMIN_USER_NOT_AUTHORIZED_TO_PERFORM_ACTION_ON_HE);
     }
 
     private void mockVmValidator() {

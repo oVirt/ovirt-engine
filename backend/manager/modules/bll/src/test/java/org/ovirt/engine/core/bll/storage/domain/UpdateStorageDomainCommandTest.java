@@ -42,6 +42,7 @@ import org.ovirt.engine.core.utils.MockConfigExtension;
 @ExtendWith(MockConfigExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateStorageDomainCommandTest extends BaseCommandTest {
+
     private Guid sdId = Guid.newGuid();
     private StorageDomain sd;
     private StoragePool sp;
@@ -85,6 +86,7 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
 
         when(sdsDao.get(sdId)).thenReturn(oldSdStatic);
         mockStorageDomainValidator();
+        doReturn(Boolean.TRUE).when(cmd).isSystemSuperUser();
     }
 
     private StorageDomainStatic createStorageDomain() {
@@ -187,6 +189,14 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
         when(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain())
                 .thenReturn(new ValidationResult(message));
         ValidateTestUtils.runAndAssertValidateFailure(cmd, message);
+    }
+
+    @Test
+    public void testUpdateFailOnHostedEngineSdWithNonSuperUser() {
+        doReturn(Boolean.FALSE).when(cmd).isSystemSuperUser();
+        sd.setHostedEngineStorage(true);
+        ValidateTestUtils.runAndAssertValidateFailure(
+                cmd, EngineMessage.NON_ADMIN_USER_NOT_AUTHORIZED_TO_PERFORM_ACTION_ON_HE);
     }
 
     private void mockStorageDomainValidator() {

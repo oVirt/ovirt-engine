@@ -83,6 +83,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         doReturn(ValidationResult.VALID).when(domainToPoolValidator).isStorageDomainNotInAnyPool();
         doReturn(domainToPoolValidator).when(command).createDomainToPoolValidator(storageDomain);
         doReturn(Boolean.FALSE).when(command).isStorageDomainAttached(storageDomain);
+        doReturn(Boolean.TRUE).when(command).isSystemSuperUser();
     }
 
     @Test

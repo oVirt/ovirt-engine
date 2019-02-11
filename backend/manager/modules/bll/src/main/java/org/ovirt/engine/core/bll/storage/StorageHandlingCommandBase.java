@@ -750,6 +750,18 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return jobProperties;
     }
 
+    protected boolean validate() {
+        if (!super.validate()) {
+            return false;
+        }
+        StorageDomain sd = getStorageDomain();
+        if (sd != null && sd.isHostedEngineStorage() && !isSystemSuperUser()) {
+            addValidationMessage(EngineMessage.NON_ADMIN_USER_NOT_AUTHORIZED_TO_PERFORM_ACTION_ON_HE);
+            return false;
+        }
+        return true;
+    }
+
     /* Transaction methods */
 
     protected void executeInScope(TransactionScopeOption scope, TransactionMethod<?> code) {

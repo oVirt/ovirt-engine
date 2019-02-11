@@ -2,10 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -23,9 +21,6 @@ import org.ovirt.engine.core.dao.RoleDao;
 
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParameters> extends CommandBase<T> {
 
-    @Named
-    @Inject
-    private Predicate<Guid> isSystemSuperUserPredicate;
     @Inject
     private EntityDao entityDao;
     @Inject
@@ -105,10 +100,6 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         if (dbUser == null && dbGroup == null) {
             dbGroup = dbGroupDao.get(getParameters().getPermission().getAdElementId());
         }
-    }
-
-    protected boolean isSystemSuperUser() {
-        return isSystemSuperUserPredicate.test(getCurrentUser().getId());
     }
 
     // TODO - this code is shared with addPermissionCommand - check if
