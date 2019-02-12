@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
@@ -637,54 +639,62 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         }
     }
 
-    @Test
-    public void testIsNetworkInSyncForIpv6Synonyms() {
-        List<String[]> tests = Arrays.asList(
+    /**
+     * @return method source for test with same name
+     */
+    static Stream<String[]> testIsNetworkInSyncForIpv6Synonyms() {
+        return Stream.of(
             // array of [network attachment address, interface address, default route role]
-            new String[] { "2001:0db8:85a3:0000:0000:8a2e:0370:7331", "2001:0db8:85a3:0000:0000:8a2e:0370:7331"},
+            new String[] { "2001:0db8:85a3:0000:0000:8a2e:0370:7331", "2001:0db8:85a3:0000:0000:8a2e:0370:7331" },
             new String[] { "2001:0db8:85a3:0000:0000:8a2e:0370:7331", "2001:db8:85a3::8a2e:370:7331" },
             new String[] { "2001:db8:85a3::8a2e:370:7331", "2001:0db8:85a3:0000:0000:8a2e:0370:7331" },
             new String[] { "::", "::0000" },
             new String[] { "::", "0000::" },
             new String[] { "::", "0:0:0:0:0:0:0:0" }
         );
-        for (String[] test : tests) {
-            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
-            ipv6Address.setGateway(test[0]);
-            ipv6Address.setAddress(test[0]);
-            iface.setIpv6Gateway(test[1]);
-            iface.setIpv6Address(test[1]);
-            ReportedConfiguration reported = createTestedInstance()
-                    .reportConfigurationsOnHost()
-                    .getReportedConfigurationList()
-                    .stream()
-                    .filter(rc -> rc.getType() == ReportedConfigurationType.IPV6_ADDRESS)
-                    .findFirst()
-                    .get();
-            assertThat(reported.isInSync(), is(true));
-        }
     }
 
-    @Test
-    public void testIsNetworkInSyncForIpv6GatewayDifferent(){
-        List<String[]> tests = Arrays.asList(
-                // array of [network attachment address, interface address]
-                new String[] { "2001:0db8:85a3::8a2e:0370:7331", "2001:0db8:85a3:0000:8a2e:0370:7332" },
-                new String[] { "::", "::0001" },
-                new String[] { null, "::1" }
+    @ParameterizedTest
+    @MethodSource
+    void testIsNetworkInSyncForIpv6Synonyms(String netAttachmentAddress, String ifaceAddress) {
+        initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+        ipv6Address.setGateway(netAttachmentAddress);
+        ipv6Address.setAddress(netAttachmentAddress);
+        iface.setIpv6Gateway(ifaceAddress);
+        iface.setIpv6Address(ifaceAddress);
+        ReportedConfiguration reported = createTestedInstance()
+            .reportConfigurationsOnHost()
+            .getReportedConfigurationList()
+            .stream()
+            .filter(rc -> rc.getType() == ReportedConfigurationType.IPV6_ADDRESS)
+            .findFirst()
+            .get();
+        assertThat(reported.isInSync(), is(true));
+    }
+
+    /**
+     * @return method source for test with same name
+     */
+    static Stream<String[]> testIsNetworkInSyncForIpv6GatewayDifferent() {
+        return Stream.of(
+            // array of [network attachment address, interface address]
+            new String[] { "2001:0db8:85a3::8a2e:0370:7331", "2001:0db8:85a3:0000:8a2e:0370:7332" },
+            new String[] { "::", "::0001" },
+            new String[] { null, "::1" }
         );
-        for (String[] test : tests) {
-            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
-            ipv6Address.setGateway(test[0]);
-            iface.setIpv6Gateway(test[1]);
-            assertThat(createTestedInstance().isNetworkInSync(), is(false));
-        }
-        for (String[] test : tests) {
-            initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
-            ipv6Address.setAddress(test[0]);
-            iface.setIpv6Address(test[1]);
-            assertThat(createTestedInstance().isNetworkInSync(), is(false));
-        }
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testIsNetworkInSyncForIpv6GatewayDifferent(String address1, String address2){
+        initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+        ipv6Address.setGateway(address1);
+        iface.setIpv6Gateway(address2);
+        assertThat(createTestedInstance().isNetworkInSync(), is(false));
+        initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
+        ipv6Address.setAddress(address1);
+        iface.setIpv6Address(address2);
+        assertThat(createTestedInstance().isNetworkInSync(), is(false));
     }
 
     @Test
@@ -899,49 +909,55 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
     }
 
-    @Test void testDefaultRouteSync() {
+    /**
+     * @return method source for test with same name
+     */
+    static Stream<Object[]> testDefaultRouteSync() {
         boolean IN_SYNC = Boolean.TRUE;
         boolean OUT_OF_SYNC = !IN_SYNC;
         boolean IPV4_DEF_ROUTE = Boolean.TRUE;
         boolean DEF_ROUTE_ROLE_NET = Boolean.TRUE;
-        List<Object[]> tests = Arrays.asList(
-                // interface is default route from any, network is default route - in sync
-                new Object[] {IPV4_DEF_ROUTE, null, null, DEF_ROUTE_ROLE_NET, IN_SYNC},
-                new Object[] {IPV4_DEF_ROUTE, null, "::", DEF_ROUTE_ROLE_NET, IN_SYNC},
-                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", DEF_ROUTE_ROLE_NET, IN_SYNC },
-                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, null, DEF_ROUTE_ROLE_NET, IN_SYNC },
-                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
-                new Object[] {IPV4_DEF_ROUTE, null, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
-                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
-                new Object[] {!IPV4_DEF_ROUTE, null, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
-                // interface is default route from any, network is not default route - out of sync
-                new Object[] {IPV4_DEF_ROUTE, null, null, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
-                new Object[] {IPV4_DEF_ROUTE, null, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
-                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
-                new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
-                new Object[] {!IPV4_DEF_ROUTE, null, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
-                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
-                // interface is not default route, network is not default route - in sync
-                new Object[] {!IPV4_DEF_ROUTE, null, null, !DEF_ROUTE_ROLE_NET, IN_SYNC},
-                new Object[] {!IPV4_DEF_ROUTE, null, "::", !DEF_ROUTE_ROLE_NET, IN_SYNC},
-                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, null, !DEF_ROUTE_ROLE_NET, IN_SYNC},
-                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", !DEF_ROUTE_ROLE_NET, IN_SYNC},
-                // interface is not default route, network is default route - out of sync
-                new Object[] {!IPV4_DEF_ROUTE, null, null, DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
-                new Object[] {!IPV4_DEF_ROUTE, null, "::", DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
-                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
-                new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, null, DEF_ROUTE_ROLE_NET, OUT_OF_SYNC}
+        return Stream.of(
+            // interface is default route from any, network is default route - in sync
+            new Object[] {IPV4_DEF_ROUTE, null, null, DEF_ROUTE_ROLE_NET, IN_SYNC},
+            new Object[] {IPV4_DEF_ROUTE, null, "::", DEF_ROUTE_ROLE_NET, IN_SYNC},
+            new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", DEF_ROUTE_ROLE_NET, IN_SYNC },
+            new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, null, DEF_ROUTE_ROLE_NET, IN_SYNC },
+            new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+            new Object[] {IPV4_DEF_ROUTE, null, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+            new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+            new Object[] {!IPV4_DEF_ROUTE, null, IPV6_GATEWAY, DEF_ROUTE_ROLE_NET, IN_SYNC },
+            // interface is default route from any, network is not default route - out of sync
+            new Object[] {IPV4_DEF_ROUTE, null, null, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+            new Object[] {IPV4_DEF_ROUTE, null, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+            new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+            new Object[] {IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+            new Object[] {!IPV4_DEF_ROUTE, null, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+            new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, IPV6_GATEWAY, !DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
+            // interface is not default route, network is not default route - in sync
+            new Object[] {!IPV4_DEF_ROUTE, null, null, !DEF_ROUTE_ROLE_NET, IN_SYNC},
+            new Object[] {!IPV4_DEF_ROUTE, null, "::", !DEF_ROUTE_ROLE_NET, IN_SYNC},
+            new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, null, !DEF_ROUTE_ROLE_NET, IN_SYNC},
+            new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", !DEF_ROUTE_ROLE_NET, IN_SYNC},
+            // interface is not default route, network is default route - out of sync
+            new Object[] {!IPV4_DEF_ROUTE, null, null, DEF_ROUTE_ROLE_NET, OUT_OF_SYNC },
+            new Object[] {!IPV4_DEF_ROUTE, null, "::", DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
+            new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, "::", DEF_ROUTE_ROLE_NET, OUT_OF_SYNC},
+            new Object[] {!IPV4_DEF_ROUTE, IPV4_GATEWAY, null, DEF_ROUTE_ROLE_NET, OUT_OF_SYNC}
         );
-        for (Object[] test : tests) {
-            iface.setIpv4DefaultRoute((Boolean) test[0]);
-            iface.setIpv4Gateway((String) test[1]);
-            iface.setIpv6Gateway((String) test[2]);
-            initIpv4Configuration();
-            initIpv6Configuration();
-            testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress().setGateway((String) test[1]);
-            testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway((String) test[2]);
-            assertThat(createTestedInstance((Boolean) test[3], sampleDnsResolverConfiguration).isNetworkInSync(), is((Boolean) test[4]));
-        }
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testDefaultRouteSync(boolean isIpv4DefaultRoute, String ipv4gateway, String ipv6gateway, boolean isDefaultRouteRoleNet, boolean isInSyncExpected) {
+        iface.setIpv4DefaultRoute((Boolean) isIpv4DefaultRoute);
+        iface.setIpv4Gateway(ipv4gateway);
+        iface.setIpv6Gateway(ipv6gateway);
+        initIpv4Configuration();
+        initIpv6Configuration();
+        testedNetworkAttachment.getIpConfiguration().getIpv4PrimaryAddress().setGateway(ipv4gateway);
+        testedNetworkAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(ipv6gateway);
+        assertThat(createTestedInstance(isDefaultRouteRoleNet, sampleDnsResolverConfiguration).isNetworkInSync(), is(isInSyncExpected));
     }
 
     @Test
