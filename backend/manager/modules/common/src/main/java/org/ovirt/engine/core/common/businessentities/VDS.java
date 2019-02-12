@@ -61,6 +61,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
      */
     private Map<String, Long> localDisksUsage;
     private boolean networkOperationInProgress;
+    private boolean isDefaultRouteRoleNetworkAttached;
 
     public VDS() {
         vdsStatic = new VdsStatic();
@@ -97,7 +98,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 balloonEnabled,
                 countThreadsAsCores,
                 glusterPeerStatus,
-                networkOperationInProgress
+                networkOperationInProgress,
+                isDefaultRouteRoleNetworkAttached
         );
     }
 
@@ -130,7 +132,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 && Objects.equals(clusterVirtService, other.clusterVirtService)
                 && Objects.equals(clusterGlusterService, other.clusterGlusterService)
                 && glusterPeerStatus == other.glusterPeerStatus
-                && networkOperationInProgress == other.networkOperationInProgress;
+                && networkOperationInProgress == other.networkOperationInProgress
+                && isDefaultRouteRoleNetworkAttached == other.isDefaultRouteRoleNetworkAttached;
     }
 
 
@@ -235,6 +238,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         }
         vds.setInFenceFlow(isInFenceFlow());
         vds.setNetworkOperationInProgress(isNetworkOperationInProgress());
+        vds.setIsDefaultRouteRoleNetworkAttached(isDefaultRouteRoleNetworkAttached());
         return vds;
     }
 
@@ -1674,4 +1678,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setConnectorInfo(Map<String, Object> connectorInfo) {
         vdsDynamic.setConnectorInfo(connectorInfo);
     }
+
+    public boolean isDefaultRouteRoleNetworkAttached() {
+        return this.isDefaultRouteRoleNetworkAttached;
+    }
+
+    public void setIsDefaultRouteRoleNetworkAttached(boolean isDefaultRouteRoleNetworkAttached) {
+        this.isDefaultRouteRoleNetworkAttached = isDefaultRouteRoleNetworkAttached;
+    }
+
+
 }
