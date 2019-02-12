@@ -522,7 +522,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     @Override
     public void setItems(Collection<VDS> value) {
-        AsyncDataProvider.getInstance().updateVDSInterfaceList(new ArrayList<>(value), () -> super.setItems(value));
+        AsyncDataProvider.getInstance().updateVDSDefaultRouteRole(new ArrayList<>(value), () -> super.setItems(value));
     }
 
     private void setDetailList(final HostHardwareGeneralModel hostHardwareGeneralModel) {

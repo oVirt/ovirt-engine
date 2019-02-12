@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -211,6 +210,6 @@ public class HostStatusCell extends AbstractCell<VDS> {
         return (Boolean) AsyncDataProvider.getInstance()
                 .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
                         vds.getClusterCompatibilityVersion().getValue())
-                && !NetworkCommonUtils.hasDefaultRoute(vds.getInterfaces());
+                && !vds.isDefaultRouteRoleNetworkAttached();
     }
 }

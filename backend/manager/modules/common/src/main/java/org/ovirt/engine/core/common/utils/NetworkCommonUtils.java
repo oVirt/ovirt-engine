@@ -118,14 +118,4 @@ public class NetworkCommonUtils {
      public static boolean isVlan(VdsNetworkInterface nic) {
          return nic.getVlanId() != null;
      }
-
-    /**
-     * Determine if a given network interface list has default route
-     *
-     * @param interfaces the vds interfaces to check.
-     * @return <code>true</code> if any of the interfaces is set as default route.
-     */
-    public static boolean hasDefaultRoute(Collection<VdsNetworkInterface> interfaces) {
-        return interfaces.stream().anyMatch(VdsNetworkInterface::isIpv4DefaultRoute);
-    }
 }

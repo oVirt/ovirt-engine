@@ -151,6 +151,7 @@ import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParam
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
+import org.ovirt.engine.core.common.queries.IsDefaultRouteRoleNetworkAttachedToHostQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
@@ -3325,20 +3326,20 @@ public class AsyncDataProvider {
         return new ArrayList<>(Arrays.asList(BiosType.values()));
     }
 
-    public void updateVDSInterfaceList(List<VDS> vdsList, Runnable callback) {
+    public void updateVDSDefaultRouteRole(List<VDS> vdsList, Runnable callback) {
         if (vdsList != null && !vdsList.isEmpty()) {
             List<QueryType> types = new ArrayList<>();
             List<QueryParametersBase> ids = new ArrayList<>();
             vdsList.stream().forEach(vds -> {
-                types.add(QueryType.GetVdsInterfacesByVdsId);
-                ids.add(new IdQueryParameters(vds.getId()));
+                types.add(QueryType.IsDefaultRouteRoleNetworkAttachedToHost);
+                ids.add(new IsDefaultRouteRoleNetworkAttachedToHostQueryParameters(vds.getClusterId(), vds.getId()));
             });
             Frontend.getInstance().runMultipleQueries(types, ids, result -> {
                 List<QueryReturnValue> values = result.getReturnValues();
                 for (int i = 0; i < vdsList.size(); i++) {
-                    QueryReturnValue interfaceQueryValue = values.get(i);
-                    if (interfaceQueryValue.getReturnValue() != null) {
-                        vdsList.get(i).getInterfaces().addAll(interfaceQueryValue.getReturnValue());
+                    QueryReturnValue queryReturnValue = values.get(i);
+                    if (queryReturnValue.getReturnValue() != null) {
+                        vdsList.get(i).setIsDefaultRouteRoleNetworkAttached(queryReturnValue.getReturnValue());
                     }
                 }
                 callback.run();
@@ -3348,11 +3349,11 @@ public class AsyncDataProvider {
         }
     }
 
-    public void updateVDSInterfaceList(Collection<PairQueryable<VdsNetworkInterface, VDS>> pairCollection,
+    public void updateVDSDefaultRouteRole(Collection<PairQueryable<VdsNetworkInterface, VDS>> pairCollection,
             Runnable callback) {
         if (pairCollection != null) {
             List<VDS> vdsList = pairCollection.stream().map(pair -> pair.getSecond()).collect(Collectors.toList());
-            updateVDSInterfaceList(vdsList, callback);
+            updateVDSDefaultRouteRole(vdsList, callback);
         } else {
             callback.run();
         }

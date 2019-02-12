@@ -44,7 +44,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
 
     @Override
     public void setItems(Collection<PairQueryable<VdsNetworkInterface, VDS>> value) {
-        AsyncDataProvider.getInstance().updateVDSInterfaceList(value, () -> super.setItems(value));
+        AsyncDataProvider.getInstance().updateVDSDefaultRouteRole(value, () -> super.setItems(value));
     }
 
     @Override
