@@ -66,6 +66,8 @@ public class IscsiBondModel extends Model {
             Set<Guid> iscsiBonded = isBondExist() ?
                     new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.emptySet();
 
+            networks = networks.stream().filter(n -> !n.isExternal()).collect(Collectors.toList());
+
             List<Network> selected =
                     networks.stream().filter(n -> iscsiBonded.contains(n.getId())).collect(Collectors.toList());
 
