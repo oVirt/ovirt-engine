@@ -151,17 +151,19 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
     }
 
     private void updateActionAvailability() {
-        boolean isInherited = false;
-
         Permission p = getSelectedItem();
-        if (p != null && getEntity() != null) {
-            isInherited = !p.getAdElementId().equals(getEntity().getId());
+        if (p != null && ApplicationGuids.everyone.asGuid().equals(p.getAdElementId())) {
+            getRemoveCommand().setIsExecutionAllowed(false);
+        } else {
+            boolean isInherited = p != null && getEntity() != null && !p.getAdElementId().equals(getEntity().getId());
+            getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null
+                    || (getSelectedItems() != null && getSelectedItems().size() > 0)));
         }
 
-        getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null
-                || (getSelectedItems() != null && getSelectedItems().size() > 0)));
-        // User Permission uses the same action panel as all the permission models, but you can't
-        // add, so we need to hide the add button.
+        /**
+         * User Permission uses the same action panel as all the permission models, but you can't add, so we need to
+         * hide the add button.
+         */
         getAddCommand().setIsAvailable(false);
     }
 
