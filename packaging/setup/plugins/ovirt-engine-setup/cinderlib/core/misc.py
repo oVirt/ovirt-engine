@@ -66,11 +66,11 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='ovirt-cinderlib-enable',
                     note=_(
-                        'Set up Cinderlib integration '
-                        '(Tech-preview for more info - '
+                        'Set up Cinderlib integration\n'
+                        '(Currently in tech preview. For more info - \n'
                         'https://ovirt.org/develop/release'
                         '-management/features/storage/cinderlib'
-                        '-integration.html)'
+                        '-integration.html)\n'
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
