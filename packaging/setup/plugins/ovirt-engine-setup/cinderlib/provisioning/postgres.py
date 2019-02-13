@@ -132,7 +132,7 @@ class Plugin(plugin.PluginBase):
                 self.environment[oclcons.CinderlibDBEnv.HOST] = 'localhost'
                 self.environment[
                     oclcons.CinderlibDBEnv.PORT
-                ] = oclcons.Defaults.DEFAULT_DB_PORT
+                ] = oclcons.Defaults.DEFAULT_CINDERLIB_DB_PORT
 
                 # TODO:
                 # consider creating database and role

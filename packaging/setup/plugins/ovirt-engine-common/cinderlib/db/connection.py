@@ -29,7 +29,6 @@ from ovirt_engine import configfile
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.cinderlib import constants as oclcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import database
 
 
@@ -138,9 +137,17 @@ class Plugin(plugin.PluginBase):
 
                 dbovirtutils.tryDatabaseConnect(dbenv)
                 self.environment.update(dbenv)
+                # current cinderlib engine-setup code leaves the database
+                # empty after creation, so we can't rely on
+                # dbovirtutils.isNewDatabase for checking this (because it
+                # checks if there are tables in the public schema).
+                # Always set to False if we managed to connect. TODO think
+                # of something more robust. Perhaps create our own dummy
+                # table to mark that it's 'populated', or save in postinstall
+                # something saying that it's created.
                 self.environment[
                     oclcons.CinderlibDBEnv.NEW_DATABASE
-                ] = dbovirtutils.isNewDatabase()
+                ] = False
 
                 self.environment[
                     oclcons.CinderlibDBEnv.NEED_DBMSUPGRADE
@@ -167,32 +174,6 @@ class Plugin(plugin.PluginBase):
                     self.logger.warning(msg)
                 else:
                     raise RuntimeError(msg)
-            if not self.environment[
-                oclcons.CinderlibDBEnv.NEW_DATABASE
-            ]:
-                statement = database.Statement(
-                    dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
-                    environment=self.environment,
-                )
-                try:
-                    justRestored = vdcoption.VdcOption(
-                        statement=statement,
-                    ).getVdcOption(
-                        'DbJustRestored',
-                        ownConnection=True,
-                    )
-                    self.environment[
-                        oclcons.CinderlibDBEnv.JUST_RESTORED
-                    ] = (justRestored == '1')
-                except RuntimeError:
-                    pass
-                if self.environment[
-                    oclcons.CinderlibDBEnv.JUST_RESTORED
-                ]:
-                    self.logger.info(_(
-                        'The ovirt cinderlib DB has been'
-                        ' restored from a backup'
-                    ))
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
