@@ -20,7 +20,9 @@
     blockinfile:
       path: '/etc/libvirt/qemu.conf'
       state: present
-      marker: '## {mark} configuration section by vdsm-{{ host_deploy_vdsm_version }}'
+      marker: '## {mark} of configuration section for VNC encryption'
+      marker_begin: 'beginning'
+      marker_end: 'end'
       block: |
         vnc_tls=1
         vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
@@ -32,7 +34,9 @@
     blockinfile:
       path: '/etc/libvirt/qemu.conf'
       state: absent
-      marker: '## {mark} configuration section by vdsm-{{ host_deploy_vdsm_version }}'
+      marker: '## {mark} of configuration section for VNC encryption'
+      marker_begin: 'beginning'
+      marker_end: 'end'
       block: |
         vnc_tls=1
         vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
