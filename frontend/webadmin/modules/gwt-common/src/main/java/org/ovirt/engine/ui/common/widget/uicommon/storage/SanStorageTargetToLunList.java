@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -205,7 +206,11 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 return model.getLunId();
             }
         };
-        lunIdColumn.makeSortable();
+        lunIdColumn.makeSortable(new Comparator<LunModel>() {
+            @Override public int compare(LunModel lunModel1, LunModel lunModel2) {
+                return lunModel2.getLunId().compareTo(lunModel1.getLunId());
+            }
+        });
         table.addColumn(lunIdColumn, constants.lunIdSanStorage(), "250px"); //$NON-NLS-1$
 
         AbstractLunTextColumn devSizeColumn = new AbstractLunTextColumn() {
