@@ -41,6 +41,7 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
+    # TODO: refactor avoid code duplication with ovirt-engine-setup
     def _checkSupportedVersionsPresent(self):
         # TODO: figure out a better way to do this for the future
         statement = database.Statement(
@@ -119,6 +120,57 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
+    # TODO: refactor avoid code duplication with ovirt-engine-setup
+    def _checkCompatibilityVersion(self):
+        statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        supported = set([
+            x.strip()
+            for x in self.environment[
+                osetupcons.CoreEnv.UPGRADE_SUPPORTED_VERSIONS
+            ].split(',')
+            if x.strip()
+        ])
+        vms = statement.execute(
+            statement="""
+                select
+                    vm_name,
+                    custom_compatibility_version
+                from
+                    vms
+                where
+                    custom_compatibility_version is not null
+                    and
+                    custom_compatibility_version <> '';
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+        if vms:
+            names = [
+                vm['vm_name']
+                for vm in vms if
+                vm['custom_compatibility_version']
+                not in supported
+            ]
+            if names:
+                raise RuntimeError(
+                    _(
+                        'Cannot upgrade the Engine due to low '
+                        'custom_compatibility_version for virtual machines: '
+                        '{r}. Please edit this virtual machines, in edit VM '
+                        'dialog go to System->Advanced Parameters -> Custom '
+                        'Compatibility Version and either reset to empty '
+                        '(cluster default) or set a value supported by the '
+                        'new installation: {s}.'
+                    ).format(
+                        r=names,
+                        s=', '.join(sorted(supported)),
+                    )
+                )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         after=(
@@ -133,6 +185,7 @@ class Plugin(plugin.PluginBase):
     )
     def _validation(self):
         self._checkSupportedVersionsPresent()
+        self._checkCompatibilityVersion()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

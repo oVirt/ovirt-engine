@@ -100,18 +100,13 @@ class Plugin(plugin.PluginBase):
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
             environment=self.environment,
         )
-        versions = statement.execute(
-            statement="""
-                select
-                    option_value
-                from
-                    vdc_options
-                where
-                    option_name = 'SupportedClusterLevels'
-            """,
-            ownConnection=True,
-            transaction=False,
-        )
+        supported = set([
+            x.strip()
+            for x in self.environment[
+                osetupcons.CoreEnv.UPGRADE_SUPPORTED_VERSIONS
+            ].split(',')
+            if x.strip()
+        ])
         vms = statement.execute(
             statement="""
                 select
@@ -132,19 +127,21 @@ class Plugin(plugin.PluginBase):
                 vm['vm_name']
                 for vm in vms if
                 vm['custom_compatibility_version']
-                not in versions[0]['option_value']
+                not in supported
             ]
             if names:
                 raise RuntimeError(
                     _(
                         'Cannot upgrade the Engine due to low '
                         'custom_compatibility_version for virtual machines: '
-                        '%r. Please edit this virtual machines, in edit VM '
+                        '{r}. Please edit this virtual machines, in edit VM '
                         'dialog go to System->Advanced Parameters -> Custom '
                         'Compatibility Version and either reset to empty '
                         '(cluster default) or set a value supported by the '
-                        'new installation: %s.' % (names,
-                                                   versions[0]['option_value'])
+                        'new installation: {s}.'
+                    ).format(
+                        r=names,
+                        s=', '.join(sorted(supported)),
                     )
                 )
 
