@@ -537,7 +537,10 @@ public class SsoUtils {
         }
     }
 
-    public static void validateRedirectUri(HttpServletRequest request, String clientId, String redirectUri) {
+    public static void validateRedirectUri(HttpServletRequest request,
+            String clientId,
+            String redirectUri,
+            String scope) {
         try {
             SsoContext ssoContext = getSsoContext(request);
             ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
@@ -564,7 +567,9 @@ public class SsoUtils {
                 if (!isValidUri) {
                     throw new OAuthBadRequestException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                             ssoContext.getLocalizationUtils().localize(
-                                    SsoConstants.APP_ERROR_REDIRECT_URI_NOTREG_MSG,
+                                    isOvirtAppApiScope(scope) ?
+                                            SsoConstants.APP_ERROR_REDIRECT_URI_NOTREG_MSG :
+                                            SsoConstants.APP_ERROR_NOT_VALID_FQDN_MSG,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
             }
@@ -576,6 +581,14 @@ public class SsoUtils {
             throw new OAuthException(SsoConstants.ERR_CODE_SERVER_ERROR, ex.getMessage());
         }
     }
+
+    private static boolean isOvirtAppApiScope(String scope) {
+        List<String> scopes = strippedScopeAsList(scopeAsList(scope));
+        return scopes.contains(SsoConstants.OVIRT_APP_API_SCOPE) &&
+                !scope.contains(SsoConstants.OVIRT_APP_ADMIN_SCOPE) &&
+                !scope.contains(SsoConstants.OVIRT_APP_PORTAL_SCOPE);
+    }
+
     public static void validateClientRequest(
             HttpServletRequest request,
             String clientId,

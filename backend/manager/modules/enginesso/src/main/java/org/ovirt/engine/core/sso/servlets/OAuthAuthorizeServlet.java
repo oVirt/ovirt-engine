@@ -71,8 +71,8 @@ public class OAuthAuthorizeServlet extends HttpServlet {
             throws Exception {
         String clientId = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_CLIENT_ID, true);
         String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
-        SsoUtils.validateRedirectUri(request, clientId, redirectUri);
         String scope = SsoUtils.getScopeRequestParameter(request, "");
+        SsoUtils.validateRedirectUri(request, clientId, redirectUri, scope);
         String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
         String appUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, "");
         String sourceAddr = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SOURCE_ADDR, "UNKNOWN");
