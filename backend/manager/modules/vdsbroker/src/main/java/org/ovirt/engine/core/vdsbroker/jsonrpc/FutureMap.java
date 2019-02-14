@@ -11,6 +11,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
@@ -112,7 +113,8 @@ public class FutureMap implements Map<String, Object> {
                         populate(this.response.get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    log.error("Exception occured during response decomposition", e);
+                    log.error("Exception occurred during response decomposition", ExceptionUtils.getRootCauseMessage(e));
+                    log.debug("Exception", e);
                     throw new IllegalStateException(e);
                 } catch (TimeoutException e) {
                     this.responseMap.put(STATUS, TIMEOUT_STATUS);
