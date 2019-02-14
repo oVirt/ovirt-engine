@@ -26,13 +26,12 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
+import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 
 public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
@@ -44,6 +43,8 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
     @Inject
     private AnsibleExecutor ansibleExecutor;
+    @Inject
+    private StorageDeviceDao storageDeviceDao;
 
     public CreateBrickCommand(CreateBrickParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -147,13 +148,14 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
             disks.add(device.getDevPath());
             totalSize += device.getSize(); //size is returned in MiB
         }
+        Double poolmetadatsize = 0.0;
         if (totalSize < MIN_VG_SIZE) {
-            totalSize = totalSize - MIN_METADATA_PERCENT * totalSize;
+            poolmetadatsize = MIN_METADATA_PERCENT * totalSize;
         } else {
-            totalSize = totalSize - DEFAULT_METADATA_SIZE_MB;
+            poolmetadatsize =  Double.valueOf(DEFAULT_METADATA_SIZE_MB);
         }
-        Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(totalSize.longValue(), SizeUnit.MiB);
-        String deviceSize = convertedSize.getSecond() + convertedSize.getFirst().toString();
+        totalSize = totalSize - poolmetadatsize;
+
         String ssdDevice = "";
         if (getParameters().getCacheDevice() != null) {
             ssdDevice = getParameters().getCacheDevice().getDevPath();
@@ -168,14 +170,15 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                         new Pair<>("ssd", ssdDevice),
                         new Pair<>("disks", JsonHelper.objectToJson(disks, false)),
                         new Pair<>("vgname", "RHGS_vg_" + getParameters().getLvName()),
-                        new Pair<>("size", deviceSize),
+                        new Pair<>("size", totalSize),
                         new Pair<>("diskcount", diskCount),
                         new Pair<>("stripesize", getParameters().getStripeSize()),
+                        new Pair<>("pool_metadatasize", poolmetadatsize),
                         new Pair<>("wipefs", "yes"),
                         new Pair<>("disktype", getParameters().getRaidType().toString()),
                         new Pair<>("lvname", getParameters().getLvName() + "_lv"),
                         new Pair<>("cache_lvname", getParameters().getLvName() + "_cache_lv"),
-                        new Pair<>("cache_lvsize", getParameters().getCacheSize() + "GiB"),
+                        new Pair<>("cache_lvsize", getParameters().getCacheSize() + "G"),
                         new Pair<>("cachemode", getParameters().getCacheMode()),
                         new Pair<>("fstype", GlusterConstants.FS_TYPE_XFS),
                         new Pair<>("mntpath", getParameters().getMountPoint()))
@@ -187,7 +190,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
             .logFileSuffix(getCorrelationId())
             .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             log.error("Failed to execute Ansible create brick role. Please check logs for more details: {}",
                     command.logFile());
@@ -195,7 +198,24 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                     String.format(
                             "Failed to execute Ansible create brick role. Please check logs for more details: %1$s",
                             command.logFile()));
+        } else {
+            // sync the storage devices, so mount point shows up
+            for (StorageDevice storageDevice : getParameters().getDisks()) {
+                storageDevice.setMountPoint(getParameters().getMountPoint());
+                storageDevice.setGlusterBrick(true);
+                saveStorageDevice(storageDevice);
+            }
+            resetIsFreeFlag(getParameters().getDisks());
         }
+    }
 
+    private void resetIsFreeFlag(List<StorageDevice> devices) {
+        for (StorageDevice device : devices) {
+            storageDeviceDao.updateIsFreeFlag(device.getId(), false);
+        }
+    }
+
+    private void saveStorageDevice(StorageDevice storageDevice) {
+        storageDeviceDao.update(storageDevice);
     }
 }

@@ -5,42 +5,84 @@
   when:  wipefs == 'yes' and item is defined
   ignore_errors: yes
 
-# Create pv on all the disks
-- name: Create Physical Volume
-  pv:
-    action: create
-    disks: "{{ item }}"
+# Set data alignment for JBODs, by default it is 256K. This set_fact is not
+# needed if we can always assume 256K for JBOD, however we provide this extra
+# variable to override it.
+- name: Set PV data alignment for JBOD
+  set_fact:
+    pv_dataalign: "{{ gluster_infra_dalign | default('256K') }}"
+  when: disktype == 'NONE' or disktype == 'RAID0'
+
+# Set data alignment for RAID
+# We need KiB: ensure to keep the trailing `K' in the pv_dataalign calculation.
+- name: Set PV data alignment for RAID
+  set_fact:
+    pv_dataalign: >
+        {{ diskcount|int *
+           stripesize|int }}K
+  when: >
+      disktype == 'RAID6' or
+      disktype == 'RAID10'
+
+- name: Set VG physical extent size for RAID
+  set_fact:
+    vg_pesize: >
+         {{ diskcount|int *
+            stripesize|int }}K
+  when: >
+     disktype == 'RAID6' or
+     disktype == 'RAID10'
+
+- name: Create volume groups
+  lvg:
+    state: present
+    vg: "{{ vgname }}"
+    pvs: "{{ item }}"
+    pv_options: "--dataalignment {{ pv_dataalign }}"
+    # pesize is 4m by default for JBODs
+    pesize: "{{ vg_pesize | default(4) }}"
   with_items: "{{ disks }}"
-  register: result
-  failed_when: "result.rc != 0 and 'Physical Volume Exists' not in result.msg"
 
-- name: Create volume group on the disks
-  vg:
-    action: "create"
-    disks: "{{ item}}"
-    vgname: "{{ vgname }}"
-    diskcount: "{{ diskcount }}"
-    disktype: "{{ disktype }}"
-    stripesize: "{{ stripesize }}"
-  with_items: "{{ disks }}"
+# Chunksize is calculated as follows for GlusterFS' optimal performance.
+# RAID6:
+#    full_stripe_size = stripe_unit_size * no_of_data_disks
+#
+# Where full_stripe_size should be between 1 MiB and 2 MiB. And chunksize is set
+# to full_stripe_size
+#
+- name: Calculate chunksize for RAID6/RAID10
+  set_fact:
+     lv_chunksize: >
+        {{ stripesize|int *
+           diskcount|int }}K
+  when: >
+     disktype == 'RAID6' or
+     disktype == 'RAID10'
 
-- name: Create thinpool
-  lv:
-    action: create
-    lvtype: "thinpool"
-    poolname: "{{ lvname }}_pool"
-    compute: rhs
-    vgname: "{{ vgname }}"
-    size: "{{ size }}"
+# For JBOD the thin pool chunk size is set to 256 KiB.
+- name: Set chunksize for JBOD
+  set_fact:
+     lv_chunksize: '256K'
+  when: disktype == 'NONE' or disktype == 'RAID0'
 
-- name: Create LVs with specified size for the VGs
-  lv:
-    action: create
-    lvtype: "thinlv"
-    lvname: "{{ lvname }}"
-    compute: rhs
-    vgname: "{{ vgname }}"
-    poolname: "{{ lvname }}_pool"
+- name: Create a LV thinpool
+  lvol:
+     state: present
+     shrink: false
+     vg: "{{ vgname }}"
+     thinpool: "{{ lvname }}_pool"
+     size: 100%FREE
+     opts: " --chunksize {{ lv_chunksize }}
+             --poolmetadatasize {{ pool_metadatasize }}
+             --zero n"
+
+- name: Create thin logical volume
+  lvol:
+     state: present
+     vg: "{{ vgname }}"
+     lv: "{{ lvname }}"
+     size: "{{ size }}"
+     thinpool: "{{ lvname }}_pool"
 
 - include_tasks: lvmcache.yml
   when: ssd is defined and ssd != ''

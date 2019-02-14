@@ -1,74 +1,54 @@
 ---
-- name: Setup SSD for caching | Create the physical volume
-  pv:
-    action: create
-    disks: "{{ item }}"
-  with_items: "{{ ssd }}"
-  register: result
-  failed_when: "result.rc != 0 and 'Physical Volume Exists' not in result.msg"
-
 - name: Setup SSD for caching | Extend the Volume Group
-  vg:
-    action: extend
-    disks: "{{ item }}"
-    vgname: "{{ vgname }}"
+  lvg:
+     state: present
+     vg: "{{ vgname }}"
+     pvs: "{{ item }}"
+     pv_options: "--dataalignment 256K"
   with_items: "{{ ssd }}"
-  register: result
-  failed_when: "result.rc != 0 and ('is already in volume group' not in result.msg  and 'not found' not in result.msg)"
 
 - name: Setup SSD for caching | Change the attributes of the logical volume
-  lv:
-    action: change
-    zero: n
-    vgname: "{{ vgname }}"
-    lvname: "{{ lvname }}_pool"
-  register: res
-  failed_when: res.rc != 0 and 'zero new blocks' not in res.msg
+  lvol:
+     state: present
+     vg: "{{ vgname }}"
+     thinpool: "{{ lvname }}_pool"
+     opts: " --zero n "
 
-- name: Setup SSD for caching | Create cache meta logical volume
-  lv:
-    action: create
-    lvname: "{{ cache_meta_lv }}"
-    lvtype: "thick"
-    size: "{{ cache_meta_lvsize }}"
-    vgname: "{{ vgname }}"
-    pvname: "{{ ssd }}"
+- name: Setup SSD for caching | Create LV for cache
+  lvol:
+     state: present
+     vg: "{{ vgname }}"
+     lv: "{{ cache_lvname }}"
+     size: "{{ cache_lvsize }}"
+
+- name: Setup SSD for caching | Create metadata LV for cache
+  lvol:
+     state: present
+     vg: "{{ vgname }}"
+     lv: "{{ cache_meta_lv }}"
+     size: "{{ cache_meta_lvsize }}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
 
-- name: Setup SSD for caching | Create cache logical volume
-  lv:
-    action: create
-    lvname: "{{ cache_lvname }}"
-    lvtype: "thick"
-    size: "{{ cache_lvsize }}"
-    vgname: "{{ vgname }}"
-    pvname: "{{ ssd }}"
-
-- name: Setup SSD for caching | Convert an existing logical volume to a cache pool LV
-  lv:
-    action: convert
-    lvtype: cache-pool
-    cachemode: "{{ cachemode }}"
-    poolmetadata: "{{ cache_meta_lv }}"
-    poolmetadataspare: n
-    vgname: "{{ vgname }}"
-    lvname: "{{ cache_lvname }}"
+- name: Setup SSD for caching | Convert logical volume to a cache pool LV
+  command: >
+     lvconvert -y --type cache-pool --poolmetadata {{ cache_meta_lv }}
+        --poolmetadataspare n
+        --cachemode {{cachemode | default('writethrough')}}
+        "/dev/{{vgname}}/{{cache_lvname}}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
 
-- name: Setup SSD for caching | Convert an existing logical volume to a cache pool LV
-  lv:
-    action: convert
-    lvtype: cache-pool
-    cachemode: "{{ cachemode }}"
-    vgname: "{{ vgname }}"
-    lvname: "{{ cache_lvname }}"
-  when: cache_meta_lv is not defined or cache_meta_lv == ' '
+# It is valid not to have cachemetalvname! Writing a separate task not to
+# complicate things.
+- name: Setup SSD for caching | Convert logical volume to a cache pool LV without cachemetalvname
+  command: >
+     lvconvert -y --type cache-pool
+        --poolmetadataspare n
+        --cachemode {{cachemode | default('writethrough')}}
+        "/dev/{{vgname}}/{{cache_lvname}}"
+  when: cache_meta_lv is not defined
 
+# Run lvs -a -o +devices to see the cache settings
 - name: Setup SSD for caching | Convert an existing logical volume to a cache LV
-  lv:
-    action: convert
-    lvtype: cache
-    cachepool: "{{ cache_lvname }}"
-    vgname: "{{ vgname }}"
-    lvname: "{{ lvname }}_pool"
-
+  command: >
+     lvconvert -y --type cache --cachepool "/dev/{{vgname}}/{{cache_lvname}}"
+     "/dev/{{vgname}}/{{ lvname }}_pool"

@@ -643,7 +643,6 @@ Requires:	%{required_python_lib_dateutil}
 Requires:	%{required_python_lib_netaddr}
 Requires:	%{required_python_lib_psycopg2}
 Requires:	%{required_python_lib_six}
-Requires:	gdeploy
 Requires(pre):		shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd

@@ -2,7 +2,6 @@ glusterfs-brick-create
 =========
 
 Given a set of physical devices, this role creates a volume group, a thin pool and thinly provisioned logical volume, creates an xfs filesystem and mounts the LV at a given path for use as a glusterfs brick. If an SSD device is provided, a lvmcache pool is created and attached to thin pool created.
-Requires ```gdeploy``` to provide the modules used in the role.
 
 
 Role Variables
