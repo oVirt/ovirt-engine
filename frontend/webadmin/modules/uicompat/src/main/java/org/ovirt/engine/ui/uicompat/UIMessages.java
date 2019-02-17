@@ -271,7 +271,7 @@ public interface UIMessages extends Messages {
 
     String cannotCopyDisks(String disks);
 
-    String moveDisksPreallocatedWarning(String disks);
+    String moveDisksConvertToCowWarning(String disks);
 
     String moveDisksWhileVmRunning(String disks);
 

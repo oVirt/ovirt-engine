@@ -95,8 +95,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
         // Add warning for raw/thin disks that reside on a file domain
         // and selected to be cold moved to a block domain (as it will cause
-        // the disks to become preallocated, and it may consume considerably
-        // more space on the target domain).
+        // the disks to become cow-sparse instead of raw-sparse).
         for (final DiskModel diskModel : getDisks()) {
             ListModel<StorageDomain> sourceStorageDomains = diskModel.getSourceStorageDomain();
             if (sourceStorageDomains.getItems().iterator().hasNext() &&
@@ -130,7 +129,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
         }
 
         if (!problematicDisksForWarning.isEmpty()) {
-            getDynamicWarning().setEntity(messages.moveDisksPreallocatedWarning(
+            getDynamicWarning().setEntity(messages.moveDisksConvertToCowWarning(
                     String.join(", ", problematicDisksForWarning))); //$NON-NLS-1$
             getDynamicWarning().setIsAvailable(true);
         } else {

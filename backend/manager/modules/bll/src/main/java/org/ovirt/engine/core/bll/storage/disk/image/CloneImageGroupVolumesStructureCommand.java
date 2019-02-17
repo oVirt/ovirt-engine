@@ -22,10 +22,14 @@ import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -37,6 +41,8 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     private DiskImageDao diskImageDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -110,6 +116,9 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     }
 
     private void createImage(DiskImage image) {
+        VolumeFormat volumeFormat = determineVolumeFormat(getParameters().getDestDomain(),
+                image.getVolumeFormat(),
+                image.getVolumeType());
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getDestDomain(),
@@ -117,11 +126,11 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 image.getParentId(),
                 getParameters().getImageGroupID(),
                 image.getImageId(),
-                image.getVolumeFormat(),
+                volumeFormat,
                 getParameters().getDescription(),
                 image.getSize(),
                 imagesHandler.determineImageInitialSize(image.getImage(),
-                        image.getVolumeFormat(),
+                        volumeFormat,
                         getParameters().getStoragePoolId(),
                         getParameters().getSrcDomain(),
                         getParameters().getDestDomain(),
@@ -132,6 +141,20 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         parameters.setParentParameters(getParameters());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(image.getImageId().toString()));
         runInternalActionWithTasksContext(ActionType.CreateVolumeContainer, parameters);
+    }
+
+    private VolumeFormat determineVolumeFormat(Guid destStorageDomainId,
+            VolumeFormat srcVolumeFormat,
+            VolumeType srcVolumeType) {
+        // Block storage domain does not support raw/thin disk.
+        // File based raw/thin disk will convert to cow/sparse
+        if (srcVolumeFormat.equals(VolumeFormat.RAW) && srcVolumeType.equals(VolumeType.Sparse)) {
+            StorageDomainStatic destStorageDomain = storageDomainStaticDao.get(destStorageDomainId);
+            if (destStorageDomain.getStorageType().isBlockDomain()) {
+                return VolumeFormat.COW;
+            }
+        }
+        return srcVolumeFormat;
     }
 
     @Override
