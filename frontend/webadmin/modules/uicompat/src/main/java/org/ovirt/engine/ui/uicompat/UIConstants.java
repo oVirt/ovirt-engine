@@ -911,7 +911,7 @@ public interface UIConstants extends Constants {
 
     String emptyFieldsInvalidReason();
 
-    String trimmingSpacesInField();
+    String leadingOrTrailingSpacesInField();
 
     String quotaMustBeSelectedInvalidReason();
 

@@ -6,7 +6,7 @@ public class NoTrimmingWhitespacesValidation extends RegexValidation {
 
     public NoTrimmingWhitespacesValidation() {
         setExpression("^$|^\\S.*\\S$|^\\S+$"); //$NON-NLS-1$
-        setMessage(ConstantsManager.getInstance().getConstants().trimmingSpacesInField());
+        setMessage(ConstantsManager.getInstance().getConstants().leadingOrTrailingSpacesInField());
     }
 
 }
