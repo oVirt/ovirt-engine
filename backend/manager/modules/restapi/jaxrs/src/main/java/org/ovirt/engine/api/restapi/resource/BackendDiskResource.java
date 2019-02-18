@@ -21,6 +21,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -89,8 +90,8 @@ public class BackendDiskResource
                     new UpdateParametersProvider());
         }
 
-        // If the QCOW version isn't specified, then just retrieve the disk:
-        return get();
+        // If the QCOW version isn't specified, then return 409
+        throw new WebFaultException(null, localize(Messages.DISK_UPDATE_NOT_PERMITTED), Response.Status.CONFLICT);
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {

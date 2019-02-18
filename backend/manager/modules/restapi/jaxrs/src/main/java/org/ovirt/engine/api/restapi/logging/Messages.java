@@ -37,6 +37,8 @@ public enum Messages {
 
     INVALID_OPERATION_ON_NON_SRIOV_NIC,
 
+    DISK_UPDATE_NOT_PERMITTED,
+
     // Reason and template to use when a value is out of range:
     VALUE_OUT_OF_RANGE_REASON,
     VALUE_OUT_OF_RANGE_DETAIL_TEMPLATE,
