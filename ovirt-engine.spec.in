@@ -1396,6 +1396,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Mon Feb 18 2019 Sandro Bonazzola <sbonazzo@redhat.com> - 4.3.1
+- Bump version to 4.3.1
+
 * Mon Jan 30 2019 Sandro Bonazzola <sbonazzo@redhat.com> - 4.3.0.4
 - Bump version to 4.3.0.4
 
