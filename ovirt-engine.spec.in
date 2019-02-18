@@ -572,6 +572,8 @@ Requires:       postgresql-server >= 10.0
 Requires:       postgresql-contrib >= 10.0
 %endif
 Conflicts:	%{name} < 4.2.6
+# See rhbz# 1676461
+Requires:	ovirt-vmconsole >= 1.0.7
 
 # OVS/OVN stuff, for firewalld service files
 Requires:	openvswitch-ovn-central >= 0:2.7
