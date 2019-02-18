@@ -188,17 +188,13 @@ public abstract class VnicProfileModel extends Model {
             Network network = getNetwork().getSelectedItem();
             boolean passthroughAndPortMirroringAllowed = network == null || !network.isExternal();
 
-            EntityModel<Boolean> portMirroring = getPortMirroring();
-            EntityModel<Boolean> passthrough = getPassthrough();
+            getPortMirroring().setIsChangeable(passthroughAndPortMirroringAllowed,
+                    constants.portMirroringNotSupportedExternalNetworks());
+            getPassthrough().setIsChangeable(passthroughAndPortMirroringAllowed,
+                    constants.passthroughNotSupportedExternalNetworks());
 
-            portMirroring.setIsChangeable(passthroughAndPortMirroringAllowed
-                    && portMirroring.getIsChangable(), portMirroring.getChangeProhibitionReason());
-            passthrough.setIsChangeable(passthroughAndPortMirroringAllowed
-                    && passthrough.getIsChangable(), passthrough.getChangeProhibitionReason());
-
-            if (!passthroughAndPortMirroringAllowed) {
-                getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotSupportedExternalNetworks());
-                getPassthrough().setChangeProhibitionReason(constants.passthroughNotSupportedExternalNetworks());
+            if(passthroughAndPortMirroringAllowed) {
+                updateChangeabilityIfVmsUsingTheProfile();
             }
         });
 
@@ -394,6 +390,8 @@ public abstract class VnicProfileModel extends Model {
     }
 
     protected abstract void initSelectedNetworkFilter();
+
+    protected abstract void updateChangeabilityIfVmsUsingTheProfile();
 
     private void initPassthroughChangeListener() {
         getPassthrough().getEntityChangedEvent().addListener((ev, sender, args) -> {

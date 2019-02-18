@@ -34,8 +34,6 @@ public class EditVnicProfileModel extends VnicProfileModel {
         getMigratable().setEntity(!getProfile().isPassthrough() || getProfile().isMigratable());
         getPortMirroring().setEntity(getProfile().isPortMirroring());
         getPublicUse().setIsAvailable(false);
-
-        updateChangabilityIfVmsUsingTheProfile();
     }
 
     public EditVnicProfileModel(SearchableListModel<?, ?> sourceModel, VnicProfile profile, Guid dcId) {
@@ -57,19 +55,15 @@ public class EditVnicProfileModel extends VnicProfileModel {
         return ActionType.UpdateVnicProfile;
     }
 
-    private void updateChangabilityIfVmsUsingTheProfile() {
-        IdQueryParameters params =
-                new IdQueryParameters(getProfile().getId());
+    protected void updateChangeabilityIfVmsUsingTheProfile() {
         startProgress();
-        Frontend.getInstance().runQuery(QueryType.GetVmsByVnicProfileId, params,
+        Frontend.getInstance().runQuery(QueryType.GetVmsByVnicProfileId,
+                new IdQueryParameters(getProfile().getId()),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     Collection<VM> vms = returnValue.getReturnValue();
                     if (vms != null && !vms.isEmpty()) {
-                        getPortMirroring().setIsChangeable(false);
-                        getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfUsedByVms());
-
-                        getPassthrough().setIsChangeable(false);
-                        getPassthrough().setChangeProhibitionReason(constants.passthroughNotChangedIfUsedByVms());
+                        getPortMirroring().setIsChangeable(false, constants.portMirroringNotChangedIfUsedByVms());
+                        getPassthrough().setIsChangeable(false, constants.passthroughNotChangedIfUsedByVms());
                     }
                     stopProgress();
                 }));

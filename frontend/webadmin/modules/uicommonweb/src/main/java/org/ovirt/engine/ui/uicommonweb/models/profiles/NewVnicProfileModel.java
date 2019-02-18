@@ -53,4 +53,9 @@ public class NewVnicProfileModel extends VnicProfileModel {
         getNetworkFilter().setSelectedItem(Linq.firstOrNull(getNetworkFilter().getItems(),
                 new Linq.NamePredicate(NetworkFilter.VDSM_NO_MAC_SPOOFING)));
     }
+
+    @Override
+    protected void updateChangeabilityIfVmsUsingTheProfile() {
+        // Do nothing
+    }
 }
