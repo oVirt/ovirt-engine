@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 public class SsoUtils {
     private static final Logger log = LoggerFactory.getLogger(SsoUtils.class);
 
-    public static String createUserSession(HttpServletRequest req, Map<String, Object> jsonResponse, boolean loginAsAdmin) {
+    public static String createUserSession(HttpServletRequest req,
+            Map<String, Object> jsonResponse,
+            boolean loginAsAdmin) throws Exception {
         String engineSessionId = null;
         if (!FiltersHelper.isStatusOk(jsonResponse)) {
             throw new RuntimeException((String) jsonResponse.get("MESSAGE"));
@@ -81,6 +83,7 @@ public class SsoUtils {
         } catch (Exception ex) {
             log.error("User '{}@{}' login failed: {}", username, profile, ex.getMessage());
             log.debug("User '{}@{}' login failed", username, profile, ex);
+            throw ex;
         } finally {
             try {
                 if (ctx != null) {
