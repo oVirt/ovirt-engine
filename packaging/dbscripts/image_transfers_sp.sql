@@ -52,6 +52,18 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetImageTransfersByStorageId(v_storage_id UUID)
+RETURNS SETOF image_transfers STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT image_transfers.*
+    FROM image_transfers
+    INNER JOIN images ON images.image_group_id = image_transfers.disk_id
+    INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
+    WHERE image_storage_domain_map.storage_domain_id = v_storage_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_command_id UUID,

@@ -54,6 +54,14 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         return get(id, null, false);
     }
 
+
+    @Override
+    public List<ImageTransfer> getByStorageId(Guid storageId) {
+        return getCallsHandler().executeReadList("GetImageTransfersByStorageId",
+                createEntityRowMapper(),
+                createIdParameterMapper(storageId, "storage_id"));
+    }
+
     @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return createIdParameterMapper(id, "command_id");

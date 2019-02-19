@@ -36,6 +36,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
@@ -50,6 +52,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -92,6 +95,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     private CINDERStorageHelper cinderStorageHelper;
     @Inject
     private ManagedBlockStorageHelper managedBlockStorageHelper;
+    @Inject
+    private ImageTransferDao imageTransferDao;
 
     private boolean isLastMaster;
 
@@ -132,6 +137,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
 
         if (!validateDomainStatus()) {
+            return false;
+        }
+
+        if (!validateNoActiveUploadsDownloads()) {
             return false;
         }
 
@@ -187,6 +196,20 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 .map(t -> t.getActionType().toString())
                 .distinct()
                 .collect(Collectors.joining(", "));
+    }
+
+    protected boolean validateNoActiveUploadsDownloads() {
+        for (ImageTransfer transfer : imageTransferDao.getByStorageId(getStorageDomainId())) {
+            ImageTransferPhase imageTransferPhase = transfer.getPhase();
+            switch (imageTransferPhase) {
+                case TRANSFERRING:
+                case RESUMING:
+                case FINALIZING_SUCCESS:
+                case FINALIZING_FAILURE:
+                    return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_DURING_UPLOAD_OR_DOWNLOAD);
+            }
+        }
+        return true;
     }
 
     protected boolean validateDomainStatus() {

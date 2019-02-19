@@ -25,4 +25,11 @@ public interface ImageTransferDao extends GenericDao<ImageTransfer, Guid>, Searc
      * @return ImageTransfer entity
      */
     ImageTransfer get(Guid diskId, Guid userId, boolean isFiltered);
+
+    /**
+     * Retrieves an ImageTransfer entities based on storage id
+     *
+     * @return ImageTransfer entity
+     */
+    List<ImageTransfer> getByStorageId(Guid storageId);
 }

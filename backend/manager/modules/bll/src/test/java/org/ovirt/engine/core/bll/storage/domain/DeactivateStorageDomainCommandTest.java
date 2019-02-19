@@ -32,6 +32,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
@@ -39,6 +41,7 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -68,6 +71,8 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     private EventQueue eventQueue;
     @Mock
     private StoragePoolStatusHandler storagePoolStatusHandler;
+    @Mock
+    private ImageTransferDao imageTransferDao;
 
     private StoragePoolIsoMap map;
     private StorageDomain domain;
@@ -144,6 +149,15 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     public void deactivateNoExistingDomainFails() {
         doReturn(null).when(cmd).getStorageDomain();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+    }
+
+    @Test
+    public void deactivateImageTransferActiveUploadFails() {
+        mockDomain();
+        ImageTransfer transfer = new ImageTransfer();
+        transfer.setPhase(ImageTransferPhase.TRANSFERRING);
+        when(imageTransferDao.getByStorageId(any())).thenReturn(Collections.singletonList(transfer));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_DURING_UPLOAD_OR_DOWNLOAD);
     }
 
     @Test
