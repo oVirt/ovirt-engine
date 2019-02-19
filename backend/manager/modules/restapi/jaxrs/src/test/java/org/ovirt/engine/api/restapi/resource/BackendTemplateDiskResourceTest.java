@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -290,6 +291,7 @@ public class BackendTemplateDiskResourceTest
         when(entity.getStorageDomainType()).thenReturn(StorageDomainType.Master);
         when(entity.getStorageType()).thenReturn(storageType);
         when(entity.getStorage()).thenReturn(GUIDS[0].toString());
+        when(entity.getStorageStaticData()).thenReturn(new StorageDomainStatic());
         return entity;
     }
     private Action setUpCopyParams(boolean byName) {

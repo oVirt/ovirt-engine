@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -241,6 +242,7 @@ public class BackendAttachedStorageDomainResourceTest
         when(domain.getStorageDomainType()).thenReturn(StorageDomainType.Master);
         when(domain.getStorageType()).thenReturn(type);
         when(domain.getStorage()).thenReturn(STORAGE_CONNECTION_ID.toString());
+        when(domain.getStorageStaticData()).thenReturn(new StorageDomainStatic());
         return domain;
     }
 

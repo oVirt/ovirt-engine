@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -572,6 +573,7 @@ public class BackendStorageDomainsResourceTest
         when(entity.getStorageDomainType()).thenReturn(getSafeEntry(index, TYPES_MAPPED));
         when(entity.getStorageType()).thenReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED));
         when(entity.getStorage()).thenReturn(getSafeEntry(index, GUIDS).toString());
+        when(entity.getStorageStaticData()).thenReturn(new StorageDomainStatic());
         return entity;
     }
 
@@ -603,6 +605,7 @@ public class BackendStorageDomainsResourceTest
         when(entity.getStorageDomainType()).thenReturn(TYPES_MAPPED[0]);
         when(entity.getStorageType()).thenReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
         when(entity.getStorage()).thenReturn(GUIDS[GUIDS.length - 1].toString());
+        when(entity.getStorageStaticData()).thenReturn(new StorageDomainStatic());
         return entity;
     }
 

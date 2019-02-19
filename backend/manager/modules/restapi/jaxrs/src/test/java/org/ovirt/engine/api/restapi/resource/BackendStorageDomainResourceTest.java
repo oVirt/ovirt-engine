@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandP
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
@@ -115,6 +116,7 @@ public class BackendStorageDomainResourceTest
         when(entity.getStorageDomainType()).thenReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data);
         when(entity.getStorageType()).thenReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP);
         when(entity.getStorage()).thenReturn(GUIDS[0].toString());
+        when(entity.getStorageStaticData()).thenReturn(new StorageDomainStatic());
         return entity;
     }
 
