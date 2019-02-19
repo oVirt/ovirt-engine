@@ -322,6 +322,11 @@ Requires:	collectd
 Requires:	collectd-postgresql
 Requires:	collectd-disk
 Requires:	collectd-write_http
+%if 0%{?rhel}
+# collectd-write_syslog is available only on EL7
+Requires:	collectd-write_syslog
+%endif
+
 
 # Requirements for ovirt-engine-metrics
 Requires:	rsyslog
