@@ -750,9 +750,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             }
 
             final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, nic.getId());
-            if (physicalFunction != null && !getShowVf().getEntity()) {
-                continue;
-            }
 
             String nicName = nic.getName();
             Collection<LogicalNetworkModel> nicNetworks = nicNameToNetworkModels.get(nicName);
@@ -763,6 +760,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     physicalFunction == null ? null : physicalFunction.getName(),
                     this);
 
+            if (physicalFunction != null && !getShowVf().getEntity()) {
+                continue;
+            }
             regularNicModels.put(nicName, nicModel);
         }
         return regularNicModels;
