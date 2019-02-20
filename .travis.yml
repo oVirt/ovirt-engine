@@ -18,7 +18,7 @@ env:
     - secure: kgBwT3IHk1vg1PHD4KKqkIOFlv4MGkOA+IK+nsTbPRJEvWpzZSgpHLuL+/2YuB4tntNMMj3LHwPTSJmaGLRdxaSjjv0MfzQA/fudLqTJ+FL3MuA++YcLSfjj6wj1dlMRj+0vYgCQcBMKTktDhGMdE6gUh42AQBzywqe1IcnX5Qs=
     - PGPORT=5433
     - PGUSER=travis
-    - PGHOST="localhost"
+    - PGHOST=""
 addons:
   postgresql: "10"
   apt:
