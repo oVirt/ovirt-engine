@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
@@ -17,7 +15,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 @SchedulingUnit(
         guid = "71931e14-f0e6-4f91-a7c8-d494a26e3a09",
@@ -26,9 +23,6 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
         description = "Prefers hosts that have more or equal number of sockets, cores and threads."
 )
 public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
-
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
 
     public HighPerformanceCpuPolicyUnit(PolicyUnit policyUnit, PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -70,7 +64,7 @@ public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
         }
 
         // Test if VM uses NUMA pinning
-        return vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId()).stream()
+        return vm.getvNumaNodeList().stream()
                 .anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
     }
 }

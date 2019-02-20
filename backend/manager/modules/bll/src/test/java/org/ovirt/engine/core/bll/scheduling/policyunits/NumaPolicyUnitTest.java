@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -25,20 +22,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class NumaPolicyUnitTest extends NumaPolicyTestBase{
 
     private static final long NODE_SIZE = 1024;
-
-    @Mock
-    public VmNumaNodeDao vmNumaNodeDao;
-
-    @Mock
-    public VdsNumaNodeDao vdsNumaNodeDao;
 
     public VM vm;
 
@@ -59,19 +48,11 @@ public class NumaPolicyUnitTest extends NumaPolicyTestBase{
         vm.setId(Guid.newGuid());
         vm.setNumaTuneMode(NumaTuneMode.STRICT);
 
-        doAnswer(arg -> vm.getvNumaNodeList()).when(vmNumaNodeDao).getAllVmNumaNodeByVmId(any(Guid.class));
-
         hostWithoutNuma = createHost(0, NODE_SIZE);
         hostTwoNodes = createHost(2, NODE_SIZE);
         hostFourNodes = createHost(4, NODE_SIZE);
 
         hosts = Arrays.asList(hostWithoutNuma, hostTwoNodes, hostFourNodes);
-
-        doAnswer(invocation -> hosts.stream()
-                .filter(h -> h.getId().equals((Guid) invocation.getArgument(0)))
-                .findAny()
-                .map(VDS::getNumaNodeList).orElse(Collections.emptyList())
-        ).when(vdsNumaNodeDao).getAllVdsNumaNodeByVdsId(any(Guid.class));
     }
 
     @Test

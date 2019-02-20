@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -28,8 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
@@ -44,11 +39,6 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
                 MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000)
         );
     }
-
-    @Mock
-    private VmNumaNodeDao vmNumaNodeDao;
-    @Mock
-    private VdsNumaNodeDao vdsNumaNodeDao;
 
     private VM vm;
     private VDS hostWithoutNuma;
@@ -69,19 +59,11 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
         vm.setThreadsPerCpu(1);
         vm.setNumaTuneMode(NumaTuneMode.STRICT);
 
-        doAnswer(arg -> vm.getvNumaNodeList()).when(vmNumaNodeDao).getAllVmNumaNodeByVmId(any(Guid.class));
-
         hostWithoutNuma = createHost(0, NODE_SIZE);
         hostWithOneCpuPerNode = createHost(2, NODE_SIZE, 1);
         hostWithTwoCpusPerNode = createHost(2, NODE_SIZE, 2);
 
         hosts = Arrays.asList(hostWithoutNuma, hostWithOneCpuPerNode, hostWithTwoCpusPerNode);
-
-        doAnswer(invocation -> hosts.stream()
-                .filter(h -> h.getId().equals(invocation.getArgument(0)))
-                .findAny()
-                .map(VDS::getNumaNodeList).orElse(Collections.emptyList())
-        ).when(vdsNumaNodeDao).getAllVdsNumaNodeByVdsId(any(Guid.class));
     }
 
     @Test

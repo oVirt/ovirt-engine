@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
@@ -21,8 +19,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +31,6 @@ import org.slf4j.LoggerFactory;
 public class NumaPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(NumaPolicyUnit.class);
 
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
-    @Inject
-    private VdsNumaNodeDao vdsNumaNodeDao;
-
     public NumaPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -47,7 +38,7 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
-        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
+        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
         boolean vmNumaPinned = vmNumaNodes.stream()
                 .anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
 
@@ -82,7 +73,7 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
             //        For now, we use the same algorithm as for STRICT mode.
             //        This will cause the host to be filtered out even in some cases when INTERLEAVE nodes could fit.
 
-            List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId());
+            List<VdsNumaNode> hostNodes = host.getNumaNodeList();
             Map<Integer, Long> pendingNodeMemory = PendingNumaMemory.collectForHost(getPendingResourceManager(), host.getId());
 
             // Subtract the pending memory from host nodes

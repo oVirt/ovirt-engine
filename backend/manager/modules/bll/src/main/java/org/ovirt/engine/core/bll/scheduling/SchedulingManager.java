@@ -339,6 +339,7 @@ public class SchedulingManager implements BackendService {
             vdsList = keepOnlyWhitelistedHosts(vdsList, hostWhiteList);
             refreshCachedPendingValues(vdsList);
             subtractRunningVmResources(cluster, vm, vdsList);
+            fetchNumaNodes(vm, vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             SchedulingContext context = new SchedulingContext(cluster,
                     createClusterPolicyParameters(cluster),
@@ -362,7 +363,11 @@ public class SchedulingManager implements BackendService {
             Optional<Guid> bestHost = selectBestHost(vm, destHostIdList, vdsList, policy, context);
             if (bestHost.isPresent() && !bestHost.get().equals(vm.getRunOnVds())) {
                 Guid bestHostId = bestHost.get();
-                addPendingResources(vm, bestHostId);
+                VDS host = vdsList.stream()
+                        .filter(h -> h.getId().equals(bestHostId))
+                        .findFirst().get();
+
+                addPendingResources(vm, host);
                 markVfsAsUsedByVm(vm, bestHostId);
             }
 
@@ -378,13 +383,22 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private void addPendingResources(VM vm, Guid hostId) {
+    private void fetchNumaNodes(VM vm, List<VDS> hosts) {
+        vm.setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId()));
+
+        for (VDS host : hosts) {
+            host.setNumaNodeList(vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+        }
+    }
+
+    private void addPendingResources(VM vm, VDS host) {
+        Guid hostId = host.getId();
         getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, vm.getNumOfCpus()));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
         getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
 
-        addPendingNumaMemory(vm, hostId);
+        addPendingNumaMemory(vm, host);
 
         // Add pending records for all specified hugepage sizes
         for (Map.Entry<Integer, Integer> hugepage: HugePageUtils.getHugePages(vm.getStaticData()).entrySet()) {
@@ -404,13 +418,13 @@ public class SchedulingManager implements BackendService {
      * When starting many VMs with NUMA pinning, it may happen that some of them will
      * not pass scheduling, even if they could fit on the host.
      */
-    private void addPendingNumaMemory(VM vm, Guid hostId) {
+    private void addPendingNumaMemory(VM vm, VDS host) {
         if (vm.getNumaTuneMode() == NumaTuneMode.PREFERRED) {
             return;
         }
 
-        List<VmNumaNode> vmNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
-        List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(hostId);
+        List<VmNumaNode> vmNodes = vm.getvNumaNodeList();
+        List<VdsNumaNode> hostNodes = host.getNumaNodeList();
 
         Map<Integer, Collection<Integer>> cpuPinning = CpuPinningHelper.parseCpuPinning(vm.getCpuPinning()).stream()
                 .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus()));
@@ -444,7 +458,7 @@ public class SchedulingManager implements BackendService {
         for (Map.Entry<Integer, Long> entry: hostNodePending.entrySet()) {
             int hostNodeIndex = entry.getKey();
             long pendingMemory = entry.getValue();
-            getPendingResourceManager().addPending(new PendingNumaMemory(hostId, vm, hostNodeIndex, pendingMemory));
+            getPendingResourceManager().addPending(new PendingNumaMemory(host.getId(), vm, hostNodeIndex, pendingMemory));
         }
     }
 
@@ -614,6 +628,7 @@ public class SchedulingManager implements BackendService {
         vdsList = keepOnlyWhitelistedHosts(vdsList, vdsWhiteList);
         refreshCachedPendingValues(vdsList);
         subtractRunningVmResources(cluster, vm, vdsList);
+        fetchNumaNodes(vm, vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         SchedulingContext context = new SchedulingContext(cluster,
                 createClusterPolicyParameters(cluster),
