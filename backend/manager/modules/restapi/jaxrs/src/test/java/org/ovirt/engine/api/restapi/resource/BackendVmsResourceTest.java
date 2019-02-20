@@ -17,12 +17,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Configuration;
@@ -61,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
@@ -75,18 +78,26 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith(MockConfigExtension.class)
 public class BackendVmsResourceTest
         extends AbstractBackendCollectionResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendVmsResource> {
 
     private static final String DEFAULT_TEMPLATE_ID = Guid.Empty.toString();
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
+    private static final String CA_CERT = "dummy-cert";
 
     private OsRepository osRepository;
 
     public BackendVmsResourceTest() {
         super(new BackendVmsResource(), SearchType.VM, "VMs : ");
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"));
     }
 
     @Override
@@ -157,6 +168,7 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(0);
         setUpGetVmOvfExpectations(0);
         setUpGetCertuficateExpectations(1, 0);
+        setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -210,6 +222,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(2, 0);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(2, 0);
+        setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
@@ -265,6 +278,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(0, 0);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetCertuficateExpectations(2, 0);
+        setUpGetCaRootExpectations();
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
@@ -362,6 +376,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -404,6 +419,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(2, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
@@ -447,6 +463,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
@@ -483,6 +500,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
@@ -547,6 +565,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
+        setUpGetCaRootExpectations();
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
@@ -574,6 +593,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
+        setUpGetCaRootExpectations();
         Vm model = getModel(2);
         model.setTemplate(new Template());
         model.getTemplate().setName(NAMES[1]);
@@ -609,6 +629,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 3);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 3);
+        setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(3);
         setUpGetVmOvfExpectations(3);
         setUpGetVirtioScsiExpectations(3);
@@ -655,6 +676,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
@@ -696,6 +718,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
@@ -797,6 +820,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getEntity(2));
+        setUpGetCaRootExpectations();
 
         Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
@@ -825,6 +849,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getEntity(2));
+        setUpGetCaRootExpectations();
 
         Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
@@ -852,6 +877,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getEntity(2));
+        setUpGetCaRootExpectations();
 
         Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
@@ -886,6 +912,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getEntity(2));
+        setUpGetCaRootExpectations();
 
         Vm model = createModel(null);
         model.setPlacementPolicy(new VmPlacementPolicy());
@@ -941,6 +968,7 @@ public class BackendVmsResourceTest
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
+        setUpGetCaRootExpectations();
 
         Vm model = createModel(null);
         addStorageDomainToModel(model);
@@ -963,6 +991,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -1019,6 +1048,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
@@ -1075,6 +1105,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetCaRootExpectations();
 
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
@@ -1128,12 +1159,15 @@ public class BackendVmsResourceTest
 
         setUpGetGraphicsMultipleExpectations(3);
         setUpQueryExpectations("");
+        setUpGetCertuficateExpectations(1, 0);
+        setUpGetCaRootExpectations();
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
 
     @Test
     public void testListAllContentIsConsolePopulated() throws Exception {
+        setUpGetCaRootExpectations();
         testListAllConsoleAware(true);
     }
 
@@ -1179,6 +1213,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(0, 1, 2);
         setUpGetRngDeviceExpectations(0, 1, 2);
         setUpGetCertuficateExpectations(3);
+        setUpGetCaRootExpectations();
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -1202,6 +1237,14 @@ public class BackendVmsResourceTest
                     new Object[] { GUIDS[index] },
                     CERTIFICATE);
         }
+    }
+
+    private void setUpGetCaRootExpectations() {
+        setUpGetEntityExpectations(QueryType.GetCACertificate,
+                QueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                CA_CERT);
     }
 
     @Test
@@ -1281,6 +1324,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
+        setUpGetCaRootExpectations();
 
         final Vm model = createModel(null);
         model.setLargeIcon(IconTestHelpler.createIconWithData());
@@ -1310,6 +1354,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getEntity(2));
+        setUpGetCaRootExpectations();
         final Vm model = createModel(null);
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         model.setLargeIcon(IconTestHelpler.createIcon(GUIDS[3]));

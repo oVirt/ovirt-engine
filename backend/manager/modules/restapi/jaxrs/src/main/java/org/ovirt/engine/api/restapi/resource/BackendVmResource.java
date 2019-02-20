@@ -25,8 +25,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Certificate;
-import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
@@ -97,7 +95,6 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -680,17 +677,7 @@ public class BackendVmResource
     }
 
     public void setCertificateInfo(Vm model) {
-        QueryReturnValue result =
-            runQuery(QueryType.GetVdsCertificateSubjectByVmId,
-                    new IdQueryParameters(asGuid(model.getId())));
-
-        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
-            if (!model.isSetDisplay()) {
-                model.setDisplay(new Display());
-            }
-            model.getDisplay().setCertificate(new Certificate());
-            model.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
-        }
+        DisplayHelper.addDisplayCertificate(this, model);
     }
 
     @Override

@@ -634,6 +634,7 @@ public class BackendVmsResource extends
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 Vm vm = map(entity);
                 DisplayHelper.adjustDisplayData(this, vm, vmsGraphicsDevices, false);
+                DisplayHelper.addDisplayCertificate(this, vm);
                 removeRestrictedInfo(vm);
                 collection.getVms().add(addLinks(populate(vm, entity)));
             }

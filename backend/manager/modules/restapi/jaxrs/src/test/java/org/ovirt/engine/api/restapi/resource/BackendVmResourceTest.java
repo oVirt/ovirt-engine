@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -25,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Action;
@@ -80,25 +82,35 @@ import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith(MockConfigExtension.class)
 public class BackendVmResourceTest
         extends AbstractBackendSubResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendVmResource> {
 
     private static final String ISO_ID = "foo.iso";
     private static final String FLOPPY_ID = "bar.vfd";
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
+    private static final String CA_CERT = "dummy-cert";
     private static final String PAYLOAD_COMTENT = "payload";
 
     public BackendVmResourceTest() {
         super(new BackendVmResource(GUIDS[0].toString(), new BackendVmsResource()));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"));
     }
 
     @Override
@@ -131,6 +143,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
+        setUpGetCaRootExpectations();
         Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
@@ -144,6 +157,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetNextRunGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
+        setUpGetCaRootExpectations();
         Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
@@ -194,6 +208,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
+        setUpGetCaRootExpectations();
         Vm response = resource.get();
         verifyModel(response, 0);
         verifyCertificate(response);
@@ -1335,6 +1350,14 @@ public class BackendVmResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0]},
                 CERTIFICATE);
+    }
+
+    private void setUpGetCaRootExpectations() {
+        setUpGetEntityExpectations(QueryType.GetCACertificate,
+                QueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                CA_CERT);
     }
 
     private void setUpGetVirtioScsiExpectations(int ... idxs) {

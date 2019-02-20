@@ -21,19 +21,17 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Console;
-import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.VirtioScsi;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -89,18 +87,8 @@ public class BackendVmDeviceHelper {
         vm.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(resouce, new Guid(vm.getId())).isEmpty());
     }
 
-    public static void setCertificateInfo(BackendResource resouce, Vm vm) {
-        QueryReturnValue result =
-                resouce.runQuery(QueryType.GetVdsCertificateSubjectByVmId,
-                        new IdQueryParameters(resouce.asGuid(vm.getId())));
-
-        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
-            if (!vm.isSetDisplay()) {
-                vm.setDisplay(new Display());
-            }
-            vm.getDisplay().setCertificate(new Certificate());
-            vm.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
-        }
+    public static void setCertificateInfo(BackendResource resource, Vm vm) {
+        DisplayHelper.addDisplayCertificate(resource, vm);
     }
 
     public static void setRngDevice(BackendResource resouce, Vm vm) {

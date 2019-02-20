@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Template;
@@ -16,8 +17,11 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.CertificateSubjectHelper;
 
 public class DisplayHelper {
 
@@ -128,6 +132,27 @@ public class DisplayHelper {
                 display.setType(DisplayType.VNC);
             } else {
                 resetDisplay(res);
+            }
+        }
+    }
+
+    public static void addDisplayCertificate(BackendResource res, Vm vm) {
+        QueryReturnValue result =
+                res.runQuery(QueryType.GetVdsCertificateSubjectByVmId,
+                             new IdQueryParameters(new Guid(vm.getId())));
+
+        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
+            if (!vm.isSetDisplay()) {
+                vm.setDisplay(new Display());
+            }
+            vm.getDisplay().setCertificate(new Certificate());
+            vm.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
+            vm.getDisplay().getCertificate().setOrganization(CertificateSubjectHelper.getOrganizationName());
+
+            final QueryReturnValue caCertificateReturnValue =
+                    res.runQuery(QueryType.GetCACertificate, new QueryParametersBase());
+            if (caCertificateReturnValue.getSucceeded()) {
+                vm.getDisplay().getCertificate().setContent(caCertificateReturnValue.getReturnValue());
             }
         }
     }

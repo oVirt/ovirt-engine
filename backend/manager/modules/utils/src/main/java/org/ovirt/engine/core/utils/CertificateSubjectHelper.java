@@ -8,15 +8,16 @@ public class CertificateSubjectHelper {
     public static String getCertificateSubject(String hostName) {
         String certificateSubject=null;
         if (hostName != null) {
-            certificateSubject = "O=" + getOrganizationName().replace("\\", "\\\\").replace(",", "\\,") +
+            certificateSubject = "O=" + getOrganizationName() +
                     ",CN=" + hostName.replace("\\", "\\\\").replace(",", "\\,");
         }
 
         return certificateSubject;
     }
 
-    private static String getOrganizationName() {
-        return Config.getValue(ConfigValues.OrganizationName);
+    public static String getOrganizationName() {
+        String orgName = Config.getValue(ConfigValues.OrganizationName);
+        return orgName.replace("\\", "\\\\").replace(",", "\\,");
     }
 
 }
