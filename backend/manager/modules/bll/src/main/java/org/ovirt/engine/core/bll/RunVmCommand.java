@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCo
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.EmulatedMachineUtils;
-import org.ovirt.engine.core.bll.utils.NumaUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -61,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -92,6 +92,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -152,7 +153,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
-    private NumaUtils numaUtils;
+    private VdsNumaNodeDao vdsNumaNodeDao;
     @Inject
     private StorageDomainDao storageDomainDao;
     @Inject
@@ -881,7 +882,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return;
         }
 
-        if (numaUtils.countNumaNodesWhereVmFits(getVm().getStaticData(), getVdsId()) == 0) {
+        List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(getVdsId());
+        boolean vmFitsToSomeNumaNode = hostNodes.stream()
+                .filter(node -> getVm().getMemSizeMb() <= node.getMemTotal())
+                .anyMatch(node -> getVm().getNumOfCpus() <= node.getCpuIds().size());
+
+        if (!vmFitsToSomeNumaNode) {
             addCustomValue("HostName", getVdsName());
             auditLogDirector.log(this, AuditLogType.VM_DOES_NOT_FIT_TO_SINGLE_NUMA_NODE);
         }

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
@@ -21,8 +19,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 
 @SchedulingUnit(
         guid = "1b14ac11-20e9-4593-a149-2eb83c60a330",
@@ -32,11 +28,6 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 )
 public class CpuAndNumaPinningWeightPolicyUnit extends PolicyUnitImpl {
 
-    @Inject
-    private VmNumaNodeDao vmNumaNodeDao;
-    @Inject
-    private VdsNumaNodeDao vdsNumaNodeDao;
-
     public CpuAndNumaPinningWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -44,7 +35,7 @@ public class CpuAndNumaPinningWeightPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
-        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
+        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
 
         boolean vmNumaPinned = vmNumaNodes.stream()
                 .anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
@@ -71,7 +62,7 @@ public class CpuAndNumaPinningWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     private Integer hostScore(VDS host, List<VmNumaNode> vmNumaNodes, Map<Integer, Collection<Integer>> cpuPinning) {
-        List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId());
+        List<VdsNumaNode> hostNodes = host.getNumaNodeList();
         return NumaPinningHelper.findAssignment(vmNumaNodes, hostNodes, cpuPinning).isPresent() ?
                 1 :
                 getMaxSchedulerWeight();

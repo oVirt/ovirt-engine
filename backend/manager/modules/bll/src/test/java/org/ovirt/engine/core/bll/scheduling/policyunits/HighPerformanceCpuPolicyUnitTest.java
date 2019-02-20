@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -26,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
@@ -39,9 +36,6 @@ public class HighPerformanceCpuPolicyUnitTest {
                 MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000)
         );
     }
-
-    @Mock
-    private VmNumaNodeDao vmNumaNodeDao;
 
     private VDS host1;
     private VDS host2;
@@ -67,8 +61,7 @@ public class HighPerformanceCpuPolicyUnitTest {
         vm.setNumOfSockets(2);
         vm.setCpuPerSocket(2);
         vm.setThreadsPerCpu(2);
-
-        doReturn(Collections.emptyList()).when(vmNumaNodeDao).getAllVmNumaNodeByVmId(vm.getId());
+        vm.setvNumaNodeList(Collections.emptyList());
     }
 
     @Test
