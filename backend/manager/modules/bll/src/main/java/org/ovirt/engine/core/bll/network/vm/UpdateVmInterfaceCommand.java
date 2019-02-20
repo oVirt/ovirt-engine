@@ -480,6 +480,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         private boolean propertiesRequiringUnplugPlugWereUpdated() {
             return !oldIface.getType().equals(getInterface().getType())
+                    || oldIface.isPassthrough()
                     || !oldIface.getMacAddress().equals(getMacAddress());
         }
 
