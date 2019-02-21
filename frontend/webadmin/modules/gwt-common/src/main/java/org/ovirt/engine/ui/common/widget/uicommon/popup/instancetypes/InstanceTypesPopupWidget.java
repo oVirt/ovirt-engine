@@ -5,6 +5,7 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 import com.google.gwt.core.client.GWT;
 
@@ -64,7 +65,12 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(iconTab, hiddenField()).
                 putOne(consoleDisconnectActionEditor, hiddenField()).
                 putOne(resumeBehavior, hiddenField()).
-                putOne(customCompatibilityVersionEditor, hiddenField()).
-                putOne(multiQueues, hiddenField());
+                putOne(customCompatibilityVersionEditor, hiddenField());
+    }
+
+    @Override
+    public void edit(UnitVmModel model) {
+        super.edit(model);
+        multiQueues.setEnabled(false);
     }
 }
