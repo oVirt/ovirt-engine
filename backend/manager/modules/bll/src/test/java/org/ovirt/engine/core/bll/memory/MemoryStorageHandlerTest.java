@@ -77,13 +77,13 @@ public class MemoryStorageHandlerTest {
 
     @Test
     public void sortStorageDomainsWithSingleComparator() {
-        sortStorageDomains(Arrays.asList(validStorageDomain1, validStorageDomain3),
+        sortStorageDomains(Arrays.asList(validStorageDomain1, validStorageDomain3, invalidStorageDomain1),
                 Arrays.asList(validStorageDomain3, validStorageDomain1));
     }
 
     @Test
     public void sortStorageDomainsWithWithMultipleComparators() {
-        sortStorageDomains(Arrays.asList(validStorageDomain1, validStorageDomain2, validStorageDomain3),
+        sortStorageDomains(Arrays.asList(validStorageDomain1, validStorageDomain2, validStorageDomain3, invalidStorageDomain1),
                 Arrays.asList(validStorageDomain3, validStorageDomain1, validStorageDomain2));
     }
 
@@ -116,6 +116,10 @@ public class MemoryStorageHandlerTest {
         invalidStorageDomain1 = initStorageDomain();
         invalidStorageDomain2 = initStorageDomain();
         invalidStorageDomain3 = initStorageDomain();
+
+        validStorageDomain1.setAvailableDiskSize(102);
+        validStorageDomain2.setAvailableDiskSize(101);
+        validStorageDomain3.setAvailableDiskSize(100);
     }
 
     private void initFilters() {
@@ -159,7 +163,7 @@ public class MemoryStorageHandlerTest {
     }
 
     private void sortStorageDomains(List<StorageDomain> domainsInPool, List<StorageDomain> expectedSortedList) {
-        memoryStorageHandler.sortStorageDomains(domainsInPool, vmDisks);
-        assertEquals(domainsInPool, expectedSortedList);
+        List<StorageDomain> result = memoryStorageHandler.sortStorageDomains(domainsInPool, vmDisks);
+        assertEquals(result, expectedSortedList);
     }
 }

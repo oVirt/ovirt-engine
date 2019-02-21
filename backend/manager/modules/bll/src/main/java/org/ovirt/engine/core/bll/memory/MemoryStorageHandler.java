@@ -79,7 +79,7 @@ public class MemoryStorageHandler {
     protected StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks,
             Collection<DiskImage> vmDisks) {
         domainsInPool = filterStorageDomains(domainsInPool, memoryDisks);
-        sortStorageDomains(domainsInPool, vmDisks);
+        domainsInPool = sortStorageDomains(domainsInPool, vmDisks);
         return domainsInPool.stream().findFirst().orElse(null);
     }
 
@@ -102,11 +102,12 @@ public class MemoryStorageHandler {
         return domainsInPool.stream().filter(predicate).collect(Collectors.toList());
     }
 
-    protected void sortStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
+    protected List<StorageDomain> sortStorageDomains(List<StorageDomain> domainsInPool, Collection<DiskImage> vmDisks) {
         Comparator<StorageDomain> comp =
                 getStorageDomainComparators(vmDisks).stream().reduce(Comparator::thenComparing).orElse(null);
-
+        domainsInPool = domainsInPool.stream().filter(s -> s.getAvailableDiskSize() != null).collect(Collectors.toList());
         domainsInPool.sort(comp);
+        return domainsInPool;
     }
 
     private void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
