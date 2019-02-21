@@ -64,7 +64,6 @@ public class BackendClusterNetworkResourceTest
     public void testUpdate() {
         setUpEntityQueryExpectations(1, false, false, false, false);
         setUpEntityQueryExpectations(1, true, true, true, true);
-        setUpClusterExpectations(GUIDS[1]);
         setUriInfo(setUpActionExpectations(ActionType.UpdateNetworkOnCluster,
                                            NetworkClusterParameters.class,
                                            new String[] {},
@@ -90,7 +89,6 @@ public class BackendClusterNetworkResourceTest
 
     @Test
     public void testRemove() {
-        setUpClusterExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
             setUpActionExpectations(
@@ -116,7 +114,6 @@ public class BackendClusterNetworkResourceTest
     }
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
-        setUpClusterExpectations(CLUSTER_ID);
         setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
             setUpActionExpectations(

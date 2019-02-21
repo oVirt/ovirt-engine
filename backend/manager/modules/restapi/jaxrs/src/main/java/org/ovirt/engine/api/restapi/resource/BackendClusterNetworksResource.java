@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.ClusterNetworkResource;
 import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -21,11 +22,17 @@ public class BackendClusterNetworksResource
     extends AbstractBackendNetworksResource
     implements ClusterNetworksResource {
 
-    private String clusterId;
+    String clusterId;
 
     public BackendClusterNetworksResource(String clusterId) {
         super(QueryType.GetAllNetworksByClusterId, ActionType.AttachNetworkToCluster);
         this.clusterId = clusterId;
+    }
+
+    @Override
+    public Networks list() {
+        return mapCollection(getBackendCollection(queryType, getQueryParameters()),
+                org.ovirt.engine.api.model.Cluster.class);
     }
 
     @Override
