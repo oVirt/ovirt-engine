@@ -19,6 +19,8 @@
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.hibernate.validator"/>
     <module name="org.javassist"/>
+    <module name="org.jboss.weld.core"/>
+    <module name="org.jboss.weld.spi"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.slf4j"/>
     <module name="com.netflix.hystrix"/>
