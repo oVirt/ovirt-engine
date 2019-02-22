@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.Ipv6AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 public class ExternalSubnetModel extends Model {
@@ -117,19 +118,23 @@ public class ExternalSubnetModel extends Model {
 
     public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
-        boolean ipv4 = getIpVersion().getSelectedItem() == IpVersion.IPV4;
+        boolean ipv4 = getIpVersion().getSelectedItem().equals(IpVersion.IPV4);
         getCidr().validateEntity(new IValidation[] { new CidrValidation(ipv4) });
         getIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getGateway().setIsValid(true);
-        if (StringHelper.isNotNullOrEmpty(getGateway().getEntity()) && ipv4) {
-            getGateway().validateEntity(new IValidation[] { new Ipv4AddressValidation() });
+        if (StringHelper.isNotNullOrEmpty(getGateway().getEntity())) {
+            getGateway().validateEntity(new IValidation[] { ipv4 ?
+                    new Ipv4AddressValidation() :
+                    new Ipv6AddressValidation() });
         }
 
         boolean dnsServersValid = true;
         for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
             dnsServer.setIsValid(true);
-            if (StringHelper.isNotNullOrEmpty(dnsServer.getEntity()) && ipv4) {
-                dnsServer.validateEntity(new IValidation[] { new Ipv4AddressValidation() });
+            if (StringHelper.isNotNullOrEmpty(dnsServer.getEntity())) {
+                dnsServer.validateEntity(new IValidation[] { ipv4 ?
+                        new Ipv4AddressValidation() :
+                        new Ipv6AddressValidation() });
             }
             dnsServersValid &= dnsServer.getIsValid();
         }
