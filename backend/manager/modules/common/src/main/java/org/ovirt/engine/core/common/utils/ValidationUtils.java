@@ -45,9 +45,11 @@ public class ValidationUtils {
             "([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*";
     public static final String HOSTNAME_FOR_URI =
             "(?:" + FQDN_PATTERN + "|" + IPV4_PATTERN + "|" + IPV6_FOR_URI + ")";
-
-    public static final String SUBNET_PREFIX_PATTERN = "(?:3[0-2]|[12]?[0-9])";
-    public static final String CIDR_FORMAT_PATTERN = "^" + IPV4_PATTERN_NON_EMPTY + "/" + SUBNET_PREFIX_PATTERN + "$";
+    public static final String IPV4_SUBNET_PREFIX_PATTERN = "(?:3[0-2]|[12]?[0-9])";
+    public static final String IPV6_SUBNET_PREFIX_PATTERN = "(?:1[0-2][0-8]|[0-9]?[0-9])";
+    public static final String IPV4_CIDR_FORMAT_PATTERN =
+            "^" + IPV4_PATTERN_NON_EMPTY + "/" + IPV4_SUBNET_PREFIX_PATTERN + "$";
+    public static final String IPV6_CIDR_FORMAT_PATTERN = "^" + IPV6_PATTERN + "/" + IPV6_SUBNET_PREFIX_PATTERN + "$";
     public static final String ISO_SUFFIX = ".iso";
     public static final String ISO_SUFFIX_PATTERN = "^$|^.+\\.iso$";
     public static final String BASE_64_PATTERN =

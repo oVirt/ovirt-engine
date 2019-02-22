@@ -10,6 +10,13 @@ public class CidrValidation implements IValidation {
 
     public static final String ILLEGAL_ARGUMENT_EXCEPTION_MESSAGE = "Argument must be a String or a null"; //$NON-NLS-1$
 
+    private boolean isIpv4;
+
+    public CidrValidation(boolean isIpv4) {
+        super();
+        this.isIpv4 = isIpv4;
+    }
+
     @Override
     public ValidationResult validate(Object value) {
         // This validation must be applied to a String
@@ -18,9 +25,9 @@ public class CidrValidation implements IValidation {
         }
         String cidr = (String) value;
         ValidationResult result = new ValidationResult();
-        if (!getCidrValidator().isCidrFormatValid(cidr)) {
+        if (!getCidrValidator().isCidrFormatValid(cidr, isIpv4)) {
             failWith(result, getThisFieldMustContainCidrInFormatMsg());
-        } else if (!getCidrValidator().isCidrNetworkAddressValid(cidr)) {
+        } else if (!getCidrValidator().isCidrNetworkAddressValid(cidr, isIpv4)) {
             failWith(result, getCidrNotNetworkAddress());
         }
 

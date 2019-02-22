@@ -19,10 +19,9 @@ public class CidrValidator {
     }
 
     /***
-     * Check if CIDR is in correct format: x.x.x.x/y where:
+     * Check if CIDR is in correct format: [IPv4/IPv6]/y where:
      * <ul>
-     * <li>x belongs to [0,255]
-     * <li>y belongs to [0,32]
+     * <li>y belongs to [0,32] for IPv4 and [0,128] for IPv6
      * <li>both inclusive
      * </ul>
      * <p>
@@ -31,8 +30,10 @@ public class CidrValidator {
      *
      * @return true if correct format, false otherwise.
      */
-    public boolean isCidrFormatValid(String cidr) {
-        return cidr != null && cidr.matches(ValidationUtils.CIDR_FORMAT_PATTERN);
+
+    public boolean isCidrFormatValid(String cidr, boolean isIpv4) {
+        return cidr != null && ((isIpv4 && cidr.matches(ValidationUtils.IPV4_CIDR_FORMAT_PATTERN))
+                || !isIpv4 && cidr.matches(ValidationUtils.IPV6_CIDR_FORMAT_PATTERN));
     }
 
     /***
@@ -43,15 +44,16 @@ public class CidrValidator {
      *            {@link CidrValidator#isCidrFormatValid(String)}
      * @return true if valid CIDR ,false otherwise
      */
-    public boolean isCidrNetworkAddressValid(String cidr) {
+    public boolean isCidrNetworkAddressValid(String cidr, boolean isIpv4) {
         String[] temp = cidr.split("/");
         BigInteger ipAsInteger = ipAddressConverter.convertIpAddressToBigInt(temp[0]);
         int mask = Integer.parseInt(temp[1]);
-        return isNetworkAddress(ipAsInteger, mask);
+        return isNetworkAddress(ipAsInteger, mask, isIpv4);
     }
 
-    private static boolean isNetworkAddress(BigInteger ip, int mask) {
-        BigInteger prefix = BigInteger.valueOf(2).pow(32 - mask).subtract(BigInteger.ONE);
+    private static boolean isNetworkAddress(BigInteger ip, int mask, boolean isIpv4) {
+        int maxPrefix = isIpv4 ? 32 : 128;
+        BigInteger prefix = BigInteger.valueOf(2).pow(maxPrefix - mask).subtract(BigInteger.ONE);
         return (prefix.and(ip)).equals(BigInteger.ZERO);
     }
 

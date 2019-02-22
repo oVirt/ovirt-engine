@@ -118,9 +118,7 @@ public class ExternalSubnetModel extends Model {
     public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         boolean ipv4 = getIpVersion().getSelectedItem() == IpVersion.IPV4;
-        getCidr().validateEntity(new IValidation[] { ipv4
-                ? new CidrValidation()
-                : new NotEmptyValidation() });
+        getCidr().validateEntity(new IValidation[] { new CidrValidation(ipv4) });
         getIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getGateway().setIsValid(true);
         if (StringHelper.isNotNullOrEmpty(getGateway().getEntity()) && ipv4) {

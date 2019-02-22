@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Cidr;
-import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 
+@Cidr
 public class ExternalSubnet implements Queryable, Nameable {
 
     private static final long serialVersionUID = 7357288865938773402L;
@@ -21,7 +21,6 @@ public class ExternalSubnet implements Queryable, Nameable {
 
     private String name;
 
-    @Cidr(groups = { CreateEntity.class })
     private String cidr;
 
     private IpVersion ipVersion;

@@ -38,7 +38,7 @@ public class MaskValidator {
      * @return true if a string [0-32] (possible with /) which represent a valid prefix, false otherwise.
      */
     public boolean isPrefixValid(String mask) {
-        return mask != null && mask.matches("^/?" + ValidationUtils.SUBNET_PREFIX_PATTERN + "$");
+        return mask != null && mask.matches("^/?" + ValidationUtils.IPV4_SUBNET_PREFIX_PATTERN + "$");
     }
 
     /***
