@@ -9,8 +9,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
-import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -44,60 +42,53 @@ public class EngineSessionDaoImpl extends BaseDao implements EngineSessionDao {
         return results;
     }
 
-    private static class EngineSessionParameterSource extends CustomMapSqlParameterSource {
-
-        public EngineSessionParameterSource(DbEngineDialect dialect, EngineSession session) {
-            super(dialect);
-            addValue("id", session.getId());
-            addValue("engine_session_id", session.getEngineSessionId());
-            addValue("user_id", session.getUserId());
-            addValue("user_name", session.getUserName());
-            addValue("authz_name", session.getAuthzName());
-            addValue("source_ip", session.getSourceIp());
-            addValue("group_ids", StringUtils.join(session.getGroupIds(), ","));
-            addValue("role_ids", StringUtils.join(session.getRoleIds(), ","));
-        }
-    }
-
     @Override
     public EngineSession get(long id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
-
-        return getCallsHandler().executeRead("GetEngineSession", engineSessionRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetEngineSession",
+                engineSessionRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id));
     }
 
     @Override
     public EngineSession getBySessionId(String id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("engine_session_id", id);
-
-        return getCallsHandler().executeRead("GetEngineSessionBySessionId", engineSessionRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetEngineSessionBySessionId",
+                engineSessionRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("engine_session_id", id));
     }
 
-    private EngineSessionParameterSource getEngineSessionParameterSource(EngineSession session) {
-        return new EngineSessionParameterSource(getDialect(), session);
+    private MapSqlParameterSource getEngineSessionParameterSource(EngineSession session) {
+        return getCustomMapSqlParameterSource()
+                .addValue("id", session.getId())
+                .addValue("engine_session_id", session.getEngineSessionId())
+                .addValue("user_id", session.getUserId())
+                .addValue("user_name", session.getUserName())
+                .addValue("authz_name", session.getAuthzName())
+                .addValue("source_ip", session.getSourceIp())
+                .addValue("group_ids", StringUtils.join(session.getGroupIds(), ","))
+                .addValue("role_ids", StringUtils.join(session.getRoleIds(), ","));
+
     }
 
     @Override
     public long save(EngineSession session) {
-        EngineSessionParameterSource parameterSource = getEngineSessionParameterSource(session);
-        return ((Integer) getCallsHandler().executeModification("InsertEngineSession", parameterSource).get("id")).longValue();
+        return ((Integer) getCallsHandler()
+                .executeModification("InsertEngineSession", getEngineSessionParameterSource(session))
+                .get("id")).longValue();
     }
 
     @Override
     public int remove(long id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
-
-        return getCallsHandler().executeModificationReturnResult("DeleteEngineSession", parameterSource);
+        return getCallsHandler().executeModificationReturnResult("DeleteEngineSession",
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id));
     }
 
     @Override
     public int removeAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        return getCallsHandler().executeModificationReturnResult("DeleteAllFromEngineSessions", parameterSource);
+        return getCallsHandler().executeModificationReturnResult("DeleteAllFromEngineSessions",
+                getCustomMapSqlParameterSource());
     }
 
     @Override
