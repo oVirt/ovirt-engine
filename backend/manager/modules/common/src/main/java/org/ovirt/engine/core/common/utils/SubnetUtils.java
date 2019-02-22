@@ -36,11 +36,11 @@ public class SubnetUtils {
     }
 
     protected String convertStringToIpv4Address(String subnetB) {
-        return getIpAddressConverter().convertPrefixToNetmask(subnetB);
+        return getIpAddressConverter().convertPrefixToIPv4Netmask(subnetB);
     }
 
     protected IPAddressConverter getIpAddressConverter() {
-        return IPv4AddressConverter.getInstance();
+        return IPAddressConverter.getInstance();
     }
 
     protected boolean validNetmaskFormat(String subnet) {

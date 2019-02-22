@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.validation;
 
+import java.math.BigInteger;
+
 import org.ovirt.engine.core.common.utils.IPAddressConverter;
-import org.ovirt.engine.core.common.utils.IPv4AddressConverter;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 
 public class MaskValidator {
-    private IPAddressConverter ipAddressConverter = IPv4AddressConverter.getInstance();
+    private IPAddressConverter ipAddressConverter = IPAddressConverter.getInstance();
 
     private static MaskValidator INSTANCE = new MaskValidator();
 
@@ -47,20 +48,20 @@ public class MaskValidator {
      * @return true if the netmask is in IPv4 format and valid, false otherwise
      */
     public boolean isNetmaskValid(String netmask) {
-        long addressInBits = ipAddressConverter.convertIpAddressToLong(netmask);
-        long mask = 1;
+        BigInteger addressInBits = ipAddressConverter.convertIpAddressToBigInt(netmask);
+        BigInteger mask = BigInteger.ONE;
         boolean isFirstOneFound = false;
 
         for (int i = 0; i < 32; i++) {
-            if (isFirstOneFound && (mask & addressInBits) != 1) {
+            if (isFirstOneFound && !addressInBits.and(mask).equals(BigInteger.ONE)) {
                 return false;
             }
 
-            if ((mask & addressInBits) == 1) {
+            if (addressInBits.and(mask).equals(BigInteger.ONE)) {
                 isFirstOneFound = true;
             }
 
-            addressInBits >>= 1;
+            addressInBits = addressInBits.shiftRight(1);
         }
 
         return true;
