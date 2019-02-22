@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
-import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.slf4j.Logger;
@@ -58,81 +57,73 @@ public class AsyncTaskDaoImpl extends BaseDao implements AsyncTaskDao {
         return entity;
     };
 
-    private static class AsyncTaskParameterSource extends CustomMapSqlParameterSource {
-
-        public AsyncTaskParameterSource(DbEngineDialect dialect, AsyncTask task) {
-            super(dialect);
-            addValue("action_type", task.getActionType());
-            addValue("result", task.getresult());
-            addValue("status", task.getstatus());
-            addValue("vdsm_task_id", task.getVdsmTaskId());
-            addValue("user_id", task.getUserId());
-            addValue("task_id", task.getTaskId());
-            addValue("step_id", task.getStepId());
-            addValue("command_id", task.getCommandId());
-            addValue("root_command_id", task.getRootCommandId());
-        }
-    }
-
     private MapSqlParameterMapper<AsyncTaskEntity> mapper = entity -> {
         CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
-        paramSource.addValue("task_id", entity.getTaskId()).
-                addValue("entity_id", entity.getEntityId()).
-                addValue("entity_type", entity.getEntityType().toString());
+        paramSource.addValue("task_id", entity.getTaskId())
+                .addValue("entity_id", entity.getEntityId())
+                .addValue("entity_type", entity.getEntityType().toString());
         return paramSource;
     };
 
     @Override
     public AsyncTask get(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("task_id", id);
-
-        return getCallsHandler().executeRead("Getasync_tasksBytask_id", asyncTaskRowMapper, parameterSource);
+        return getCallsHandler().executeRead("Getasync_tasksBytask_id",
+                asyncTaskRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("task_id", id));
     }
 
     @Override
     public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vdsm_task_id", vdsmTaskId);
-        return getCallsHandler().executeRead("GetAsyncTasksByVdsmTaskId", asyncTaskRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetAsyncTasksByVdsmTaskId",
+                asyncTaskRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("vdsm_task_id", vdsmTaskId));
     }
 
     @Override
     public List<AsyncTask> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        return getCallsHandler().executeReadList("GetAllFromasync_tasks", asyncTaskRowMapper, parameterSource);
+        return getCallsHandler()
+                .executeReadList("GetAllFromasync_tasks", asyncTaskRowMapper, getCustomMapSqlParameterSource());
     }
 
-    private AsyncTaskParameterSource getTaskParameterSource(AsyncTask task) {
-        return new AsyncTaskParameterSource(getDialect(), task);
+    private MapSqlParameterSource getTaskParameterSource(AsyncTask task) {
+        return getCustomMapSqlParameterSource()
+                .addValue("action_type", task.getActionType())
+                .addValue("result", task.getresult())
+                .addValue("status", task.getstatus())
+                .addValue("vdsm_task_id", task.getVdsmTaskId())
+                .addValue("user_id", task.getUserId())
+                .addValue("task_id", task.getTaskId())
+                .addValue("step_id", task.getStepId())
+                .addValue("command_id", task.getCommandId())
+                .addValue("root_command_id", task.getRootCommandId());
     }
 
     @Override
     public void saveOrUpdate(AsyncTask task) {
-        AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
-        parameterSource.addValue("started_at", task.getStartTime());
-        parameterSource.addValue("storage_pool_id", task.getStoragePoolId());
-        parameterSource.addValue("async_task_type", task.getTaskType());
-        getCallsHandler().executeModification("InsertOrUpdateAsyncTasks", parameterSource);
+        getCallsHandler().executeModification("InsertOrUpdateAsyncTasks",
+                getTaskParameterSource(task)
+                        .addValue("started_at", task.getStartTime())
+                        .addValue("storage_pool_id", task.getStoragePoolId())
+                        .addValue("async_task_type", task.getTaskType()));
     }
 
     @Override
     public void save(AsyncTask task) {
-        AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
-        parameterSource.addValue("started_at", task.getStartTime());
-        parameterSource.addValue("storage_pool_id", task.getStoragePoolId());
-        parameterSource.addValue("async_task_type", task.getTaskType());
-        getCallsHandler().executeModification("Insertasync_tasks", parameterSource);
+        getCallsHandler().executeModification("Insertasync_tasks",
+                getTaskParameterSource(task)
+                        .addValue("started_at", task.getStartTime())
+                        .addValue("storage_pool_id", task.getStoragePoolId())
+                        .addValue("async_task_type", task.getTaskType()));
     }
 
     @Override
     public void update(AsyncTask task) {
         logNullParameters(task);
-
-        AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
-        parameterSource.addValue("storage_pool_id", task.getStoragePoolId());
-        getCallsHandler().executeModification("Updateasync_tasks", parameterSource);
+        getCallsHandler().executeModification("Updateasync_tasks",
+                getTaskParameterSource(task)
+                        .addValue("storage_pool_id", task.getStoragePoolId()));
     }
 
     private static void logNullParameters(AsyncTask task) {
@@ -151,39 +142,39 @@ public class AsyncTaskDaoImpl extends BaseDao implements AsyncTaskDao {
 
     @Override
     public int remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("task_id", id);
-
-        return getCallsHandler().executeModificationReturnResult("Deleteasync_tasks", parameterSource);
+        return getCallsHandler().executeModificationReturnResult("Deleteasync_tasks",
+                getCustomMapSqlParameterSource()
+                        .addValue("task_id", id));
     }
 
     public int removeByVdsmTaskId(Guid vdsmTaskId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vdsm_task_id", vdsmTaskId);
-        return getCallsHandler().executeModificationReturnResult("DeleteAsyncTasksByVdsmTaskId", parameterSource);
+        return getCallsHandler().executeModificationReturnResult("DeleteAsyncTasksByVdsmTaskId",
+                getCustomMapSqlParameterSource()
+                        .addValue("vdsm_task_id", vdsmTaskId));
     }
 
     @Override
     public List<Guid> getAsyncTaskIdsByEntity(Guid entityId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("entity_id", entityId);
-        return getCallsHandler().executeReadList("GetAsyncTasksIdsByEntityId", idRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAsyncTasksIdsByEntityId",
+                idRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("entity_id", entityId));
     }
 
     @Override
     public List<AsyncTask> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_pool_id", storagePoolId);
-        return getCallsHandler().executeReadList("GetAsyncTasksByStoragePoolId", asyncTaskRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAsyncTasksByStoragePoolId",
+                asyncTaskRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_pool_id", storagePoolId));
     }
 
     @Override
     public List<AsyncTask> getTasksByEntity(Guid entityId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("entity_id", entityId);
         return getCallsHandler().executeReadList("GetAsyncTasksByEntityId",
                 asyncTaskRowMapper,
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("entity_id", entityId));
     }
 
     @Override
@@ -193,10 +184,9 @@ public class AsyncTaskDaoImpl extends BaseDao implements AsyncTaskDao {
 
     @Override
     public List<AsyncTaskEntity> getAllAsyncTaskEntitiesByTaskId(Guid taskId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("task_id", taskId);
         return getCallsHandler().executeReadList("GetAsyncTaskEntitiesByTaskId",
                 asyncTaskEntityRowMapper,
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("task_id", taskId));
     }
 }
