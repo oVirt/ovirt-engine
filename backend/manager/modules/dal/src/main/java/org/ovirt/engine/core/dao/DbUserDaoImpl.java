@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -35,22 +34,19 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
         return entity;
     };
 
-    private class DbUserMapSqlParameterSource extends
-            CustomMapSqlParameterSource {
-        public DbUserMapSqlParameterSource(DbUser user) {
-            super(getDialect());
-            addValue("department", user.getDepartment());
-            addValue("domain", user.getDomain());
-            addValue("email", user.getEmail());
-            addValue("name", user.getFirstName());
-            addValue("note", user.getNote());
-            addValue("surname", user.getLastName());
-            addValue("user_id", user.getId());
-            addValue("username", user.getLoginName());
-            addValue("last_admin_check_status", user.isAdmin());
-            addValue("external_id", user.getExternalId());
-            addValue("namespace", user.getNamespace());
-        }
+    private MapSqlParameterSource getDbUserParameterSource(DbUser user) {
+        return getCustomMapSqlParameterSource()
+                .addValue("department", user.getDepartment())
+                .addValue("domain", user.getDomain())
+                .addValue("email", user.getEmail())
+                .addValue("name", user.getFirstName())
+                .addValue("note", user.getNote())
+                .addValue("surname", user.getLastName())
+                .addValue("user_id", user.getId())
+                .addValue("username", user.getLoginName())
+                .addValue("last_admin_check_status", user.isAdmin())
+                .addValue("external_id", user.getExternalId())
+                .addValue("namespace", user.getNamespace());
     }
 
     @Override
@@ -60,29 +56,29 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
 
     @Override
     public DbUser get(Guid id, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", id)
-                .addValue("is_filtered", isFiltered);
-
-        return getCallsHandler().executeRead("GetUserByUserId", dbUserRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetUserByUserId",
+                dbUserRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", id)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
     public DbUser getByUsernameAndDomain(String username, String domainName) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("username", username)
-                .addValue("domain", domainName);
-
-        return getCallsHandler().executeRead("GetUserByUserNameAndDomain", dbUserRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetUserByUserNameAndDomain",
+                dbUserRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("username", username)
+                        .addValue("domain", domainName));
     }
 
     @Override
     public DbUser getByExternalId(String domain, String externalId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("domain", domain)
-                .addValue("external_id", externalId);
-
-        return getCallsHandler().executeRead("GetUserByExternalId", dbUserRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetUserByExternalId",
+                dbUserRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("domain", domain)
+                        .addValue("external_id", externalId));
     }
 
     @Override
@@ -118,18 +114,18 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
 
     @Override
     public List<DbUser> getAllForVm(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
-
-        return getCallsHandler().executeReadList("GetUsersByVmGuid", dbUserRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetUsersByVmGuid",
+                dbUserRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", id));
     }
 
     @Override
     public List<DbUser> getAllForTemplate(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("template_guid", id);
-
-        return getCallsHandler().executeReadList("GetUsersByTemplateGuid", dbUserRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetUsersByTemplateGuid",
+                dbUserRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("template_guid", id));
     }
 
     @Override
@@ -144,44 +140,43 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
 
     @Override
     public List<DbUser> getAll(Guid userID, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetAllFromUsers", dbUserRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromUsers",
+                dbUserRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
     public void save(DbUser user) {
         setIdIfNeeded(user);
         new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("InsertUser")
-                .execute(new DbUserMapSqlParameterSource(user));
+                .execute(getDbUserParameterSource(user));
     }
 
     @Override
     public void update(DbUser user) {
-        getCallsHandler().executeModification("UpdateUser", new DbUserMapSqlParameterSource(user));
+        getCallsHandler().executeModification("UpdateUser", getDbUserParameterSource(user));
     }
 
     @Override
     public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", id);
-
-        getCallsHandler().executeModification("DeleteUser", parameterSource);
+        getCallsHandler().executeModification("DeleteUser",
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", id));
     }
 
     @Override
     public void saveOrUpdate(DbUser user) {
         setIdIfNeeded(user);
         new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("InsertOrUpdateUser")
-                .execute(new DbUserMapSqlParameterSource(user));
+                .execute(getDbUserParameterSource(user));
     }
 
     @Override
     public void updateLastAdminCheckStatus(Guid... userIds) {
-        MapSqlParameterSource parameterSource =
-                getCustomMapSqlParameterSource().addValue("userIds", StringUtils.join(userIds, ","));
-
-        new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("UpdateLastAdminCheckStatus").execute(parameterSource);
+        new SimpleJdbcCall(getJdbcTemplate()).withProcedureName("UpdateLastAdminCheckStatus")
+                .execute(getCustomMapSqlParameterSource().addValue("userIds", StringUtils.join(userIds, ",")));
     }
 
     private void setIdIfNeeded(DbUser user) {
