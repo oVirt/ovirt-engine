@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -18,56 +17,39 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
     private static final RowMapper<Bookmark> bookmarkRowMapper = (rs, rowNum) -> {
-            Bookmark entity = new Bookmark();
-            entity.setId(getGuid(rs, "bookmark_id"));
-            entity.setName(rs.getString("bookmark_name"));
-            entity.setValue(rs.getString("bookmark_value"));
-            return entity;
+        Bookmark entity = new Bookmark();
+        entity.setId(getGuid(rs, "bookmark_id"));
+        entity.setName(rs.getString("bookmark_name"));
+        entity.setValue(rs.getString("bookmark_value"));
+        return entity;
     };
 
-    private class BookmarkSqlParameterSource extends
-            CustomMapSqlParameterSource {
-        public BookmarkSqlParameterSource(Bookmark bookmark) {
-            super(getDialect());
-            addValue("bookmark_id", bookmark.getId());
-            addValue("bookmark_name", bookmark.getName());
-            addValue("bookmark_value", bookmark.getValue());
-        }
-
-        public BookmarkSqlParameterSource() {
-            super(getDialect());
-        }
-
-        public BookmarkSqlParameterSource(Guid id) {
-            super(getDialect());
-            addValue("bookmark_id", id);
-        }
-
-        public BookmarkSqlParameterSource(String name) {
-            super(getDialect());
-            addValue("bookmark_name", name);
-        }
+    private MapSqlParameterSource getBookmarkParameterSource(Bookmark bookmark) {
+        return getCustomMapSqlParameterSource()
+                .addValue("bookmark_id", bookmark.getId())
+                .addValue("bookmark_name", bookmark.getName())
+                .addValue("bookmark_value", bookmark.getValue());
     }
 
     @Override
     public Bookmark get(Guid id) {
-        MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
-                id);
-        return getCallsHandler().executeRead("GetBookmarkBybookmark_id", bookmarkRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetBookmarkBybookmark_id",
+                bookmarkRowMapper,
+                getCustomMapSqlParameterSource().addValue("bookmark_id", id));
     }
 
     @Override
     public Bookmark getByName(String name) {
-        MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
-                name);
-        return getCallsHandler().executeRead("GetBookmarkBybookmark_name", bookmarkRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetBookmarkBybookmark_name",
+                bookmarkRowMapper,
+                getCustomMapSqlParameterSource().addValue("bookmark_name", name));
     }
 
     @Override
     public List<Bookmark> getAll() {
-        MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource();
-
-        return getCallsHandler().executeReadList("GetAllFromBookmarks", bookmarkRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromBookmarks",
+                bookmarkRowMapper,
+                getCustomMapSqlParameterSource());
     }
 
     @Override
@@ -77,25 +59,17 @@ public class BookmarkDaoImpl extends BaseDao implements BookmarkDao {
             id = Guid.newGuid();
             bookmark.setId(id);
         }
-        MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
-                bookmark);
-
-        getCallsHandler().executeModification("InsertBookmark", parameterSource);
+        getCallsHandler().executeModification("InsertBookmark", getBookmarkParameterSource(bookmark));
     }
 
     @Override
     public void update(Bookmark bookmark) {
-        MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
-                bookmark);
-
-        getCallsHandler().executeModification("UpdateBookmark", parameterSource);
+        getCallsHandler().executeModification("UpdateBookmark", getBookmarkParameterSource(bookmark));
     }
 
     @Override
     public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
-                id);
-
-        getCallsHandler().executeModification("DeleteBookmark", parameterSource);
+        getCallsHandler().executeModification("DeleteBookmark",
+                getCustomMapSqlParameterSource().addValue("bookmark_id", id));
     }
 }
