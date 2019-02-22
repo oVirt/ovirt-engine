@@ -73,12 +73,15 @@ public class CidrAnnotationTest {
         return Stream.of(
                 // Bad Format
                 Arguments.of("a.a.a.a", IpVersion.IPV4, false, false),
+                Arguments.of("abcd:::jklf", IpVersion.IPV6, false, false),
 
                 // Not A Network address
                 Arguments.of("253.0.0.32/26", IpVersion.IPV4, true, false),
+                Arguments.of("1234:5678::4321/64", IpVersion.IPV6, true, false),
 
                 // valid CIDR
-                Arguments.of("255.255.255.255/32", IpVersion.IPV4, true, true)
+                Arguments.of("255.255.255.255/32", IpVersion.IPV4, true, true),
+                Arguments.of("1234:5678:9abc:def0::/64", IpVersion.IPV6, true, true)
         );
     }
 

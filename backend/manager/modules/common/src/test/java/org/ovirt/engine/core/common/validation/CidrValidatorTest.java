@@ -43,6 +43,18 @@ public class CidrValidatorTest {
                 Arguments.of("1.1.1000.1/24", true, false, false),
                 Arguments.of("1.1.1.1000/24", true, false, false),
 
+                Arguments.of(null, false, false, false),
+                Arguments.of("", false, false, false),
+                Arguments.of("?\"?>!", false, false, false),
+                Arguments.of("a", false, false, false),
+                Arguments.of("a:a", false, false, false),
+                Arguments.of("a:a:g", false, false, false),
+                Arguments.of("jk::/24", false, false, false),
+                Arguments.of("11::/200", false, false, false),
+                Arguments.of("20000::/24", false, false, false),
+                Arguments.of("25:25:/24", false, false, false),
+                Arguments.of(":::/129", false, false, false),
+
                 Arguments.of("1.1.1.1/33", true, false, false),
                 Arguments.of("1111.1.1.1/1", true, false, false),
                 Arguments.of("1111.1.1.1/32", true, false, false),
@@ -71,6 +83,11 @@ public class CidrValidatorTest {
                 Arguments.of("192.0.0.0/1", true, true, false),
                 Arguments.of("255.255.255.255/0", true, true, false),
 
+                Arguments.of("f::1/4", false, true, false),
+                Arguments.of("ffff::4321/64", false, true, false),
+                Arguments.of("1234:5678:9abc:def0::1/64", false, true, false),
+                Arguments.of("1234:5678:9abc:def0:1::/64", false, true, false),
+
                 // valid CIDR
                 Arguments.of("255.255.255.255/32", true, true, true),
                 Arguments.of("0.0.0.0/32", true, true, true),
@@ -83,7 +100,14 @@ public class CidrValidatorTest {
                 Arguments.of("255.252.0.0/14", true, true, true),
                 Arguments.of("255.0.0.0/8", true, true, true),
                 Arguments.of("248.0.0.0/5", true, true, true),
-                Arguments.of("128.0.0.0/1", true, true, true)
+                Arguments.of("128.0.0.0/1", true, true, true),
+
+                Arguments.of("f000::/4", false, true, true),
+                Arguments.of("ffff::/64", false, true, true),
+                Arguments.of("1234:5678:9abc::/92", false, true, true),
+                Arguments.of("1234:5678:9abc:def0::1/128", false, true, true),
+                Arguments.of("::/0", false, true, true),
+                Arguments.of("::/1", false, true, true)
         );
     }
 
