@@ -250,7 +250,7 @@ class Provisioning(base.Base):
                 self._plugin.execute(
                     (
                         setup,
-                        'initdb',
+                        '--initdb',
                     ),
                 )
             else:
