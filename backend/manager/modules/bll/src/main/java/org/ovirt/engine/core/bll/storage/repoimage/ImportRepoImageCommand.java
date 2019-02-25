@@ -411,6 +411,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         try {
             diskImage = getDiskImage();
         } catch (OpenStackImageException e) {
+            auditLog(this, AuditLogType.FAILED_IMPORT_IMAGE_FROM_REPOSITORY);
             log.error("Unable to get the disk image from the provider proxy: ({}) {}",
                     e.getErrorType(),
                     e.getMessage());
@@ -422,7 +423,12 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_DOWNLOAD_ERROR);
                 case UNRECOGNIZED_IMAGE_FORMAT:
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_UNRECOGNIZED);
+                case IMAGE_NOT_FOUND:
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_FIND_SPECIFIED_IMAGE);
             }
+        } catch (RuntimeException rte) {
+            auditLog(this, AuditLogType.FAILED_IMPORT_IMAGE_FROM_REPOSITORY);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_IMPORT_IMAGE_FROM_REPOSITORY);
         }
 
         if (diskImage == null) {

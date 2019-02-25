@@ -8,7 +8,8 @@ public class OpenStackImageException extends RuntimeException {
         UNSUPPORTED_CONTAINER_FORMAT,
         UNSUPPORTED_DISK_FORMAT,
         UNABLE_TO_DOWNLOAD_IMAGE,
-        UNRECOGNIZED_IMAGE_FORMAT
+        UNRECOGNIZED_IMAGE_FORMAT,
+        IMAGE_NOT_FOUND
     }
 
     private ErrorType errorType;

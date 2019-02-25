@@ -44,7 +44,7 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
 
     protected V providerValidator;
 
-    private static Logger log = LoggerFactory.getLogger(AbstractOpenStackStorageProviderProxy.class);
+    protected static final Logger log = LoggerFactory.getLogger(AbstractOpenStackStorageProviderProxy.class);
 
     @Override
     public void testConnection() {

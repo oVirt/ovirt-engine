@@ -25,6 +25,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 
 import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Image;
 import com.woorea.openstack.glance.model.ImageDownload;
@@ -163,7 +164,18 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
 
     public DiskImage getImageAsDiskImage(String id) {
         DiskImage diskImage = new DiskImage();
-        Image glanceImage = getClient().images().show(id).execute();
+        Image glanceImage;
+        try {
+            glanceImage = getClient().images().show(id).execute();
+        } catch (OpenStackResponseException e) {
+            log.debug("Exception:", e);
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.IMAGE_NOT_FOUND,
+                    "Cannot find the specified image.");
+        } catch (RuntimeException rte) {
+            log.error("Exception:", rte);
+            throw new RuntimeException("Failed to import from the repository.");
+        }
 
         validateContainerFormat(glanceImage);
 
