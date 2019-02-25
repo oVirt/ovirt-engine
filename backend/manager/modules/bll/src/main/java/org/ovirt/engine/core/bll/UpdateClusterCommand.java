@@ -616,26 +616,39 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 .filter(v -> v.getStatus() == VDSStatus.Up)
                 .collect(Collectors.toList());
         boolean valid = true;
+        List<String> lowerVersionHosts = new ArrayList<>();
+        List<String> lowCpuHosts = new ArrayList<>();
+        List<String> incompatibleEmulatedMachineHosts = new ArrayList<>();
         for (VDS vds : upVdss) {
             if (!VersionSupport.checkClusterVersionSupported(
-                    getCluster().getCompatibilityVersion(), vds)) {
+                    getCluster().getCompatibilityVersion(),
+                    vds)) {
                 valid = false;
-                addValidationVarAndMessage("host",
-                        vds.getName(),
-                        EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
+                lowerVersionHosts.add(vds.getName());
             }
             if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
                 valid = false;
-                addValidationVarAndMessage("host",
-                        vds.getName(),
-                        EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+                lowCpuHosts.add(vds.getName());
             }
             if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
                 valid = false;
-                addValidationVarAndMessage("host",
-                        vds.getName(),
-                        EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
+                incompatibleEmulatedMachineHosts.add(vds.getName());
             }
+        }
+        if (!lowerVersionHosts.isEmpty()) {
+            addValidationVarAndMessage("host",
+                    String.join(", ", lowerVersionHosts),
+                    EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
+        }
+        if (!lowCpuHosts.isEmpty()) {
+            addValidationVarAndMessage("host",
+                    String.join(", ", lowCpuHosts),
+                    EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+        }
+        if (!incompatibleEmulatedMachineHosts.isEmpty()) {
+            addValidationVarAndMessage("host",
+                    String.join(", ", incompatibleEmulatedMachineHosts),
+                    EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_INCOMPATIBLE_EMULATED_MACHINE);
         }
         return valid;
     }
