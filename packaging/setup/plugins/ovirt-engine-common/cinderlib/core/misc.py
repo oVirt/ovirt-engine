@@ -16,22 +16,19 @@
 #
 
 
-import gettext
+"""Misc plugin."""
+
 
 from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common import constants as oengcommcons
-
-
-def _(m):
-    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
+from ovirt_engine_setup.cinderlib import constants as oclcons
 
 
 @util.export
 class Plugin(plugin.PluginBase):
+    """Misc plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -45,10 +42,9 @@ class Plugin(plugin.PluginBase):
     def _boot(self):
         self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ].extend((
-            oengcommcons,
-            oenginecons,
-        ))
+        ].append(
+            oclcons,
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
