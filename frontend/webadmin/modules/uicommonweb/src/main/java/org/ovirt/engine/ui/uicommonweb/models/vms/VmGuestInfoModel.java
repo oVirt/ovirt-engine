@@ -247,11 +247,17 @@ public class VmGuestInfoModel extends EntityModel<VM> {
                 optional = messages.guestOSVersionOptional(guestOsCodename);
             }
             guestOsNamedVersion = messages.guestOSVersionLinux(guestOsDistribution, guestOsVersion, optional);
-        } else if (guestOsType == OsType.Windows && guestOs != null && guestOs.startsWith("Win ")) { //$NON-NLS-1$
-            if (guestOs.startsWith("Win 20")) { //$NON-NLS-1$
-                guestOsNamedVersion = messages.guestOSVersionWindowsServer(guestOs.substring(4), guestOsVersion);
+        } else if (guestOsType == OsType.Windows && guestOs != null) {
+            if (guestOs.startsWith("Win ")) { //$NON-NLS-1$
+                // This is for backword compatibility with oVirt Guest Agent
+                if (guestOs.startsWith("Win 20")) { //$NON-NLS-1$
+                    guestOsNamedVersion = messages.guestOSVersionWindowsServer(guestOs.substring(4), guestOsVersion);
+                } else {
+                    guestOsNamedVersion = messages.guestOSVersionWindows(guestOs.substring(4), guestOsVersion);
+                }
             } else {
-                guestOsNamedVersion = messages.guestOSVersionWindows(guestOs.substring(4), guestOsVersion);
+                // With new enough qemu-ga the names are already pretty enough
+                guestOsNamedVersion = guestOs;
             }
         }
     }
