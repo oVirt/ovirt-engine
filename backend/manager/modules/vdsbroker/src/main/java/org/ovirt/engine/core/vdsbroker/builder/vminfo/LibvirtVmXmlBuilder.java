@@ -2001,6 +2001,24 @@ public class LibvirtVmXmlBuilder {
             break;
         }
 
+        if (disk.getDiskStorageType() != DiskStorageType.CINDER /** && ! RBD */) {
+            writeSeclabel();
+        }
+
+        writer.writeEndElement();
+    }
+
+    private void writeSeclabel() {
+        // We need to make sure that libvirt DAC (file system permission driver)
+        // is disabled for disks:
+        //   model='dac' -- dac is the file system permissions driver
+        //   type='none' -- type is currently used for SELinux/AppArmor drivers
+        //   relabel='no' -- disable the change of permissions
+        // See https://libvirt.org/formatdomain.html#seclabel for more details.
+        writer.writeStartElement("seclabel");
+        writer.writeAttributeString("model", "dac");
+        writer.writeAttributeString("type", "none");
+        writer.writeAttributeString("relabel", "no");
         writer.writeEndElement();
     }
 
@@ -2071,7 +2089,9 @@ public class LibvirtVmXmlBuilder {
             return;
         }
         // <disk device="floppy" snapshot="no" type="file">
-        //   <source file="/var/run/vdsm/payload/8b5fa6b8-9c57-4d7c-80cb-64537eea560f.6e38a5ccb3c6b2b674086e9d07126a03.img" startupPolicy="optional" />
+        //   <source file="/var/run/vdsm/payload/8b5fa6b8-9c57-4d7c-80cb-64537eea560f.6e38a5ccb3c6b2b674086e9d07126a03.img" startupPolicy="optional">
+        //     <seclabel model='dac' relabel='no' type='none'/>
+        //   </source>
         //   <target bus="fdc" dev="fda" />
         //   <readonly />
         // </disk>
@@ -2084,6 +2104,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("source");
         writer.writeAttributeString("file", payload ? "PAYLOAD:" : vm.getFloppyPath());
         writer.writeAttributeString("startupPolicy", "optional");
+        writeSeclabel();
         writer.writeEndElement();
 
         writer.writeStartElement("target");
@@ -2108,6 +2129,8 @@ public class LibvirtVmXmlBuilder {
         // <disk type='file' device='cdrom' snapshot='no'>
         //   <driver name='qemu' type='raw' error_policy='report' />
         //   <source file='<path>' startupPolicy='optional'/>
+        //     <seclabel model='dac' relabel='no' type='none'/>
+        //   </source>
         //   <target dev='hdc' bus='ide'/>
         //   <readonly/>
         //   <address type='drive' controller='0' bus='1' target='0' unit='0'/>
@@ -2127,6 +2150,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("source");
             writer.writeAttributeString("file", "PAYLOAD:");
             writer.writeAttributeString("startupPolicy", "optional");
+            writeSeclabel();
             writer.writeEndElement();
 
             payloadIndex = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
@@ -2177,6 +2201,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("source");
             writer.writeAttributeString(isoOnBlockDomain ? "dev" : "file", cdPath);
             writer.writeAttributeString("startupPolicy", "optional");
+            writeSeclabel();
             writer.writeEndElement();
 
             writer.writeStartElement("target");
