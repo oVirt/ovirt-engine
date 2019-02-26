@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.hostdeploy.VdsDeployBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
@@ -123,6 +124,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public void update(final VDS host) {
+        Cluster cluster = clusterDao.get(host.getClusterId());
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
             .hostnames(host.getHostName())
             // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
@@ -131,6 +133,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             .logFileName(host.getHostName())
             .logFileSuffix(CorrelationIdTracker.getCorrelationId())
             .variables(
+                new Pair<>("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled())),
                 // PKI variables:
                 new Pair<>("ovirt_pki_dir", config.getPKIDir()),
                 new Pair<>("ovirt_vds_hostname", host.getHostName()),
