@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -57,7 +56,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -349,11 +347,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
             updateParams.setCompensationEnabled(true);
 
-            upgradeGraphicsDevices(vm, updateParams);
-            updateResumeBehavior(vm);
-            updateRngDeviceIfNecessary(vm.getId(), vm.getCustomCompatibilityVersion(), updateParams);
-            updateMigrationPolicy(vm, updateParams);
-
             ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVm,
                     updateParams,
@@ -447,31 +440,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
         }
         return "";
-    }
-
-    /**
-     * If upgrading cluster to 4.3 then switch from VNC/cirrus to VNC/vga
-     */
-    private void upgradeGraphicsDevices(VmStatic dbVm, VmManagementParametersBase updateParams) {
-        Version oldVersion = updateParams.getClusterLevelChangeFromVersion();
-        if (Version.v4_3.greater(oldVersion)) {
-            VmStatic paramVm = updateParams.getVmStaticData();
-
-            if (dbVm.getDefaultDisplayType() == DisplayType.cirrus) {
-                paramVm.setDefaultDisplayType(DisplayType.vga);
-            }
-        }
-    }
-
-    private void updateMigrationPolicy(VmStatic dbVm, VmManagementParametersBase updateParams) {
-        Version oldVersion = updateParams.getClusterLevelChangeFromVersion();
-        if (Version.v4_3.greater(oldVersion)) {
-            // legacy migration policy should not be used anymore in 4.3
-            if (dbVm.getMigrationPolicyId() != null && dbVm.getMigrationPolicyId().equals(NoMigrationPolicy.ID)) {
-                VmStatic paramVm = updateParams.getVmStaticData();
-                paramVm.setMigrationPolicyId(getCluster().getMigrationPolicyId());
-            }
-        }
     }
 
     private void updateResumeBehavior(VmBase vmBase) {
