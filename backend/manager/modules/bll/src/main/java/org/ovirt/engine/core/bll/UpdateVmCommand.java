@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -39,6 +41,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
+import org.ovirt.engine.core.common.action.HasRngDevice;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.HotUnplugMemoryWithoutVmUpdateParameters;
@@ -83,9 +86,11 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -165,6 +170,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+    @Inject
+    private RngDeviceUtils rngDeviceUtils;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -234,6 +241,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected void executeVmCommand() {
+        VM vm = getParameters().getVm();
+
+        upgradeGraphicsDevices(vm.getStaticData(), getParameters());
+        updateResumeBehavior(vm.getStaticData());
+        updateRngDeviceIfNecessary(vm.getId(),
+                getVm().getCustomCompatibilityVersion(),
+                getParameters(),
+                vm.getClusterCompatibilityVersionOrigin());
+        updateMigrationPolicy(vm.getStaticData(), getParameters());
+
         oldVm = getVm(); // needs to be here for post-actions
         if (isUpdateVmTemplateVersion) {
             updateVmTemplateVersion();
@@ -335,6 +352,57 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         String newName = newVmStatic.getName();
         if (!newName.equals(oldVm.getName()) && !newName.equals(runtimeName)) {
             log.info("changing the name of a vm that started as {} to {}", runtimeName, newName);
+        }
+    }
+
+    /**
+     * If upgrading cluster to 4.3 then switch from VNC/cirrus to VNC/vga
+     */
+    private void upgradeGraphicsDevices(VmStatic dbVm, VmManagementParametersBase updateParams) {
+        Version oldVersion = updateParams.getClusterLevelChangeFromVersion();
+        if (Version.v4_3.greater(oldVersion)) {
+            VmStatic paramVm = updateParams.getVmStaticData();
+
+            if (dbVm.getDefaultDisplayType() == DisplayType.cirrus) {
+                paramVm.setDefaultDisplayType(DisplayType.vga);
+            }
+        }
+    }
+
+    private void updateMigrationPolicy(VmStatic dbVm, VmManagementParametersBase updateParams) {
+        Version oldVersion = updateParams.getClusterLevelChangeFromVersion();
+        if (Version.v4_3.greater(oldVersion)) {
+            // legacy migration policy should not be used anymore in 4.3
+            if (dbVm.getMigrationPolicyId() != null && dbVm.getMigrationPolicyId().equals(NoMigrationPolicy.ID)) {
+                VmStatic paramVm = updateParams.getVmStaticData();
+                paramVm.setMigrationPolicyId(getCluster().getMigrationPolicyId());
+            }
+        }
+    }
+
+    private void updateResumeBehavior(VmBase vmBase) {
+        vmHandler.autoSelectResumeBehavior(vmBase, getCluster());
+    }
+
+    /**
+     * This can be dropped together with support of 4.0 compatibility level.
+     */
+    private void updateRngDeviceIfNecessary(
+            Guid vmBaseId,
+            Version customCompatibilityLevel,
+            HasRngDevice updateParameters,
+            Version oldCompatabilityLevel) {
+        final Version oldEffectiveVersion = CompatibilityVersionUtils.getEffective(
+                customCompatibilityLevel,
+                () -> oldCompatabilityLevel);
+        final Version newEffectiveVersion = CompatibilityVersionUtils.getEffective(
+                customCompatibilityLevel,
+                () -> getCluster().getCompatibilityVersion());
+        final Optional<VmRngDevice> updatedDeviceOptional = rngDeviceUtils.createUpdatedRngDeviceIfNecessary(
+                oldEffectiveVersion, newEffectiveVersion, vmBaseId, cloneContext());
+        if (updatedDeviceOptional.isPresent()) {
+            updateParameters.setUpdateRngDevice(true);
+            updateParameters.setRngDevice(updatedDeviceOptional.get());
         }
     }
 

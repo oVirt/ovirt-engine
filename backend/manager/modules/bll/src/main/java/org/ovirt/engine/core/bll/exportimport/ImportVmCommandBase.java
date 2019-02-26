@@ -35,9 +35,11 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -474,6 +476,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
+            Cluster cluster = clusterDao.get(getParameters().getClusterId());
+            if (getVm().getClusterCompatibilityVersionOrigin().less(cluster.getCompatibilityVersion())) {
+                updateVm();
+            }
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);
             throw e;
@@ -481,6 +487,17 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getVm());
+    }
+
+    private boolean updateVm() {
+        VmManagementParametersBase updateParams = new VmManagementParametersBase(getVm());
+        updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+        updateParams.setClusterLevelChangeFromVersion(getVm().getClusterCompatibilityVersionOrigin());
+        updateParams.setCompensationEnabled(true);
+
+        return runInternalAction(ActionType.UpdateVm,
+                updateParams,
+                cloneContextWithNoCleanupCompensation()).getSucceeded();
     }
 
     public void addVmToAffinityGroups() {
