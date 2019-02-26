@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.validation.MaskValidator;
+import org.ovirt.engine.core.common.validation.IPv4MaskValidator;
 
 public class SubnetUtils {
     private static SubnetUtils INSTANCE = new SubnetUtils();
@@ -51,8 +51,8 @@ public class SubnetUtils {
         return getMaskValidator().isPrefixValid(subnet);
     }
 
-    protected MaskValidator getMaskValidator() {
-        return MaskValidator.getInstance();
+    protected IPv4MaskValidator getMaskValidator() {
+        return IPv4MaskValidator.getInstance();
     }
 
 }

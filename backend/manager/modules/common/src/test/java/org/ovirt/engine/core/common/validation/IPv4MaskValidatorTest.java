@@ -9,11 +9,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class MaskValidatorTest {
+public class IPv4MaskValidatorTest {
     @ParameterizedTest
     @MethodSource
     public void netmaskFormatValidation(String mask, boolean isNetmaskValidFormat) {
-        assertEquals(isNetmaskValidFormat, MaskValidator.getInstance().isValidNetmaskFormat(mask),
+        assertEquals(isNetmaskValidFormat, IPv4MaskValidator.getInstance().isValidNetmaskFormat(mask),
                 "Failed to validate mask's Format: " + mask);
     }
 
@@ -24,7 +24,7 @@ public class MaskValidatorTest {
     @ParameterizedTest
     @MethodSource
     public void prefixFormatValidation(String mask, boolean isPrefixValid) {
-        assertEquals(isPrefixValid, MaskValidator.getInstance().isPrefixValid(mask),
+        assertEquals(isPrefixValid, IPv4MaskValidator.getInstance().isPrefixValid(mask),
                 "Failed to validate prefix's Format: " + mask);
     }
 
@@ -35,13 +35,13 @@ public class MaskValidatorTest {
     @ParameterizedTest
     @MethodSource
     public void netmaskValidValue(String mask, boolean isNetmaskValidValue) {
-        assertEquals(isNetmaskValidValue, MaskValidator.getInstance().isNetmaskValid(mask),
+        assertEquals(isNetmaskValidValue, IPv4MaskValidator.getInstance().isNetmaskValid(mask),
                 "Failed to validate mask value" + mask);
     }
 
     public static Stream<Arguments> netmaskValidValue() {
         return namesParams()
-                .filter(o -> MaskValidator.getInstance().isValidNetmaskFormat((String) o[0]))
+                .filter(o -> IPv4MaskValidator.getInstance().isValidNetmaskFormat((String) o[0]))
                 .map(o -> Arguments.of(o[0], o[2]));
     }
 

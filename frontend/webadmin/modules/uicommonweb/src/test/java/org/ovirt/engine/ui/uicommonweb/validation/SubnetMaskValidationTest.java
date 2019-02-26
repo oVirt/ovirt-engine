@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.ovirt.engine.core.common.validation.MaskValidator;
+import org.ovirt.engine.core.common.validation.IPv4MaskValidator;
 
 public class SubnetMaskValidationTest {
     private SubnetMaskValidation createUnderTest(boolean isPrefixAllowed) {
@@ -51,7 +51,7 @@ public class SubnetMaskValidationTest {
             boolean isPrefixValid,
             ErrorMessage errorType) {
 
-        MaskValidator validator = mock(MaskValidator.class);
+        IPv4MaskValidator validator = mock(IPv4MaskValidator.class);
         doReturn(isPrefixValid).when(validator).isPrefixValid(any());
         doReturn(isNetmaskValidFormat).when(validator).isValidNetmaskFormat(any());
         doReturn(isNetmaskValidValue).when(validator).isNetmaskValid(any());

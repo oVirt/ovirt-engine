@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.network.SwitchType;
-import org.ovirt.engine.core.common.validation.MaskValidator;
+import org.ovirt.engine.core.common.validation.IPv4MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -149,7 +149,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
     }
 
     private void putIpv4PrefixOrNetmaskIfNotEmpty(Map<String, Object> opts, String netmask) {
-        if (MaskValidator.getInstance().isPrefixValid(netmask)) {
+        if (IPv4MaskValidator.getInstance().isPrefixValid(netmask)) {
             putIfNotEmpty(opts, "prefix", netmask.replace("/", ""));
         } else {
             putIfNotEmpty(opts, "netmask", netmask);

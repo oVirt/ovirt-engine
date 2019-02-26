@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.validation.MaskValidator;
+import org.ovirt.engine.core.common.validation.IPv4MaskValidator;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SubnetMaskValidation implements IValidation {
@@ -64,8 +64,8 @@ public class SubnetMaskValidation implements IValidation {
         return new ValidationResult(false, Arrays.asList(errorMessage));
     }
 
-    MaskValidator getMaskValidator() {
-        return MaskValidator.getInstance();
+    IPv4MaskValidator getMaskValidator() {
+        return IPv4MaskValidator.getInstance();
     }
 
 }

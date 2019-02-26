@@ -5,15 +5,15 @@ import java.math.BigInteger;
 import org.ovirt.engine.core.common.utils.IPAddressConverter;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 
-public class MaskValidator {
+public class IPv4MaskValidator {
     private IPAddressConverter ipAddressConverter = IPAddressConverter.getInstance();
 
-    private static MaskValidator INSTANCE = new MaskValidator();
+    private static IPv4MaskValidator INSTANCE = new IPv4MaskValidator();
 
-    private MaskValidator() {
+    private IPv4MaskValidator() {
     }
 
-    public static MaskValidator getInstance() {
+    public static IPv4MaskValidator getInstance() {
         return INSTANCE;
     }
 
@@ -24,7 +24,7 @@ public class MaskValidator {
      * </ul>
      * <p>
      * <b>Note!</b> the function is not validating that mask value is valid, please see @see
-     * {@link MaskValidator#isNetmaskValid(String)} (String)}
+     * {@link IPv4MaskValidator#isNetmaskValid(String)} (String)}
      *
      * @return true if correct IPv4 format , false otherwise.
      */
@@ -44,7 +44,7 @@ public class MaskValidator {
     /***
      * check if mask is valid and netmasked formated and return true if does
      *
-     * @param netmask in valid format , please verify first with @see {@link MaskValidator#isValidNetmaskFormat(String)}
+     * @param netmask in valid format , please verify first with @see {@link IPv4MaskValidator#isValidNetmaskFormat(String)}
      * @return true if the netmask is in IPv4 format and valid, false otherwise
      */
     public boolean isNetmaskValid(String netmask) {

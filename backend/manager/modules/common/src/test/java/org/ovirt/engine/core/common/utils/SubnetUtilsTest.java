@@ -12,7 +12,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.ovirt.engine.core.common.validation.MaskValidator;
+import org.ovirt.engine.core.common.validation.IPv4MaskValidator;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -27,14 +27,14 @@ public class SubnetUtilsTest {
     private SubnetUtils underTest = SubnetUtils.getInstance();
 
     @Mock
-    private MaskValidator mockedMaskValidator;
+    private IPv4MaskValidator mockedIPv4MaskValidator;
 
     @Mock
     private IPAddressConverter mockIpAddressConverter;
 
     @BeforeEach
     public void setup() {
-        when(underTest.getMaskValidator()).thenReturn(mockedMaskValidator);
+        when(underTest.getMaskValidator()).thenReturn(mockedIPv4MaskValidator);
         when(underTest.getIpAddressConverter()).thenReturn(mockIpAddressConverter);
     }
 
@@ -55,32 +55,32 @@ public class SubnetUtilsTest {
 
     @Test
     public void checkEqualSubnetStringAndIntegerRepresentation() {
-        when(mockedMaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
-        when(mockedMaskValidator.isPrefixValid(VALID_PREFIX)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isPrefixValid(VALID_PREFIX)).thenReturn(true);
         when(mockIpAddressConverter.convertPrefixToIPv4Netmask(VALID_PREFIX)).thenReturn(VALID_NETMASK_FORMAT);
         assertTrue(underTest.equalSubnet(VALID_NETMASK_FORMAT, VALID_PREFIX));
     }
 
     @Test
     public void checkDifferentSubnetStringAndIntegerRepresentation() {
-        when(mockedMaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
-        when(mockedMaskValidator.isPrefixValid(DIFFERENT_PREFIX)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isPrefixValid(DIFFERENT_PREFIX)).thenReturn(true);
         when(mockIpAddressConverter.convertPrefixToIPv4Netmask(DIFFERENT_PREFIX)).thenReturn(INVALID_NETMASK_FORMAT);
         assertFalse(underTest.equalSubnet(VALID_NETMASK_FORMAT, DIFFERENT_PREFIX));
     }
 
     @Test
     public void checkEqualSubnetIntegerAndStringRepresentation() {
-        when(mockedMaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
-        when(mockedMaskValidator.isPrefixValid(VALID_PREFIX)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isPrefixValid(VALID_PREFIX)).thenReturn(true);
         when(mockIpAddressConverter.convertPrefixToIPv4Netmask(VALID_PREFIX)).thenReturn(VALID_NETMASK_FORMAT);
         assertTrue(underTest.equalSubnet(VALID_PREFIX, VALID_NETMASK_FORMAT));
     }
 
     @Test
     public void checkDifferentSubnetIntegerAndStringRepresentation() {
-        when(mockedMaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
-        when(mockedMaskValidator.isPrefixValid(DIFFERENT_PREFIX)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isValidNetmaskFormat(VALID_NETMASK_FORMAT)).thenReturn(true);
+        when(mockedIPv4MaskValidator.isPrefixValid(DIFFERENT_PREFIX)).thenReturn(true);
         when(mockIpAddressConverter.convertPrefixToIPv4Netmask(DIFFERENT_PREFIX)).thenReturn(INVALID_NETMASK_FORMAT);
         assertFalse(underTest.equalSubnet(DIFFERENT_PREFIX, VALID_NETMASK_FORMAT));
     }

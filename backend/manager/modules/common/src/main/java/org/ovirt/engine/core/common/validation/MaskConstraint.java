@@ -36,8 +36,8 @@ public class MaskConstraint implements ConstraintValidator<Mask, String> {
         return getMaskValidator().isPrefixValid(mask) || getMaskValidator().isNetmaskValid(mask);
     }
 
-    MaskValidator getMaskValidator() {
-        return MaskValidator.getInstance();
+    IPv4MaskValidator getMaskValidator() {
+        return IPv4MaskValidator.getInstance();
     }
 
 }

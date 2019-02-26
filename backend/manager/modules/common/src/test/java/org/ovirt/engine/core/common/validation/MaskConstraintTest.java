@@ -32,7 +32,7 @@ public class MaskConstraintTest {
     private MaskConstraint underTest;
 
     @Mock
-    private MaskValidator mockMaskValidator;
+    private IPv4MaskValidator mockIPv4MaskValidator;
 
     @Mock
     private ConstraintValidatorContext contextMock;
@@ -45,7 +45,7 @@ public class MaskConstraintTest {
 
     @BeforeEach
     public void setup() {
-        doReturn(mockMaskValidator).when(underTest).getMaskValidator();
+        doReturn(mockIPv4MaskValidator).when(underTest).getMaskValidator();
     }
 
     @Test
@@ -68,8 +68,8 @@ public class MaskConstraintTest {
     }
 
     private void runSetup(String testMask, boolean isValidFormat, boolean isMaskValidValue, String errorMessage) {
-        when(mockMaskValidator.isValidNetmaskFormat(testMask)).thenReturn(isValidFormat);
-        when(mockMaskValidator.isPrefixValid(testMask)).thenReturn(isMaskValidValue);
+        when(mockIPv4MaskValidator.isValidNetmaskFormat(testMask)).thenReturn(isValidFormat);
+        when(mockIPv4MaskValidator.isPrefixValid(testMask)).thenReturn(isMaskValidValue);
         when(contextMock.buildConstraintViolationWithTemplate(errorMessage)).thenReturn(mockConstraintViolationBuilder);
         when(mockConstraintViolationBuilder.addNode(any())).thenReturn(mockNodeBuilderDefinedContext);
     }
