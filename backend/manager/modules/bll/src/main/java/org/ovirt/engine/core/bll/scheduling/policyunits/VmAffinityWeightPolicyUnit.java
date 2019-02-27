@@ -32,10 +32,10 @@ public class VmAffinityWeightPolicyUnit extends VmAffinityPolicyUnit {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
         Map<Guid, Integer> acceptableHosts = getAcceptableHostsWithPriorities(false,
                 hosts,
-                vm,
+                vmGroup,
                 new PerHostMessages());
 
         int maxNonmigratableVms = acceptableHosts.values().stream()

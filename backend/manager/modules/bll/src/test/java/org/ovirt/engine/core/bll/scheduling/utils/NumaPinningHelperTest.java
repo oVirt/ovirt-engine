@@ -12,15 +12,18 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.utils.NumaTestUtils;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.compat.Guid;
 
 class NumaPinningHelperTest {
 
     @Test
     public void testFindAssignmentNoNodes() {
-        Optional<Map<Integer, Integer>> assignment = NumaPinningHelper.findAssignment(
-                Collections.emptyList(), Collections.emptyList());
+        Optional<Map<Guid, Integer>> assignment = NumaPinningHelper.findAssignment(
+                Collections.emptyList(), Collections.emptyList(), false);
 
         assertThat(assignment.isPresent()).isFalse();
     }
@@ -37,7 +40,7 @@ class NumaPinningHelperTest {
                 createHostNumaNode(1, 512)
         );
 
-        Optional<Map<Integer, Integer>> assignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
+        Optional<Map<Guid, Integer>> assignment = NumaPinningHelper.findAssignment(createVms(vmNodes), hostNodes, false);
 
         assertThat(assignment.isPresent()).isFalse();
     }
@@ -56,14 +59,14 @@ class NumaPinningHelperTest {
                 createHostNumaNode(1, 2500)
         );
 
-        Optional<Map<Integer, Integer>> assignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
+        Optional<Map<Guid, Integer>> assignment = NumaPinningHelper.findAssignment(createVms(vmNodes), hostNodes, false);
 
         assertThat(assignment.isPresent()).isTrue();
         assertThat(assignment.get().entrySet()).extracting("key", "value").containsOnly(
-                tuple(0, 1),
-                tuple(1, 1),
-                tuple(2, 0),
-                tuple(3, 0)
+                tuple(vmNodes.get(0).getId(), 1),
+                tuple(vmNodes.get(1).getId(), 1),
+                tuple(vmNodes.get(2).getId(), 0),
+                tuple(vmNodes.get(3).getId(), 0)
         );
     }
 
@@ -84,16 +87,18 @@ class NumaPinningHelperTest {
                 createHostNumaNode(3, 1500)
         );
 
-        Optional<Map<Integer, Integer>> assignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
+        Optional<Map<Guid, Integer>> assignment = NumaPinningHelper.findAssignment(createVms(vmNodes), hostNodes, false);
 
         assertThat(assignment.isPresent()).isTrue();
         assertThat(assignment.get().entrySet()).extracting("key", "value").containsOnly(
-                tuple(0, 0),
-                tuple(1, 3),
-                tuple(2, 2),
-                tuple(3, 1)
+                tuple(vmNodes.get(0).getId(), 0),
+                tuple(vmNodes.get(1).getId(), 3),
+                tuple(vmNodes.get(2).getId(), 2),
+                tuple(vmNodes.get(3).getId(), 1)
         );
     }
+
+    // TODO - add tests for multiple VMs
 
     private VmNumaNode createVmNumaNode(int index, List<Integer> hostNodeIndices) {
         VmNumaNode node = NumaTestUtils.createVmNumaNode(index);
@@ -106,5 +111,14 @@ class NumaPinningHelperTest {
         node.setNumaNodeStatistics(new NumaNodeStatistics());
         node.getNumaNodeStatistics().setMemFree(freeMem);
         return node;
+    }
+
+    private List<VM> createVms(List<VmNumaNode> nodes) {
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        vm.setvNumaNodeList(nodes);
+        vm.setNumaTuneMode(NumaTuneMode.STRICT);
+
+        return Collections.singletonList(vm);
     }
 }

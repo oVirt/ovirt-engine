@@ -41,7 +41,7 @@ public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
         long lowMemoryLimit = context.getPolicyParameters().containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(context.getPolicyParameters().get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
 
@@ -75,8 +75,12 @@ public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {
 
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
-            float hostSchedulingMem = vds.getMaxSchedulingMemory() -
-                    (vds.getId().equals(vm.getRunOnVds()) ? 0 : vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
+            int totalVmMemory = vmGroup.stream()
+                    .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
+                    .mapToInt(vm -> vmOverheadCalculator.getTotalRequiredMemoryInMb(vm))
+                    .sum();
+
+            float hostSchedulingMem = vds.getMaxSchedulingMemory() - totalVmMemory;
 
             scores.add(new Pair<>(
                     vds.getId(),

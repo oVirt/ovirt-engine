@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class MigrateVmToServerParameters extends MigrateVmParameters {
     private static final long serialVersionUID = 2378358850714143232L;
     private Guid vdsId;
+    private boolean skipScheduling;
 
     public MigrateVmToServerParameters() {
     }
@@ -22,6 +23,14 @@ public class MigrateVmToServerParameters extends MigrateVmParameters {
 
     public Guid getVdsId() {
         return vdsId;
+    }
+
+    public boolean isSkipScheduling() {
+        return skipScheduling;
+    }
+
+    public void setSkipScheduling(boolean skipScheduling) {
+        this.skipScheduling = skipScheduling;
     }
 
     @Override

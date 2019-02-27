@@ -91,7 +91,12 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     }
 
     protected  <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
-        List<Pair<Guid, Integer>> scores = unit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()), hosts, vm);
+        List<Pair<Guid, Integer>> scores = unit.score(
+                new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()),
+                hosts,
+                Collections.singletonList(vm)
+        );
+
         scores.sort(Comparator.comparing(Pair::getSecond));
         return scores.get(0).getFirst();
     }

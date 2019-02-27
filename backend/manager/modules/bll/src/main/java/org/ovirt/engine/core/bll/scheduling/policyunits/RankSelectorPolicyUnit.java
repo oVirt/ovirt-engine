@@ -82,7 +82,10 @@ public class RankSelectorPolicyUnit extends PolicyUnitImpl {
                 // Prepare a copy of weights for local purposes
                 Map<Guid, Integer> weights = new HashMap<>();
                 for (Pair<Guid, Integer> record: unit.getValue()) {
-                    weights.put(record.getFirst(), record.getSecond());
+                    // Using merge, because the same host can be in multiple records.
+                    // This can happen when scheduling multiple VMs and an external function is used.
+                    // The score is called multiple times for different VMs and the results should be accumulated.
+                    weights.merge(record.getFirst(), record.getSecond(), Integer::sum);
                 }
 
                 // Make sure all hosts are present in the list
