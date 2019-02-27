@@ -67,10 +67,7 @@ class Plugin(plugin.PluginBase):
                     name='ovirt-cinderlib-enable',
                     note=_(
                         'Set up Cinderlib integration\n'
-                        '(Currently in tech preview. For more info - \n'
-                        'https://ovirt.org/develop/release'
-                        '-management/features/storage/cinderlib'
-                        '-integration.html)\n'
+                        '(Currently in tech preview)\n'
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
