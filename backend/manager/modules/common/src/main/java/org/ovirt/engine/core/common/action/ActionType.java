@@ -24,6 +24,7 @@ public enum ActionType {
     RunVmOnce(13, ActionGroup.RUN_VM, QuotaDependency.BOTH),
     MigrateVm(14, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
+    MigrateMultipleVms(66, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
     ReorderVmNics(17, ActionGroup.CREATE_VM, false, QuotaDependency.NONE),
     VmLogon(18, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
     SetVmTicket(22, ActionGroup.CONNECT_TO_VM, false, QuotaDependency.NONE),

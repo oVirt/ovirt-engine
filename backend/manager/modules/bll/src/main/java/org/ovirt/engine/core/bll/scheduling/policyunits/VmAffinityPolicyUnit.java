@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -22,10 +24,11 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
+public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(VmAffinityPolicyUnit.class);
 
     @Inject
@@ -46,14 +49,21 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
      */
     protected Map<Guid, Integer> getAcceptableHostsWithPriorities(boolean onlyEnforcing,
             List<VDS> hosts,
-            VM vm,
+            List<VM> vmGroup,
             PerHostMessages messages) {
 
-        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
-        // no affinity groups found for VM return all hosts
+        Set<AffinityGroup> affinityGroups = new HashSet<>();
+        // TODO - get all affinity gorups in 1 DB call
+        vmGroup.forEach(vm -> affinityGroups.addAll(affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId())));
+
+        // no affinity groups found for VM group return all hosts
         if (affinityGroups.isEmpty()) {
             return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> 0));
         }
+
+        Set<Guid> vmIdSet = vmGroup.stream()
+                .map(VM::getId)
+                .collect(Collectors.toSet());
 
         Set<Guid> allVmIdsPositive = new HashSet<>();
         Set<Guid> allVmIdsNegative = new HashSet<>();
@@ -61,16 +71,31 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
         // Group by all vms in affinity groups per positive or negative
         for (AffinityGroup affinityGroup : affinityGroups) {
             if (affinityGroup.isVmAffinityEnabled() && (!onlyEnforcing || affinityGroup.isVmEnforcing())) {
-                for (Guid entityId : affinityGroup.getVmIds()) {
-                    // Skip current VM
-                    if (entityId.equals(vm.getId())) {
-                        continue;
+                List<Guid> vmsNotInVmGroup = affinityGroup.getVmIds().stream()
+                        .filter(id -> !vmIdSet.contains(id))
+                        .collect(Collectors.toList());
+
+                if (affinityGroup.isVmPositive()) {
+                    allVmIdsPositive.addAll(vmsNotInVmGroup);
+                } else if (affinityGroup.isVmNegative()) {
+                    // Check if the negative AG contains more VMs from the group
+                    List<Guid> vmsInPositiveAndNegativeGroup = affinityGroup.getVmIds().stream()
+                            .filter(vmIdSet::contains)
+                            .collect(Collectors.toList());
+
+                    if (vmsInPositiveAndNegativeGroup.size() > 1) {
+                        log.warn(
+                                "Affinity conflict detected! Negative affinity group '{}' contains VMs that are in positive affinity: {}",
+                                affinityGroup.getName(),
+                                vmGroup.stream()
+                                        .filter(vm -> vmsInPositiveAndNegativeGroup.contains(vm.getId()))
+                                        .map(VM::getName)
+                                        .collect(Collectors.toList()));
+
+                        return Collections.emptyMap();
                     }
-                    if (affinityGroup.isVmPositive()) {
-                        allVmIdsPositive.add(entityId);
-                    } else if (affinityGroup.isVmNegative()) {
-                        allVmIdsNegative.add(entityId);
-                    }
+
+                    allVmIdsNegative.addAll(vmsNotInVmGroup);
                 }
             }
         }
@@ -82,7 +107,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
 
         // Get all running VMs in cluster
         Map<Guid, VM> runningVMsMap = new HashMap<>();
-        for (VM iter : vmDao.getAllRunningByCluster(vm.getClusterId())) {
+        for (VM iter : vmDao.getAllRunningByCluster(vmGroup.get(0).getClusterId())) {
             runningVMsMap.put(iter.getId(), iter);
         }
 
@@ -119,23 +144,25 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
             hostMap.put(host.getId(), host);
         }
 
+        Supplier<String> vmNames = new MemoizingSupplier<>(() -> getVmNames(vmGroup));
+
         // Compute the intersection of hosts with positive and negative affinity and report that
         // contradicting rules to the log
         unacceptableHosts.retainAll(acceptableHosts.keySet());
         for (Guid id: unacceptableHosts) {
             log.warn("Host '{}' ({}) belongs to both positive and negative affinity list" +
-                            " while scheduling VM '{}' ({})",
+                            " while scheduling VMs: {}",
                     hostMap.get(id).getName(), id,
-                    vm.getName(), vm.getId());
+                    vmNames.get());
         }
 
         // No hosts associated with positive affinity, all hosts are applicable.
         if (acceptableHosts.isEmpty()) {
             acceptableHosts = hosts.stream().collect(Collectors.toMap(h -> h.getId(), h -> 0));
         } else if (acceptableHosts.size() > 1) {
-            log.warn("Invalid affinity situation was detected while scheduling VM '{}' ({})." +
+            log.warn("Invalid affinity situation was detected while scheduling VMs: {}." +
                             " VMs belonging to the same affinity groups are running on more than one host.",
-                    vm.getName(), vm.getId());
+                    vmNames.get());
         }
 
         // Report hosts that were removed because of violating the positive affinity rules
@@ -165,5 +192,11 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
 
     private static boolean isVmMigratable(VM vm) {
         return (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) && !vm.isHostedEngine();
+    }
+
+    private String getVmNames(List<VM> vmGroup) {
+        return vmGroup.stream()
+                .map(vm -> String.format("'%s' (%s)", vm.getName(), vm.getId()))
+                .collect(Collectors.joining(", "));
     }
 }

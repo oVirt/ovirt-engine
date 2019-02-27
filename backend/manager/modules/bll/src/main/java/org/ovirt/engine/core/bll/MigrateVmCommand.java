@@ -42,12 +42,10 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -199,7 +197,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
-    private Optional<Guid> getVdsToRunOn() {
+    protected Optional<Guid> getVdsToRunOn() {
         List<String> messages = new ArrayList<>();
         Optional<Guid> vdsToRunOn =
                 schedulingManager.schedule(getCluster(),
@@ -795,34 +793,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failValidation(EngineMessage.MIGRATION_IS_NOT_SUPPORTED);
         }
 
-        // If VM is pinned to host, no migration can occur
-        if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);
-        }
-
-        if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE
-                && !getParameters().isForceMigrationForNonMigratableVm()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
-        }
-
-        switch (vm.getStatus()) {
-        case MigratingFrom:
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
-
-        case NotResponding:
-            return failVmStatusIllegal();
-
-        case Paused:
-            if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {
-                return failValidation(EngineMessage.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
-            }
-            break;
-
-        default:
-        }
-
-        if (!vm.isQualifyToMigrate()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
+        if (!validate(vmValidator.canMigrate(getParameters().isForceMigrationForNonMigratableVm()))) {
+            return false;
         }
 
         if (!validate(new MultipleVmsValidator(vm).vmNotHavingPluggedDiskSnapshots(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -512,9 +513,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     }
 
     /**
-     * For VM to host affinity, a VM with positive enforcing affinity cannot be migrated from the host it belongs to.
-     * For VM to VM affinity we cannot guarantee that migrating VM with positive enforcing affinity will
-     * migrate to the same target host, user will have to manually fix it before putting the host on maintenance.
+     * For VM to host affinity, a VM with positive enforcing affinity cannot be migrated
+     * if there is no other host in the affinity group.
      *
      * @param vdsId      current host id
      * @param runningVms current running vms on host
@@ -531,10 +531,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
             List<Object> items = new ArrayList<>();
             affinityGroups.stream()
-                    .filter(ag ->
-                            !ag.getVdsIds().isEmpty()
-                                    || affinityGroupContainsRunningVMs(ag, runningVms)
-                    )
+                    .filter(ag -> ag.getVdsIds().size() == 1 && Objects.equals(ag.getVdsIds().get(0), vdsId))
                     .forEach(affinityGroup -> {
                         items.add(String.format("%1$s (%2$s)",
                                 affinityGroup.getName(),
@@ -550,22 +547,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         }
 
         return true;
-    }
-
-    /**
-     * Check vm to vm affinity group with 2 or more running vms
-     *
-     * @return true if affinity group has 2 or more running vms
-     */
-    private boolean affinityGroupContainsRunningVMs(AffinityGroup affinityGroup, List<VM> runningVms) {
-
-        return affinityGroup.getVdsIds().isEmpty()
-                && affinityGroup.isVmAffinityEnabled()
-                && runningVms.size() > 1
-                && affinityGroup.getVmIds().size() > 1
-                && runningVms.stream()
-                .filter(vm -> affinityGroup.getVmIds().contains(vm.getId()))
-                .collect(Collectors.toList()).size() > 1;
     }
 
     private void addSharedLockEntry(VDS vds) {

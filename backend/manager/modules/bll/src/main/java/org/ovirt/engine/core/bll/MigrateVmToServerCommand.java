@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -90,5 +91,16 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getDestinationVdsName());
         }
         return jobProperties;
+    }
+
+    @Override
+    protected Optional<Guid> getVdsToRunOn() {
+        // 'Do not schedule' parameter is used by MigrateMultipleVms command,
+        // so that scheduling side effects are not executed twice.
+        if (getParameters().isSkipScheduling()) {
+            return Optional.ofNullable(getParameters().getVdsId());
+        }
+
+        return super.getVdsToRunOn();
     }
 }
