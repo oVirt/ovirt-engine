@@ -54,7 +54,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
     }
 
     @Override
-    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
         // Hosts available for running the `vm`
         Set<VDS> candidateHosts = new HashSet<>();
         // Hosts needed as spares for the hosted engine
@@ -81,20 +81,23 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
         }
 
         // The hosted engine VM is not part of the currently scheduled cluster
-        if (!hostedEngine.getClusterId().equals(vm.getClusterId())) {
+        if (!hostedEngine.getClusterId().equals(vmGroup.get(0).getClusterId())) {
             return hosts;
         }
 
         // Scheduling the hosted engine VM, do nothing
-        if (hostedEngine.getId().equals(vm.getId())) {
+        if (vmGroup.stream().anyMatch(vm -> hostedEngine.getId().equals(vm.getId()))) {
             return hosts;
         }
 
         // Count the number of hosted engine spares
         for (VDS host: hosts) {
-            // If the VM is currently running on the host, it does not require any additional memory
-            int vmMemoryNeeded = host.getId().equals(vm.getRunOnVds()) ? 0 :
-                    vm.getMemSizeMb() + host.getGuestOverhead();
+            int vmMemoryNeeded = vmGroup.stream()
+                    // If the VM is currently running on the host,
+                    // it does not require any additional memory
+                    .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
+                    .mapToInt(vm -> vm.getMemSizeMb() + host.getGuestOverhead())
+                    .sum();
 
             // Not a HE host
             if (!host.getHighlyAvailableIsActive()) {

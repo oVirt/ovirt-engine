@@ -32,12 +32,12 @@ public class VmAffinityFilterPolicyUnit extends VmAffinityPolicyUnit {
     }
 
     @Override
-    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
         if (context.getSchedulingParameters().isIgnoreHardVmToVmAffinity()) {
             return hosts;
         }
 
-        Map<Guid, Integer> acceptableHosts = getAcceptableHostsWithPriorities(true, hosts, vm, messages);
+        Map<Guid, Integer> acceptableHosts = getAcceptableHostsWithPriorities(true, hosts, vmGroup, messages);
 
         return hosts.stream()
                 .filter(h -> acceptableHosts.containsKey(h.getId()))

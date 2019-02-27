@@ -54,7 +54,7 @@ public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
             scores.add(new Pair<>(vds.getId(), calcEvenGuestDistributionScore(vds, context.getPolicyParameters())));

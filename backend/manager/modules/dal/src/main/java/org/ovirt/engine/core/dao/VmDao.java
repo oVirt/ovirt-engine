@@ -210,7 +210,7 @@ public interface VmDao extends Dao {
     /**
      * Get all vms with the given ids
      */
-    public List<VM> getVmsByIds(List<Guid> vmsIds);
+    public List<VM> getVmsByIds(Collection<Guid> vmsIds);
 
     /**
      * Retrieves the list of all VMS with optional permission filtering.

@@ -211,6 +211,9 @@ public class NumaPolicyUnitTest extends NumaPolicyTestBase{
     }
 
     private List<VDS> filter() {
-        return unit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()), hosts, vm, new PerHostMessages());
+        return unit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()),
+                hosts,
+                Collections.singletonList(vm),
+                new PerHostMessages());
     }
 }
