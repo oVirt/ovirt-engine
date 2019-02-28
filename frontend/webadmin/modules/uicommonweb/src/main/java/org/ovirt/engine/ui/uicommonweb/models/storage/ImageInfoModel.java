@@ -211,12 +211,6 @@ public class ImageInfoModel extends EntityModel<String> {
             }
         }
 
-        // Uploaded image must be aligned to sector size (512 bytes in vdsm)
-        if (imageSize % 512 != 0) {
-            getInvalidityReasons().add(constants.uploadImageInvalidAlignment());
-            return false;
-        }
-
         return true;
     }
 
