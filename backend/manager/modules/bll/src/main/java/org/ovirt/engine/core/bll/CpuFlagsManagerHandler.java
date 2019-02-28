@@ -111,6 +111,12 @@ public class CpuFlagsManagerHandler implements BackendService {
         return cpuFlagsManager != null ? cpuFlagsManager.getSupportedServerCpuList(maxCpuName) : new ArrayList<>();
     }
 
+    public String getVendorByCpuName(String cpuName, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.getVendorByCpuName(cpuName) : "";
+
+    }
+
     private static class CpuFlagsManager {
         private List<ServerCpu> intelCpuList;
         private List<ServerCpu> amdCpuList;
@@ -138,6 +144,23 @@ public class CpuFlagsManagerHandler implements BackendService {
 
             return ArchitectureType.undefined;
         }
+
+        public String getVendorByCpuName(String cpuName) {
+            String result = "";
+            if (StringUtils.isNotEmpty(cpuName)) {
+                if (intelCpuByNameDictionary.get(cpuName) != null) {
+                    result = CpuVendor.INTEL.name();
+                } else if (amdCpuByNameDictionary.get(cpuName) != null) {
+                    result = CpuVendor.AMD.name();
+                } else if (ibmCpuByNameDictionary.get(cpuName) != null) {
+                    result = CpuVendor.IBM.name();
+                } else if (s390CpuByNameDictionary.get(cpuName) != null) {
+                    result = CpuVendor.IBMS390.name();
+                }
+            }
+            return result;
+        }
+
 
         public ServerCpu getServerCpuByName(String cpuName) {
             ServerCpu result = null;
