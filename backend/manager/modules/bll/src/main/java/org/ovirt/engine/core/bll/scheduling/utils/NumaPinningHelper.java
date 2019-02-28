@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +18,19 @@ public class NumaPinningHelper {
     private Map<Integer, Collection<Integer>> cpuPinning;
     private Map<Integer, List<Integer>> hostNodeCpuMap;
 
+    private List<Runnable> commandStack;
+    private Map<Integer, Long> hostNodeFreeMem;
+    private Map<Integer, Integer> currentAssignment;
+
     private NumaPinningHelper(List<VmNumaNode> vmNodes,
             Map<Integer, Collection<Integer>> cpuPinning,
-            Map<Integer, List<Integer>> hostNodeCpuMap) {
+            Map<Integer, List<Integer>> hostNodeCpuMap,
+            Map<Integer, Long> hostNodeFreeMem) {
 
         this.vmNodes = vmNodes;
         this.cpuPinning = cpuPinning;
         this.hostNodeCpuMap = hostNodeCpuMap;
+        this.hostNodeFreeMem = hostNodeFreeMem;
     }
 
     public static Optional<Map<Integer, Integer>> findAssignment(List<VmNumaNode> vmNodes, List<VdsNumaNode> hostNodes) {
@@ -42,6 +49,10 @@ public class NumaPinningHelper {
     public static Optional<Map<Integer, Integer>> findAssignment(List<VmNumaNode> vmNodes,
             List<VdsNumaNode> hostNodes,
             Map<Integer, Collection<Integer>> cpuPinning) {
+
+        if (vmNodes.isEmpty()) {
+            return Optional.empty();
+        }
 
         Map<Integer, Long> hostNodeFreeMem = hostNodes.stream()
                 .collect(Collectors.toMap(
@@ -70,58 +81,79 @@ public class NumaPinningHelper {
                             NumaNode::getCpuIds
                         ));
 
-        NumaPinningHelper helper = new NumaPinningHelper(vmNodes, cpuPinning, hostNodeCpuMap);
-        Map<Integer, Integer> assignment = helper.fitNodes(0, hostNodeFreeMem);
-        return Optional.ofNullable(assignment);
+        NumaPinningHelper helper = new NumaPinningHelper(vmNodes, cpuPinning, hostNodeCpuMap, hostNodeFreeMem);
+        return Optional.ofNullable(helper.fitNodes());
     }
 
-    private Map<Integer, Integer> fitNodes(int vmNumaNodeIndex, Map<Integer, Long> hostNodeFreeMem) {
-        // Stopping condition for recursion
-        // If all nodes fit, return an empty map
-        if (vmNumaNodeIndex >= vmNodes.size()) {
-            return new HashMap<>(vmNodes.size());
-        }
-
-        VmNumaNode vmNode = vmNodes.get(vmNumaNodeIndex);
-
-        // If the node is not pinned, skip it.
-        //
-        // Unpinned nodes will behave according to the default NUMA configuration on the host.
-        // Here they are ignored, because we don't know if the host will use strict, interleaved or
-        // preferred mode and to which host nodes they can be pinned.
-        if (vmNode.getVdsNumaNodeList().isEmpty()) {
-            return fitNodes(vmNumaNodeIndex + 1, hostNodeFreeMem);
-        }
-
-        for (Integer pinnedIndex: vmNode.getVdsNumaNodeList()) {
-            long hostFreeMem = hostNodeFreeMem.get(pinnedIndex);
-            if (hostFreeMem < vmNode.getMemTotal()) {
-                continue;
+    private Runnable fitNodesRunnable(int vmNumaNodeIndex) {
+        return () -> {
+            // Stopping condition for recursion
+            if (vmNumaNodeIndex >= vmNodes.size()) {
+                // If all nodes fit, clear the commandStack to skip all other commands
+                // and return current assignment
+                commandStack.clear();
+                return;
             }
 
-            if (cpuPinning != null) {
-                if (!vmNodeFitsHostNodeCpuPinning(vmNode, hostNodeCpuMap.get(pinnedIndex))) {
-                    continue;
-                }
-            }
-            // The current VM node fits to the host node,
-            // store new free memory value in the list
-            hostNodeFreeMem.put(pinnedIndex, hostFreeMem - vmNode.getMemTotal());
+            VmNumaNode vmNode = vmNodes.get(vmNumaNodeIndex);
 
-            // Recursive call to check if the rest of the nodes fit
-            Map<Integer, Integer> othersFit = fitNodes(vmNumaNodeIndex + 1, hostNodeFreeMem);
-
-            // if a possible assignment was found, store it in the output map and return
-            if (othersFit != null) {
-                othersFit.put(vmNode.getIndex(), pinnedIndex);
-                return othersFit;
+            // If the node is not pinned, skip it.
+            //
+            // Unpinned nodes will behave according to the default NUMA configuration on the host.
+            // Here they are ignored, because we don't know if the host will use strict, interleaved or
+            // preferred mode and to which host nodes they can be pinned.
+            if (vmNode.getVdsNumaNodeList().isEmpty()) {
+                commandStack.add(fitNodesRunnable(vmNumaNodeIndex + 1));
+                return;
             }
 
-            // The rest of the VM nodes do not fit, return the old value to the list
-            hostNodeFreeMem.put(pinnedIndex, hostFreeMem);
+            // The commands will be executed in reversed order, but it does not matter,
+            // because this function is looking for any possible assignment
+            for (Integer pinnedIndex: vmNode.getVdsNumaNodeList()) {
+                commandStack.add(() -> {
+                    long hostFreeMem = hostNodeFreeMem.get(pinnedIndex);
+                    if (hostFreeMem < vmNode.getMemTotal()) {
+                        return;
+                    }
+
+                    if (cpuPinning != null && !vmNodeFitsHostNodeCpuPinning(vmNode, hostNodeCpuMap.get(pinnedIndex))) {
+                        return;
+                    }
+
+                    // The current VM node fits to the host node,
+                    hostNodeFreeMem.put(pinnedIndex, hostFreeMem - vmNode.getMemTotal());
+                    currentAssignment.put(vmNode.getIndex(), pinnedIndex);
+
+                    // Push revert command to the stack
+                    commandStack.add(() -> {
+                        currentAssignment.remove(vmNode.getIndex());
+                        hostNodeFreeMem.put(pinnedIndex, hostFreeMem);
+                    });
+
+                    // Push recursive call
+                    commandStack.add(fitNodesRunnable(vmNumaNodeIndex + 1));
+                });
+            }
+        };
+    }
+
+    private Map<Integer, Integer> fitNodes() {
+        // Algorithm uses explicit stack, to avoid stack overflow
+        currentAssignment = new HashMap<>();
+        commandStack = new ArrayList<>();
+
+        // Last command - assignment was not found
+        commandStack.add(() -> {
+            currentAssignment = null;
+        });
+
+        commandStack.add(fitNodesRunnable(0));
+
+        while (!commandStack.isEmpty()) {
+            commandStack.remove(commandStack.size() - 1).run();
         }
 
-        return null;
+        return currentAssignment;
     }
 
     private boolean vmNodeFitsHostNodeCpuPinning(VmNumaNode vmNode, List<Integer> hostNodeCpus) {
