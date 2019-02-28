@@ -1037,7 +1037,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         if ((Boolean) AsyncDataProvider.getInstance()
             .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
             getEntity().getClusterCompatibilityVersion().getValue())) {
-                setHasDefaultRouteAlert(getEntity().isDefaultRouteRoleNetworkAttached());
+                setHasDefaultRouteAlert(!getEntity().isDefaultRouteRoleNetworkAttached());
         }
 
         // Check manual fence alert presense.
