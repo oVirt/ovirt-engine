@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -184,6 +185,70 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return cluster == null ? null : cluster.getMacPoolId();
     }
 
+    private void reDetectDefaultsForDeprecatedCPUs() {
+        boolean oldCpuExists = cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
+                getParameters().getCluster().getCompatibilityVersion());
+        boolean newCpuExists = cpuFlagsManagerHandler.checkIfCpusExist(getParameters().getCluster().getCpuName(),
+                getParameters().getCluster().getCompatibilityVersion());
+        boolean oldCpuExisted = cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
+                oldCluster.getCompatibilityVersion());
+        String oldCpuManufacturer = "";
+        ServerCpu scMin = null;
+
+        if (oldCpuExisted) {
+            oldCpuManufacturer = cpuFlagsManagerHandler.getVendorByCpuName(oldCluster.getCpuName(),
+                    oldCluster.getCompatibilityVersion());
+            oldCpuExisted = !oldCpuManufacturer.isEmpty();
+        }
+
+        for (VDS vds : allForCluster) {
+            ServerCpu sc = cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
+                    getParameters().getCluster().getCompatibilityVersion());
+
+            if (vds.getStatus() == VDSStatus.Up && sc != null  &&
+                    (scMin == null || scMin.getLevel() > sc.getLevel()) &&
+                    (!oldCpuExisted || oldCpuManufacturer.equals(cpuFlagsManagerHandler.
+                            getVendorByCpuName(sc.getCpuName(), getParameters().getCluster().getCompatibilityVersion())))) {
+                scMin = sc;
+            }
+        }
+
+        // Update the Current CPU if either the previous CPU was Deprecated or if the New CPU is not
+        // Valid to compensate for validation fall through during upgrading.
+        if (!oldCpuExists || !newCpuExists) {
+            // If the minimum was not found and the current cpu does not exist, fetch the lowest CPU
+            // in the list as the default per Manufacturer.
+            if (scMin == null && !newCpuExists) {
+                if (oldCpuExisted) {
+                    List<ServerCpu> serverList = cpuFlagsManagerHandler.allServerCpuList(getParameters().
+                            getCluster().getCompatibilityVersion());
+
+                    for (ServerCpu serverCpu : serverList) {
+                        if (oldCpuManufacturer.equals(cpuFlagsManagerHandler.
+                                getVendorByCpuName(serverCpu.getCpuName(),
+                                        getParameters().getCluster().getCompatibilityVersion()))) {
+                            scMin = serverCpu;
+                            break;
+                        }
+                    }
+                }
+
+                // If still not found fetch the lowest CPU in the list.
+                if (scMin == null) {
+                    scMin = cpuFlagsManagerHandler.allServerCpuList(getParameters().getCluster().
+                            getCompatibilityVersion()).get(0);
+                }
+            }
+
+            if (scMin != null) {
+                getCluster().setCpuName(scMin.getCpuName());
+                addCustomValue("CPU", scMin.getCpuName());
+                addCustomValue("Cluster", getParameters().getCluster().getName());
+                auditLogDirector.log(this, AuditLogType.CLUSTER_UPDATE_CPU_WHEN_DEPRECATED);
+            }
+        }
+    }
+
     @Override
     protected void executeCommand() {
         Guid newMacPoolId = getNewMacPoolId();
@@ -214,6 +279,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             } else {
                 getParameters().getCluster().setEmulatedMachine(emulatedMachine);
             }
+
+            reDetectDefaultsForDeprecatedCPUs();
+
         } else if (oldCluster.getArchitecture() != getCluster().getArchitecture()) {
             // if architecture was changed, emulated machines must be updated when adding new host.
             // At this point the cluster is empty and have changed CPU name
@@ -673,18 +741,47 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
+    protected boolean isCpuDeprecated() {
+        // If the version is being upgrading and the previous or current CPU was deprecated,
+        // then skip the validation so that we can adjust the cpu type in the executeCommand() function.
+        return !oldCluster.getCompatibilityVersion().equals(getParameters().getCluster().getCompatibilityVersion()) &&
+                ((cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
+                        oldCluster.getCompatibilityVersion()) &&
+                        !cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
+                                getParameters().getCluster().getCompatibilityVersion())) ||
+                        !cpuFlagsManagerHandler.checkIfCpusExist(getCluster().getCpuName(),
+                                getParameters().getCluster().getCompatibilityVersion()));
+    }
+
     protected boolean isArchitectureUpdatable() {
+        if (isCpuDeprecated()) {
+            return true;
+        }
+
         return oldCluster.getArchitecture() == ArchitectureType.undefined ? true
                 : getArchitecture() == oldCluster.getArchitecture();
     }
 
     protected boolean checkIfCpusSameManufacture(Cluster group) {
+        if (!cpuFlagsManagerHandler.checkIfCpusExist(group.getCpuName(),
+                    getParameters().getCluster().getCompatibilityVersion()) ||
+            !cpuFlagsManagerHandler.checkIfCpusExist(getCluster().getCpuName(),
+                    getParameters().getCluster().getCompatibilityVersion())) {
+            return true;
+        }
+
         return cpuFlagsManagerHandler.checkIfCpusSameManufacture(group.getCpuName(),
                 getCluster().getCpuName(),
                 getCluster().getCompatibilityVersion());
     }
 
     protected boolean checkIfCpusExist() {
+        // If the version is being upgrading and the previous or current CPU was deprecated,
+        // then skip the validation so that we can adjust the cpu type in the executeCommand() function.
+        if (isCpuDeprecated()) {
+            return true;
+        }
+
         return cpuFlagsManagerHandler.checkIfCpusExist(getCluster().getCpuName(),
                 getCluster().getCompatibilityVersion());
     }
