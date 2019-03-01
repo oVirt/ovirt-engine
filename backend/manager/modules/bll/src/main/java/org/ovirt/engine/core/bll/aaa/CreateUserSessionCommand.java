@@ -68,7 +68,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
                 dbUserDao.getByExternalId(authzName, params.getPrincipalId());
         DbUser user = new DbUser(dbUser);
         user.setId(dbUser == null ? Guid.newGuid() : dbUser.getId());
-        user.setExternalId(dbUser == null ? Guid.newGuid().toString() : params.getPrincipalId());
+        user.setExternalId(dbUser == null && externalSsoEnabled ? Guid.newGuid().toString() : params.getPrincipalId());
         user.setDomain(authzName);
         user.setEmail(params.getEmail());
         user.setFirstName(params.getFirstName());
