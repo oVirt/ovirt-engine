@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
@@ -25,6 +24,8 @@ public class RunAsyncActionCommand<T extends RunAsyncActionParameters> extends C
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
+    private CommandBase<?> command;
+
     public RunAsyncActionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -45,12 +46,21 @@ public class RunAsyncActionCommand<T extends RunAsyncActionParameters> extends C
 
     @Override
     protected boolean isUserAuthorizedToRunAction() {
-        return true;
+        return getCommand().isUserAuthorizedToRunAction();
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.emptyList();
+        return getCommand().getPermissionCheckSubjects();
+    }
+
+    private CommandBase<?> getCommand() {
+        if (command == null) {
+            command = CommandsFactory.createCommand(getParameters().getAction(),
+                    getParameters().getActionParameters(),
+                    cloneContextAndDetachFromParent());
+        }
+        return command;
     }
 
     @Override
