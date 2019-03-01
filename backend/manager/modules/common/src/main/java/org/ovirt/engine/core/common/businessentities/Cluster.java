@@ -60,6 +60,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private boolean countThreadsAsCores;
 
+    private boolean upgradeRunning;
+
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     private String compatibilityVersion;
 
@@ -255,6 +257,20 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setCountThreadsAsCores(boolean value) {
         countThreadsAsCores = value;
+    }
+
+    public boolean isUpgradeRunning() {
+        return upgradeRunning;
+    }
+
+    /**
+     * Sets the readonly cluster upgrade running flag. This is not saved to the database when updating or saving the
+     * cluster to the database.
+     *
+     * @param upgradeRunning the flag indicating if the cluster upgrade is running.
+     */
+    public void setUpgradeRunning(boolean upgradeRunning) {
+        this.upgradeRunning = upgradeRunning;
     }
 
     public Version getCompatibilityVersion() {

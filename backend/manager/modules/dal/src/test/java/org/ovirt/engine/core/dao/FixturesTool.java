@@ -126,6 +126,11 @@ public class FixturesTool {
     public static final Guid CLUSTER_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");
 
     /**
+     * Predefined vds group with cluster upgrade running
+     */
+    public static final Guid CLUSTER_UPGRADE_RUNNING = new Guid("0e57070e-2469-4b38-84a2-f111aaabd49d");
+
+    /**
      * Predefined NFS storage pool.
      */
     public static final Guid VDS_RHEL6_NFS_SPM = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");

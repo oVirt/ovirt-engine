@@ -1,0 +1,1 @@
+SELECT fn_db_add_column('cluster', 'upgrade_running', 'BOOLEAN NOT NULL DEFAULT FALSE');
