@@ -2,3 +2,5 @@
 - name: Measure an image
   command: qemu-img measure -O qcow2 {{ image_path }}
   register: measurement_result
+  become: yes
+  become_user: vdsm

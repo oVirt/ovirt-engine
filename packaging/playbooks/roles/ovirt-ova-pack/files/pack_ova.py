@@ -2,6 +2,7 @@
 
 import io
 import os
+import pwd
 import sys
 import tarfile
 import time
@@ -45,10 +46,15 @@ def convert_disks(ova_path):
         output = check_output(['losetup', '--find', '--show', '-o', offset,
                                ova_path])
         loop = output.splitlines()[0]
+        loop_stat = os.stat(loop)
+        vdsm_user = pwd.getpwnam('vdsm')
+        os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)
         try:
-            call(['qemu-img', 'convert', '-T', 'none', '-O', 'qcow2', path,
-                  loop])
+            qemu_cmd = ("qemu-img convert -T none -O qcow2 '%s' '%s'"
+                        % (path, loop))
+            call(['su', '-p', '-c', qemu_cmd, 'vdsm'])
         finally:
+            os.chown(loop, loop_stat.st_uid, loop_stat.st_gid)
             call(['losetup', '-d', loop])
 
 
