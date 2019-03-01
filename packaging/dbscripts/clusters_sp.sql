@@ -510,6 +510,56 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+--This SP sets the cluster upgrade running flag to true if one is found with flag false. Returns true if update
+--was successful.
+CREATE OR REPLACE FUNCTION SetClusterUpgradeRunning (
+    v_cluster_id UUID,
+    OUT v_updated BOOLEAN
+    )
+AS $PROCEDURE$
+DECLARE c_id UUID;
+BEGIN
+    SELECT cluster_id INTO c_id
+    FROM cluster
+    WHERE cluster_id = v_cluster_id
+        AND upgrade_running = false
+    FOR UPDATE;
+
+    IF FOUND THEN
+        UPDATE cluster
+        SET upgrade_running = true
+        WHERE cluster_id = c_id;
+    END IF;
+
+    v_updated := FOUND;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+--This SP clears the cluster upgrade running flag
+CREATE OR REPLACE FUNCTION ClearClusterUpgradeRunning (
+    v_cluster_id UUID,
+    OUT v_updated BOOLEAN
+    )
+AS $PROCEDURE$
+BEGIN
+    UPDATE cluster
+    SET upgrade_running = false
+    WHERE cluster_id = v_cluster_id;
+
+    v_updated := FOUND;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+--This SP clears the cluster upgrade running flag for all rows
+CREATE OR REPLACE FUNCTION ClearAllClusterUpgradeRunning ()
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE cluster
+    SET upgrade_running = false
+    WHERE upgrade_running = true;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetTrustedClusters ()
 RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
 BEGIN

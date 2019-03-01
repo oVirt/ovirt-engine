@@ -166,6 +166,25 @@ public interface ClusterDao extends GenericDao<Cluster, Guid>, SearchDao<Cluster
      */
     void setEmulatedMachine(Guid clusterId, String emulatedMachine, boolean detectEmulatedMachine);
 
+    /**
+     * Sets the cluster's upgrade running flag to true.
+     * @param clusterId The id of the cluster
+     * @return flag indicating if updated succeeded
+     */
+    boolean setUpgradeRunning(Guid clusterId);
+
+    /**
+     * Clears the cluster's upgrade running flag.
+     * @param clusterId The id of the cluster
+     * @return flag indicating if updated succeeded
+     */
+    boolean clearUpgradeRunning(Guid clusterId);
+
+    /**
+     * Clears the cluster's upgrade running flag of all clusters.
+     */
+    void clearAllUpgradeRunning();
+
    /**
     * Retries trusted cluster
     */

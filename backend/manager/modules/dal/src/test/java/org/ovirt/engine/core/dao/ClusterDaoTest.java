@@ -47,6 +47,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
     private Cluster existingCluster;
     private Cluster newGroup;
     private Cluster groupWithNoRunningVms;
+    private Cluster upgradeRunningCluster;
 
     @BeforeEach
     @Override
@@ -55,6 +56,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
 
         existingCluster = dao.get(FixturesTool.CLUSTER_RHEL6_ISCSI);
         groupWithNoRunningVms = dao.get(FixturesTool.CLUSTER_NO_RUNNING_VMS);
+        upgradeRunningCluster = dao.get(FixturesTool.CLUSTER_UPGRADE_RUNNING);
 
         newGroup = new Cluster();
         newGroup.setName("New VDS Group");
@@ -380,6 +382,61 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
         dao.setEmulatedMachine(existingCluster.getId(), updatedValue, false);
 
         assertEquals(updatedValue, dao.get(existingCluster.getId()).getEmulatedMachine());
+    }
+
+    /**
+     * Test that the clusters upgrade running is set to true
+     */
+    @Test
+    public void testSetUpgradeRunning() {
+        boolean preUpdate = existingCluster.isUpgradeRunning();
+        boolean updatedValue = true;
+
+        assertNotSame(updatedValue, preUpdate);
+
+        dao.setUpgradeRunning(existingCluster.getId());
+
+        assertEquals(updatedValue, dao.get(existingCluster.getId()).isUpgradeRunning());
+    }
+
+    @Test
+    public void testFailureSetUpgradeRunning() {
+        boolean preUpdate = upgradeRunningCluster.isUpgradeRunning();
+        boolean updatedValue = false;
+
+        assertNotSame(updatedValue, preUpdate);
+
+        boolean updated = dao.setUpgradeRunning(upgradeRunningCluster.getId());
+        assertEquals(updated, false);
+    }
+
+    /**
+     * Test that the clusters upgrade running is cleared
+     */
+    @Test
+    public void testClearUpgradeRunning() {
+        boolean updated = dao.clearUpgradeRunning(FixturesTool.CLUSTER_UPGRADE_RUNNING);
+
+        assertEquals(updated, true);
+    }
+
+    /**
+     * Test that the clusters upgrade running is cleared
+     */
+    @Test
+    public void testClearAllUpgradeRunning() {
+        boolean preUpdate = existingCluster.isUpgradeRunning();
+        boolean updatedValue = true;
+
+        assertNotSame(updatedValue, preUpdate);
+
+        dao.setUpgradeRunning(existingCluster.getId());
+
+        assertEquals(updatedValue, dao.get(existingCluster.getId()).isUpgradeRunning());
+
+        dao.clearAllUpgradeRunning();
+
+        assertEquals(preUpdate, dao.get(existingCluster.getId()).isUpgradeRunning());
     }
 
     /**

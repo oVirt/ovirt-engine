@@ -185,6 +185,32 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
     }
 
     @Override
+    public boolean setUpgradeRunning(Guid clusterId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId);
+
+        Map<String, Object> results =
+                getCallsHandler().executeModification("SetClusterUpgradeRunning", parameterSource);
+
+        return (Boolean) results.get("updated");
+    }
+
+    @Override
+    public boolean clearUpgradeRunning(Guid clusterId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId);
+
+        Map<String, Object> results =
+                getCallsHandler().executeModification("ClearClusterUpgradeRunning", parameterSource);
+        return (Boolean) results.get("updated");
+    }
+
+    @Override
+    public void clearAllUpgradeRunning() {
+        getCallsHandler().executeModification("ClearAllClusterUpgradeRunning", getCustomMapSqlParameterSource());
+    }
+
+    @Override
     public int getVmsCountByClusterId(Guid clusterId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("cluster_id", clusterId);
         return getCallsHandler().executeRead("GetNumberOfVmsInCluster",
@@ -211,6 +237,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                         cluster.getMaxVdsMemoryOverCommit())
                 .addValue("count_threads_as_cores",
                         cluster.getCountThreadsAsCores())
+                .addValue("upgrade_running",
+                        cluster.isUpgradeRunning())
                 .addValue("transparent_hugepages",
                         cluster.getTransparentHugepages())
                 .addValue("compatibility_version",
@@ -276,6 +304,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));
         entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
+        entity.setUpgradeRunning(rs.getBoolean("upgrade_running"));
         entity.setTransparentHugepages(rs.getBoolean("transparent_hugepages"));
         entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
         entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
