@@ -9,8 +9,8 @@ public enum StorageFormatType {
     V1("0"),
     V2("2"),
     V3("3"),
-    V5("5"),
-    V4("4");
+    V4("4"),
+    V5("5");
 
     /**
      * This is a part of vdsm capabilities negotiation
