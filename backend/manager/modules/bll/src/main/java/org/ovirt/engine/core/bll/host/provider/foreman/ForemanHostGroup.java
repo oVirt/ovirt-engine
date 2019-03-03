@@ -11,19 +11,19 @@ public class ForemanHostGroup implements Serializable {
     private String name;
     private int id;
     @JsonProperty("subnet_id")
-    private int subnetId;
+    private Integer subnetId;
     @JsonProperty("operatingsystem_id")
-    private int operatingSystemId;
+    private Integer operatingSystemId;
     @JsonProperty("domain_id")
-    private int domainId;
+    private Integer domainId;
     @JsonProperty("environment_id")
-    private int environmentId;
+    private Integer environmentId;
     @JsonProperty("ptable_id")
-    private int ptableId;
+    private Integer ptableId;
     @JsonProperty("medium_id")
-    private int mediumId;
+    private Integer mediumId;
     @JsonProperty("architecture_id")
-    private int architectureId;
+    private Integer architectureId;
     @JsonProperty("puppet_proxy_id")
     private Integer puppetProxyId;
     @JsonProperty("puppet_ca_proxy_id")
@@ -96,27 +96,27 @@ public class ForemanHostGroup implements Serializable {
         this.architectureName = architectureName;
     }
 
-    public int getPtableId() {
+    public Integer getPtableId() {
         return ptableId;
     }
 
-    public void setPtableId(int ptableId) {
+    public void setPtableId(Integer ptableId) {
         this.ptableId = ptableId;
     }
 
-    public int getMediumId() {
+    public Integer getMediumId() {
         return mediumId;
     }
 
-    public void setMediumId(int mediumId) {
+    public void setMediumId(Integer mediumId) {
         this.mediumId = mediumId;
     }
 
-    public int getArchitectureId() {
+    public Integer getArchitectureId() {
         return architectureId;
     }
 
-    public void setArchitectureId(int architectureId) {
+    public void setArchitectureId(Integer architectureId) {
         this.architectureId = architectureId;
     }
 
@@ -128,27 +128,27 @@ public class ForemanHostGroup implements Serializable {
         this.id = id;
     }
 
-    public int getSubnetId() {
+    public Integer getSubnetId() {
         return subnetId;
     }
 
-    public void setSubnetId(int subnetId) {
+    public void setSubnetId(Integer subnetId) {
         this.subnetId = subnetId;
     }
 
-    public int getOperatingSystemId() {
+    public Integer getOperatingSystemId() {
         return operatingSystemId;
     }
 
-    public void setOperatingSystemId(int operatingSystemId) {
+    public void setOperatingSystemId(Integer operatingSystemId) {
         this.operatingSystemId = operatingSystemId;
     }
 
-    public int getDomainId() {
+    public Integer getDomainId() {
         return domainId;
     }
 
-    public void setDomainId(int domainId) {
+    public void setDomainId(Integer domainId) {
         this.domainId = domainId;
     }
 
@@ -176,11 +176,11 @@ public class ForemanHostGroup implements Serializable {
         this.name = name;
     }
 
-    public int getEnvironmentId() {
+    public Integer getEnvironmentId() {
         return environmentId;
     }
 
-    public void setEnvironmentId(int environmentId) {
+    public void setEnvironmentId(Integer environmentId) {
         this.environmentId = environmentId;
     }
 

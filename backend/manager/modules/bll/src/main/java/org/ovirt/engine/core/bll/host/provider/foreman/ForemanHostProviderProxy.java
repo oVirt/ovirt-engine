@@ -183,7 +183,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String medName = hg.getMediumName();
                         if (medName != null) {
-                            int medId = hg.getMediumId();
+                            Integer medId = hg.getMediumId();
                             hostGroups.get(hostGroup.getId()).setMediumName(medName);
                             hostGroups.get(hostGroup.getId()).setMediumId(medId);
                             break;
@@ -195,7 +195,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String envName = hg.getEnvironmentName();
                         if (envName != null) {
-                            int envId = hg.getEnvironmentId();
+                            Integer envId = hg.getEnvironmentId();
                             hostGroups.get(hostGroup.getId()).setEnvironmentName(envName);
                             hostGroups.get(hostGroup.getId()).setEnvironmentId(envId);
                             break;
@@ -207,7 +207,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String ptableName = hg.getPtableName();
                         if (ptableName != null) {
-                            int ptableId = hg.getPtableId();
+                            Integer ptableId = hg.getPtableId();
                             hostGroups.get(hostGroup.getId()).setPtableName(ptableName);
                             hostGroups.get(hostGroup.getId()).setPtableId(ptableId);
                             break;
@@ -219,7 +219,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String archName = hg.getArchitectureName();
                         if (archName != null) {
-                            int archId = hg.getArchitectureId();
+                            Integer archId = hg.getArchitectureId();
                             hostGroups.get(hostGroup.getId()).setArchitectureName(archName);
                             hostGroups.get(hostGroup.getId()).setArchitectureId(archId);
                             break;
@@ -231,7 +231,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String osName = hg.getOperatingsystemName();
                         if (osName != null) {
-                            int osId = hg.getOperatingsystemId();
+                            Integer osId = hg.getOperatingsystemId();
                             hostGroups.get(hostGroup.getId()).setOperatingsystemName(osName);
                             hostGroups.get(hostGroup.getId()).setOperatingsystemId(osId);
                             break;
@@ -243,7 +243,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String domainName = hg.getDomainName();
                         if (domainName != null) {
-                            int domainId = hg.getDomainId();
+                            Integer domainId = hg.getDomainId();
                             hostGroups.get(hostGroup.getId()).setDomainName(domainName);
                             hostGroups.get(hostGroup.getId()).setDomainId(domainId);
                             break;
@@ -255,7 +255,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                         ExternalHostGroup hg = hostGroups.get(Integer.parseInt(ancestries[i]));
                         String subnetName = hg.getSubnetName();
                         if (subnetName != null) {
-                            int subnetId = hg.getSubnetId();
+                            Integer subnetId = hg.getSubnetId();
                             hostGroups.get(hostGroup.getId()).setSubnetName(subnetName);
                             hostGroups.get(hostGroup.getId()).setSubnetId(subnetId);
                             break;
@@ -352,17 +352,17 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "    \"discovered_host\": {\n" +
                 "        \"name\": \"" + host.getName() + "\",\n" +
                 "        \"hostgroup_id\": \"" + hg.getHostgroupId() + "\",\n" +
-                "        \"environment_id\": \"" + hg.getEnvironmentId() + "\",\n" +
+                replaceIfExists(hg.getEnvironmentId(), "        \"environment_id\": \"%d\",\n") +
                 "        \"mac\": \"" + mac + "\",\n" +
-                "        \"domain_id\": \"" + hg.getDomainId() + "\",\n" +
-                "        \"subnet_id\": \"" + hg.getSubnetId() + "\",\n" +
+                replaceIfExists(hg.getDomainId(), "        \"domain_id\": \"%d\",\n") +
+                replaceIfExists(hg.getSubnetId(), "        \"subnet_id\": \"%d\",\n") +
                 "        \"ip\": \"" + ip + "\",\n" +
-                "        \"architecture_id\": \"" + hg.getArchitectureId() + "\",\n" +
-                "        \"operatingsystem_id\": \"" + hg.getOperatingsystemId() + "\",\n" +
-                "        \"medium_id\": \"" + hg.getMediumId() + "\",\n" +
-                "        \"ptable_id\": \"" + hg.getPtableId() + "\",\n" +
-                replaceIfExists(hg.getPuppetProxyId(), "        \"puppet_proxy_id\": \"%s \",\n") +
-                replaceIfExists(hg.getPuppetCaProxyId(), "        \"puppet_ca_proxy_id\": \"%s \",\n") +
+                replaceIfExists(hg.getArchitectureId(), "        \"architecture_id\": \"%d\",\n") +
+                replaceIfExists(hg.getOperatingsystemId(), "        \"operatingsystem_id\": \"%d\",\n") +
+                replaceIfExists(hg.getMediumId(), "        \"medium_id\": \"%d\",\n") +
+                replaceIfExists(hg.getPtableId(), "        \"ptable_id\": \"%d\",\n") +
+                replaceIfExists(hg.getPuppetProxyId(), "        \"puppet_proxy_id\": \"%s\",\n") +
+                replaceIfExists(hg.getPuppetCaProxyId(), "        \"puppet_ca_proxy_id\": \"%s\",\n") +
                 "        \"root_pass\": \"" + rootPassword + "\",\n" +
                 "        \"build\": \"" + Boolean.TRUE + "\",\n" +
                 "        \"host_parameters_attributes\": [\n" +

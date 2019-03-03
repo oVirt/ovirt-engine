@@ -8,15 +8,15 @@ public class ExternalHostGroup implements ExternalEntityBase {
     private String name;
 
     private String title;
-    private int subnetId;
-    private int domainId;
-    private int environmentId;
+    private Integer subnetId;
+    private Integer domainId;
+    private Integer environmentId;
     private String environmentName;
-    private int hostgroupId;
-    private int operatingsystemId;
-    private int ptableId;
-    private int mediumId;
-    private int architectureId;
+    private Integer hostgroupId;
+    private Integer operatingsystemId;
+    private Integer ptableId;
+    private Integer mediumId;
+    private Integer architectureId;
     private Integer puppetProxyId;
     private Integer puppetCaProxyId;
     private Map<String, String> parameters;
@@ -76,43 +76,43 @@ public class ExternalHostGroup implements ExternalEntityBase {
         this.subnetName = subnetName;
     }
 
-    public int getHostgroupId() {
+    public Integer getHostgroupId() {
         return hostgroupId;
     }
 
-    public void setHostgroupId(int id) {
+    public void setHostgroupId(Integer id) {
         this.hostgroupId = id;
     }
 
-    public int getOperatingsystemId() {
+    public Integer getOperatingsystemId() {
         return operatingsystemId;
     }
 
-    public void setOperatingsystemId(int os_id) {
-        this.operatingsystemId = os_id;
+    public void setOperatingsystemId(Integer osId) {
+        this.operatingsystemId = osId;
     }
 
-    public int getSubnetId() {
+    public Integer getSubnetId() {
         return subnetId;
     }
 
-    public void setSubnetId(int subnetId) {
+    public void setSubnetId(Integer subnetId) {
         this.subnetId = subnetId;
     }
 
-    public int getDomainId() {
+    public Integer getDomainId() {
         return domainId;
     }
 
-    public void setDomainId(int domainId) {
+    public void setDomainId(Integer domainId) {
         this.domainId = domainId;
     }
 
-    public int getEnvironmentId() {
+    public Integer getEnvironmentId() {
         return environmentId;
     }
 
-    public void setEnvironmentId(int environmentId) {
+    public void setEnvironmentId(Integer environmentId) {
         this.environmentId = environmentId;
     }
 
@@ -124,27 +124,27 @@ public class ExternalHostGroup implements ExternalEntityBase {
         this.parameters = parameters;
     }
 
-    public int getPtableId() {
+    public Integer getPtableId() {
         return ptableId;
     }
 
-    public void setPtableId(int ptableId) {
+    public void setPtableId(Integer ptableId) {
         this.ptableId = ptableId;
     }
 
-    public int getMediumId() {
+    public Integer getMediumId() {
         return mediumId;
     }
 
-    public void setMediumId(int mediumId) {
+    public void setMediumId(Integer mediumId) {
         this.mediumId = mediumId;
     }
 
-    public int getArchitectureId() {
+    public Integer getArchitectureId() {
         return architectureId;
     }
 
-    public void setArchitectureId(int architectureId) {
+    public void setArchitectureId(Integer architectureId) {
         this.architectureId = architectureId;
     }
 
