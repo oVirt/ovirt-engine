@@ -343,6 +343,7 @@ public final class AsyncTaskManager implements BackendService {
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
                 .addMinutes(-1 * Config.<Integer>getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
+        int asyncZombieTaskLife = Config.<Integer> getValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes);
         for (SPMTask task : tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
@@ -358,17 +359,21 @@ public final class AsyncTaskManager implements BackendService {
                     task.setZombieTask(true);
                     auditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
-                    log.info("Cleaning zombie tasks: Stopping async task '{}' that started at '{}'",
-                            task.getParameters().getDbAsyncTask().getActionType(), task
-                                    .getParameters().getDbAsyncTask().getStartTime());
+                    log.info(
+                            "Cleaning zombie tasks: Stopping async task '{}' that started at '{}' since it reached a timeout of {} minutes",
+                            task.getParameters().getDbAsyncTask().getActionType(),
+                            task.getParameters().getDbAsyncTask().getStartTime(),
+                            asyncZombieTaskLife);
 
                     task.stopTask(true);
                 } else {
                     auditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
-                    log.info("Cleaning zombie tasks: Clearing async task '{}' that started at '{}'",
-                            task.getParameters().getDbAsyncTask().getActionType(), task
-                                    .getParameters().getDbAsyncTask().getStartTime());
+                    log.info(
+                            "Cleaning zombie tasks: Clearing async task '{}' that started at '{}' since it reached a timeout of {} minutes",
+                            task.getParameters().getDbAsyncTask().getActionType(),
+                            task.getParameters().getDbAsyncTask().getStartTime(),
+                            asyncZombieTaskLife);
 
                     task.clearAsyncTask(true);
                 }
