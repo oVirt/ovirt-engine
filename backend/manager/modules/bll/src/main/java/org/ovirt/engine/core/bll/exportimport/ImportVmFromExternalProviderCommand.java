@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
@@ -106,7 +107,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         setVdsId(getParameters().getProxyHostId());
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
-        replaceImageActualSizeWithVirtualSizeIfNeeded();
+        adjustKVMDataForBlockSD();
         vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
 
@@ -333,17 +334,25 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         return diskParameters;
     }
 
-    private void replaceImageActualSizeWithVirtualSizeIfNeeded() {
+    private void adjustKVMDataForBlockSD() {
         // This is a workaround until bz 1332019 will be merged
         // since KVM is currently the only source for which we use Libvirt streaming API.
         // Libvirt currently reports the actual disk size and the virtual one,
         // when using preallocated qcow2 on block domain the size that the Libvirt stream emits
         // can be larger then the actual size.
+        // Separately, setting the Volume Type to Preallocated avoids Sparseness when the
+        // Destination is a Block SD
         if (getVm().getOrigin() == OriginType.KVM
                 && getActionState() == CommandActionState.EXECUTE
                 && getStorageDomain() != null
                 && getStorageDomain().getStorageType().isBlockDomain()) {
-            getVm().getImages().forEach(image -> image.setActualSizeInBytes(image.getSize()));
+            getVm().getImages().forEach(image -> {
+                image.setActualSizeInBytes(image.getSize());
+                image.setVolumeType(VolumeType.Preallocated);
+            });
+
+            log.info("Block Storage Domains do not support Sparseness. The Importing of VM: '{}'({}) is defaulting to Preallocated.",
+                    getVm().getName(), getVm().getId());
         }
     }
 
