@@ -31,6 +31,7 @@ public enum VmDeviceType {
     VIRTIOSERIAL("virtio-serial"),
     HOST_DEVICE("hostdev"),
     MEMORY("memory"),
+    PCI("pci"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

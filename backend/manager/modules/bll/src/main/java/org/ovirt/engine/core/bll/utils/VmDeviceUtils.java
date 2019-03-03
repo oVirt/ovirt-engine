@@ -1448,6 +1448,8 @@ public class VmDeviceUtils {
                 case CONTROLLER:
                     if (VmDeviceType.USB.getName().equals(device.getDevice())) {
                         specParams = device.getSpecParams();
+                    } else if (VmDeviceType.PCI.getName().equals(device.getDevice())) {
+                        specParams = device.getSpecParams();
                     } else if (VmDeviceType.VIRTIOSCSI.getName().equals(device.getDevice())) {
                         hasVirtioScsi = true;
                         if (Boolean.FALSE.equals(isVirtioScsiEnabled)) {
