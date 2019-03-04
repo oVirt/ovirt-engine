@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 
 public class BackendDataCenterClusterResource extends BackendClusterResource<BackendDataCenterClustersResource> {
@@ -16,7 +17,7 @@ public class BackendDataCenterClusterResource extends BackendClusterResource<Bac
         if (entity == null) {
             return notFound();
         }
-        return addLinks(map(entity));
+        return addLinks(map(entity), LinkHelper.NO_PARENT);
     }
 
     private Cluster getCluster() {
