@@ -405,7 +405,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
             StorageDomain storageDomain = storageDomainDao.get(newDiskImage.getStorageIds().get(0));
             if (storageDomain.getStorageType().isBlockDomain()) {
-                Integer maxBlockDiskSize = Config.<Integer> getValue(ConfigValues.MaxBlockDiskSize);
+                Integer maxBlockDiskSize = Config.<Integer> getValue(ConfigValues.MaxBlockDiskSizeInGibiBytes);
                 if (newDiskImage.getSize() / BYTES_IN_GB > maxBlockDiskSize) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED,
                             String.format("$max_disk_size %1$s", maxBlockDiskSize));

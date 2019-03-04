@@ -156,7 +156,7 @@ public class EditDiskModel extends AbstractDiskModel {
         IntegerValidation sizeValidation = new IntegerValidation();
         if (storageType.isBlockDomain()) {
             Integer maxBlockDiskSize =
-                    (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBlockDiskSize);
+                    (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBlockDiskSizeInGibiBytes);
             sizeValidation.setMaximum(maxBlockDiskSize - getSize().getEntity());
         }
         getSizeExtend().validateEntity(new IValidation[] {

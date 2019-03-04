@@ -87,7 +87,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8192)
+                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSizeInGibiBytes, 8192)
         );
     }
 
@@ -265,13 +265,13 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     /**
-     * Validate should succeed when the requested disk space is less or equal than 'MaxBlockDiskSize'
+     * Validate should succeed when the requested disk space is less or equal than 'MaxBlockDiskSizeInGibiBytes'
      */
     @Test
     public void validateMaxBlockDiskSizeCheckSucceeds() {
         Guid storageId = Guid.newGuid();
         DiskImage disk = new DiskImage();
-        disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize));
+        disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSizeInGibiBytes));
         command.getParameters().setDiskInfo(disk);
 
         mockStorageDomain(storageId, StorageType.ISCSI);
@@ -284,13 +284,13 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     /**
-     * Validate should fail when the requested disk space is larger than 'MaxBlockDiskSize'
+     * Validate should fail when the requested disk space is larger than 'MaxBlockDiskSizeInGibiBytes'
      */
     @Test
     public void validateMaxBlockDiskSizeCheckFails() {
         Guid storageId = Guid.newGuid();
         DiskImage disk = new DiskImage();
-        disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSize) * 2L);
+        disk.setSizeInGigabytes(Config.<Integer>getValue(ConfigValues.MaxBlockDiskSizeInGibiBytes) * 2L);
         command.getParameters().setDiskInfo(disk);
 
         mockStorageDomain(storageId, StorageType.ISCSI);

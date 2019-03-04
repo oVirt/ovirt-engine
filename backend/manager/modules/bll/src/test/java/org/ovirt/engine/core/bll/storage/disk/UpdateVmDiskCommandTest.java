@@ -134,7 +134,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8)
+                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSizeInGibiBytes, 8)
         );
     }
 

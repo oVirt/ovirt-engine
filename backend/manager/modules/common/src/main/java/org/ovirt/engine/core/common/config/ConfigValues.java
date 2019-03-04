@@ -281,7 +281,7 @@ public enum ConfigValues {
     VdsRecoveryTimeoutInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
-    MaxBlockDiskSize(ClientAccessLevel.User),
+    MaxBlockDiskSizeInGibiBytes(ClientAccessLevel.User),
     // the order is- {level}:{name}:{flags}:{vdsm};
     // {level}:{name}:{flags}:{vdsm};1:cpu_name:cpu_flags,..,:vdsm_exec,+..,-..;..
     @TypeConverterAttribute(String.class)
