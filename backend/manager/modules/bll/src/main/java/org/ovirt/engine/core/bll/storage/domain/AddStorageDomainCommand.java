@@ -245,7 +245,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     private void initStorageDomainDiscardAfterDeleteIfNeeded() {
         if (getStorageDomain().getDiscardAfterDelete() == null) {
-            getStorageDomain().setDiscardAfterDelete(getStorageDomain().getStorageType().isBlockDomain());
+            getStorageDomain().setDiscardAfterDelete(false);
         }
     }
 

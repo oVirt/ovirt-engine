@@ -601,12 +601,8 @@ public class StorageModel extends Model {
             }
 
             getDiscardAfterDelete().setIsAvailable(true);
-            if (getDiscardAfterDelete().getIsAvailable()) {
-                if (isNewStorage()) {
-                    getDiscardAfterDelete().setEntity(true);
-                } else {
-                    getDiscardAfterDelete().setEntity(getStorage().getDiscardAfterDelete());
-                }
+            if (getDiscardAfterDelete().getIsAvailable() && !isNewStorage()) {
+                getDiscardAfterDelete().setEntity(getStorage().getDiscardAfterDelete());
             } else {
                 getDiscardAfterDelete().setEntity(false);
             }
