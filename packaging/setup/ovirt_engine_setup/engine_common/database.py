@@ -32,6 +32,7 @@ from otopi import util
 
 from ovirt_engine import util as outil
 
+from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
@@ -1554,7 +1555,10 @@ class OvirtUtils(base.Base):
         # FIXME localhost is inappropriate in case of docker e.g
         # we need a deterministic notion of local/remote pg_host in sense of
         # 'we own postgres' or not.
-        return _ind_env(self, DEK.HOST) == 'localhost'
+        return (
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] or
+            _ind_env(self, DEK.HOST) == 'localhost'
+        )
 
     def _HumanReadableSize(self, bytes):
         size_in_mb = bytes / pow(2, 20)
