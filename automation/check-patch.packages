@@ -9,7 +9,6 @@ otopi
 postgresql-contrib
 postgresql-jdbc
 postgresql-server
-pyflakes
 python2-mock
 python2-psycopg2
 python2-pytest
@@ -17,3 +16,5 @@ python-devel
 python-isort
 python-pep8
 python-futures
+python2-pyflakes
+python3-pyflakes
