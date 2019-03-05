@@ -53,6 +53,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String IncorrectFormat();
 
+    String NoSuchVmLeaseOnDomain();
+
     String InvalidParameterException();
 
     String InvalidTask();

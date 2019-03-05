@@ -58,16 +58,18 @@ public class GetVmLeaseInfoCommand<T extends VmLeaseParameters> extends CommandB
                 getParameters().getVmId());
 
         if (getParameters().isFailureExpected()) {
-            vmLeaseVDSParameters.setExpectedEngineErrors(Collections.singleton(EngineError.GeneralException));
+            vmLeaseVDSParameters.setExpectedEngineErrors(Collections.singleton(EngineError.NoSuchVmLeaseOnDomain));
         }
 
         try {
             retVal = runVdsCommand(VDSCommandType.GetVmLeaseInfo, vmLeaseVDSParameters);
         } catch (EngineException e) {
-            log.error("Failure in getting lease info for VM '{}' from storage domains '{}', message: {}",
-                    getParameters().getVmId(),
-                    getParameters().getStorageDomainId(),
-                    e.getMessage());
+            if (!getParameters().isFailureExpected()) {
+                log.error("Failure in getting lease info for VM '{}' from storage domains '{}', message: {}",
+                        getParameters().getVmId(),
+                        getParameters().getStorageDomainId(),
+                        e.getMessage());
+            }
             return;
         }
 

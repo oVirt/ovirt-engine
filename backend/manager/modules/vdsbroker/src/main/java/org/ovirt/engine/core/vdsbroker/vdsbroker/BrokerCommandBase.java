@@ -176,6 +176,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case UnsupportedGlusterVolumeReplicaCountError:
         case MissingOvfFileFromVM:
         case ReplicationNotInProgress:
+        case NoSuchVmLeaseOnDomain:
             if (this instanceof IrsBrokerCommand || this instanceof StorageJobVDSCommand) {
                 outEx = new IrsOperationFailedNoFailoverException(getReturnStatus().message);
             } else {

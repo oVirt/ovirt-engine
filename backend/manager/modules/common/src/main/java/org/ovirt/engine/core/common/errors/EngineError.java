@@ -355,6 +355,7 @@ public enum EngineError {
     FailedToStopMasterVolumeDuringVolumeSnapshotRestore(857),
     FailedToRestoreMasterVolumeDuringVolumeSnapshotRestore(858),
     StorageDomainIsMemberOfPool(900),
+    NoSuchVmLeaseOnDomain(936),
     InvalidParameterException(1000),
     InvalidDefaultExceptionException(1001),
     FailedToCreateLease(1002),
