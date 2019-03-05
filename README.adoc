@@ -74,6 +74,17 @@ If soft limit was not set, before building, apply new limit using:
 
   $ ulimit -n 10240
 
+Development environment by default uses ports 8080 (HTTP), 8443 (HTTPS) and 8787 (java debug), so make sure they are
+accessible from the outside. For example, on fedora:
+
+    firewall-cmd --add-port=8080/tcp --permanent
+    firewall-cmd --add-port=8443/tcp --permanent
+    firewall-cmd --add-port=8787/tcp --permanent
+    firewall-cmd --reload
+
+If compiling in a virtual machine, javac might experience difficulties on guests with dynamically growing RAM so it's
+better to have VM's starting allocation and maximum allocation set to the same value.
+
 === PostgreSQL accessibility
 
 Configure PostgreSQL to accept user and password:
@@ -86,7 +97,7 @@ Locate `pg_hba.conf` within your distribution, common locations are:
 - `/var/opt/rh/rh-postgresql10/lib/pgsql/data/pg_hba.conf` (el7 with rh-postgresql10)
 
 Within `pg_hba.conf` set method to `password` for `127.0.0.1/32` and
-`::1/128`.
+`::1/128` for IPv4 and IPv6 local connections correspondingly.
 
 Tune PostgreSQL configuration:
 Locate `postgresql.conf` within your distribution, common locations are:
@@ -103,7 +114,8 @@ Within `postgresql.conf` set:
   max_connections = 150
   work_mem = 8192
 
-Restart the PostgreSQL service (`systemctl restart rh-postgresql10-postgresql` for the SCL one).
+Enable and start (`systemctl enable rh-postgresql10-postgresql --now`) or restart the PostgreSQL service
+(`systemctl restart rh-postgresql10-postgresql` for the SCL one).
 
 === Database creation
 
@@ -116,6 +128,10 @@ work to create a user named `engine` that owns database named `engine`:
   template1=# drop database engine;
   template1=# create database engine owner engine template template0
   encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
+
+Enable uuid-ossp extension for the database:
+
+ su - postgres -c "psql -d engine -c \"CREATE EXTENSION \\\"uuid-ossp\\\";\""
 
 == Development
 
@@ -145,6 +161,8 @@ intend to install the environment.
 
 NOTE: Add DEV_BUILD_SCL_POSTGRESQL=1 in order to configure your local build
 for SCL rh-postgresql10.
+
+NOTE: Add SKIP_CHECKS=1 to disable tests.
 
 ==== Build targets
 
@@ -257,6 +275,9 @@ To setup the product use the following command:
 
   $ "${PREFIX}/bin/engine-setup"
 
+During engine setup, a certificate has to be issued and you will be asked for a hostname. If you want to use
+imageio-proxy along with the engine, it has to be the name by which your machine is accessible from the outside.
+
 == JBoss
 
 If you want to use different WildFly/EAP installation, specify it at
@@ -301,7 +322,12 @@ Access using HTTP or HTTPS:
 - http://<server>:8080
 - https://<server>:8443
 
-Debug port is available at `127.0.0.1:8787`.
+== Remote debug
+
+By default, debug address is `127.0.0.1:8787`. If you want to make engine accessible to the remote debugger, after
+running engine-setup edit the following file: ${PREFIX}/etc/ovirt-engine/engine.conf.d/10-setup-protocols.conf:
+
+ ENGINE_DEBUG_ADDRESS=0.0.0.0:8787
 
 == Running instance management (JMX)
 
