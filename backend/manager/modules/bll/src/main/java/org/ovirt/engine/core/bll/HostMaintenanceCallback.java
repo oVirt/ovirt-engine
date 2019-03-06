@@ -6,10 +6,13 @@ import java.util.List;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -56,6 +59,10 @@ public class HostMaintenanceCallback implements CommandCallback {
 
     @Inject
     private GlusterUtil glusterUtil;
+
+    @Inject
+    private BackendInternal backend;
+
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
         MaintenanceVdsCommand<MaintenanceVdsParameters> maintenanceCommand =
@@ -148,6 +155,10 @@ public class HostMaintenanceCallback implements CommandCallback {
         }
         if (!succeeded) {
             log.error("Failed to stop gluster services while moving the host '{}' to maintenance", getHostName(vdsId));
+            // activate the VDS, this will also restart the gluster services that failed to stop
+            backend.runInternalAction(ActionType.ActivateVds, new VdsActionParameters(vdsId));
+            throw new RuntimeException(String.format("Failed to stop gluster services while moving the host '%s' to maintenance",
+                    getHostName(vdsId)));
         }
     }
     private void stopVDOService(Guid vdsId) {
@@ -155,6 +166,10 @@ public class HostMaintenanceCallback implements CommandCallback {
                 new GlusterServiceVDSParameters(vdsId, Arrays.asList("vdo"), "stop")).getSucceeded();
         if (!succeeded) {
             log.error("Failed to stop VDO service while moving the host '{}' to maintenance", getHostName(vdsId));
+            // activate the VDS, this will also restart the VDO services that failed to stop
+            backend.runInternalAction(ActionType.ActivateVds, new VdsActionParameters(vdsId));
+            throw new RuntimeException(String.format("Failed to stop VDO services while moving the host '%s' to maintenance",
+                    getHostName(vdsId)));
         }
     }
     private String getHostName(Guid hostId) {

@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.bll.gluster.GlusterHostValidator;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -93,6 +96,9 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private StepDao stepDao;
     @Inject
     private ImageTransferDao imageTransferDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -160,6 +166,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                     getParameters().isStopGlusterService());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCorrelationId(getParameters().getCorrelationId());
+            tempVar.setParentCommand(getParameters().getCommandType());
+            tempVar.setParentParameters(getParentParameters());
             ActionReturnValue result =
                     runInternalAction(ActionType.MaintenanceVds,
                             tempVar,
@@ -632,5 +640,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.unmodifiableList(inspectedEntitiesMap);
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }

@@ -100,22 +100,40 @@ public class HostUpgradeCallback implements CommandCallback {
 
         // Invoke the upgrade action
         case Maintenance:
-            log.info("Host '{}' is on maintenance mode. Proceeding with Upgrade process.",
-                    getHostName(parameters.getVdsId()));
-            invokeHostUpgrade(rootCommand, parameters);
+            switch (getMaintenanceCmdStatus(childCmdIds)) {
+            case FAILED:
+            case ENDED_WITH_FAILURE:
+                log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
+                        "maintenance completed with failure, please see logs for details.",
+                        getHostName(parameters.getVdsId()));
+                handleActionFailed(rootCommand, parameters);
+                break;
+            case SUCCEEDED:
+            case ENDED_SUCCESSFULLY:
+                log.info("Host '{}' is on maintenance mode. Proceeding with Upgrade process.",
+                        getHostName(parameters.getVdsId()));
+                invokeHostUpgrade(rootCommand, parameters);
+                break;
+            default:
+                break;
+            }
             break;
 
         // Any other status implies maintenance action failed, and the callback cannot proceed with the upgrade
         default:
             if (isMaintenanceCommandExecuted(childCmdIds) || hasMaintenanceCmdFailed(childCmdIds)) {
-                log.error("Host '{}' failed to move to maintenance mode. Upgrade process is terminated.",
-                        getHostName(parameters.getVdsId()));
-                auditLogDirector.log(rootCommand, AuditLogType.VDS_MAINTENANCE_FAILED);
-                rootCommand.setCommandStatus(CommandStatus.FAILED);
+                handleActionFailed(rootCommand, parameters);
             }
 
             break;
         }
+    }
+
+    private void handleActionFailed(CommandBase<?> rootCommand, UpgradeHostParameters parameters) {
+        log.error("Host '{}' failed to move to maintenance mode. Upgrade process is terminated.",
+                getHostName(parameters.getVdsId()));
+        auditLogDirector.log(rootCommand, AuditLogType.VDS_MAINTENANCE_FAILED);
+        rootCommand.setCommandStatus(CommandStatus.FAILED);
     }
 
     /**
@@ -187,6 +205,12 @@ public class HostUpgradeCallback implements CommandCallback {
         Guid maintenanceCommandId = getMaintenanceCmdId(childCmdIds);
         CommandEntity maintenanceCmd = commandCoordinatorUtil.getCommandEntity(maintenanceCommandId);
         return maintenanceCmd != null && maintenanceCmd.getCommandStatus() == CommandStatus.FAILED;
+    }
+
+    private CommandStatus getMaintenanceCmdStatus(List<Guid> childCmdIds) {
+        Guid maintenanceCommandId = getMaintenanceCmdId(childCmdIds);
+        CommandEntity maintenanceCmd = commandCoordinatorUtil.getCommandEntity(maintenanceCommandId);
+        return maintenanceCmd == null ? CommandStatus.UNKNOWN : maintenanceCmd.getCommandStatus();
     }
 
     private String getHostName(Guid hostId) {
