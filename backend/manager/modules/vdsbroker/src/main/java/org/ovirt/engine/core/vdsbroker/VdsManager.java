@@ -320,6 +320,7 @@ public class VdsManager {
 
         try {
             Guid storagePoolId = null;
+            ArrayList<VDSDomainsData> domainsList = null;
             synchronized (this) {
                 unrespondedAttempts.set(0);
                 setLastUpdate();
@@ -333,7 +334,7 @@ public class VdsManager {
                     // the storage anymore (so there is no sense in updating the domains list in that case).
                     if (cachedVds != null && cachedVds.getStatus() != VDSStatus.Maintenance) {
                         storagePoolId = cachedVds.getStoragePoolId();
-                        setDomains(cachedVds.getDomains());
+                        domainsList = cachedVds.getDomains();
                     }
 
                     hostMonitoring = null;
@@ -349,8 +350,9 @@ public class VdsManager {
             }
             // Now update the status of domains, this code should not be in
             // synchronized part of code
-            if (getDomains() != null) {
-                updateVdsDomainsData(cachedVds, storagePoolId, getDomains());
+            if (domainsList != null) {
+                updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
+                setDomains(domainsList);
             }
         } catch (Exception e) {
             log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
