@@ -2325,6 +2325,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void dataCenterWithClusterSelectedItemChanged(Object sender, EventArgs args) {
+        String selectedTimeZone = "";
+        Integer selectedOsId = null;
+
+        if (getTimeZone().getSelectedItem() != null) {
+            selectedTimeZone = getBehavior().getSelectedTimeZone();
+        }
+
+        if (getOSType().getSelectedItem() != null) {
+            selectedOsId = getBehavior().getSelectedOSType();
+        }
+
         behavior.dataCenterWithClusterSelectedItemChanged();
         refreshMigrationPolicies();
         updateMigrationRelatedFields();
@@ -2347,6 +2358,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateSoundCard();
         updateResumeBehavior();
         updateBiosType();
+
+        getBehavior().updateOSValue(selectedOsId);
+
+        if (!selectedTimeZone.isEmpty()) {
+            getBehavior().updateTimeZone(selectedTimeZone);
+        }
     }
 
     private void updateBootMenu() {

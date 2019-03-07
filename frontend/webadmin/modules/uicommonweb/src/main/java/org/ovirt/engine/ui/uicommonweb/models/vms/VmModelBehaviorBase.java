@@ -420,6 +420,31 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
+    protected String getSelectedTimeZone() {
+        return getModel().getTimeZone().getSelectedItem().getTimeZoneKey().toString();
+    }
+
+    protected int getSelectedOSType() {
+        return getModel().getOSType().getSelectedItem();
+    }
+
+    protected void updateOSValue(final Integer selectedOsId) {
+        Cluster cluster = getModel().getSelectedCluster();
+
+        if (cluster == null) {
+            return;
+        }
+
+        List<Integer> vmOsValues = AsyncDataProvider.getInstance().getOsIds(cluster.getArchitecture());
+
+        if (selectedOsId == null || !vmOsValues.contains(selectedOsId)) {
+            updateOSValues();
+            return;
+        }
+
+        getModel().getOSType().setSelectedItem(selectedOsId);
+    }
+
     protected void updateTimeZone(final String selectedTimeZone) {
         if (StringHelper.isNullOrEmpty(selectedTimeZone)) {
             updateDefaultTimeZone();
