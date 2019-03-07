@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.common.CellTablePopupTableResources;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -33,14 +34,18 @@ import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -141,37 +146,103 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         Row content = new Row();
         Column column = new Column(ColumnSize.MD_12);
         content.add(column);
+        Container container = createItemContainerPanel(content);
 
-        for (DiskImage image: diskImages) {
-            DListElement dl = Document.get().createDLElement();
-            dl.addClassName(DL_HORIZONTAL);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.statusDisk()),
-                    SafeHtmlUtils.fromString(getImageStatus(image.getImageStatus())), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.aliasDisk()),
-                    SafeHtmlUtils.fromString(image.getDiskAlias()), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.provisionedSizeDisk()),
-                    SafeHtmlUtils.fromString(String.valueOf(sizeRenderer.render(image.getSize()))), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.sizeDisk()),
-                    SafeHtmlUtils.fromString(String.valueOf(sizeRenderer.render(image.getActualSizeInBytes()))), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.allocationDisk()),
-                    SafeHtmlUtils.fromString(String.valueOf(VolumeType.forValue(image.getVolumeType().getValue()))), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.interfaceDisk()),
-                    SafeHtmlUtils.fromString(getInterface(image)), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.creationDateDisk()),
-                    SafeHtmlUtils.fromString(dateRenderer.render(image.getCreationDate())), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.diskSnapshotIDDisk()),
-                    SafeHtmlUtils.fromString(String.valueOf(image.getImageId())), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeDisk()),
-                    SafeHtmlUtils.fromString(String.valueOf(image.getDiskStorageType())), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.descriptionDisk()),
-                    SafeHtmlUtils.fromString(StringHelper.isNotNullOrEmpty(image.getDiskDescription()) ? image.getDiskDescription()
-                            : constants.notAvailableLabel()), dl);
-            column.getElement().appendChild(dl);
-        }
-        if (diskImages.isEmpty()) {
+        CellTable<DiskImage> disksTable = new CellTable<>(1000,
+                (CellTable.Resources)GWT.create(CellTablePopupTableResources.class));
+
+        disksTable.setWidth("98%"); // $NON-NLS-1$
+
+        AbstractTextColumn<DiskImage> statusDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return getImageStatus(object.getImageStatus());
+            }
+        };
+        disksTable.addColumn(statusDisk, constants.statusDisk());
+
+        AbstractTextColumn<DiskImage> aliasDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return object.getDiskAlias();
+            }
+        };
+        disksTable.addColumn(aliasDisk, constants.aliasDisk());
+
+        AbstractTextColumn<DiskImage> provisionedSizeDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return String.valueOf(sizeRenderer.render(object.getSize()));
+            }
+        };
+        disksTable.addColumn(provisionedSizeDisk, constants.provisionedSizeDisk());
+
+        AbstractTextColumn<DiskImage> sizeDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return String.valueOf(sizeRenderer.render(object.getActualSizeInBytes()));
+            }
+        };
+        disksTable.addColumn(sizeDisk, constants.sizeDisk());
+
+        AbstractTextColumn<DiskImage> allocationDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return String.valueOf(VolumeType.forValue(object.getVolumeType().getValue()));
+            }
+        };
+        disksTable.addColumn(allocationDisk, constants.allocationDisk());
+
+        AbstractTextColumn<DiskImage> interfaceDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return getInterface(object);
+            }
+        };
+        disksTable.addColumn(interfaceDisk, constants.interfaceDisk());
+
+        AbstractTextColumn<DiskImage> creationDateDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return dateRenderer.render(object.getCreationDate());
+            }
+        };
+        disksTable.addColumn(creationDateDisk, constants.creationDateDisk());
+
+        AbstractTextColumn<DiskImage> diskSnapshotIDDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return String.valueOf(object.getImageId());
+            }
+        };
+        disksTable.addColumn(diskSnapshotIDDisk, constants.diskSnapshotIDDisk());
+
+        AbstractTextColumn<DiskImage> typeDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return String.valueOf(object.getDiskStorageType());
+            }
+        };
+        disksTable.addColumn(typeDisk, constants.typeDisk());
+
+        AbstractTextColumn<DiskImage> descriptionDisk = new AbstractTextColumn<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return StringHelper.isNotNullOrEmpty(object.getDiskDescription()) ? object.getDiskDescription()
+                        : constants.notAvailableLabel();
+            }
+        };
+        disksTable.addColumn(descriptionDisk, constants.descriptionDisk());
+
+        if (!diskImages.isEmpty()) {
+            column.add(disksTable);
+        } else {
             column.getElement().setInnerHTML(constants.noItemsToDisplay());
         }
-        return createItemContainerPanel(content);
+
+        disksTable.setRowData(diskImages);
+        disksTable.getElement().getStyle().setMarginBottom(15, Style.Unit.PX);
+        return container;
     }
 
     private String getInterface(DiskImage image) {
