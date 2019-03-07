@@ -29,7 +29,6 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
 
     private Guid vmId;
     private Guid vnicProfileId;
-    private Guid vmTemplateId;
 
     /**
      * Link State of the Nic. <BR>
@@ -54,14 +53,6 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
     @Override
     public Object getQueryableId() {
         return getVmId();
-    }
-
-    public void setVmTemplateId(Guid vmTemplateId) {
-        this.vmTemplateId = vmTemplateId;
-    }
-
-    public Guid getVmTemplateId() {
-        return vmTemplateId;
     }
 
     public boolean isLinked() {
@@ -123,7 +114,6 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
                 .append("macAddress", getMacAddress())
                 .append("linked", isLinked())
                 .append("vmId", getVmId())
-                .append("vmTemplateId", getVmTemplateId())
                 .build();
     }
 
@@ -133,8 +123,7 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
                 super.hashCode(),
                 linked,
                 vmId,
-                vnicProfileId,
-                vmTemplateId
+                vnicProfileId
         );
     }
 
@@ -150,7 +139,6 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         return super.equals(obj)
                 && Objects.equals(vmId, other.vmId)
                 && Objects.equals(vnicProfileId, other.vnicProfileId)
-                && Objects.equals(vmTemplateId, other.vmTemplateId)
                 && linked == other.linked;
     }
 

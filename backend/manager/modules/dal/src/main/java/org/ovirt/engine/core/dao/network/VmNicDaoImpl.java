@@ -81,7 +81,6 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
                 .addValue("speed", entity.getSpeed())
                 .addValue("vm_guid", entity.getVmId())
                 .addValue("vnic_profile_id", entity.getVnicProfileId())
-                .addValue("vmt_guid", entity.getVmTemplateId())
                 .addValue("type", entity.getType())
                 .addValue("linked", entity.isLinked());
     }
@@ -104,7 +103,6 @@ public class VmNicDaoImpl extends DefaultGenericDao<VmNic, Guid> implements VmNi
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
             entity.setVmId(getGuid(rs, "vm_guid"));
-            entity.setVmTemplateId(getGuid(rs, "vmt_guid"));
             entity.setType((Integer) rs.getObject("type"));
             entity.setMacAddress(rs.getString("mac_addr"));
             entity.setVnicProfileId(getGuid(rs, "vnic_profile_id"));

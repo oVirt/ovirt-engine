@@ -617,7 +617,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             iface.setVmId(getVmTemplateId());
             VmNic nic = new VmNic();
             nic.setId(iface.getId());
-            nic.setVmTemplateId(getVmTemplateId());
+            nic.setVmId(getVmTemplateId());
             nic.setName(iface.getName());
             nic.setLinked(iface.isLinked());
             nic.setSpeed(iface.getSpeed());

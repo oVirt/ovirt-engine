@@ -684,7 +684,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (iface.getId() == null) {
             iface.setId(Guid.newGuid());
         }
-        iface.setVmTemplateId(null);
         iface.setVmId(getVmId());
     }
 

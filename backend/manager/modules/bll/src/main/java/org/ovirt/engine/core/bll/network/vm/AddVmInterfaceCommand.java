@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -146,7 +147,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        if (!validate(vmTemplateEmpty())) {
+        if (!validate(linkedToVm())) {
             return false;
         }
 
@@ -178,6 +179,13 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         return true;
+    }
+
+
+    protected ValidationResult linkedToVm() {
+        return getInterface().getVmId() != null
+                ? new ValidationResult(EngineMessage.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET)
+                : ValidationResult.VALID;
     }
 
     @Override

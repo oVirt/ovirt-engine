@@ -2275,7 +2275,6 @@ SELECT vm_interface_statistics.rx_rate,
     vm_interface.name,
     vm_interface.vnic_profile_id,
     vm_static.vm_guid,
-    vm_interface.vmt_guid,
     vm_static.vm_name,
     vm_interface.id,
     0 AS boot_protocol,
@@ -2304,6 +2303,7 @@ LEFT JOIN (
         ON vnic_profiles.network_qos_id = qos.id
     )
     ON vnic_profiles.id = vm_interface.vnic_profile_id
+WHERE entity_type = 'VM'
 
 UNION
 
@@ -2323,8 +2323,7 @@ SELECT vm_interface_statistics.rx_rate,
     network.name AS network_name,
     vm_interface.name,
     vm_interface.vnic_profile_id,
-    NULL::uuid AS vm_guid,
-    vm_interface.vmt_guid,
+    vm_templates.vm_guid,
     vm_templates.vm_name AS vm_name,
     vm_interface.id,
     0 AS boot_protocol,
@@ -2341,9 +2340,9 @@ FROM vm_interface_statistics
 RIGHT JOIN vm_interface
     ON vm_interface_statistics.id = vm_interface.id
 INNER JOIN vm_static AS vm_templates
-    ON vm_interface.vmt_guid = vm_templates.vm_guid
+    ON vm_interface.vm_guid = vm_templates.vm_guid
 INNER JOIN vm_device
-    ON vm_interface.vmt_guid = vm_device.vm_id
+    ON vm_interface.vm_guid = vm_device.vm_id
         AND vm_interface.id = vm_device.device_id
 LEFT JOIN (
     (
@@ -2352,8 +2351,8 @@ LEFT JOIN (
         ) LEFT JOIN qos
         ON vnic_profiles.network_qos_id = qos.id
     )
-    ON vnic_profiles.id = vm_interface.vnic_profile_id;
-
+    ON vnic_profiles.id = vm_interface.vnic_profile_id
+WHERE vm_templates.entity_type = 'TEMPLATE';
 
 CREATE OR REPLACE VIEW vm_interface_monitoring_view AS
 
@@ -3417,7 +3416,10 @@ SELECT DISTINCT vnic_profile_id,
 FROM vm_interface
 INNER JOIN internal_permissions_view
     ON object_id = vm_guid
-WHERE object_type_id = 2
+INNER JOIN vm_static
+    ON vm_interface.vm_guid = vm_static.vm_guid
+WHERE entity_type = 'TEMPLATE'
+    AND object_type_id = 2
     AND role_type = 2 -- Or the user has permissions on the Template with the profile
 
 UNION ALL
@@ -3426,8 +3428,11 @@ SELECT DISTINCT vnic_profile_id,
     ad_element_id
 FROM vm_interface
 INNER JOIN internal_permissions_view
-    ON object_id = vmt_guid
-WHERE object_type_id = 4
+    ON object_id = vm_guid
+INNER JOIN vm_static
+    ON vm_interface.vm_guid = vm_static.vm_guid
+WHERE entity_type = 'VM'
+    AND  object_type_id = 4
     AND role_type = 2 -- Or the user has permissions on system
 
 UNION ALL

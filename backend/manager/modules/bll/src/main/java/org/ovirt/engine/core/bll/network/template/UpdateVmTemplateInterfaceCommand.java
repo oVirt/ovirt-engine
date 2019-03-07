@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -56,7 +57,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        if (!validate(linkedToTemplate())) {
+        if (!validate(parentEntityIdMatches())) {
             return false;
         }
 
@@ -101,6 +102,15 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
         return true;
     }
+
+    /**
+     * existing interface - should have a matching parent entity (template) id
+     */
+    private ValidationResult parentEntityIdMatches() {
+        return getParameters().getInterface().getVmId().equals(getVmTemplateId()) ? ValidationResult.VALID
+                : new ValidationResult(EngineMessage.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
+    }
+
 
     private boolean checkPciAndIdeLimit(VmNic oldIface,
             List<VmNic> interfaces,

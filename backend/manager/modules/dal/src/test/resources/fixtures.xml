@@ -544,9 +544,9 @@
   <vm_guest_agent_interfaces vm_id="77296e00-0cad-4e5a-9299-008a7b6f4354" interface_name="p1p3" mac_address="CC:BB:BB:BB:BB:BB"/>
 
   <vm_interface id="e2817b12-f873-4046-b0da-0098293c14fd" vnic_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87052" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4355" mac_addr="00:1a:4a:16:87:d9" name="nic1" speed="1000" type="3" _create_date="2010-11-18 11:14:08" linked="true"/>
-  <vm_interface id="e2817b12-f873-4046-b0da-0098293c0000" vnic_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87052" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" mac_addr="00:1a:4a:16:87:d9" name="nic1" speed="1000" type="3" _create_date="2010-11-18 11:14:08" linked="true"/>
-  <vm_interface id="14550e82-1e1f-47b5-ae41-b009348dabfa" vnic_profile_id="d0f2ca62-f564-447c-aa55-ce2aa12ea798" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4355" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" mac_addr="00:1a:4a:16:87:da" name="nic2" speed="1000" type="3" _create_date="2010-11-18 11:14:09" linked="false"/>
-  <vm_interface id="14550e82-1e1f-47b5-ae41-b009348dabfb" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4359" vmt_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" mac_addr="00:1a:4a:16:87:db" name="nic1" speed="1000" type="3" _create_date="2013-01-24 11:14:00" linked="false"/>
+  <vm_interface id="e2817b12-f873-4046-b0da-0098293c0000" vnic_profile_id="fd81f1e1-785b-4579-ab75-1419ebb87052" vm_guid="1b85420c-b84c-4f29-997e-0eb674b40b79" mac_addr="00:1a:4a:16:87:d9" name="nic1" speed="1000" type="3" _create_date="2010-11-18 11:14:08" linked="true"/>
+  <vm_interface id="14550e82-1e1f-47b5-ae41-b009348dabfa" vnic_profile_id="d0f2ca62-f564-447c-aa55-ce2aa12ea798" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4355" mac_addr="00:1a:4a:16:87:da" name="nic2" speed="1000" type="3" _create_date="2010-11-18 11:14:09" linked="false"/>
+  <vm_interface id="14550e82-1e1f-47b5-ae41-b009348dabfb" vm_guid="77296e00-0cad-4e5a-9299-008a7b6f4359" mac_addr="00:1a:4a:16:87:db" name="nic1" speed="1000" type="3" _create_date="2013-01-24 11:14:00" linked="false"/>
 
   <vm_interface_statistics id="e2817b12-f873-4046-b0da-0098293c14fd" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355" rx_rate="0" tx_rate="0" rx_drop="0" tx_drop="0" rx_total="0" tx_total="0" rx_offset="0" tx_offset="0" iface_status="0" sample_time="0"/>
   <vm_interface_statistics id="e2817b12-f873-4046-b0da-0098293c0000" vm_id="1b85420c-b84c-4f29-997e-0eb674b40b79" rx_rate="0" tx_rate="0" rx_drop="0" tx_drop="0" rx_total="0" tx_total="0" rx_offset="0" tx_offset="0" iface_status="1" sample_time="0"/>

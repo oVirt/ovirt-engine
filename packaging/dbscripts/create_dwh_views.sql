@@ -363,7 +363,9 @@ LEFT JOIN (
         ON network.id = vnic_profiles.network_id
     )
     ON vnic_profiles.id = vm_interface.vnic_profile_id
-WHERE vmt_guid IS NULL
+INNER JOIN vm_static
+    ON vm_interface.vm_guid = vm_static.vm_guid
+WHERE entity_type = 'VM'
     AND (
         (
             vm_interface._create_date > (

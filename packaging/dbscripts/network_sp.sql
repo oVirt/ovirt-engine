@@ -797,7 +797,6 @@ CREATE OR REPLACE FUNCTION InsertVmInterface (
     v_speed INT,
     v_vnic_profile_id UUID,
     v_vm_guid UUID,
-    v_vmt_guid UUID,
     v_type INT,
     v_linked BOOLEAN
     )
@@ -810,7 +809,6 @@ BEGIN
         speed,
         vnic_profile_id,
         vm_guid,
-        vmt_guid,
         type,
         linked
         )
@@ -821,7 +819,6 @@ BEGIN
         v_speed,
         v_vnic_profile_id,
         v_vm_guid,
-        v_vmt_guid,
         v_type,
         v_linked
         );
@@ -835,7 +832,6 @@ CREATE OR REPLACE FUNCTION UpdateVmInterface (
     v_speed INT,
     v_vnic_profile_id UUID,
     v_vm_guid UUID,
-    v_vmt_guid UUID,
     v_type INT,
     v_linked BOOLEAN
     )
@@ -847,7 +843,6 @@ BEGIN
         speed = v_speed,
         vnic_profile_id = v_vnic_profile_id,
         vm_guid = v_vm_guid,
-        vmt_guid = v_vmt_guid,
         type = v_type,
         _update_date = LOCALTIMESTAMP,
         linked = v_linked
@@ -915,7 +910,7 @@ BEGIN
 
     SELECT *
     FROM vm_interface
-    WHERE vmt_guid = v_template_id;
+    WHERE vm_guid = v_template_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -943,7 +938,7 @@ BEGIN
     SELECT vm_interface.*
     FROM vm_interface
     INNER JOIN vm_static
-        ON vm_interface.vmt_guid = vm_static.vm_guid
+        ON vm_interface.vm_guid = vm_static.vm_guid
     INNER JOIN vnic_profiles
         ON vm_interface.vnic_profile_id = vnic_profiles.id
     WHERE vnic_profiles.network_id = v_network_id
@@ -1067,7 +1062,7 @@ BEGIN
 
     SELECT *
     FROM vm_interface_view
-    WHERE vmt_guid = v_template_id
+    WHERE vm_guid = v_template_id
         AND (
             NOT v_is_filtered
             OR EXISTS (

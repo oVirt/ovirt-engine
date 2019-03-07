@@ -102,12 +102,6 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 getVmDeviceUtils().hasSoundDevice(getVmId())));
     }
 
-    protected ValidationResult vmTemplateEmpty() {
-        return getInterface().getVmTemplateId() != null
-                ? new ValidationResult(EngineMessage.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET)
-                : ValidationResult.VALID;
-    }
-
     protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {
         if (!validate(backwardCompatibilityVnicHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
                 oldNic,

@@ -22,7 +22,6 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
 
     @Override
     protected ActionParametersBase createAddInterfaceParameter(Guid id, VmNetworkInterface editedVnic) {
-        editedVnic.setVmTemplateId(null);
         return new AddVmInterfaceParameters(id, editedVnic);
     }
 

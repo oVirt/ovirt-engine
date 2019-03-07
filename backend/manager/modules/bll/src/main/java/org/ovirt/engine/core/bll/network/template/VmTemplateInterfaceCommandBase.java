@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.BackwardCompatibilityVnicHelper;
@@ -48,11 +47,6 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
 
     protected boolean interfaceNameUnique(List<VmNic> interfaces) {
         return validate(vmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName()));
-    }
-
-    protected ValidationResult linkedToTemplate() {
-        return getParameters().getInterface().getVmId() == null ? ValidationResult.VALID
-                : new ValidationResult(EngineMessage.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
     }
 
     protected boolean updateVnicForBackwardCompatibility(VmNic oldNic) {

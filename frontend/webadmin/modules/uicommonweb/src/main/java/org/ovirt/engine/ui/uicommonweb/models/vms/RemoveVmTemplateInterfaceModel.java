@@ -25,7 +25,7 @@ public class RemoveVmTemplateInterfaceModel extends RemoveVmInterfaceModel{
 
     @Override
     protected ActionParametersBase getRemoveVmInterfaceParams(VmNetworkInterface vnic) {
-        return new RemoveVmTemplateInterfaceParameters(vnic.getVmTemplateId(), vnic.getId());
+        return new RemoveVmTemplateInterfaceParameters(vnic.getVmId(), vnic.getId());
     }
 
     @Override

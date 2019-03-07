@@ -695,7 +695,8 @@ BEGIN
       INNER JOIN vnic_profiles
       ON vnic_profiles.id = vm_interface.vnic_profile_id
       WHERE vnic_profiles.network_id = v_network_id
-          AND vm_interface.vmt_guid = vm_templates_based_view.vmt_guid);
+          AND vm_interface.vm_guid = vm_templates_based_view.vmt_guid
+          AND vm_templates_based_view.entity_type = 'TEMPLATE');
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -709,7 +710,8 @@ BEGIN
       SELECT 1
       FROM vm_interface
       WHERE vm_interface.vnic_profile_id = v_vnic_profile_id
-      AND vm_interface.vmt_guid = vm_templates_based_view.vmt_guid);
+      AND vm_interface.vm_guid = vm_templates_based_view.vmt_guid
+      AND vm_templates_based_view.entity_type = 'TEMPLATE');
 END; $procedure$
 LANGUAGE plpgsql;
 

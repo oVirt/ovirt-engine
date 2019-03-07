@@ -1209,7 +1209,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             iface.setId(id);
             iface.setMacAddress(macAddresses.get(i));
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
-            iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
             updateProfileOnNic(iface);
             vmNicDao.save(iface);

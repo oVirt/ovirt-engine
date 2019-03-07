@@ -261,7 +261,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!validate(vmTemplateEmpty())) {
+        if (!validate(parentEntityIdMatches())) {
             return false;
         }
 
@@ -294,6 +294,11 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         return true;
+    }
+
+    private ValidationResult parentEntityIdMatches() {
+        return getInterface().getVmId().equals(getVmId()) ? ValidationResult.VALID
+                : new ValidationResult(EngineMessage.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET);
     }
 
     void initMacPoolData() {

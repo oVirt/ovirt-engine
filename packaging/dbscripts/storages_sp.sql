@@ -1073,7 +1073,7 @@ BEGIN
 
     DELETE
     FROM vm_interface
-    WHERE vmt_guid IN (
+    WHERE vm_guid IN (
             SELECT vm_guid
             FROM TEMPLATES_IDS_TEMPORARY_TABLE
             );

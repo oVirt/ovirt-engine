@@ -36,7 +36,6 @@ public class VmNetworkInterface extends VmNic {
         setType(iface.getType());
         setVmId(iface.getVmId());
         setVmName(iface.getVmName());
-        setVmTemplateId(iface.getVmTemplateId());
         setStatistics(new VmNetworkStatistics(iface.getStatistics()));
     }
 
@@ -124,7 +123,6 @@ public class VmNetworkInterface extends VmNic {
                 .append("portMirroring", isPortMirroring())
                 .append("vmId", getVmId())
                 .append("vmName", getVmName())
-                .append("vmTemplateId", getVmTemplateId())
                 .append("QoSName", getQosName())
                 .append("remoteNetworkName", getRemoteNetworkName())
                 .build();

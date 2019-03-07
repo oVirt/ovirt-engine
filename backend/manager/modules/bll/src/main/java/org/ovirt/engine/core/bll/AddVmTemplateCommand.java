@@ -982,7 +982,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (VmNic iface : interfaces) {
             VmNic iDynamic = new VmNic();
             iDynamic.setId(Guid.newGuid());
-            iDynamic.setVmTemplateId(getVmTemplateId());
+            iDynamic.setVmId(getVmTemplateId());
             iDynamic.setName(iface.getName());
             iDynamic.setVnicProfileId(iface.getVnicProfileId());
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());

@@ -42,7 +42,7 @@ public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<P extends IdQuer
         List<PairQueryable<VmNetworkInterface, VmTemplate>> vmInterfaceVmPairs = new ArrayList<>();
         for (VmNetworkInterface vmNetworkInterface : vmNetworkInterfaceList) {
             vmInterfaceVmPairs.add(new PairQueryable<>(vmNetworkInterface,
-                    vmTemplatesById.get(vmNetworkInterface.getVmTemplateId())));
+                    vmTemplatesById.get(vmNetworkInterface.getVmId())));
         }
 
         getQueryReturnValue().setReturnValue(vmInterfaceVmPairs);

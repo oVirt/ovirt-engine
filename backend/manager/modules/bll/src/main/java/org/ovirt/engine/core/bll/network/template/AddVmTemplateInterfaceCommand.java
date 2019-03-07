@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -34,7 +35,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
     @Override
     protected void executeCommand() {
-        getParameters().getInterface().setVmTemplateId(getParameters().getVmTemplateId());
+        getParameters().getInterface().setVmId(getParameters().getVmTemplateId());
         getParameters().getInterface().setId(Guid.newGuid());
         getParameters().getInterface().setSpeed(
                 VmInterfaceType.forValue(
@@ -96,6 +97,12 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
         return true;
     }
+
+    private ValidationResult linkedToTemplate() {
+        return getParameters().getInterface().getVmId() == null ? ValidationResult.VALID
+                : new ValidationResult(EngineMessage.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
+    }
+
 
     @Override
     protected List<Class<?>> getValidationGroups() {

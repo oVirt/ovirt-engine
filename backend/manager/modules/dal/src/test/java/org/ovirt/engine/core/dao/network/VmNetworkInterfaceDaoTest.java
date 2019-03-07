@@ -43,6 +43,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase<VmNetworkInterfac
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());
         newVmInterface.setId(Guid.newGuid());
+        newVmInterface.setVmId(VM_ID);
         newVmInterface.setVnicProfileId(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
         newVmInterface.setName("eth77");
         newVmInterface.setNetworkName("enginet");
@@ -222,7 +223,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase<VmNetworkInterfac
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmNetworkInterface iface : result) {
-            assertEquals(TEMPLATE_ID, iface.getVmTemplateId());
+            assertEquals(TEMPLATE_ID, iface.getVmId());
         }
     }
 }

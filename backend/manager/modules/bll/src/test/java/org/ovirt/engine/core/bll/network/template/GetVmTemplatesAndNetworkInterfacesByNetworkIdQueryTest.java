@@ -42,7 +42,7 @@ public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQueryTest
         when(params.getId()).thenReturn(networkId);
 
         vmTemplate.setId(vmTemplateId);
-        vmNetworkInterface.setVmTemplateId(vmTemplateId);
+        vmNetworkInterface.setVmId(vmTemplateId);
 
         // Setup the Daos
         setupVmTemplateDao();

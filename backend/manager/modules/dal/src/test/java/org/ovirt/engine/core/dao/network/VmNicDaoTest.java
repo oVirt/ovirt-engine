@@ -57,7 +57,7 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmNic iface : result) {
-            assertEquals(TEMPLATE_ID, iface.getVmTemplateId());
+            assertEquals(TEMPLATE_ID, iface.getVmId());
         }
     }
 
@@ -114,6 +114,7 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
     protected VmNic generateNewEntity() {
         VmNic vmNic = new VmNic();
         vmNic.setId(Guid.newGuid());
+        vmNic.setVmId(VM_ID);
         vmNic.setVnicProfileId(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
         vmNic.setName("eth77");
         vmNic.setLinked(true);
