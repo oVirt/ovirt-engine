@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -51,6 +52,7 @@ public class JsonObjectSerializer implements Serializer {
         formattedMapper.getSerializationConfig().addMixInAnnotations(Collection.class, JsonCollectionMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(Map.class, JsonMapMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(Cluster.class, JsonClusterMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VdsDynamic.class, JsonVdsDynamicMixIn.class);
 
         formattedMapper.configure(Feature.INDENT_OUTPUT, true);
         formattedMapper.enableDefaultTyping();

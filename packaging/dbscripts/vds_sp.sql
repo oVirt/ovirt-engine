@@ -270,7 +270,8 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_kernel_features JSONB,
     v_vnc_encryption_enabled BOOLEAN,
     v_connector_info JSONB,
-    v_backup_enabled BOOLEAN
+    v_backup_enabled BOOLEAN,
+    v_supported_domain_versions VARCHAR(256)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -341,7 +342,8 @@ BEGIN
             kernel_features,
             vnc_encryption_enabled,
             connector_info,
-            backup_enabled
+            backup_enabled,
+            supported_domain_versions
             )
         VALUES (
             v_cpu_cores,
@@ -409,7 +411,8 @@ BEGIN
             v_kernel_features,
             v_vnc_encryption_enabled,
             v_connector_info,
-            v_backup_enabled
+            v_backup_enabled,
+            v_supported_domain_versions
             );
     END;
 
@@ -501,7 +504,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_kernel_features JSONB,
     v_vnc_encryption_enabled BOOLEAN,
     v_connector_info JSONB,
-    v_backup_enabled BOOLEAN
+    v_backup_enabled BOOLEAN,
+    v_supported_domain_versions VARCHAR(256)
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -576,7 +580,8 @@ BEGIN
             kernel_features = v_kernel_features,
             vnc_encryption_enabled = v_vnc_encryption_enabled,
             connector_info = v_connector_info,
-            backup_enabled = v_backup_enabled
+            backup_enabled = v_backup_enabled,
+            supported_domain_versions = v_supported_domain_versions
         WHERE vds_id = v_vds_id;
     END;
 

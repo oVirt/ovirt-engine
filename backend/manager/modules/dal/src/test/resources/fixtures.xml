@@ -288,7 +288,7 @@
                is_numa_supported="true" supported_rng_sources="RANDOM" online_cpus="0,1,2,3" incoming_migrations="0"
                outgoing_migrations="0" is_update_available="true" is_hostdev_enabled="true"
                pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
-               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false"/>
+               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false" supported_domain_versions="0,2,3,4,5"/>
   <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e7" status="3" external_status="0" cpu_cores="8"
                cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
                physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
@@ -304,7 +304,7 @@
                selinux_enforce_mode="0" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources=""
                online_cpus="0,2,4" incoming_migrations="0" outgoing_migrations="0" is_update_available="true"
                is_hostdev_enabled="false" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
-               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false"/>
+               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false" supported_domain_versions="0,2,3,4,5"/>
   <vds_dynamic vds_id="afce7a39-8e8c-4819-ba9c-796d316592e8" status="3" external_status="0" cpu_cores="8"
                cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
                physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
@@ -320,7 +320,7 @@
                selinux_enforce_mode="-1" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="HWRNG"
                online_cpus="0,8,16,24,32" incoming_migrations="0" outgoing_migrations="0" is_update_available="false"
                is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
-               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false"/>
+               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false" supported_domain_versions="0,2,3,4,5"/>
   <vds_dynamic vds_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" status="3" external_status="0" cpu_cores="8"
                cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
                physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
@@ -336,7 +336,7 @@
                selinux_enforce_mode="2" auto_numa_balancing="2" is_numa_supported="true" supported_rng_sources="RANDOM"
                online_cpus="0,128" incoming_migrations="0" outgoing_migrations="0" is_update_available="false"
                is_hostdev_enabled="true" pretty_name="RHEL 7.0 (core)" hosted_engine_configured="false"
-               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false"/>
+               in_fence_flow="false" vnc_encryption_enabled="false" backup_enabled="false" supported_domain_versions="0,2,3,4,5"/>
   <vds_dynamic vds_id="2001751e-549b-4e7a-aff6-32d36856c125" status="3" external_status="0" cpu_cores="8"
                cpu_model="Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz" cpu_speed_mh="2494" kvm_enabled="1"
                physical_mem_mb="15952" mem_commited="0" vm_active="0" vm_count="0" vm_migrating="0" reserved_mem="256"
@@ -354,7 +354,7 @@
                online_cpus="0,1,2,3,4,5,6,7,8" incoming_migrations="0" outgoing_migrations="0"
                is_update_available="false" is_hostdev_enabled="false" pretty_name="RHEL 7.0 (core)"
                hosted_engine_configured="false" in_fence_flow="false" vnc_encryption_enabled="false"
-               backup_enabled="false"/>
+               backup_enabled="false" supported_domain_versions="0,2,3,4,5"/>
 
   <vds_statistics vds_id="afce7a39-8e8c-4819-ba9c-796d316592e6" cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0" usage_mem_percent="6" usage_cpu_percent="0" usage_network_percent="0" mem_available="14741" mem_shared="0" mem_free="13245" swap_free="15999" swap_total="15999" ksm_cpu_percent="0" ksm_pages="64" ksm_state="0" anonymous_hugepages="0" hugepages="[]" ha_score="0" ha_configured="false" ha_active="false" ha_global_maintenance="false" ha_local_maintenance="false" boot_time="123456789" cpu_over_commit_time_stamp="2010-12-01 14:13:10"/>
   <vds_statistics vds_id="afce7a39-8e8c-4819-ba9c-796d316592e7" cpu_idle="100" cpu_load="0" cpu_sys="0" cpu_user="0" usage_mem_percent="6" usage_cpu_percent="0" usage_network_percent="0" mem_available="14741" mem_shared="0" mem_free="13245" swap_free="15999" swap_total="15999" ksm_cpu_percent="0" ksm_pages="64" ksm_state="0" anonymous_hugepages="0" hugepages="[]" ha_score="0" ha_configured="false" ha_active="false" ha_global_maintenance="false" ha_local_maintenance="false" boot_time="123456789" cpu_over_commit_time_stamp="2010-12-01 14:13:10"/>

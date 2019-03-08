@@ -1694,4 +1694,16 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setBackupEnabled(Boolean value) {
         vdsDynamic.setBackupEnabled(value);
     }
+
+    public Set<StorageFormatType> getSupportedDomainVersions() {
+        return vdsDynamic.getSupportedDomainVersions();
+    }
+
+    public void setSupportedDomainVersions(Set<StorageFormatType> supportedDomainVersions) {
+        vdsDynamic.setSupportedDomainVersions(supportedDomainVersions);
+    }
+
+    public void setSupportedDomainVersionsAsString(String supportedDomainVersions) {
+        vdsDynamic.setSupportedDomainVersionsAsString(supportedDomainVersions);
+    }
 }

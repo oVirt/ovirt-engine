@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -37,6 +39,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class AddStorageDomainCommand<T extends StorageDomainManagementParameter> extends
@@ -48,6 +52,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VdsDao vdsDao;
 
 
     protected AddStorageDomainCommand(Guid commandId) {
@@ -187,6 +193,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return false;
         }
 
+        if (!checkDomainVersionSupport()) {
+            return false;
+        }
+
         initStorageDomainDiscardAfterDeleteIfNeeded();
         if (!validateDiscardAfterDeleteLegal(sdValidator)) {
             return false;
@@ -200,6 +210,23 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         }
         if (!isSupportedByManagedBlockStorageDomain(getStorageDomain())) {
             return false;
+        }
+        return true;
+    }
+
+    private Boolean checkDomainVersionSupport() {
+        StorageFormatType numericDomainFormat = getStorageDomain().getStorageFormat();
+        List<String> haveNotSupportedVDSes = vdsDao.getAllForStoragePool(getStorageDomain().getStoragePoolId())
+                .stream()
+                .filter(vds -> !vds.getSupportedDomainVersions().contains(numericDomainFormat))
+                .map(VDS::getName)
+                .collect(Collectors.toList());
+
+        if (!haveNotSupportedVDSes.isEmpty()) {
+            List<String> replacements = new ArrayList<>(2);
+            replacements.add(ReplacementUtils.createSetVariableString("hosts", haveNotSupportedVDSes));
+            replacements.add(ReplacementUtils.createSetVariableString("formatversion", numericDomainFormat));
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_VERSION_UNSUPPORTED, replacements);
         }
         return true;
     }
