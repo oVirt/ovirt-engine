@@ -1,3 +1,4 @@
 host_deploy_vnc_tls_x509_cert_dir: "/etc/pki/vdsm/libvirt-vnc"
 host_deploy_spice_tls_x509_cert_dir: "/etc/pki/vdsm/libvirt-spice"
 host_deploy_vnc_tls: true
+host_deploy_vnc_restart_services: true

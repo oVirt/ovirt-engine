@@ -2,22 +2,26 @@
   service:
     name: vdsmd
     state: stopped
+  when: host_deploy_vnc_restart_services|bool
   listen: "restart libvirtd"
 
 - name: stop supervdsmd
   service:
     name: supervdsmd
     state: stopped
+  when: host_deploy_vnc_restart_services|bool
   listen: "restart libvirtd"
 
 - name: restart libvirtd
   service:
     name: libvirtd
     state: restarted
+  when: host_deploy_vnc_restart_services|bool
   listen: "restart libvirtd"
 
 - name: start vdsmd
   service:
     name: vdsmd
     state: started
+  when: host_deploy_vnc_restart_services|bool
   listen: "restart libvirtd"

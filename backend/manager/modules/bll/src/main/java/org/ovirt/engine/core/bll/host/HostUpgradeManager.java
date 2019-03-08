@@ -133,6 +133,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             .logFileName(host.getHostName())
             .logFileSuffix(CorrelationIdTracker.getCorrelationId())
             .variables(
+                new Pair<>("host_deploy_vnc_restart_services", host.getVdsType() == VDSType.VDS),
                 new Pair<>("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled())),
                 // PKI variables:
                 new Pair<>("ovirt_pki_dir", config.getPKIDir()),
