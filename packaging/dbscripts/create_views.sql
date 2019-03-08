@@ -1807,7 +1807,8 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.kernel_features AS kernel_features,
     vds_dynamic.vnc_encryption_enabled AS vnc_encryption_enabled,
     vds_static.vgpu_placement AS vgpu_placement,
-    vds_dynamic.connector_info AS connector_info
+    vds_dynamic.connector_info AS connector_info,
+    vds_dynamic.supported_domain_versions AS supported_domain_versions
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1952,7 +1953,8 @@ SELECT cluster.cluster_id,
     vds_dynamic.in_fence_flow AS in_fence_flow,
     vds_dynamic.vnc_encryption_enabled AS vnc_encryption_enabled,
     vds_static.vgpu_placement AS vgpu_placement,
-    vds_dynamic.connector_info AS connector_info
+    vds_dynamic.connector_info AS connector_info,
+    vds_dynamic.supported_domain_versions AS supported_domain_versions
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

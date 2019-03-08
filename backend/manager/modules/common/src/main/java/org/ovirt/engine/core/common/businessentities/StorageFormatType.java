@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,21 @@ public enum StorageFormatType {
     V3("3"),
     V5("5"),
     V4("4");
+
+    /**
+     * This is a part of vdsm capabilities negotiation
+     * system.
+     *
+     * Starting from 4.3 vdsm is reporting supported storage domain versions,
+     * while engine uses that information to verify, whether it is safe
+     * or not, to create storage domain of some specific version
+     * in the current environment.
+     *
+     * Pre 4.3 vdsm do not report supported storage domain versions and
+     * this functions provides a fixed default list of sd version for pre
+     * 4.3 vdsms
+     */
+    private static final EnumSet<StorageFormatType> defaultSupportedVersions = EnumSet.of(V1, V2, V3, V4);
 
     private final String value;
     private static final Map<String, StorageFormatType> mappings = new HashMap<>();
@@ -35,4 +51,7 @@ public enum StorageFormatType {
         return mappings.get(value);
     }
 
+    public static EnumSet<StorageFormatType> getDefaultSupportedVersions() {
+        return defaultSupportedVersions;
+    }
 }

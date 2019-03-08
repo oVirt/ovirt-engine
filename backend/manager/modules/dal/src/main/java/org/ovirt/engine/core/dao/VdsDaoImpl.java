@@ -374,6 +374,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setVgpuPlacement(rs.getInt("vgpu_placement"));
         entity.setConnectorInfo(ObjectUtils.mapNullable(
                 rs.getString("connector_info"), JsonHelper::jsonToMapUnchecked));
+        entity.setSupportedDomainVersionsAsString(rs.getString("supported_domain_versions"));
         return entity;
     };
 }

@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.SessionState;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -999,6 +1000,14 @@ public class VdsBrokerObjectsBuilder {
         vds.setVncEncryptionEnabled(assignBoolValue(struct, VdsProperties.vnc_encryption_enabled));
         vds.setConnectorInfo((Map<String, Object>) struct.get(VdsProperties.CONNECTOR_INFO));
         vds.setKvmEnabled(assignBoolValue(struct, VdsProperties.kvm_enabled));
+        if (struct.containsKey(VdsProperties.domain_versions)) { //Older VDSMs do not return that
+            Set<StorageFormatType> domain_versions = Stream.of((Object[]) struct.get(VdsProperties.domain_versions))
+                    .map(o -> (Integer) o)
+                    .map(Object::toString)
+                    .map(StorageFormatType::forValue)
+                    .collect(Collectors.toSet());
+            vds.setSupportedDomainVersions(domain_versions);
+        }
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

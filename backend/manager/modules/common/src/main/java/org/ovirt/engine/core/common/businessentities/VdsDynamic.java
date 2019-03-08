@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -91,6 +93,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private String supportedClusterLevels;
 
     private String supportedEngines;
+
+    private Set<StorageFormatType> supportedDomainVersions;
 
     private String hostOs;
 
@@ -239,6 +243,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
         supportedRngSources = new HashSet<>();
         additionalFeatures = new HashSet<>();
+
+        // By default we support these storage versions (for older vdsm that do not report it).
+        supportedDomainVersions = StorageFormatType.getDefaultSupportedVersions();
     }
 
     public Integer getCpuCores() {
@@ -492,6 +499,30 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     public void setSupportedEngines(String value) {
         supportedEngines = value;
         supportedEngineVersionsSet = null;
+    }
+
+    public Set<StorageFormatType> getSupportedDomainVersions() {
+        return supportedDomainVersions;
+    }
+
+    public String getSupportedDomainVersionsAsString() {
+        return supportedDomainVersions.stream().map(StorageFormatType::getValue).collect(Collectors.joining(","));
+    }
+
+    public void setSupportedDomainVersionsAsString(String supportedDomainVersions) {
+        if (supportedDomainVersions == null) {
+            //No data provided, leave current/default
+            return;
+        }
+        this.supportedDomainVersions = Stream.of(supportedDomainVersions.split(","))
+                .map(Integer::valueOf)
+                .map(Object::toString)
+                .map(StorageFormatType::forValue)
+                .collect(Collectors.toSet());
+    }
+
+    public void setSupportedDomainVersions(Set<StorageFormatType> supportedDomainVersions) {
+        this.supportedDomainVersions = supportedDomainVersions;
     }
 
     public Set<Version> getSupportedEngineVersionsSet() {
@@ -947,7 +978,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 openstackBindingHostIds,
                 vncEncryptionEnabled,
                 connectorInfo,
-                backupEnabled
+                backupEnabled,
+                supportedDomainVersions
         );
     }
 
@@ -1031,6 +1063,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(openstackBindingHostIds, other.openstackBindingHostIds)
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
                 && Objects.equals(connectorInfo, other.connectorInfo)
-                && backupEnabled == other.backupEnabled;
+                && backupEnabled == other.backupEnabled
+                && Objects.equals(supportedDomainVersions, other.supportedDomainVersions);
     }
 }
