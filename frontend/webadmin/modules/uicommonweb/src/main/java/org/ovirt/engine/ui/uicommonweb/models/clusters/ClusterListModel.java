@@ -686,6 +686,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
+        cluster.setSmtDisabled(Boolean.TRUE.equals(model.getSmtDisabled().getEntity()));
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
                 && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setEnableKsm(Boolean.TRUE.equals(model.getEnableKsm().getEntity()));

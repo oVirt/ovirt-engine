@@ -440,6 +440,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Path("kernelCmdlineFips.entity")
     EntityModelCheckBoxEditor kernelCmdlineFips;
 
+    @UiField(provided = true)
+    @Path("kernelCmdlineSmtDisabled.entity")
+    EntityModelCheckBoxEditor kernelCmdlineSmt;
+
+    @UiField
+    InfoIcon kernelCmdlineSmtInfoIcon;
+
     @UiField
     InfoIcon kernelCmdlinePciReallocInfoIcon;
 
@@ -590,6 +597,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlinePciRealloc = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineFips = new EntityModelCheckBoxEditor(Align.RIGHT);
+        kernelCmdlineSmt = new EntityModelCheckBoxEditor(Align.RIGHT);
         consoleAddressEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         vgpuConsolidatedPlacementEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
         vgpuSeparatedPlacementEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
@@ -670,6 +678,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineKvmNestedInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineKvmNestedInfoIcon()));
         kernelCmdlinePciReallocInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlinePciReallocInfoIcon()));
         kernelCmdlineFipsInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineFipsInfoIcon()));
+        kernelCmdlineSmtInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineSmtInfoIcon()));
         kernelCmdlineInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineInfoIcon()));
 
         // Affinity Labels Tab
@@ -1074,6 +1083,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlinePciRealloc.setTabIndex(nextTabIndex++);
         kernelCmdlineBlacklistNouveau.setTabIndex(nextTabIndex++);
         kernelCmdlineFips.setTabIndex(nextTabIndex++);
+        kernelCmdlineSmt.setTabIndex(nextTabIndex++);
         kernelCmdlineText.setTabIndex(nextTabIndex++);
 
         // ==Hosted Engine Tab==

@@ -150,6 +150,9 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
         if (model.getHasDefaultRouteAlert()) {
             addTextAlert(view, messages.hostHasDefaultRouteAlert());
         }
+        if (model.getHasSmtDiscrepancyAlert()) {
+            addTextAlert(view, messages.hostHasSmtDiscrepancyAlert());
+        }
     }
 
     private void addTextAlert(final ViewDef view, final String text, AlertType type) {

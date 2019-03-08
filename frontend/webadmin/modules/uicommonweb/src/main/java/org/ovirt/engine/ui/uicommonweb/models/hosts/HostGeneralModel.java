@@ -710,6 +710,11 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    public boolean getHasSmtDiscrepancyAlert() {
+        int threadsPerCore = getEntity().getCpuThreads() / getEntity().getCpuCores();
+        return getEntity().isKernelCmdlineSmtDisabled() && threadsPerCore > 1;
+    }
+
     private NonOperationalReason nonOperationalReasonEntity;
 
     public NonOperationalReason getNonOperationalReasonEntity() {
@@ -1092,7 +1097,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasAnyAlert(getHasNICsAlert() || getHasUpgradeAlert() || getHasManualFenceAlert()
                 || getHasNoPowerManagementAlert() || getHasReinstallAlertNonResponsive()
                 || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance()
-                || getHasGlusterDisconnectedAlert() || getHasDefaultRouteAlert());
+                || getHasGlusterDisconnectedAlert() || getHasDefaultRouteAlert()
+                || getHasSmtDiscrepancyAlert());
     }
 
     private void goToEvents() {

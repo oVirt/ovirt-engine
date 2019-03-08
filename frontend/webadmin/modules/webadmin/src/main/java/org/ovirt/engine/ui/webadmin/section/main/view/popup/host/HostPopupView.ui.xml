@@ -485,6 +485,16 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="kernelCmdlineSmt"
+                                                                      label="{constants.hostKernelCmdlineSmt}"
+                                                                      removeFormGroup="true"
+                                                                      usePatternFly="true"
+                                                                      addStyleNames="{style.inline}"/>
+                                        <d:InfoIcon ui:field="kernelCmdlineSmtInfoIcon" addStyleNames="{style.inline} {style.topOfLine}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
                                         <g:Label text="{constants.kernelCmdlineLabel}" addStyleNames="{style.floatLeft}" />
                                         <d:InfoIcon ui:field="kernelCmdlineInfoIcon" addStyleNames="{style.patternFlyRadio} {style.inline}"/>
                                     </b:Column>
