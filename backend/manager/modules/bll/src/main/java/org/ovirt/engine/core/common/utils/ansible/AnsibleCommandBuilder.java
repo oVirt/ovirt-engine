@@ -84,13 +84,12 @@ public class AnsibleCommandBuilder {
         enableLogging = true;
         envVars = new HashMap<>();
         config = EngineLocalConfig.getInstance();
-        playbookDir = Paths.get(config.getUsrDir().getPath(),  "playbooks");
+        playbookDir = Paths.get(config.getUsrDir().getPath(), "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
 
         try {
             verboseLevel = AnsibleVerbosity.valueOf(
-                "LEVEL" + EngineLocalConfig.getInstance().getProperty("ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL")
-            );
+                    "LEVEL" + EngineLocalConfig.getInstance().getProperty("ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL"));
         } catch (IllegalArgumentException | NullPointerException e) {
             verboseLevel = AnsibleVerbosity.LEVEL1;
         }
@@ -121,15 +120,15 @@ public class AnsibleCommandBuilder {
         return this;
     }
 
-    public AnsibleCommandBuilder hostnames(String ... hostnames) {
+    public AnsibleCommandBuilder hostnames(String... hostnames) {
         this.hostnames = Arrays.asList(hostnames);
         return this;
     }
 
     public AnsibleCommandBuilder variables(Pair<String, Object>... variables) {
         this.variables = Arrays.stream(variables)
-            .map(p -> String.format("%1$s=\"%2$s\"", p.getFirst(), p.getSecond()))
-            .collect(Collectors.toList());
+                .map(p -> String.format("%1$s=\"%2$s\"", p.getFirst(), p.getSecond()))
+                .collect(Collectors.toList());
         return this;
     }
 
@@ -246,14 +245,11 @@ public class AnsibleCommandBuilder {
         ansibleCommand.add(ANSIBLE_COMMAND);
 
         // Always ignore system wide SSH configuration:
-        ansibleCommand.add(
-            String.format("--ssh-common-args=-F %1$s/.ssh/config", config.getVarDir())
-        );
+        ansibleCommand.add(String.format("--ssh-common-args=-F %1$s/.ssh/config", config.getVarDir()));
 
         if (verboseLevel.ordinal() > 0) {
             ansibleCommand.add(
-                "-" + IntStream.range(0, verboseLevel.ordinal()).mapToObj(i -> "v").collect(Collectors.joining())
-            );
+                    "-" + IntStream.range(0, verboseLevel.ordinal()).mapToObj(i -> "v").collect(Collectors.joining()));
         }
 
         if (checkMode) {
@@ -274,8 +270,8 @@ public class AnsibleCommandBuilder {
 
         if (CollectionUtils.isNotEmpty(variables)) {
             variables.stream()
-                .map(v -> String.format("--extra-vars=%1$s", v))
-                .forEach(ansibleCommand::add);
+                    .map(v -> String.format("--extra-vars=%1$s", v))
+                    .forEach(ansibleCommand::add);
         }
 
         if (variableFilePath != null) {
@@ -284,19 +280,17 @@ public class AnsibleCommandBuilder {
 
         if (logFile == null && enableLogging) {
             logFile = Paths.get(
-                config.getLogDir().toString(),
-                logFileDirectory != null ? logFileDirectory : AnsibleExecutor.DEFAULT_LOG_DIRECTORY,
-                String.format(
-                    "%1$s-%2$s-%3$s%4$s.log",
-                    logFilePrefix != null ? logFilePrefix : "ansible",
-                    new SimpleDateFormat("yyyyMMddHHmmss").format(
-                        Calendar.getInstance().getTime()
-                    ),
-                    logFileName != null ?
-                        logFileName : playbook.substring(playbook.lastIndexOf('/') + 1).replace('.', '_'),
-                    logFileSuffix != null ? "-" + logFileSuffix : ""
-                )
-            ).toFile();
+                    config.getLogDir().toString(),
+                    logFileDirectory != null ? logFileDirectory : AnsibleExecutor.DEFAULT_LOG_DIRECTORY,
+                    String.format(
+                            "%1$s-%2$s-%3$s%4$s.log",
+                            logFilePrefix != null ? logFilePrefix : "ansible",
+                            new SimpleDateFormat("yyyyMMddHHmmss").format(
+                                    Calendar.getInstance().getTime()),
+                            logFileName != null ? logFileName
+                                    : playbook.substring(playbook.lastIndexOf('/') + 1).replace('.', '_'),
+                            logFileSuffix != null ? "-" + logFileSuffix : ""))
+                    .toFile();
         }
 
         ansibleCommand.add(playbook);
@@ -310,11 +304,10 @@ public class AnsibleCommandBuilder {
 
         // Env vars:
         sb.append(
-            envVars.entrySet()
-                .stream()
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining(" "))
-        );
+                envVars.entrySet()
+                        .stream()
+                        .map(entry -> entry.getKey() + "=" + entry.getValue())
+                        .collect(Collectors.joining(" ")));
         // Command:
         sb.append(" ");
         sb.append(StringUtils.join(build(), " "));
