@@ -288,6 +288,17 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelCheckBoxEditor countThreadsAsCoresEditor;
 
     @UiField
+    @Ignore
+    Label clusterPopupCpuSmtTitle;
+
+    @UiField(provided = true)
+    @Path(value = "smtDisabled.entity")
+    EntityModelCheckBoxEditor smtDisabledEditor;
+
+    @UiField
+    InfoIcon clusterPopupCpuSmtInfoIcon;
+
+    @UiField
     @WithElementId
     DialogTab migrationTab;
 
@@ -535,6 +546,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         migrationBandwidthLimitInfoIcon.setText(SafeHtmlUtils.fromString(constants.migrationBandwidthLimit()));
         clusterPopupResiliencePolicyInfoIcon.setText(
                 SafeHtmlUtils.fromString(constants.clusterPopupResiliencePolicyInfo()));
+        clusterPopupCpuSmtInfoIcon.setText(
+                SafeHtmlUtils.fromString(constants.clusterCpuSmtInfo())
+        );
     }
 
     private void setVisibilities() {
@@ -662,7 +676,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableGlusterServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         importGlusterConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
+        smtDisabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);

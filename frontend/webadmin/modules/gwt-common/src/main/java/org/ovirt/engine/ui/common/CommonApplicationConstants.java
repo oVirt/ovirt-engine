@@ -1691,6 +1691,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostKernelCmdlinePciRealloc();
 
+    String hostKernelCmdlineSmt();
+
     String hostKernelCmdlineReset();
 
     String kernelCmdlineLabel();
@@ -1760,6 +1762,8 @@ public interface CommonApplicationConstants extends Constants {
     String kernelCmdlineUnsafeInterruptsInfoIcon();
 
     String kernelCmdlinePciReallocInfoIcon();
+
+    String kernelCmdlineSmtInfoIcon();
 
     String maxMemoryInfoIcon();
 

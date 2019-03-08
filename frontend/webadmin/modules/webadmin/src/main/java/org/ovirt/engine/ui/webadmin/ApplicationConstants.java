@@ -686,6 +686,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPopupCpuThreadsInfo();
 
+    String clusterPopupCpuSmtLabel();
+
+    String clusterPopupCpuSmtTitle();
+
+    String clusterCpuSmtInfo();
+
     String clusterPopupCountThreadsAsCoresLabel();
 
     String clusterPopupMigrationTabLabel();

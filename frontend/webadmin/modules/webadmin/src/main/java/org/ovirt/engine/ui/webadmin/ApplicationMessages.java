@@ -26,6 +26,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostHasDefaultRouteAlert();
 
+    String hostHasSmtDiscrepancyAlert();
+
     String manaulFencePopupMessageLabel(String hostName);
 
     String storageDestroyPopupMessageLabel(String storageName);

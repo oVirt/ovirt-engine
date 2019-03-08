@@ -2402,6 +2402,10 @@ public class AsyncDataProvider {
         return false;
     }
 
+    public boolean getClusterDefaultSmtDisabled() {
+        return false;
+    }
+
     public ArrayList<VolumeType> getVolumeTypeList() {
         return new ArrayList<>(Arrays.asList(VolumeType.Preallocated, VolumeType.Sparse));
     }

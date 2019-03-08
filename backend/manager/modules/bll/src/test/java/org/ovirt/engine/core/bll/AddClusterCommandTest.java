@@ -44,6 +44,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
     private static final Guid DATA_CENTER_ID = Guid.newGuid();
     private static final String CPU_NAME = "Cpu Name";
     private static final int MAX_VDS_MEMORY_OVER_COMMIT = 10;
+    private static final boolean SMT_DISABLED = false;
     private static final boolean COUNT_THREADS_AS_CORES = true;
     private static final boolean SET_TRANSPARENT_HUGE_PAGES = true;
     private static final Version SET_COMPATIBILITY_VERSION = new Version("3.5");
@@ -93,6 +94,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
         cluster.setStoragePoolId(DATA_CENTER_ID);
         cluster.setCpuName(CPU_NAME);
         cluster.setMaxVdsMemoryOverCommit(MAX_VDS_MEMORY_OVER_COMMIT);
+        cluster.setSmtDisabled(SMT_DISABLED);
         cluster.setCountThreadsAsCores(COUNT_THREADS_AS_CORES);
         cluster.setTransparentHugepages(SET_TRANSPARENT_HUGE_PAGES);
         cluster.setCompatibilityVersion(SET_COMPATIBILITY_VERSION);

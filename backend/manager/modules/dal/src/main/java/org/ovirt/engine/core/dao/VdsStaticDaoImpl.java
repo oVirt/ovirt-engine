@@ -215,6 +215,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         private boolean kvmNested;
         private boolean unsafeInterrupts;
         private boolean pciRealloc;
+        private boolean smtDisabled;
 
         public String toJson() {
             try {
@@ -242,6 +243,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             vdsStatic.setKernelCmdlineKvmNested(kvmNested);
             vdsStatic.setKernelCmdlineUnsafeInterrupts(unsafeInterrupts);
             vdsStatic.setKernelCmdlinePciRealloc(pciRealloc);
+            vdsStatic.setKernelCmdlineSmtDisabled(smtDisabled);
         }
 
         public void toVds(VDS vds) {
@@ -251,6 +253,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             vds.setKernelCmdlineKvmNested(kvmNested);
             vds.setKernelCmdlineUnsafeInterrupts(unsafeInterrupts);
             vds.setKernelCmdlinePciRealloc(pciRealloc);
+            vds.setKernelCmdlineSmtDisabled(smtDisabled);
         }
 
         public static KernelCmdlineColumn fromVdsStatic(VdsStatic vdsStatic) {
@@ -261,6 +264,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             kernelCmdlineColumn.kvmNested = vdsStatic.isKernelCmdlineKvmNested();
             kernelCmdlineColumn.unsafeInterrupts = vdsStatic.isKernelCmdlineUnsafeInterrupts();
             kernelCmdlineColumn.pciRealloc = vdsStatic.isKernelCmdlinePciRealloc();
+            kernelCmdlineColumn.smtDisabled = vdsStatic.isKernelCmdlineSmtDisabled();
             return kernelCmdlineColumn;
         }
     }

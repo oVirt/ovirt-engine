@@ -469,6 +469,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         privateCountThreadsAsCores = value;
     }
 
+    private EntityModel<Boolean> privateSmtDisabled;
+
+    public EntityModel<Boolean> getSmtDisabled() {
+        return privateSmtDisabled;
+    }
+
+    public void setSmtDisabled(EntityModel<Boolean> privateSmtEnabled) {
+        this.privateSmtDisabled = privateSmtEnabled;
+    }
+
     private EntityModel<Boolean> privateVersionSupportsCpuThreads;
 
     public EntityModel<Boolean> getVersionSupportsCpuThreads() {
@@ -1180,6 +1190,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setDefaultMemoryOvercommit(AsyncDataProvider.getInstance().getClusterDefaultMemoryOverCommit());
 
         setCountThreadsAsCores(new EntityModel<>(AsyncDataProvider.getInstance().getClusterDefaultCountThreadsAsCores()));
+        setSmtDisabled(new EntityModel<>(AsyncDataProvider.getInstance().getClusterDefaultSmtDisabled()));
+        getCountThreadsAsCores().setIsChangeable(!getSmtDisabled().getEntity());
+        getSmtDisabled().getEntityChangedEvent().addListener(this);
 
         setVersionSupportsCpuThreads(new EntityModel<>(true));
 
@@ -1556,6 +1569,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setMemoryOverCommit(getEntity().getMaxVdsMemoryOverCommit());
 
         getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());
+        getSmtDisabled().setEntity(getEntity().getSmtDisabled());
         getEnableBallooning().setEntity(getEntity().isEnableBallooning());
         getEnableKsm().setEntity(getEntity().isEnableKsm());
 
@@ -1642,6 +1656,12 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     private void handleEntityChangedEventDefinition(EntityModel<Boolean> senderEntityModel) {
         if (senderEntityModel == getSpiceProxyEnabled()) {
             getSpiceProxy().setIsChangeable(getSpiceProxyEnabled().getEntity());
+        } else if (senderEntityModel == getSmtDisabled()) {
+            getCountThreadsAsCores().setIsChangeable(!getSmtDisabled().getEntity());
+            if (getSmtDisabled().getEntity()) {
+                // Disable countThreadsAsCores when SMT not enabled
+                getCountThreadsAsCores().setEntity(false);
+            }
         } else if ((Boolean) senderEntityModel.getEntity()) {
             if (senderEntityModel == getOptimizationNone_IsSelected()) {
                 getOptimizationForServer_IsSelected().setEntity(false);

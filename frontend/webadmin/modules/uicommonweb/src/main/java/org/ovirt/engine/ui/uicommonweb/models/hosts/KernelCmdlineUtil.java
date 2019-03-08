@@ -9,12 +9,14 @@ public class KernelCmdlineUtil {
             boolean iommu,
             boolean kvmNested,
             boolean unsafeInterrupts,
-            boolean pciRealloc) {
+            boolean pciRealloc,
+            boolean smtDisabled) {
         StringBuilder cmdlineBuilder = new StringBuilder();
         cmdlineBuilder.append(getIommu(cpuVendor, iommu));
         cmdlineBuilder.append(getKvmNested(cpuVendor, kvmNested));
         cmdlineBuilder.append(getUnsafeInterrupts(cpuVendor, unsafeInterrupts));
         cmdlineBuilder.append(getPciRealloc(cpuVendor, pciRealloc));
+        cmdlineBuilder.append(getSmt(smtDisabled));
         return cmdlineBuilder.toString().trim();
     }
 
@@ -83,5 +85,13 @@ public class KernelCmdlineUtil {
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
         }
+    }
+
+    private static String getSmt(boolean smtDisabled) {
+        if (smtDisabled) {
+            return "nosmt "; //$NON-NLS-1$
+        }
+
+        return "";
     }
 }

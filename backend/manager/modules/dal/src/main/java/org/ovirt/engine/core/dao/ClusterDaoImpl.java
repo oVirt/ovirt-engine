@@ -208,6 +208,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("storage_pool_id", cluster.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
                         cluster.getMaxVdsMemoryOverCommit())
+                .addValue("smt_disabled", cluster.getSmtDisabled())
                 .addValue("count_threads_as_cores",
                         cluster.getCountThreadsAsCores())
                 .addValue("transparent_hugepages",
@@ -273,6 +274,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));
+        entity.setSmtDisabled(rs.getBoolean("smt_disabled"));
         entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
         entity.setTransparentHugepages(rs.getBoolean("transparent_hugepages"));
         entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));

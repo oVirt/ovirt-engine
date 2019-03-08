@@ -242,6 +242,7 @@ public final class Cloner {
         obj.setKernelCmdlineIommu(instance.isKernelCmdlineIommu());
         obj.setKernelCmdlineKvmNested(instance.isKernelCmdlineKvmNested());
         obj.setKernelCmdlinePciRealloc(instance.isKernelCmdlinePciRealloc());
+        obj.setKernelCmdlineSmtDisabled(instance.isKernelCmdlineSmtDisabled());
         obj.setKernelCmdlineUnsafeInterrupts(instance.isKernelCmdlineUnsafeInterrupts());
 
         return obj;
@@ -309,6 +310,7 @@ public final class Cloner {
 
         obj.setStoragePoolId(instance.getStoragePoolId());
         obj.setMaxVdsMemoryOverCommit(instance.getMaxVdsMemoryOverCommit());
+        obj.setSmtDisabled(instance.getSmtDisabled());
         obj.setCountThreadsAsCores(instance.getCountThreadsAsCores());
         obj.setEmulatedMachine(instance.getEmulatedMachine());
         obj.setDetectEmulatedMachine(instance.isDetectEmulatedMachine());
