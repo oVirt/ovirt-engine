@@ -1701,6 +1701,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostKernelCmdlineFips();
 
+    String hostKernelCmdlineSmt();
+
     String hostKernelCmdlineReset();
 
     String kernelCmdlineLabel();
@@ -1772,6 +1774,8 @@ public interface CommonApplicationConstants extends Constants {
     String kernelCmdlinePciReallocInfoIcon();
 
     String kernelCmdlineFipsInfoIcon();
+
+    String kernelCmdlineSmtInfoIcon();
 
     String physMemGuarInfoIcon();
 

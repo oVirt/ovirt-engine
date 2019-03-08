@@ -11,7 +11,8 @@ public class KernelCmdlineUtil {
             boolean kvmNested,
             boolean unsafeInterrupts,
             boolean pciRealloc,
-            boolean fips) {
+            boolean fips,
+            boolean smtDisabled) {
         StringBuilder cmdlineBuilder = new StringBuilder();
         cmdlineBuilder.append(getBlacklistNouveau(cpuVendor, blacklistNouveau));
         cmdlineBuilder.append(getIommu(cpuVendor, iommu));
@@ -19,6 +20,7 @@ public class KernelCmdlineUtil {
         cmdlineBuilder.append(getUnsafeInterrupts(cpuVendor, unsafeInterrupts));
         cmdlineBuilder.append(getPciRealloc(cpuVendor, pciRealloc));
         cmdlineBuilder.append(getFips(fips));
+        cmdlineBuilder.append(getSmt(smtDisabled));
         return cmdlineBuilder.toString().trim();
     }
 
@@ -111,5 +113,13 @@ public class KernelCmdlineUtil {
         }
 
         return "fips=1 "; //$NON-NLS-1$
+    }
+
+    private static String getSmt(boolean smtDisabled) {
+        if (smtDisabled) {
+            return "nosmt "; //$NON-NLS-1$
+        }
+
+        return "";
     }
 }

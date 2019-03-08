@@ -158,6 +158,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private boolean kernelCmdlineFips;
 
     @EditableVdsField
+    private boolean kernelCmdlineSmtDisabled;
+
+    @EditableVdsField
     private boolean reinstallRequired;
 
     @EditableVdsField
@@ -456,6 +459,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setReinstallRequired(boolean reinstallRequired) {
         this.reinstallRequired = reinstallRequired;
+    }
+
+    public boolean isKernelCmdlineSmtDisabled() {
+        return kernelCmdlineSmtDisabled;
+    }
+
+    public void setKernelCmdlineSmtDisabled(boolean kernelCmdlineSmtDisabled) {
+        this.kernelCmdlineSmtDisabled = kernelCmdlineSmtDisabled;
     }
 
     public int getVgpuPlacement() {

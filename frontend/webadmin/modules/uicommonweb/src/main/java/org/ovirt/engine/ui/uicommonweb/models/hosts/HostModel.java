@@ -495,6 +495,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         this.kernelCmdlineFips = kernelCmdlineFips;
     }
 
+    private EntityModel<Boolean> kernelCmdlineSmtDisabled;
+
+    public EntityModel<Boolean> getKernelCmdlineSmtDisabled() {
+        return kernelCmdlineSmtDisabled;
+    }
+
+    public void setKernelCmdlineSmtDisabled(EntityModel<Boolean> kernelCmdlineSmtDisabled) {
+        this.kernelCmdlineSmtDisabled = kernelCmdlineSmtDisabled;
+    }
+
     public String getPmProxyPreferences() {
         // Return null if power management is not enabled.
         if (!getIsPm().getEntity()) {
@@ -844,6 +854,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setKernelCmdlineUnsafeInterrupts(new EntityModel<>(false));
         setKernelCmdlinePciRealloc(new EntityModel<>(false));
         setKernelCmdlineFips(new EntityModel<>(false));
+        setKernelCmdlineSmtDisabled(new EntityModel<>(false));
         kernelCmdlineListener = new EnableableEventListener<>(null);
         setCurrentKernelCmdLine(new EntityModel<>(""));
         setHostedEngineHostModel(new HostedEngineHostModel());
@@ -995,7 +1006,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 || sender == getKernelCmdlineKvmNested()
                 || sender == getKernelCmdlineUnsafeInterrupts()
                 || sender == getKernelCmdlinePciRealloc()
-                || sender == getKernelCmdlineFips())) {
+                || sender == getKernelCmdlineFips()
+                || sender == getKernelCmdlineSmtDisabled())) {
             if (isKernelCmdlineParsable()) {
                 updateKernelCmdlineAccordingToCheckboxes();
             }
@@ -1094,8 +1106,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
 
         getNetworkProviderModel().setDefaultProviderId(cluster.getDefaultNetworkProviderId());
-
         setVgpuPlacementChangeability(cluster.getCompatibilityVersion());
+        getKernelCmdlineSmtDisabled().setEntity(cluster.getSmtDisabled());
     }
 
     protected abstract void cpuVendorChanged();
@@ -1239,6 +1251,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineUnsafeInterrupts().setEntity(vds.isKernelCmdlineUnsafeInterrupts());
         getKernelCmdlinePciRealloc().setEntity(vds.isKernelCmdlinePciRealloc());
         getKernelCmdlineFips().setEntity(vds.isKernelCmdlineFips());
+        getKernelCmdlineSmtDisabled().setEntity(vds.isKernelCmdlineSmtDisabled());
     }
 
     public List<FenceAgentModel> getFenceAgentModelList(VDS vds) {
@@ -1383,6 +1396,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineUnsafeInterrupts().setIsChangeable(changeable, reason);
         getKernelCmdlinePciRealloc().setIsChangeable(changeable, reason);
         getKernelCmdlineFips().setIsChangeable(changeable, reason);
+        getKernelCmdlineSmtDisabled().setIsChangeable(changeable, reason);
     }
 
     private void setKernelCmdlineCheckboxesValue(boolean checked) {
@@ -1392,6 +1406,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineUnsafeInterrupts().setEntity(checked);
         getKernelCmdlinePciRealloc().setEntity(checked);
         getKernelCmdlineFips().setEntity(checked);
+        getKernelCmdlineSmtDisabled().setEntity(checked);
     }
 
     /**
@@ -1418,6 +1433,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineUnsafeInterrupts().getEntityChangedEvent().addListener(this);
         getKernelCmdlinePciRealloc().getEntityChangedEvent().addListener(this);
         getKernelCmdlineFips().getEntityChangedEvent().addListener(this);
+        getKernelCmdlineSmtDisabled().getEntityChangedEvent().addListener(this);
     }
 
     private void updateKernelCmdlineAccordingToCheckboxes() {
@@ -1428,7 +1444,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 || getKernelCmdlineKvmNested().getEntity() == null
                 || getKernelCmdlineUnsafeInterrupts().getEntity() == null
                 || getKernelCmdlinePciRealloc().getEntity() == null
-                || getKernelCmdlineFips().getEntity() == null) {
+                || getKernelCmdlineFips().getEntity() == null
+                || getKernelCmdlineSmtDisabled().getEntity() == null) {
             return;
         }
         final String kernelCmdline = KernelCmdlineUtil.create(
@@ -1438,7 +1455,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 getKernelCmdlineKvmNested().getEntity(),
                 getKernelCmdlineUnsafeInterrupts().getEntity(),
                 getKernelCmdlinePciRealloc().getEntity(),
-                getKernelCmdlineFips().getEntity());
+                getKernelCmdlineFips().getEntity(),
+                getKernelCmdlineSmtDisabled().getEntity());
         kernelCmdlineListener.whilePaused(() -> getKernelCmdline().setEntity(kernelCmdline));
     }
 

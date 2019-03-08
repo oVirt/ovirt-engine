@@ -306,6 +306,13 @@
                                         <ge:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" removeFormGroup="true" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <g:Label ui:field="clusterPopupCpuSmtTitle" text="{constants.clusterPopupCpuSmtTitle}" addStyleNames="{style.floatLeft} {style.groupTitle}" />
+                                        <d:InfoIcon ui:field="clusterPopupCpuSmtInfoIcon" addStyleNames="{style.panelInfo}" />
+                                        <ge:EntityModelCheckBoxEditor ui:field="smtDisabledEditor" label="{constants.clusterPopupCpuSmtLabel}" removeFormGroup="true" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
                                 <b:Row ui:field="cpuThreadsRow">
                                     <b:Column size="SM_12">
                                         <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.clusterPopupCpuThreadsPanelTitle}" />

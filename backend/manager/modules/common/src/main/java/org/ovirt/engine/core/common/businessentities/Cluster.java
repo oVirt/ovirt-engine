@@ -62,6 +62,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private boolean upgradeRunning;
 
+    private boolean smtDisabled;
+
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     private String compatibilityVersion;
 
@@ -271,6 +273,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
      */
     public void setUpgradeRunning(boolean upgradeRunning) {
         this.upgradeRunning = upgradeRunning;
+    }
+
+    public boolean getSmtDisabled() {
+        return smtDisabled;
+    }
+
+    public void setSmtDisabled(boolean smtDisabled) {
+        this.smtDisabled = smtDisabled;
     }
 
     public Version getCompatibilityVersion() {

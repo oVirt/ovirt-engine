@@ -1,0 +1,1 @@
+SELECT fn_db_add_column('cluster', 'smt_disabled', 'BOOLEAN NOT NULL DEFAULT FALSE');
