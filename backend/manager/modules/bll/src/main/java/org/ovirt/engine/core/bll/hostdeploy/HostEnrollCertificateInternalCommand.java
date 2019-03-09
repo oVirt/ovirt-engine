@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -36,33 +35,33 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
     protected void executeCommand() {
         setVdsStatus(VDSStatus.Installing);
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-            .hostnames(getVds().getHostName())
-            // /var/log/ovirt-engine/host-deploy/ovirt-enroll-certs-ansible-{hostname}-{correlationid}-{timestamp}.log
-            .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
-            .logFilePrefix("ovirt-enroll-certs-ansible")
-            .logFileName(getVds().getHostName())
-            .logFileSuffix(CorrelationIdTracker.getCorrelationId())
-            .variables(
-                new Pair<>("ovirt_pki_dir", config.getPKIDir()),
-                new Pair<>("ovirt_vds_hostname", getVds().getHostName()),
-                new Pair<>("ovirt_engine_usr", config.getUsrDir()),
-                new Pair<>("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName)),
-                new Pair<>("ovirt_vdscertificatevalidityinyears", Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears)),
-                new Pair<>("ovirt_signcerttimeoutinseconds", Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds)),
-                new Pair<>("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM)),
-                new Pair<>("ovirt_ca_key",  PKIResources.getCaCertificate().toString(
-                    PKIResources.Format.OPENSSH_PUBKEY
-                ).replace("\n", ""))
-            )
-            .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE);
+                .hostnames(getVds().getHostName())
+                // /var/log/ovirt-engine/host-deploy/ovirt-enroll-certs-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-enroll-certs-ansible")
+                .logFileName(getVds().getHostName())
+                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
+                .variable("ovirt_pki_dir", config.getPKIDir())
+                .variable("ovirt_vds_hostname", getVds().getHostName())
+                .variable("ovirt_engine_usr", config.getUsrDir())
+                .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
+                .variable("ovirt_vdscertificatevalidityinyears",
+                        Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears).toString())
+                .variable("ovirt_signcerttimeoutinseconds",
+                        Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds).toString())
+                .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
+                .variable("ovirt_ca_key",
+                        PKIResources.getCaCertificate()
+                                .toString(PKIResources.Format.OPENSSH_PUBKEY)
+                                .replace("\n", ""))
+                .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE);
         setVdsStatus(VDSStatus.Maintenance);
         setSucceeded(true);
         if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             log.error(
-                "Failed to enroll certificate for host '{}': please check log for more details: {}",
-                getVds().getName(),
-                command.logFile()
-            );
+                    "Failed to enroll certificate for host '{}': please check log for more details: {}",
+                    getVds().getName(),
+                    command.logFile());
             setVdsStatus(VDSStatus.InstallFailed);
         }
     }

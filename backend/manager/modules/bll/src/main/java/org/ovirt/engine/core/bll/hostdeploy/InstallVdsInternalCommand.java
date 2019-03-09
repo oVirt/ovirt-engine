@@ -244,28 +244,27 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
 
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-            .hostnames(getVds().getHostName())
-            .variables(
-                new Pair<>("host_deploy_cluster_version", hostCluster.getCompatibilityVersion()),
-                new Pair<>("host_deploy_cluster_name", hostCluster.getName()),
-                new Pair<>("host_deploy_cluster_switch_type", hostCluster.getRequiredSwitchTypeForCluster().getOptionValue()),
-                new Pair<>("host_deploy_gluster_enabled", hostCluster.supportsGlusterService()),
-                new Pair<>("host_deploy_virt_enabled", hostCluster.supportsVirtService()),
-                new Pair<>("host_deploy_vdsm_port", getVds().getPort()),
-                new Pair<>("host_deploy_override_firewall", getParameters().getOverrideFirewall()),
-                new Pair<>("host_deploy_firewall_type", hostCluster.getFirewallType().name()),
-                new Pair<>("ansible_port", getVds().getSshPort()),
-                new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH),
-                new Pair<>("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(getVds())),
-                new Pair<>("host_deploy_ovn_central", getOvnCentral()),
-                new Pair<>("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
-            )
-            // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
-            .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
-            .logFilePrefix("ovirt-host-deploy-ansible")
-            .logFileName(getVds().getHostName())
-            .logFileSuffix(getCorrelationId())
-            .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
+                .hostnames(getVds().getHostName())
+                .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
+                .variable("host_deploy_cluster_name", hostCluster.getName())
+                .variable("host_deploy_cluster_switch_type",
+                        hostCluster.getRequiredSwitchTypeForCluster().getOptionValue())
+                .variable("host_deploy_gluster_enabled", hostCluster.supportsGlusterService())
+                .variable("host_deploy_virt_enabled", hostCluster.supportsVirtService())
+                .variable("host_deploy_vdsm_port", getVds().getPort())
+                .variable("host_deploy_override_firewall", getParameters().getOverrideFirewall())
+                .variable("host_deploy_firewall_type", hostCluster.getFirewallType().name())
+                .variable("ansible_port", getVds().getSshPort())
+                .variable("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
+                .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(getVds()))
+                .variable("host_deploy_ovn_central", getOvnCentral())
+                .variable("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
+                // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-deploy-ansible")
+                .logFileName(getVds().getHostName())
+                .logFileSuffix(getCorrelationId())
+                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
 
         AuditLogable logable = new AuditLogableImpl();
         logable.setVdsName(getVds().getName());

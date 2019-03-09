@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -126,28 +125,29 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     public void update(final VDS host) {
         Cluster cluster = clusterDao.get(host.getClusterId());
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-            .hostnames(host.getHostName())
-            // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
-            .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
-            .logFilePrefix("ovirt-host-mgmt-ansible")
-            .logFileName(host.getHostName())
-            .logFileSuffix(CorrelationIdTracker.getCorrelationId())
-            .variables(
-                new Pair<>("host_deploy_vnc_restart_services", host.getVdsType() == VDSType.VDS),
-                new Pair<>("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled())),
+                .hostnames(host.getHostName())
+                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-mgmt-ansible")
+                .logFileName(host.getHostName())
+                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
+                .variable("host_deploy_vnc_restart_services", host.getVdsType() == VDSType.VDS)
+                .variable("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled()))
                 // PKI variables:
-                new Pair<>("ovirt_pki_dir", config.getPKIDir()),
-                new Pair<>("ovirt_vds_hostname", host.getHostName()),
-                new Pair<>("ovirt_engine_usr", config.getUsrDir()),
-                new Pair<>("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName)),
-                new Pair<>("ovirt_vdscertificatevalidityinyears", Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears)),
-                new Pair<>("ovirt_signcerttimeoutinseconds", Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds)),
-                new Pair<>("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM)),
-                new Pair<>("ovirt_ca_key",  PKIResources.getCaCertificate().toString(
-                    PKIResources.Format.OPENSSH_PUBKEY
-                ).replace("\n", ""))
-            )
-            .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
+                .variable("ovirt_pki_dir", config.getPKIDir())
+                .variable("ovirt_vds_hostname", host.getHostName())
+                .variable("ovirt_engine_usr", config.getUsrDir())
+                .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
+                .variable("ovirt_vdscertificatevalidityinyears",
+                        Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
+                .variable("ovirt_signcerttimeoutinseconds",
+                        Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
+                .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
+                .variable("ovirt_ca_key",
+                        PKIResources.getCaCertificate()
+                                .toString(PKIResources.Format.OPENSSH_PUBKEY)
+                                .replace("\n", ""))
+                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
         if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             String error = String.format("Failed to update host '%1$s'.", host.getHostName());
             log.error(error);
