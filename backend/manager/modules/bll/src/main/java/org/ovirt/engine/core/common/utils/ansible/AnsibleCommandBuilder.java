@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,6 +87,7 @@ public class AnsibleCommandBuilder {
         config = EngineLocalConfig.getInstance();
         playbookDir = Paths.get(config.getUsrDir().getPath(), "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
+        variables = new LinkedList<>();
 
         try {
             verboseLevel = AnsibleVerbosity.valueOf(
@@ -125,10 +127,15 @@ public class AnsibleCommandBuilder {
         return this;
     }
 
+    public AnsibleCommandBuilder variable(String name, Object value) {
+        this.variables.add(String.format("%1$s=\"%2$s\"", name, value));
+        return this;
+    }
+
     public AnsibleCommandBuilder variables(Pair<String, Object>... variables) {
-        this.variables = Arrays.stream(variables)
+        this.variables.addAll(Arrays.stream(variables)
                 .map(p -> String.format("%1$s=\"%2$s\"", p.getFirst(), p.getSecond()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         return this;
     }
 

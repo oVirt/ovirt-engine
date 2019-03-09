@@ -132,14 +132,11 @@ public class AnsibleCommandBuilderTest {
     @Test
     public void testExtraVariables() {
         String command = createCommand(
-            new AnsibleCommandBuilder()
-                .variables(
-                    new Pair<>("a", "1"),
-                    new Pair<>("b", "2"),
-                    new Pair<>("c", "3")
-                )
-                .playbook(ANSIBLE_PLAYBOOK)
-        );
+                new AnsibleCommandBuilder()
+                        .variable("a", "1")
+                        .variable("b", "2")
+                        .variable("c", "3")
+                        .playbook(ANSIBLE_PLAYBOOK));
         assertEquals(
             join(
                 AnsibleCommandBuilder.ANSIBLE_COMMAND,
@@ -163,10 +160,8 @@ public class AnsibleCommandBuilderTest {
                 .inventoryFile(Paths.get("/myinventory"))
                 .limit("mylimit")
                 .verboseLevel(AnsibleVerbosity.LEVEL3)
-                .variables(
-                    new Pair<>("a", "1"),
-                    new Pair<>("b", "2")
-                )
+                        .variable("a", "1")
+                        .variable("b", "2")
                 .playbook(ANSIBLE_PLAYBOOK)
         );
         assertEquals(
