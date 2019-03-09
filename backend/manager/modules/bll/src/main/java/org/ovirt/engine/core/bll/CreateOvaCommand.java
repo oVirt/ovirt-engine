@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -158,9 +157,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private String runAnsibleImageMeasurePlaybook(String path) {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
-                .variables(
-                    new Pair<>("image_path", path)
-                )
+                .variable("image_path", path)
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-image-measure-ansible")
@@ -189,14 +186,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         String encodedOvf = genOvfParameter(ovf);
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
-                .variables(
-                    new Pair<>("target_directory", getParameters().getDirectory()),
-                    new Pair<>("entity_type", getParameters().getEntityType().name().toLowerCase()),
-                    new Pair<>("ova_size", String.valueOf(calcOvaSize(disks, encodedOvf))),
-                    new Pair<>("ova_name", getParameters().getName()),
-                    new Pair<>("ovirt_ova_pack_ovf", encodedOvf),
-                    new Pair<>("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))
-                )
+                .variable("target_directory", getParameters().getDirectory())
+                .variable("entity_type", getParameters().getEntityType().name().toLowerCase())
+                .variable("ova_size", String.valueOf(calcOvaSize(disks, encodedOvf)))
+                .variable("ova_name", getParameters().getName())
+                .variable("ovirt_ova_pack_ovf", encodedOvf)
+                .variable("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-ansible")

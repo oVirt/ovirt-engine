@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -99,15 +98,17 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
-                .variables(
-                    new Pair<>("ovirt_import_ova_path", getParameters().getOvaPath()),
-                    new Pair<>("ovirt_import_ova_disks", diskPaths.stream()
-                            .map(path -> String.format("'%s'", path))
-                            .collect(Collectors.joining(",", "[", "]"))),
-                    new Pair<>("ovirt_import_ova_image_mappings", getImageMappings().entrySet().stream()
-                            .map(e -> String.format("\"%s\": \"%s\"", e.getValue().toString(), e.getKey().toString()))
-                            .collect(Collectors.joining(", ", "'{", "}'")))
-                )
+                .variable("ovirt_import_ova_path", getParameters().getOvaPath())
+                .variable("ovirt_import_ova_disks",
+                        diskPaths.stream()
+                                .map(path -> String.format("'%s'", path))
+                                .collect(Collectors.joining(",", "[", "]")))
+                .variable("ovirt_import_ova_image_mappings",
+                        getImageMappings().entrySet()
+                                .stream()
+                                .map(e -> String
+                                        .format("\"%s\": \"%s\"", e.getValue().toString(), e.getKey().toString()))
+                                .collect(Collectors.joining(", ", "'{", "}'")))
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-import-ova-ansible")

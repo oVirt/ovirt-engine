@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -47,11 +46,9 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
         String hostname = vdsStaticDao.get(getParameters().getVdsId()).getHostName();
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(hostname)
-                .variables(
-                    new Pair<>("ovirt_query_ova_path", getParameters().getPath()),
-                    new Pair<>("list_directory", getParameters().isListDirectory() ? "True" : "False"),
-                    new Pair<>("entity_type", getEntityType().name().toLowerCase())
-                )
+                .variable("ovirt_query_ova_path", getParameters().getPath())
+                .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
+                .variable("entity_type", getEntityType().name().toLowerCase())
                 // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-query-ova-ansible")

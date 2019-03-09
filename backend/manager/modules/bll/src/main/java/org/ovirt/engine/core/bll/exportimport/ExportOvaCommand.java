@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -92,10 +91,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     private ValidationResult validateTargetFolder() {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
-                .variables(
-                    new Pair<>("target_directory", getParameters().getDirectory()),
-                    new Pair<>("validate_only", "True")
-                )
+                .variable("target_directory", getParameters().getDirectory())
+                .variable("validate_only", "True")
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CreateOvaCommand.CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-validate-ansible")
