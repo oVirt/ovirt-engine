@@ -32,7 +32,6 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -129,13 +128,6 @@ public class AnsibleCommandBuilder {
 
     public AnsibleCommandBuilder variable(String name, Object value) {
         this.variables.add(String.format("%1$s=\"%2$s\"", name, value));
-        return this;
-    }
-
-    public AnsibleCommandBuilder variables(Pair<String, Object>... variables) {
-        this.variables.addAll(Arrays.stream(variables)
-                .map(p -> String.format("%1$s=\"%2$s\"", p.getFirst(), p.getSecond()))
-                .collect(Collectors.toList()));
         return this;
     }
 
