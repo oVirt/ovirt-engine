@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -53,7 +51,7 @@ public class AnsibleCommandBuilder {
     private Path privateKey;
     private String cluster;
     private List<String> hostnames;
-    private List<String> variables;
+    private Map<String, Object> variables;
     private String variableFilePath;
     private String limit;
     private Path inventoryFile;
@@ -86,7 +84,7 @@ public class AnsibleCommandBuilder {
         config = EngineLocalConfig.getInstance();
         playbookDir = Paths.get(config.getUsrDir().getPath(), "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
-        variables = new LinkedList<>();
+        variables = new HashMap<>();
 
         try {
             verboseLevel = AnsibleVerbosity.valueOf(
@@ -127,7 +125,7 @@ public class AnsibleCommandBuilder {
     }
 
     public AnsibleCommandBuilder variable(String name, Object value) {
-        this.variables.add(String.format("%1$s=\"%2$s\"", name, value));
+        this.variables.put(name, value);
         return this;
     }
 
@@ -267,11 +265,10 @@ public class AnsibleCommandBuilder {
             ansibleCommand.add(String.format("--limit=%1$s", limit));
         }
 
-        if (CollectionUtils.isNotEmpty(variables)) {
-            variables.stream()
-                    .map(v -> String.format("--extra-vars=%1$s", v))
-                    .forEach(ansibleCommand::add);
-        }
+        variables.entrySet()
+                .stream()
+                .map(e -> String.format("--extra-vars=%1$s=\"%2$s\"", e.getKey(), e.getValue()))
+                .forEach(ansibleCommand::add);
 
         if (variableFilePath != null) {
             ansibleCommand.add(String.format("--extra-vars=@%s", variableFilePath));
