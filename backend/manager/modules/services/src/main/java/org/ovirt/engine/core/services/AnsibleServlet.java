@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.queries.GetEngineSessionIdForSsoTokenQueryPa
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -82,13 +81,11 @@ public class AnsibleServlet extends HttpServlet {
             try {
                 variablesFile = createVariablesFile(request);
                 AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                    .variables(
-                        new Pair<>("engine_url", engineUrl),
-                        new Pair<>("engine_token", token),
-                        new Pair<>("engine_insecure", "true") // TODO: use CA
-                    )
-                    .variableFilePath(variablesFile.toString())
-                    .playbook(request.getParameter("playbook") + ".yml");
+                        .variable("engine_url", engineUrl)
+                        .variable("engine_token", token)
+                        .variable("engine_insecure", "true") // TODO: use CA
+                        .variableFilePath(variablesFile.toString())
+                        .playbook(request.getParameter("playbook") + ".yml");
 
                 // Verify the ansible-playbook exists
                 Path playbook = Paths.get(command.playbook());
