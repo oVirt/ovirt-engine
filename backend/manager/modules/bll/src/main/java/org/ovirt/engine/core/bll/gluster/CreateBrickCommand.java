@@ -166,29 +166,27 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
-                .variables(
-                        new Pair<>("ssd", ssdDevice),
-                        new Pair<>("disks", JsonHelper.objectToJson(disks, false)),
-                        new Pair<>("vgname", "RHGS_vg_" + getParameters().getLvName()),
-                        new Pair<>("size", totalSize),
-                        new Pair<>("diskcount", diskCount),
-                        new Pair<>("stripesize", getParameters().getStripeSize()),
-                        new Pair<>("pool_metadatasize", poolmetadatsize),
-                        new Pair<>("wipefs", "yes"),
-                        new Pair<>("disktype", getParameters().getRaidType().toString()),
-                        new Pair<>("lvname", getParameters().getLvName() + "_lv"),
-                        new Pair<>("cache_lvname", getParameters().getLvName() + "_cache_lv"),
-                        new Pair<>("cache_lvsize", getParameters().getCacheSize() + "G"),
-                        new Pair<>("cachemode", getParameters().getCacheMode()),
-                        new Pair<>("fstype", GlusterConstants.FS_TYPE_XFS),
-                        new Pair<>("mntpath", getParameters().getMountPoint()))
-
-            // /var/log/ovirt-engine/brick-setup/ovirt-gluster-brick-ansible-{hostname}-{correlationid}-{timestamp}.log
-            .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
-            .logFilePrefix("ovirt-gluster-brick-ansible")
-            .logFileName(getVds().getHostName())
-            .logFileSuffix(getCorrelationId())
-            .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
+                .variable("ssd", ssdDevice)
+                .variable("disks", JsonHelper.objectToJson(disks, false))
+                .variable("vgname", "RHGS_vg_" + getParameters().getLvName())
+                .variable("size", totalSize.toString())
+                .variable("diskcount", diskCount)
+                .variable("stripesize", getParameters().getStripeSize())
+                .variable("pool_metadatasize", poolmetadatsize)
+                .variable("wipefs", "yes")
+                .variable("disktype", getParameters().getRaidType().toString())
+                .variable("lvname", getParameters().getLvName() + "_lv")
+                .variable("cache_lvname", getParameters().getLvName() + "_cache_lv")
+                .variable("cache_lvsize", getParameters().getCacheSize() + "G")
+                .variable("cachemode", getParameters().getCacheMode())
+                .variable("fstype", GlusterConstants.FS_TYPE_XFS)
+                .variable("mntpath", getParameters().getMountPoint())
+                // /var/log/ovirt-engine/brick-setup/ovirt-gluster-brick-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-gluster-brick-ansible")
+                .logFileName(getVds().getHostName())
+                .logFileSuffix(getCorrelationId())
+                .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
 
          AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
