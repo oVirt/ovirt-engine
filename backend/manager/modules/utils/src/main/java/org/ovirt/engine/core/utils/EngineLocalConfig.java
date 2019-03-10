@@ -219,12 +219,24 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getProperty("ENGINE_PKI_TRUST_STORE");
     }
 
+    public String getPKITrustStorePassword() {
+        return getProperty("ENGINE_PKI_TRUST_STORE_PASSWORD");
+    }
+
+    public String getHttpsPKITrustStoreType() {
+        return getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_TYPE");
+    }
+
+    public File getHttpsPKITrustStore() {
+        return getFile("ENGINE_HTTPS_PKI_TRUST_STORE");
+    }
+
     public String getHttpsPKITrustStorePath() {
         return getProperty("ENGINE_HTTPS_PKI_TRUST_STORE");
     }
 
-    public String getPKITrustStorePassword() {
-        return getProperty("ENGINE_PKI_TRUST_STORE_PASSWORD");
+    public String getHttpsPKITrustStorePassword() {
+        return getProperty("ENGINE_HTTPS_PKI_TRUST_STORE_PASSWORD");
     }
 
     public String getPKIEngineStoreType() {

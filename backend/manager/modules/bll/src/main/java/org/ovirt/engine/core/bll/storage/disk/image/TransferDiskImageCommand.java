@@ -856,9 +856,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             HttpURLConnectionBuilder builder = new HttpURLConnectionBuilder().setURL(url);
             // Set SSL details
-            builder.setTrustStore(EngineLocalConfig.getInstance().getPKITrustStore().getAbsolutePath())
-                    .setTrustStorePassword(EngineLocalConfig.getInstance().getPKITrustStorePassword())
-                    .setTrustStoreType(EngineLocalConfig.getInstance().getPKITrustStoreType())
+            builder.setTrustStore(EngineLocalConfig.getInstance().getHttpsPKITrustStore().getAbsolutePath())
+                    .setTrustStorePassword(EngineLocalConfig.getInstance().getHttpsPKITrustStorePassword())
+                    .setTrustStoreType(EngineLocalConfig.getInstance().getHttpsPKITrustStoreType())
                     .setHttpsProtocol(Config.getValue(ConfigValues.ExternalCommunicationProtocol));
             HttpURLConnection connection = builder.create();
             connection.setDoOutput(true);
