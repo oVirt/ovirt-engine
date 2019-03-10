@@ -168,7 +168,7 @@ public class VdsEventListener implements IVdsEventListener {
             // and the storage server. it should be synced with the host autorecovery mechanism to try to avoid
             // leaving the host with storage/pool connection when it's on maintenance.
             EngineLock lock = new EngineLock(Collections.singletonMap(vds.getId().toString(),
-                    new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
+                    new Pair<>(LockingGroup.VDS.toString(),
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString())), null);
             try {
                 lockManager.acquireLockWait(lock);
