@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.CONFIRM_CONNECTIVITY;
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.POLL;
 import static org.ovirt.engine.core.utils.NetworkUtils.areDifferentId;
-import static org.ovirt.engine.core.utils.NetworkUtils.hasIpv6PrimaryAddress;
+import static org.ovirt.engine.core.utils.NetworkUtils.hasIpv6StaticBootProto;
 import static org.ovirt.engine.core.utils.network.predicate.IsDefaultRouteOnInterfacePredicate.isDefaultRouteOnInterfacePredicate;
 
 import java.util.ArrayList;
@@ -617,7 +617,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         List<HostNetwork> networksToConfigure = new ArrayList<>(getParameters().getNetworkAttachments().size());
         BusinessEntityMap<VdsNetworkInterface> nics = getExistingNicsBusinessEntityMap();
 
-        for (NetworkAttachment attachment : getAttachmentsWithMissingUpdatedDefaultRoute()) {
+        List<NetworkAttachment> attachments = getAttachmentsWithMissingUpdatedDefaultRoute();
+        removeIpv6GatewayFromPreviousDefaultRouteAttachment(findPreviousDefaultRouteNic(), attachments);
+        for (NetworkAttachment attachment : attachments) {
             Network network = existingNetworkRelatedToAttachment(attachment);
             NetworkCluster networkCluster = network.getCluster();
             HostNetwork networkToConfigure = new HostNetwork(network, attachment);
@@ -669,15 +671,19 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 currentDefaultRouteNetworkAttachment,
                 previousDefaultRouteNetworkAttachment);
         addAttachmentIfMissing(potentialyMissingAttachment, extendedAttachments);
-
-        NetworkAttachment previousExtendedDefaultRouteAttachment = findNetworkAttachmentByNetworkName(previousDefaultRouteNic, extendedAttachments);
-        if (hasIpv6PrimaryAddress(previousExtendedDefaultRouteAttachment)) {
-            previousExtendedDefaultRouteAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
-            auditLog(auditEventRemoveIpv6Gateway(previousExtendedDefaultRouteAttachment),
-                    AuditLogType.NETWORK_REMOVING_IPV6_GATEWAY_FROM_OLD_DEFAULT_ROUTE_ROLE_ATTACHMENT);
-        }
-
         return extendedAttachments;
+    }
+
+    private void removeIpv6GatewayFromPreviousDefaultRouteAttachment(
+            VdsNetworkInterface previousDefaultRouteNic, List<NetworkAttachment> extendedAttachments) {
+        NetworkAttachment previousDefaultRouteAttachment = findNetworkAttachmentByNetworkName(
+                previousDefaultRouteNic, extendedAttachments
+        );
+        if (hasIpv6StaticBootProto(previousDefaultRouteAttachment)) {
+            previousDefaultRouteAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
+            auditLog(auditEventRemoveIpv6Gateway(previousDefaultRouteAttachment),
+                AuditLogType.NETWORK_REMOVING_IPV6_GATEWAY_FROM_OLD_DEFAULT_ROUTE_ROLE_ATTACHMENT);
+        }
     }
 
     private NetworkAttachment findNetworkAttachmentByNetworkName(VdsNetworkInterface iface, List<NetworkAttachment> attachments) {
