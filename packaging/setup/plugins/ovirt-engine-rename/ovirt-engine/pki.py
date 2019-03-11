@@ -214,7 +214,7 @@ class Plugin(plugin.PluginBase):
                         if line.startswith('authorityInfoAccess'):
                             line = (
                                 'authorityInfoAccess = '
-                                'caIssuers;URI:http://%s:%s/ca.crt'
+                                'caIssuers;URI:http://%s:%s%s'
                             ) % (
                                 self.environment[
                                     osetupcons.RenameEnv.FQDN
@@ -222,6 +222,7 @@ class Plugin(plugin.PluginBase):
                                 self.environment[
                                     oengcommcons.ConfigEnv.PUBLIC_HTTP_PORT
                                 ],
+                                oenginecons.Const.ENGINE_PKI_CA_URI,
                             )
                         content.append(line)
                 localtransaction.append(
