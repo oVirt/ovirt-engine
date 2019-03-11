@@ -2121,8 +2121,6 @@ public interface UIConstants extends Constants {
 
     String noGeoRepSessionForGlusterVolume();
 
-    String hcAddBrickWarning();
-
     String forceRemoveProvider();
 
     String forceRemoveCinderProvider();
