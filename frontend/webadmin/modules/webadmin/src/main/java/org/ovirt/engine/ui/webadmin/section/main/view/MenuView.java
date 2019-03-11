@@ -71,6 +71,7 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     FlowPanel storageSecondaryContainer;
     @UiField
     Anchor storageSecondaryHeader;
+    @WithElementId("storageTab")
     @UiField
     Anchor storagePrimaryHeader;
 

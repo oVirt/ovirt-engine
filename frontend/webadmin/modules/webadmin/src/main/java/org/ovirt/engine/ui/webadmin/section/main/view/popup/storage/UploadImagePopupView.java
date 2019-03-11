@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
@@ -38,6 +39,10 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<UploadImagePopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Ignore
     Label imageSourceLabel;
@@ -53,13 +58,16 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     AlertPanel messagePanel;
 
     @UiField
+    @WithElementId("fileUpload")
     FileUpload imageFileUpload;
 
     @UiField
+    @WithElementId("fileUploadButton")
     SimpleDialogButton imageFileUploadButton;
 
     @UiField
     @Ignore
+    @WithElementId("fileUploadLabel")
     Label imageFileUploadLabel;
 
     @UiField
@@ -68,7 +76,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
     @UiField(provided = true)
     @Ignore
-    @WithElementId("vmdisk")
     VmDiskPopupWidget vmDiskPopupWidget;
 
     @UiField
@@ -90,6 +97,7 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         vmDiskPopupWidget = new VmDiskPopupWidget(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
+        UploadImagePopupView.ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
