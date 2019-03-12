@@ -41,7 +41,7 @@ public final class NetworkUtils {
     private static final Logger log = LoggerFactory.getLogger(NetworkUtils.class);
     private static final Pattern VALID_VDS_NAME_PATTERN = Pattern.compile(
             String.format("^[0-9a-zA-Z_-]{1,%d}$", BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH));
-    private static Integer getHostDefaultMtu() {
+    public static Integer getHostDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
 

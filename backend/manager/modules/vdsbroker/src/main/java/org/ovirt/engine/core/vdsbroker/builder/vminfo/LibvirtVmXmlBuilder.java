@@ -2348,9 +2348,12 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("address", nic.getMacAddress());
         writer.writeEndElement();
 
-        if (!networkless && !vnicProfile.isPassthrough()) {
+        if (networkless || !vnicProfile.isPassthrough()) {
             writer.writeStartElement("mtu");
-            writer.writeAttributeString("size", String.valueOf(NetworkUtils.getVmMtuActualValue(network)));
+            writer.writeAttributeString("size",
+                    networkless ?
+                            String.valueOf(NetworkUtils.getHostDefaultMtu()) :
+                            String.valueOf(NetworkUtils.getVmMtuActualValue(network)));
             writer.writeEndElement();
         }
 
