@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.validation.DiskExtendSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonNegativeLongNumberValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -153,7 +153,7 @@ public class EditDiskModel extends AbstractDiskModel {
     public boolean validate() {
         StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
                 : getStorageDomain().getSelectedItem().getStorageType();
-        IntegerValidation sizeValidation = new IntegerValidation();
+        DiskExtendSizeValidation sizeValidation = new DiskExtendSizeValidation();
         if (storageType.isBlockDomain()) {
             Integer maxBlockDiskSize =
                     (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBlockDiskSizeInGibiBytes);
