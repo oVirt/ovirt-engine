@@ -104,6 +104,10 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
             if (isNameChanged(vm)) {
                 tooltip += "<br/><br/>" + messages.vmStartedWithDifferentName(vm.getRuntimeName()); //$NON-NLS-1$
             }
+
+            if (isRunOnce(vm)) {
+                tooltip += "<br/></br/>" + constants.isRunOnce(); //$NON-NLS-1$
+            }
         }
 
         if (tooltip != null) {
@@ -120,7 +124,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
     public static boolean needsAlert(VM vm) {
         boolean alertRequired = false;
         if (vm.getStatus() == VMStatus.Up) {
-            alertRequired = !hasGuestAgent(vm) || hasDifferentTimezone(vm) || hasDifferentOSType(vm);
+            alertRequired = !hasGuestAgent(vm) || hasDifferentTimezone(vm) || hasDifferentOSType(vm) || isRunOnce(vm);
         }
         return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm) || hasIllegalImages(vm) || isNameChanged(vm) || !cpuVerbMatchesConfiguredCpuVerb(vm);
     }
@@ -152,6 +156,10 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
 
     private static boolean isNameChanged(VM vm) {
         return vm.getRuntimeName() != null && !vm.getRuntimeName().equals(vm.getName());
+    }
+
+    private static boolean isRunOnce(VM vm) {
+        return vm.getStatus() == VMStatus.Up && vm.isRunOnce();
     }
 
     private static boolean isUpdateNeeded(VM vm) {

@@ -1687,6 +1687,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String guestAgentNotAvailable();
 
+    String isRunOnce();
+
     String ExternalStatus();
 
     String foremanLabel();
