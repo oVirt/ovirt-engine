@@ -97,7 +97,7 @@ select fn_db_add_config_value('PopulateDirectLUNDiskDescriptionWithLUNId','4','g
 -- Host time drift
 select fn_db_add_config_value('EnableHostTimeDrift','true','general');
 -- list of os/remote-viewer minimal version supported by ovirt. Format: "linux:3.0;windows:2.5"
-select fn_db_add_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-128;rhev-win32:2.0-128;rhel7:2.0-6;rhel6:2.0-14','general');
+select fn_db_add_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-160;rhev-win32:2.0-160;rhel8:7.0-3;rhel7:2.0-6;rhel6:99.0-1','general');
 -- url which should be shown when the version check does not pass
 select fn_db_add_config_value('RemoteViewerNewerVersionUrl','${console_client_resources_url}','general');
 --Handling Enable Spice Root Certification Validation
@@ -1190,7 +1190,7 @@ select fn_db_rename_config_key('MaxVmNameLengthWindows', 'MaxVmNameLengthSysprep
 select fn_db_update_default_config_value('ClientModeSpiceDefault','Plugin','Native','general',false);
 
 -- Minimal version of remote-viewer supporting "sso-token" in vv files, there is no build of remote-viewer supporting sso-token for rhel6
-select fn_db_update_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-160;rhev-win32:2.0-160;rhel7:2.0-6;rhel6:99.0-1','general');
+select fn_db_update_config_value('RemoteViewerSupportedVersions','rhev-win64:2.0-160;rhev-win32:2.0-160;rhel8:7.0-3;rhel7:2.0-6;rhel6:99.0-1','general');
 
 -- Increase connection timeout from 2 to 20 seconds
 select fn_db_update_default_config_value('vdsConnectionTimeout','2','20','general',false);
