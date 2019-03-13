@@ -62,7 +62,9 @@ public class ConvergenceConfigProvider {
         } else {
             // this can happen since there is no guarantee on the cluster object that the policy is not going to be
             // deleted later on. In that case return the "no policy".
-            return migrationPolicies.get(NoMigrationPolicy.ID);
+            return migrationPolicies.get(NoMigrationPolicy.ID) != null ?
+                    migrationPolicies.get(NoMigrationPolicy.ID) :
+                    new NoMigrationPolicy();
         }
     }
 
@@ -80,7 +82,9 @@ public class ConvergenceConfigProvider {
                 policies.stream().collect(toMap(MigrationPolicy::getId, identity()));
 
         // the null object
-        migrationPolicies.put(NoMigrationPolicy.ID, new NoMigrationPolicy());
+        if (version.less(Version.v4_3)) {
+            migrationPolicies.put(NoMigrationPolicy.ID, new NoMigrationPolicy());
+        }
 
         migrationPoliciesByVersion.put(version, migrationPolicies);
     }

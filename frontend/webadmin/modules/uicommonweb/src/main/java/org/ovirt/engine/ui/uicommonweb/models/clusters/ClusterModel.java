@@ -1366,7 +1366,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     public void refreshMigrationPolicies() {
-        Version version = getEffectiveVersion();
+        Version version;
+        if (getVersion().getSelectedItem() != null) {
+            version = getVersion().getSelectedItem();
+        } else {
+            Cluster cluster = getEntity();
+            version = cluster == null ? getEffectiveVersion() : cluster.getCompatibilityVersion();
+        }
 
         Guid selectedPolicyId = null;
         if (getMigrationPolicies() != null && getMigrationPolicies().getSelectedItem() != null) {
@@ -1385,8 +1391,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             migrationPolicy = findMigrationPolicyById(selectedPolicyId, policies);
         }
 
-        getMigrationPolicies().setSelectedItem(migrationPolicy != null ? migrationPolicy :
-                findMigrationPolicyById(NoMigrationPolicy.ID, policies));
+        if (migrationPolicy == null) {
+            if (version.greaterOrEquals(Version.v4_3)) {
+                migrationPolicy = findFirstNonEmptyMigrationPolicy(policies);
+            } else {
+                migrationPolicy = findMigrationPolicyById(NoMigrationPolicy.ID, policies);
+            }
+        }
+        if (migrationPolicy != null) {
+            getMigrationPolicies().setSelectedItem(migrationPolicy);
+        }
 
         getMigrationPolicies().setIsChangeable(true);
     }

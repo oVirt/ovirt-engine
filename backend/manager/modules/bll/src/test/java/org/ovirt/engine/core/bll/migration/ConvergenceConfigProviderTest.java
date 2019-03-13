@@ -32,6 +32,13 @@ public class ConvergenceConfigProviderTest {
     }
 
     @Test
+    public void jsonInvalidJsonLegacyVersion() {
+        provider.initMigrationPolicies("this is not a valid json", Version.v4_2);
+        MigrationPolicy policy = provider.getMigrationPolicy(Guid.newGuid(), Version.v4_2);
+        assertTrue(policy instanceof NoMigrationPolicy);
+    }
+
+    @Test
     public void jsonProperlyFilled() throws IOException {
         Guid id = Guid.newGuid();
 
