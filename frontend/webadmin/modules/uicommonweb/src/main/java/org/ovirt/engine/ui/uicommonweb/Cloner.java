@@ -152,6 +152,7 @@ public final class Cloner {
         vm.setUsbPolicy(instance.getUsbPolicy());
         vm.setUtcDiff(instance.getUtcDiff());
         vm.setClusterCompatibilityVersion(instance.getClusterCompatibilityVersion());
+        vm.setClusterCompatibilityVersionOrigin(instance.getClusterCompatibilityVersionOrigin());
         vm.setClusterId(instance.getClusterId());
         vm.setClusterName(instance.getClusterName());
         vm.setVmCreationDate(instance.getVmCreationDate());
