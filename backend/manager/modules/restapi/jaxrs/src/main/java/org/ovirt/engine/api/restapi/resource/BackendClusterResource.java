@@ -4,6 +4,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.ClusterUpgradeAction;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -63,6 +64,14 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public Response syncAllNetworks(Action action) {
         return doAction(ActionType.SyncAllClusterNetworks, new ClusterParametersBase(guid), action);
+    }
+
+    @Override
+    public Response upgrade(Action action) {
+        if(action.getUpgradeAction() == ClusterUpgradeAction.START) {
+            return doAction(ActionType.StartClusterUpgrade, new ClusterParametersBase(guid), action);
+        }
+        return doAction(ActionType.FinishClusterUpgrade, new ClusterParametersBase(guid), action);
     }
 
     @Override
