@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
@@ -12,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -28,6 +31,9 @@ import org.ovirt.engine.core.compat.Guid;
         }
 )
 public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {
+
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
 
     public PowerSavingMemoryWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -69,9 +75,12 @@ public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {
 
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
+            float hostSchedulingMem = vds.getMaxSchedulingMemory() -
+                    (vds.getId().equals(vm.getRunOnVds()) ? 0 : vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
+
             scores.add(new Pair<>(
                     vds.getId(),
-                    calcHostScore(vds.getMaxSchedulingMemory(), maxMemory, lowMemoryLimit, highMemoryLimit)
+                    calcHostScore(hostSchedulingMem, maxMemory, lowMemoryLimit, highMemoryLimit)
             ));
         }
         return scores;

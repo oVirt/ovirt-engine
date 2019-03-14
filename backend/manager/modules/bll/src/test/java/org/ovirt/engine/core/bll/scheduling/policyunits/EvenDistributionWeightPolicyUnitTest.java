@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +15,11 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
@@ -22,18 +29,17 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@ExtendWith(MockConfigExtension.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest {
 
     private static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
-
-    private EvenDistributionCPUWeightPolicyUnit evenDistributionCPUWeightPolicyUnit;
-    private EvenDistributionMemoryWeightPolicyUnit evenDistributionMemoryWeightPolicyUnit;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
@@ -43,11 +49,18 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
         );
     }
 
+    @Mock
+    private VmOverheadCalculator vmOverheadCalculator;
+
+    @InjectMocks
+    private EvenDistributionCPUWeightPolicyUnit evenDistributionCPUWeightPolicyUnit = new EvenDistributionCPUWeightPolicyUnit(null, new PendingResourceManager());
+
+    @InjectMocks
+    private EvenDistributionMemoryWeightPolicyUnit evenDistributionMemoryWeightPolicyUnit =  new EvenDistributionMemoryWeightPolicyUnit(null, new PendingResourceManager());
+
     @BeforeEach
     public void setUp() {
-        PendingResourceManager pendingResourceManager = new PendingResourceManager();
-        evenDistributionCPUWeightPolicyUnit = new EvenDistributionCPUWeightPolicyUnit(null, pendingResourceManager);
-        evenDistributionMemoryWeightPolicyUnit = new EvenDistributionMemoryWeightPolicyUnit(null, pendingResourceManager);
+        when(vmOverheadCalculator.getTotalRequiredMemoryInMb(any(VM.class))).thenAnswer(invocation -> invocation.<VM>getArgument(0).getMemSizeMb());
     }
 
     @Test

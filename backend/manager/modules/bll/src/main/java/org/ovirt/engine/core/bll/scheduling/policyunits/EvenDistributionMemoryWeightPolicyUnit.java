@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,6 +27,9 @@ import org.ovirt.engine.core.compat.Guid;
 )
 public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
 
+    @Inject
+    private VmOverheadCalculator vmOverheadCalculator;
+
     public EvenDistributionMemoryWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -34,7 +40,7 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
         float maxMemoryOfVdsInCluster = getMaxMemoryOfVdsInCluster(hosts);
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
-            scores.add(new Pair<>(vds.getId(), calcHostScore(maxMemoryOfVdsInCluster, vds)));
+            scores.add(new Pair<>(vds.getId(), calcHostScore(maxMemoryOfVdsInCluster, vds, vm)));
         }
         return scores;
     }
@@ -46,8 +52,11 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
      * @param maxMemoryOfVdsInCluster maximum available memory for scheduling of a vds from all the available hosts
      * @return weight score for a single host
      */
-    private int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds) {
-        int score = Math.round(((vds.getMaxSchedulingMemory() - 1) * (getMaxSchedulerWeight() - 1))
+    private int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds, VM vm) {
+        float hostSchedulingMem = vds.getMaxSchedulingMemory() -
+                (vds.getId().equals(vm.getRunOnVds()) ? 0 : vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
+
+        int score = Math.round(((hostSchedulingMem - 1) * (getMaxSchedulerWeight() - 1))
                 / (maxMemoryOfVdsInCluster - 1));
         return getMaxSchedulerWeight() - score;
     }

@@ -338,7 +338,7 @@ public class SchedulingManager implements BackendService {
             vdsList = removeBlacklistedHosts(vdsList, hostBlackList);
             vdsList = keepOnlyWhitelistedHosts(vdsList, hostWhiteList);
             refreshCachedPendingValues(vdsList);
-            subtractRunningVmResources(cluster, vm, vdsList);
+            vmHandler.updateVmStatistics(vm);
             fetchNumaNodes(vm, vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             SchedulingContext context = new SchedulingContext(cluster,
@@ -627,7 +627,7 @@ public class SchedulingManager implements BackendService {
         vdsList = removeBlacklistedHosts(vdsList, vdsBlackList);
         vdsList = keepOnlyWhitelistedHosts(vdsList, vdsWhiteList);
         refreshCachedPendingValues(vdsList);
-        subtractRunningVmResources(cluster, vm, vdsList);
+        vmHandler.updateVmStatistics(vm);
         fetchNumaNodes(vm, vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         SchedulingContext context = new SchedulingContext(cluster,
@@ -908,41 +908,6 @@ public class SchedulingManager implements BackendService {
             selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
                     resultEntry.getHost(), resultEntry.getWeight());
         }
-    }
-
-    private void subtractRunningVmResources(Cluster cluster, VM vm, List<VDS> hosts) {
-        // Check if VM is running
-        if (Guid.isNullOrEmpty(vm.getRunOnVds())) {
-            return;
-        }
-
-        // Find host where it runs
-        VDS host = hosts.stream()
-                 .filter(h -> h.getId().equals(vm.getRunOnVds()))
-                 .findAny().orElse(null);
-
-        if (host == null) {
-            return;
-        }
-
-        vmHandler.updateVmStatistics(vm);
-        // There may be no statistics for the VM, if it was started recently
-        if (vm.getStatisticsData() == null) {
-            return;
-        }
-
-        // Using the count of threads instead of count of CPUs,
-        // because the CPU percentage from the host uses threads
-        int hostThreads = host.getCpuThreads();
-        int hostLoad = host.getUsageCpuPercent() * hostThreads;
-        int vmLoad = vm.getUsageCpuPercent() * vm.getNumOfCpus(true);
-
-        host.setUsageCpuPercent(Math.max(
-                Math.round((float) (hostLoad - vmLoad) / (float) hostThreads),
-                0));
-
-        // Subtract memory
-        host.setMemCommited(host.getMemCommited() - vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
     }
 
     public Map<String, String> getCustomPropertiesRegexMap(ClusterPolicy clusterPolicy) {
