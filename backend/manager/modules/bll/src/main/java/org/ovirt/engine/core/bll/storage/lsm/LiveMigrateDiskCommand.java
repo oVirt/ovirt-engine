@@ -237,9 +237,16 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             return true;
         }
 
-        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.IMAGE_DATA_SYNC_EXEC_END) {
+        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.IMAGE_DATA_SYNC_EXEC_END ||
+                getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.VM_REPLICATE_DISK_FINISH) {
             updateStage(LiveDiskMigrateStage.VM_REPLICATE_DISK_FINISH);
-            completeLiveMigration();
+
+            // in case live migration is yet to complete (VM under heavy I/O load), we shall retry to pivot
+            // in the next polling cycle
+            if (!completeLiveMigration()) {
+                return true;
+            }
+
             updateStage(LiveDiskMigrateStage.SOURCE_IMAGE_DELETION);
             removeImage(getParameters().getSourceStorageDomainId(), getParameters()
                     .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
@@ -363,7 +370,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         setSucceeded(true);
     }
 
-    private void completeLiveMigration() {
+    private boolean completeLiveMigration() {
         // Update the DB before sending the command (perform rollback on failure)
         moveDiskInDB(getParameters().getSourceStorageDomainId(),
                 getParameters().getTargetStorageDomainId(),
@@ -374,6 +381,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             replicateDiskFinish(getParameters().getSourceStorageDomainId(),
                     getParameters().getTargetStorageDomainId());
         } catch (Exception e) {
+            if (e instanceof EngineException &&
+                    EngineError.unavail.equals(((EngineException) e).getErrorCode())) {
+                log.warn("Replication not finished yet, will retry in next polling cycle");
+                return false;
+            }
+
             moveDiskInDB(getParameters().getTargetStorageDomainId(),
                     getParameters().getSourceStorageDomainId(),
                     sourceQuotaId,
@@ -383,6 +396,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     getParameters().getVmId());
             throw e;
         }
+
+        return true;
     }
 
     private void replicateDiskFinish(Guid srcDomain, Guid dstDomain) {
