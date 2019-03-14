@@ -18,6 +18,7 @@ exec "${JAVA_HOME}/bin/java" \
 	-Dorg.ovirt.engine.exttool.core.useKeytab="${AAA_JAAS_USE_KEYTAB}" \
 	-Dorg.ovirt.engine.exttool.core.keytabFile="${AAA_JAAS_KEYTAB_FILE}" \
 	-Dorg.ovirt.engine.exttool.core.principalName="${AAA_JAAS_PRINCIPAL_NAME}" \
+	-Dorg.ovirt.engine.exttool.core.debug="${AAA_JAAS_ENABLE_DEBUG}" \
 	${JAVA_OPTS} \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.core.extensions-tool \

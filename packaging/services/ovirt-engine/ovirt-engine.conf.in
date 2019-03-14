@@ -547,6 +547,11 @@ AAA_JAAS_KEYTAB_FILE=
 AAA_JAAS_PRINCIPAL_NAME=
 
 #
+# Enable Kerberos Debug
+#
+AAA_JAAS_ENABLE_DEBUG=false
+
+#
 # Enable/disable updating the dashboard DB query caches at regular intervals.
 #
 DASHBOARD_CACHE_UPDATE=true

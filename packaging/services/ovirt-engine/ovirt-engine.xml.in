@@ -595,6 +595,7 @@
               {% if config.get('AAA_JAAS_PRINCIPAL_NAME') != "" %}
               <module-option name="principal" value="{{ config.get('AAA_JAAS_PRINCIPAL_NAME') }}"/>
               {% endif %}
+              <module-option name="debug" value="{{ config.getboolean('AAA_JAAS_ENABLE_DEBUG') }}"/>
               <module-option name="doNotPrompt" value="true"/>
             </login-module>
           </authentication>
