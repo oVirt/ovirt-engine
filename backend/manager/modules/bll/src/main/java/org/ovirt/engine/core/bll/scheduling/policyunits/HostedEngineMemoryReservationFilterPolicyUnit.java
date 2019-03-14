@@ -92,6 +92,10 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
 
         // Count the number of hosted engine spares
         for (VDS host: hosts) {
+            // If the VM is currently running on the host, it does not require any additional memory
+            int vmMemoryNeeded = host.getId().equals(vm.getRunOnVds()) ? 0 :
+                    vm.getMemSizeMb() + host.getGuestOverhead();
+
             // Not a HE host
             if (!host.getHighlyAvailableIsActive()) {
                 candidateHosts.add(host);
@@ -107,7 +111,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
             // HE host that has enough memory to run both the hosted engine VM
             // and the scheduled VM at the same time -- count as candidate and spare!
             } else if (host.getMaxSchedulingMemory()
-                    > vm.getMemSizeMb() + 2 * host.getGuestOverhead() + hostedEngine.getMemSizeMb()) {
+                    > vmMemoryNeeded + host.getGuestOverhead() + hostedEngine.getMemSizeMb()) {
                 spares.add(host);
                 candidateHosts.add(host);
             // HE host that has enough memory to run the hosted engine VM -- count as spare only!

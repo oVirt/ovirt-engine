@@ -44,6 +44,10 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     private double calcHostLoadPerCore(VDS vds, VM vm, int hostCores) {
+        if (vds.getId().equals(vm.getRunOnVds())) {
+            return vds.getUsageCpuPercent();
+        }
+
         int vcpu = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
         int spmCpu = (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer>getValue(ConfigValues.SpmVCpuConsumption);
@@ -52,9 +56,15 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
         double pendingVcpus = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
 
         double hostLoad = hostCpu * hostCores;
-        double addedLoad = vcpu * (pendingVcpus + vm.getNumOfCpus() + spmCpu);
 
-        return (hostLoad + addedLoad) / hostCores;
+        // If the VM is running, use its current CPU load, otherwise use the config value
+        double vmLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null ?
+                vm.getUsageCpuPercent() * vm.getNumOfCpus() :
+                vcpu * vm.getNumOfCpus();
+
+        double addedLoad = vcpu * (pendingVcpus + spmCpu);
+
+        return (hostLoad + vmLoad + addedLoad) / hostCores;
     }
 
     /**
