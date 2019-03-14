@@ -1164,15 +1164,25 @@ public class LibvirtVmXmlBuilder {
                 VmDeviceCommonUtils.extractDiskVmElements(vm));
     }
 
-    private void writeVGpu() {
+    void writeVGpu() {
         String mdevTypes = vmCustomProperties.remove("mdev_type");
-        if (mdevTypes != null) {
+        boolean display = true;
+        if (StringUtils.isNotEmpty(mdevTypes)) {
             String[] mdevDevices = mdevTypes.split(",");
+            if (mdevDevices.length > 0 && mdevDevices[0].equals("nodisplay")) {
+                display = false;
+                mdevDevices = Arrays.copyOfRange(mdevDevices, 1, mdevDevices.length);
+            }
             for (String mdevType : mdevDevices) {
                 writer.writeStartElement("hostdev");
                 writer.writeAttributeString("mode", "subsystem");
                 writer.writeAttributeString("type", "mdev");
                 writer.writeAttributeString("model", "vfio-pci");
+                if (display && vm.getCompatibilityVersion().greaterOrEquals(Version.v4_3)) {
+                    // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
+                    // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
+                    writer.writeAttributeString("display", "on");
+                }
 
                 writer.writeStartElement("source");
                 String address = Guid.newGuid().toString();
