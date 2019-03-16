@@ -11,8 +11,20 @@
   <name>Frontend for GWT UI Projects</name>
   <dependencies>
     <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
@@ -119,6 +131,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
+          <jvm>/lib/jvm/java-1.8.0-openjdk/bin/java</jvm>
           <servicePattern>**/gwtservices/*GWTService.java</servicePattern>
         </configuration>
         <executions>
@@ -140,6 +153,12 @@
               <goal>process</goal>
             </goals>
             <phase>generate-sources</phase>
+            <configuration>
+              <!--<compilerArguments>&#45;&#45;add-modules javax.annotation</compilerArguments>-->
+              <excludes>
+                <exclude>**/*Servlet.java</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>

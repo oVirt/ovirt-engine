@@ -5,7 +5,8 @@
 OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/ovirt-register-sso-client-tool-logging.properties}"
 
 exec "${JAVA_HOME}/bin/java" \
-	-Xbootclasspath/p:"${ENGINE_USR}/logutils/logutils.jar" \
+	--add-modules java.se \
+	--module-path "${ENGINE_USR}/logutils/logutils.jar" \
 	-Djava.util.logging.config.file="${OVIRT_LOGGING_PROPERTIES}" \
 	-Dorg.ovirt.engine.ssoreg.core.programName="${0}" \
 	-Dorg.ovirt.engine.ssoreg.core.packageName="${PACKAGE_NAME}" \

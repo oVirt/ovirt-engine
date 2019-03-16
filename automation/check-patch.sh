@@ -73,7 +73,7 @@ export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
 export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
 
 # Set the location of the JDK that will be used for compilation:
-export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-1.8.0}"
+export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-11-openjdk}"
 
 # Use ovirt mirror if able, fall back to central maven
 mkdir -p "${MAVEN_SETTINGS%/*}"
@@ -125,7 +125,7 @@ make validations
 # platforms.
 # Spotbugs currently has false negatives using mvn 3.5.0, which is the currnt centos version from SCL (rh-maven35).
 # We will work with the Fedora version meanwhile which has maven 3.5.4 and is known to work.
-if [[ "$STD_CI_DISTRO" = "fc29" ]]; then
+if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
     source automation/spotbugs.sh
 fi
 

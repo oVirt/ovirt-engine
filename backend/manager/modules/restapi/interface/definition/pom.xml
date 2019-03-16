@@ -78,7 +78,22 @@
       <version>${metamodel.version}</version>
       <scope>runtime</scope>
     </dependency>
-
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -212,8 +227,8 @@
 
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb22-plugin</artifactId>
-        <version>0.8.1</version>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.14.0</version>
         <executions>
 
           <!-- Generate the Java code from the XML schema of version 4 of the API: -->

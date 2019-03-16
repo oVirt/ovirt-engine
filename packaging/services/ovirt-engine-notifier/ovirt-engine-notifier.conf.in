@@ -63,7 +63,9 @@ NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} \"java.util.logging.config.file=${EN
 #
 # Extra Java arguments to be added to command-line.
 #
-NOTIFIER_JVM_ARGS="-Xbootclasspath/p:\"${ENGINE_USR}/logutils/logutils.jar\""
+# Note: with jboss-modules version 1.9.1.Final we don't have to add the java.se module, its
+# being handled.
+NOTIFIER_JVM_ARGS="--module-path=${ENGINE_USR}/logutils --add-modules=java.se,logutils"
 
 #
 # Module path

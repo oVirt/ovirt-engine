@@ -316,6 +316,9 @@ class Daemon(service.Daemon):
         # We start with an empty list of arguments:
         self._engineArgs = []
 
+        # since java-11, add se module
+        self._engineArgs.extend(['--add-modules', 'java.se'])
+
         # HEAP size
         heap_min_conf = self._config.get('ENGINE_HEAP_MIN')
         heap_max_conf = self._config.get('ENGINE_HEAP_MAX')

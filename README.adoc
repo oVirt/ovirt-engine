@@ -6,6 +6,7 @@
 
 Install the following system components:
 
+- java-11-openjdk-devel
 - jdk-8 / openjdk-8-jdk / icedtea-8
 - mime-types or mailcap
 - unzip
@@ -33,10 +34,45 @@ Install the following system components:
 - python-docker-py (optional)
 - python2-isort (optional)
 
-Maven-3 is required, download and extract if not installed using
+# Note on Java versions
+The project is built and run using java 11. 4.3 branches and earlier are excluded.
+The only exception is GWT code, which still needs to be compiled using jdk-8,
+and that it because the gwt version doesn't support the language syntax, and solid
+support for it is not imminent. That's why jdk-8 is needed only for build-time
+, and only for GWT, specifically the javac command.
+
+Prepare your dev envrionment for java 11:
+Use `alternatives` command to configure `java` and `javac` to version 11:
+```console
+$ sudo alternatives --config java
+
+There are 4 programs which provide 'java'.
+
+  Selection    Command
+-----------------------------------------------
+   1           java-latest-openjdk.x86_64 (/usr/lib/jvm/java-12-openjdk-12.0.1.12-1.rolling.fc30.x86_64/bin/java)
+   2           java (/opt/jdk-9/bin/java)
+   3           java-11-openjdk.x86_64 (/usr/lib/jvm/java-11-openjdk-11.0.3.7-5.fc30.x86_64/bin/java)
+*+ 4           java-1.8.0-openjdk.x86_64 (/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-0.fc30.x86_64/jre/bin/java)
+
+Enter to keep the current selection[+], or type selection number: 3
+
+$ sudo alternatives --config javac
+
+There are 2 programs which provide 'javac'.
+
+  Selection    Command
+-----------------------------------------------
+*+ 1           java-1.8.0-openjdk.x86_64 (/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-0.fc30.x86_64/bin/javac)
+   2           java-11-openjdk.x86_64 (/usr/lib/jvm/java-11-openjdk-11.0.3.7-5.fc30.x86_64/bin/javac)
+
+Enter to keep the current selection[+], or type selection number: 2
+
+```
+Maven > 3.5 is required, download and extract if not installed using
 distribution package management, and add to PATH.
 
-WildFly 11 is required along with ovirt-engine-wildfly-overlay. Preferred way
+WildFly 15 is required along with ovirt-engine-wildfly-overlay. Preferred way
 is to install following packages:
 
 - ovirt-engine-wildfly

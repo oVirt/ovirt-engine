@@ -48,7 +48,7 @@ validjre() {
 		case "${COMPONENT}" in
 			engine)
 				version="$("${dir}/bin/java" -version 2>&1 | sed \
-					-e 's/^openjdk version "1\.8\.0.*/VERSION_OK/' \
+					-e 's/^openjdk version "11.*/VERSION_OK/' \
 					-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
 				)"
 			;;
@@ -87,7 +87,7 @@ fi
 DIRS=
 case "${COMPONENT}" in
 	engine)
-		DIRS="/usr/lib/jvm/jre /usr/lib/jvm/jre-1.8.0 /usr/lib/jvm/jre-1.8.0_openjdk"
+		DIRS="/usr/lib/jvm/java-11"
 	;;
 	reports)
 		DIRS="/usr/lib/jvm/jre-1.7.0 /usr/lib/jvm/jre-1.7.0_openjdk /usr/lib/jvm/jre"
@@ -100,19 +100,11 @@ for dir in ${DIRS};  do
 	fi
 done
 
-#
-# select from jvm folder
-# last which is not jdk wins
-# jre is preferred as it usually more stable
-#
+# Java 11 has no jre/jdk, just one folder.
 JAVA_HOME=""
 for dir in /usr/lib/jvm/*; do
 	if validjre "${dir}"; then
-		if [ -x "${dir}/bin/javac" ]; then
-			[ -z "${JAVA_HOME}" ] && JAVA_HOME="${dir}"
-		else
-			JAVA_HOME="${dir}"
-		fi
+		JAVA_HOME="${dir}"
 	fi
 done
 

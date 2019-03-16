@@ -114,7 +114,8 @@ parseArgs "$@"
 #
 
 exec "${JAVA_HOME}/bin/java" \
-	-Xbootclasspath/p:"${ENGINE_USR}/logutils/logutils.jar" \
+	--add-modules java.se \
+	--module-path "${ENGINE_USR}/logutils/logutils.jar" \
 	-Djboss.modules.system.pkgs=org.jboss.byteman,org.ovirt.engine.core.logutils \
 	-Djava.util.logging.config.file="${OVIRT_LOGGING_PROPERTIES}" \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \

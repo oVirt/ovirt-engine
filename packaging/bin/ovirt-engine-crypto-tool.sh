@@ -3,6 +3,7 @@
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
 exec "${JAVA_HOME}/bin/java" \
+	--add-modules java.se \
 	-Dorg.ovirt.engine.cryptotool.core.programName="${0}" \
 	-Dorg.ovirt.engine.cryptotool.core.packageName="${PACKAGE_NAME}" \
 	-Dorg.ovirt.engine.cryptotool.core.packageVersion="${PACKAGE_VERSION}" \

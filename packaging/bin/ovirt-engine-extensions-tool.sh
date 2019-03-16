@@ -5,7 +5,8 @@
 OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/extensions-tool-logging.properties}"
 
 exec "${JAVA_HOME}/bin/java" \
-	-Xbootclasspath/p:"${ENGINE_USR}/logutils/logutils.jar" \
+	--add-modules java.se \
+	--module-path "${ENGINE_USR}/logutils/logutils.jar" \
 	-Djava.security.auth.login.config="${ENGINE_USR}/conf/jaas.conf" \
 	-Djava.util.logging.config.file="${OVIRT_LOGGING_PROPERTIES}" \
 	-Dorg.ovirt.engine.exttool.core.programName="${0}" \

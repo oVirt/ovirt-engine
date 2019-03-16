@@ -114,9 +114,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
+      <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-core</artifactId>
-      <version>${jaxb-impl.version}</version>
+      <version>${jaxb-core.version}</version>
       <scope>test</scope>
     </dependency>
 

@@ -114,7 +114,25 @@
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>set-system-properties</goal>
+            </goals>
+            <configuration>
+              <properties><property><name>javaAAA.home</name><value>/lib/jvm/java-1.8</value></property></properties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <jvm>/lib/jvm/java-1.8.0-openjdk/bin/java</jvm>
+        </configuration>
         <executions>
           <execution>
             <goals>
