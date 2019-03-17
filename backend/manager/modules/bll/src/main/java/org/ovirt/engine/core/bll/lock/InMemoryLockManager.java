@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBean {
 
     private static final Pair<Boolean, Set<String>> LOCK_INSERT_SUCCESS_RESULT = new Pair<>(Boolean.TRUE, Collections.<String>emptySet());
+    private static final Pair<Boolean, Set<String>> LOCK_INSERT_FAILURE_RESULT = new Pair<>(Boolean.FALSE, Collections.emptySet());
     /** A map which is contains all internal representation of locks **/
     private final Map<String, InternalLockView> locks = new HashMap<>();
     /** A lock which is used to synchronized acquireLock(), acquireLockWait() and releaseLock() operations **/
@@ -102,6 +104,36 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         } finally {
             globalLock.unlock();
         }
+    }
+
+    @Override
+    public Pair<Boolean, Set<String>> acquireLockWait(EngineLock lock, long timeoutMillis) {
+        log.debug("Before acquiring wait or timeout lock '{}'", lock);
+        validateLockForAcquireAndWait(lock);
+        if (timeoutMillis <= 0) {
+            throw new IllegalArgumentException("timeout must be positive");
+        }
+        long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMillis);
+        Pair<Boolean, Set<String>> lockAcquired = LOCK_INSERT_FAILURE_RESULT;
+        globalLock.lock();
+        try {
+            do {
+                lockAcquired = acquireLockInternal(lock);
+                if (!lockAcquired.getFirst()) {
+                    if (timeoutNanos <= 0L) {
+                        log.info("Failed to acquire lock because timeout was reached. lock {}", lock);
+                        break;
+                    }
+                    log.info("Failed to acquire lock, will try again until timeout. lock '{}'", lock);
+                    timeoutNanos = releasedLock.awaitNanos(timeoutNanos);
+                }
+            } while (!lockAcquired.getFirst());
+        } catch (InterruptedException ignore) {
+            log.info("Acquire lock operation was interrupted. lock '{}'", lock);
+        } finally {
+            globalLock.unlock();
+        }
+        return lockAcquired;
     }
 
     private void validateLockForAcquireAndWait(EngineLock lock) {
