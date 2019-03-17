@@ -168,10 +168,10 @@ class Plugin(plugin.PluginBase):
         self.logger.info(_('Adding default OVN provider to database'))
 
         password = (
-            self._encrypt_password(self._password)
+            self._encrypt_password(self._password).decode()
             if self._password
             else None
-        ).decode()
+        )
 
         self.environment[
             oenginecons.EngineDBEnv.STATEMENT
