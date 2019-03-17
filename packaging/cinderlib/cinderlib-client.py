@@ -227,14 +227,20 @@ def create_volume(args):
 
 def delete_volume(args):
     backend = load_backend(args)
-    logger.info("Deleting volume '%s'")
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
+    logger.info("Deleting volume '%s'", args.volume_id)
     vol.delete()
 
 
 def connect_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Connecting volume '%s', to host with info %r", args.volume_id,
                 args.connector_info)
 
@@ -255,7 +261,10 @@ def connect_volume(args):
 
 def disconnect_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Disconnecting volume '%s'", args.volume_id)
 
     for c in vol.connections:
@@ -264,7 +273,10 @@ def disconnect_volume(args):
 
 def extend_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Extending volume '%s' by %s GB", args.volume_id, args.size)
     vol.extend(int(args.size))
     backend.refresh()
@@ -279,7 +291,10 @@ def storage_stats(args):
 
 def save_device(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     conn = vol.connections[0]
     logger.info("Saving connection %r for volume '%s'", conn, vol.id)
     conn.device_attached(json.loads(args.device))
@@ -287,16 +302,21 @@ def save_device(args):
 
 def get_connection_info(args):
     backend = load_backend(args)
-    logger.info("Fetch volume '%s' connetion info", args.volume_id)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
-    conn = vol.connections[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
 
+    conn = vol.connections[0]
+    logger.info("Fetch volume '%s' connetion info", args.volume_id)
     _write_output(json.dumps(conn.connection_info))
 
 
 def clone_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Cloning volume '%s' to '%s'", vol.id, args.cloned_vol_id)
     vol.clone(id=args.cloned_vol_id)
     backend.refresh()
@@ -304,7 +324,10 @@ def clone_volume(args):
 
 def create_snapshot(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Creating snapshot for volume '%s'", args.volume_id)
     snap = vol.create_snapshot()
     logger.info("Created snapshot id: '%s'", snap.id)
@@ -314,7 +337,10 @@ def create_snapshot(args):
 
 def remove_snapshot(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Removing volume '%s' snapshot '%s'",
                 args.volume_id, args.snapshot_id)
     snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
@@ -323,13 +349,30 @@ def remove_snapshot(args):
 
 def create_volume_from_snapshot(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
-    snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
+    snap = [s for s in vol.snapshots if s.id == args.snapshot_id]
+    if not snap:
+        logger.error("Snapshot '%s' does not exist", args.snapshot_id)
+        _write_output("Snapshot '%s' not found")
+        return
+
     logger.info("Creating new volume from snapshot '%s' of volume '%s'",
                 args.snapshot_id, args.volume_id)
     new_vol = snap.create_volume()
     logger.info("Created volume id: '%s'", new_vol.id)
     _write_output(new_vol.id)
+
+
+def _get_volume(backend, vol_id):
+    volumes = backend.volumes_filtered(volume_id=vol_id)
+    if not volumes:
+        logger.error("Volume '%s' not found", vol_id)
+        _write_output("Volume '%s' not found")
+        return None
+    return volumes[0]
 
 
 def _write_output(s):
