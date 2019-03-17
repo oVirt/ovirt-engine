@@ -2521,8 +2521,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("connection_info", connectionInfo)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        Map<String, Object> info = (Map<String, Object>) response.get("info");
-        return new DeviceInfoReturn(info);
+        return new DeviceInfoReturn(response);
     }
 
     @Override
