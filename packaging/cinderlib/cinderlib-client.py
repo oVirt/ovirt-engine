@@ -201,7 +201,7 @@ def setup_logger():
     logging.config.fileConfig("logger.conf", disable_existing_loggers=True)
     logging.captureWarnings(True)
     global logger
-    logger = logging.getLogger()
+    logger = logging.getLogger("cinderlib-client")
 
 
 def load_backend(args):
