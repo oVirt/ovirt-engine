@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.ovirt.engine.core.common.action.LockProperties.Scope.Execution;
+
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class RefreshHostCommand extends VdsCommand<VdsActionParameters> {
 
@@ -16,8 +21,8 @@ public class RefreshHostCommand extends VdsCommand<VdsActionParameters> {
     @Override
     protected void executeCommand() {
         VdsActionParameters parameters = new VdsActionParameters(getVdsId());
-        LockProperties lockProperties = LockProperties.create(LockProperties.Scope.Execution);
-        parameters.setLockProperties(isInternalExecution() ? lockProperties.withWaitForever() : lockProperties.withNoWait());
+        int timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksWaitTimeoutSeconds);
+        parameters.setLockProperties(LockProperties.create(Execution).withWaitTimeout(SECONDS.toMillis(timeout)));
 
         ActionReturnValue returnValue = runInternalAction(ActionType.RefreshHostCapabilities, parameters);
         if (!returnValue.getSucceeded()) {
