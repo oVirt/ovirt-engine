@@ -24,6 +24,12 @@ public interface LockManager {
     void acquireLockWait(EngineLock lock);
 
     /**
+     * The following method will wait until lock is acquired or until the specified timeout elapses.
+     * The lock should be exclusive and only one, otherwise exception will be thrown
+     */
+    Pair<Boolean, Set<String>> acquireLockWait(EngineLock lock, long timeoutMillis);
+
+    /**
      * The following method will release a lock Also it will notify all threads awaiting inside acquireLockWait that
      * some lock was released and they can try to acquire a lock
      */

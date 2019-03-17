@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.lock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -121,5 +122,61 @@ public class InMemoryLockManagerTest {
         assertEquals(2, lockManager.showAllLocks().size());
         lockManager.clear();
         assertTrue(lockManager.showAllLocks().isEmpty());
+    }
+
+    @Test
+    public void testAcquireLockWaitTwoTimeouts() {
+        assertTrue(lockManager.acquireLockWait(lockLock1, 1000L).getFirst());
+        assertEquals(1, lockManager.showAllLocks().size());
+        long before = System.currentTimeMillis();
+        assertFalse(lockManager.acquireLockWait(failLockLock, 5500L).getFirst());
+        assertEquals(1, lockManager.showAllLocks().size());
+        long after = System.currentTimeMillis();
+        assertTrue(after - before >= 5000 && after - before < 7000L);
+        lockManager.releaseLock(lockLock1);
+        assertEquals(0, lockManager.showAllLocks().size());
+        assertTrue(lockManager.acquireLockWait(failLockLock, 1000L).getFirst());
+        assertEquals(1, lockManager.showAllLocks().size());
+        lockManager.releaseLock(failLockLock);
+        assertEquals(0, lockManager.showAllLocks().size());
+    }
+
+    @Test
+    public void testAcquireLockWaitTimeoutAfterForever() {
+        lockManager.acquireLockWait(lockLock1);
+        assertEquals(1, lockManager.showAllLocks().size());
+        long before = System.currentTimeMillis();
+        assertFalse(lockManager.acquireLockWait(failLockLock, 5500L).getFirst());
+        assertEquals(1, lockManager.showAllLocks().size());
+        long after = System.currentTimeMillis();
+        assertTrue(after - before >= 5000 && after - before < 7000L);
+        lockManager.releaseLock(lockLock1);
+        assertEquals(0, lockManager.showAllLocks().size());
+        assertTrue(lockManager.acquireLockWait(failLockLock, 1000L).getFirst());
+        assertEquals(1, lockManager.showAllLocks().size());
+        lockManager.releaseLock(failLockLock);
+        assertEquals(0, lockManager.showAllLocks().size());
+    }
+
+    @Test
+    public void testAcquireLockWaitTimeoutBeforeForever() {
+        assertTrue(lockManager.acquireLockWait(lockLock1, 1000L).getFirst());
+        assertEquals(1, lockManager.showAllLocks().size());
+        new Thread(() -> lockManager.acquireLockWait(failLockLock)).start();
+        assertEquals(1, lockManager.showAllLocks().size());
+        lockManager.releaseLock(lockLock1);
+        try {
+            Thread.sleep(100L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(1, lockManager.showAllLocks().size());
+        lockManager.releaseLock(failLockLock);
+        assertEquals(0, lockManager.showAllLocks().size());
+    }
+
+    @Test
+    public void testAcquireLockNegativeTimeout() {
+        assertThrows(IllegalArgumentException.class, () -> lockManager.acquireLockWait(lockLock1, -1000L));
     }
 }

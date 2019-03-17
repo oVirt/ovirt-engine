@@ -1805,8 +1805,10 @@ public abstract class CommandBase<T extends ActionParametersBase>
             releaseLocksAtEndOfExecute = Scope.Execution.equals(lockProperties.getScope());
             if (lockProperties.isNoWait()) {
                 returnValue = acquireLockInternal();
-            } else {
+            } else if (lockProperties.isWaitForever()) {
                 acquireLockAndWait();
+            } else if (lockProperties.isTimeout()) {
+                returnValue = acquireLockOrTimeout();
             }
         }
         return returnValue;
@@ -1891,6 +1893,30 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 log.info("Lock-wait acquired to object '{}'", lock);
             }
         }
+    }
+
+    private boolean acquireLockOrTimeout() {
+        // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
+        if (context.getLock() == null) {
+            Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
+            if (exclusiveLocks != null) {
+                EngineLock lock = new EngineLock(exclusiveLocks, null);
+                log.info("Before acquiring lock-timeout '{}'", lock);
+                Pair<Boolean, Set<String>> lockAcquireResult = lockManager.acquireLockWait(
+                    lock, getLockProperties().getTimeoutMillis()
+                );
+                if (lockAcquireResult.getFirst()) {
+                    log.info("Lock-timeout acquired to object '{}'", lock);
+                    context.withLock(lock);
+                } else {
+                    log.info("Failed to acquire lock-timeout to object '{}'", lock);
+                    getReturnValue().getValidationMessages()
+                        .addAll(extractVariableDeclarations(lockAcquireResult.getSecond()));
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void freeLockExecute() {
