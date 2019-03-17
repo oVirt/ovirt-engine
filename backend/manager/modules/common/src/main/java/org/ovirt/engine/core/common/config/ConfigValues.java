@@ -1584,6 +1584,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     NumOfPciExpressPorts,
 
+    @TypeConverterAttribute(Integer.class)
+    SetupNetworksWaitTimeoutSeconds,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

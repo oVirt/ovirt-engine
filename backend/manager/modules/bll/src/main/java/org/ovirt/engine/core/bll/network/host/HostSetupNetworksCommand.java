@@ -199,7 +199,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
+        int timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksWaitTimeoutSeconds);
+        return lockProperties.withScope(Scope.Execution).withWaitTimeout(TimeUnit.SECONDS.toMillis(timeout));
     }
 
     @Override
