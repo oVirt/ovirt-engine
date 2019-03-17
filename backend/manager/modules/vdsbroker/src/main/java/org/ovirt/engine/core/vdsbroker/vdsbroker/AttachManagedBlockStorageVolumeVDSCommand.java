@@ -4,15 +4,22 @@ import org.ovirt.engine.core.common.vdscommands.AttachManagedBlockStorageVolumeV
 
 public class AttachManagedBlockStorageVolumeVDSCommand<P extends AttachManagedBlockStorageVolumeVDSCommandParameters> extends VdsBrokerCommand<P>{
 
+    private DeviceInfoReturn deviceInfoReturn;
+
     public AttachManagedBlockStorageVolumeVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        DeviceInfoReturn deviceInfoReturn =
+        deviceInfoReturn =
                 getBroker().attachManagedBlockStorageVolume(getParameters().getVolumeId(), getParameters().getConnectionInfo());
+        proceedProxyReturnValue();
         setReturnValue(deviceInfoReturn.getDeviceInfo());
     }
 
+    @Override
+    protected Status getReturnStatus() {
+        return deviceInfoReturn.getStatus();
+    }
 }

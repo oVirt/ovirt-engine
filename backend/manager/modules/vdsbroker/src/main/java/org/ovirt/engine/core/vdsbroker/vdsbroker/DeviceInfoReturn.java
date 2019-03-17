@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class DeviceInfoReturn extends StatusReturn {
 
     public DeviceInfoReturn(Map<String, Object> innerMap) {
         super(innerMap);
-        deviceInfo = new HashMap<>(innerMap);
+        deviceInfo = (Map<String, Object>) innerMap.get("info");
     }
 
     public Map<String, Object> getDeviceInfo() {
