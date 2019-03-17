@@ -250,8 +250,7 @@ def connect_volume(args):
         conn = (vol.connect(json.loads(args.connector_info))
                 .connection_info['conn'])
 
-    sys.stdout.write(json.dumps(conn))
-    sys.stdout.flush()
+    _write_output(json.dumps(conn))
 
 
 def disconnect_volume(args):
@@ -274,9 +273,8 @@ def extend_volume(args):
 def storage_stats(args):
     backend = load_backend(args)
     logger.info("Fetch backend stats")
-    sys.stdout.write(
+    _write_output(
         json.dumps(backend.stats(refresh=args.refresh)))
-    sys.stdout.flush()
 
 
 def save_device(args):
@@ -293,8 +291,7 @@ def get_connection_info(args):
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     conn = vol.connections[0]
 
-    sys.stdout.write(json.dumps(conn.connection_info))
-    sys.stdout.flush()
+    _write_output(json.dumps(conn.connection_info))
 
 
 def clone_volume(args):
@@ -311,8 +308,7 @@ def create_snapshot(args):
     logger.info("Creating snapshot for volume '%s'", args.volume_id)
     snap = vol.create_snapshot()
     logger.info("Created snapshot id: '%s'", snap.id)
-    sys.stdout.write(snap.id)
-    sys.stdout.flush()
+    _write_output(snap.id)
     backend.refresh()
 
 
@@ -333,7 +329,11 @@ def create_volume_from_snapshot(args):
                 args.snapshot_id, args.volume_id)
     new_vol = snap.create_volume()
     logger.info("Created volume id: '%s'", new_vol.id)
-    sys.stdout.write(new_vol.id)
+    _write_output(new_vol.id)
+
+
+def _write_output(s):
+    sys.stdout.write(s)
     sys.stdout.flush()
 
 if __name__ == '__main__':
