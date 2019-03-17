@@ -57,6 +57,16 @@ logger = None
 class UsageError(Exception):
     """ Raised when usage is wrong """
 
+
+class LogAdapter(logging.LoggerAdapter):
+    def __init__(self, logger, extra={}, correlation_id=None):
+        super(LogAdapter, self).__init__(logger, extra)
+        self.correlation_id = correlation_id
+
+    def process(self, msg, kwargs):
+        return '%s [%s]' % (msg, self.correlation_id), kwargs
+
+
 conf = configfile.ConfigFile([config.ENGINE_DEFAULTS])
 
 
@@ -78,8 +88,7 @@ def main(args=None):
                                           help="Create a volume."
                                                " return CinderLib metadata")
     create_parser.set_defaults(command=create_volume)
-    create_parser.add_argument("driver", help="The driver parameters")
-    create_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(create_parser)
     create_parser.add_argument("volume_id", help="The volume id")
     create_parser.add_argument("size", help="The size needed for the volume")
 
@@ -87,15 +96,13 @@ def main(args=None):
                                           help="Delete a volume."
                                                " return CinderLib metadata")
     delete_parser.set_defaults(command=delete_volume)
-    delete_parser.add_argument("driver", help="The driver parameters")
-    delete_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(delete_parser)
     delete_parser.add_argument("volume_id", help="The volume id")
 
     connect_parser = subparsers.add_parser("connect_volume",
                                            help="Get volume connection info")
     connect_parser.set_defaults(command=connect_volume)
-    connect_parser.add_argument("driver", help="The driver parameters")
-    connect_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(connect_parser)
     connect_parser.add_argument("volume_id", help="The volume id")
     connect_parser.add_argument("connector_info",
                                 help="The connector information")
@@ -103,31 +110,27 @@ def main(args=None):
     disconnect_parser = subparsers.add_parser("disconnect_volume",
                                               help="disconnect a volume")
     disconnect_parser.set_defaults(command=disconnect_volume)
-    disconnect_parser.add_argument("driver", help="The driver parameters")
-    disconnect_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(disconnect_parser)
     disconnect_parser.add_argument("volume_id", help="The volume id")
 
     extend_parser = subparsers.add_parser("extend_volume",
                                           help="Extend a volume")
     extend_parser.set_defaults(command=extend_volume)
-    extend_parser.add_argument("driver", help="The driver parameters")
-    extend_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(extend_parser)
     extend_parser.add_argument("volume_id", help="The volume id")
     extend_parser.add_argument("size", help="The size needed for the volume")
 
     storage_stats_parser = subparsers.add_parser("storage_stats",
                                                  help="Get the storage status")
     storage_stats_parser.set_defaults(command=storage_stats)
-    storage_stats_parser.add_argument("driver", help="The driver parameters")
-    storage_stats_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(storage_stats_parser)
     storage_stats_parser.add_argument("refresh",
                                       help="True if latest data is required")
 
     save_device_parser = subparsers.add_parser("save_device",
                                                help="save a device")
     save_device_parser.set_defaults(command=save_device)
-    save_device_parser.add_argument("driver", help="The driver parameters")
-    save_device_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(save_device_parser)
     save_device_parser.add_argument("volume_id", help="The volume id")
     save_device_parser.add_argument("device", help="The device")
 
@@ -136,33 +139,26 @@ def main(args=None):
                                                         "attachment connection"
                                                         " info")
     connection_info_parser.set_defaults(command=get_connection_info)
-    connection_info_parser.add_argument("driver",
-                                        help="The driver parameters")
-    connection_info_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(connection_info_parser)
     connection_info_parser.add_argument("volume_id", help="The volume id")
 
     clone_parser = subparsers.add_parser("clone_volume",
                                          help="Clone a volume")
     clone_parser.set_defaults(command=clone_volume)
-    clone_parser.add_argument("driver", help="The driver parameters")
-    clone_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(clone_parser)
     clone_parser.add_argument("volume_id", help="The source volume id")
     clone_parser.add_argument("cloned_vol_id", help="The cloned volume id")
 
     create_snapshot_parser = subparsers.add_parser("create_snapshot",
                                                    help="create snapshot ")
     create_snapshot_parser.set_defaults(command=create_snapshot)
-    create_snapshot_parser.add_argument("driver",
-                                        help="The driver parameters")
-    create_snapshot_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(create_snapshot_parser)
     create_snapshot_parser.add_argument("volume_id", help="The volume id")
 
     remove_snapshot_parser = subparsers.add_parser("remove_snapshot",
                                                    help="remove a snapshot ")
     remove_snapshot_parser.set_defaults(command=remove_snapshot)
-    remove_snapshot_parser.add_argument("driver",
-                                        help="The driver parameters")
-    remove_snapshot_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(remove_snapshot_parser)
     remove_snapshot_parser.add_argument("snapshot_id", help="The snapshot id")
     remove_snapshot_parser.add_argument("volume_id", help="Snapshots's "
                                                           "volume id")
@@ -171,11 +167,7 @@ def main(args=None):
                               help="create a volume from a snapshot")
     create_volume_from_snapshot_parser.set_defaults(
         command=create_volume_from_snapshot)
-    create_volume_from_snapshot_parser.add_argument("driver",
-                                                    help="The driver "
-                                                         "parameters")
-    create_volume_from_snapshot_parser.add_argument("db_url",
-                                                    help="The database url")
+    _add_common_arguments(create_volume_from_snapshot_parser)
     create_volume_from_snapshot_parser.add_argument("volume_id",
                                                     help="Snapshots's "
                                                          "volume id")
@@ -187,7 +179,7 @@ def main(args=None):
         args.command(args)
         sys.exit(0)
     except Exception as e:
-        setup_logger()
+        setup_logger(args)
         logger.error("Failure occurred when trying to run command '%s': %s",
                      sys.argv[1], e)
         sys.stderr.write(traceback.format_exc(e))
@@ -195,13 +187,14 @@ def main(args=None):
         sys.exit(1)
 
 
-def setup_logger():
+def setup_logger(args):
     logging.log_file = os.path.join(conf.get('ENGINE_LOG'),
                                     'cinderlib', 'cinderlib.log')
-    logging.config.fileConfig("logger.conf", disable_existing_loggers=True)
+    logging.config.fileConfig("logger.conf", disable_existing_loggers=False)
     logging.captureWarnings(True)
     global logger
-    logger = logging.getLogger()
+    logger = logging.getLogger("cinderlib-client")
+    logger = LogAdapter(logger, {}, args.correlation_id)
 
 
 def load_backend(args):
@@ -212,7 +205,7 @@ def load_backend(args):
              disable_logs=False)
 
     # Setup logging here to not have our logger overridden by cinderlib's
-    setup_logger()
+    setup_logger(args)
 
     return cl.Backend(**json.loads(args.driver))
 
@@ -227,14 +220,20 @@ def create_volume(args):
 
 def delete_volume(args):
     backend = load_backend(args)
-    logger.info("Deleting volume '%s'")
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
+    logger.info("Deleting volume '%s'", args.volume_id)
     vol.delete()
 
 
 def connect_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Connecting volume '%s', to host with info %r", args.volume_id,
                 args.connector_info)
 
@@ -250,13 +249,15 @@ def connect_volume(args):
         conn = (vol.connect(json.loads(args.connector_info))
                 .connection_info['conn'])
 
-    sys.stdout.write(json.dumps(conn))
-    sys.stdout.flush()
+    _write_output(json.dumps(conn))
 
 
 def disconnect_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Disconnecting volume '%s'", args.volume_id)
 
     for c in vol.connections:
@@ -265,7 +266,10 @@ def disconnect_volume(args):
 
 def extend_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Extending volume '%s' by %s GB", args.volume_id, args.size)
     vol.extend(int(args.size))
     backend.refresh()
@@ -274,14 +278,16 @@ def extend_volume(args):
 def storage_stats(args):
     backend = load_backend(args)
     logger.info("Fetch backend stats")
-    sys.stdout.write(
+    _write_output(
         json.dumps(backend.stats(refresh=args.refresh)))
-    sys.stdout.flush()
 
 
 def save_device(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     conn = vol.connections[0]
     logger.info("Saving connection %r for volume '%s'", conn, vol.id)
     conn.device_attached(json.loads(args.device))
@@ -289,17 +295,21 @@ def save_device(args):
 
 def get_connection_info(args):
     backend = load_backend(args)
-    logger.info("Fetch volume '%s' connetion info", args.volume_id)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
-    conn = vol.connections[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
 
-    sys.stdout.write(json.dumps(conn.connection_info))
-    sys.stdout.flush()
+    conn = vol.connections[0]
+    logger.info("Fetch volume '%s' connetion info", args.volume_id)
+    _write_output(json.dumps(conn.connection_info))
 
 
 def clone_volume(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Cloning volume '%s' to '%s'", vol.id, args.cloned_vol_id)
     vol.clone(id=args.cloned_vol_id)
     backend.refresh()
@@ -307,7 +317,10 @@ def clone_volume(args):
 
 def create_snapshot(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Creating snapshot for volume '%s'", args.volume_id)
     snap = None
     try:
@@ -319,14 +332,16 @@ def create_snapshot(args):
         raise
 
     logger.info("Created snapshot id: '%s'", snap.id)
-    sys.stdout.write(snap.id)
-    sys.stdout.flush()
+    _write_output(snap.id)
     backend.refresh()
 
 
 def remove_snapshot(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
     logger.info("Removing volume '%s' snapshot '%s'",
                 args.volume_id, args.snapshot_id)
     snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
@@ -335,14 +350,43 @@ def remove_snapshot(args):
 
 def create_volume_from_snapshot(args):
     backend = load_backend(args)
-    vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
-    snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
+    vol = _get_volume(backend, args.volume_id)
+    if vol is None:
+        return
+
+    snap = [s for s in vol.snapshots if s.id == args.snapshot_id]
+    if not snap:
+        logger.error("Snapshot '%s' does not exist", args.snapshot_id)
+        _write_output("Snapshot '%s' not found")
+        return
+
     logger.info("Creating new volume from snapshot '%s' of volume '%s'",
                 args.snapshot_id, args.volume_id)
     new_vol = snap.create_volume()
     logger.info("Created volume id: '%s'", new_vol.id)
-    sys.stdout.write(new_vol.id)
+    _write_output(new_vol.id)
+
+
+def _get_volume(backend, vol_id):
+    volumes = backend.volumes_filtered(volume_id=vol_id)
+    if not volumes:
+        logger.error("Volume '%s' not found", vol_id)
+        _write_output("Volume '%s' not found")
+        return None
+    return volumes[0]
+
+
+def _write_output(s):
+    sys.stdout.write(s)
     sys.stdout.flush()
+
+
+def _add_common_arguments(parser):
+    parser.add_argument("driver", help="The driver parameters")
+    parser.add_argument("db_url", help="The database url")
+    parser.add_argument("correlation_id",
+                        help="ovirt-engine correlation_id for the action")
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

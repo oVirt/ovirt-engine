@@ -50,7 +50,8 @@ public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorage
             CinderlibCommandParameters params =
                     new CinderlibCommandParameters(JsonHelper.mapToJson(driverOptions,
                             false),
-                            Collections.singletonList(Boolean.TRUE.toString()));
+                            Collections.singletonList(Boolean.TRUE.toString()),
+                            getCorrelationId());
             returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.STORAGE_STATS, params);
 
             if(returnValue.getSucceed()) {

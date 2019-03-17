@@ -69,6 +69,7 @@ public class CinderlibExecutor {
         commandArgs.add(command.toString());
         commandArgs.add(params.getDriverInfo());
         commandArgs.add(url);
+        commandArgs.add(params.getCorrelationId());
         commandArgs.addAll(params.getExtraParams());
 
         return commandArgs;

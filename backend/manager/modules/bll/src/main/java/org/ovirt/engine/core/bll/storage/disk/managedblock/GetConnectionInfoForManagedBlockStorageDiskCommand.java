@@ -46,7 +46,8 @@ public class GetConnectionInfoForManagedBlockStorageDiskCommand<T extends Connec
             CinderlibCommandParameters params = new CinderlibCommandParameters(
                     JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
-                    extraParams);
+                    extraParams,
+                    getCorrelationId());
             CinderlibReturnValue returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.GET_CONNECTION_INFO, params);
             if (!returnValue.getSucceed()) {

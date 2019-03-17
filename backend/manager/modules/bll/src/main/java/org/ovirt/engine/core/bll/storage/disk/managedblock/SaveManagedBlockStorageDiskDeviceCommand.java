@@ -46,7 +46,8 @@ public class SaveManagedBlockStorageDiskDeviceCommand<T extends SaveManagedBlock
             CinderlibCommandParameters params = new CinderlibCommandParameters(
                     JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
-                    extraParams);
+                    extraParams,
+                    getCorrelationId());
             succeeded = cinderlibExecutor
                     .runCommand(CinderlibExecutor.CinderlibCommand.SAVE_DEVICE, params)
                     .getSucceed();

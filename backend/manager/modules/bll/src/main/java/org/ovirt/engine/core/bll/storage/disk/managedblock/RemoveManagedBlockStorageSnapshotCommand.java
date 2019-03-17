@@ -64,7 +64,8 @@ public class RemoveManagedBlockStorageSnapshotCommand<T extends ImagesContainter
                     new CinderlibCommandParameters(JsonHelper.mapToJson(
                             managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
             returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.REMOVE_SNAPSHOT, params);
         } catch(Exception e) {

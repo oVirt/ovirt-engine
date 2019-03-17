@@ -79,7 +79,8 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
             CinderlibCommandParameters params =
                     new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
             returnValue = cinderlibExecutor.runCommand(CinderlibCommand.CLONE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing clone volume verb", e);

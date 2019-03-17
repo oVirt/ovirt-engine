@@ -91,7 +91,8 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
                     new CinderlibCommandParameters(JsonHelper.mapToJson(
                                 managedBlockStorage.getAllDriverOptions(),
                             false),
-                    extraParams);
+                                extraParams,
+                                getCorrelationId());
             returnValue = cinderlibExecutor.runCommand(CinderlibCommand.CREATE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing volume creation", e);

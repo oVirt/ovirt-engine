@@ -83,7 +83,8 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
                     new CinderlibCommandParameters(JsonHelper.mapToJson(
                             managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
             returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.CREATE_SNAPSHOT, params);
             snapshotId = Guid.createGuidFromString(returnValue.getOutput());
