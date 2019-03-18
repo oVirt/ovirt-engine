@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
@@ -246,13 +247,18 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(getStoragePool(), getVds());
             CommandContext ctx = cloneContext();
             ctx.getExecutionContext().setJobRequired(false);
-            runInternalAction(ActionType.ConnectHostToStoragePoolServers, params, ctx);
-            EventResult connectResult = connectHostToPool();
-            if (connectResult != null) {
-                returnValue = connectResult.isSuccess();
-                problematicDomains = (List<StorageDomainStatic>) connectResult.getResultData();
+            ActionReturnValue retVal = runInternalAction(ActionType.ConnectHostToStoragePoolServers, params, ctx);
+            if (retVal.getSucceeded()) {
+                EventResult connectResult = connectHostToPool();
+                if (connectResult != null) {
+                    returnValue = connectResult.isSuccess();
+                    problematicDomains = (List<StorageDomainStatic>) connectResult.getResultData();
+                }
+                connectPoolSucceeded = returnValue;
+            } else {
+                connectPoolSucceeded = false;
             }
-            connectPoolSucceeded = returnValue;
+
         }
         return returnValue;
     }
