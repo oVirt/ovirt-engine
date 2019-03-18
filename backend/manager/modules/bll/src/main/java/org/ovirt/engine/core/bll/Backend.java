@@ -261,6 +261,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         serviceLoader.load(CpuFlagsManagerHandler.class);
         serviceLoader.load(AuditLogCleanupManager.class);
+        serviceLoader.load(ClusterUpgradeRunningCleanupManager.class);
 
         serviceLoader.load(TagsDirector.class);
 
