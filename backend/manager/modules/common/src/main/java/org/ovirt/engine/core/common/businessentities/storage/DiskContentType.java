@@ -11,7 +11,11 @@ public enum DiskContentType implements Identifiable {
     OVF_STORE(1, "OVFS"),
     MEMORY_DUMP_VOLUME(2, "MEMD"),
     MEMORY_METADATA_VOLUME(3, "MEMM"),
-    ISO(4, "ISOF");
+    ISO(4, "ISOF"),
+    HOSTED_ENGINE(5, "HEVD"),
+    HOSTED_ENGINE_SANLOCK(6, "HESD"),
+    HOSTED_ENGINE_METADATA(7, "HEMD"),
+    HOSTED_ENGINE_CONFIGURATION(8, "HECI");
 
     public static final String LEGACY_DISK_TYPE = "2";
 
