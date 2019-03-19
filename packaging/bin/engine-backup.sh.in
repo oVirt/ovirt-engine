@@ -178,6 +178,7 @@ load_branding() {
 # Globals
 BACKUP_PATHS="/etc/ovirt-engine
 /etc/ovirt-engine-dwh
+/etc/ovirt-provider-ovn/conf.d
 /etc/ovirt-vmconsole
 /etc/pki/ovirt-engine
 /etc/pki/ovirt-vmconsole
@@ -189,7 +190,10 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/dnf/plugins/versionlock.list
 /etc/firewalld/services/ovirt-https.xml
 /etc/firewalld/services/ovirt-http.xml
-/etc/firewalld/services/ovirt-postgres.xml"
+/etc/firewalld/services/ovirt-postgres.xml
+/etc/firewalld/services/ovirt-provider-ovn.xml
+/etc/firewalld/services/ovn-central-firewall-service.xml
+/var/lib/openvswitch"
 # Add /var/lib/ovirt-engine except a few
 VAR_LIB_EXCLUSIONS="/var/lib/ovirt-engine/backups
 /var/lib/ovirt-engine/jboss_runtime"
