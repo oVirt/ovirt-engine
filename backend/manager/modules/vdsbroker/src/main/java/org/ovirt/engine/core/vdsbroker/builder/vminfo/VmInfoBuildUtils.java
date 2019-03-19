@@ -1400,7 +1400,7 @@ public class VmInfoBuildUtils {
 
     boolean isKernelFipsMode(Guid vdsGuid) {
         boolean fips = vdsStaticDao.get(vdsGuid).isKernelCmdlineFips();
-        log.info("Kernel FIPS – Guid: " + vdsGuid + " fips: " + fips);
+        log.info("Kernel FIPS - Guid: " + vdsGuid + " fips: " + fips);
         return vdsStaticDao.get(vdsGuid).isKernelCmdlineFips();
     }
 }

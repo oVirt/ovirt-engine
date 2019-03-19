@@ -767,12 +767,15 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("memoryBacking");
         writer.writeStartElement("hugepages");
         writer.writeStartElement("page");
-        int hugepageSize = hugepageSizeOpt.get();
-        List<Integer> hugepageSizes = hostStatisticsSupplier.get().getHugePages().stream()
-                .map(HugePage::getSizeKB)
-                .collect(Collectors.toList());
-        if (!hugepageSizes.contains(hugepageSize)) {
-            hugepageSize = vmInfoBuildUtils.getDefaultHugepageSize(vm);
+        int hugepageSize = vmInfoBuildUtils.getDefaultHugepageSize(vm);
+        if (hostStatisticsSupplier.get() != null) {
+            int hugepageSizeFromOpt = hugepageSizeOpt.get();
+            List<Integer> hugepageSizes = hostStatisticsSupplier.get().getHugePages().stream()
+                    .map(HugePage::getSizeKB)
+                    .collect(Collectors.toList());
+            if (hugepageSizes.contains(hugepageSizeFromOpt)) {
+                hugepageSize = hugepageSizeFromOpt;
+            }
         }
         writer.writeAttributeString("size", String.valueOf(hugepageSize));
         writer.writeEndElement();
@@ -1631,8 +1634,9 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("port", String.valueOf(LIBVIRT_PORT_AUTOSELECT));
         writer.writeAttributeString("autoport", "yes");
         // TODO: defaultMode
-        if (graphicsType == GraphicsType.SPICE
-                || /* VNC && */ !vmInfoBuildUtils.isKernelFipsMode(hostStatisticsSupplier.get().getId())) {
+        if (graphicsType == GraphicsType.SPICE      // SPICE always needs password
+            || hostStatisticsSupplier.get() == null // when there's no host, it doesn't matter; use password to be safe
+            || !vmInfoBuildUtils.isKernelFipsMode(hostStatisticsSupplier.get().getId())) {
             writer.writeAttributeString("passwd", "*****");
             writer.writeAttributeString("passwdValidTo", "1970-01-01T00:00:01");
         }
