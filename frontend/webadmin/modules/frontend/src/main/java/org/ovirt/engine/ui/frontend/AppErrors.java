@@ -1827,6 +1827,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ERROR_CANNOT_FIND_ISO_IMAGE_PATH();
 
+    String ERROR_CANNOT_REMOVE_SNAPSHOT_ILLEGAL_IMAGE();
+
     String ERROR_ISO_IMAGE_STATUS_ILLEGAL();
 
     String ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH();
