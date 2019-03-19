@@ -463,6 +463,15 @@ etc/pki/ovirt-engine/cacert.template.in
 etc/pki/ovirt-engine/cert.template.in
 etc/pki/ovirt-engine/openssl.conf"
 
+# Hashers. Must support:
+# - No options, for creation of hash file
+# - '-c hashfile --status', for verifying a hash file
+# On restore, search for all of them inside the tar, use first found
+AVAILABLE_HASHERS="sha256sum md5sum"
+# On backup, use this one
+HASHER="sha256sum"
+# In all cases, the file name containing the hashes is identical to the hasher itself.
+
 source_d defaults
 
 compressor_to_tar_option() {
@@ -967,8 +976,8 @@ dobackup() {
 	getOSVersion > "${tardir}/${OS_VERSION_FILENAME}" || logdie "Can't create ${tardir}/${OS_VERSION_FILENAME}"
 	source_d dobackup
 	dump_config_for_restore > "${tardir}/config" || logdie "Can't create ${tardir}/config"
-	log "Creating md5sum at ${tardir}/md5sum"
-	createmd5 "${tardir}" "${tardir}/md5sum"
+	log "Creating ${HASHER} at ${tardir}/${HASHER}"
+	createhash "${tardir}" "${tardir}/${HASHER}"
 	output "Packing into file '${FILE}'"
 	log "Creating tarball ${FILE}"
 	createtar "${tardir}" "${FILE}"
@@ -994,18 +1003,28 @@ createtar() {
 	fi
 }
 
-createmd5() {
+createhash() {
 	local tardir="$1"
-	local md5file="$2"
+	local hashfile="$2"
 	find "${tardir}" -type f -printf "%P\n" | while read -r file; do
-		( cd "${tardir}" && md5sum "${file}" ) >> "${md5file}" || logdie "Cannot create checksum for '${file}'"
+		( cd "${tardir}" && "${HASHER}" "${file}" ) >> "${hashfile}" || logdie "Cannot create checksum for '${file}'"
 	done || logdie "Find execution failed"
 }
 
-verifymd5() {
+verifyhash() {
 	local tardir="$1"
-	local md5file="$2"
-	( cd "${tardir}" && md5sum -c "${md5file}" --status ) || logdie "Checksum verification failed"
+	local hashfile=
+	local hasher=
+	local found=
+	for hasher in ${AVAILABLE_HASHERS}; do
+		hashfile="${tardir}/${hasher}"
+		if [ -e "${hashfile}" ]; then
+			found=1
+			( cd "${tardir}" && "${hasher}" -c "${hashfile}" --status ) || logdie "Checksum verification failed"
+			break
+		fi
+	done
+	[ -z "${found}" ] && logdie "No supported hash file found"
 }
 
 backupFiles() {
@@ -1092,8 +1111,8 @@ dorestore() {
 	output "- Unpacking file '${FILE}'"
 	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
 	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
-	log "Verifying md5"
-	verifymd5 "${TEMP_FOLDER}" "md5sum"
+	log "Verifying hash"
+	verifyhash "${TEMP_FOLDER}"
 	log "Verifying version"
 	verifyVersion
 
@@ -1933,8 +1952,8 @@ doverify() {
 	output "- Unpacking file '${FILE}'"
 	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
 	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
-	log "Verifying md5"
-	verifymd5 "${TEMP_FOLDER}" "md5sum"
+	log "Verifying hash"
+	verifyhash "${TEMP_FOLDER}"
 	log "Verifying version"
 	verifyVersion
 
