@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -15,6 +14,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +25,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -216,21 +218,53 @@ public class MultipleStorageDomainsValidatorTest {
     @Test
     public void testAllDomainsHaveSpaceForMergeSuccess(){
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        List<SubchainInfo> subchain = createSubchain(Collections.singletonList(sdId1));
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
-        assertTrue(validator.allDomainsHaveSpaceForMerge(anyList(), any()).isValid());
+        assertTrue(validator.allDomainsHaveSpaceForMerge(subchain, ActionType.RemoveSnapshotSingleDiskLive).isValid());
         verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForMerge(any(), any());
     }
 
     @Test
     public void testAllDomainsHaveSpaceForMergeFail(){
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        List<SubchainInfo> subchain = createSubchain(Collections.singletonList(sdId1));
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForMerge(any(), any());
+                when(storageDomainValidator).hasSpaceForMerge(subchain, ActionType.RemoveSnapshotSingleDiskLive);
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
-        ValidationResult result = validator.allDomainsHaveSpaceForMerge(anyList(), any());
+        ValidationResult result = validator.allDomainsHaveSpaceForMerge(subchain, ActionType.RemoveSnapshotSingleDiskLive);
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForMergeBrokenSubchainFail(){
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        List<SubchainInfo> subchain = new ArrayList<>();
+        doReturn(new ValidationResult(EngineMessage.ERROR_CANNOT_REMOVE_SNAPSHOT_ILLEGAL_IMAGE)).
+                when(storageDomainValidator).hasSpaceForMerge(subchain, ActionType.RemoveSnapshotSingleDiskLive);
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
+
+        ValidationResult result = validator.allDomainsHaveSpaceForMerge(subchain, ActionType.RemoveSnapshotSingleDiskLive);
+        assertThat(result, failsWith(EngineMessage.ERROR_CANNOT_REMOVE_SNAPSHOT_ILLEGAL_IMAGE));
+    }
+
+    private List<SubchainInfo> createSubchain(List<Guid> sdIds) {
+        Guid imageGroup = Guid.newGuid();
+        DiskImage base = new DiskImage();
+        base.setId(imageGroup);
+        base.setImageId(Guid.newGuid());
+        base.setStorageIds(sdIds);
+
+        DiskImage top = new DiskImage();
+        top.setId(imageGroup);
+        top.setImageId(Guid.newGuid());
+        top.setParentId(base.getImageId());
+        top.setStorageIds(sdIds);
+
+        SubchainInfo subchainInfo = new SubchainInfo(sdIds.get(0), base, top);
+
+        return Collections.singletonList(subchainInfo);
     }
 
     private List<DiskImage> generateDisksList(int size, List<Guid> sdIds) {

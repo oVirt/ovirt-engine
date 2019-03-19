@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
@@ -115,6 +116,12 @@ public class MultipleStorageDomainsValidator {
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
     public ValidationResult allDomainsHaveSpaceForMerge(List<SubchainInfo> snapshots, ActionType snapshotActionType) {
+        // Make sure the subchain was built correctly, in case we have orphaned volumes in the chain
+        // it could fail with NPE
+        if (snapshots.isEmpty()) {
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_REMOVE_SNAPSHOT_ILLEGAL_IMAGE);
+        }
+
         final Map<Guid, List<SubchainInfo>> storageToSnapshots = getDomainsToSnapshotsMap(snapshots);
 
         return validOrFirstFailure(entry -> {
