@@ -143,7 +143,8 @@ public class CloudInitHandler {
      * is specified explicitly or if no protocol is specified at all.
      */
     private boolean useOpenstackMetadataProtocol(VmInit vmInit) {
-        return vmInit.getCloudInitNetworkProtocol() == null || OPENSTACK_METADATA.equals(vmInit.getCloudInitNetworkProtocol());
+        return vmInit != null && (vmInit.getCloudInitNetworkProtocol() == null ||
+            OPENSTACK_METADATA.equals(vmInit.getCloudInitNetworkProtocol()));
     }
 
     private void storeHostname() {
