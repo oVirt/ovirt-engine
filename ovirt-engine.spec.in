@@ -270,6 +270,7 @@ BuildRequires:	python3-devel
 %endif
 BuildRequires:	systemd
 BuildRequires:	unzip
+BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
 
 # TODO Replace add_maven_depmap and then remove. See also:
 # https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/R3KZ7VI5DPCMCELFIVJQ4AXB2WQED35C/
