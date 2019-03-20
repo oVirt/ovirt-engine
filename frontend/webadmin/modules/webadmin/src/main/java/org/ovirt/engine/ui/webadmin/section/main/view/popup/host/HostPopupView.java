@@ -691,13 +691,15 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         driver.edit(object);
         setTabIndexes(0);
         object.getCluster().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
-            if (object.getCluster().getSelectedItem().supportsGlusterService()
+            if (object.getCluster().getSelectedItem() != null) {
+                if (object.getCluster().getSelectedItem().supportsGlusterService()
                     && !object.getCluster().getSelectedItem().supportsVirtService()) {
-                powerManagementTab.setVisible(false);
-                spmTab.setVisible(false);
-            } else {
-                powerManagementTab.setVisible(true);
-                spmTab.setVisible(true);
+                    powerManagementTab.setVisible(false);
+                    spmTab.setVisible(false);
+                } else {
+                    powerManagementTab.setVisible(true);
+                    spmTab.setVisible(true);
+                }
             }
         });
 
