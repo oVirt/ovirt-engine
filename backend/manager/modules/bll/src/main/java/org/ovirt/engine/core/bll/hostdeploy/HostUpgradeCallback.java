@@ -100,6 +100,12 @@ public class HostUpgradeCallback implements CommandCallback {
 
         // Invoke the upgrade action
         case Maintenance:
+            // if child command ids is empty the host is already in maintenance so no need to check for
+            // MaintenanceNumberOfVdssCommand status. So upgrade can be started
+            if (childCmdIds.isEmpty()) {
+                logAndinvokeHostUpgrade(rootCommand, parameters);
+                break;
+            }
             switch (getMaintenanceCmdStatus(childCmdIds)) {
             case FAILED:
             case ENDED_WITH_FAILURE:
@@ -110,11 +116,18 @@ public class HostUpgradeCallback implements CommandCallback {
                 break;
             case SUCCEEDED:
             case ENDED_SUCCESSFULLY:
-                log.info("Host '{}' is on maintenance mode. Proceeding with Upgrade process.",
+                logAndinvokeHostUpgrade(rootCommand, parameters);
+                break;
+            case UNKNOWN:
+                log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
+                                "maintenance command is in UNKNOWN status.",
                         getHostName(parameters.getVdsId()));
-                invokeHostUpgrade(rootCommand, parameters);
                 break;
             default:
+                log.info("Host '{}' is on maintenance mode. But not invoking Upgrade process because moving to " +
+                                "maintenance command is in unhandled status '{}'.",
+                        getHostName(parameters.getVdsId()),
+                        host.getStatus());
                 break;
             }
             break;
@@ -127,6 +140,12 @@ public class HostUpgradeCallback implements CommandCallback {
 
             break;
         }
+    }
+
+    private void logAndinvokeHostUpgrade(CommandBase<?> rootCommand, UpgradeHostParameters parameters) {
+        log.info("Host '{}' is on maintenance mode. Proceeding with Upgrade process.",
+                getHostName(parameters.getVdsId()));
+        invokeHostUpgrade(rootCommand, parameters);
     }
 
     private void handleActionFailed(CommandBase<?> rootCommand, UpgradeHostParameters parameters) {
