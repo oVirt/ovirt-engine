@@ -947,6 +947,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCustomEmulatedMachine(),
                         getParameters().getMasterVm().getBiosType(),
                         getParameters().getMasterVm().getCustomCpuName(),
+                        getParameters().getMasterVm().isUseHostCpuFlags(),
                         getParameters().getMasterVm().getSmallIconId(),
                         getParameters().getMasterVm().getLargeIconId(),
                         getParameters().getMasterVm().getNumOfIoThreads(),

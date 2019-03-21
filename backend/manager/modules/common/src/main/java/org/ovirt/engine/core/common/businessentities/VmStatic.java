@@ -27,9 +27,6 @@ public class VmStatic extends VmBase {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String cpuPinning;
 
-    @EditableVmField(onStatuses = VMStatus.Down)
-    private boolean useHostCpuFlags;
-
     @EditableVmField
     private Guid instanceTypeId;
     private Guid imageTypeId;
@@ -56,7 +53,6 @@ public class VmStatic extends VmBase {
         vmtGuid = vmStatic.getVmtGuid();
         originalTemplateGuid = vmStatic.originalTemplateGuid;
         originalTemplateName = vmStatic.originalTemplateName;
-        useHostCpuFlags = vmStatic.useHostCpuFlags;
         cpuPinning = vmStatic.cpuPinning;
         setInitialized(vmStatic.isInitialized());
         setUseLatestVersion(vmStatic.isUseLatestVersion());
@@ -116,7 +112,6 @@ public class VmStatic extends VmBase {
                 initialized,
                 getName(),
                 vmtGuid,
-                useHostCpuFlags,
                 instanceTypeId,
                 imageTypeId,
                 originalTemplateGuid,
@@ -139,21 +134,12 @@ public class VmStatic extends VmBase {
                 && initialized == other.initialized
                 && Objects.equals(getName(), other.getName())
                 && Objects.equals(vmtGuid, other.vmtGuid)
-                && useHostCpuFlags == other.useHostCpuFlags
                 && Objects.equals(instanceTypeId, other.instanceTypeId)
                 && Objects.equals(imageTypeId, other.imageTypeId)
                 && Objects.equals(originalTemplateGuid, other.originalTemplateGuid)
                 && Objects.equals(originalTemplateName, other.originalTemplateName)
                 && useLatestVersion == other.useLatestVersion
                 && Objects.equals(providerId, other.providerId);
-    }
-
-    public boolean isUseHostCpuFlags() {
-        return useHostCpuFlags;
-    }
-
-    public void setUseHostCpuFlags(boolean useHostCpuFlags) {
-        this.useHostCpuFlags = useHostCpuFlags;
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Cpu;
+import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -281,6 +282,10 @@ public class VmBaseMapper {
         if (model.isSetMultiQueuesEnabled()) {
             entity.setMultiQueuesEnabled(model.isMultiQueuesEnabled());
         }
+
+        if (model.isSetCpu() && model.getCpu().isSetMode()) {
+            entity.setUseHostCpuFlags(model.getCpu().getMode() == CpuMode.HOST_PASSTHROUGH);
+        }
     }
 
     /**
@@ -455,6 +460,10 @@ public class VmBaseMapper {
         model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));
 
         model.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
+
+        if(entity.isUseHostCpuFlags()) {
+            model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);
+        }
     }
 
     @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)

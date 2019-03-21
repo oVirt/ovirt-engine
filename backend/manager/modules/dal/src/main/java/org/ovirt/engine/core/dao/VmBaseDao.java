@@ -90,6 +90,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("custom_emulated_machine", entity.getCustomEmulatedMachine())
                 .addValue("bios_type", entity.getBiosType())
                 .addValue("custom_cpu_name", entity.getCustomCpuName())
+                .addValue("host_cpu_flags", entity.isUseHostCpuFlags())
                 .addValue(SMALL_ICON_ID_COLUMN, entity.getSmallIconId())
                 .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId())
                 .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString())
@@ -166,6 +167,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setCustomEmulatedMachine(rs.getString("custom_emulated_machine"));
             entity.setBiosType(BiosType.forValue(rs.getInt("bios_type")));
             entity.setCustomCpuName(rs.getString("custom_cpu_name"));
+            entity.setUseHostCpuFlags((Boolean) rs.getObject("host_cpu_flags"));
             entity.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
             entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
             entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromString(rs.getString("console_disconnect_action")));

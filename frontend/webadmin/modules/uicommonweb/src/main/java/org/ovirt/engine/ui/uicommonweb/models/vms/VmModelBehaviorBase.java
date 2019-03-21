@@ -493,8 +493,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void doChangeDefaultHost(List<Guid> dedicatedHostIds) {
-        getModel().getIsAutoAssign().setEntity(true);
         if (dedicatedHostIds == null) {
+            getModel().getIsAutoAssign().setEntity(true);
             return;
         }
 
@@ -508,8 +508,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             if (!selectedHosts.isEmpty()) {
                 getModel().getDefaultHost().setSelectedItems(selectedHosts);
                 getModel().getIsAutoAssign().setEntity(false);
+                return;
             }
         }
+        getModel().getIsAutoAssign().setEntity(true);
     }
 
     protected void updateDefaultHost() {
@@ -881,13 +883,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;
         Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
+        int numOfPinnedHosts = getModel().getDefaultHost().getSelectedItems() == null ?
+                0 : getModel().getDefaultHost().getSelectedItems().size();
 
         if (isAutoAssign == null) {
             return;
         }
 
         if (clusterSupportsHostCpu && !clusterHasPpcArchitecture()
-                && (Boolean.FALSE.equals(isAutoAssign) || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)) {
+                && ((Boolean.FALSE.equals(isAutoAssign) && numOfPinnedHosts > 0)
+                || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
@@ -1725,4 +1730,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE
         );
     }
+
+    /**
+     * Return true if VM is of "High Performance" type or if "Host Auto Assign" is enabled.
+     * since calling updateDefaultHost() for checking which hosts are available for current chosen cluster
+     * may change "Host Auto Assign" mode, then we need this method to change "cpu-pass-through" value accordingly.
+     */
+     protected boolean isHostCpuValueStillBasedOnTemp() {
+         return !getModel().getIsAutoAssign().getEntity()
+                 || getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
+     }
 }

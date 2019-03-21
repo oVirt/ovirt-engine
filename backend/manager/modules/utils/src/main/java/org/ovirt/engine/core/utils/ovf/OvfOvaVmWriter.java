@@ -46,7 +46,6 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
             _writer.writeElement(ORIGINAL_TEMPLATE_NAME, vm.getOriginalTemplateName());
         }
 
-        _writer.writeElement(USE_HOST_CPU, String.valueOf(vm.isUseHostCpuFlags()));
         _writer.writeElement(USE_LATEST_VERSION, String.valueOf(vm.isUseLatestVersion()));
 
         if (vm.getLastStopTime() != null) {

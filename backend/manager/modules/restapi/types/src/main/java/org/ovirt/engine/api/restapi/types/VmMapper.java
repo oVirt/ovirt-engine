@@ -13,7 +13,6 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
-import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
@@ -123,6 +122,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setQuotaId(entity.getQuotaId());
         staticVm.setBootMenuEnabled(entity.isBootMenuEnabled());
         staticVm.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
+        staticVm.setUseHostCpuFlags(entity.isUseHostCpuFlags());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 
@@ -178,9 +178,6 @@ public class VmMapper extends VmBaseMapper {
             }
         }
         if (vm.isSetCpu()) {
-            if (vm.getCpu().isSetMode()) {
-                staticVm.setUseHostCpuFlags(vm.getCpu().getMode() == CpuMode.HOST_PASSTHROUGH);
-            }
             if (vm.getCpu().isSetCpuTune()) {
                 staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
             }
@@ -274,9 +271,6 @@ public class VmMapper extends VmBaseMapper {
             os.setInitrd(entity.getInitrdUrl());
             os.setCmdline(entity.getKernelParams());
             model.setOs(os);
-        }
-        if(entity.isUseHostCpuFlags()) {
-            model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);
         }
         model.getCpu().setCpuTune(stringToCpuTune(entity.getCpuPinning()));
 

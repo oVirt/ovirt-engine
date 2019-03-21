@@ -103,7 +103,6 @@ public class OvfVmReader extends OvfOvirtReader {
         consumeReadProperty(content, ORIGINAL_TEMPLATE_ID, val -> _vm.setOriginalTemplateGuid(new Guid(val)));
         consumeReadProperty(content, ORIGINAL_TEMPLATE_NAME, val -> _vm.getStaticData().setOriginalTemplateName(val));
         consumeReadProperty(content, USE_LATEST_VERSION, val -> _vm.setUseLatestVersion(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, USE_HOST_CPU, val -> _vm.setUseHostCpuFlags(Boolean.parseBoolean(val)));
         consumeReadProperty(content, STOP_TIME, val -> _vm.setLastStopTime(OvfParser.utcDateStringToLocalDate(val)));
     }
 

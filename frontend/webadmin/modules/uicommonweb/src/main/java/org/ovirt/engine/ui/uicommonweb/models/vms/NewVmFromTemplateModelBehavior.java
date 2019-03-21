@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -59,11 +58,6 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
             initTemplateWithVersion(relatedTemplates, null, false);
         }
 
-        // since host_cpu_flags parameter (i.e. pass-through host cpu) is not part of template properties,
-        // then set it in case of new VM from High-performance template
-        if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance && !clusterHasPpcArchitecture()) {
-            getModel().getHostCpu().setEntity(true);
-        }
         updateIsDisksAvailable();
     }
 
