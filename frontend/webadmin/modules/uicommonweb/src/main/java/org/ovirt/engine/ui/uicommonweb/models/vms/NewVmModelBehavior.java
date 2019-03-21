@@ -146,6 +146,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
             updateRngDevice(template.getId());
 
+            if (isHostCpuValueStillBasedOnTemp()) {
+                getModel().getHostCpu().setEntity(template.isUseHostCpuFlags());
+            }
+
             initStorageDomains();
 
             InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();

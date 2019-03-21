@@ -183,6 +183,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
+    private boolean useHostCpuFlags; // Pass-Through Host CPU
+
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
             message = "VALIDATION_VM_NUM_OF_MONITORS_EXCEEDED")
     private int numOfMonitors;
@@ -587,6 +592,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getCustomEmulatedMachine(),
                 vmBase.getBiosType(),
                 vmBase.getCustomCpuName(),
+                vmBase.isUseHostCpuFlags(),
                 vmBase.getSmallIconId(),
                 vmBase.getLargeIconId(),
                 vmBase.getNumOfIoThreads(),
@@ -657,6 +663,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             String customEmulatedMachine,
             BiosType biosType,
             String customCpuName,
+            boolean useHostCpuFlags,
             Guid smallIconId,
             Guid largeIconId,
             int numOfIoThreads,
@@ -725,6 +732,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.customEmulatedMachine = customEmulatedMachine;
         this.biosType = biosType;
         this.customCpuName = customCpuName;
+        this.useHostCpuFlags = useHostCpuFlags;
         this.smallIconId = smallIconId;
         this.largeIconId = largeIconId;
         this.numOfIoThreads = numOfIoThreads;
@@ -1142,6 +1150,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 customEmulatedMachine,
                 biosType,
                 customCpuName,
+                useHostCpuFlags,
                 smallIconId,
                 largeIconId,
                 consoleDisconnectAction,
@@ -1211,6 +1220,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
                 && biosType == other.biosType
                 && Objects.equals(customCpuName, other.customCpuName)
+                && Objects.equals(useHostCpuFlags, other.useHostCpuFlags)
                 && Objects.equals(smallIconId, other.smallIconId)
                 && Objects.equals(largeIconId, other.largeIconId)
                 && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction)
@@ -1507,6 +1517,15 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     public void setCustomCpuName(String customCpuName) {
         this.customCpuName = customCpuName==null || customCpuName.trim().isEmpty() ? null : customCpuName;
     }
+
+    public boolean isUseHostCpuFlags() {
+        return useHostCpuFlags;
+    }
+
+    public void setUseHostCpuFlags(boolean useHostCpuFlags) {
+        this.useHostCpuFlags = useHostCpuFlags;
+    }
+
 
     public void setCustomCompatibilityVersion(Version customCompatibilityVersion) {
         this.customCompatibilityVersion = customCompatibilityVersion;

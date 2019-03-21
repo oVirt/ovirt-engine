@@ -67,7 +67,6 @@ public class OvfVmWriter extends OvfOvirtWriter {
             _writer.writeElement(CPU_PINNING, vm.getCpuPinning());
         }
 
-        _writer.writeElement(USE_HOST_CPU, String.valueOf(vm.isUseHostCpuFlags()));
         _writer.writeElement(USE_LATEST_VERSION, String.valueOf(vm.isUseLatestVersion()));
 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(vm.getStaticData());

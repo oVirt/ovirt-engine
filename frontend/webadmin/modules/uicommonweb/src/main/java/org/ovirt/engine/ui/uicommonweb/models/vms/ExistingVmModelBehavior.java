@@ -168,7 +168,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             updateTimeZone(vm.getTimeZone());
 
             updateGraphics(vm.getId());
-            getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
+
+            getModel().getHostCpu().setEntity(isHostCpuValueStillBasedOnTemp() ? vm.isUseHostCpuFlags() : false);
 
             // Storage domain and provisioning are not available for an existing VM.
             getModel().getStorageDomain().setIsChangeable(false);
@@ -284,6 +285,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     protected void changeDefaultHost() {
         super.changeDefaultHost();
         doChangeDefaultHost(vm.getDedicatedVmForVdsList());
+
+        if (isHostCpuValueStillBasedOnTemp()) {
+            getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
+        }
     }
 
     @Override

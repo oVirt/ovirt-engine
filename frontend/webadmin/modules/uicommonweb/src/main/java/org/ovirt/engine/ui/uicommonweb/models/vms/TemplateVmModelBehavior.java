@@ -151,6 +151,10 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     protected void changeDefaultHost() {
         super.changeDefaultHost();
         doChangeDefaultHost(template.getDedicatedVmForVdsList());
+
+        if (isHostCpuValueStillBasedOnTemp()) {
+            getModel().getHostCpu().setEntity(template.isUseHostCpuFlags());
+        }
     }
 
     public void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
@@ -165,6 +169,10 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private void initTemplate() {
         // Update model state according to VM properties.
         buildModel(template, (source, destination) -> {
+            if (!isHostCpuValueStillBasedOnTemp()) {
+                getModel().getHostCpu().setEntity(false);
+            }
+
             updateTimeZone(template.getTimeZone());
 
             // Storage domain and provisioning are not available for an existing VM.

@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -103,13 +102,10 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        setupWindowModelFrom(template);
         doChangeDefaultHost(template.getDedicatedVmForVdsList());
+        setupWindowModelFrom(template);
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-        if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance && !clusterHasPpcArchitecture()) {
-            getModel().getHostCpu().setEntity(true);
-        }
     }
 
     @Override
