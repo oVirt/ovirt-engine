@@ -1380,8 +1380,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                     ArrayList<ActionParametersBase> list = new ArrayList<>();
                                     for (GlusterVolumeEntity volume : volumeList) {
                                         Guid volumeId = volume.getId();
-
-                                        list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
+                                        if (volume.getVolumeType().isReplicatedType()) {
+                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
+                                        } else if (volume.getVolumeType().equals(GlusterVolumeType.DISTRIBUTE)){
+                                            list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", "distributed-virt")));//$NON-NLS-1$ $NON-NLS-2$
+                                        }
 
                                         list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
 
