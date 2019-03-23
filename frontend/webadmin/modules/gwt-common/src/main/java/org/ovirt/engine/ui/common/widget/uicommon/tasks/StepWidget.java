@@ -93,8 +93,9 @@ public class StepWidget extends Composite {
         jobProgress.setActive(true);
         jobProgress.setType(ProgressType.STRIPED);
         jobProgressBar.setPercent(100);
-        jobProgressBar.setText(constants.startedTask() + ": " // $NON-NLS-1$
-                + DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(step.getStartTime()));
+        String startTime = step.getStartTime() == null ? constants.notAvailableLabel() :
+            DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(step.getStartTime());
+        jobProgressBar.setText(constants.startedTask() + ": " + startTime); // $NON-NLS-1$
         if (step.getProgress() != null) {
             jobProgressBar.setPercent(step.getProgress());
         }
@@ -103,8 +104,9 @@ public class StepWidget extends Composite {
     private void markFinished(Step step) {
         jobProgressBar.setPercent(100);
         statusIcon.addStyleName(PatternflyIconType.PF_BASE.getCssName());
-        jobProgressBar.setText(constants.completedTask() + ": " // $NON-NLS-1$
-                + DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(step.getEndTime()));
+        String endTime = step.getEndTime() == null ? constants.notAvailableLabel() :
+            DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(step.getEndTime());
+        jobProgressBar.setText(constants.completedTask() + ": " + endTime); // $NON-NLS-1$
         jobProgressBar.setPercent(100);
         if (JobExecutionStatus.FINISHED.equals(step.getStatus())) {
             statusIcon.addStyleName(PatternflyConstants.PFICON_OK);
