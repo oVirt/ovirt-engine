@@ -110,6 +110,8 @@ public abstract class OvfOvaReader extends OvfReader {
             return 27; // Windows 10x64
         case "117":
             return 29; // Windows 2016x64
+        case "122":
+            return 31; // Windows 2019x64
         case "42":
             return 1500; // FreeBSD
         case "78":
