@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ComputerName><![CDATA[$ComputerName$]]></ComputerName>
+            <RegisteredOrganization><![CDATA[$OrgName$]]></RegisteredOrganization>
+            <RegisteredOwner>User</RegisteredOwner>
+            <ProductKey><![CDATA[$ProductKey$]]></ProductKey>
+        </component>
+        <component name="Microsoft-Windows-UnattendedJoin" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Identification>
+                <Credentials>
+                    <Domain><![CDATA[$JoinDomain$]]></Domain>
+                    <Password><![CDATA[$DomainAdminPassword$]]></Password>
+                    <Username><![CDATA[$DomainAdmin$]]></Username>
+                </Credentials>
+                <DebugJoin>true</DebugJoin>
+                <JoinDomain><![CDATA[$JoinDomain$]]></JoinDomain>
+                <MachineObjectOU><![CDATA[$MachineObjectOU$]]></MachineObjectOU>
+            </Identification>
+        </component>
+    </settings>
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-IE-ClientNetworkProtocolImplementation" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <HKLMProxyEnable>false</HKLMProxyEnable>
+        </component>
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale><![CDATA[$InputLocale$]]></InputLocale>
+            <SystemLocale><![CDATA[$SystemLocale$]]></SystemLocale>
+            <UILanguage><![CDATA[$UILanguage$]]></UILanguage>
+            <UILanguageFallback>en-US</UILanguageFallback>
+            <UserLocale><![CDATA[$UserLocale$]]></UserLocale>
+        </component>
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Display>
+                <ColorDepth>32</ColorDepth>
+                <HorizontalResolution>1024</HorizontalResolution>
+                <RefreshRate>75</RefreshRate>
+                <VerticalResolution>768</VerticalResolution>
+            </Display>
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <SkipUserOOBE>true</SkipUserOOBE>
+            </OOBE>
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value><![CDATA[$AdminPassword$]]></Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+            </UserAccounts>
+            <RegisteredOrganization><![CDATA[$OrgName$]]></RegisteredOrganization>
+            <RegisteredOwner>User</RegisteredOwner>
+            <TimeZone><![CDATA[$TimeZone$]]></TimeZone>
+        </component>
+    </settings>
+    <settings pass="windowsPE">
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SetupUILanguage>
+                <UILanguage><![CDATA[$SetupUiLanguageUiLanguage$]]></UILanguage>
+            </SetupUILanguage>
+            <InputLocale><![CDATA[$InputLocale$]]></InputLocale>
+            <UILanguage><![CDATA[$UILanguage$]]></UILanguage>
+            <SystemLocale><![CDATA[$SystemLocale$]]></SystemLocale>
+            <UILanguageFallback>en-US</UILanguageFallback>
+            <UserLocale><![CDATA[$UserLocale$]]></UserLocale>
+        </component>
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserData>
+                <ProductKey>
+                    <Key><![CDATA[$ProductKey$]]></Key>
+                    <WillShowUI>Never</WillShowUI>
+                </ProductKey>
+                <AcceptEula>true</AcceptEula>
+                <Organization><![CDATA[$OrgName$]]></Organization>
+                <FullName>User</FullName>
+            </UserData>
+        </component>
+    </settings>
+    <cpi:offlineImage cpi:source="catalog://catalogs/windows2012-x86/sources/install_windows longhorn serverenterprise.clg" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+</unattend>

@@ -117,6 +117,8 @@ public abstract class OvfOvaWriter extends OvfWriter {
             return 121;
         case 29: // Windows 2016x64
             return 117;
+        case 31: // Windows 2019x64
+            return 122;
         case 1004:
         case 1193: // Suse
         case 2004:
