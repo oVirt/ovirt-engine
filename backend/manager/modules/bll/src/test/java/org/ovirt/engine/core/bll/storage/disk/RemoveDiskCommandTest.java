@@ -184,4 +184,12 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         doReturn(Collections.singletonList("NiceVm")).when(vmStaticDao).getAllNamesWithSpecificIsoAttached(disk.getId());
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_REMOVE_ISO_DISK_ATTACHED_TO_VMS);
     }
+
+    @Test
+    public void testRemoveHostedEngineDiskFailsByAlias() {
+        // No need to test all available aliases as the validation is done on the entire list using contains()
+        disk.setDiskAlias(StorageConstants.HOSTED_ENGINE_DISKS_ALIASES.get(0));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_DISK_IS_A_HOSTED_ENGINE_DISK);
+    }
 }
