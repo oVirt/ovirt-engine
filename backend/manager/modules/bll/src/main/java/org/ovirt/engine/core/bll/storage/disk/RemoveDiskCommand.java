@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -134,8 +135,20 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         }
 
 
-        return validateHostedEngineDisks() && validateAllVmsForDiskAreDown() && canRemoveDiskBasedOnContentTypeChecks()
+        return validateHostedEngineDisks() && canRemoveBasedOnLegacyHostedEngineDiskAlias() && validateAllVmsForDiskAreDown()
+                && canRemoveDiskBasedOnContentTypeChecks()
                 && canRemoveDiskBasedOnStorageTypeCheck();
+    }
+
+    /**
+     * From version 4.3 the Hosted Engine disks are created with a specific content type but in earlier setups
+     * the only way to distinguish whether a disk is a part of Hosted Engine is to check the disk alias
+     */
+    private boolean canRemoveBasedOnLegacyHostedEngineDiskAlias() {
+        if (StorageConstants.HOSTED_ENGINE_DISKS_ALIASES.contains(getDiskAlias())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_A_HOSTED_ENGINE_DISK);
+        }
+        return true;
     }
 
     private boolean canRemoveDiskBasedOnContentTypeChecks() {
@@ -146,6 +159,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return false;
         }
 
+        // No need to validate for Hosted Engine disks as the remove operation is not allowed of them to begin with
         switch (disk.getContentType()) {
         case OVF_STORE:
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator((DiskImage) disk);

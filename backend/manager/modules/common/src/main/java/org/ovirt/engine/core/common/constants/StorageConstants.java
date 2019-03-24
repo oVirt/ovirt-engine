@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.constants;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -26,4 +28,6 @@ public class StorageConstants {
     public static final String GLUSTER_VOL_SEPARATOR = ":/";
     public static final Set<StorageDomainStatus> monitoredDomainStatuses =
             Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Active, StorageDomainStatus.Inactive));
+    public static final List<String> HOSTED_ENGINE_DISKS_ALIASES = Arrays.asList("he_virtio_disk", "he_sanlock",
+            "HostedEngineConfigurationImage", "he_metadata");
 }
