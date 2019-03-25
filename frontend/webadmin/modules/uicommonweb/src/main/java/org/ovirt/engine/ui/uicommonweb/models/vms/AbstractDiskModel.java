@@ -285,6 +285,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         setIsIncrementalBackup(new EntityModel<>());
         getIsIncrementalBackup().setEntity(false);
+        getIsIncrementalBackup().setIsAvailable(false);
 
         setDiskStorageType(new EntityModel<>());
         getDiskStorageType().setEntity(DiskStorageType.IMAGE);
@@ -703,7 +704,6 @@ public abstract class AbstractDiskModel extends DiskModel {
         getDataCenter().setIsAvailable(!isInVm);
         getDiskProfile().setIsAvailable(isDiskImage);
         getCinderVolumeType().setIsAvailable(isCinderDisk);
-        getIsIncrementalBackup().setIsAvailable(isDiskImage);
 
         if (!isDiskImage) {
             previousIsQuotaAvailable = getQuota().getIsAvailable();
