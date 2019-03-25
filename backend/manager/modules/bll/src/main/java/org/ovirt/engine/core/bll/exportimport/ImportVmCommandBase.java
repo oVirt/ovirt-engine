@@ -477,7 +477,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
             Cluster cluster = clusterDao.get(getParameters().getClusterId());
-            if (getVm().getClusterCompatibilityVersionOrigin().less(cluster.getCompatibilityVersion())) {
+            if (getVm() != null
+                    && getVm().getClusterCompatibilityVersionOrigin().less(cluster.getCompatibilityVersion())) {
                 updateVm();
             }
         } catch (RuntimeException e) {
