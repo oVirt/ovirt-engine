@@ -536,4 +536,7 @@ public final class VdsProperties {
 
     // cinderlib
     public static final String CONNECTOR_INFO = "connector_info";
+
+    // incremental backup
+    public static final String BACKUP_ENABLED = "backupEnabled";
 }

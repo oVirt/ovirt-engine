@@ -126,6 +126,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setVncEncryptionEnabled(rs.getBoolean("vnc_encryption_enabled"));
         entity.setConnectorInfo(
                 ObjectUtils.mapNullable(rs.getString("connector_info"), JsonHelper::jsonToMapUnchecked));
+        entity.setBackupEnabled(rs.getBoolean("backup_enabled"));
 
         return entity;
     };
@@ -321,7 +322,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                         ObjectUtils.mapNullable(vds.getKernelFeatures(), JsonHelper::mapToJsonUnchecked))
                 .addValue("vnc_encryption_enabled", vds.isVncEncryptionEnabled())
                 .addValue("connector_info",
-                    ObjectUtils.mapNullable(vds.getConnectorInfo(), JsonHelper::mapToJsonUnchecked));
+                    ObjectUtils.mapNullable(vds.getConnectorInfo(), JsonHelper::mapToJsonUnchecked))
+                .addValue("backup_enabled", vds.isBackupEnabled());
     }
 
     @Override

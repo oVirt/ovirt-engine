@@ -999,6 +999,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setVncEncryptionEnabled(assignBoolValue(struct, VdsProperties.vnc_encryption_enabled));
         vds.setConnectorInfo((Map<String, Object>) struct.get(VdsProperties.CONNECTOR_INFO));
         vds.setKvmEnabled(assignBoolValue(struct, VdsProperties.kvm_enabled));
+        vds.setBackupEnabled(assignBoolValue(struct, VdsProperties.BACKUP_ENABLED));
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
