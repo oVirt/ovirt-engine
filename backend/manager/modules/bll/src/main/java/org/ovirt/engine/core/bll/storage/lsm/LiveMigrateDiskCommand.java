@@ -654,12 +654,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return new StorageDomainValidator(storageDomain);
     }
 
-    @Override
-    protected boolean isImageNotLocked() {
-        // During LSM the disks are being locked prior to the snapshot phase
-        // therefore returning true here.
-        return true;
-    }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
