@@ -450,6 +450,14 @@ public class DiskMapper {
             return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_METADATA_VOLUME;
         case OVF_STORE:
             return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.OVF_STORE;
+        case HOSTED_ENGINE:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE;
+        case HOSTED_ENGINE_SANLOCK:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_SANLOCK;
+        case HOSTED_ENGINE_METADATA:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_METADATA;
+        case HOSTED_ENGINE_CONFIGURATION:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_CONFIGURATION;
         default:
             throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
@@ -470,6 +478,14 @@ public class DiskMapper {
             return DiskContentType.MEMORY_METADATA_VOLUME;
         case OVF_STORE:
             return DiskContentType.OVF_STORE;
+        case HOSTED_ENGINE:
+            return DiskContentType.HOSTED_ENGINE;
+        case HOSTED_ENGINE_SANLOCK:
+            return DiskContentType.HOSTED_ENGINE_SANLOCK;
+        case HOSTED_ENGINE_METADATA:
+            return DiskContentType.HOSTED_ENGINE_METADATA;
+        case HOSTED_ENGINE_CONFIGURATION:
+            return DiskContentType.HOSTED_ENGINE_CONFIGURATION;
         default:
             throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
