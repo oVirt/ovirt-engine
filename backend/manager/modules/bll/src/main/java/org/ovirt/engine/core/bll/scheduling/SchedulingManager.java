@@ -337,6 +337,7 @@ public class SchedulingManager implements BackendService {
             List<Guid> hostWhiteList,
             List<Guid> destHostIdList,
             boolean ignoreHardVmToVmAffinity,
+            boolean doNotGroupVms,
             boolean stateless,
             List<String> messages,
             boolean delayWhenNeeded,
@@ -352,7 +353,8 @@ public class SchedulingManager implements BackendService {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             SchedulingContext context = new SchedulingContext(cluster,
                     createClusterPolicyParameters(cluster),
-                    ignoreHardVmToVmAffinity);
+                    ignoreHardVmToVmAffinity,
+                    doNotGroupVms);
 
             splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
             splitFunctions(policy.getFunctions(), context);
@@ -621,7 +623,7 @@ public class SchedulingManager implements BackendService {
             return Collections.singletonList(vms);
         }
 
-        if (context.isIgnoreHardVmToVmAffinity()) {
+        if (context.isDoNotGroupVms() || context.isIgnoreHardVmToVmAffinity()) {
             return vms.stream()
                     .map(Collections::singletonList)
                     .collect(Collectors.toList());
@@ -778,6 +780,7 @@ public class SchedulingManager implements BackendService {
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
             boolean ignoreHardVmToVmAffinity,
+            boolean doNotGroupVms,
             List<String> messages) {
         List<VDS> hosts = fetchHosts(cluster.getId(), vdsBlackList, vdsWhiteList);
         refreshCachedPendingValues(hosts);
@@ -786,7 +789,8 @@ public class SchedulingManager implements BackendService {
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         SchedulingContext context = new SchedulingContext(cluster,
                 createClusterPolicyParameters(cluster),
-                ignoreHardVmToVmAffinity);
+                ignoreHardVmToVmAffinity,
+                doNotGroupVms);
         splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
 
         Map<Guid, List<VDS>> res = new HashMap<>();
@@ -1055,6 +1059,37 @@ public class SchedulingManager implements BackendService {
             selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
                     resultEntry.getHost(), resultEntry.getWeight());
         }
+    }
+
+    public Set<Guid> positiveAffinityClosure(Cluster cluster, List<Guid> vms) {
+        // Group VMs only if affinity filter is active
+        Guid vmAffinityPolicyunitId = Guid.createGuidFromString(
+                VmAffinityFilterPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
+
+        ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
+
+        boolean isVmAffinityFilterActive = policy.getFilters().stream()
+                .anyMatch(vmAffinityPolicyunitId::equals);
+
+        if (!isVmAffinityFilterActive) {
+            return new HashSet<>(vms);
+        }
+
+        // TODO - maybe optimize DB call to fetch only needed affinity groups?
+        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId()).stream()
+                .filter(ag -> ag.isVmPositive() && ag.isVmEnforcing())
+                .collect(Collectors.toList());
+
+        if (allPositiveGroups.isEmpty()) {
+            return new HashSet<>(vms);
+        }
+
+        Set<Guid> vmSet = new HashSet<>(vms);
+        AffinityRulesUtils.getUnifiedPositiveAffinityGroups(allPositiveGroups).stream()
+                .filter(group -> !Collections.disjoint(group, vms))
+                .forEach(vmSet::addAll);
+
+        return vmSet;
     }
 
     public boolean isHostAffinityMoreImportantThanVmAffinity(Cluster cluster) {
@@ -1358,6 +1393,7 @@ public class SchedulingManager implements BackendService {
         private List<Guid> whiteList = Collections.emptyList();
         private List<Guid> destHostIdList = Collections.emptyList();
         private boolean ignoreHardVmToVmAffinity = false;
+        private boolean doNotGroupVms = false;
         private List<String> outMessages = new ArrayList<>();
         private boolean delay = false;
         private String correlationId;
@@ -1373,6 +1409,7 @@ public class SchedulingManager implements BackendService {
                     whiteList,
                     destHostIdList,
                     ignoreHardVmToVmAffinity,
+                    doNotGroupVms,
                     stateless,
                     outMessages,
                     delay,
@@ -1397,6 +1434,11 @@ public class SchedulingManager implements BackendService {
 
         public CallBuilder ignoreHardVmToVmAffinity(boolean value) {
             ignoreHardVmToVmAffinity = value;
+            return this;
+        }
+
+        public CallBuilder doNotGroupVms(boolean value) {
+            doNotGroupVms = value;
             return this;
         }
 
@@ -1435,6 +1477,7 @@ public class SchedulingManager implements BackendService {
                     blackList,
                     whiteList,
                     ignoreHardVmToVmAffinity,
+                    doNotGroupVms,
                     outMessages);
         }
 

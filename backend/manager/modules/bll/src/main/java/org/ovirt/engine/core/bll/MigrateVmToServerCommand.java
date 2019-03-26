@@ -94,6 +94,16 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     }
 
     @Override
+    protected boolean canScheduleVm() {
+        // 'Do not schedule' parameter is used by MigrateMultipleVms command,
+        // so that scheduling side effects are not executed twice.
+        if (getParameters().isSkipScheduling()) {
+            return true;
+        }
+        return super.canScheduleVm();
+    }
+
+    @Override
     protected Optional<Guid> getVdsToRunOn() {
         // 'Do not schedule' parameter is used by MigrateMultipleVms command,
         // so that scheduling side effects are not executed twice.

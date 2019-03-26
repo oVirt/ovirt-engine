@@ -95,7 +95,7 @@ public class MigrateMultipleVmsCommandTest extends BaseCommandTest {
         when(vmValidator.canMigrate(anyBoolean())).thenReturn(ValidationResult.VALID);
         doReturn(vmValidator).when(command).getVmValidator(any(VM.class));
 
-        when(schedulingManager.canSchedule(any(), any(), any(), any(), anyBoolean(), any())).thenReturn(possibleHosts);
+        when(schedulingManager.canSchedule(any(), any(), any(), any(), anyBoolean(), anyBoolean(), any())).thenReturn(possibleHosts);
         when(schedulingManager.prepareCall(any())).thenCallRealMethod();
     }
 

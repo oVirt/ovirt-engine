@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @NonTransactiveCommandAttribute
@@ -39,9 +42,12 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
     @Inject
     private VmDao vmDao;
     @Inject
+    private PermissionDao permissionDao;
+    @Inject
     private SchedulingManager schedulingManager;
 
     private List<VM> vms;
+    private List<Guid> hostBlackList;
     private List<VM> possibleVmsToMigrate = Collections.emptyList();
 
     public MigrateMultipleVmsCommand(T parameters, CommandContext cmdContext) {
@@ -82,13 +88,23 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VMS_NOT_FOUND);
         }
 
+        if (getParameters().isAddVmsInPositiveHardAffinity()) {
+            setVms(computeVmAffinityClosure());
+
+            // The permissions have to be checked for the new VMs.
+            if(!hasPermissionToMigrateVms(getVms())) {
+                return failValidation(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            }
+        }
+
         boolean forceMigration = getParameters().isForceMigration();
         if (getVms().stream().anyMatch(vm -> !validate(getVmValidator(vm).canMigrate(forceMigration)))) {
             return false;
         }
 
         Map<Guid, List<VDS>> possibleVmHosts = schedulingManager.prepareCall(getCluster())
-                .hostBlackList(getParameters().getHostBlackList())
+                .hostBlackList(getHostBlackList())
+                .hostWhiteList(getHostWhiteList())
                 .ignoreHardVmToVmAffinity(getParameters().isCanIgnoreHardVmAffinity())
                 // TODO - Use error messages from scheduling
                 .canSchedule(getVms());
@@ -143,7 +159,16 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
                     parameters,
                     createMigrateVmContext(vm));
 
+            if (!returnValue.isValid()) {
+                getReturnValue().getValidationMessages().addAll(returnValue.getValidationMessages());
+                getReturnValue().setValid(false);
+            }
+
             if (!returnValue.getSucceeded()) {
+                // The pending resources are added by this command
+                // and are not cleared if the child command fails
+                schedulingManager.clearPendingVm(vm.getStaticData());
+
                 log.warn("VM '{}' failed migration.", vm.getName());
                 setSucceeded(false);
             }
@@ -159,7 +184,8 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
 
     private Map<Guid, Guid> scheduleVms(List<VM> vms, boolean shouldIgnoreVmAffinity) {
         return schedulingManager.prepareCall(getCluster())
-                .hostBlackList(getParameters().getHostBlackList())
+                .hostBlackList(getHostBlackList())
+                .hostWhiteList(getHostWhiteList())
                 .ignoreHardVmToVmAffinity(shouldIgnoreVmAffinity)
                 .delay(true)
                 .correlationId(getCorrelationId())
@@ -175,6 +201,60 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
 
     public void setVms(List<VM> vms) {
         this.vms = vms;
+    }
+
+    private List<VM> computeVmAffinityClosure() {
+        Set<Guid> hosts = getVms().stream()
+                .map(VM::getRunOnVds)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<Guid> vmIds = getVms().stream().map(VM::getId).collect(Collectors.toList());
+        Set<Guid> vmAffinityClosure = schedulingManager.positiveAffinityClosure(getCluster(), vmIds);
+
+        vmAffinityClosure.removeAll(vmIds);
+
+        return Stream.concat(getVms().stream(), vmDao.getVmsByIds(vmAffinityClosure).stream())
+                // Do not migrate VMs that run on hosts where no original VM is running
+                .filter(vm -> hosts.contains(vm.getRunOnVds()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Guid> getHostBlackList() {
+        if (hostBlackList == null) {
+            hostBlackList = computeHostBlackList();
+        }
+        return hostBlackList;
+    }
+
+    private List<Guid> computeHostBlackList() {
+        if (!getParameters().getHostBlackList().isEmpty()) {
+            return getParameters().getHostBlackList();
+        }
+
+        Guid sourceHost = null;
+        for (VM vm : getVms()) {
+            if (vm.getRunOnVds() == null) {
+                continue;
+            }
+
+            if (sourceHost == null) {
+                sourceHost = vm.getRunOnVds();
+                continue;
+            }
+
+            // In case VMs run on 2 or more hosts, the blacklist is empty
+            if (!sourceHost.equals(vm.getRunOnVds())) {
+                return Collections.emptyList();
+            }
+        }
+        return Collections.singletonList(sourceHost);
+    }
+
+    private List<Guid> getHostWhiteList() {
+        return getParameters().getDestinationHostId() != null ?
+                Collections.singletonList(getParameters().getDestinationHostId()) :
+                Collections.emptyList();
     }
 
     private CommandContext createMigrateVmContext(VM vm) {
@@ -208,5 +288,14 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
 
     protected VmValidator getVmValidator(VM vm) {
         return new VmValidator(vm);
+    }
+
+    private boolean hasPermissionToMigrateVms(List<VM> vms) {
+        return vms.stream()
+                .map(vm -> permissionDao.getEntityPermissions(getUserId(),
+                        getActionType().getActionGroup(),
+                        vm.getId(),
+                        VdcObjectType.VM))
+                .allMatch(Objects::nonNull);
     }
 }

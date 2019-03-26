@@ -39,6 +39,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     static final String MIGRATION_TARGET_OF = "migration_target_of";
 
+    private static final String CHECK_VMS_IN_AFFINITY = "check_vms_in_affinity_closure";
+
     public static final String ACTIVATE = "activate";
 
     public BackendHostsResource() {
@@ -68,24 +70,32 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllHosts,
                     new QueryParametersBase()));
-        } else {
-            String migrationTargetOf = ParametersHelper.getParameter(httpHeaders, uriInfo, MIGRATION_TARGET_OF);
-            if (StringUtils.isNotEmpty(migrationTargetOf)) {
-                String[] vmsIds = migrationTargetOf.split(",");
-                List<VM> vms = Arrays.stream(vmsIds).map(
-                        id -> getEntity(
-                                VM.class,
-                                QueryType.GetVmByVmId,
-                                new IdQueryParameters(new Guid(id)),
-                                "GetVmByVmId")
-                ).collect(Collectors.toList());
-
-                return mapCollection(getBackendCollection(QueryType.GetValidHostsForVms,
-                        new GetValidHostsForVmsParameters(vms)));
-            } else {
-                return mapCollection(getBackendCollection(SearchType.VDS));
-            }
         }
+
+        String migrationTargetOf = ParametersHelper.getParameter(httpHeaders, uriInfo, MIGRATION_TARGET_OF);
+        if (StringUtils.isNotEmpty(migrationTargetOf)) {
+            String[] vmsIds = migrationTargetOf.split(",");
+            List<VM> vms = Arrays.stream(vmsIds).map(
+                    id -> getEntity(
+                            VM.class,
+                            QueryType.GetVmByVmId,
+                            new IdQueryParameters(new Guid(id)),
+                            "GetVmByVmId")
+            ).collect(Collectors.toList());
+
+            boolean checkVmsInAffinity = ParametersHelper.getBooleanParameter(httpHeaders,
+                    uriInfo,
+                    CHECK_VMS_IN_AFFINITY,
+                    true,
+                    false);
+
+            GetValidHostsForVmsParameters params = new GetValidHostsForVmsParameters(vms);
+            params.setCheckVmsInAffinityClosure(checkVmsInAffinity);
+
+            return mapCollection(getBackendCollection(QueryType.GetValidHostsForVms, params));
+        }
+
+        return mapCollection(getBackendCollection(SearchType.VDS));
     }
 
     @Override

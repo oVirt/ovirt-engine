@@ -112,7 +112,7 @@ public class AffinityRulesEnforcerTest {
         when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenAnswer(invocation -> copyGroups());
         when(labelDao.getAllByClusterId(any())).thenReturn(labels);
 
-        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), anyBoolean(), any())).thenReturn(possibleHosts);
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), anyBoolean(), anyBoolean(), any())).thenReturn(possibleHosts);
         when(schedulingManager.prepareCall(eq(cluster))).thenCallRealMethod();
     }
 

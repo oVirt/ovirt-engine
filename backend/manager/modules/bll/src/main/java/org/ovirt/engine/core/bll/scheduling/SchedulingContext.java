@@ -16,6 +16,7 @@ public class SchedulingContext {
 
     private final Map<String, String> policyParameters;
     private final boolean ignoreHardVmToVmAffinity;
+    private final boolean doNotGroupVms;
     private boolean shouldWeighClusterHosts;
 
     /**
@@ -35,14 +36,15 @@ public class SchedulingContext {
 
     private final List<String> messages = new ArrayList<>();
 
-    public SchedulingContext(Cluster cluster, Map<String, String> policyParameters, boolean ignoreHardVmToVmAffinity) {
+    public SchedulingContext(Cluster cluster, Map<String, String> policyParameters, boolean ignoreHardVmToVmAffinity, boolean doNotGroupVms) {
         this.cluster = cluster;
         this.policyParameters = policyParameters;
         this.ignoreHardVmToVmAffinity = ignoreHardVmToVmAffinity;
+        this.doNotGroupVms = doNotGroupVms;
     }
 
     public SchedulingContext(Cluster cluster, Map<String, String> policyParameters) {
-        this(cluster, policyParameters, false);
+        this(cluster, policyParameters, false, false);
     }
 
     public Cluster  getCluster() {
@@ -71,6 +73,10 @@ public class SchedulingContext {
 
     public boolean isIgnoreHardVmToVmAffinity() {
         return ignoreHardVmToVmAffinity;
+    }
+
+    public boolean isDoNotGroupVms() {
+        return doNotGroupVms;
     }
 
     public boolean isShouldWeighClusterHosts() {
