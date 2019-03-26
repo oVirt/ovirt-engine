@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -57,27 +56,26 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
         String customCpu; // full name of the vm cpu
         Version compatibilityVer = vm.getCompatibilityVersion();
 
-        // Migration checks for a VM with CPU passthrough
+        // Migration checks for a VM with CPU passthrough.
+        // In case of CPU passthrough enabled, the VM's CPU flags (the flags that the VM started running with)
+        // should be identical to target host's CPU flags for migration to be allowed
         // TODO figure out how to handle hostModel
         if (vm.isUsingCpuPassthrough()
                 && Objects.nonNull(vm.getCpuName())) {
-            log.info("VM uses CPU flags passthrough, checking flag compatiblity with {}", vm.getCpuName());
+            log.info("VM uses CPU flags passthrough, checking flags compatibility with: {}", vm.getCpuName());
             Set<String> requiredFlags = Arrays.stream(vm.getCpuName().split(","))
                     .collect(Collectors.toSet());
 
             for (VDS host : hosts) {
                 Set<String> providedFlags = Arrays.stream(host.getCpuFlags().split(","))
                         .collect(Collectors.toSet());
-                Set<String> missingFlags = new HashSet<>(requiredFlags);
-                missingFlags.removeAll(providedFlags);
+                log.info("Host {} provides flags: {}", host.getName(), String.join(", ", providedFlags));
 
-                log.info("Host {} provides flags {}", host.getName(), String.join(", ", providedFlags));
-
-                if (missingFlags.isEmpty()) {
+                if (requiredFlags.equals(providedFlags)) {
                     hostsToRunOn.add(host);
                 } else {
-                    log.info("Host {} can't host the VM, flags are missing: {}",
-                            host.getName(), String.join(", ", missingFlags));
+                    log.info("Host {} can't run the VM because it's CPU flags are not exactly identical to VM's required CPU flags",
+                            host.getName());
                 }
             }
             return hostsToRunOn;
