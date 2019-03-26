@@ -148,6 +148,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
         case 19:
         case 24:
         case 28:
+        case 33:
         case 1003:
         case 1006:
         case 1007:
