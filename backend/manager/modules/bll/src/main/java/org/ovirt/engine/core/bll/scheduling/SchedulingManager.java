@@ -635,7 +635,8 @@ public class SchedulingManager implements BackendService {
             return Collections.singletonList(vms);
         }
 
-        if (context.getSchedulingParameters().isIgnoreHardVmToVmAffinity()) {
+        if (context.getSchedulingParameters().isDoNotGroupVms() ||
+                context.getSchedulingParameters().isIgnoreHardVmToVmAffinity()) {
             return vms.stream()
                     .map(Collections::singletonList)
                     .collect(Collectors.toList());
@@ -1084,6 +1085,37 @@ public class SchedulingManager implements BackendService {
             selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
                     resultEntry.getHost(), resultEntry.getWeight());
         }
+    }
+
+    public Set<Guid> positiveAffinityClosure(Cluster cluster, List<Guid> vms) {
+        // Group VMs only if affinity filter is active
+        Guid vmAffinityPolicyunitId = Guid.createGuidFromString(
+                VmAffinityFilterPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
+
+        ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
+
+        boolean isVmAffinityFilterActive = policy.getFilters().stream()
+                .anyMatch(vmAffinityPolicyunitId::equals);
+
+        if (!isVmAffinityFilterActive) {
+            return new HashSet<>(vms);
+        }
+
+        // TODO - maybe optimize DB call to fetch only needed affinity groups?
+        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId()).stream()
+                .filter(ag -> ag.isVmPositive() && ag.isVmEnforcing())
+                .collect(Collectors.toList());
+
+        if (allPositiveGroups.isEmpty()) {
+            return new HashSet<>(vms);
+        }
+
+        Set<Guid> vmSet = new HashSet<>(vms);
+        AffinityRulesUtils.getUnifiedPositiveAffinityGroups(allPositiveGroups).stream()
+                .filter(group -> !Collections.disjoint(group, vms))
+                .forEach(vmSet::addAll);
+
+        return vmSet;
     }
 
     public Map<String, String> getCustomPropertiesRegexMap(ClusterPolicy clusterPolicy) {

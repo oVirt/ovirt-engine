@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,6 +67,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.ExportVmToOvaParameters;
+import org.ovirt.engine.core.common.action.MigrateMultipleVmsParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -291,6 +293,19 @@ public class BackendVmResource
     @Override
     public Response migrate(Action action) {
         boolean forceMigration = action.isSetForce() ? action.isForce() : false;
+
+        if (action.isSetMigrateVmsInAffinityClosure() && action.isMigrateVmsInAffinityClosure()) {
+            MigrateMultipleVmsParameters params = new MigrateMultipleVmsParameters(
+                    Collections.singletonList(guid),
+                    forceMigration);
+
+            params.setAddVmsInPositiveHardAffinity(true);
+            if (action.isSetHost()) {
+                params.setDestinationHostId(getHostId(action));
+            }
+
+            return doAction(ActionType.MigrateMultipleVms, params, action);
+        }
 
         if (!action.isSetHost()) {
             return doAction(ActionType.MigrateVm,

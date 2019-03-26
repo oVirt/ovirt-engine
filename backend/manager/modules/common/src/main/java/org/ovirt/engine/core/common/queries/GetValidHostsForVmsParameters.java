@@ -29,6 +29,16 @@ public class GetValidHostsForVmsParameters extends QueryParametersBase {
         this.clusterId = clusterId;
     }
 
+    public boolean checkVmsInAffinityClosure = false;
+
+    public boolean isCheckVmsInAffinityClosure() {
+        return checkVmsInAffinityClosure;
+    }
+
+    public void setCheckVmsInAffinityClosure(boolean checkVmsInAffinityClosure) {
+        this.checkVmsInAffinityClosure = checkVmsInAffinityClosure;
+    }
+
     public GetValidHostsForVmsParameters(List<VM> vms, Guid clusterId) {
         this.setVms(vms);
         this.setClusterId(clusterId);

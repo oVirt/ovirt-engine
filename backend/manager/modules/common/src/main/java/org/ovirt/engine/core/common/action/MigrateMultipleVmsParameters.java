@@ -14,6 +14,9 @@ public class MigrateMultipleVmsParameters extends ActionParametersBase {
     private boolean canIgnoreHardVmAffinity;
 
     private List<Guid> hostBlackList = Collections.emptyList();
+    private Guid destinationHostId;
+
+    private boolean addVmsInPositiveHardAffinity;
 
     public MigrateMultipleVmsParameters() {
     }
@@ -61,5 +64,21 @@ public class MigrateMultipleVmsParameters extends ActionParametersBase {
 
     public void setHostBlackList(List<Guid> hostBlackList) {
         this.hostBlackList = hostBlackList;
+    }
+
+    public Guid getDestinationHostId() {
+        return destinationHostId;
+    }
+
+    public void setDestinationHostId(Guid destinationHostId) {
+        this.destinationHostId = destinationHostId;
+    }
+
+    public boolean isAddVmsInPositiveHardAffinity() {
+        return addVmsInPositiveHardAffinity;
+    }
+
+    public void setAddVmsInPositiveHardAffinity(boolean addVmsInPositiveHardAffinity) {
+        this.addVmsInPositiveHardAffinity = addVmsInPositiveHardAffinity;
     }
 }

@@ -205,7 +205,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsBlackList(),
                         getVdsWhiteList(),
                         getDestinationHostList(),
-                        new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
+                        new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity(), false),
                         messages,
                         true,
                         getCorrelationId());
@@ -819,7 +819,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 && canScheduleVm();
     }
 
-    private boolean canScheduleVm() {
+    protected boolean canScheduleVm() {
         boolean result = !schedulingManager.canSchedule(getCluster(),
                 getVm(),
                 getVdsBlackList(),
@@ -840,7 +840,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     getVm(),
                     getVdsBlackList(),
                     getVdsWhiteList(),
-                    new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
+                    new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity(), false),
                     getReturnValue().getValidationMessages()).isEmpty();
         }
 
