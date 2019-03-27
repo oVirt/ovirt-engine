@@ -111,6 +111,7 @@ rm -rf output
 rm -f ./*tar.gz
 rm -rf exported-artifacts
 mkdir -p exported-artifacts/tests
+
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
@@ -120,11 +121,12 @@ automation/packaging-setup-tests.sh
 # perform quick validations
 make validations
 
-# Since findbugs is a pure java task, there's no reason to run it on multiple
+# Since spotbugs is a pure java task, there's no reason to run it on multiple
 # platforms.
-# It seems to be stabler on EL7 for some reason, so we'll run it there:
-if [[ "$STD_CI_DISTRO" = "el7" ]]; then
-    source automation/findbugs.sh
+# Spotbugs currently has false negatives using mvn 3.5.0, which is the currnt centos version from SCL (rh-maven35).
+# We will work with the Fedora version meanwhile which has maven 3.5.4 and is known to work.
+if [[ "$STD_CI_DISTRO" = "fc29" ]]; then
+    source automation/spotbugs.sh
 fi
 
 # Get the tarball
@@ -164,9 +166,9 @@ rpmbuild \
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 
 if [[ "$STD_CI_DISTRO" = "el7" ]]; then
-    # Collect any mvn findbugs artifacts
+    # Collect any mvn spotbugs artifacts
     mkdir -p exported-artifacts/find-bugs
-    find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
+    find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
         while read source_file; do
             destination_file=$(
                 sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"

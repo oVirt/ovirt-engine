@@ -2,7 +2,7 @@ autoconf
 git
 java-1.8.0-openjdk-devel
 make
-maven
+rh-maven35
 net-tools
 postgresql-jdbc
 pyflakes

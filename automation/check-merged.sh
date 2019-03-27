@@ -72,11 +72,11 @@ rm -f ./*tar.gz
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
-# Since findbugs is a pure java task, there's no reason to run it on multiple
+# Since spotbugs is a pure java task, there's no reason to run it on multiple
 # platforms.
 # It seems to be stabler on EL7 for some reason, so we'll run it there:
 if [[ "$STD_CI_DISTRO" = "el7" ]]; then
-    source automation/findbugs.sh
+    source automation/spotbugs.sh
 fi
 
 # Get the tarball
@@ -110,7 +110,7 @@ if [[ "$STD_CI_DISTRO" = "el7" ]]; then
     [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
     # Move find bugs to a dedicated directory under exported-artifacts
     mkdir -p exported-artifacts/find-bugs
-    find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
+    find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
         while read source_file; do
             destination_file=$(
                 sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
