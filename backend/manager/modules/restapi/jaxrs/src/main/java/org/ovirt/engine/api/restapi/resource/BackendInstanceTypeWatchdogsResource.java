@@ -61,6 +61,7 @@ public class BackendInstanceTypeWatchdogsResource
     public Response add(Watchdog watchdog) {
         validateParameters(watchdog, "action", "model");
         WatchdogParameters parameters = new WatchdogParameters();
+        parameters.setClusterIndependent(true);
         if (watchdog.isSetAction()) {
             parameters.setAction(WatchdogMapper.map(watchdog.getAction()));
         }
