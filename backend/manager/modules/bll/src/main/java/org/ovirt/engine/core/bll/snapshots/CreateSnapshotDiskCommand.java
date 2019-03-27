@@ -16,6 +16,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 
+@NonTransactiveCommandAttribute
 public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> extends VmCommand<T> {
     private List<DiskImage> cachedSelectedActiveDisks;
     private List<DiskImage> cachedImagesDisks;
