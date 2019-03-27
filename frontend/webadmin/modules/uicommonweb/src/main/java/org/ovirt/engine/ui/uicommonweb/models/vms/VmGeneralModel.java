@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -58,6 +59,19 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         if (!Objects.equals(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+        }
+    }
+
+    private VMStatus status;
+
+    public VMStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VMStatus value) {
+        if (!Objects.equals(status, value)) {
+            status = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
     }
 
@@ -547,6 +561,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         super.updateProperties(vm.getId());
 
         setName(vm.getName());
+        setStatus(vm.getStatus());
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null

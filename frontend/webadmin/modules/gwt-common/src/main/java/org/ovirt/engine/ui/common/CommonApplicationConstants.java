@@ -331,6 +331,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String nameVm();
 
+    String statusVm();
+
     String typeVm();
 
     String aliasVm();
