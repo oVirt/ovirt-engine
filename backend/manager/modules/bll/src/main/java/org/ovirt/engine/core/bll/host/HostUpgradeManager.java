@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll.host;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.CertificationValidityChecker;
 import org.ovirt.engine.core.bll.hostdeploy.VdsDeployBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
@@ -124,6 +126,14 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     @Override
     public void update(final VDS host) {
         Cluster cluster = clusterDao.get(host.getClusterId());
+        //The number of days allowed before certificate expiration.
+        //(less time left than this requires enrolling for new certificate).
+        Integer daysAllowedUntilExpiration = Config.<Integer> getValue(ConfigValues.CertExpirationAlertPeriodInDays);
+        //The date in the future (in seconds), against which to validate the certificates.
+        //For example if we allow certificates which expire in 7 days or more, this
+        //variable will contain a seconds-since-1/1/1970 representation 7 days from the current moment.
+        long allowedExpirationDateInSeconds = TimeUnit.MILLISECONDS.toSeconds(
+                CertificationValidityChecker.computeFutureExpirationDate(daysAllowedUntilExpiration).getTimeInMillis());
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(host.getHostName())
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
@@ -142,6 +152,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                         Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
                 .variable("ovirt_signcerttimeoutinseconds",
                         Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
+                .variable("ovirt_time_to_check", allowedExpirationDateInSeconds)
                 .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
                 .variable("ovirt_ca_key",
                         PKIResources.getCaCertificate()

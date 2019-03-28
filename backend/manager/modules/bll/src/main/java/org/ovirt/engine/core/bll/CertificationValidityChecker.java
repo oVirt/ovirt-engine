@@ -146,4 +146,10 @@ public class CertificationValidityChecker implements BackendService {
         expirationTime.add(Calendar.DAY_OF_MONTH, -1 * Config.<Integer> getValue(daysBeforeExpiration));
         return expirationTime.getTime();
     }
+
+    public static Calendar computeFutureExpirationDate(int days) {
+        Calendar expirationTime = Calendar.getInstance();
+        expirationTime.add(Calendar.DAY_OF_MONTH, days);
+        return expirationTime;
+    }
 }

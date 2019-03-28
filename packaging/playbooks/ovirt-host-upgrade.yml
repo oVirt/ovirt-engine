@@ -8,6 +8,8 @@
         command: |
           '/usr/bin/openssl'
           'verify'
+          '-attime'
+          "{{ ovirt_time_to_check }}"
           '-CAfile'
           "{{ item.ca }}"
           "{{ item.cert }}"
