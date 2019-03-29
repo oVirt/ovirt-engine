@@ -33,10 +33,10 @@ public class ExternalSchedulerDiscoveryResult {
             return false;
         }
         @SuppressWarnings("unchecked")
-        Map<String, HashMap<String, Object[]>> castedResult = (Map<String, HashMap<String, Object[]>>) xmlRpcRawResult;
+        Map<String, Map<String, Object[]>> castedResult = (Map<String, Map<String, Object[]>>) xmlRpcRawResult;
 
         // keys will be filter, score and balance
-        for (Map.Entry<String, HashMap<String, Object[]>> entry : castedResult.entrySet()) {
+        for (Map.Entry<String, Map<String, Object[]>> entry : castedResult.entrySet()) {
             String type = entry.getKey();
             Map<String, Object[]> typeMap = entry.getValue();
                 List<ExternalSchedulerDiscoveryUnit> currentList = getRelevantList(type);
