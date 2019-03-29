@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
 <module name="Checker">
+  <property name="cacheFile" value="${checkstyle.cache.file}"/>
+
   <module name="BeforeExecutionExclusionFileFilter">
     <property name="fileNamePattern" value=".*generated-sources.*"/>
   </module>
@@ -17,7 +21,6 @@
   </module>
   <module name="UniqueProperties"/>
   <module name="TreeWalker">
-    <property name="cacheFile" value="${checkstyle.cache.file}"/>
 
     <!-- Built-in checks -->
     <module name="AnnotationLocation" />
@@ -66,6 +69,10 @@
     <module name="RightCurly" />
     <module name="SimplifyBooleanExpression"/>
     <module name="StringLiteralEquality"/>
+    <module name="SuppressionXpathSingleFilter">
+      <property name="checks" value="IllegalType"/>
+      <property name="query" value="//EXTENDS_CLAUSE[@text='HashMap' or @text='HashSet' or @text='LinkedHashMap']/IDENT"/>
+    </module>
     <module name="TypeName" />
     <module name="UnnecessaryParentheses"/>
     <module name="UnusedImports"/>

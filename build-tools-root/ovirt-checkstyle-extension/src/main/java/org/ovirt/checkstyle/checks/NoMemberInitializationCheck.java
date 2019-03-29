@@ -3,7 +3,7 @@ package org.ovirt.checkstyle.checks;
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.ScopeUtils;
+import com.puppycrawl.tools.checkstyle.utils.ScopeUtil;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ public class NoMemberInitializationCheck extends AbstractCheck {
 
         // do not check local variables and
         // fields declared in interface/annotations
-        if (ScopeUtils.isLocalVariableDef(aAST) || ScopeUtils.isInInterfaceOrAnnotationBlock(aAST)) {
+        if (ScopeUtil.isLocalVariableDef(aAST) || ScopeUtil.isInInterfaceOrAnnotationBlock(aAST)) {
             return;
         }
 
