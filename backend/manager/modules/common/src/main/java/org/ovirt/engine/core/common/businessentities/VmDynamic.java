@@ -763,5 +763,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setGuestContainers(vm.getGuestContainers());
         setGuestAgentNicsHash(vm.getGuestAgentNicsHash());
         setQemuGuestAgentStatus(vm.getQemuGuestAgentStatus());
+        setSession(vm.getSession());
     }
 }
