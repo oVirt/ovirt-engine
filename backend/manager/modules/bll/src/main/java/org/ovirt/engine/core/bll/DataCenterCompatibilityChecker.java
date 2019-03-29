@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -52,7 +52,8 @@ public class DataCenterCompatibilityChecker implements BackendService {
 
     private void checkCompatibility() {
         try {
-            Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
+            Optional<Version> retVal = Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)
+                    .stream()
                     .max(Comparator.naturalOrder());
             if (retVal.isPresent()) {
                 Version version = retVal.get();

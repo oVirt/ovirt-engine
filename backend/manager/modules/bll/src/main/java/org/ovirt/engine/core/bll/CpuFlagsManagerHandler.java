@@ -34,7 +34,7 @@ public class CpuFlagsManagerHandler implements BackendService {
     public void initDictionaries() {
         log.info("Start initializing dictionaries");
         managersDictionary.clear();
-        for (Version ver : Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
+        for (Version ver : Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
             managersDictionary.put(ver, new CpuFlagsManager(ver));
         }
        log.info("Finished initializing dictionaries");

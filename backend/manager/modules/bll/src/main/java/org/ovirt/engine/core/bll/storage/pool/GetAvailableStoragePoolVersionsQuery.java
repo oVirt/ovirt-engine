@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -38,8 +38,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
                 List<Cluster> clusters =
                         clusterDao.getAllForStoragePool(storagePool.getId(), getUserID(), getParameters().isFiltered());
 
-                for (Version supportedVer : Config
-                        .<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
+                for (Version supportedVer : Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
                     // if version lower than current skip because cannot
                     // decrease version
                     if (supportedVer.compareTo(storagePool.getCompatibilityVersion()) < 0) {
@@ -62,7 +61,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
             getQueryReturnValue().setReturnValue(result);
         } else {
             getQueryReturnValue().setReturnValue(
-                    new ArrayList<>(Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
+                    new ArrayList<>(Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)));
         }
     }
 }

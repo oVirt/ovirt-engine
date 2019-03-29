@@ -1140,8 +1140,8 @@ public class IrsProxy {
         currentVdsId = null;
     }
 
-    private final Map<Guid, HashSet<Guid>> domainsInProblem = new ConcurrentHashMap<>();
-    private final Map<Guid, HashSet<Guid>> _domainsInMaintenance = new ConcurrentHashMap<>();
+    private final Map<Guid, Set<Guid>> domainsInProblem = new ConcurrentHashMap<>();
+    private final Map<Guid, Set<Guid>> _domainsInMaintenance = new ConcurrentHashMap<>();
     private final Map<Guid, Guid> vdsReportsOnUnseenDomain = new ConcurrentHashMap<>();
     private final Map<Guid, Guid> vdsHandeledReportsOnUnseenDomains = new ConcurrentHashMap<>();
         private final Map<Guid, ScheduledFuture> timersMap = new HashMap<>();
@@ -1772,9 +1772,9 @@ public class IrsProxy {
     }
 
     private void removeVdsAsProblematic(List<Guid> nonOpVdss) {
-        Iterator<Map.Entry<Guid, HashSet<Guid>>> iterDomainsInProblem = domainsInProblem.entrySet().iterator();
+        Iterator<Map.Entry<Guid, Set<Guid>>> iterDomainsInProblem = domainsInProblem.entrySet().iterator();
         while (iterDomainsInProblem.hasNext()) {
-            Map.Entry<Guid, HashSet<Guid>> entry = iterDomainsInProblem.next();
+            Map.Entry<Guid, Set<Guid>> entry = iterDomainsInProblem.next();
             entry.getValue().removeAll(nonOpVdss);
             if (entry.getValue().isEmpty()) {
                 iterDomainsInProblem.remove();
@@ -1795,9 +1795,9 @@ public class IrsProxy {
 
     private void removeVdsFromDomainMaintenance(List<Guid> nonOpVdss) {
         log.info("Removing vds '{}' from the domain in maintenance cache", nonOpVdss);
-        Iterator<Map.Entry<Guid, HashSet<Guid>>> iterDomainsInProblem = _domainsInMaintenance.entrySet().iterator();
+        Iterator<Map.Entry<Guid, Set<Guid>>> iterDomainsInProblem = _domainsInMaintenance.entrySet().iterator();
         while (iterDomainsInProblem.hasNext()) {
-            Map.Entry<Guid, HashSet<Guid>> entry = iterDomainsInProblem.next();
+            Map.Entry<Guid, Set<Guid>> entry = iterDomainsInProblem.next();
             entry.getValue().removeAll(nonOpVdss);
             if (entry.getValue().isEmpty()) {
                 iterDomainsInProblem.remove();

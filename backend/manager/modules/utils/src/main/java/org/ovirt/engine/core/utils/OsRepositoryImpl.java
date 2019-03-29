@@ -148,7 +148,7 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap() {
 
-        List<Version> versions = new ArrayList<>(Config.<HashSet<Version>>getValue(ConfigValues.SupportedClusterLevels));
+        List<Version> versions = new ArrayList<>(Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels));
         Map<Pair<Integer, Version>, Boolean> hotplugSupportOsIdVersionMap = new HashMap<>();
 
         for (Integer osId : getOsIds()) {

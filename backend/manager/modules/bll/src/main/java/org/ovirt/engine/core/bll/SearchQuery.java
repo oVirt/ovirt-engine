@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -365,7 +364,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<Cluster> searchClusters() {
-        Optional<Version> retVal = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels).stream()
+        Optional<Version> retVal = Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels)
+                .stream()
                 .max(Comparator.naturalOrder());
         List<Cluster> clusters = genericSearch(clusterDao, true);
         if (retVal.isPresent()) {

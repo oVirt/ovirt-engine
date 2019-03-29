@@ -83,7 +83,7 @@ public class CustomPropertiesUtils {
      * @return supported cluster levels
      */
     public Set<Version> getSupportedClusterLevels() {
-        Set<Version> versions = Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels);
+        Set<Version> versions = Config.<Set<Version>> getValue(ConfigValues.SupportedClusterLevels);
         return versions;
     }
 
