@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
@@ -99,6 +101,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -322,7 +326,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             // The non migratable VM names will be comma separated
                             log.error("VDS '{}' contains non migratable VMs", vdsId);
                             result = false;
-
                         } else if (!validate(new MultipleVmsValidator(vms)
                                 .vmNotHavingPluggedDiskSnapshots(EngineMessage.VDS_CANNOT_MAINTENANCE_VM_HAS_PLUGGED_DISK_SNAPSHOT))) {
                             hostsWithVmsWithPluggedDiskSnapshots.add(vds.getName());
@@ -419,10 +422,18 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 result = validateGlusterParams(clustersAsSet);
             }
         }
-
+        if (!result) {
+            addMaintenanceFailedReason();
+        }
         return result;
     }
 
+    private void addMaintenanceFailedReason() {
+        addCustomValue("Message",
+                String.join(",",
+                        backend.getErrorsTranslator().translateErrorText(getReturnValue().getValidationMessages())));
+        auditLogDirector.log(this, AuditLogType.GENERIC_ERROR_MESSAGE);
+    }
 
     private boolean validateNoRunningJobs(VDS vds) {
         List<Step> steps =
