@@ -309,7 +309,15 @@ def create_snapshot(args):
     backend = load_backend(args)
     vol = backend.volumes_filtered(volume_id=args.volume_id)[0]
     logger.info("Creating snapshot for volume '%s'", args.volume_id)
-    snap = vol.create_snapshot()
+    snap = None
+    try:
+        snap = vol.create_snapshot()
+    except:
+        if snap and snap.status == 'error':
+            logger.error("failed to create snapshot '%s', reverting", snap.id)
+            snap.delete()
+        raise
+
     logger.info("Created snapshot id: '%s'", snap.id)
     sys.stdout.write(snap.id)
     sys.stdout.flush()

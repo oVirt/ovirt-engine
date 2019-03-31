@@ -12,7 +12,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.util.ManagedBlockStorageDiskUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateManagedBlockStorageDiskSnapshotParameters;
+import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
@@ -91,6 +97,10 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         }
 
         saveSnapshot(snapshotId);
+
+        // To be used later when rolling back
+        getParameters().setImageId(snapshotId);
+
         setSucceeded(true);
     }
 
@@ -136,5 +146,31 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return null;
+    }
+
+    @Override
+    protected void endWithFailure() {
+        if (!Guid.Empty.equals(getParameters().getImageId())) {
+            revertSnapshot();
+        }
+    }
+
+    private void revertSnapshot() {
+        log.info("Failure occurred while creating snapshot {}, attempting to remove",
+                getParameters().getImageId());
+        ImagesContainterParametersBase params = new ImagesContainterParametersBase();
+        params.setImageId(getParameters().getImageId());
+        params.setImageGroupID(getParameters().getVolumeId());
+        params.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+
+        ActionReturnValue returnValue = runInternalAction(ActionType.RemoveManagedBlockStorageSnapshot,
+                params,
+                cloneContextAndDetachFromParent());
+
+        if (returnValue.getSucceeded()) {
+            DiskImage parentImage = diskImageDao.get(getParameters().getVolumeId());
+            managedBlockStorageDiskUtil.updateOldImageAsActive(Snapshot.SnapshotType.ACTIVE, true, parentImage);
+        }
+
     }
 }
