@@ -78,8 +78,7 @@ def main(args=None):
                                           help="Create a volume."
                                                " return CinderLib metadata")
     create_parser.set_defaults(command=create_volume)
-    create_parser.add_argument("driver", help="The driver parameters")
-    create_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(create_parser)
     create_parser.add_argument("volume_id", help="The volume id")
     create_parser.add_argument("size", help="The size needed for the volume")
 
@@ -87,15 +86,13 @@ def main(args=None):
                                           help="Delete a volume."
                                                " return CinderLib metadata")
     delete_parser.set_defaults(command=delete_volume)
-    delete_parser.add_argument("driver", help="The driver parameters")
-    delete_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(delete_parser)
     delete_parser.add_argument("volume_id", help="The volume id")
 
     connect_parser = subparsers.add_parser("connect_volume",
                                            help="Get volume connection info")
     connect_parser.set_defaults(command=connect_volume)
-    connect_parser.add_argument("driver", help="The driver parameters")
-    connect_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(connect_parser)
     connect_parser.add_argument("volume_id", help="The volume id")
     connect_parser.add_argument("connector_info",
                                 help="The connector information")
@@ -103,31 +100,27 @@ def main(args=None):
     disconnect_parser = subparsers.add_parser("disconnect_volume",
                                               help="disconnect a volume")
     disconnect_parser.set_defaults(command=disconnect_volume)
-    disconnect_parser.add_argument("driver", help="The driver parameters")
-    disconnect_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(disconnect_parser)
     disconnect_parser.add_argument("volume_id", help="The volume id")
 
     extend_parser = subparsers.add_parser("extend_volume",
                                           help="Extend a volume")
     extend_parser.set_defaults(command=extend_volume)
-    extend_parser.add_argument("driver", help="The driver parameters")
-    extend_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(extend_parser)
     extend_parser.add_argument("volume_id", help="The volume id")
     extend_parser.add_argument("size", help="The size needed for the volume")
 
     storage_stats_parser = subparsers.add_parser("storage_stats",
                                                  help="Get the storage status")
     storage_stats_parser.set_defaults(command=storage_stats)
-    storage_stats_parser.add_argument("driver", help="The driver parameters")
-    storage_stats_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(storage_stats_parser)
     storage_stats_parser.add_argument("refresh",
                                       help="True if latest data is required")
 
     save_device_parser = subparsers.add_parser("save_device",
                                                help="save a device")
     save_device_parser.set_defaults(command=save_device)
-    save_device_parser.add_argument("driver", help="The driver parameters")
-    save_device_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(save_device_parser)
     save_device_parser.add_argument("volume_id", help="The volume id")
     save_device_parser.add_argument("device", help="The device")
 
@@ -136,33 +129,26 @@ def main(args=None):
                                                         "attachment connection"
                                                         " info")
     connection_info_parser.set_defaults(command=get_connection_info)
-    connection_info_parser.add_argument("driver",
-                                        help="The driver parameters")
-    connection_info_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(connection_info_parser)
     connection_info_parser.add_argument("volume_id", help="The volume id")
 
     clone_parser = subparsers.add_parser("clone_volume",
                                          help="Clone a volume")
     clone_parser.set_defaults(command=clone_volume)
-    clone_parser.add_argument("driver", help="The driver parameters")
-    clone_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(clone_parser)
     clone_parser.add_argument("volume_id", help="The source volume id")
     clone_parser.add_argument("cloned_vol_id", help="The cloned volume id")
 
     create_snapshot_parser = subparsers.add_parser("create_snapshot",
                                                    help="create snapshot ")
     create_snapshot_parser.set_defaults(command=create_snapshot)
-    create_snapshot_parser.add_argument("driver",
-                                        help="The driver parameters")
-    create_snapshot_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(create_snapshot_parser)
     create_snapshot_parser.add_argument("volume_id", help="The volume id")
 
     remove_snapshot_parser = subparsers.add_parser("remove_snapshot",
                                                    help="remove a snapshot ")
     remove_snapshot_parser.set_defaults(command=remove_snapshot)
-    remove_snapshot_parser.add_argument("driver",
-                                        help="The driver parameters")
-    remove_snapshot_parser.add_argument("db_url", help="The database url")
+    _add_common_arguments(remove_snapshot_parser)
     remove_snapshot_parser.add_argument("snapshot_id", help="The snapshot id")
     remove_snapshot_parser.add_argument("volume_id", help="Snapshots's "
                                                           "volume id")
@@ -171,11 +157,7 @@ def main(args=None):
                               help="create a volume from a snapshot")
     create_volume_from_snapshot_parser.set_defaults(
         command=create_volume_from_snapshot)
-    create_volume_from_snapshot_parser.add_argument("driver",
-                                                    help="The driver "
-                                                         "parameters")
-    create_volume_from_snapshot_parser.add_argument("db_url",
-                                                    help="The database url")
+    _add_common_arguments(create_volume_from_snapshot_parser)
     create_volume_from_snapshot_parser.add_argument("volume_id",
                                                     help="Snapshots's "
                                                          "volume id")
@@ -378,6 +360,11 @@ def _get_volume(backend, vol_id):
 def _write_output(s):
     sys.stdout.write(s)
     sys.stdout.flush()
+
+
+def _add_common_arguments(parser):
+    parser.add_argument("driver", help="The driver parameters")
+    parser.add_argument("db_url", help="The database url")
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
