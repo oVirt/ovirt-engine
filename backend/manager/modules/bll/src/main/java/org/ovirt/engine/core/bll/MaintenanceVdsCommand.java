@@ -48,6 +48,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     private List<VM> vms;
     private boolean haMaintenanceFailed;
+    private List<String> nonMigratableVms = new ArrayList<>();
     @Inject
     private SchedulingManager schedulingManager;
     @Inject
@@ -194,8 +195,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return cloneContextAndDetachFromParent().withExecutionContext(ctx);
     }
 
-    @Override
-    protected boolean validate() {
+    private boolean executeValidation() {
         Guid vdsId = getVdsId();
         VDS vds = vdsDao.get(vdsId);
         // we can get here when vds status was set already to Maintenance
@@ -221,11 +221,37 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             }
             if ((getParameters().isInternal() && vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE) ||
                     vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
+                nonMigratableVms.add(vm.getName());
                 return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
             }
         }
-
         return true;
+    }
+
+    @Override
+    protected boolean validate() {
+        boolean result = executeValidation();
+        if (!result) {
+            executeValidationFailure();
+        }
+        return result;
+    }
+
+    private void executeValidationFailure() {
+        addValidationMessageVariables();
+        addMaintenanceFailedReason();
+    }
+
+    private void addValidationMessageVariables() {
+        addValidationMessageVariable("HostsList", StringUtils.join(jobProperties.values(), ", "));
+        addValidationMessageVariable("VmsList", StringUtils.join(nonMigratableVms, ", "));
+    }
+
+    private void addMaintenanceFailedReason() {
+        String messageToDisplay = String.join(",",
+                backend.getErrorsTranslator().translateErrorText(getReturnValue().getValidationMessages()));
+        addCustomValue("Message", messageToDisplay);
+        auditLogDirector.log(this, AuditLogType.GENERIC_ERROR_MESSAGE);
     }
 
     @Override

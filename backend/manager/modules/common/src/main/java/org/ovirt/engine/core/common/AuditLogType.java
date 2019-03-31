@@ -1530,7 +1530,10 @@ public enum AuditLogType {
     // API deprecation warning, at most once each day:
     DEPRECATED_API(13000, AuditLogSeverity.WARNING, AuditLogTimeInterval.DAY.getValue()),
 
-    DEPRECATED_IPTABLES_FIREWALL(13001, AuditLogSeverity.WARNING);
+    DEPRECATED_IPTABLES_FIREWALL(13001, AuditLogSeverity.WARNING),
+
+    // A generic error message to log validation failure events
+    GENERIC_ERROR_MESSAGE(14001, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.
@@ -1585,5 +1588,4 @@ public enum AuditLogType {
     public static AuditLogType forValue(int value) {
         return mappings.get(value);
     }
-
 }
