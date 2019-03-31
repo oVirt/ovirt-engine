@@ -57,7 +57,8 @@ public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectMana
             CinderlibCommandParameters params =
                     new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
 
             succeeded = cinderlibExecutor
                         .runCommand(CinderlibExecutor.CinderlibCommand.DISCONNECT_VOLUME, params)

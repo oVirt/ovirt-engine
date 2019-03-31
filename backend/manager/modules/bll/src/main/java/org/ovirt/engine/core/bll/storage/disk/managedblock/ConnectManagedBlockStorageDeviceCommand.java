@@ -50,7 +50,8 @@ public class ConnectManagedBlockStorageDeviceCommand<T extends ConnectManagedBlo
             CinderlibCommandParameters params =
                     new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
             CinderlibReturnValue returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.CONNECT_VOLUME, params);
             if (!returnValue.getSucceed()) {

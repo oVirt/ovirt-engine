@@ -81,7 +81,8 @@ public class TryBackToManagedBlockSnapshotCommand<T extends CreateManagedBlockSt
                     new CinderlibCommandParameters(JsonHelper.mapToJson(
                             managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
             returnValue =
                     cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.CREATE_VOLUME_FROM_SNAPSHOT,
                             params);

@@ -63,7 +63,8 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
             CinderlibCommandParameters params =
                     new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
                             false),
-                            extraParams);
+                            extraParams,
+                            getCorrelationId());
             returnValue = cinderlibExecutor.runCommand(CinderlibCommand.EXTEND_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed executing volume extension", e);

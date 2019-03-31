@@ -57,6 +57,16 @@ logger = None
 class UsageError(Exception):
     """ Raised when usage is wrong """
 
+
+class LogAdapter(logging.LoggerAdapter):
+    def __init__(self, logger, extra={}, correlation_id=None):
+        super(LogAdapter, self).__init__(logger, extra)
+        self.correlation_id = correlation_id
+
+    def process(self, msg, kwargs):
+        return '%s [%s]' % (msg, self.correlation_id), kwargs
+
+
 conf = configfile.ConfigFile([config.ENGINE_DEFAULTS])
 
 
@@ -169,7 +179,7 @@ def main(args=None):
         args.command(args)
         sys.exit(0)
     except Exception as e:
-        setup_logger()
+        setup_logger(args)
         logger.error("Failure occurred when trying to run command '%s': %s",
                      sys.argv[1], e)
         sys.stderr.write(traceback.format_exc(e))
@@ -177,13 +187,14 @@ def main(args=None):
         sys.exit(1)
 
 
-def setup_logger():
+def setup_logger(args):
     logging.log_file = os.path.join(conf.get('ENGINE_LOG'),
                                     'cinderlib', 'cinderlib.log')
     logging.config.fileConfig("logger.conf", disable_existing_loggers=True)
     logging.captureWarnings(True)
     global logger
     logger = logging.getLogger("cinderlib-client")
+    logger = LogAdapter(logger, {}, args.correlation_id)
 
 
 def load_backend(args):
@@ -194,7 +205,7 @@ def load_backend(args):
              disable_logs=False)
 
     # Setup logging here to not have our logger overridden by cinderlib's
-    setup_logger()
+    setup_logger(args)
 
     return cl.Backend(**json.loads(args.driver))
 
@@ -365,6 +376,9 @@ def _write_output(s):
 def _add_common_arguments(parser):
     parser.add_argument("driver", help="The driver parameters")
     parser.add_argument("db_url", help="The database url")
+    parser.add_argument("correlation_id",
+                        help="ovirt-engine correlation_id for the action")
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
