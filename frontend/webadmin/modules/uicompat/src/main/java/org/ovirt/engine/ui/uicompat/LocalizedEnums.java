@@ -1712,6 +1712,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String DiskContentType___ISO();
 
+    String DiskContentType___HOSTED_ENGINE();
+
+    String DiskContentType___HOSTED_ENGINE_SANLOCK();
+
+    String DiskContentType___HOSTED_ENGINE_METADATA();
+
+    String DiskContentType___HOSTED_ENGINE_CONFIGURATION();
+
     String ResumeBehavior___AUTO_RESUME();
 
     String ResumeBehavior___LEAVE_PAUSED();
