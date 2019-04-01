@@ -218,6 +218,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         VDSReturnValue vdsRetVal;
         try {
             List<VmCheckpoint> checkpoints = vmCheckpointDao.getAllForVm(getVmId());
+            if (checkpoints.isEmpty()) {
+                log.info("No previous VM checkpoints found for VM '{}', skip redefine VM checkpoints", getVmId());
+                return true;
+            }
+
             checkpoints.forEach(c -> c.setDisks(vmCheckpointDao.getDisksByCheckpointId(c.getId())));
             vdsRetVal = runVdsCommand(VDSCommandType.RedefineVmCheckpoints,
                     new VmCheckpointsVDSParameters(getVdsId(), getVmId(), checkpoints));
