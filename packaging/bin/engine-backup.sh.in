@@ -185,6 +185,8 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/httpd/conf.d/ovirt-engine-root-redirect.conf
 /etc/httpd/conf.d/ssl.conf
 /etc/httpd/conf.d/z-ovirt-engine-proxy.conf
+/etc/httpd/http.keytab
+/etc/httpd/conf.d/ovirt-sso.conf
 /etc/yum/pluginconf.d/versionlock.list
 /etc/dnf/plugins/versionlock.list
 /etc/firewalld/services/ovirt-https.xml
