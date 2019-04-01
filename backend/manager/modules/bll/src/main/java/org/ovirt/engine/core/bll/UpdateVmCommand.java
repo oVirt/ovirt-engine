@@ -735,25 +735,33 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      */
     private void hotPlugMemory(int memoryHotPlugSize) {
         final int minimalHotPlugDeviceSizeMb = getVm().getClusterArch().getHotplugMemorySizeFactorMb();
+
+        if (requiresSpecialBlock(minimalHotPlugDeviceSizeMb)) {
+
+            if (!hotPlugMemoryDevice(minimalHotPlugDeviceSizeMb)) {
+                // If the first hotplug fails, no need to execute the second call
+                return;
+            }
+
+            int secondPartSizeMb = memoryHotPlugSize - minimalHotPlugDeviceSizeMb;
+            if (secondPartSizeMb > 0) {
+                hotPlugMemoryDevice(secondPartSizeMb);
+            }
+        } else {
+            hotPlugMemoryDevice(memoryHotPlugSize);
+        }
+    }
+
+    private boolean requiresSpecialBlock(int minimalHotPlugDeviceSizeMb) {
+        if (!osRepository.requiresHotPlugSpecialBlock(getParameters().getVmStaticData().getOsId(),
+                getEffectiveCompatibilityVersion())){
+            return false;
+        }
         final List<VmDevice> memoryDevices = getVmDeviceUtils().getMemoryDevices(getVmId());
         final boolean minimalMemoryDevicePresent = memoryDevices.stream()
                 .anyMatch(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device)
                         .map(size -> size == minimalHotPlugDeviceSizeMb).orElse(false));
-
-        if (minimalMemoryDevicePresent) {
-            hotPlugMemoryDevice(memoryHotPlugSize);
-            return;
-        }
-
-        if (!hotPlugMemoryDevice(minimalHotPlugDeviceSizeMb)) {
-            // If the first hotplug fails, no need to execute the second call
-            return;
-        }
-
-        int secondPartSizeMb = memoryHotPlugSize - minimalHotPlugDeviceSizeMb;
-        if (secondPartSizeMb > 0) {
-            hotPlugMemoryDevice(secondPartSizeMb);
-        }
+        return !minimalMemoryDevicePresent;
     }
 
     private boolean hotPlugMemoryDevice(int memHotplugSize) {

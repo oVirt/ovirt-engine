@@ -71,6 +71,7 @@ void devices() : {} {
     | ("floppy.support" booleanValue())
     | ("usb.controller" usbControllerModelValue())
     | ("console.target.type" consoleTargetTypeValue())
+    | ("memoryHotplug.specialBlock" booleanValue())
     )
 }
 
