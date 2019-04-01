@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 public class VmToHostAffinityPolicyUnit extends PolicyUnitImpl {
 
     private static final Logger log = LoggerFactory.getLogger(VmToHostAffinityPolicyUnit.class);
-    private static final int INITIAL_HOST_SCORE = 1;
 
     @Inject
     AffinityGroupDao affinityGroupDao;
@@ -48,38 +47,36 @@ public class VmToHostAffinityPolicyUnit extends PolicyUnitImpl {
             VM vm,
             PerHostMessages messages) {
 
-        Map<Guid, Integer> hostViolations = new HashMap<>();
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
         // no affinity groups found for VM return all hosts with no violations
         if (affinityGroups.isEmpty()) {
-            return hostViolations;
+            return Collections.emptyMap();
         }
 
-        Map<Guid, VDS> hostMap = hosts.stream().collect(Collectors.toMap(VDS::getId, h -> h));
-
+        Map<Guid, Integer> hostViolations = new HashMap<>();
         for (AffinityGroup affinityGroup : affinityGroups) {
-            if (affinityGroup.isVdsEnforcing() == enforcing) {
+            if (affinityGroup.isVdsEnforcing() == enforcing && affinityGroup.isVdsAffinityEnabled()) {
 
                 List<Guid> vdsIds = affinityGroup.getVdsIds();
                 if (affinityGroup.isVdsPositive()) {
                     // log and score hosts that violate the positive affinity rules
-                    hostMap.keySet().stream()
-                            .filter(host_id -> !vdsIds.contains(host_id))
-                            .forEach(id -> {
+                    hosts.stream()
+                            .filter(host -> !vdsIds.contains(host.getId()))
+                            .forEach(host -> {
                                 // TODO compute the affinity rule names
-                                messages.addMessage(id, String.format("$affinityRules %1$s", ""));
-                                messages.addMessage(id, EngineMessage.VAR__DETAIL__AFFINITY_FAILED_POSITIVE.toString());
-                                hostViolations.put(id, 1 + hostViolations.getOrDefault(id, INITIAL_HOST_SCORE));
+                                messages.addMessage(host.getId(), String.format("$affinityRules %1$s", ""));
+                                messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__AFFINITY_FAILED_POSITIVE.toString());
+                                hostViolations.merge(host.getId(), 1, Integer::sum);
                             });
                 } else {
                     // log and score hosts that violate the negative affinity rules
-                    hostMap.keySet().stream()
-                            .filter(host_id -> vdsIds.contains(host_id))
-                            .forEach(id -> {
+                    hosts.stream()
+                            .filter(host -> vdsIds.contains(host.getId()))
+                            .forEach(host -> {
                                 // TODO compute the affinity rule names
-                                messages.addMessage(id, String.format("$affinityRules %1$s", ""));
-                                messages.addMessage(id, EngineMessage.VAR__DETAIL__AFFINITY_FAILED_NEGATIVE.toString());
-                                hostViolations.put(id, 1 + hostViolations.getOrDefault(id, INITIAL_HOST_SCORE));
+                                messages.addMessage(host.getId(), String.format("$affinityRules %1$s", ""));
+                                messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__AFFINITY_FAILED_NEGATIVE.toString());
+                                hostViolations.merge(host.getId(), 1, Integer::sum);
                             });
                 }
             }
