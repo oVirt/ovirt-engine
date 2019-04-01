@@ -49,6 +49,10 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
     @Ignore
     StringEntityModelTextAreaLabelEditor eventMessageTextArea;
 
+    @UiField
+    @Ignore
+    StringEntityModelLabelEditor eventCorrelationIdLabel;
+
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -67,12 +71,15 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
         eventIdLabel.setLabel(constants.idEvent());
         eventTimeLabel.setLabel(constants.timeEvent());
         eventMessageTextArea.setLabel(constants.messageEvent());
+        eventCorrelationIdLabel.setLabel(constants.correltaionIdEvent());
     }
 
     private void applyStyles() {
         eventIdLabel.addContentWidgetContainerStyleName(style.editorContent());
         eventTimeLabel.addContentWidgetContainerStyleName(style.editorContent());
         eventMessageTextArea.addContentWidgetContainerStyleName(style.editorContent());
+        eventCorrelationIdLabel.addContentWidgetContainerStyleName(style.editorContent());
+
     }
 
     @Override
@@ -83,6 +90,7 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
         eventIdLabel.asValueBox().setValue(String.valueOf(event.getLogTypeValue()));
         eventTimeLabel.asValueBox().setValue(new FullDateTimeRenderer().render(event.getLogTime()));
         eventMessageTextArea.asValueBox().setValue(event.getMessage());
+        eventCorrelationIdLabel.asValueBox().setValue(event.getCorrelationId());
     }
 
     @Override
