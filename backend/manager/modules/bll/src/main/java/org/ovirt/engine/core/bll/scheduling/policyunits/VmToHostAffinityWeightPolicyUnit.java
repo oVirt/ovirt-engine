@@ -43,7 +43,7 @@ public class VmToHostAffinityWeightPolicyUnit extends VmToHostAffinityPolicyUnit
 
         List<Pair<Guid, Integer>> retList = new ArrayList<>();
         for (VDS host : hosts) {
-            int score = hostViolations.getOrDefault(host.getId(), DEFAULT_SCORE);
+            int score = hostViolations.getOrDefault(host.getId(), 0) + DEFAULT_SCORE;
 
             // Increase the score of hosts with equal or worse score
             // than the host where the VM is currently running.
