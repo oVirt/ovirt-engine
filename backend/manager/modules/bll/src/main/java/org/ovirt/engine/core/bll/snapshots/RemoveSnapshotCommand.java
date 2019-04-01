@@ -423,6 +423,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      */
     protected boolean validateStorageDomains() {
         MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
+        if (DisksFilter.filterImageDisks(getSourceImages()).isEmpty()) {
+            return true;
+        }
+
         return validate(storageDomainsValidator.allDomainsExistAndActive())
                 && validate(storageDomainsValidator.allDomainsWithinThresholds())
                 && validate(storageDomainsValidator.allDomainsHaveSpaceForMerge(getAllDisksSnapshot(getSourceImages()), getSnapshotActionType()))
