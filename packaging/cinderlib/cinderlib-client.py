@@ -190,7 +190,7 @@ def main(args=None):
 def setup_logger(args):
     logging.log_file = os.path.join(conf.get('ENGINE_LOG'),
                                     'cinderlib', 'cinderlib.log')
-    logging.config.fileConfig("logger.conf", disable_existing_loggers=True)
+    logging.config.fileConfig("logger.conf", disable_existing_loggers=False)
     logging.captureWarnings(True)
     global logger
     logger = logging.getLogger("cinderlib-client")
