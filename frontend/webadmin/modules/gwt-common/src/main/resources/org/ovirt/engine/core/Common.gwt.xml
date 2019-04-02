@@ -322,6 +322,7 @@
         <include name="common/businessentities/storage/ManagedBlockStorageDisk.java" />
         <include name="common/businessentities/storage/DiskBackup.java" />
         <include name="common/businessentities/storage/CinderVolumeDriver.java" />
+        <include name="common/businessentities/storage/ImageTransferBackend.java" />
         <include name="common/businessentities/VmBackup.java" />
         <include name="common/businessentities/VmBackupPhase.java" />
 

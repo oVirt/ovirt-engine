@@ -8,8 +8,10 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -90,6 +92,8 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("bytes_sent", entity.getBytesSent());
         mapper.addValue("bytes_total", entity.getBytesTotal());
         mapper.addValue("client_inactivity_timeout", entity.getClientInactivityTimeout());
+        mapper.addValue("image_format", entity.getImageFormat());
+        mapper.addValue("backend", entity.getBackend());
         return mapper;
     }
 
@@ -113,6 +117,8 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setBytesSent(rs.getLong("bytes_sent"));
             entity.setBytesTotal(rs.getLong("bytes_total"));
             entity.setClientInactivityTimeout((Integer) rs.getObject("client_inactivity_timeout"));
+            entity.setImageFormat(VolumeFormat.forValue(rs.getInt("image_format")));
+            entity.setBackend(ImageTransferBackend.forValue(rs.getInt("backend")));
             return entity;
         };
     }

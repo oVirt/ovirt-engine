@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.ImageTransferDirection;
 import org.ovirt.engine.api.model.ImageTransfers;
 import org.ovirt.engine.api.resource.ImageTransferResource;
 import org.ovirt.engine.api.resource.ImageTransfersResource;
+import org.ovirt.engine.api.restapi.types.ImageTransferMapper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
@@ -59,6 +60,9 @@ public class BackendImageTransfersResource
         }
         if (imageTransfer.isSetInactivityTimeout()) {
             params.setClientInactivityTimeout(imageTransfer.getInactivityTimeout());
+        }
+        if (imageTransfer.isSetFormat()) {
+            params.setVolumeFormat(ImageTransferMapper.map(imageTransfer.getFormat(), null));
         }
         return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
                 IdQueryParameters.class));

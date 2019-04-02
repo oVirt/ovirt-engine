@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.NbdServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeLegalityVDSCommandParameters;
@@ -143,10 +145,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         runInternalAction(ActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
     }
 
-    protected String prepareImage(Guid vdsId) {
+    protected String prepareImage(Guid vdsId, Guid imagedTicketId) {
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
-        return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        if (getTransferBackend() == ImageTransferBackend.NBD) {
+            vdsRetVal = runVdsCommand(VDSCommandType.StartNbdServer,
+                    getStartNbdServerParameters(vdsId, imagedTicketId));
+            return (String) vdsRetVal.getReturnValue();
+        } else {
+            return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        }
     }
 
     protected boolean validateImageTransfer() {
@@ -186,30 +194,52 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getDiskImage().getImageId(), true);
     }
 
-    protected void tearDownImage(Guid vdsId) {
-        if (!Guid.Empty.equals(getImage().getImageTemplateId())) {
-            LockInfo lockInfo =
-                    lockManager.getLockInfo(getImage().getImageTemplateId() + LockingGroup.TEMPLATE.toString());
+    private NbdServerVDSParameters getStartNbdServerParameters(Guid vdsId, Guid imagedTicketId) {
+        NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
+        nbdServerVDSParameters.setServerId(imagedTicketId);
+        nbdServerVDSParameters.setStorageDomainId(getParameters().getStorageDomainId());
+        nbdServerVDSParameters.setImageId(getDiskImage().getId());
+        nbdServerVDSParameters.setVolumeId(getDiskImage().getImageId());
+        nbdServerVDSParameters.setReadonly(false);
+        nbdServerVDSParameters.setDiscard(isSparseImage());
+        return nbdServerVDSParameters;
+    }
 
-            if (lockInfo != null) {
-                log.info("The template image is being used, skipping teardown");
-                return;
+    protected void tearDownImage(Guid vdsId, Guid imageTicketId) {
+        DiskImage image = getDiskImage();
+        boolean tearDownFailed = false;
+
+        if (getTransferBackend() == ImageTransferBackend.FILE) {
+            if (!Guid.Empty.equals(image.getImageTemplateId())) {
+                LockInfo lockInfo =
+                        lockManager.getLockInfo(getImage().getImageTemplateId() + LockingGroup.TEMPLATE.toString());
+
+                if (lockInfo != null) {
+                    log.info("The template image is being used, skipping teardown");
+                    return;
+                }
+            }
+
+            VDSReturnValue teardownImageVdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
+                    getImageActionsParameters(vdsId));
+            if (!teardownImageVdsRetVal.getSucceeded()) {
+                log.warn("Failed to tear down image '{}' for image transfer session: {}",
+                        image, teardownImageVdsRetVal.getVdsError());
+                tearDownFailed = true;
+            }
+        } else if (getTransferBackend() == ImageTransferBackend.NBD) {
+            NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
+            nbdServerVDSParameters.setServerId(imageTicketId);
+            VDSReturnValue stopNbdServerVdsRetVal = runVdsCommand(VDSCommandType.StopNbdServer,
+                    nbdServerVDSParameters);
+            if (!stopNbdServerVdsRetVal.getSucceeded()) {
+                log.warn("Failed to stop NBD server of image '{}' for image transfer session: {}",
+                        image, stopNbdServerVdsRetVal.getVdsError());
+                tearDownFailed = true;
             }
         }
 
-        try {
-            VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
-                    getImageActionsParameters(vdsId));
-            if (!vdsRetVal.getSucceeded()) {
-                EngineException engineException = new EngineException();
-                engineException.setVdsError(vdsRetVal.getVdsError());
-                throw engineException;
-            }
-        } catch (EngineException e) {
-            DiskImage image = getDiskImage();
-            log.warn("Failed to tear down image '{}' for image transfer session: {}",
-                    image, e.getVdsError());
-
+        if (tearDownFailed) {
             // Invoke log method directly rather than relying on infra, because teardown
             // failure may occur during command execution, e.g. if the upload is paused.
             addCustomValue("DiskAlias", image != null ? image.getDiskAlias() : "(unknown)");
@@ -315,6 +345,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setClientInactivityTimeout(getParameters().getClientInactivityTimeout() != null ?
                 getParameters().getClientInactivityTimeout() :
                 getTransferImageClientInactivityTimeoutInSeconds());
+        entity.setImageFormat(getTransferImageFormat());
+        entity.setBackend(getTransferBackend());
         imageTransferDao.save(entity);
 
         if (isImageProvided()) {
@@ -336,6 +368,21 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private boolean isImageProvided() {
         return !Guid.isNullOrEmpty(getParameters().getImageId()) ||
                 !Guid.isNullOrEmpty(getParameters().getImageGroupID());
+    }
+
+    private VolumeFormat getTransferImageFormat() {
+        if (getParameters().getVolumeFormat() != null) {
+            return getParameters().getVolumeFormat();
+        }
+        if (isImageProvided()) {
+            return getDiskImage().getVolumeFormat();
+        }
+        return ((DiskImage) getParameters().getAddDiskParameters().getDiskInfo()).getVolumeFormat();
+    }
+
+    private ImageTransferBackend getTransferBackend() {
+        return getParameters().getVolumeFormat() == VolumeFormat.RAW ?
+                ImageTransferBackend.NBD : ImageTransferBackend.FILE;
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
@@ -642,7 +689,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             }
 
             // Finished using the image, tear it down.
-            tearDownImage(context.entity.getVdsId());
+            tearDownImage(context.entity.getVdsId(), context.entity.getImagedTicketId());
 
             // Moves Image status to OK or ILLEGAL
             setImageStatus(nextImageStatus);
@@ -678,7 +725,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         Guid vdsId = context.entity.getVdsId() != null ? context.entity.getVdsId() : getVdsId();
         // Teardown is required for all scenarios as we call prepareImage when
         // starting a new session.
-        tearDownImage(vdsId);
+        tearDownImage(vdsId, context.entity.getImagedTicketId());
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
         setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
     }
@@ -793,7 +840,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private boolean addImageTicketToDaemon(Guid imagedTicketId, long timeout) {
         String imagePath;
         try {
-            imagePath = prepareImage(getVdsId());
+            imagePath = prepareImage(getVdsId(), imagedTicketId);
         } catch (Exception e) {
             log.error("Failed to prepare image for transfer session: {}", e);
             return false;
@@ -805,9 +852,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         String[] transferOps = new String[] {getParameters().getTransferType().getAllowedOperation()};
-        // Sparse is not supported yet for block storage in imageio. See BZ#1619006.
-        boolean sparse = getDiskImage().getVolumeType() == VolumeType.Sparse &&
-                getStorageDomain().getStorageType().isFileDomain();
         AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
                 imagedTicketId,
                 getParameters().getCommandId(),
@@ -816,7 +860,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getParameters().getTransferSize(),
                 imagePath,
                 getParameters().getDownloadFilename(),
-                sparse);
+                isSparseImage());
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
@@ -835,6 +879,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 imagedTicketId.toString(), timeout);
 
         return true;
+    }
+
+    private boolean isSparseImage() {
+        // Sparse is not supported yet for block storage in imageio. See BZ#1619006.
+        return getDiskImage().getVolumeType() == VolumeType.Sparse &&
+                getStorageDomain().getStorageType().isFileDomain();
     }
 
     private boolean addImageTicketToProxy(Guid imagedTicketId, String signedTicket) {

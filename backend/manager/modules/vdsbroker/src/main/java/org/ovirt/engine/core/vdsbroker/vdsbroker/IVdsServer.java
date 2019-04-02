@@ -535,6 +535,10 @@ public interface IVdsServer {
 
     StatusOnlyReturn deleteVmCheckpoints(String vmId, String[] checkpointIds);
 
+    NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig);
+
+    StatusOnlyReturn stopNbdServer(String serverId);
+
     StatusOnlyReturn isolateVolume(String sdUUID, String srcImageID, String dstImageID, String volumeID);
 
     StatusOnlyReturn wipeVolume(String sdUUID, String imgUUID, String volUUID);

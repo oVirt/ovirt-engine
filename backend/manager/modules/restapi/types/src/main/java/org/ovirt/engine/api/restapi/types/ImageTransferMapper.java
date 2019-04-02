@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.ImageTransfer;
@@ -7,6 +8,7 @@ import org.ovirt.engine.api.model.ImageTransferDirection;
 import org.ovirt.engine.api.model.ImageTransferPhase;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 
 public class ImageTransferMapper {
     @Mapping(from = ImageTransfer.class,
@@ -25,6 +27,9 @@ public class ImageTransferMapper {
         }
         if (model.isSetImage() && model.getImage().isSetId()) {
             entity.setDiskId(GuidUtils.asGuid(model.getImage().getId()));
+        }
+        if (model.isSetFormat()) {
+            entity.setImageFormat(map(model.getFormat(), null));
         }
         return entity;
     }
@@ -68,6 +73,9 @@ public class ImageTransferMapper {
         if (entity.getClientInactivityTimeout() != null) {
             model.setInactivityTimeout(entity.getClientInactivityTimeout());
         }
+        if (entity.getImageFormat() != null) {
+            model.setFormat(map(entity.getImageFormat(), null));
+        }
         return model;
     }
 
@@ -110,4 +118,29 @@ public class ImageTransferMapper {
             return null;
         }
     }
+
+    @Mapping(from = DiskFormat.class, to = String.class)
+    public static VolumeFormat map(DiskFormat diskFormat, VolumeFormat template) {
+        switch (diskFormat) {
+            case COW:
+                return VolumeFormat.COW;
+            case RAW:
+                return VolumeFormat.RAW;
+            default:
+                return VolumeFormat.Unassigned;
+        }
+    }
+
+    @Mapping(from = VolumeFormat.class, to = DiskFormat.class)
+    public static DiskFormat map(VolumeFormat volumeFormat, DiskFormat template) {
+        switch (volumeFormat) {
+            case COW:
+                return DiskFormat.COW;
+            case RAW:
+                return DiskFormat.RAW;
+            default:
+                return null;
+        }
+    }
+
 }
