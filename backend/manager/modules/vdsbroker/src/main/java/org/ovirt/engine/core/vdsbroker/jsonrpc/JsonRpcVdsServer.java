@@ -58,6 +58,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageTicketInformationReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LldpReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NbdServerURLReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturn;
@@ -2277,6 +2278,27 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new RequestBuilder("VM.delete_checkpoints")
                         .withParameter("vmID", vmId)
                         .withParameter("checkpoints", checkpointIds)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig) {
+        JsonRpcRequest request =
+                new RequestBuilder("NBD.start_server")
+                        .withParameter("server_id", serverId)
+                        .withParameter("config", nbdServerConfig)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new NbdServerURLReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn stopNbdServer(String serverId) {
+        JsonRpcRequest request =
+                new RequestBuilder("NBD.stop_server")
+                        .withParameter("server_id", serverId)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);

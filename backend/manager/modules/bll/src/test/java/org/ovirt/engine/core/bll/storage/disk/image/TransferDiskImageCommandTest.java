@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -223,6 +224,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
      *****************/
     @Test
     public void testCreatingImageIfNotSupplied() {
+        transferImageCommand.getParameters().setVolumeFormat(VolumeFormat.COW);
         transferImageCommand.executeCommand();
 
         // Make sure an image is created.

@@ -30,6 +30,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private Long bytesSent;
     private Long bytesTotal;
     private Integer clientInactivityTimeout;
+    private VolumeFormat imageFormat;
+    private ImageTransferBackend backend;
 
     public ImageTransfer(Guid commandId) {
         this.commandId = commandId;
@@ -173,6 +175,22 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.clientInactivityTimeout = clientInactivityTimeout;
     }
 
+    public VolumeFormat getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(VolumeFormat imageFormat) {
+        this.imageFormat = imageFormat;
+    }
+
+    public ImageTransferBackend getBackend() {
+        return backend;
+    }
+
+    public void setBackend(ImageTransferBackend backend) {
+        this.backend = backend;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -198,6 +216,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(bytesSent, other.bytesSent)
                 && Objects.equals(bytesTotal, other.bytesTotal)
                 && Objects.equals(clientInactivityTimeout, other.clientInactivityTimeout)
+                && Objects.equals(imageFormat, other.imageFormat)
                 && type == other.type;
     }
 
@@ -217,7 +236,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 signedTicket,
                 bytesSent,
                 bytesTotal,
-                clientInactivityTimeout
+                clientInactivityTimeout,
+                imageFormat
         );
     }
 
@@ -238,6 +258,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 .append("bytesSent", getBytesSent())
                 .append("bytesTotal", getBytesTotal())
                 .append("clientInactivityTimeout", getClientInactivityTimeout())
+                .append("imageFormat", getImageFormat())
                 .build();
     }
 
