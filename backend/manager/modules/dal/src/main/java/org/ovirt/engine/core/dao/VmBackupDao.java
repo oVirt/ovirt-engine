@@ -36,6 +36,14 @@ public interface VmBackupDao extends GenericDao<VmBackup, Guid> {
     void addBackupUrlToVmBackup(Guid backupId, Guid diskId, String backupUrl);
 
     /**
+     * Returns the backup_url for the specified disk.
+     *
+     * @param backupId the VM backup id
+     * @param diskId the relevant disk id
+     */
+    String getBackupUrlForDisk(Guid backupId, Guid diskId);
+
+    /**
      * Get disks associated with the VM backup.
      *
      * @param backupId the VM backup id

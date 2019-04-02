@@ -156,3 +156,15 @@ BEGIN
     WHERE  images_storage_domain_view.active AND vm_backup_disk_map.backup_id = v_backup_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetBackupUrlForDiskId (v_backup_id UUID, v_disk_id UUID)
+RETURNS TEXT STABLE AS $FUNCTION$
+BEGIN
+    RETURN
+    (
+        SELECT backup_url
+        FROM vm_backup_disk_map
+        WHERE backup_id = v_backup_id AND disk_id = v_disk_id
+    );
+END;$FUNCTION$
+LANGUAGE plpgsql;

@@ -19,6 +19,7 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private AddDiskParameters addDiskParameters;
     private Integer clientInactivityTimeout;
     private VolumeFormat volumeFormat;
+    private Guid backupId;
 
     public TransferDiskImageParameters() {}
 
@@ -105,5 +106,13 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
 
     public void setVolumeFormat(VolumeFormat volumeFormat) {
         this.volumeFormat = volumeFormat;
+    }
+
+    public Guid getBackupId() {
+        return backupId;
+    }
+
+    public void setBackupId(Guid backupId) {
+        this.backupId = backupId;
     }
 }

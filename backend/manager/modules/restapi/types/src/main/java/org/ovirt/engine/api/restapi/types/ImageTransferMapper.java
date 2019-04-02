@@ -31,6 +31,9 @@ public class ImageTransferMapper {
         if (model.isSetFormat()) {
             entity.setImageFormat(map(model.getFormat(), null));
         }
+        if (model.isSetBackup() && model.getBackup().isSetId()) {
+            entity.setBackupId(GuidUtils.asGuid(model.getBackup().getId()));
+        }
         return entity;
     }
 
