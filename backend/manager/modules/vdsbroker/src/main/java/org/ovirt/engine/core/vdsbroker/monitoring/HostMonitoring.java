@@ -777,9 +777,10 @@ public class HostMonitoring {
             return false;
         }
         // show status UP in audit only when InitVdsOnUpCommand finished successfully
-        if (vds.getStatus() != VDSStatus.Up) {
+        VDSStatus status = vds.getStatus();
+        if (status != VDSStatus.Up) {
             AuditLogable logable = createAuditLogableForHost();
-            logable.addCustomValue("HostStatus", vds.getStatus().toString());
+            logable.addCustomValue("HostStatus", status.toString());
             auditLog(logable, AuditLogType.VDS_DETECTED);
         }
         return executingAsyncVdsCommand;
