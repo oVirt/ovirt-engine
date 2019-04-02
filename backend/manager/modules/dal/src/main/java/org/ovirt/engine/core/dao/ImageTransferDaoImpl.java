@@ -94,6 +94,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("client_inactivity_timeout", entity.getClientInactivityTimeout());
         mapper.addValue("image_format", entity.getImageFormat());
         mapper.addValue("backend", entity.getBackend());
+        mapper.addValue("backup_id", entity.getBackupId());
         return mapper;
     }
 
@@ -119,6 +120,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setClientInactivityTimeout((Integer) rs.getObject("client_inactivity_timeout"));
             entity.setImageFormat(VolumeFormat.forValue(rs.getInt("image_format")));
             entity.setBackend(ImageTransferBackend.forValue(rs.getInt("backend")));
+            entity.setBackupId(getGuid(rs, "backup_id"));
             return entity;
         };
     }

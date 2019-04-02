@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -89,6 +90,15 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                         .addValue("backup_id", backupId)
                         .addValue("disk_id", diskId)
                         .addValue("backup_url", backupUrl));
+    }
+
+    @Override
+    public String getBackupUrlForDisk(Guid backupId, Guid diskId) {
+        return getCallsHandler().executeRead("GetBackupUrlForDiskId",
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource()
+                        .addValue("backup_id", backupId)
+                        .addValue("disk_id", diskId));
     }
 
     @Override

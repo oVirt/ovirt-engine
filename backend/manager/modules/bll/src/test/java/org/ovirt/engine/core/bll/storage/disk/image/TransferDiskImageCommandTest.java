@@ -45,6 +45,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
@@ -69,6 +70,9 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
     @Mock
     private ImageTransferDao imageTransferDao;
+
+    @Mock
+    private VmBackupDao vmBackupDao;
 
     @Spy
     @InjectMocks

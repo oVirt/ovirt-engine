@@ -26,6 +26,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private String proxyUri;
     private String daemonUri;
     private String signedTicket;
+    private Guid backupId;
 
     private Long bytesSent;
     private Long bytesTotal;
@@ -189,6 +190,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
 
     public void setBackend(ImageTransferBackend backend) {
         this.backend = backend;
+    }
+
+    public Guid getBackupId() {
+        return backupId;
+    }
+
+    public void setBackupId(Guid backupId) {
+        this.backupId = backupId;
     }
 
     @Override

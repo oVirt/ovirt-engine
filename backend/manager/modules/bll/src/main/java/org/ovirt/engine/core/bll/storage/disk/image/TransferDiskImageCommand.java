@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
@@ -77,6 +79,7 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.JsonHelper;
@@ -119,6 +122,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Inject
     private VdsDao vdsDao;
     @Inject
+    private VmBackupDao vmBackupDao;
+    @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     @Typed(TransferImageCommandCallback.class)
@@ -146,6 +151,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected String prepareImage(Guid vdsId, Guid imagedTicketId) {
+        if (getParameters().getBackupId() != null) {
+            return vmBackupDao.getBackupUrlForDisk(
+                    getParameters().getBackupId(), getDiskImage().getId());
+        }
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
         if (getTransferBackend() == ImageTransferBackend.NBD) {
@@ -163,15 +172,28 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         DiskImagesValidator diskImagesValidator = getDiskImagesValidator(diskImage);
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator(
                 storageDomainDao.getForStoragePool(diskImage.getStorageIds().get(0), diskImage.getStoragePoolId()));
-        return validate(diskValidator.isDiskExists())
-                && validateActiveDiskPluggedToAnyNonDownVm(diskImage, diskValidator)
+        boolean isValid =
+                validate(diskValidator.isDiskExists())
                 && validate(diskImagesValidator.diskImagesNotIllegal())
-                && validate(diskImagesValidator.diskImagesNotLocked())
                 && validate(storageDomainValidator.isDomainExistAndActive());
+        if (getParameters().getBackupId() != null) {
+            return isValid && validate(isVmBackupExists());
+        }
+        return isValid
+                && validateActiveDiskPluggedToAnyNonDownVm(diskImage, diskValidator)
+                && validate(diskImagesValidator.diskImagesNotLocked());
     }
 
     private boolean validateActiveDiskPluggedToAnyNonDownVm(DiskImage diskImage, DiskValidator diskValidator) {
         return diskImage.isDiskSnapshot() || validate(diskValidator.isDiskPluggedToAnyNonDownVm(false));
+    }
+
+    private ValidationResult isVmBackupExists() {
+        VmBackup vmBackup = vmBackupDao.get(getParameters().getBackupId());
+        if (vmBackup == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_EXIST);
+        }
+        return ValidationResult.VALID;
     }
 
     protected DiskImagesValidator getDiskImagesValidator(DiskImage diskImage) {
@@ -205,7 +227,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return nbdServerVDSParameters;
     }
 
-    protected void tearDownImage(Guid vdsId, Guid imageTicketId) {
+    protected void tearDownImage(Guid vdsId, Guid imageTicketId, Guid backupId) {
+        if (backupId != null) {
+            // shouldn't teardown as prepare wasn't invoked
+            return;
+        }
+
         DiskImage image = getDiskImage();
         boolean tearDownFailed = false;
 
@@ -320,6 +347,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
+        if (getParameters().getBackupId() != null) {
+            // StartVmBackup should handle locks
+            return locks;
+        }
         if (getDiskImage() != null) {
             locks.put(getDiskImage().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
@@ -347,6 +378,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getTransferImageClientInactivityTimeoutInSeconds());
         entity.setImageFormat(getTransferImageFormat());
         entity.setBackend(getTransferBackend());
+        entity.setBackupId(getParameters().getBackupId());
         imageTransferDao.save(entity);
 
         if (isImageProvided()) {
@@ -689,7 +721,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             }
 
             // Finished using the image, tear it down.
-            tearDownImage(context.entity.getVdsId(), context.entity.getImagedTicketId());
+            tearDownImage(context.entity.getVdsId(), context.entity.getImagedTicketId(), context.entity.getBackupId());
 
             // Moves Image status to OK or ILLEGAL
             setImageStatus(nextImageStatus);
@@ -725,7 +757,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         Guid vdsId = context.entity.getVdsId() != null ? context.entity.getVdsId() : getVdsId();
         // Teardown is required for all scenarios as we call prepareImage when
         // starting a new session.
-        tearDownImage(vdsId, context.entity.getImagedTicketId());
+        tearDownImage(vdsId, context.entity.getImagedTicketId(), context.entity.getBackupId());
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
         setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
     }

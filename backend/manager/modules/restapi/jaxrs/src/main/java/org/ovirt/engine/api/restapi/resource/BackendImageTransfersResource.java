@@ -64,6 +64,9 @@ public class BackendImageTransfersResource
         if (imageTransfer.isSetFormat()) {
             params.setVolumeFormat(ImageTransferMapper.map(imageTransfer.getFormat(), null));
         }
+        if (imageTransfer.isSetBackup() && imageTransfer.getBackup().isSetId()) {
+            params.setBackupId(Guid.createGuidFromString(imageTransfer.getBackup().getId()));
+        }
         return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
