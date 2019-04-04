@@ -251,6 +251,26 @@ public class FixturesTool {
     protected static final Guid VM_RHEL5_POOL_60 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4360");
 
     /**
+     * Predefined VM for testing with the following properties :
+     * <ul>
+     * <li>VM name: vm1-shared-bootable-disk</li>
+     * <li>Vds group: rhel6.nfs2 (eba797fb-8e3b-4777-b63c-92e7a5957d7c)</li>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
+     */
+    public static final Guid VM_VM1_SHARED_BOOTABLE_DISK = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4361");
+
+    /**
+     * Predefined VM for testing with the following properties :
+     * <ul>
+     * <li>VM name: vm2-shared-nonbootable-disk</li>
+     * <li>Vds group: rhel6.nfs2 (eba797fb-8e3b-4777-b63c-92e7a5957d7c)</li>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
+     */
+    public static final Guid VM_VM2_SHARED_NONBOOTABLE_DISK = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4362");
+
+    /**
      * Predefined template for testing with the following properties :
      * <ul>
      * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
@@ -503,6 +523,10 @@ public class FixturesTool {
      * Predefined boot LUN disk attached to VM_RHEL5_POOL_57
      */
     protected static final Guid BOOTABLE_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a40");
+    /**
+     * Predefined shared boot IMAGE disk attached to VM_VM1_SHARED_BOOTABLE_DISK & VM_VM2_SHARED_NONBOOTABLE_DISK
+     */
+    protected static final Guid BOOTABLE_SHARED_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a47");
 
     /**
      * Predefined entity that has associated tasks.

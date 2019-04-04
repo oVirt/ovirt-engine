@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDaoTest extends BaseDaoTestCase<VmDao> {
-    private static final int VM_COUNT = 8;
+    private static final int VM_COUNT = 10;
     private VM existingVm;
 
     @Inject
@@ -571,7 +571,7 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
         List<VM> result = dao.getAllForDiskProfiles(Collections.singleton(FixturesTool.DISK_PROFILE_1));
 
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertEquals(4, result.size());
     }
 
     private void createHostedEngineVm(Guid id) {

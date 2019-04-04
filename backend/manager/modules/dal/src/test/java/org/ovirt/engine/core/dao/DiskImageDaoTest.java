@@ -182,7 +182,7 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
                 Arrays.asList(FixturesTool.DISK_PROFILE_1, FixturesTool.DISK_PROFILE_2));
 
         assertNotNull(diskImages);
-        assertEquals(6, diskImages.size());
+        assertEquals(7, diskImages.size());
     }
 
     @Test
