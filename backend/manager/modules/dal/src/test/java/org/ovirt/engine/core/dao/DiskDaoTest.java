@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 8;
+    private static final int TOTAL_DISK_IMAGES = 9;
 
     @Override
     protected Guid getExistingEntityId() {
@@ -186,6 +186,15 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     @Test
+    public void testGetVmBootActiveSharedDisk() {
+        Disk bootDiskVm1 = dao.getVmBootActiveDisk(FixturesTool.VM_VM1_SHARED_BOOTABLE_DISK);
+        Disk bootDiskVm2 = dao.getVmBootActiveDisk(FixturesTool.VM_VM2_SHARED_NONBOOTABLE_DISK);
+        assertNull(bootDiskVm2, "VM2 should not have a bootable disk attached");
+        assertNotNull(bootDiskVm1, "VM1 should have a bootable disk attached");
+        assertEquals(FixturesTool.BOOTABLE_SHARED_DISK_ID, bootDiskVm1.getId(), "Wrong boot disk for VM");
+    }
+
+    @Test
     public void testGetVmPartialData() {
         List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
         assertFullGetAllForVMResult(disks);
@@ -224,10 +233,12 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
-        assertEquals(4, disks.size(), "There should be only four attachable disks");
-        Set<Guid> expectedFloatingDiskIds =
-                new HashSet<>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID,
-                        FixturesTool.FLOATING_CINDER_DISK_ID));
+        assertEquals(5, disks.size(), "There should be only five attachable disks");
+        Set<Guid> expectedFloatingDiskIds = new HashSet<>(Arrays.asList(
+                FixturesTool.FLOATING_DISK_ID,
+                FixturesTool.FLOATING_LUN_ID,
+                FixturesTool.FLOATING_CINDER_DISK_ID,
+                FixturesTool.BOOTABLE_SHARED_DISK_ID));
         Set<Guid> actualFloatingDiskIds = disks.stream().map(BaseDisk::getId).collect(Collectors.toSet());
         assertEquals(expectedFloatingDiskIds, actualFloatingDiskIds, "Wrong attachable disks");
     }
@@ -235,7 +246,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllFromDisksIncludingSnapshots() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(null, false);
-        assertEquals(15, result.size(), "wrong number of returned disks");
+        assertEquals(16, result.size(), "wrong number of returned disks");
     }
 
     @Test
@@ -247,19 +258,19 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForUnprivilegedUserWithoutFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(UNPRIVILEGED_USER_ID, false);
-        assertEquals(15, result.size(), "wrong number of returned disks");
+        assertEquals(16, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithoutFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, false);
-        assertEquals(15, result.size(), "wrong number of returned disks");
+        assertEquals(16, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, true);
-        assertEquals(14, result.size(), "wrong number of returned disks");
+        assertEquals(15, result.size(), "wrong number of returned disks");
     }
 
     @Test

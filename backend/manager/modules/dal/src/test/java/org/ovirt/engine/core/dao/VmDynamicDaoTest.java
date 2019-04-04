@@ -51,7 +51,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 8;
+        return 10;
     }
 
     /**
