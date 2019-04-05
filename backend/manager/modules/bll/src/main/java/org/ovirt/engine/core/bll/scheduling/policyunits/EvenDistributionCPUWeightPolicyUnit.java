@@ -58,7 +58,7 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
         double hostLoad = hostCpu * hostCores;
 
         // If the VM is running, use its current CPU load, otherwise use the config value
-        double vmLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null ?
+        double vmLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
                 vm.getUsageCpuPercent() * vm.getNumOfCpus() :
                 vcpu * vm.getNumOfCpus();
 
