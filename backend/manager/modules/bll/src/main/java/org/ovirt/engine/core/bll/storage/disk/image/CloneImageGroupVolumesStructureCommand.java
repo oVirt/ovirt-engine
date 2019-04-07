@@ -127,6 +127,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 getParameters().getImageGroupID(),
                 image.getImageId(),
                 volumeFormat,
+                image.getVolumeType(),
                 getParameters().getDescription(),
                 image.getSize(),
                 imagesHandler.determineImageInitialSize(image.getImage(),

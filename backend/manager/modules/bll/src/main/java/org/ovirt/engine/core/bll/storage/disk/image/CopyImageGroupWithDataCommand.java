@@ -124,6 +124,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 getParameters().getDestImageGroupId(),
                 getParameters().getDestinationImageId(),
                 getParameters().getDestinationFormat(),
+                getParameters().getDestinationVolumeType(),
                 getParameters().getDescription(),
                 getDiskImage().getSize(),
                 imagesHandler.determineTotalImageInitialSize(getDiskImage(),

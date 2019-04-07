@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParametersBase {
@@ -9,19 +10,29 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
     private boolean collapse;
     private Guid destImageGroupId;
     private VolumeFormat destinationFormat;
+    private VolumeType destinationVolumeType;
     private CopyStage stage = CopyStage.DEST_CREATION;
 
     public CopyImageGroupWithDataCommandParameters() {
     }
 
-    public CopyImageGroupWithDataCommandParameters(Guid storagePoolId, Guid srcDomain, Guid destDomain, Guid
-            imageGroupId, Guid imageId, Guid destImageGroupId, Guid destImageId, VolumeFormat destinationFormat,
-                                                   boolean collapse) {
+    public CopyImageGroupWithDataCommandParameters(
+            Guid storagePoolId,
+            Guid srcDomain,
+            Guid destDomain,
+            Guid imageGroupId,
+            Guid imageId,
+            Guid destImageGroupId,
+            Guid destImageId,
+            VolumeFormat destinationFormat,
+            VolumeType destinationType,
+            boolean collapse) {
         this.destDomain = destDomain;
         this.srcDomain = srcDomain;
         this.collapse = collapse;
         this.destImageGroupId = destImageGroupId;
         this.destinationFormat = destinationFormat;
+        this.destinationVolumeType = destinationType;
         setStoragePoolId(storagePoolId);
         setImageGroupID(imageGroupId);
         setImageId(imageId);
@@ -66,6 +77,14 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
 
     public void setDestinationFormat(VolumeFormat destinationFormat) {
         this.destinationFormat = destinationFormat;
+    }
+
+    public VolumeType getDestinationVolumeType() {
+        return destinationVolumeType;
+    }
+
+    public void setDestinationVolumeType(VolumeType destinationVolumeType) {
+        this.destinationVolumeType = destinationVolumeType;
     }
 
     public CopyStage getStage() {

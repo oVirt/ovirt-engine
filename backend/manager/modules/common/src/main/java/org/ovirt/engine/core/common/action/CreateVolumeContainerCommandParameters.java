@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVolumeContainerCommandParameters extends StorageJobCommandParameters {
     private long size;
     private VolumeFormat volumeFormat;
+    private VolumeType volumeType;
     private Guid srcImageGroupId;
     private Guid srcImageId;
     private Long initialSize;
@@ -15,7 +17,7 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
 
     public CreateVolumeContainerCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid srcImageGroupId,
                                                   Guid srcImageId, Guid imageGroupId, Guid imageId,
-                                                  VolumeFormat volumeFormat, String description, long size,
+                                                  VolumeFormat volumeFormat, VolumeType volumeType, String description, long size,
                                                   Long initialSize) {
         setStoragePoolId(storagePoolId);
         setStorageDomainId(storageDomainId);
@@ -26,6 +28,7 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
         this.srcImageId = srcImageId;
         this.size = size;
         this.volumeFormat = volumeFormat;
+        this.volumeType = volumeType;
         this.initialSize = initialSize;
         fillEntityInfo(imageId);
     }
@@ -68,5 +71,13 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
 
     public void setInitialSize(Long initialSize) {
         this.initialSize = initialSize;
+    }
+
+    public VolumeType getVolumeType() {
+        return volumeType;
+    }
+
+    public void setVolumeType(VolumeType volumeType) {
+        this.volumeType = volumeType;
     }
 }
