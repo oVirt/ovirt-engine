@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -90,6 +91,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private ImageDao imageDao;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -385,6 +388,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
                 setOvfVolumeDescription(storagePoolId, storageDomainId,
                         diskId, volumeId, getPostUpdateOvfStoreDescription(size));
                 storageDomainOvfInfoDao.update(storageDomainOvfInfo);
+                ovfDisk.setLastModified(updateDate);
+                imageDao.update(ovfDisk.getImage());
                 return true;
             }
         } catch (EngineException e) {
