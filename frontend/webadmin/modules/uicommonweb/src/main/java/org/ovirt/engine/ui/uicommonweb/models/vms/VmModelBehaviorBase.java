@@ -623,6 +623,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             new ArrayList<>(Collections.singletonList(VolumeType.Preallocated))
                             : AsyncDataProvider.getInstance().getVolumeTypeList(), disk.getVolumeType());
                     diskModel.setVolumeType(volumes);
+                    VM vm = new VM();
+                    vm.setClusterCompatibilityVersion(getCompatibilityVersion());
+                    diskModel.setVm(vm);
                     break;
                 case CINDER:
                     CinderDisk cinderDisk = (CinderDisk) disk;
