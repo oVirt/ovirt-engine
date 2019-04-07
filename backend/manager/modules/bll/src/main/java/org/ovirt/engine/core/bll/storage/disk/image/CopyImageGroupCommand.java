@@ -158,6 +158,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                     getParameters().getImageGroupID(),
                     getParameters().getImageId(),
                     getVolumeFormatForDomain(),
+                    getParameters().getVolumeType(),
                     getParameters().getUseCopyCollapse());
             p.setParentParameters(getParameters());
             p.setParentCommand(getActionType());

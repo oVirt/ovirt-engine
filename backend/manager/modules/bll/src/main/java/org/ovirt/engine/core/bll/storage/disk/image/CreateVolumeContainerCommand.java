@@ -85,9 +85,13 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     }
 
     private VolumeType getType() {
-        if (getStorageDomain().getStorageType().isInternal() &&
-                getParameters().getVolumeFormat() == VolumeFormat.RAW) {
-            return VolumeType.Preallocated;
+        // For raw volume on file-based domain we cannot determine
+        // the type according to the format because since 4.3 engine support
+        // raw-preallocate file volume on a file-based storage domain
+        if (getParameters().getVolumeFormat() == VolumeFormat.RAW) {
+            return getStorageDomain().getStorageType().isBlockDomain() ?
+                    VolumeType.Preallocated :
+                    getParameters().getVolumeType();
         }
         return VolumeType.Sparse;
     }

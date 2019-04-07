@@ -81,6 +81,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     newDiskImage.getId(),
                     getDestinationImageId(),
                     newDiskImage.getVolumeFormat(),
+                    newDiskImage.getVolumeType(),
                     true);
 
             p.setParentParameters(getParameters());
