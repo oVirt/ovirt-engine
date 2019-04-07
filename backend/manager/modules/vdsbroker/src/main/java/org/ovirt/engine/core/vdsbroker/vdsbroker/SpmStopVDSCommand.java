@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -20,6 +21,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -32,6 +36,9 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
     private VdsDao vdsDao;
 
     private EngineLock lock;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public SpmStopVDSCommand(P parameters) {
         super(parameters);
@@ -107,6 +114,11 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                                 unclearedTasksDetails);
                         VDSError error = new VDSError(EngineError.TaskInProgress, unclearedTasksDetails);
                         getVDSReturnValue().setVdsError(error);
+                        AuditLogable event = new AuditLogableImpl();
+                        event.addCustomValue("vdsName", getVds().getName());
+                        event.addCustomValue("poolId", getParameters().getStoragePoolId().toString());
+                        event.addCustomValue("tasks", unclearedTasksDetails);
+                        auditLogDirector.log(event, AuditLogType.VDS_ALERT_NOT_STOPPING_SPM_UNCLEARED_TASKS);
                     } else if (getVDSReturnValue().getVdsError().getCode() == EngineError.VDS_NETWORK_ERROR) {
                         log.info(
                                 "SpmStopVDSCommand::Could not get tasks on vds '{}' - network exception, not stopping spm! pool id '{}'",
