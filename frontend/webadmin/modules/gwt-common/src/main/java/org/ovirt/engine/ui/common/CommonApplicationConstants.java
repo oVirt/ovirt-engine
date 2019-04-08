@@ -781,6 +781,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String creationDateDisk();
 
+    String modificationDateDisk();
+
     String diskSnapshotIDDisk();
 
     String descriptionDisk();
