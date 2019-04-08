@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>4.3.3.3</version>
+  <version>4.3.3.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
@@ -44,7 +44,7 @@
     <model.version>4.3.22</model.version>
 
     <!-- oVirt extensions versions -->
-    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
+    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
 
     <!-- Dependencies Versions -->
     <junit.version>5.3.1</junit.version>
@@ -753,7 +753,7 @@
           <dependency>
             <groupId>org.ovirt.engine</groupId>
             <artifactId>ovirt-findbugs-filters</artifactId>
-            <version>4.3.3.3</version>
+            <version>4.3.3.4-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>
