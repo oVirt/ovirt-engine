@@ -163,7 +163,7 @@ LANGUAGE plpgsql;
 -- Adds a value to vdc_options (if not exists)
 CREATE OR REPLACE FUNCTION fn_db_add_config_value (
     v_option_name VARCHAR(100),
-    v_option_value VARCHAR(4000),
+    v_option_value TEXT,
     v_version VARCHAR(40)
     )
 RETURNS void AS $PROCEDURE$
@@ -273,7 +273,7 @@ LANGUAGE plpgsql;
 -- Updates a value in vdc_options (if exists)
 CREATE OR REPLACE FUNCTION fn_db_update_config_value (
     v_option_name VARCHAR(100),
-    v_option_value VARCHAR(4000),
+    v_option_value TEXT,
     v_version VARCHAR(40)
     )
 RETURNS void AS $PROCEDURE$
@@ -301,8 +301,8 @@ LANGUAGE plpgsql;
 -- Updates a value in vdc_options (if exists) if default value wasn't changed
 CREATE OR REPLACE FUNCTION fn_db_update_default_config_value (
     v_option_name VARCHAR(100),
-    v_default_option_value VARCHAR(4000),
-    v_option_value VARCHAR(4000),
+    v_default_option_value TEXT,
+    v_option_value TEXT,
     v_version VARCHAR(40),
     v_ignore_default_value_case boolean
     )
@@ -350,7 +350,7 @@ LANGUAGE plpgsql;
         )
     RETURNS void AS $PROCEDURE$
 
-    DECLARE v_current_option_value VARCHAR(4000);
+    DECLARE v_current_option_value TEXT;
 
     BEGIN
         IF (
