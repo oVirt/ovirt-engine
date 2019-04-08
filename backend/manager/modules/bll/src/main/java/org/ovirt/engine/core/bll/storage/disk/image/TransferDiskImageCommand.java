@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -186,6 +187,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected void tearDownImage(Guid vdsId) {
+        if (!Guid.Empty.equals(getImage().getImageTemplateId())) {
+            LockInfo lockInfo =
+                    lockManager.getLockInfo(getImage().getImageTemplateId() + LockingGroup.TEMPLATE.toString());
+
+            if (lockInfo != null) {
+                log.info("The template image is being used, skipping teardown");
+                return;
+            }
+        }
+
         try {
             VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
                     getImageActionsParameters(vdsId));

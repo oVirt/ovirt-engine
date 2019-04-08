@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -27,6 +30,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -336,6 +341,19 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
     }
 
     @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        // Lock the template image to prevent having it teared down
+        if (!Guid.Empty.equals(getDiskImage().getImageTemplateId())) {
+            return Collections.singletonMap(getDiskImage().getImageTemplateId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
+                                EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED));
+        }
+
+        return null;
+    }
+
+
+    @Override
     protected void endWithFailure() {
         // TODO: FILL! We should determine what to do in case of
         // failure (is everything rolled-backed? rolled-forward?
@@ -346,5 +364,10 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
     private String getSnapshotDescriptionById(Guid snapshotId) {
         Snapshot snapshot = snapshotDao.get(snapshotId);
         return snapshot != null ? snapshot.getDescription() : StringUtils.EMPTY;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Command);
     }
 }
