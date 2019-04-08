@@ -6,13 +6,13 @@
 --
 CREATE OR REPLACE FUNCTION InsertVdcOption (
     v_option_name VARCHAR(50),
-    v_option_value VARCHAR(50),
+    v_option_value TEXT,
     v_version VARCHAR(40),
     INOUT v_option_id INT
     ) AS $PROCEDURE$
 BEGIN
     INSERT INTO vdc_options (
-        OPTION_name,
+        option_name,
         option_value,
         version
         )
@@ -28,7 +28,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVdcOption (
     v_option_name VARCHAR(50),
-    v_option_value VARCHAR(50),
+    v_option_value TEXT,
     v_option_id INT,
     v_version VARCHAR(40)
     )
@@ -37,7 +37,7 @@ RETURNS VOID
     AS $PROCEDURE$
 BEGIN
     UPDATE vdc_options
-    SET OPTION_name = v_option_name,
+    SET option_name = v_option_name,
         option_value = v_option_value,
         version = v_version
     WHERE option_id = v_option_id;
