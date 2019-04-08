@@ -58,6 +58,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     private static AbstractDiskSizeColumn<Disk> sizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
+    private static AbstractTextColumn<Disk> dateModifiedColumn;
     private static AbstractColumn<Disk, Disk> statusColumn;
     private static AbstractTextColumn<Disk> lunIdColumn;
     private static AbstractTextColumn<Disk> lunSerialColumn;
@@ -194,6 +195,9 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
+                dateModifiedColumn, constants.modificationDateDisk(), images || cinder || managedBlock, "120px"); //$NON-NLS-1$
+
+        getTable().ensureColumnVisible(
                 statusColumn, constants.statusDisk(), images || cinder || managedBlock|| all,
                 "80px"); //$NON-NLS-1$
 
@@ -249,6 +253,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
         allocationColumn = DisksViewColumns.getAllocationColumn(null);
         dateCreatedColumn = DisksViewColumns.getDateCreatedColumn(DiskConditionFieldAutoCompleter.CREATION_DATE);
+        dateModifiedColumn = DisksViewColumns.getDateModifiedColumn(null);
         statusColumn = DisksViewColumns.getStatusColumn(DiskConditionFieldAutoCompleter.STATUS);
         lunIdColumn = DisksViewColumns.getLunIdColumn(null);
         lunSerialColumn = DisksViewColumns.getLunSerialColumn(null);

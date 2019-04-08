@@ -360,6 +360,20 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
+    public static final AbstractFullDateTimeColumn<Disk> getDateModifiedColumn(String sortBy) {
+        AbstractFullDateTimeColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
+            @Override
+            protected Date getRawValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
+                        object.getDiskStorageType() == DiskStorageType.CINDER ||
+                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
+                        ((DiskImage) object).getLastModified() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
     public static final AbstractColumn<Disk, Disk> getStatusColumn(String sortBy) {
         DiskTransferProgressColumn uploadImageProgressColumn = new DiskTransferProgressColumn();
         DiskProgressColumn diskProgressColumn = new DiskProgressColumn();
