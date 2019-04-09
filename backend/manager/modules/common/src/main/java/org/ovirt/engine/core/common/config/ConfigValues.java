@@ -270,6 +270,8 @@ public enum ConfigValues {
     EventQueueName,
     @TypeConverterAttribute(Integer.class)
     EventProcessingPoolSize,
+    @TypeConverterAttribute(Integer.class)
+    EventPurgeTimeoutInHours,
     @Reloadable
     @TypeConverterAttribute(String.class)
     OrganizationName,
