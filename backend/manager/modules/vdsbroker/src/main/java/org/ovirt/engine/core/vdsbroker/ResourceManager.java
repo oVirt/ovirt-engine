@@ -73,6 +73,7 @@ public class ResourceManager implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
     private int parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
+    private int eventTimeoutInHours = Config.getValue(ConfigValues.EventPurgeTimeoutInHours);
 
     @Inject
     private Instance<IVdsEventListener> eventListener;
@@ -451,7 +452,7 @@ public class ResourceManager implements BackendService {
 
     public void subscribe(EventSubscriber subscriber) {
         log.debug("subscribe called with subscription id: {}", subscriber.getSubscriptionId());
-        ReactorFactory.getWorker(this.parallelism).getPublisher().subscribe(subscriber);
+        ReactorFactory.getWorker(this.parallelism, this.eventTimeoutInHours).getPublisher().subscribe(subscriber);
     }
 
     @Inject

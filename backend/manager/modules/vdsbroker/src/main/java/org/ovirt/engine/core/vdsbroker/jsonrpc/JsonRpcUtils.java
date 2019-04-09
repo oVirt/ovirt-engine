@@ -31,6 +31,7 @@ public class JsonRpcUtils {
             boolean isSecure,
             String protocol,
             int parallelism,
+            int eventTimeoutInHours,
             String requestQueue,
             String responseQueue,
             String eventQueue,
@@ -49,7 +50,7 @@ public class JsonRpcUtils {
             log.debug(identifierLogMessage, hostname);
             connectionPolicy.setIdentifier(hostname);
         }
-        return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism, executorService);
+        return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism, eventTimeoutInHours, executorService);
     }
 
     private static JsonRpcClient createClient(String hostname,
@@ -60,6 +61,7 @@ public class JsonRpcUtils {
             ReactorType type,
             String protocol,
             int parallelism,
+            int eventTimeoutInHours,
             ScheduledExecutorService executorService) {
         ManagerProvider provider = null;
         if (isSecure) {
@@ -67,7 +69,7 @@ public class JsonRpcUtils {
         }
         try {
             final Reactor reactor = ReactorFactory.getReactor(provider, type);
-            return getJsonClient(reactor, hostname, port, connectionPolicy, clientPolicy, parallelism, executorService);
+            return getJsonClient(reactor, hostname, port, connectionPolicy, clientPolicy, parallelism, eventTimeoutInHours, executorService);
         } catch (ClientConnectionException e) {
             log.error("Exception occurred during building ssl context or obtaining selector for '{}': {}",
                     hostname,
@@ -83,10 +85,11 @@ public class JsonRpcUtils {
             ClientPolicy connectionPolicy,
             ClientPolicy clientPolicy,
             int parallelism,
+            int eventTimeoutInHours,
             ScheduledExecutorService executorService) throws ClientConnectionException {
         final ReactorClient client = reactor.createClient(hostName, port);
         client.setClientPolicy(connectionPolicy);
-        ResponseWorker worker = ReactorFactory.getWorker(parallelism);
+        ResponseWorker worker = ReactorFactory.getWorker(parallelism, eventTimeoutInHours);
         JsonRpcClient jsonClient = worker.register(client);
         jsonClient.setRetryPolicy(clientPolicy);
         jsonClient.setExecutorService(executorService);
