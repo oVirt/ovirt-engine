@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,6 +62,9 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                         getVmsMonitoring().perform(vms, fetchTime, vdsManager, false);
                         processDevices(vms.stream().map(Pair::getSecond), fetchTime);
                     }
+                } catch (Throwable t) {
+                    log.error("Error processing VM stats monitoring event: {}", ExceptionUtils.getRootCauseMessage(t));
+                    log.debug("Exception", t);
                 } finally {
                     subscription.request(1);
                 }
