@@ -47,7 +47,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(true);
+        return lockProperties.withScope(Scope.Execution).withWaitForever();
     }
 
     private List<VDS> getAllUpServers() {

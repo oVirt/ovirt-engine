@@ -132,7 +132,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(false);
+        return lockProperties.withScope(Scope.Execution).withNoWait();
     }
 
     @Override

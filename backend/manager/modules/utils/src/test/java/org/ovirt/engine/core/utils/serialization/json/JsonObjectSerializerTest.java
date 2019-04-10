@@ -56,7 +56,7 @@ public class JsonObjectSerializerTest {
     @Test
     public void serializeVdsActionParameters() {
         ActionParametersBase params = new ActionParametersBase();
-        params.setLockProperties(LockProperties.create(Scope.None).withWait(true));
+        params.setLockProperties(LockProperties.create(Scope.None).withWaitForever());
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         assertTrue(serializer.serialize(params).length() > 0);
     }

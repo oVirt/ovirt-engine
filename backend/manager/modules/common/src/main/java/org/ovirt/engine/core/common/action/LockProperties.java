@@ -11,6 +11,8 @@ public class LockProperties implements Serializable {
 
 
     private static final long serialVersionUID = -4444694059467965831L;
+    private static final long NO_WAIT = -1L;
+    private static final long WAIT_FOREVER = 0L;
 
     public static enum Scope {
         /**
@@ -35,19 +37,49 @@ public class LockProperties implements Serializable {
     private Scope scope = Scope.None;
 
     /**
-     * Wait until the lock is acquired
+     * <pre>
+     * Policy for acquiring the lock. The values of this field signify:
+     *    -2 or less: undefined
+     *    NO_WAIT (-1): if lock is not acquired on the first trial, do not try again and return a failure message.
+     *    WAIT_FOREVER(0): try to acquire the lock indefinitely.
+     *    1 or more: try to acquire the lock until the timeout value (milliseconds) is reached.
+     * </pre>
      */
-    private boolean wait = true;
+    private long timeoutMillis = WAIT_FOREVER;
 
     private LockProperties() {}
 
-    public boolean isWait() {
-        return wait;
+    public boolean isNoWait() {
+        return timeoutMillis == NO_WAIT;
     }
 
-    public LockProperties withWait(boolean wait) {
-        this.wait = wait;
+    public boolean isWaitForever() {
+        return timeoutMillis == WAIT_FOREVER;
+    }
+
+    public boolean isTimeout() {
+        return timeoutMillis > 0;
+    }
+
+    public LockProperties withNoWait() {
+        return withTimeout(NO_WAIT);
+    }
+
+    public LockProperties withWaitForever() {
+        return withTimeout(WAIT_FOREVER);
+    }
+
+    public LockProperties withWaitTimeout(long timeoutMillis) {
+        return withTimeout(timeoutMillis);
+    }
+
+    private LockProperties withTimeout(long timeoutMillis) {
+        this.timeoutMillis = timeoutMillis;
         return this;
+    }
+
+    public long getTimeoutMillis() {
+        return timeoutMillis;
     }
 
     public LockProperties withScope(Scope scope) {

@@ -30,7 +30,7 @@ public class SyncStorageDevicesCommand<T extends SyncGlusterStorageDevicesParame
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(false);
+        return lockProperties.withScope(Scope.Execution).withNoWait();
     }
 
     @Override

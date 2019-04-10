@@ -133,7 +133,7 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(LockProperties.Scope.Execution).withWait(true);
+        return lockProperties.withScope(LockProperties.Scope.Execution).withWaitForever();
     }
 
     @Override

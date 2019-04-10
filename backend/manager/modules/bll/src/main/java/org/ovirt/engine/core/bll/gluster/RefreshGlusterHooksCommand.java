@@ -25,7 +25,7 @@ public class RefreshGlusterHooksCommand<T extends GlusterClusterParameters> exte
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(true);
+        return lockProperties.withScope(Scope.Execution).withWaitForever();
     }
 
     @Override

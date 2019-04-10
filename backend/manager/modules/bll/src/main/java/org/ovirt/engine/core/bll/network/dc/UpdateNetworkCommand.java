@@ -511,7 +511,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(LockProperties.Scope.Execution).withWait(true);
+        return lockProperties.withScope(LockProperties.Scope.Execution).withWaitForever();
     }
 
     @Override

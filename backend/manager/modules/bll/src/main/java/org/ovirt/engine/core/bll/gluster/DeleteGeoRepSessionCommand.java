@@ -29,7 +29,7 @@ public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(false);
+        return lockProperties.withScope(Scope.Execution).withNoWait();
     }
 
     @Override

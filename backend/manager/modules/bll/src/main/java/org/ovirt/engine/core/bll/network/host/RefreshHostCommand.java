@@ -16,8 +16,8 @@ public class RefreshHostCommand extends VdsCommand<VdsActionParameters> {
     @Override
     protected void executeCommand() {
         VdsActionParameters parameters = new VdsActionParameters(getVdsId());
-        parameters.setLockProperties(
-                LockProperties.create(LockProperties.Scope.Execution).withWait(isInternalExecution()));
+        LockProperties lockProperties = LockProperties.create(LockProperties.Scope.Execution);
+        parameters.setLockProperties(isInternalExecution() ? lockProperties.withWaitForever() : lockProperties.withNoWait());
 
         ActionReturnValue returnValue = runInternalAction(ActionType.RefreshHostCapabilities, parameters);
         if (!returnValue.getSucceeded()) {
