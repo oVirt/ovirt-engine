@@ -897,7 +897,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     protected LockProperties getLockProperties() {
-        return LockProperties.create(LockProperties.Scope.Command).withWait(false);
+        return LockProperties.create(LockProperties.Scope.Command).withNoWait();
     }
 
     @Override

@@ -395,6 +395,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(LockProperties.Scope.Execution).withWait(true);
+        return lockProperties.withScope(LockProperties.Scope.Execution).withWaitForever();
     }
 }

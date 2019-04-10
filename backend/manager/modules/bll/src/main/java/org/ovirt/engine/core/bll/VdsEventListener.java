@@ -566,7 +566,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void refreshHostCapabilities(Guid hostId) {
         ActionParametersBase parameters = new VdsActionParameters(hostId);
         parameters.setLockProperties(
-                LockProperties.create(LockProperties.Scope.Execution).withWait(true));
+                LockProperties.create(LockProperties.Scope.Execution).withWaitForever());
         backend.runInternalAction(ActionType.RefreshHostCapabilities, parameters);
     }
 

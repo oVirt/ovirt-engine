@@ -1774,7 +1774,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
      * The default lock property settings for the commands
      */
     protected final LockProperties getLockingPropertiesSettings() {
-        return LockProperties.create(Scope.None).withWait(false);
+        return LockProperties.create(Scope.None).withNoWait();
     }
 
     /**
@@ -1803,7 +1803,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         boolean returnValue = true;
         if (!Scope.None.equals(lockProperties.getScope())) {
             releaseLocksAtEndOfExecute = Scope.Execution.equals(lockProperties.getScope());
-            if (!lockProperties.isWait()) {
+            if (lockProperties.isNoWait()) {
                 returnValue = acquireLockInternal();
             } else {
                 acquireLockAndWait();
