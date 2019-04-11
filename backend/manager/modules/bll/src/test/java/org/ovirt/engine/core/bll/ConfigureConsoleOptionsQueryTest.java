@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -178,9 +179,15 @@ public class ConfigureConsoleOptionsQueryTest extends
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
 
-        VdsDynamic vds = new VdsDynamic();
-        vds.setVncEncryptionEnabled(true);
-        doReturn(vds).when(getQuery()).getHost();
+        VDS vds = new VDS();
+        vds.setHostName("test.host.name");
+        QueryReturnValue qrv = new QueryReturnValue();
+        qrv.setReturnValue(vds);
+        doReturn(qrv).when(backend).runInternalQuery(eq(QueryType.GetVdsByName), any());
+
+        VdsDynamic vdsDynamic = new VdsDynamic();
+        vdsDynamic.setVncEncryptionEnabled(true);
+        doReturn(vdsDynamic).when(getQuery()).getHost();
         doReturn(true).when(getQuery()).isKernelFips();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
