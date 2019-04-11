@@ -53,9 +53,46 @@ Both packages can be installed from ovirt-master-snapshot-static repository:
 
 Please replace `@DIST@` with `fc` for Fedora or `el` for Centos/RHEL.
 
+Alternatively, repository list can be updated using the following command:
+
+  $ sudo yum install -y http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm
+
 OVN/OVS is an optional dependency. If you want to use it, check the requirements in the
 ovirt-engine.spec.in file for a list of packages. Otherwise, you should reply 'No'
 when asked about it by engine-setup.
+
+For Fedora prerequisites installation, following command can be applied:
+
+  $ sudo yum install -y $(cat automation/check-patch.packages)
+
+Install additional packages for Fedora:
+
+  $ sudo yum install -y \
+        ansible \
+        bind-utils \
+        libxml2-python \
+        m2crypto \
+        mailcap \
+        openssl \
+        ovirt-ansible-roles \
+        ovirt-engine-metrics \
+        ovirt-engine-wildfly \
+        ovirt-engine-wildfly-overlay \
+        ovirt-host-deploy \
+        ovirt-setup-lib \
+        python2-daemon \
+        python2-dateutil \
+        python2-jinja2 \
+        python-ovirt-engine-sdk4 \
+        unzip
+
+Optional packages for Fedora:
+
+  $ sudo yum install -y \
+        python2-docker-py \
+        python2-flake8 \
+        python2-isort \
+        python2-pep8
 
 === System settings
 
@@ -86,6 +123,10 @@ If compiling in a virtual machine, javac might experience difficulties on guests
 better to have VM's starting allocation and maximum allocation set to the same value.
 
 === PostgreSQL accessibility
+
+Initialize PostgreSQL configuration files:
+
+  $ sudo postgresql-setup --initdb --unit postgresql # fedora
 
 Configure PostgreSQL to accept user and password:
 
