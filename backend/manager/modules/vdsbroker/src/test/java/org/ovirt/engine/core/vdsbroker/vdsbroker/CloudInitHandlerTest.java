@@ -31,11 +31,11 @@ public class CloudInitHandlerTest {
     private static final String DNS_SERVERS = "dns servers";
     private static final String DNS_SEARCH = "dns search";
 
-    private VmInit vmInit;
+    protected VmInit vmInit;
     private CloudInitHandler underTest;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         vmInit = new VmInit();
         vmInit.setCloudInitNetworkProtocol(CloudInitNetworkProtocol.ENI);
         underTest = new CloudInitHandler(vmInit);

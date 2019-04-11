@@ -142,10 +142,9 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
             break;
 
         case CloudInit:
-            CloudInitHandler cloudInitHandler = new CloudInitHandler(getParameters().getVm().getVmInit());
             Map<String, byte[]> cloudInitContent;
             try {
-                cloudInitContent = cloudInitHandler.getFileData();
+                cloudInitContent = vmInfoBuildUtils.buildPayload(getParameters().getVm().getVmInit());
             } catch (Exception e) {
                 throw new RuntimeException("Failed to build cloud-init data:", e);
             }
@@ -171,10 +170,9 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
                     : null;
 
         case CloudInit:
-            CloudInitHandler cloudInitHandler = new CloudInitHandler(getParameters().getVm().getVmInit());
             Map<String, byte[]> cloudInitContent;
             try {
-                cloudInitContent = cloudInitHandler.getFileData();
+                cloudInitContent = vmInfoBuildUtils.buildPayload(getParameters().getVm().getVmInit());
             } catch (Exception e) {
                 throw new RuntimeException("Failed to build cloud-init data:", e);
             }

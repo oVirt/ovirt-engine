@@ -10,11 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -36,6 +35,7 @@ public class CloudInitHandler {
     private final Map<String, Object> metaData;
     private final Map<String, Object> userData;
     private final Map<String, byte[]> files;
+    private Supplier<String> userDataProvider;
     private int nextFileIndex;
     private String interfaces;
     private Map<String, Object> networkData;
@@ -73,11 +73,17 @@ public class CloudInitHandler {
         userData = new HashMap<>();
         files = new HashMap<>();
         nextFileIndex = 0;
+        userDataProvider = this::getUserData;
+    }
+
+    public CloudInitHandler (VmInit vmInit, Supplier<String> customUserDataProvider) {
+        this(vmInit);
+        this.userDataProvider = customUserDataProvider;
     }
 
 
     public Map<String, byte[]> getFileData()
-            throws UnsupportedEncodingException, IOException, JsonGenerationException, JsonMappingException {
+            throws IOException {
         if (vmInit != null) {
             try {
                 storeHostname();
@@ -96,17 +102,8 @@ public class CloudInitHandler {
         storeExecutionParameters();
 
         String metaDataStr = mapToJson(metaData);
-        String userDataStr = mapToYaml(userData);
         String networkDataStr = !MapUtils.isEmpty(networkData) ? mapToJson(networkData) : "";
-
-        if (vmInit != null && vmInit.getCustomScript() != null) {
-            userDataStr += vmInit.getCustomScript();
-        }
-
-        // add #cloud-config for user data file head
-        if (StringUtils.isNotBlank(userDataStr)) {
-            userDataStr = "#cloud-config\n" + userDataStr;
-        }
+        String userDataStr = userDataProvider.get();
 
         files.put("openstack/latest/meta_data.json", metaDataStr.getBytes("UTF-8"));
         files.put("openstack/latest/user_data", userDataStr.getBytes("UTF-8"));
@@ -124,6 +121,20 @@ public class CloudInitHandler {
         log.debug("cloud-init meta-data:\n{}", metaDataStr);
         log.debug("cloud-init user-data:\n{}", userDataStr);
         return files;
+    }
+
+    private String getUserData() {
+        String userDataStr = mapToYaml(userData);
+
+        if (vmInit != null && vmInit.getCustomScript() != null) {
+            userDataStr += vmInit.getCustomScript();
+        }
+
+        // add #cloud-config for user data file head
+        if (StringUtils.isNotBlank(userDataStr)) {
+            userDataStr = "#cloud-config\n" + userDataStr;
+        }
+        return userDataStr;
     }
 
     private void storeNetwork() throws UnsupportedEncodingException {
