@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.EnumSet;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public enum StorageFormatType {
 
@@ -25,7 +27,8 @@ public enum StorageFormatType {
      * this functions provides a fixed default list of sd version for pre
      * 4.3 vdsms
      */
-    private static final EnumSet<StorageFormatType> defaultSupportedVersions = EnumSet.of(V1, V2, V3, V4);
+    private static final Set<StorageFormatType> defaultSupportedVersions =
+            new HashSet<>(Arrays.asList(V1, V2, V3, V4));
 
     private final String value;
     private static final Map<String, StorageFormatType> mappings = new HashMap<>();
@@ -51,7 +54,7 @@ public enum StorageFormatType {
         return mappings.get(value);
     }
 
-    public static EnumSet<StorageFormatType> getDefaultSupportedVersions() {
+    public static Set<StorageFormatType> getDefaultSupportedVersions() {
         return defaultSupportedVersions;
     }
 }
