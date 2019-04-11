@@ -153,7 +153,7 @@ public class VmPoolHandler implements BackendService {
     public Guid selectPrestartedVm(Guid vmPoolId, boolean isStatefulPool, ErrorProcessor errorProcessor) {
         return selectPrestartedVms(vmPoolId, isStatefulPool, errorProcessor, false)
                 .findFirst()
-                .map(vmId -> acquireVm(vmId, true))
+                .map(vmId -> acquireVm(vmId, false))
                 .orElse(Guid.Empty);
     }
 
