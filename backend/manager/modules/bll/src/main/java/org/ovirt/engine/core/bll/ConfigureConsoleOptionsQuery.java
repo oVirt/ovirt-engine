@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.config.Config;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -382,7 +384,15 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             // If VNC encyption is enabled (at cluster level or because of FIPS mode)
             // the console descriptor must contain host name,
             // to match TLS certificate for connection
-            result = getCachedVm().getRunOnVdsName();
+            String hostName = getCachedVm().getRunOnVdsName();
+            QueryReturnValue queryReturnValue = backend.runInternalQuery(QueryType.GetVdsByName,
+                    new NameQueryParameters(hostName));
+            VDS vds = queryReturnValue.getReturnValue();
+            if (vds != null) {
+                result = vds.getHostName();
+            } else {
+                log.warn("Could not find host's FQDN, falling back to IP");
+            }
         }
 
         return result;
