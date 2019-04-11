@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -103,6 +105,7 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
@@ -110,6 +113,8 @@ import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.collections.ComparatorUtils;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.IgnitionHandler;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -1403,4 +1408,30 @@ public class VmInfoBuildUtils {
         log.info("Kernel FIPS - Guid: " + vdsGuid + " fips: " + fips);
         return vdsStaticDao.get(vdsGuid).isKernelCmdlineFips();
     }
+
+    /**
+     * buildPayload will create a proper payload to pass to libvirt.
+     * It supports both cloud-init, and ignition.
+     * Cloud init payload is supported before 4.0
+     * Ignition support is experimental, and is implicit. To get an ignition
+     * payload, a valid json with an 'ignition' key must be passed as a custom script
+     * Only in that case the payload will be passed as-is, without extra cloud-init additions.
+     * vmInit - holding all the init data for a VM - hostname, script, root password etc.
+     **/
+    public Map<String, byte[]> buildPayload(VmInit vmInit) throws IOException {
+        // detect ignition
+        boolean isIgnition = false;
+        try {
+            isIgnition = JsonHelper.jsonToMap(vmInit.getCustomScript()).containsKey("ignition");
+            if (isIgnition) {
+                // there is no json schema or a java library that validates ignition files yet. The passing criterira now
+                // is a valid json structure with an 'ignition' key
+                log.info("the json content under custom script is an ignition json file, the content has not been validated");
+            }
+        } catch (IOException e) {
+            // not a json - probably not an ignition config
+        }
+        return isIgnition ? new IgnitionHandler(vmInit).getFileData() : new CloudInitHandler(vmInit).getFileData();
+    }
+
 }

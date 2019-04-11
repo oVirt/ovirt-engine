@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.MB_TO_BYTES;
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
@@ -369,5 +372,24 @@ public class VmInfoBuildUtilsTest {
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setClusterId(CLUSTER_ID);
         assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).get());
+    }
+
+    @Test
+    public void testBuildCloudInitPayload() {
+        VmInit vmInit = new VmInit();
+        vmInit.setCustomScript("packages: [foo]");
+
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
+        String userData = new String(stringMap.get("openstack/latest/user_data"));
+        assertTrue(userData.startsWith("#cloud-config"));
+        assertTrue(userData.contains("packages: [foo]"));
+    }
+    @Test
+    public void testBuildIgnition() {
+        VmInit vmInit = new VmInit();
+        vmInit.setCustomScript("{\"ignition\": {} }");
+
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
+        assertTrue(new String(stringMap.get("openstack/latest/user_data")).startsWith("{\"ignition\""));
     }
 }
