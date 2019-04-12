@@ -97,7 +97,13 @@ public class AnsibleServlet extends HttpServlet {
                 asyncContext.complete();
 
                 // Execute the ansible-playbook command:
-                AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+                AnsibleReturnValue ansibleReturnValue;
+                String timeout = request.getParameter("execution_timeout");
+                if (timeout != null) {
+                    ansibleReturnValue = ansibleExecutor.runCommand(command, Integer.valueOf(timeout));
+                } else {
+                    ansibleReturnValue = ansibleExecutor.runCommand(command);
+                }
 
                 // Wait until ansible-playbook command finish:
                 if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
