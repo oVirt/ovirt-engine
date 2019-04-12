@@ -68,19 +68,19 @@ public class GetGeoRepSessionsForStorageDomainQuery<P extends IdQueryParameters>
             String volumeName = pathElements[1];
             String hostName = pathElements[0];
             String hostAddress;
-            try {
-                hostAddress = InetAddress.getByName(hostName).getHostAddress();
-            } catch (UnknownHostException e) {
-                // return empty
+
+            hostAddress = resolveHostName(hostName);
+            if (hostAddress == null) {
                 getQueryReturnValue().setSucceeded(false);
                 return;
             }
             List<VDS> vdsList = vdsDao.getAll();
             VDS vds = vdsList.stream()
-                    .filter(v -> v.getName().equals(hostName)
+                    .filter(v -> hostName.equals(v.getName())
                             || interfaceDao.getAllInterfacesForVds(v.getId())
                                     .stream()
-                                    .anyMatch(iface -> iface.getIpv4Address().equals(hostAddress)))
+                                    .anyMatch(iface -> hostAddress.equals(iface.getIpv4Address())
+                                              || hostAddress.equals(iface.getIpv6Address())))
                     .findFirst()
                     .orElse(null);
             if (vds == null) {
@@ -97,6 +97,15 @@ public class GetGeoRepSessionsForStorageDomainQuery<P extends IdQueryParameters>
         }
         getQueryReturnValue().setReturnValue(glusterGeoRepDao.getGeoRepSessions(glusterVolumeId));
         getQueryReturnValue().setSucceeded(true);
+    }
+
+    //extracted to enable testing
+    protected String resolveHostName(String hostName) {
+        try {
+            return InetAddress.getByName(hostName).getHostAddress();
+        } catch (UnknownHostException e) {
+            return null;
+        }
     }
 
 }
