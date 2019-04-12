@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.common.queries;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetValidHostsForVmsParameters extends QueryParametersBase {
+    private static final long serialVersionUID = -8417122714295216837L;
+
     private List<VM> vms;
 
     public List<VM> getVms() {
@@ -27,57 +29,16 @@ public class GetValidHostsForVmsParameters extends QueryParametersBase {
         this.clusterId = clusterId;
     }
 
-    private List<Guid> blackList;
-
-    public List<Guid> getBlackList() {
-        return blackList;
-    }
-
-    public void setBlackList(List<Guid> blackList) {
-        this.blackList = blackList;
-    }
-
-    private List<Guid> whiteList;
-
-    public List<Guid> getWhiteList() {
-        return whiteList;
-    }
-
-    public void setWhiteList(List<Guid> whiteList) {
-        this.whiteList = whiteList;
-    }
-
-    private List<String> messages;
-
-    public List<String> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
-
-    public GetValidHostsForVmsParameters(List<VM> vms,
-                                         Guid clusterId,
-                                         List<Guid> blackList,
-                                         List<Guid> whiteList,
-                                         List<String> messages) {
+    public GetValidHostsForVmsParameters(List<VM> vms, Guid clusterId) {
         this.setVms(vms);
         this.setClusterId(clusterId);
-        this.setBlackList(blackList);
-        this.setWhiteList(whiteList);
-        this.setMessages(messages);
     }
 
     public GetValidHostsForVmsParameters(List<VM> vms) {
-        this (vms, Guid.Empty, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-    }
-
-    public GetValidHostsForVmsParameters(List<VM> vms, Guid clusterId) {
-        this (vms, clusterId, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this (vms, Guid.Empty);
     }
 
     public GetValidHostsForVmsParameters() {
-        this (new ArrayList<>(), Guid.Empty, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this (Collections.emptyList(), Guid.Empty);
     }
 }

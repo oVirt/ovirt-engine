@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,14 +48,15 @@ public class GetValidHostsForVmsQuery<P extends GetValidHostsForVmsParameters> e
         Cluster cluster = clusterDao.get(clusterId);
 
         List<VM> vms = getParameters().getVms();
-        List<Guid> blackList = getParameters().getBlackList();
-        List<Guid> whiteList = getParameters().getWhiteList();
-        List<String> messages = getParameters().getMessages();
-
         Map<Guid, VDS> hostMap = new HashMap<>();
 
         List<Set<Guid>> hostsLists = vms.stream()
-            .map(vm -> schedulingManager.canSchedule(cluster, vm, blackList, whiteList, new SchedulingParameters(), messages))
+            .map(vm -> schedulingManager.canSchedule(cluster,
+                    vm,
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    new SchedulingParameters(),
+                    new ArrayList<>()))
             .map(hosts -> addToMap(hostMap, hosts))
             .map(this::getIdSet)
             .collect(Collectors.toList());
