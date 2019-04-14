@@ -936,7 +936,7 @@ public class ImagesHandler {
         return null;
     }
 
-    private static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
+    public static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
         // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
         // case in which we won't have enough space. If the source is already COW we don't need the additional
         // space.
