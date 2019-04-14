@@ -34,7 +34,7 @@ public class HotUnPlugDiskFromVmCommand<T extends VmDiskOperationParameterBase> 
         super.executeVmCommand();
         if (DiskStorageType.MANAGED_BLOCK_STORAGE == getDisk().getDiskStorageType()) {
                 managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisk(getVm(),
-                        diskImageDao.get(getDisk().getId()));
+                        diskImageDao.get(getDisk().getId()), false);
         }
     }
 

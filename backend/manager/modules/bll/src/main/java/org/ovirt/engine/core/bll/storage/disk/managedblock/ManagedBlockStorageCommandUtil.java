@@ -157,29 +157,38 @@ public class ManagedBlockStorageCommandUtil {
     }
 
     public boolean disconnectManagedBlockStorageDisks(VM vm, VmHandler vmHandler) {
+        return disconnectManagedBlockStorageDisks(vm, vmHandler, false);
+    }
+
+    public boolean disconnectManagedBlockStorageDisks(VM vm, VmHandler vmHandler, boolean removeDest) {
         if (vm.getDiskMap().isEmpty()) {
             vmHandler.updateDisksFromDb(vm);
         }
 
         List<ManagedBlockStorageDisk> disks =
                 DisksFilter.filterManagedBlockStorageDisks(vm.getDiskMap().values());
-        return disks.stream().allMatch(disk -> disconnectManagedBlockStorageDisk(vm, disk));
+        return disks.stream().allMatch(disk -> disconnectManagedBlockStorageDisk(vm, disk, removeDest));
     }
 
-    public boolean disconnectManagedBlockStorageDisk(VM vm, DiskImage disk) {
+    public boolean disconnectManagedBlockStorageDisk(VM vm, DiskImage disk, boolean removeDest) {
         VmDevice vmDevice = vmDeviceDao.get(new VmDeviceId(disk.getId(), vm.getId()));
         DisconnectManagedBlockStorageDeviceParameters parameters =
                 new DisconnectManagedBlockStorageDeviceParameters();
         parameters.setStorageDomainId(disk.getStorageIds().get(0));
         parameters.setDiskId(disk.getImageId());
 
-        Guid vdsId = (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.ATTACHED_VDS_ID);
+        // In case of a live migration failure we want to detach from the destination
+        Guid vdsId = removeDest ? (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.DEST_VDS_ID) :
+                (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.ATTACHED_VDS_ID);
 
         // Disk is being disconnected as part of live migration
         Guid destVdsId = (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.DEST_VDS_ID);
         if (destVdsId != null) {
+            if (!removeDest) {
+                vmDevice.getSpecParams().put(ManagedBlockStorageDisk.ATTACHED_VDS_ID, destVdsId);
+            }
+
             // The device is now attached only to the destination host
-            vmDevice.getSpecParams().put(ManagedBlockStorageDisk.ATTACHED_VDS_ID, destVdsId);
             vmDevice.getSpecParams().remove(ManagedBlockStorageDisk.DEST_VDS_ID);
             TransactionSupport.executeInNewTransaction(() -> {
                 vmDeviceDao.update(vmDevice);

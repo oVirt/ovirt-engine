@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -244,8 +245,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             getParameters().setTotalMigrationTime(new Date());
             getParameters().resetStartTime();
 
+            BooleanSupplier attachMBSDisks =  () -> managedBlockStorageCommandUtil
+                    .attachManagedBlockStorageDisks(getVm(), vmHandler, getDestinationVds(), true);
             if (unplugPassthroughNics() && connectLunDisks(getDestinationVdsId()) &&
-                    attachManagedBlockDiskToDest() &&
+                    attachOrDetachMBSFromDest(attachMBSDisks) &&
                     migrateVm()) {
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 return true;
@@ -537,6 +540,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         try {
             //this will clean all VF reservations made in {@link #initVdss}.
             cleanupPassthroughVnics(getDestinationVdsId());
+            BooleanSupplier detachMBSDisk = () -> managedBlockStorageCommandUtil
+                    .disconnectManagedBlockStorageDisks(getVm(), vmHandler, true);
+            if (!attachOrDetachMBSFromDest(detachMBSDisk)) {
+                log.error("Failed to detach managed block disks from destination host");
+            }
         } finally {
             super.runningFailed();
         }
@@ -715,13 +723,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return nic.getStatistics().getStatus() == InterfaceStatus.UP;
     }
 
-    private boolean attachManagedBlockDiskToDest() {
+    private boolean attachOrDetachMBSFromDest(BooleanSupplier supplier) {
+        vmHandler.updateDisksFromDb(getVm());
         if (DisksFilter.filterManagedBlockStorageDisks(getVm().getDiskList()).isEmpty()) {
             return true;
         }
 
-        return managedBlockStorageCommandUtil
-                .attachManagedBlockStorageDisks(getVm(), vmHandler, getDestinationVds(), true);
+        return supplier.getAsBoolean();
     }
 
     /**
