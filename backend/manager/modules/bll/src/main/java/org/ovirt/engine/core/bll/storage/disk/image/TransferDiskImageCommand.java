@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockInfo;
@@ -412,7 +413,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return ((DiskImage) getParameters().getAddDiskParameters().getDiskInfo()).getVolumeFormat();
     }
 
-    private ImageTransferBackend getTransferBackend() {
+    protected ImageTransferBackend getTransferBackend() {
         return getParameters().getVolumeFormat() == VolumeFormat.RAW ?
                 ImageTransferBackend.NBD : ImageTransferBackend.FILE;
     }
@@ -546,26 +547,72 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         resetPeriodicPauseLogTime(0);
     }
 
+    /**
+     * direction   storage    transfer    disk     ticket size
+     * =================================================================================
+     * upload      block      raw         *        virtual size
+     * upload      block      -           raw      lv size (virtual size)
+     * upload      block      -           qcow2    lv size (virtual size + cow overhead)
+     * ---------------------------------------------------------------------------------
+     * upload      file       raw         *        virtual size
+     * upload      file       -           raw      virtual size
+     * upload      file       -           qcow2    virtual size + cow overhead[1]
+     * ---------------------------------------------------------------------------------
+     * upload (ui) *          -           *        uploaded file size
+     * ---------------------------------------------------------------------------------
+     * download    block      raw         *        virtual size (using /map)
+     * download    block      -           raw      virtual size
+     * download    block      -           qcow2    image-end-offset[2]
+     * ---------------------------------------------------------------------------------
+     * download    file       raw         *        virtual size (using /map)
+     * download    file       -           raw      virtual size
+     * download    file       -           qcow2    file size
+     * ---------------------------------------------------------------------------------
+     */
     private long getTransferSize() {
         DiskImage image = getDiskImage();
-        Guid domainId = image.getStorageIds().get(0);
+
+        if (getTransferBackend() == ImageTransferBackend.NBD) {
+            // NBD always uses virtual size (raw format)
+            return image.getSize();
+        }
 
         if (getParameters().getTransferType() == TransferType.Download) {
-            if (image.getVolumeFormat() == VolumeFormat.COW) {
-                DiskImage imageInfoFromVdsm = imagesHandler.getVolumeInfoFromVdsm(
-                        image.getStoragePoolId(), domainId, image.getId(), image.getImageId());
-                return imageInfoFromVdsm.getApparentSizeInBytes();
-            } else { // RAW
+            if (image.getVolumeFormat() == VolumeFormat.RAW) {
                 return image.getSize();
             }
+            if (image.getVolumeFormat() == VolumeFormat.COW) {
+                return getImageApparentSize(image);
+            }
+            // Shouldn't happen
+            throw new RuntimeException(String.format(
+                    "Invalid volume format: %s", image.getVolumeFormat()));
+        } else if (getParameters().getTransferType() == TransferType.Upload) {
+            if (getParameters().getTransferSize() != 0) {
+                // TransferSize is only set by the webadmin
+                return getParameters().getTransferSize();
+            }
+            if (image.getVolumeFormat() == VolumeFormat.RAW) {
+                return image.getSize();
+            }
+            // COW volume format
+            boolean isBlockDomain = image.getStorageTypes().get(0).isBlockDomain();
+            if (isBlockDomain) {
+                return image.getActualSizeInBytes();
+            }
+            // Needed to allow uploading fully allocated qcow (BZ#1697294)
+            return (long) Math.ceil(image.getSize() * StorageConstants.QCOW_OVERHEAD_FACTOR);
         }
-        // Upload
-        if (getParameters().getTransferSize() != 0) {
-            // TransferSize is only set by the webadmin
-            return getParameters().getTransferSize();
-        }
-        boolean isBlockDomain = image.getStorageTypes().get(0).isBlockDomain();
-        return isBlockDomain ? image.getActualSizeInBytes() : image.getSize();
+        // Shouldn't happen
+        throw new RuntimeException(String.format(
+                "Invalid transfer type: %s", getParameters().getTransferType()));
+    }
+
+    protected long getImageApparentSize(DiskImage image) {
+        Guid domainId = image.getStorageIds().get(0);
+        DiskImage imageInfoFromVdsm = imagesHandler.getVolumeInfoFromVdsm(
+                image.getStoragePoolId(), domainId, image.getId(), image.getImageId());
+        return imageInfoFromVdsm.getApparentSizeInBytes();
     }
 
     private void handleResuming(final StateContext context) {

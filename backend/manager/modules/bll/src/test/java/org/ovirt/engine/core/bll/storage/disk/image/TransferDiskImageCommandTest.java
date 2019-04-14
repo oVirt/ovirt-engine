@@ -36,10 +36,12 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -115,7 +117,10 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         readyImage.setImageId(imageId);
         readyImage.setStorageIds(Collections.singletonList(sdId));
         readyImage.setStorageTypes(Collections.singletonList(StorageType.NFS));
+        readyImage.setVolumeFormat(VolumeFormat.COW);
         readyImage.setSize(1024L);
+        readyImage.setApparentSizeInBytes(1127L);
+        readyImage.setActualSizeInBytes(1127L);
 
         doReturn(readyImage).when(transferImageCommand).getDiskImage();
         return readyImage;
@@ -269,7 +274,6 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         transferImageCommand.handleImageIsReadyForTransfer();
 
         assertEquals(transferImageCommand.getParameters().getStorageDomainId(), readyImage.getStorageIds().get(0));
-        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());
     }
 
     @Test
@@ -289,6 +293,91 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         inOrder = inOrder(params, transferImageCommand);
         inOrder.verify(params).setTransferSize(anyLong());
         inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
+    }
+
+    /**********
+     * Transfer Size
+     *********/
+    @Test
+    public void testTransferSizeNBD() {
+        DiskImage readyImage = initReadyImageForUpload();
+
+        transferImageCommand.getParameters().setVolumeFormat(VolumeFormat.RAW);
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getTransferBackend(), ImageTransferBackend.NBD);
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());
+    }
+
+    @Test
+    public void testTransferSizeDownloadRAW() {
+        DiskImage readyImage = initReadyImageForUpload();
+        readyImage.setVolumeFormat(VolumeFormat.RAW);
+
+        transferImageCommand.getParameters().setTransferType(TransferType.Download);
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());
+    }
+
+    @Test
+    public void testTransferSizeDownloadCOW() {
+        DiskImage readyImage = initReadyImageForUpload();
+        readyImage.setVolumeFormat(VolumeFormat.COW);
+
+        doReturn(readyImage.getApparentSizeInBytes()).when(transferImageCommand).getImageApparentSize(readyImage);
+
+        transferImageCommand.getParameters().setTransferType(TransferType.Download);
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getApparentSizeInBytes());
+    }
+
+    @Test
+    public void testTransferSizeUploadFromUI() {
+        DiskImage readyImage = initReadyImageForUpload();
+
+        transferImageCommand.getParameters().setTransferType(TransferType.Upload);
+        transferImageCommand.getParameters().setTransferSize(readyImage.getSize());
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());
+    }
+
+    @Test
+    public void testTransferSizeUploadRAW() {
+        DiskImage readyImage = initReadyImageForUpload();
+        readyImage.setVolumeFormat(VolumeFormat.RAW);
+
+        transferImageCommand.getParameters().setTransferType(TransferType.Upload);
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());
+    }
+
+    @Test
+    public void testTransferSizeUploadBlockCOW() {
+        DiskImage readyImage = initReadyImageForUpload();
+        readyImage.setVolumeFormat(VolumeFormat.COW);
+        readyImage.setStorageTypes(Collections.singletonList(StorageType.ISCSI));
+
+        transferImageCommand.getParameters().setTransferType(TransferType.Upload);
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getActualSizeInBytes());
+    }
+
+    @Test
+    public void testTransferSizeUploadFileCOW() {
+        DiskImage readyImage = initReadyImageForUpload();
+        readyImage.setVolumeFormat(VolumeFormat.COW);
+        readyImage.setStorageTypes(Collections.singletonList(StorageType.NFS));
+
+        transferImageCommand.getParameters().setTransferType(TransferType.Upload);
+        transferImageCommand.handleImageIsReadyForTransfer();
+
+        assertEquals(transferImageCommand.getParameters().getTransferSize(),
+                Math.ceil(readyImage.getSize() * StorageConstants.QCOW_OVERHEAD_FACTOR));
     }
 
     /**********
