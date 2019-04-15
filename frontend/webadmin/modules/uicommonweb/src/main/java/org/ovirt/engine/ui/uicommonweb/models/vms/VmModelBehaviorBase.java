@@ -421,7 +421,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected String getSelectedTimeZone() {
-        return getModel().getTimeZone().getSelectedItem().getTimeZoneKey().toString();
+        String timeZoneKey =  getModel().getTimeZone().getSelectedItem().getTimeZoneKey();
+        return timeZoneKey != null ? timeZoneKey : "";
     }
 
     protected int getSelectedOSType() {
