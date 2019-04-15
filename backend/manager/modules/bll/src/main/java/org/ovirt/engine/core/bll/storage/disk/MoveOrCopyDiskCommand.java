@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -235,9 +236,17 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         // Validate shareable disks moving/copying
         boolean moveOrCopy = isMoveOperation() || isCopyOperation();
-        if (moveOrCopy && getImage().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS ) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS,
-                    String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
+
+        if (moveOrCopy && getImage().isShareable()) {
+            if (getStorageDomain().getStorageType() == StorageType.GLUSTERFS) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS,
+                        String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
+            }
+
+            if (getStorageDomain().getStorageType().isBlockDomain() && getImage().getVolumeType() == VolumeType.Sparse) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_OR_COPY_SHAREABLE_THIN_DISK_TO_BLOCK_DOMAIN,
+                        String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
+            }
         }
 
         if (isMoveOperation()) {
