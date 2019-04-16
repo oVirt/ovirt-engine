@@ -34,7 +34,7 @@ public class GlusterEventsWebHookServlet extends HttpServlet {
             // Deserialiaze content if not empty
             if (!jsonBody.isEmpty()) {
                 JsonObjectDeserializer deserializer = new JsonObjectDeserializer();
-                GlusterEvent event = deserializer.deserialize(jsonBody, GlusterEvent.class);
+                GlusterEvent event = deserializer.deserializeUnformattedJson(jsonBody, GlusterEvent.class);
                 processEvent(event);
             }
             response.setStatus(HttpURLConnection.HTTP_OK);
