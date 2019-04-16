@@ -117,7 +117,11 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         attachmentToCurHostColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
-                Guid vdsId = getDetailModel().getEntity().getId();
+                Guid vdsId = getDetailModel().getEntity() != null? getDetailModel().getEntity().getId() : null;
+                // if no hosts is set for the model yet, return an empty status.
+                if (vdsId == null) {
+                    return constants.empty();
+                }
                 boolean pinned = object.getDedicatedVmForVdsList() != null ? object.getDedicatedVmForVdsList().contains(vdsId) : false;
                 boolean running = object.getRunOnVds() != null? object.getRunOnVds().equals(vdsId) : false;
                 return pinned ? (running? constants.runningAndPinnedOnCurHost() : constants.pinnedToCurHost()) : constants.runningOnCurHost();
