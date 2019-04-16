@@ -73,6 +73,7 @@ import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -125,6 +126,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private VdsStaticDao vdsStaticDao;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    private VmInitDao vmInitDao;
 
     private List<VDS> allForCluster;
 
@@ -159,6 +162,12 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 .filter(vm -> vm.getCustomCompatibilityVersion() == null)
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    protected void setVmInitToVms() {
+        for (VmStatic vm : vmsLockedForUpdate) {
+            vm.setVmInit(vmInitDao.get(vm.getId()));
+        }
     }
 
     protected List<VmTemplate> filterTemplatesInClusterNeedUpdate() {
@@ -259,6 +268,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
         getCluster().setArchitecture(getArchitecture());
 
+        setVmInitToVms();
         setDefaultSwitchTypeIfNeeded();
         setDefaultFirewallTypeIfNeeded();
         setDefaultLogMaxMemoryUsedThresholdIfNeeded();
