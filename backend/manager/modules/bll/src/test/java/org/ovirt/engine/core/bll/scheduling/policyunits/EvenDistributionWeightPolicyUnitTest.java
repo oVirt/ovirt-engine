@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -92,7 +91,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
 
     protected  <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
         List<Pair<Guid, Integer>> scores = unit.score(
-                new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()),
+                new SchedulingContext(new Cluster(), Collections.emptyMap()),
                 hosts,
                 Collections.singletonList(vm)
         );

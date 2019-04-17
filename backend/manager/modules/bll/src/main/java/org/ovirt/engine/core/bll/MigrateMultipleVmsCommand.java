@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -103,13 +102,12 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
             return false;
         }
 
-        Map<Guid, List<VDS>> possibleVmHosts = schedulingManager.canSchedule(getCluster(),
-                getVms(),
-                getHostBlackList(),
-                getHostWhiteList(),
-                new SchedulingParameters(getParameters().isCanIgnoreHardVmAffinity(), false),
+        Map<Guid, List<VDS>> possibleVmHosts = schedulingManager.prepareCall(getCluster())
+                .hostBlackList(getHostBlackList())
+                .hostWhiteList(getHostWhiteList())
+                .ignoreHardVmToVmAffinity(getParameters().isCanIgnoreHardVmAffinity())
                 // TODO - Use error messages from scheduling
-                new ArrayList<>());
+                .canSchedule(getVms());
 
         possibleVmsToMigrate = new ArrayList<>(getVms().size());
         for (VM vm : getVms()) {
@@ -185,15 +183,13 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
     }
 
     private Map<Guid, Guid> scheduleVms(List<VM> vms, boolean shouldIgnoreVmAffinity) {
-        return schedulingManager.schedule(getCluster(),
-                vms,
-                getHostBlackList(),
-                getHostWhiteList(),
-                Collections.emptyList(),
-                new SchedulingParameters(shouldIgnoreVmAffinity, false),
-                new ArrayList<>(),
-                true,
-                getCorrelationId());
+        return schedulingManager.prepareCall(getCluster())
+                .hostBlackList(getHostBlackList())
+                .hostWhiteList(getHostWhiteList())
+                .ignoreHardVmToVmAffinity(shouldIgnoreVmAffinity)
+                .delay(true)
+                .correlationId(getCorrelationId())
+                .schedule(vms);
     }
 
     private List<VM> getVms() {

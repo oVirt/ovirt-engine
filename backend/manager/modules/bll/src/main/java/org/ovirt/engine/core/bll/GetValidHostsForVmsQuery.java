@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +13,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -58,18 +55,13 @@ public class GetValidHostsForVmsQuery<P extends GetValidHostsForVmsParameters> e
 
         Map<Guid, VDS> hostMap = new HashMap<>();
 
-        List<Set<Guid>> hostsLists = schedulingManager.canSchedule(
-                cluster,
-                vms,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                new SchedulingParameters(false,
-                        !getParameters().isCheckVmsInAffinityClosure()),
-                new ArrayList<>()
-        ).values().stream()
-                .map(hosts -> addToMap(hostMap, hosts))
-                .map(this::getIdSet)
-                .collect(Collectors.toList());
+        List<Set<Guid>> hostsLists = vms.stream()
+            .map(vm -> schedulingManager.prepareCall(cluster)
+                    .doNotGroupVms(!getParameters().isCheckVmsInAffinityClosure())
+                    .canSchedule(vm))
+            .map(hosts -> addToMap(hostMap, hosts))
+            .map(this::getIdSet)
+            .collect(Collectors.toList());
 
         Set<Guid> validHostIds = hostsLists.isEmpty() ? new HashSet<>() : new HashSet<>(hostsLists.get(0));
 

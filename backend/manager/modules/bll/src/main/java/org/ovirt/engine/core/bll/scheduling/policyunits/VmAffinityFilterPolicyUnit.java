@@ -33,7 +33,7 @@ public class VmAffinityFilterPolicyUnit extends VmAffinityPolicyUnit {
 
     @Override
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
-        if (context.getSchedulingParameters().isIgnoreHardVmToVmAffinity()) {
+        if (context.isIgnoreHardVmToVmAffinity()) {
             return hosts;
         }
 

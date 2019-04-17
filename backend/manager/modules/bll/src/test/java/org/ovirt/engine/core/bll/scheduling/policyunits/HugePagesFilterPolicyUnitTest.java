@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -25,7 +24,7 @@ public class HugePagesFilterPolicyUnitTest {
     VM vm;
     VM otherVm;
 
-    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters());
+    private SchedulingContext context = new SchedulingContext(new Cluster(), Collections.emptyMap());
 
     PendingResourceManager pendingResourceManager;
 

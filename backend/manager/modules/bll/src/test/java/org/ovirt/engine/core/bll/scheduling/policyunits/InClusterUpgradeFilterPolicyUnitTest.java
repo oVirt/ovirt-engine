@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -115,7 +114,7 @@ public class InClusterUpgradeFilterPolicyUnitTest {
     }
 
     private List<VDS> filter(final VM vm, final VDS... hosts) {
-        return inClusterUpgradeFilterPolicyUnit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()),
+        return inClusterUpgradeFilterPolicyUnit.filter(new SchedulingContext(new Cluster(), Collections.emptyMap()),
                 Arrays.asList(hosts),
                 vm,
                 mock(PerHostMessages.class));

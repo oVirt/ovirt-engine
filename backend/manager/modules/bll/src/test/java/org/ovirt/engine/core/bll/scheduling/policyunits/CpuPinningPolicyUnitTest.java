@@ -18,7 +18,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -57,7 +56,7 @@ public class CpuPinningPolicyUnitTest {
 
     @Test
     public void shouldHandleEmptyHostList() {
-        final List<VDS> filteredHost = policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters()),  new ArrayList<>(), vm, mock(PerHostMessages.class));
+        final List<VDS> filteredHost = policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),  new ArrayList<>(), vm, mock(PerHostMessages.class));
         assertThat(filteredHost, is(empty()));
         assertThat(messages(), is(empty()));
     }
@@ -123,7 +122,7 @@ public class CpuPinningPolicyUnitTest {
     }
 
     private List<VDS> filter() {
-        return policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters()),
+        return policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),
                 Arrays.asList(hostWithCpus, hostWithoutCpus), vm,
                 perHostMessages);
     }

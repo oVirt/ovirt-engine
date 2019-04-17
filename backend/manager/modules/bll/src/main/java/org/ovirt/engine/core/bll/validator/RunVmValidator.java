@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -171,7 +170,11 @@ public class RunVmValidator {
                    validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    validate(validateDisksPassDiscard(vm), messages) &&
-                   !schedulingManager.canSchedule(cluster, vm, vdsBlackList, vdsWhiteList, new SchedulingParameters(), messages).isEmpty();
+                   !schedulingManager.prepareCall(cluster)
+                        .hostBlackList(vdsBlackList)
+                        .hostWhiteList(vdsWhiteList)
+                        .outputMessages(messages)
+                        .canSchedule(vm).isEmpty();
         }
 
         return
@@ -190,7 +193,11 @@ public class RunVmValidator {
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
-                !schedulingManager.canSchedule(cluster, vm, vdsBlackList, vdsWhiteList, new SchedulingParameters(), messages).isEmpty();
+                !schedulingManager.prepareCall(cluster)
+                        .hostBlackList(vdsBlackList)
+                        .hostWhiteList(vdsWhiteList)
+                        .outputMessages(messages)
+                        .canSchedule(vm).isEmpty();
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {

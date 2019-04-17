@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.arem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
@@ -13,13 +14,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -78,6 +80,8 @@ public class AffinityRulesEnforcerTest {
 
     private final List<Label> labels = new ArrayList<>();
 
+    private Map<Guid, List<VDS>> possibleHosts;
+
     @InjectMocks
     private AffinityRulesEnforcer enforcer;
 
@@ -102,14 +106,20 @@ public class AffinityRulesEnforcerTest {
         vm6 = createVM(host3, Up, "vm6");
         prepareVmDao(vm1, vm2, vm3, vm4, vm5, vm6);
 
+        possibleHosts = Stream.of(vm1, vm2, vm3, vm4, vm5, vm6)
+                .collect(Collectors.toMap(VM::getId, vm -> Arrays.asList(host1, host2, host3)));
+
         when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenReturn(affinityGroups);
         when(labelDao.getAllByClusterId(any())).thenReturn(labels);
-        when(schedulingManager.canSchedule(eq(cluster), any(VM.class), any(), any(), any(), any())).thenReturn(Arrays.asList(host1));
+
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), anyBoolean(), anyBoolean(), any())).thenReturn(possibleHosts);
+        when(schedulingManager.prepareCall(eq(cluster))).thenCallRealMethod();
     }
 
     @Test
     public void shouldNotTryToMigrateWhenNotSchedulable() {
-        when(schedulingManager.canSchedule(eq(cluster), any(VM.class), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        possibleHosts.clear();
+
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4));
         assertThat(getVmsToMigrate()).isEmpty();
         affinityGroups.clear();
@@ -255,6 +265,10 @@ public class AffinityRulesEnforcerTest {
         vm5.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000004"));
         prepareVmDao(vm1, vm2, vm4, vm5, vm6);
 
+        possibleHosts.clear();
+        Stream.of(vm1, vm2, vm3, vm4, vm5, vm6)
+                .forEach(vm -> possibleHosts.put(vm.getId(), Arrays.asList(host1, host2, host3)));
+
         final AffinityGroup lowIdGroup =
                 createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm4);
         final AffinityGroup highIdGroup =
@@ -294,7 +308,7 @@ public class AffinityRulesEnforcerTest {
                 vm5, vm6));
 
         // Say no when scheduling vm6
-        when(schedulingManager.canSchedule(eq(cluster), eq(vm6), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        possibleHosts.put(vm6.getId(), Collections.emptyList());
 
         // There is no fixed order so we only know that one of those VMs will be selected for migration
         assertVmsToMigrateGroups(Arrays.asList(
@@ -308,7 +322,7 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm5, vm6));
 
         // vm1 cannot be scheduled
-        when(schedulingManager.canSchedule(eq(cluster), eq(vm1), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        possibleHosts.put(vm1.getId(), Collections.emptyList());
 
         assertVmsToMigrateGroups(Arrays.asList(
                 Arrays.asList(vm5, vm6)
@@ -318,8 +332,9 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm4, vm5, vm6));
 
         // cannot schedule vm4, vm5 and vm6
-        when(schedulingManager.canSchedule(eq(cluster), ArgumentMatchers.<VM>argThat(vm -> Arrays.asList(vm4, vm5, vm6).contains(vm)),
-                any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        possibleHosts.put(vm4.getId(), Collections.emptyList());
+        possibleHosts.put(vm5.getId(), Collections.emptyList());
+        possibleHosts.put(vm6.getId(), Collections.emptyList());
 
         assertVmsToMigrateGroups(Arrays.asList(
                 Arrays.asList(vm2, vm3)

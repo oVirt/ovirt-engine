@@ -27,7 +27,6 @@ import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
@@ -831,16 +830,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected boolean getVdsToRunOn() {
-        Optional<Guid> vdsToRunOn =
-                schedulingManager.schedule(getCluster(),
-                        getVm(),
-                        getRunVdssList(),
-                        getVdsWhiteList(),
-                        getPredefinedVdsIdListToRunOn(),
-                        new SchedulingParameters(),
-                        new ArrayList<>(),
-                        true,
-                        getCorrelationId());
+        Optional<Guid> vdsToRunOn = schedulingManager.prepareCall(getCluster())
+                .hostBlackList(getRunVdssList())
+                .hostWhiteList(getVdsWhiteList())
+                .destHostIdList(getPredefinedVdsIdListToRunOn())
+                .delay(true)
+                .correlationId(getCorrelationId())
+                .schedule(getVm());
+
         setVdsId(vdsToRunOn.orElse(null));
         if (vdsToRunOn.isPresent()) {
             getRunVdssList().add(vdsToRunOn.get());
