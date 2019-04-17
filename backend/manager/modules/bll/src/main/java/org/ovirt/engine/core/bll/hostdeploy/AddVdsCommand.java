@@ -429,14 +429,16 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      * @param client - already connected ssh client
      */
     private String getInstalledVdsIdIfExists(SSHClient client) {
+        ByteArrayOutputStream err = new ConstraintByteArrayOutputStream(256);
         try {
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
-            client.executeCommand(Config.getValue(ConfigValues.GetVdsmIdByVdsmToolCommand), null, out, null);
+            client.executeCommand(Config.getValue(ConfigValues.GetVdsmIdByVdsmToolCommand), null, out, err);
             return new String(out.toByteArray(), StandardCharsets.UTF_8);
         } catch(Exception e) {
             log.warn(
-                    "Failed to initiate vdsm-id request on host: {}",
-                    e.getMessage()
+                    "Failed to initiate vdsm-id request on host: {} with error: {}",
+                    e.getMessage(),
+                    new String(err.toByteArray(), StandardCharsets.UTF_8)
                     );
             log.debug("Exception", e);
             return null;
