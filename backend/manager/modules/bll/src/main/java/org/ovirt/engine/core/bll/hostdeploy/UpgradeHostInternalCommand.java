@@ -148,6 +148,15 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.HOST_UPGRADE_FINISHED : AuditLogType.HOST_UPGRADE_FAILED;
+        AuditLogType value = AuditLogType.HOST_UPGRADE_FAILED;
+        if (getSucceeded()) {
+            if (getParameters().isReboot()) {
+                value = AuditLogType.HOST_UPGRADE_FINISHED_AND_WILL_BE_REBOOTED;
+            } else {
+                value = AuditLogType.HOST_UPGRADE_FINISHED;
+            }
+        }
+
+        return value;
     }
 }
