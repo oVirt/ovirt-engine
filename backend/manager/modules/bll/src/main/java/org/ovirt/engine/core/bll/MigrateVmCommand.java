@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
 import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -199,16 +198,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected Optional<Guid> getVdsToRunOn() {
         List<String> messages = new ArrayList<>();
-        Optional<Guid> vdsToRunOn =
-                schedulingManager.schedule(getCluster(),
-                        getVm(),
-                        getVdsBlackList(),
-                        getVdsWhiteList(),
-                        getDestinationHostList(),
-                        new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
-                        messages,
-                        true,
-                        getCorrelationId());
+        Optional<Guid> vdsToRunOn = schedulingManager.prepareCall(getCluster())
+                .hostBlackList(getVdsBlackList())
+                .hostWhiteList(getVdsWhiteList())
+                .destHostIdList(getDestinationHostList())
+                .ignoreHardVmToVmAffinity(getParameters().isIgnoreHardVmToVmAffinity())
+                .delay(true)
+                .correlationId(getCorrelationId())
+                .outputMessages(messages)
+                .schedule(getVm());
         messages.forEach(this::addValidationMessage);
         return vdsToRunOn;
     }
@@ -819,13 +817,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 && canScheduleVm();
     }
 
-    private boolean canScheduleVm() {
-        boolean result = !schedulingManager.canSchedule(getCluster(),
-                getVm(),
-                getVdsBlackList(),
-                getVdsWhiteList(),
-                new SchedulingParameters(),
-                getReturnValue().getValidationMessages()).isEmpty();
+    protected boolean canScheduleVm() {
+        boolean result = !schedulingManager.prepareCall(getCluster())
+                .hostBlackList(getVdsBlackList())
+                .hostWhiteList(getVdsWhiteList())
+                .outputMessages(getReturnValue().getValidationMessages())
+                .canSchedule(getVm()).isEmpty();
 
         if (result) {
             // If it is possible to migrate VM without breaking affinity, do not ignore it.
@@ -836,12 +833,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         // If the migration is caused by moving a host to maintenance,
         // it is possible to ignore VM affinity groups.
         if (getParameters().isIgnoreHardVmToVmAffinity()) {
-            return !schedulingManager.canSchedule(getCluster(),
-                    getVm(),
-                    getVdsBlackList(),
-                    getVdsWhiteList(),
-                    new SchedulingParameters(getParameters().isIgnoreHardVmToVmAffinity()),
-                    getReturnValue().getValidationMessages()).isEmpty();
+            return !schedulingManager.prepareCall(getCluster())
+                    .hostBlackList(getVdsBlackList())
+                    .hostWhiteList(getVdsWhiteList())
+                    .outputMessages(getReturnValue().getValidationMessages())
+                    .ignoreHardVmToVmAffinity(getParameters().isIgnoreHardVmToVmAffinity())
+                    .canSchedule(getVm()).isEmpty();
         }
 
         return false;

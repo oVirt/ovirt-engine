@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -45,7 +44,7 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
 
-        context = new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters());
+        context = new SchedulingContext(cluster, Collections.emptyMap());
 
         vm = new VM();
         vm.setId(Guid.newGuid());

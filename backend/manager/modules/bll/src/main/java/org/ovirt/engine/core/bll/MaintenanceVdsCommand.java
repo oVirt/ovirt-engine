@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -120,14 +119,9 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         if (getVdsId() != null) {
             blacklist.add(getVdsId());
         }
-        return !schedulingManager.canSchedule(
-                getCluster(),
-                vm,
-                blacklist, //blacklist only contains the host we're putting to maintenance
-                Collections.emptyList(), //no whitelist
-                new SchedulingParameters(),
-                new ArrayList<>()
-        ).isEmpty();
+        return !schedulingManager.prepareCall(getCluster())
+                .hostBlackList(blacklist) //blacklist only contains the host we're putting to maintenance
+                .canSchedule(vm).isEmpty();
     }
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method

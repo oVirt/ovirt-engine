@@ -23,7 +23,6 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -108,7 +107,7 @@ public class PowerSavingWeightPolicyUnitTest extends AbstractPolicyUnitTest {
     }
 
     private <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
-        return unit.score(new SchedulingContext(new Cluster(), parameters, new SchedulingParameters()),
+        return unit.score(new SchedulingContext(new Cluster(), parameters),
                 hosts,
                 Collections.singletonList(vm)).stream()
                 .min(Comparator.comparing(Pair::getSecond))

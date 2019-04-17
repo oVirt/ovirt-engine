@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
-import org.ovirt.engine.core.bll.scheduling.SchedulingParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -99,7 +98,7 @@ public class CPUPolicyUnitTest {
     }
 
     private List<VDS> filter() {
-        return cpuPolicyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap(), new SchedulingParameters()),
+        return cpuPolicyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),
                 Arrays.asList(vdsWithInvalidCpuInfo, vdsWithCores),
                 vm, mock(PerHostMessages.class));
     }

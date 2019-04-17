@@ -329,12 +329,12 @@ public class SchedulingManager implements BackendService {
 
     }
 
-    public Map<Guid, Guid> schedule(Cluster cluster,
+    private Map<Guid, Guid> schedule(Cluster cluster,
             List<VM> vms,
             List<Guid> hostBlackList,
             List<Guid> hostWhiteList,
             List<Guid> destHostIdList,
-            SchedulingParameters schedulingParameters,
+            boolean ignoreHardVmToVmAffinity,
             List<String> messages,
             boolean delayWhenNeeded,
             String correlationId) {
@@ -349,7 +349,7 @@ public class SchedulingManager implements BackendService {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             SchedulingContext context = new SchedulingContext(cluster,
                     createClusterPolicyParameters(cluster),
-                    schedulingParameters);
+                    ignoreHardVmToVmAffinity);
 
             splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
             splitFunctions(policy.getFunctions(), context);
@@ -415,28 +415,6 @@ public class SchedulingManager implements BackendService {
 
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
-    }
-
-    public Optional<Guid> schedule(Cluster cluster,
-            VM vm,
-            List<Guid> hostBlackList,
-            List<Guid> hostWhiteList,
-            List<Guid> destHostIdList,
-            SchedulingParameters schedulingParameters,
-            List<String> messages,
-            boolean delayWhenNeeded,
-            String correlationId) {
-        Map<Guid, Guid> res = schedule(cluster,
-                Collections.singletonList(vm),
-                hostBlackList,
-                hostWhiteList,
-                destHostIdList,
-                schedulingParameters,
-                messages,
-                delayWhenNeeded,
-                correlationId);
-
-        return Optional.ofNullable(res.get(vm.getId()));
     }
 
     private Optional<Guid> selectHost(ClusterPolicy policy,
@@ -635,7 +613,7 @@ public class SchedulingManager implements BackendService {
             return Collections.singletonList(vms);
         }
 
-        if (context.getSchedulingParameters().isIgnoreHardVmToVmAffinity()) {
+        if (context.isIgnoreHardVmToVmAffinity()) {
             return vms.stream()
                     .map(Collections::singletonList)
                     .collect(Collectors.toList());
@@ -786,11 +764,12 @@ public class SchedulingManager implements BackendService {
         return !crossedThreshold;
     }
 
+    // Leaving public so it can be mocked in tests
     public Map<Guid, List<VDS>> canSchedule(Cluster cluster,
             List<VM> vms,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
-            SchedulingParameters schedulingParameters,
+            boolean ignoreHardVmToVmAffinity,
             List<String> messages) {
         List<VDS> hosts = fetchHosts(cluster.getId(), vdsBlackList, vdsWhiteList);
         refreshCachedPendingValues(hosts);
@@ -799,7 +778,7 @@ public class SchedulingManager implements BackendService {
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         SchedulingContext context = new SchedulingContext(cluster,
                 createClusterPolicyParameters(cluster),
-                schedulingParameters);
+                ignoreHardVmToVmAffinity);
         splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
 
         Map<Guid, List<VDS>> res = new HashMap<>();
@@ -814,22 +793,6 @@ public class SchedulingManager implements BackendService {
         }
         messages.addAll(context.getMessages());
         return res;
-    }
-
-    public List<VDS> canSchedule(Cluster cluster,
-            VM vm,
-            List<Guid> vdsBlackList,
-            List<Guid> vdsWhiteList,
-            SchedulingParameters schedulingParameters,
-            List<String> messages) {
-        Map<Guid, List<VDS>> res = canSchedule(cluster,
-                Collections.singletonList(vm),
-                vdsBlackList,
-                vdsWhiteList,
-                schedulingParameters,
-                messages);
-
-        return res.getOrDefault(vm.getId(), Collections.emptyList());
     }
 
     private Map<String, String> createClusterPolicyParameters(Cluster cluster) {
@@ -1355,5 +1318,92 @@ public class SchedulingManager implements BackendService {
      */
     public void clearPendingVm(VmStatic vm) {
         getPendingResourceManager().clearVm(vm);
+    }
+
+
+    public class CallBuilder {
+        private Cluster cluster;
+        private List<Guid> blackList = Collections.emptyList();
+        private List<Guid> whiteList = Collections.emptyList();
+        private List<Guid> destHostIdList = Collections.emptyList();
+        private boolean ignoreHardVmToVmAffinity = false;
+        private List<String> outMessages = new ArrayList<>();
+        private boolean delay = false;
+        private String correlationId;
+
+        private CallBuilder(Cluster cluster) {
+            this.cluster = cluster;
+        }
+
+        public CallBuilder hostBlackList(List<Guid> hosts) {
+            blackList = hosts;
+            return this;
+        }
+
+
+        public CallBuilder hostWhiteList(List<Guid> hosts) {
+            whiteList = hosts;
+            return this;
+        }
+
+        public CallBuilder destHostIdList(List<Guid> hosts) {
+            destHostIdList = hosts;
+            return this;
+        }
+
+        public CallBuilder ignoreHardVmToVmAffinity(boolean value) {
+            ignoreHardVmToVmAffinity = value;
+            return this;
+        }
+
+        public CallBuilder outputMessages(List<String> messages) {
+            outMessages = messages;
+            return this;
+        }
+
+        public CallBuilder delay(boolean delay) {
+            this.delay = delay;
+            return this;
+        }
+
+        public CallBuilder correlationId(String id) {
+            correlationId = id;
+            return this;
+        }
+
+        public Map<Guid, Guid> schedule(List<VM> vms) {
+            return SchedulingManager.this.schedule(cluster,
+                    vms,
+                    blackList,
+                    whiteList,
+                    destHostIdList,
+                    ignoreHardVmToVmAffinity,
+                    outMessages,
+                    delay,
+                    correlationId);
+        }
+
+        public Optional<Guid> schedule(VM vm) {
+            Map<Guid, Guid> res = schedule(Collections.singletonList(vm));
+            return Optional.ofNullable(res.get(vm.getId()));
+        }
+
+        public Map<Guid, List<VDS>> canSchedule(List<VM> vms) {
+            return SchedulingManager.this.canSchedule(cluster,
+                    vms,
+                    blackList,
+                    whiteList,
+                    ignoreHardVmToVmAffinity,
+                    outMessages);
+        }
+
+        public List<VDS> canSchedule(VM vm) {
+            Map<Guid, List<VDS>> res = canSchedule(Collections.singletonList(vm));
+            return res.getOrDefault(vm.getId(), Collections.emptyList());
+        }
+    }
+
+    public CallBuilder prepareCall(Cluster cluster) {
+        return new CallBuilder(cluster);
     }
 }
