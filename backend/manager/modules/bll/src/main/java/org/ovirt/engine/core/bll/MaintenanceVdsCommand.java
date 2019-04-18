@@ -114,15 +114,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return migrateAllVms(parentContext, false);
     }
 
-    private boolean canScheduleVm(VM vm) {
-        List<Guid> blacklist = new ArrayList<>();
-        if (getVdsId() != null) {
-            blacklist.add(getVdsId());
-        }
-        return !schedulingManager.prepareCall(getCluster())
-                .hostBlackList(blacklist) //blacklist only contains the host we're putting to maintenance
-                .canSchedule(vm).isEmpty();
-    }
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
      */
@@ -132,15 +123,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
         List<VM> vmsToMigrate = new ArrayList<>();
         for (VM vm : vms) {
-            if (vm.isHostedEngine()) {
-                // check if there is host which can be used for HE
-                if (!canScheduleVm(vm)) {
-                    succeeded = false;
-                    log.error("There is no host capable of running the hosted engine VM");
-                }
-                // The Hosted Engine vm is migrated by the HA agent
-                continue;
-            }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || vm.isAutoStartup())) {
                 vmsToMigrate.add(vm);
@@ -222,8 +204,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                         Collections.singletonList(vdsId))) {
                     return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE);
                 }
-                // The Hosted Engine vm is migrated by the HA agent
-                continue;
             }
             if ((getParameters().isInternal() && vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE) ||
                     vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
