@@ -66,7 +66,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         SerialNumberPolicyModel serialNumberPolicyModel = mockSerialNumberPolicyModel();
         when(model.getSerialNumberPolicy()).thenReturn(serialNumberPolicyModel);
         when(model.getAllowConsoleReconnect().getEntity()).thenReturn(true);
-        when(model.getIsSingleQxlEnabled().getEntity()).thenReturn(true);
+        when(model.isSingleQxlEnabled()).thenReturn(true);
         when(model.getTotalCPUCores().getEntity()).thenReturn(Integer.toString(TOTAL_CPU));
         when(model.getUsbPolicy().getSelectedItem()).thenReturn(USB_POLICY);
         when(model.getIsStateless().getEntity()).thenReturn(true);

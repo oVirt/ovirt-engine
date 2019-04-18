@@ -1435,9 +1435,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void enableSinglePCI(boolean enabled) {
-        getModel().getIsSingleQxlEnabled().setIsChangeable(enabled);
         if (!enabled) {
-            getModel().getIsSingleQxlEnabled().setEntity(false);
+            getModel().setSingleQxlEnabled(false);
         }
     }
 

@@ -55,7 +55,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     public void setVm(VM vm) {
         this.vm = vm;
-        getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());
+        getModel().setSingleQxlEnabled(vm.getSingleQxlPci());
     }
 
     protected VM getVm() {
@@ -404,6 +404,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void enableSinglePCI(boolean enabled) {
         super.enableSinglePCI(enabled);
-        getModel().getIsSingleQxlEnabled().setEntity(vm != null ? vm.getSingleQxlPci() : false);
+        getModel().setSingleQxlEnabled(vm != null && vm.getSingleQxlPci());
     }
 }

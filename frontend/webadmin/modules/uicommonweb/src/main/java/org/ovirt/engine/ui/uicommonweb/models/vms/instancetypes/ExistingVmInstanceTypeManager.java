@@ -55,6 +55,6 @@ public class ExistingVmInstanceTypeManager extends VmInstanceTypeManager {
 
     @Override
     public void maybeSetSingleQxlPci(VmBase vmBase) {
-        maybeSetEntity(getModel().getIsSingleQxlEnabled(), vm.getSingleQxlPci() && getModel().getIsQxlSupported());
+        maybeSetSingleQxlPciValue(vm.getSingleQxlPci() && getModel().getIsQxlSupported());
     }
 }

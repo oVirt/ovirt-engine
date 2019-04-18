@@ -245,6 +245,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.icon = icon;
     }
 
+    private boolean singleQxlEnabled;
+
+    public boolean isSingleQxlEnabled() {
+        return singleQxlEnabled;
+    }
+
+    public void setSingleQxlEnabled(boolean value) {
+        singleQxlEnabled = value;
+    }
+
     /**
      * Note: We assume that this method is called only once, on the creation stage of the model. if this assumption is
      * changed (i.e the VM can attached/detached from a pool after the model is created), this method should be modified
@@ -295,7 +305,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getConsoleDisconnectAction().setIsChangeable(false);
             getResumeBehavior().setIsChangeable(false);
             getNumOfMonitors().setIsChangeable(false);
-            getIsSingleQxlEnabled().setIsChangeable(false);
             getIsSmartcardEnabled().setIsChangeable(false);
             getAllowConsoleReconnect().setIsChangeable(false);
             getVncKeyboardLayout().setIsChangeable(false);
@@ -528,17 +537,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void setNumOfMonitors(NotChangableForVmInPoolListModel<Integer> value) {
         privateNumOfMonitors = value;
     }
-
-    private NotChangableForVmInPoolEntityModel<Boolean> privateIsSingleQxlEnabled;
-
-    public EntityModel<Boolean> getIsSingleQxlEnabled() {
-        return privateIsSingleQxlEnabled;
-    }
-
-    private void setIsSingleQxlEnabled(NotChangableForVmInPoolEntityModel<Boolean> value) {
-        privateIsSingleQxlEnabled = value;
-    }
-
 
     private NotChangableForVmInPoolEntityModel<Boolean> privateAllowConsoleReconnect;
 
@@ -1823,7 +1821,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsSoundcardEnabled().setEntity(false);
         getIsSoundcardEnabled().setIsChangeable(false);
 
-        setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         getBehavior().enableSinglePCI(false);
 
         selectSsoMethod(SsoMethod.GUEST_AGENT);
@@ -2680,7 +2677,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (isHeadlessEnabled) {
             getUsbPolicy().setIsChangeable(!isHeadlessEnabled);
             getNumOfMonitors().setIsChangeable(!isHeadlessEnabled);
-            getIsSingleQxlEnabled().setIsChangeable(!isHeadlessEnabled);
             getIsSmartcardEnabled().setIsChangeable(!isHeadlessEnabled);
             getSpiceFileTransferEnabled().setIsChangeable(!isHeadlessEnabled);
             getSpiceCopyPasteEnabled().setIsChangeable(!isHeadlessEnabled);

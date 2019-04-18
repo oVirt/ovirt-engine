@@ -507,11 +507,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public Row monitors;
 
     @UiField(provided = true)
-    @Path(value = "isSingleQxlEnabled.entity")
-    @WithElementId("isSingleQxlEnabled")
-    public EntityModelCheckBoxEditor isSingleQxlEnabledEditor;
-
-    @UiField(provided = true)
     @Path(value = "isStateless.entity")
     @WithElementId("isStateless")
     public EntityModelCheckBoxEditor isStatelessEditor;
@@ -1057,7 +1052,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
         ioThreadsInfo.setTooltipMaxWidth(TooltipWidth.W420);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
         cpuPinningInfo.setTooltipMaxWidth(TooltipWidth.W420);
         multiQueuesInfo = new InfoIcon(templates.italicText(constants.multiQueuesLabelExplanation()));
@@ -1968,7 +1962,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
         usbSupportEditor.setTabIndex(nextTabIndex++);
         consoleDisconnectActionEditor.setTabIndexes(nextTabIndex++);
-        isSingleQxlEnabledEditor.setTabIndex(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
         ssoMethodNone.setTabIndex(nextTabIndex++);
@@ -2061,7 +2054,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 putAll(consoleTabWidgets(), simpleField().visibleInAdvancedModeOnly()).
                 update(consoleTab, simpleField()).
                 update(numOfMonitorsEditor, simpleField()).
-                update(isSingleQxlEnabledEditor, simpleField()).
                 putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(isConsoleDeviceEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(spiceFileTransferEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
@@ -2170,7 +2162,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 usbSupportEditor,
                 consoleDisconnectActionEditor,
                 monitors,
-                isSingleQxlEnabledEditor,
                 ssoMethodLabel,
                 ssoMethodNone,
                 ssoMethodGuestAgent,

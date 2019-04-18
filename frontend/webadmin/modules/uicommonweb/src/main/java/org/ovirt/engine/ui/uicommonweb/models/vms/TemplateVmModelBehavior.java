@@ -218,9 +218,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void enableSinglePCI(boolean enabled) {
         super.enableSinglePCI(enabled);
         if (enabled) {
-            getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci() && getModel().getIsQxlSupported());
+            getModel().setSingleQxlEnabled(template.getSingleQxlPci() && getModel().getIsQxlSupported());
         } else {
-            getModel().getIsSingleQxlEnabled().setEntity(false);
+            getModel().setSingleQxlEnabled(false);
         }
     }
 

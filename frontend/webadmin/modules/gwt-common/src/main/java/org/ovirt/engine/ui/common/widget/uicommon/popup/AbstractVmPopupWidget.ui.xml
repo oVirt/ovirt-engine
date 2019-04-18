@@ -317,9 +317,6 @@
                   <b:Column size="SM_2">
                     <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" usePatternFly="true" />
                   </b:Column>
-                  <b:Column size="SM_3">
-                    <ge:EntityModelCheckBoxEditor ui:field="isSingleQxlEnabledEditor" label="{constants.singleQxlEnabled}" usePatternFly="true" />
-                  </b:Column>
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_12">

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
@@ -92,7 +91,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
         UnitVmModel model = spy(createModel(behavior));
         doReturn(cluster).when(model).getSelectedCluster();
-        doReturn(new EntityModel<>(true)).when(model).getIsSingleQxlEnabled();
+        doReturn(true).when(model).isSingleQxlEnabled();
         model.initialize();
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
 
@@ -163,7 +162,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertEquals(MIN_MEM, (int) model.getMinAllocatedMemory().getEntity());
         assertEquals(USB_POLICY, model.getUsbPolicy().getSelectedItem());
         assertEquals(NUM_OF_MONITORS, (int) model.getNumOfMonitors().getSelectedItem());
-        assertTrue(model.getIsSingleQxlEnabled().getEntity());
+        assertTrue(model.isSingleQxlEnabled());
         assertEquals(BOOT_SEQUENCE, model.getBootSequence());
         assertEquals(Integer.toString(TOTAL_CPU), model.getTotalCPUCores().getEntity());
         assertEquals(NUM_OF_SOCKETS, (int) model.getNumOfSockets().getSelectedItem());

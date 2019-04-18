@@ -355,7 +355,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     @Override
     public void enableSinglePCI(boolean enabled) {
         super.enableSinglePCI(enabled);
-        getModel().getIsSingleQxlEnabled().setEntity(enabled);
+        getModel().setSingleQxlEnabled(enabled);
     }
 
     @Override

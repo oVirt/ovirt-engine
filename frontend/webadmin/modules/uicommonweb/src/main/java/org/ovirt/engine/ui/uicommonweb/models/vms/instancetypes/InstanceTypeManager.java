@@ -502,8 +502,15 @@ public abstract class InstanceTypeManager {
     }
 
     protected void maybeSetSingleQxlPci(VmBase vmBase) {
-        maybeSetEntity(model.getIsSingleQxlEnabled(), vmBase.getSingleQxlPci());
+        maybeSetSingleQxlPciValue(vmBase.getSingleQxlPci());
     }
+
+    protected void maybeSetSingleQxlPciValue(boolean value) {
+        if (alwaysEnabledFieldUpdate) {
+            model.setSingleQxlEnabled(value);
+        }
+    }
+
 
     protected <T> void maybeSetSelectedItem(ListModel<T> entityModel, T value) {
         if (alwaysEnabledFieldUpdate || (entityModel != null && entityModel.getIsChangable() && entityModel.getIsAvailable())) {

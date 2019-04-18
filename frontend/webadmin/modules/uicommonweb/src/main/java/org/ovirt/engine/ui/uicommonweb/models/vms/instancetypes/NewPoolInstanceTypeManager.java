@@ -39,7 +39,7 @@ public class NewPoolInstanceTypeManager extends InstanceTypeManager {
                         && getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion()
                                 .getId().equals(Guid.Empty);
         if (customInstanceTypeUsed && blankTemplateUsed) {
-            maybeSetEntity(getModel().getIsSingleQxlEnabled(), getModel().getIsQxlSupported());
+            maybeSetSingleQxlPciValue(getModel().getIsQxlSupported());
         } else {
             super.maybeSetSingleQxlPci(vmBase);
         }

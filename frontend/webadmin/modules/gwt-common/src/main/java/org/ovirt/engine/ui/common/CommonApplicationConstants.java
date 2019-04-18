@@ -1287,8 +1287,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String soundcardEnabled();
 
-    String singleQxlEnabled();
-
     String optimizedFor();
 
     String addItemButtonLabel();

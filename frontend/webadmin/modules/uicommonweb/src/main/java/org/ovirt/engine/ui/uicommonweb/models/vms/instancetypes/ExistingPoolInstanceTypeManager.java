@@ -68,7 +68,7 @@ public class ExistingPoolInstanceTypeManager extends InstanceTypeManager {
     }
 
     protected void maybeSetSingleQxlPci(VmBase vmBase) {
-        maybeSetEntity(getModel().getIsSingleQxlEnabled(), pool.getSingleQxlPci());
-        getModel().getIsSingleQxlEnabled().setEntity(pool.getSingleQxlPci() && getModel().getIsQxlSupported());
+        maybeSetSingleQxlPciValue(pool.getSingleQxlPci());
+        getModel().setSingleQxlEnabled(pool.getSingleQxlPci() && getModel().getIsQxlSupported());
     }
 }

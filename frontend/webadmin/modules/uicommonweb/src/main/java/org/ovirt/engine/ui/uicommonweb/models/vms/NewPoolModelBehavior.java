@@ -147,6 +147,6 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     public void enableSinglePCI(boolean enabled) {
         super.enableSinglePCI(enabled);
-        getModel().getIsSingleQxlEnabled().setEntity(enabled);
+        getModel().setSingleQxlEnabled(enabled);
     }
 }
