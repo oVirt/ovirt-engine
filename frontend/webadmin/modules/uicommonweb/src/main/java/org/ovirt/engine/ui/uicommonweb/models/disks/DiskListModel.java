@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -33,14 +32,13 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DiskOperationsHelper;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DownloadImageHandler;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DownloadImageManager;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -49,6 +47,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.inject.Inject;
 
 public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
+
     private UICommand privateNewCommand;
 
     public UICommand getNewCommand() {
@@ -321,29 +320,9 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
 
     }
 
-    private void move() {
-
-
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
-
-        if (disks == null || getWindow() != null) {
-            return;
-        }
-
-        MoveDiskModel model = new MoveDiskModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
-        model.setHelpTag(HelpTag.move_disks);
-        model.setHashName("move_disks"); //$NON-NLS-1$
-        model.setIsSourceStorageDomainNameAvailable(true);
-        model.setEntity(this);
-        model.init(disks);
-        model.startProgress();
-    }
-
     private void export() {
         @SuppressWarnings("unchecked")
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) DiskOperationsHelper.asDiskImages(getSelectedItems());
 
         if (disks == null || getWindow() != null) {
             return;
@@ -365,7 +344,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private void changeQuota() {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) DiskOperationsHelper.asDiskImages(getSelectedItems());
 
         if (disks == null || getWindow() != null) {
             return;
@@ -407,23 +386,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
                     cancel();
                 },
                 this);
-    }
-
-    private void copy() {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
-
-        if (disks == null || getWindow() != null) {
-            return;
-        }
-
-        CopyDiskModel model = new CopyDiskModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
-        model.setHelpTag(HelpTag.copy_disks);
-        model.setHashName("copy_disks"); //$NON-NLS-1$
-        model.setEntity(this);
-        model.init(disks);
-        model.startProgress();
     }
 
     private void remove() {
@@ -518,7 +480,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && shouldAllowEdit);
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
         getExportCommand().setIsExecutionAllowed(isExportCommandAvailable());
-        updateCopyAndMoveCommandAvailability(disks);
+        DiskOperationsHelper.updateMoveAndCopyCommandAvailability(DiskOperationsHelper.asDiskImages(disks),
+                getMoveCommand(), getCopyCommand());
 
         getCancelUploadCommand().setIsExecutionAllowed(UploadImageModel.isCancelAllowed(disks));
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
@@ -534,60 +497,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
                 return ((CinderDisk) disk).getImageStatus() == ImageStatus.LOCKED;
         }
         return false;
-    }
-
-    private void updateCopyAndMoveCommandAvailability(List<Disk> disks) {
-        boolean isCopyAllowed = true;
-        boolean isMoveAllowed = true;
-
-        if (disks == null || disks.isEmpty() || disks.get(0).getDiskStorageType() != DiskStorageType.IMAGE) {
-            disableMoveAndCopyCommands();
-            return;
-        }
-
-        Guid datacenterId = ((DiskImage) disks.get(0)).getStoragePoolId();
-
-
-        boolean foundTemplateDisk = false;
-        boolean foundVmDisk = false;
-        boolean foundUnattachedDisk = false;
-
-        for (Disk disk : disks) {
-            if ((!isCopyAllowed && !isMoveAllowed) || disk.getDiskStorageType() != DiskStorageType.IMAGE) {
-                disableMoveAndCopyCommands();
-                return;
-            }
-
-            DiskImage diskImage = (DiskImage) disk;
-            if (diskImage.getImageStatus() != ImageStatus.OK || !datacenterId.equals(diskImage.getStoragePoolId()) || diskImage.isOvfStore()) {
-                disableMoveAndCopyCommands();
-                return;
-            }
-            VmEntityType vmEntityType = disk.getVmEntityType();
-            if (vmEntityType == null) {
-                foundUnattachedDisk = true;
-            } else if (vmEntityType.isTemplateType()) {
-                foundTemplateDisk = true;
-            } else if (vmEntityType.isVmType()) {
-                foundVmDisk = true;
-            }
-
-            if (foundTemplateDisk && (foundUnattachedDisk || foundVmDisk)) {
-                isCopyAllowed = false;
-            }
-
-            if (vmEntityType != null && vmEntityType.isTemplateType()) {
-                isMoveAllowed = false;
-            }
-        }
-
-        getCopyCommand().setIsExecutionAllowed(isCopyAllowed);
-        getMoveCommand().setIsExecutionAllowed(isMoveAllowed);
-    }
-
-    private void disableMoveAndCopyCommands() {
-        getCopyCommand().setIsExecutionAllowed(false);
-        getMoveCommand().setIsExecutionAllowed(false);
     }
 
     private boolean isRemoveCommandAvailable() {
@@ -617,7 +526,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private boolean isExportCommandAvailable() {
-        List<DiskImage> disks = asImages(getSelectedItems());
+        List<DiskImage> disks = DiskOperationsHelper.asDiskImages(getSelectedItems());
 
         if (disks == null || disks.isEmpty()) {
             return false;
@@ -656,9 +565,9 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         } else if (command == getRemoveCommand()) {
             remove();
         } else if (command == getMoveCommand()) {
-            move();
+            DiskOperationsHelper.move(this, DiskOperationsHelper.asDiskImages(getSelectedItems()));
         } else if (command == getCopyCommand()) {
-            copy();
+            DiskOperationsHelper.copy(this, DiskOperationsHelper.asDiskImages(getSelectedItems()));
         } else if (command == getExportCommand()) {
             export();
         } else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName()) || "Cancel".equals(command.getName())) { //$NON-NLS-1$
@@ -686,20 +595,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         }
     }
 
-    private List<DiskImage> asImages(List<Disk> disks) {
-        if (disks == null) {
-            return null;
-        }
-
-        List<DiskImage> res = new ArrayList<>();
-        for (Disk disk : disks) {
-            if (disk.getDiskStorageType().isInternal()) {
-                res.add((DiskImage) disk);
-            }
-        }
-
-        return res;
-    }
 
     @Override
     public boolean isSearchStringMatch(String searchString) {
