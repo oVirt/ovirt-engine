@@ -234,7 +234,7 @@ public class FixturesTool {
      * Predefined VM for testing with the following properties :
      * <ul>
      * <li>VM name: rhel5-pool-59</li>
-     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * <li>Vds group: rhel6.nfs (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
      * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
      * </ul>
      */
@@ -244,7 +244,7 @@ public class FixturesTool {
      * Predefined VM for testing with the following properties :
      * <ul>
      * <li>VM name: rhel5-pool-60</li>
-     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * <li>Vds group: rhel6.nfs (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
      * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
      * </ul>
      */
@@ -289,7 +289,7 @@ public class FixturesTool {
     /**
      * Predefined template for testing with the following properties :
      * <ul>
-     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * <li>Vds group: rhel6.nfs (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
      * </ul>
      */
     protected static final Guid VM_TEMPLATE_RHEL6_1 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b81");
@@ -297,7 +297,7 @@ public class FixturesTool {
     /**
      * Predefined template for testing with the following properties :
      * <ul>
-     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * <li>Vds group: rhel6.nfs (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
      * </ul>
      */
     protected static final Guid VM_TEMPLATE_RHEL6_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b82");

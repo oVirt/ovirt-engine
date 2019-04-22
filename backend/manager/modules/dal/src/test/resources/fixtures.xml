@@ -463,8 +463,8 @@
   <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a37" lun_id="1IET_00180003"/>
   <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a40" lun_id="1IET_00180004"/>
   <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a46" lun_id="1IET_00180007"/>
-  <engine_sessions id="-1" engine_session_id="9ee57fd0-6f67-11e4-9e67-3c970e14c386" user_id="9bf7c640-b620-456f-a550-0348f366544a" user_name="userportal2" authz_name="example.com-authz" source_ip="10.18.16.144" group_ids="35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364"/>
 
+  <engine_sessions id="-1" engine_session_id="9ee57fd0-6f67-11e4-9e67-3c970e14c386" user_id="9bf7c640-b620-456f-a550-0348f366544a" user_name="userportal2" authz_name="example.com-authz" source_ip="10.18.16.144" group_ids="35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364"/>
   <engine_sessions id="-2" engine_session_id="c6f975b2-6f67-11e4-8455-3c970e14c386" user_id="9bf7c640-b620-456f-a550-0348f366544b" user_name="userportal3" authz_name="example.com-authz" source_ip="fe80::56ee:75ff:fe5c:6cc7" group_ids="26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7"/>
 
   <users user_id="9bf7c640-b620-456f-a550-0348f366544a" external_id="a" name="userportal2" domain="testportal.redhat.com" username="userportal2@testportal.redhat.com" last_admin_check_status="0" namespace="*"/>
