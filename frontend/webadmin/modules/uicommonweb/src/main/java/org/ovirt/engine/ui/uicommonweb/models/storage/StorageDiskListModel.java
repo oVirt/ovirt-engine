@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class StorageDiskListModel extends SearchableListModel<StorageDomain, DiskImage> {
+
     private UICommand removeCommand;
 
     public UICommand getRemoveCommand() {
@@ -82,11 +83,33 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         downloadCommand = value;
     }
 
+    private UICommand moveCommand;
+
+    public UICommand getMoveCommand() {
+        return moveCommand;
+    }
+
+    private void setMoveCommand(UICommand value) {
+        moveCommand = value;
+    }
+
+    private UICommand copyCommand;
+
+    public UICommand getCopyCommand() {
+        return copyCommand;
+    }
+
+    private void setCopyCommand(UICommand value) {
+        copyCommand = value;
+    }
+
     public StorageDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHelpTag(HelpTag.disks);
         setHashName("disks"); //$NON-NLS-1$
 
+        setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
+        setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setUploadCommand(new UICommand("Upload", this)); //$NON-NLS-1$
         setCancelUploadCommand(new UICommand("CancelUpload", this)); //$NON-NLS-1$
@@ -152,6 +175,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
         getDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isDownloadAllowed(disks));
+        DiskOperationsHelper.updateMoveAndCopyCommandAvailability(disks, getMoveCommand(), getCopyCommand());
     }
 
     private boolean isRemoveCommandAvailable(List<DiskImage> disks) {
@@ -280,6 +304,10 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
             cancel();
         } else if (command == getDownloadCommand()) {
             download();
+        } else if (command == getMoveCommand()) {
+            DiskOperationsHelper.move(this, getSelectedItems());
+        } else if (command == getCopyCommand()) {
+            DiskOperationsHelper.copy(this, getSelectedItems());
         }
     }
 

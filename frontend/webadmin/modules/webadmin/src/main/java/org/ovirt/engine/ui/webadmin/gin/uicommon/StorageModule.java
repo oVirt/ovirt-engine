@@ -198,6 +198,8 @@ public class StorageModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<UploadImagePopupPresenterWidget> uploadImagePopupProvider,
+            final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
+            final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider,
             final Provider<StorageListModel> mainModelProvider,
             final Provider<StorageDiskListModel> modelProvider) {
 
@@ -209,9 +211,12 @@ public class StorageModule extends AbstractGinModule {
                             UICommand lastExecutedCommand, Model windowModel) {
                         if (lastExecutedCommand == getModel().getUploadCommand() || lastExecutedCommand == getModel().getResumeUploadCommand()) {
                             return uploadImagePopupProvider.get();
-                        } else {
-                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        } else if (lastExecutedCommand == getModel().getMoveCommand()) {
+                            return movePopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getCopyCommand()) {
+                            return copyPopupProvider.get();
                         }
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
                     }
 
                     @Override

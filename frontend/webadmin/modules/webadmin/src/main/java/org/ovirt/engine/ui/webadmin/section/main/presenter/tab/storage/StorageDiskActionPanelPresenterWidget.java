@@ -33,6 +33,21 @@ public class StorageDiskActionPanelPresenterWidget extends
 
     @Override
     protected void initializeButtons() {
+
+        addActionButton(new WebAdminButtonDefinition<Disk>(constants.moveDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getMoveCommand();
+            }
+        });
+
+        addActionButton(new WebAdminButtonDefinition<Disk>(constants.copyDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getCopyCommand();
+            }
+        });
+
         addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
