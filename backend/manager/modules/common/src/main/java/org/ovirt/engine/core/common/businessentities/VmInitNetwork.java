@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
@@ -95,5 +96,44 @@ public class VmInitNetwork implements Serializable, BusinessEntity<Guid> {
     }
     public void setIpv6Gateway(String ipv6Gateway) {
         this.ipv6Gateway = ipv6Gateway;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                id,
+                startOnBoot,
+                name,
+                bootProtocol,
+                ip,
+                netmask,
+                gateway,
+                ipv6BootProtocol,
+                ipv6Address,
+                ipv6Prefix,
+                ipv6Gateway
+        );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof VmInitNetwork)) {
+            return false;
+        }
+        VmInitNetwork other = (VmInitNetwork) obj;
+        return Objects.equals(id, other.id) &&
+                Objects.equals(startOnBoot, other.startOnBoot) &&
+                Objects.equals(name, other.name) &&
+                Objects.equals(bootProtocol, other.bootProtocol) &&
+                Objects.equals(ip, other.ip) &&
+                Objects.equals(netmask, other.netmask) &&
+                Objects.equals(gateway, other.gateway) &&
+                Objects.equals(ipv6BootProtocol, other.ipv6BootProtocol) &&
+                Objects.equals(ipv6Address, other.ipv6Address) &&
+                Objects.equals(ipv6Prefix, other.ipv6Prefix) &&
+                Objects.equals(ipv6Gateway, other.ipv6Gateway);
     }
 }

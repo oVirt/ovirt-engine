@@ -2813,6 +2813,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_MEMORY_HOT_SET_NOT_SUPPORTED_FOR_HUGE_PAGES();
 
+    String ACTION_TYPE_CANNOT_CHANGE_INITIAL_RUN_DATA();
+
     String NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY();
 
     String VM_ICON_DATAURL_MALFORMED();

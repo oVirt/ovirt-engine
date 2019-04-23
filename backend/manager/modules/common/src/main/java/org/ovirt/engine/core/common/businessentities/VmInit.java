@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,6 +36,7 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
 
     public VmInit() {
+        this.setRegenerateKeys(false);
     }
 
     public void setCustomScript(String customScript) {
@@ -207,5 +209,66 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
 
     public void setCloudInitNetworkProtocol(CloudInitNetworkProtocol protocol) {
         cloudInitNetworkProtocol = protocol;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                id,
+                hostname,
+                timeZone,
+                authorizedKeys,
+                customScript,
+                userName,
+                domain,
+                activeDirectoryOU,
+                orgName,
+                dnsServers,
+                dnsSearch,
+                winKey,
+                rootPassword,
+                inputLocale,
+                uiLanguage,
+                systemLocale,
+                userLocale,
+                regenerateKeys,
+                passwordAlreadyStored,
+                networks,
+                cloudInitNetworkProtocol
+        );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof VmInit)) {
+            return false;
+        }
+        VmInit other = (VmInit) obj;
+        return Objects.equals(id, other.id) &&
+                Objects.equals(hostname, other.hostname) &&
+                Objects.equals(timeZone, other.timeZone) &&
+                Objects.equals(authorizedKeys, other.authorizedKeys) &&
+                Objects.equals(customScript, other.customScript) &&
+                Objects.equals(userName, other.userName) &&
+                Objects.equals(domain, other.domain) &&
+                Objects.equals(activeDirectoryOU, other.activeDirectoryOU) &&
+                Objects.equals(orgName, other.orgName) &&
+                Objects.equals(dnsServers, other.dnsServers) &&
+                Objects.equals(dnsSearch, other.dnsSearch) &&
+                Objects.equals(winKey, other.winKey) &&
+                Objects.equals(rootPassword, other.rootPassword) &&
+                Objects.equals(inputLocale, other.inputLocale) &&
+                Objects.equals(uiLanguage, other.uiLanguage) &&
+                Objects.equals(systemLocale, other.systemLocale) &&
+                Objects.equals(userLocale, other.userLocale) &&
+                Objects.equals(regenerateKeys, other.regenerateKeys) &&
+                Objects.equals(passwordAlreadyStored, other.passwordAlreadyStored) &&
+                (Objects.equals(networks, other.networks) ||
+                        (networks == null && other.networks.size() == 0) ||
+                        (other.networks == null && networks.size() == 0)) &&
+                Objects.equals(cloudInitNetworkProtocol, other.cloudInitNetworkProtocol);
     }
 }
