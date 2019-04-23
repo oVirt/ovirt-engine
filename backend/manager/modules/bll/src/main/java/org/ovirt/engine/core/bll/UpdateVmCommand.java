@@ -70,8 +70,10 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -111,7 +113,9 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -155,6 +159,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmNicDao vmNicDao;
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private VmInitDao vmInitDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
     @Inject
@@ -1364,6 +1372,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
+        }
+
+        if (vmFromDB.getVmPoolId() != null) {
+            VmPool vmPool = vmPoolDao.get(vmFromDB.getVmPoolId());
+            if (vmPool == null || !vmPool.isStateful()) {
+                VmInit oldVmInit = vmInitDao.get(vmFromDB.getId());
+
+                if (!Objects.equals(getParameters().getVmStaticData().getVmInit(), oldVmInit)) {
+                    return failValidation(EngineMessage.ACTION_TYPE_CANNOT_CHANGE_INITIAL_RUN_DATA);
+                }
+            }
         }
 
         return true;
