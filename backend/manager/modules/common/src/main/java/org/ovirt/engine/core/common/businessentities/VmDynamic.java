@@ -334,7 +334,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     }
 
     public void setAppList(String value) {
-        this.appList = value;
+        if (value != null) {
+            this.appList = value.intern();
+        } else {
+            this.appList = null;
+        }
     }
 
     public String getConsoleCurrentUserName() {
