@@ -215,7 +215,6 @@ def create_volume(args):
     logger.info("Creating volume '%s', with size '%s' GB",
                 args.volume_id, args.size)
     backend.create_volume(int(args.size), id=args.volume_id)
-    backend.refresh()
 
 
 def delete_volume(args):
@@ -272,7 +271,6 @@ def extend_volume(args):
 
     logger.info("Extending volume '%s' by %s GB", args.volume_id, args.size)
     vol.extend(int(args.size))
-    backend.refresh()
 
 
 def storage_stats(args):
@@ -312,7 +310,6 @@ def clone_volume(args):
 
     logger.info("Cloning volume '%s' to '%s'", vol.id, args.cloned_vol_id)
     vol.clone(id=args.cloned_vol_id)
-    backend.refresh()
 
 
 def create_snapshot(args):
@@ -333,7 +330,6 @@ def create_snapshot(args):
 
     logger.info("Created snapshot id: '%s'", snap.id)
     _write_output(snap.id)
-    backend.refresh()
 
 
 def remove_snapshot(args):
