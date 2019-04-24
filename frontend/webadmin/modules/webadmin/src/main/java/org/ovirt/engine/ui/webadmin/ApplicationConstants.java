@@ -3467,6 +3467,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostHasNoDefaultRoute();
 
+    String hostSmtAlert();
+
     String autoDetect();
 
     String cacheDevice();
