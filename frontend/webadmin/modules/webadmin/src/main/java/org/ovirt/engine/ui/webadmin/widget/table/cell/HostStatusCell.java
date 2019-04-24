@@ -186,6 +186,10 @@ public class HostStatusCell extends AbstractCell<VDS> {
             appendLine(sb, constants.hostHasNoDefaultRoute());
         }
 
+        if (hasSmtAlert(vds)) {
+            appendLine(sb, constants.hostSmtAlert());
+        }
+
         return sb.toSafeHtml();
     }
 
@@ -211,5 +215,11 @@ public class HostStatusCell extends AbstractCell<VDS> {
                 .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
                         vds.getClusterCompatibilityVersion().getValue())
                 && !vds.isDefaultRouteRoleNetworkAttached();
+    }
+
+    private boolean hasSmtAlert(VDS vds) {
+        int threadsPerCore = vds.getCpuThreads() / vds.getCpuCores();
+        return (vds.isKernelCmdlineSmtDisabled() && threadsPerCore > 1)
+            || vds.isKernelCmdlineSmtDisabled() != vds.isClusterSmtDisabled();
     }
 }

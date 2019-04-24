@@ -1809,7 +1809,8 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_static.vgpu_placement AS vgpu_placement,
     vds_dynamic.connector_info AS connector_info,
     vds_dynamic.backup_enabled AS backup_enabled,
-    vds_dynamic.supported_domain_versions AS supported_domain_versions
+    vds_dynamic.supported_domain_versions AS supported_domain_versions,
+    cluster.smt_disabled AS cluster_smt_disabled
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1956,7 +1957,8 @@ SELECT cluster.cluster_id,
     vds_static.vgpu_placement AS vgpu_placement,
     vds_dynamic.connector_info AS connector_info,
     vds_dynamic.backup_enabled AS backup_enabled,
-    vds_dynamic.supported_domain_versions AS supported_domain_versions
+    vds_dynamic.supported_domain_versions AS supported_domain_versions,
+    cluster.smt_disabled AS cluster_smt_disabled
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

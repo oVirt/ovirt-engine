@@ -63,6 +63,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     private boolean networkOperationInProgress;
     private boolean isDefaultRouteRoleNetworkAttached;
 
+    private boolean isClusterSmtDisabled;
+
     public VDS() {
         vdsStatic = new VdsStatic();
         vdsDynamic = new VdsDynamic();
@@ -133,7 +135,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 && Objects.equals(clusterGlusterService, other.clusterGlusterService)
                 && glusterPeerStatus == other.glusterPeerStatus
                 && networkOperationInProgress == other.networkOperationInProgress
-                && isDefaultRouteRoleNetworkAttached == other.isDefaultRouteRoleNetworkAttached;
+                && isDefaultRouteRoleNetworkAttached == other.isDefaultRouteRoleNetworkAttached
+                && isClusterSmtDisabled == other.isClusterSmtDisabled;
     }
 
 
@@ -240,6 +243,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setInFenceFlow(isInFenceFlow());
         vds.setNetworkOperationInProgress(isNetworkOperationInProgress());
         vds.setIsDefaultRouteRoleNetworkAttached(isDefaultRouteRoleNetworkAttached());
+        vds.setClusterSmtDisabled(isClusterSmtDisabled());
         return vds;
     }
 
@@ -1714,5 +1718,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setSupportedDomainVersionsAsString(String supportedDomainVersions) {
         vdsDynamic.setSupportedDomainVersionsAsString(supportedDomainVersions);
+    }
+
+    public boolean isClusterSmtDisabled() {
+        return isClusterSmtDisabled;
+    }
+
+    public void setClusterSmtDisabled(boolean clusterSmtDisabled) {
+        isClusterSmtDisabled = clusterSmtDisabled;
     }
 }
