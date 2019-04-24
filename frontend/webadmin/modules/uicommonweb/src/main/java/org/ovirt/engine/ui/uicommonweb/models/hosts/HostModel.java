@@ -1107,7 +1107,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         getNetworkProviderModel().setDefaultProviderId(cluster.getDefaultNetworkProviderId());
         setVgpuPlacementChangeability(cluster.getCompatibilityVersion());
-        getKernelCmdlineSmtDisabled().setEntity(cluster.getSmtDisabled());
     }
 
     protected abstract void cpuVendorChanged();

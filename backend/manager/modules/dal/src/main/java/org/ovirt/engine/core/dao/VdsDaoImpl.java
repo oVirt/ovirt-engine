@@ -375,6 +375,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setConnectorInfo(ObjectUtils.mapNullable(
                 rs.getString("connector_info"), JsonHelper::jsonToMapUnchecked));
         entity.setSupportedDomainVersionsAsString(rs.getString("supported_domain_versions"));
+        entity.setClusterSmtDisabled(rs.getBoolean("cluster_smt_disabled"));
         return entity;
     };
 }
