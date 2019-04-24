@@ -375,7 +375,7 @@ public class BackendStorageDomainsResource
         StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
         if (cnx.getConnection().startsWith("[")) {
             String[] parts = cnx.getConnection().split("]:");
-            storage.setAddress(parts[0].substring(1));
+            storage.setAddress(parts[0].concat("]"));
             storage.setPath(parts[1]);
         } else if (cnx.getConnection().contains(":")) {
             String[] parts = cnx.getConnection().split(":");

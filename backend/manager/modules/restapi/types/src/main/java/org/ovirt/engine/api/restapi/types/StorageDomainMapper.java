@@ -303,7 +303,11 @@ public class StorageDomainMapper {
     }
 
     private static void setPath(StorageServerConnections entity, StorageConnection model) {
-        if (entity.getConnection().contains(":")) {
+        if (entity.getConnection().startsWith("[")) {
+            String[] parts = entity.getConnection().split("]:");
+            model.setAddress(parts[0].concat("]"));
+            model.setPath(parts[1]);
+        } else if (entity.getConnection().contains(":")) {
             String[] parts = entity.getConnection().split(":");
             model.setAddress(parts[0]);
             model.setPath(parts[1]);
