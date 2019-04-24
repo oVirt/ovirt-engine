@@ -187,6 +187,10 @@ public class HostStatusCell extends AbstractCell<VDS> {
             appendLine(sb, constants.hostHasNoDefaultRoute());
         }
 
+        if (hasSmtAlert(vds)) {
+            appendLine(sb, constants.hostSmtAlert());
+        }
+
         return sb.toSafeHtml();
     }
 
@@ -212,5 +216,9 @@ public class HostStatusCell extends AbstractCell<VDS> {
                 .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
                         vds.getClusterCompatibilityVersion().getValue())
                 && !NetworkCommonUtils.hasDefaultRoute(vds.getInterfaces());
+    }
+
+    private boolean hasSmtAlert(VDS vds) {
+        return vds.hasSmtDiscrepancyAlert() || vds.hasSmtClusterDiscrepancyAlert();
     }
 }

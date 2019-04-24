@@ -717,9 +717,30 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private boolean hasSmtDiscrepancyAlert;
+
     public boolean getHasSmtDiscrepancyAlert() {
-        int threadsPerCore = getEntity().getCpuThreads() / getEntity().getCpuCores();
-        return getEntity().isKernelCmdlineSmtDisabled() && threadsPerCore > 1;
+        return hasSmtDiscrepancyAlert;
+    }
+
+    public void setHasSmtDiscrepancyAlert(boolean value) {
+        if (value != hasSmtDiscrepancyAlert) {
+            hasSmtDiscrepancyAlert = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasSmtDiscrepancyAlert")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean hasSmtClusterDiscrepancyAlert;
+
+    public boolean getHasSmtClusterDiscrepancyAlert() {
+        return hasSmtClusterDiscrepancyAlert;
+    }
+
+    public void setHasSmtClusterDiscrepancyAlert(boolean value) {
+        if (hasSmtClusterDiscrepancyAlert != value) {
+            hasSmtClusterDiscrepancyAlert = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasSmtClusterDiscrepancyAlert")); //$NON-NLS-1$
+        }
     }
 
     private NonOperationalReason nonOperationalReasonEntity;
@@ -1078,6 +1099,9 @@ public class HostGeneralModel extends EntityModel<VDS> {
                 && getEntity().getGlusterPeerStatus() != PeerStatus.CONNECTED) {
             setHasGlusterDisconnectedAlert(true);
         }
+        // Update SMT status
+        setHasSmtDiscrepancyAlert(getEntity().hasSmtDiscrepancyAlert());
+        setHasSmtClusterDiscrepancyAlert(getEntity().hasSmtClusterDiscrepancyAlert());
 
         setNonOperationalReasonEntity(getEntity().getNonOperationalReason() == NonOperationalReason.NONE ?
                 null : getEntity().getNonOperationalReason());
@@ -1104,7 +1128,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
                 || getHasNoPowerManagementAlert() || getHasReinstallAlertNonResponsive()
                 || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance()
                 || getHasGlusterDisconnectedAlert() || getHasDefaultRouteAlert()
-                || getHasSmtDiscrepancyAlert());
+                || getHasSmtDiscrepancyAlert() || getHasSmtClusterDiscrepancyAlert());
     }
 
     private void goToEvents() {

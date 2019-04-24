@@ -62,6 +62,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     private Map<String, Long> localDisksUsage;
     private boolean networkOperationInProgress;
 
+    private boolean isClusterSmtDisabled;
+
     public VDS() {
         vdsStatic = new VdsStatic();
         vdsDynamic = new VdsDynamic();
@@ -130,7 +132,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 && Objects.equals(clusterVirtService, other.clusterVirtService)
                 && Objects.equals(clusterGlusterService, other.clusterGlusterService)
                 && glusterPeerStatus == other.glusterPeerStatus
-                && networkOperationInProgress == other.networkOperationInProgress;
+                && networkOperationInProgress == other.networkOperationInProgress
+                && isClusterSmtDisabled == other.isClusterSmtDisabled;
     }
 
 
@@ -233,6 +236,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         }
         vds.setInFenceFlow(isInFenceFlow());
         vds.setNetworkOperationInProgress(isNetworkOperationInProgress());
+        vds.setClusterSmtDisabled(isClusterSmtDisabled());
         return vds;
     }
 
@@ -1647,5 +1651,28 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setNetworkOperationInProgress(boolean networkOperationInProgress) {
         this.networkOperationInProgress = networkOperationInProgress;
+    }
+
+    public boolean isClusterSmtDisabled() {
+        return isClusterSmtDisabled;
+    }
+
+    public void setClusterSmtDisabled(boolean clusterSmtDisabled) {
+        isClusterSmtDisabled = clusterSmtDisabled;
+    }
+
+    public boolean hasSmtDiscrepancyAlert() {
+        int threadsPerCore = getCpuThreads() / getCpuCores();
+        return isKernelCmdlineSmtDisabled() && threadsPerCore > 1;
+    }
+
+    public boolean hasSmtClusterDiscrepancyAlert() {
+        int threadsPerCore = getCpuThreads() / getCpuCores();
+        boolean settingsDifferent = isKernelCmdlineSmtDisabled() != isClusterSmtDisabled();
+        boolean smtActual = threadsPerCore > 1;
+        boolean disabledClusterButActual = smtActual && isClusterSmtDisabled();
+        boolean disabledClusterEnabledHost = isKernelCmdlineSmtDisabled() && !isClusterSmtDisabled();
+
+        return settingsDifferent && (disabledClusterButActual || disabledClusterEnabledHost);
     }
 }

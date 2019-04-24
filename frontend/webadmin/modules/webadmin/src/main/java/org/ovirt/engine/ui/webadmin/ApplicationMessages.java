@@ -28,6 +28,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostHasSmtDiscrepancyAlert();
 
+    String hostHasSmtClusterDiscrepancyAlert();
+
     String manaulFencePopupMessageLabel(String hostName);
 
     String storageDestroyPopupMessageLabel(String storageName);

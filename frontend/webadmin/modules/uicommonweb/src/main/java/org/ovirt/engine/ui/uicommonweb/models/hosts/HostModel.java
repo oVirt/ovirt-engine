@@ -1033,7 +1033,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         getHostedEngineWarning().setIsAvailable(cluster.getCompatibilityVersion().less(Version.v4_0));
         getNetworkProviderModel().setDefaultProviderId(cluster.getDefaultNetworkProviderId());
-        getKernelCmdlineSmtDisabled().setEntity(cluster.getSmtDisabled());
     }
 
     protected abstract void cpuVendorChanged();
