@@ -71,7 +71,16 @@
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <w:EntityModelWidgetWithInfo ui:field="nameWidget" usePatternFly="true"
+                                                                 labelColSize="SM_6" widgetColSize="SM_6"/>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                    </b:Column>
+                                    <b:Column size="SM_6">
+                                        <g:Label ui:field="nameWarningLabel" text="{constants.networkNameInfo}"
+                                                 addStyleNames="form-group"/>
+                                    </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />

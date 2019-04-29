@@ -3514,4 +3514,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String vdsmName();
 
     String portSecurityEnabledLabel();
+
+    String networkNameInfo();
 }

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -61,6 +63,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     implements AbstractNetworkPopupPresenterWidget.ViewDef<T> {
 
     private static final int CLUSTERS_TABLE_HEIGHT = 390;
+    private static final String HAS_WARNING = "has-warning"; //$NON-NLS-1$
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractNetworkPopupView<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -90,9 +93,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @WithElementId("dataCenter")
     public ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
-    @UiField
     @Path(value = "name.entity")
-    public StringEntityModelTextBoxEditor nameEditor;
+    public StringEntityModelTextBoxOnlyEditor nameEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo nameWidget;
+
+    @UiField
+    @Ignore
+    public Label nameWarningLabel;
 
     @UiField
     @Path(value = "description.entity")
@@ -235,6 +245,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public AbstractNetworkPopupView(EventBus eventBus) {
         super(eventBus);
         // Initialize Editors
+        EnableableFormLabel nameLabel = new EnableableFormLabel();
+        nameLabel.setText(constants.nameLabel());
+        nameEditor = new StringEntityModelTextBoxOnlyEditor();
+        nameWidget = new EntityModelWidgetWithInfo(nameLabel, nameEditor);
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         externalProviderEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider>());
         qosEditor = new ListModelListBoxEditor<>(new NameRenderer<HostNetworkQos>());
@@ -259,6 +273,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         initEntityModelCellTable();
         localize();
 
+        nameWarningLabel.setVisible(false);
         dnsServersWidget.setUsePatternFly(true);
     }
 
@@ -270,7 +285,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
         dataCenterEditor.setLabel(constants.networkPopupDataCenterLabel());
         assignLabel.setText(constants.networkPopupAssignLabel());
-        nameEditor.setLabel(constants.nameLabel());
+        nameWidget.setExplanation(templates.italicText(constants.networkNameInfo()));
         descriptionEditor.setLabel(constants.descriptionLabel());
         externalLabel.setText(constants.externalLabel());
         externalEditor.setLabel(constants.externalCheckboxLabel());
@@ -440,6 +455,14 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         profilesEditor.edit(model.getProfiles());
         subnetWidget.edit(model.getSubnetModel());
         dnsServersWidget.edit(model.getDnsConfigurationModel().getNameServerModelListModel());
+        model.getNameWarningEvent().addListener((ev, sender, args) -> {
+            boolean hasWarning = (Boolean) sender;
+            if (hasWarning) {
+                showNameWarning();
+            } else {
+                hideNameWarning();
+            }
+        });
     }
 
     @Override
@@ -489,6 +512,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public DialogTabPanel getTabPanel() {
         return tabPanel;
+    }
+
+    private void showNameWarning() {
+        nameWarningLabel.setVisible(true);
+        nameEditor.addStyleName(HAS_WARNING);
+    }
+
+    private void hideNameWarning() {
+        nameWarningLabel.setVisible(false);
+        nameEditor.removeStyleName(HAS_WARNING);
     }
 
 }
