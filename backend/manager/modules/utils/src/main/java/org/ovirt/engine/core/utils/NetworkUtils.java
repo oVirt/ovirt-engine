@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
 import org.ovirt.engine.core.utils.network.function.NicToIpv6AddressFunction;
 import org.slf4j.Logger;
@@ -39,8 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public final class NetworkUtils {
     private static final Logger log = LoggerFactory.getLogger(NetworkUtils.class);
-    private static final Pattern VALID_VDS_NAME_PATTERN = Pattern.compile(
-            String.format("^[0-9a-zA-Z_-]{1,%d}$", BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH));
+    private static final Pattern VALID_VDS_NAME_PATTERN = Pattern.compile(ValidationUtils.HOST_NIC_NAME_PATTERN);
     public static Integer getHostDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
