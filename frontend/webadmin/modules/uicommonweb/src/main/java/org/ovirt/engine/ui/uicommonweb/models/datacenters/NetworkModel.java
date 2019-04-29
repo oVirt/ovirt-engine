@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -55,6 +56,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -64,6 +66,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
 
     public static final HostNetworkQos EMPTY_HOST_NETWORK_QOS = createEmptyHostNetworkQos();
+
+    private static final EventDefinition NAME_WARNING_EVENT =
+            new EventDefinition("NameWarningEvent", Boolean.class); //$NON-NLS-1$
 
     public static HostNetworkQos createEmptyHostNetworkQos() {
         HostNetworkQos qos = new HostNetworkQos();
@@ -102,6 +107,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private boolean isGeneralTabValid;
     private boolean isVnicProfileTabValid;
     private boolean isSubnetTabValid;
+    private Event<EventArgs> nameWarningEvent;
 
     public NetworkModel(SearchableListModel<?, ? extends Network> sourceListModel) {
         this(new Network(), sourceListModel);
@@ -197,6 +203,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setIsGeneralTabValid(true);
         setIsVnicProfileTabValid(true);
         updateAvailability();
+
+        setNameWarningEvent(new Event<>(NAME_WARNING_EVENT));
+        getName().getEntityChangedEvent().addListener((ev, sender, args) -> checkNameForWarningEvent());
     }
 
     private void initPhysicalNetworkList() {
@@ -860,6 +869,28 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     private void updateSubnetChangeability() {
         getSubnetModel().toggleChangeability(getCreateSubnet().getEntity());
+    }
+
+    public Event<EventArgs> getNameWarningEvent() {
+        return nameWarningEvent;
+    }
+
+    public void setNameWarningEvent(Event<EventArgs> nameWarningEvent) {
+        this.nameWarningEvent = nameWarningEvent;
+    }
+
+    private void checkNameForWarningEvent() {
+        if (getName().getEntity().matches(ValidationUtils.HOST_NIC_NAME_PATTERN)) {
+            getNameWarningEvent().raise(Boolean.FALSE, EventArgs.EMPTY);
+        } else {
+            getNameWarningEvent().raise(Boolean.TRUE, EventArgs.EMPTY);
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        cleanupEvents(getNameWarningEvent());
+        super.cleanup();
     }
 
     public enum MtuSelector {
