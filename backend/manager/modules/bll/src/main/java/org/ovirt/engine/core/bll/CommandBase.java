@@ -22,6 +22,7 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
@@ -977,7 +978,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         // checked:
         final List<PermissionSubject> permSubjects = getPermissionCheckSubjects();
 
-        if (permSubjects == null || permSubjects.isEmpty()) {
+        if (CollectionUtils.isEmpty(permSubjects) && objectsRequiringPermissionExist()) {
             if (log.isDebugEnabled()) {
                 log.debug("The set of objects to check is null or empty for action '{}'.", getActionType());
             }
@@ -1000,6 +1001,16 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
         // If we are here then we should grant the permission:
         return checkPermissions(permSubjects);
+    }
+
+    /**
+     * Override this method with false if there are no objects that require permission checking, not because
+     * the user does not have the permissions for these objects, but because none currently exist in engine.
+     * For example, a cluster to which no hosts have yet been added.
+     * @return there are objects requiring permissions that need to be verified against permission subjects
+     */
+    protected boolean objectsRequiringPermissionExist() {
+        return true;
     }
 
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
