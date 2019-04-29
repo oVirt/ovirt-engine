@@ -114,9 +114,9 @@ select fn_db_add_config_value('BackupAlertPeriodInDays','1','general');
 select fn_db_add_config_value('EngineMode','Active','general');
 --Handling Use Default Credentials
 select fn_db_add_config_value('FailedJobCleanupTimeInMinutes','60','general');
-select fn_db_add_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus,delay=10;ilo3:lanplus,power_wait=4;ilo4:lanplus,power_wait=4','general');
+select fn_db_add_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus,delay=10;ilo3:lanplus,power_wait=4;ilo4:lanplus,power_wait=4;redfish:ssl_insecure=1','general');
 select fn_db_add_config_value('CustomFenceAgentDefaultParams','','general');
-select fn_db_add_config_value('FenceAgentDefaultParamsForPPC','ilo3:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ilo4:ilanplus=1,cipher=1,privlvl=administrator,power_wait=4;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4','general');
+select fn_db_add_config_value('FenceAgentDefaultParamsForPPC','ilo3:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ilo4:ilanplus=1,cipher=1,privlvl=administrator,power_wait=4;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;redfish:ssl_insecure=1','general');
 select fn_db_add_config_value('CustomFenceAgentDefaultParamsForPPC','','general');
 select fn_db_add_config_value('FenceAgentMapping','drac7=ipmilan,ilo2=ilo,ilo3=ipmilan,ilo4=ipmilan','general');
 select fn_db_add_config_value('CustomFenceAgentMapping','','general');
@@ -127,7 +127,7 @@ select fn_db_add_config_value('FenceStartStatusDelayBetweenRetriesInSec','60','g
 select fn_db_add_config_value('FenceStartStatusRetries','3','general');
 select fn_db_add_config_value('FenceStopStatusDelayBetweenRetriesInSec','60','general');
 select fn_db_add_config_value('FenceStopStatusRetries','3','general');
-select fn_db_add_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ipmilan=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
+select fn_db_add_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ipmilan=power_wait,redfish=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
 select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','general');
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
 select fn_db_add_config_value('CriticalSpaceActionBlocker','5','general');
@@ -839,10 +839,10 @@ select fn_db_add_config_value_for_versions_up_to('SshHostRebootCommand',
 select fn_db_add_config_value_for_versions_up_to('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '4.4');
 select fn_db_add_config_value_for_versions_up_to('SshVdsPowerdownCommand', '/sbin/poweroff', '4.4');
 select fn_db_add_config_value_for_versions_up_to('VdsFenceOptionMapping',
-                                                 'apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port',
+                                                 'apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port',
                                                  '4.4');
 select fn_db_add_config_value_for_versions_up_to('VdsFenceType',
-                                                 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti',
+                                                 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti',
                                                  '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'true', '4.4');
@@ -870,14 +870,14 @@ select fn_db_update_config_value('AutoRecoveryAllowedTypes','{"storage domains":
 select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
-select fn_db_update_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus=1,delay=10;ilo3:power_wait=4;ilo4:power_wait=4;ilo_ssh:secure=1','general');
-select fn_db_update_config_value('FenceAgentDefaultParamsForPPC','ilo3:cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ilo4:cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ipmilan:lanplus=1,cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ilo_ssh:secure=1','general');
+select fn_db_update_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus=1,delay=10;ilo3:power_wait=4;ilo4:power_wait=4;ilo_ssh:secure=1;redfish:ssl_insecure=1','general');
+select fn_db_update_config_value('FenceAgentDefaultParamsForPPC','ilo3:cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ilo4:cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ipmilan:lanplus=1,cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ilo_ssh:secure=1;redfish:ssl_insecure=1','general');
 select fn_db_update_config_value('FenceAgentMapping','drac7=ipmilan,ilo2=ilo','general');
 select fn_db_update_config_value('FenceStartStatusDelayBetweenRetriesInSec','10','general');
 select fn_db_update_config_value('FenceStartStatusRetries','18','general');
 select fn_db_update_config_value('FenceStopStatusDelayBetweenRetriesInSec','10','general');
 select fn_db_update_config_value('FenceStopStatusRetries','18','general');
-select fn_db_update_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ilo_ssh=power_wait,ipmilan=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
+select fn_db_update_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ilo_ssh=power_wait,ipmilan=power_wait,redfish=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
 select fn_db_update_config_value('QemuimgCommitSupported','true','4.1');
 select fn_db_update_config_value('AgentChannelNamingSupported','true','4.2');
 select fn_db_update_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*','general');
@@ -995,8 +995,12 @@ select fn_db_update_config_value('SupportedClusterLevels','4.1,4.2,4.3,4.4','gen
 select fn_db_update_config_value('SupportedVDSMVersions','4.20,4.30,4.40','general');
 select fn_db_update_config_value('VdcVersion','4.1.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','4.1.0.0','general');
-select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','4.1');
-select fn_db_update_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti','4.1');
+select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port', '4.1');
+select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port', '4.2');
+select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port', '4.3');
+select fn_db_update_config_value('VdsFenceType', 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti','4.1');
+select fn_db_update_config_value('VdsFenceType', 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti','4.2');
+select fn_db_update_config_value('VdsFenceType', 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti','4.3');
 select fn_db_update_config_value('VdsRefreshRate','3','general');
 select fn_db_update_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
