@@ -48,6 +48,8 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -336,6 +338,7 @@ public class SchedulingManager implements BackendService {
             List<Guid> destHostIdList,
             boolean ignoreHardVmToVmAffinity,
             boolean doNotGroupVms,
+            boolean stateless,
             List<String> messages,
             boolean delayWhenNeeded,
             String correlationId) {
@@ -384,6 +387,11 @@ public class SchedulingManager implements BackendService {
 
                 Guid bestHostId = bestHost.get();
                 vmGroup.forEach(vm -> vmToHostAssignment.put(vm.getId(), bestHostId));
+
+                // Stateless scheduling will not update the pending values or update vfs
+                if (stateless) {
+                    continue;
+                }
 
                 List<VM> vmsNotOnHost = vmGroup.stream()
                         .filter(vm -> vm.getRunOnVds() != bestHostId)
@@ -1084,6 +1092,29 @@ public class SchedulingManager implements BackendService {
         return vmSet;
     }
 
+    public boolean isHostAffinityMoreImportantThanVmAffinity(Cluster cluster) {
+        Guid hostAffinityPolicyUnitId =  Guid.createGuidFromString(
+                VmToHostAffinityWeightPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
+
+        Guid vmAffinityPolicyUnitId =  Guid.createGuidFromString(
+                VmAffinityWeightPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
+
+        ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
+
+        Integer hostAffinityFactor = 0;
+        Integer vmAffinityFactor = 0;
+        for (Pair<Guid, Integer> pair : policy.getFunctions()) {
+            Guid functionId = pair.getFirst();
+            if (functionId.equals(hostAffinityPolicyUnitId)) {
+                hostAffinityFactor = pair.getSecond();
+            } else if (functionId.equals(vmAffinityPolicyUnitId)) {
+                vmAffinityFactor = pair.getSecond();
+            }
+        }
+
+        return hostAffinityFactor >= vmAffinityFactor;
+    }
+
     public Map<String, String> getCustomPropertiesRegexMap(ClusterPolicy clusterPolicy) {
         Set<Guid> usedPolicyUnits = new HashSet<>();
         if (clusterPolicy.getFilters() != null) {
@@ -1371,6 +1402,20 @@ public class SchedulingManager implements BackendService {
             this.cluster = cluster;
         }
 
+        private Map<Guid, Guid> schedule(List<VM> vms, boolean stateless) {
+            return SchedulingManager.this.schedule(cluster,
+                    vms,
+                    blackList,
+                    whiteList,
+                    destHostIdList,
+                    ignoreHardVmToVmAffinity,
+                    doNotGroupVms,
+                    stateless,
+                    outMessages,
+                    delay,
+                    correlationId);
+        }
+
         public CallBuilder hostBlackList(List<Guid> hosts) {
             blackList = hosts;
             return this;
@@ -1413,20 +1458,16 @@ public class SchedulingManager implements BackendService {
         }
 
         public Map<Guid, Guid> schedule(List<VM> vms) {
-            return SchedulingManager.this.schedule(cluster,
-                    vms,
-                    blackList,
-                    whiteList,
-                    destHostIdList,
-                    ignoreHardVmToVmAffinity,
-                    doNotGroupVms,
-                    outMessages,
-                    delay,
-                    correlationId);
+            return schedule(vms, false);
         }
 
         public Optional<Guid> schedule(VM vm) {
-            Map<Guid, Guid> res = schedule(Collections.singletonList(vm));
+            Map<Guid, Guid> res = schedule(Collections.singletonList(vm), false);
+            return Optional.ofNullable(res.get(vm.getId()));
+        }
+
+        public Optional<Guid> scheduleStateless(VM vm) {
+            Map<Guid, Guid> res = schedule(Collections.singletonList(vm), true);
             return Optional.ofNullable(res.get(vm.getId()));
         }
 

@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -69,24 +70,35 @@ public class AffinityRulesEnforcer {
         List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
         allAffinityGroups.addAll(affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
 
-        Cache cache = new Cache();
+        Cache cache = new Cache(cluster, allAffinityGroups);
 
-        Pair<Iterable<Guid>, Iterable<Guid>> vmToHostConflicts =
-                getCandidateVmsFromVmsToHostAffinity(allAffinityGroups, cache);
+        Pair<Iterable<Guid>, Iterable<Guid>> vmToHostConflicts = getCandidateVmsFromVmsToHostAffinity(cache);
 
-        return Pipeline
+        Iterator<Guid> hardConflicts = Pipeline
                 // Check hard VM to host affinity
                 .create(() -> vmToHostConflicts.getFirst().iterator())
                 // Check hard VM to VM affinity
-                .append(() -> getCandidateVmsFromVmToVmAffinity(allAffinityGroups, true, cache))
+                .append(() -> getCandidateVmsFromVmToVmAffinity(true, cache))
+                .iterator();
+
+        Set<Guid> softConflictIds = new HashSet<>();
+        Iterator<Guid> softConflicts = Pipeline
                 // Check soft VM to host affinity
-                .append(() -> vmToHostConflicts.getSecond().iterator())
+                .create(() -> vmToHostConflicts.getSecond().iterator())
                 // Check soft VM to VM affinity
-                .append(() -> getCandidateVmsFromVmToVmAffinity(allAffinityGroups, false, cache))
+                .append(() -> getCandidateVmsFromVmToVmAffinity(false, cache))
+                .execute(softConflictIds::add)
+                .iterator();
+
+        return Pipeline
+                .create(hardConflicts)
+                .append(softConflicts)
 
                 .distinct()
                 .map(cache::getVm)
                 .filter(vm -> isVmMigrationValid(cluster, vm))
+                .filter(vm -> !softConflictIds.contains(vm.getId()) ||
+                        migrationImprovesSoftAffinity(vm, cache))
                 .iterator();
     }
 
@@ -117,12 +129,15 @@ public class AffinityRulesEnforcer {
      * 1.Candidate VMs violating enforcing affinity to hosts.
      * 2.Candidate VMs violating non enforcing affinity to hosts.
      *
-     * @param allAffinityGroups All affinity groups for the current cluster.
      * @return Pair of streams. The first contains VMs breaking hard vm to host affinity,
      *   the second contains VMs breaking soft vm to host affinity.
      */
-    private Pair<Iterable<Guid>, Iterable<Guid>> getCandidateVmsFromVmsToHostAffinity(List<AffinityGroup> allAffinityGroups, Cache cache) {
-        List<AffinityGroup> allVmToHostsAffinityGroups = getAllAffinityGroupsForVMsToHostsAffinity(allAffinityGroups);
+    private Pair<Iterable<Guid>, Iterable<Guid>> getCandidateVmsFromVmsToHostAffinity(Cache cache) {
+        List<AffinityGroup> allVmToHostsAffinityGroups = cache.getAllGroups().stream()
+                .filter(AffinityGroup::isVdsAffinityEnabled)
+                .filter(g -> !g.getVdsIds().isEmpty() && !g.getVmIds().isEmpty())
+                .collect(Collectors.toList());
+
         if (allVmToHostsAffinityGroups.isEmpty()) {
             return new Pair<>(IteratorUtils::emptyIterator,  IteratorUtils::emptyIterator);
         }
@@ -230,22 +245,13 @@ public class AffinityRulesEnforcer {
         }
     }
 
-    private Iterator<Guid> getCandidateVmsFromVmToVmAffinity(List<AffinityGroup> allAffinityGroups, boolean onlyEnforcing, Cache cache) {
-        List<AffinityGroup> vmToVmAffinityGroups = allAffinityGroups.stream()
+    private Iterator<Guid> getCandidateVmsFromVmToVmAffinity(boolean onlyEnforcing, Cache cache) {
+        cache.computeUnifiedPositiveGroups();
+        List<AffinityGroup> unifiedAffinityGroups = cache.getAllGroups().stream()
                 .filter(AffinityGroup::isVmAffinityEnabled)
+                .filter(ag -> !ag.getVmIds().isEmpty())
                 .filter(ag -> !onlyEnforcing || ag.isVmEnforcing())
                 .collect(Collectors.toList());
-        Set<Set<Guid>> unifiedPositiveAffinityGroups = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(
-                vmToVmAffinityGroups);
-        List<AffinityGroup> unifiedAffinityGroups = AffinityRulesUtils.setsToAffinityGroups(
-                unifiedPositiveAffinityGroups);
-
-        // Add negative affinity groups
-        for (AffinityGroup ag : vmToVmAffinityGroups) {
-            if (ag.isVmNegative()) {
-                unifiedAffinityGroups.add(ag);
-            }
-        }
 
         // Create a set of all VMs in affinity groups
         Set<Guid> allVms = new HashSet<>();
@@ -448,10 +454,66 @@ public class AffinityRulesEnforcer {
         return new ArrayList<>(broken);
     }
 
-    private List<AffinityGroup> getAllAffinityGroupsForVMsToHostsAffinity(List<AffinityGroup> allAffinityGroups) {
-        return allAffinityGroups.stream()
-                .filter(g -> !g.getVdsIds().isEmpty() && !g.getVmIds().isEmpty())
-                .collect(Collectors.toList());
+    private boolean migrationImprovesSoftAffinity(VM vm, Cache cache) {
+        Guid sourceHost = vm.getRunOnVds();
+        Guid targetHost = schedulingManager.prepareCall(cache.getCluster()).scheduleStateless(vm).orElse(null);
+
+        if (targetHost == null) {
+            return false;
+        }
+
+        if (targetHost.equals(sourceHost)) {
+            return false;
+        }
+
+        List<AffinityGroup> affinityGroupsForVm = cache.getAllGroupsForVm(vm.getId());
+
+        // The number of conflicting host affinity groups must be lower than before
+        Supplier<Boolean> improvesHostAffinity = () -> {
+            int oldConflictCount = 0;
+            int newConflictCount = 0;
+            for (AffinityGroup ag : affinityGroupsForVm) {
+                if (ag.isVdsAffinityEnabled()) {
+                    oldConflictCount += (ag.getVdsIds().contains(sourceHost) != ag.isVdsPositive()) ? 1 : 0;
+                    newConflictCount += (ag.getVdsIds().contains(targetHost) != ag.isVdsPositive()) ? 1 : 0;
+                }
+            }
+
+            return newConflictCount < oldConflictCount;
+        };
+
+        Supplier<Boolean> improvesVmAffinity = () -> {
+            int posAffScore = 0;
+            int negAffScore = 0;
+
+            for (AffinityGroup group : affinityGroupsForVm) {
+                if (!group.isVmAffinityEnabled()) {
+                    continue;
+                }
+
+                Map<Guid, Integer> vmCountOnHosts = cache.getHostsForGroup(group.getId());
+                if (group.isVmPositive()) {
+                    // Subtract 1 from source count, because the current VM should not be counted
+                    int sourceCount = vmCountOnHosts.getOrDefault(sourceHost, 1) - 1;
+                    int targetCount = vmCountOnHosts.getOrDefault(targetHost, 0);
+                    posAffScore += Integer.compare(targetCount, sourceCount);
+                } else {
+                    negAffScore += vmCountOnHosts.getOrDefault(sourceHost, 1) > 1 ? 1 : 0;
+                    negAffScore += vmCountOnHosts.containsKey(targetHost) ? -1 : 0;
+                }
+            }
+
+            // If any of the scores is worse, the vm affinity did not improve
+            if (posAffScore < 0 || negAffScore < 0) {
+                return false;
+            }
+
+            return posAffScore > 0 || negAffScore > 0;
+        };
+
+        return cache.isHostAffinityMoreImportant() ?
+                improvesHostAffinity.get() || improvesVmAffinity.get() :
+                improvesVmAffinity.get() || improvesHostAffinity.get();
     }
 
     private static class AffinityGroupComparator implements Comparator<AffinityGroup>, Serializable {
@@ -473,7 +535,22 @@ public class AffinityRulesEnforcer {
     }
 
     private class Cache {
+        private final Cluster cluster;
         private Map<Guid, VM> vms = new HashMap<>();
+
+        private List<AffinityGroup> allGroups;
+        private Map<Guid, List<AffinityGroup>> groupsForVm;
+        private boolean unifiedGroupsComputed = false;
+
+        // Map: Affinity group id -> host id -> number of VMs running on the host
+        private Map<Guid, Map<Guid, Integer>> hostsForGroups;
+
+        Boolean hostAffinityMoreImportant;
+
+        public Cache(Cluster cluster, List<AffinityGroup> allGroups) {
+            this.cluster = cluster;
+            this.allGroups = allGroups;
+        }
 
         public VM getVm(Guid id) {
             if (!vms.containsKey(id)) {
@@ -487,8 +564,106 @@ public class AffinityRulesEnforcer {
                     .filter(id -> !vms.containsKey(id))
                     .collect(Collectors.toList());
 
+            if (missingIds.isEmpty()) {
+                return;
+            }
+
             vmDao.getVmsByIds(missingIds)
                     .forEach(vm -> vms.put(vm.getId(), vm));
+        }
+
+        public List<AffinityGroup> getAllGroups() {
+            return allGroups;
+        }
+
+        public void computeUnifiedPositiveGroups() {
+            if (unifiedGroupsComputed) {
+                return;
+            }
+
+            List<AffinityGroup> vmPositiveGroups = allGroups.stream()
+                    .filter(AffinityGroup::isVmPositive)
+                    .filter(ag -> !ag.getVmIds().isEmpty())
+                    .collect(Collectors.toList());
+
+            List<AffinityGroup> unifiedPositiveGroups = AffinityRulesUtils.setsToAffinityGroups(
+                    AffinityRulesUtils.getUnifiedPositiveAffinityGroups(vmPositiveGroups));
+
+            List<AffinityGroup> unifiedPositiveEnforcingGroups = AffinityRulesUtils.setsToAffinityGroups(
+                    AffinityRulesUtils.getUnifiedPositiveAffinityGroups(vmPositiveGroups.stream()
+                            .filter(AffinityGroup::isVmEnforcing)
+                            .collect(Collectors.toList())));
+
+            unifiedPositiveEnforcingGroups.forEach(ag -> ag.setVmEnforcing(true));
+
+            // Disable vm affinity in all other vm positive affinity groups.
+            // They are not removed, because tho host affinity can still be enabled
+            for (AffinityGroup ag : allGroups) {
+                if (ag.isVmPositive()) {
+                    ag.setVmAffinityRule(EntityAffinityRule.DISABLED);
+                }
+            }
+
+            allGroups.addAll(unifiedPositiveEnforcingGroups);
+            allGroups.addAll(unifiedPositiveGroups);
+
+            unifiedGroupsComputed = true;
+            groupsForVm = null;
+        }
+
+        public List<AffinityGroup> getAllGroupsForVm(Guid vmId) {
+            if (groupsForVm == null) {
+                groupsForVm = new HashMap<>();
+                for (AffinityGroup ag : allGroups) {
+                    for (Guid id : ag.getVmIds()) {
+                        groupsForVm.computeIfAbsent(id, k -> new ArrayList<>()).add(ag);
+                    }
+                }
+            }
+
+            return groupsForVm.getOrDefault(vmId, Collections.emptyList());
+        }
+
+        public Map<Guid, Map<Guid, Integer>> getHostsForGroups() {
+            if (hostsForGroups == null) {
+                Set<Guid> allVms = allGroups.stream()
+                        .flatMap(ag -> ag.getVmIds().stream())
+                        .collect(Collectors.toSet());
+
+                fetchVms(allVms);
+
+                hostsForGroups = new HashMap<>(allGroups.size());
+                for (AffinityGroup group : allGroups) {
+                    if (!group.isVmAffinityEnabled()) {
+                        continue;
+                    }
+
+                    Map<Guid, Integer> vmCountOnHosts = group.getVmIds().stream()
+                            .map(this::getVm)
+                            .filter(vm -> vm != null && vm.getRunOnVds() != null)
+                            .collect(Collectors.toMap(VM::getRunOnVds, v -> 1, Integer::sum));
+
+                    hostsForGroups.put(group.getId(), vmCountOnHosts);
+                }
+            }
+
+            return hostsForGroups;
+        }
+
+        public Map<Guid, Integer> getHostsForGroup(Guid groupId) {
+            return getHostsForGroups().get(groupId);
+        }
+
+        public Cluster getCluster() {
+            return cluster;
+        }
+
+        public boolean isHostAffinityMoreImportant() {
+            if (hostAffinityMoreImportant == null) {
+                hostAffinityMoreImportant =
+                        schedulingManager.isHostAffinityMoreImportantThanVmAffinity(cluster);
+            }
+            return hostAffinityMoreImportant;
         }
     }
 }

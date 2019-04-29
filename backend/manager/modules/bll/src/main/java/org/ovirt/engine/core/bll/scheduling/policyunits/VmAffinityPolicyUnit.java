@@ -125,37 +125,41 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
                 .filter(v -> v != null && v.getRunOnVds() != null)
                 .collect(Collectors.groupingBy(VM::getRunOnVds));
 
-        // Group all hosts for VMs with negative affinity
-        Set<Guid> unacceptableHosts = allVmIdsNegative.stream()
-                .map(runningVMsMap::get)
-                .filter(v -> v != null && v.getRunOnVds() != null)
-                .map(VM::getRunOnVds)
-                .collect(Collectors.toSet());
+        // Test invalid situation for enforcing affinity groups
+        if (onlyEnforcing) {
+            // Group all hosts for VMs with negative affinity
+            Set<Guid> unacceptableHosts = allVmIdsNegative.stream()
+                    .map(runningVMsMap::get)
+                    .filter(v -> v != null && v.getRunOnVds() != null)
+                    .map(VM::getRunOnVds)
+                    .collect(Collectors.toSet());
 
-        Map<Guid, VDS> hostMap = new HashMap<>();
-        for (VDS host : hosts) {
-            hostMap.put(host.getId(), host);
-        }
+            Map<Guid, VDS> hostMap = new HashMap<>();
+            for (VDS host : hosts) {
+                hostMap.put(host.getId(), host);
+            }
 
-        Supplier<String> vmNames = new MemoizingSupplier<>(() -> getVmNames(vmGroup));
+            Supplier<String> vmNames = new MemoizingSupplier<>(() -> getVmNames(vmGroup));// Compute the intersection of hosts with positive and negative affinity and report that
+            // contradicting rules to the log
+            unacceptableHosts.retainAll(acceptableHosts.keySet());
+            for (Guid id : unacceptableHosts) {
+                log.warn("Host '{}' ({}) belongs to both positive and negative affinity list" +
+                                " while scheduling VMs: {}",
+                        hostMap.get(id).getName(), id,
+                        vmNames.get());
+            }
 
-        // Compute the intersection of hosts with positive and negative affinity and report that
-        // contradicting rules to the log
-        unacceptableHosts.retainAll(acceptableHosts.keySet());
-        for (Guid id: unacceptableHosts) {
-            log.warn("Host '{}' ({}) belongs to both positive and negative affinity list" +
-                            " while scheduling VMs: {}",
-                    hostMap.get(id).getName(), id,
-                    vmNames.get());
+            if (acceptableHosts.size() > 1) {
+                log.warn("Invalid affinity situation was detected while scheduling VMs: {}." +
+                                " VMs belonging to the same positive enforcing affinity groups are" +
+                                " running on more than one host.",
+                        vmNames.get());
+            }
         }
 
         // No hosts associated with positive affinity, all hosts are applicable.
         if (acceptableHosts.isEmpty()) {
             acceptableHosts = hosts.stream().collect(Collectors.toMap(VDS::getId, h -> Collections.emptyList()));
-        } else if (acceptableHosts.size() > 1) {
-            log.warn("Invalid affinity situation was detected while scheduling VMs: {}." +
-                            " VMs belonging to the same affinity groups are running on more than one host.",
-                    vmNames.get());
         }
 
         // Report hosts that were removed because of violating the positive affinity rules
