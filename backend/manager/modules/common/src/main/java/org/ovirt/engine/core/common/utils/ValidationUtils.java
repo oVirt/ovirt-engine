@@ -58,6 +58,8 @@ public class ValidationUtils {
     public static final String EMPTY_STRING = "^$";
     public static final String NO_WHITESPACE = "[^\\s]+";
     public static final String GUID = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}";
+    public static final String HOST_NIC_NAME_PATTERN =
+            "^[0-9a-zA-Z_-]{1," + BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH + "}$";
 
 
 
