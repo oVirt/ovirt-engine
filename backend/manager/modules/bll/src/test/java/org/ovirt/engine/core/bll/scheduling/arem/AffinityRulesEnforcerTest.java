@@ -109,7 +109,7 @@ public class AffinityRulesEnforcerTest {
         possibleHosts = Stream.of(vm1, vm2, vm3, vm4, vm5, vm6)
                 .collect(Collectors.toMap(VM::getId, vm -> Arrays.asList(host1, host2, host3)));
 
-        when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenReturn(affinityGroups);
+        when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenAnswer(invocation -> copyGroups());
         when(labelDao.getAllByClusterId(any())).thenReturn(labels);
 
         when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), anyBoolean(), any())).thenReturn(possibleHosts);
@@ -628,6 +628,20 @@ public class AffinityRulesEnforcerTest {
         return ag;
     }
 
+    private AffinityGroup copyAffinityGroup(AffinityGroup group) {
+        AffinityGroup newGroup = new AffinityGroup();
+        newGroup.setId(group.getId());
+        newGroup.setVmAffinityRule(group.getVmAffinityRule());
+        newGroup.setClusterId(group.getClusterId());
+        newGroup.setVmEnforcing(group.isVmEnforcing());
+        newGroup.setVmIds(group.getVmIds());
+        newGroup.setVdsIds(group.getVdsIds());
+        newGroup.setVdsAffinityRule(group.getVdsAffinityRule());
+        newGroup.setVdsEnforcing(group.isVdsEnforcing());
+        return newGroup;
+    }
+
+
     private void prepareVmDao(VM... vmList) {
         doAnswer(invocation -> {
             final List<VM> selectedVms = new ArrayList<>();
@@ -639,6 +653,12 @@ public class AffinityRulesEnforcerTest {
             }
             return selectedVms;
         }).when(vmDao).getVmsByIds(any());
+    }
+
+    private List<AffinityGroup> copyGroups() {
+        return affinityGroups.stream()
+                .map(this::copyAffinityGroup)
+                .collect(Collectors.toList());
     }
 
     private List<VM> getVmsToMigrate() {

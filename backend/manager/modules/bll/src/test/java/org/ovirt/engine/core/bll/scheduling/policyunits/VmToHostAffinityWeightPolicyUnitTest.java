@@ -93,7 +93,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
         doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
-        assertEquals(4, (long) results.get(host_negative_enforcing.getId()));
+        assertEquals(3, (long) results.get(host_negative_enforcing.getId()));
         assertEquals(2, (long) results.get(host_not_in_affinity_group.getId()));
     }
 

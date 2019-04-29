@@ -38,21 +38,9 @@ public class VmToHostAffinityWeightPolicyUnit extends VmToHostAffinityPolicyUnit
         Map<Guid, Integer> hostViolations =
                 getHostViolationCount(false, hosts, vm, new PerHostMessages());
 
-        Guid currentHostId = vm.getRunOnVds();
-        int currentHostScore = hostViolations.getOrDefault(currentHostId, getMaxSchedulerWeight());
-
         List<Pair<Guid, Integer>> retList = new ArrayList<>();
         for (VDS host : hosts) {
             int score = hostViolations.getOrDefault(host.getId(), 0) + DEFAULT_SCORE;
-
-            // Increase the score of hosts with equal or worse score
-            // than the host where the VM is currently running.
-            // If more hosts have the same number of violations,
-            // the host where the VM is running is preferred.
-            if (score >= currentHostScore && !host.getId().equals(currentHostId)) {
-                score += 1;
-            }
-
             retList.add(new Pair<>(host.getId(), Math.min(score, getMaxSchedulerWeight())));
         }
 
