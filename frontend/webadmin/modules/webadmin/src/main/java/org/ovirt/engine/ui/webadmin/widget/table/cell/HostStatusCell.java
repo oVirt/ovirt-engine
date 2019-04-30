@@ -218,8 +218,6 @@ public class HostStatusCell extends AbstractCell<VDS> {
     }
 
     private boolean hasSmtAlert(VDS vds) {
-        int threadsPerCore = vds.getCpuThreads() / vds.getCpuCores();
-        return (vds.isKernelCmdlineSmtDisabled() && threadsPerCore > 1)
-            || vds.isKernelCmdlineSmtDisabled() != vds.isClusterSmtDisabled();
+        return vds.hasSmtDiscrepancyAlert() || vds.hasSmtClusterDiscrepancyAlert();
     }
 }

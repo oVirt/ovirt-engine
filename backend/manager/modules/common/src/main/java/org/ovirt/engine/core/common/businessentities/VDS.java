@@ -1727,4 +1727,19 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setClusterSmtDisabled(boolean clusterSmtDisabled) {
         isClusterSmtDisabled = clusterSmtDisabled;
     }
+
+    public boolean hasSmtDiscrepancyAlert() {
+        int threadsPerCore = getCpuThreads() / getCpuCores();
+        return isKernelCmdlineSmtDisabled() && threadsPerCore > 1;
+    }
+
+    public boolean hasSmtClusterDiscrepancyAlert() {
+        int threadsPerCore = getCpuThreads() / getCpuCores();
+        boolean settingsDifferent = isKernelCmdlineSmtDisabled() != isClusterSmtDisabled();
+        boolean smtActual = threadsPerCore > 1;
+        boolean disabledClusterButActual = smtActual && isClusterSmtDisabled();
+        boolean disabledClusterEnabledHost = isKernelCmdlineSmtDisabled() && !isClusterSmtDisabled();
+
+        return settingsDifferent && (disabledClusterButActual || disabledClusterEnabledHost);
+    }
 }

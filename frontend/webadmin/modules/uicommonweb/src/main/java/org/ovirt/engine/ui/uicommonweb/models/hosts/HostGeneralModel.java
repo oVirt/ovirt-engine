@@ -1094,9 +1094,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
             setHasGlusterDisconnectedAlert(true);
         }
         // Update SMT status
-        int threadsPerCore = getEntity().getCpuThreads() / getEntity().getCpuCores();
-        setHasSmtDiscrepancyAlert(getEntity().isKernelCmdlineSmtDisabled() && threadsPerCore > 1);
-        setHasSmtClusterDiscrepancyAlert(getEntity().isKernelCmdlineSmtDisabled() != getEntity().isClusterSmtDisabled());
+        setHasSmtDiscrepancyAlert(getEntity().hasSmtDiscrepancyAlert());
+        setHasSmtClusterDiscrepancyAlert(getEntity().hasSmtClusterDiscrepancyAlert());
 
         setNonOperationalReasonEntity(getEntity().getNonOperationalReason() == NonOperationalReason.NONE ?
                 null : getEntity().getNonOperationalReason());
