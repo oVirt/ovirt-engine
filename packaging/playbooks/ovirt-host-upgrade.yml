@@ -1,6 +1,12 @@
 - hosts: all
   remote_user: root
 
+  # https://github.com/ansible/ansible/issues/10698
+  # Make sure we use LANG=C for the yum plugin, to properly parse the updated/installed
+  # packages
+  environment:
+    LANG: "C"
+
   pre_tasks:
     - block:
       # Check if certificates need re-enrollment:
