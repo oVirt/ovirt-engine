@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -75,6 +77,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private VdsDao vdsDao;
     @Inject
     private DiskLunMapDao diskLunMapDao;
+    @Inject
+    private VmDao vmDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -248,8 +252,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 return failValidation(EngineMessage.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
             }
         }
-        if ( !getOldStoragePool().getCompatibilityVersion().equals(getStoragePool()
-                .getCompatibilityVersion())) {
+        if (!getOldStoragePool().getCompatibilityVersion().equals(getStoragePool().getCompatibilityVersion())) {
             if (!isStoragePoolVersionSupported()) {
                 return failValidation(VersionSupport.getUnsupportedVersionMessage());
             } else if (getStoragePool().getCompatibilityVersion().compareTo(getOldStoragePool().getCompatibilityVersion()) < 0) {
@@ -264,7 +267,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                         return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
                     }
                 }
-            } else if (!checkAllClustersLevel()) {  // Check all clusters has at least the same compatibility version.
+            } else if (!checkAllClustersLevel() // Check all clusters have at least the same compatibility version.
+                    || hasSuspendedVms()) {
                 return false;
             }
         }
@@ -322,6 +326,24 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     String.format("$ClustersList %1$s", lowLevelClusters));
         }
         return true;
+    }
+
+    private boolean hasSuspendedVms() {
+        List<VM> vmList = vmDao.getAllForStoragePool(getStoragePool().getId());
+        String suspendedVms = vmList.stream()
+                .filter(vm -> vm.getStatus().isSuspended() && vm.getCustomCompatibilityVersion() != null)
+                .filter(vm -> getStoragePool().getCompatibilityVersion().greater(vm.getCustomCompatibilityVersion()))
+                .map(VM::getName)
+                .map(name -> "<li>" + name + "</li>")
+                .collect(Collectors.joining());
+
+        if (!suspendedVms.isEmpty()) {
+            suspendedVms = "<ul>" + suspendedVms + "</ul>";
+            addValidationMessage(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_SUSPENDED_VM_COMPATIBILITY_VERSION_NOT_SUPPORTED);
+            addValidationMessageVariable("VmsList", suspendedVms);
+            return true;
+        }
+        return false;
     }
 
     protected NetworkValidator getNetworkValidator(Network network) {
