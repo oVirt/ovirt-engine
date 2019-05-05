@@ -414,6 +414,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected ImageTransferBackend getTransferBackend() {
+        if (getParameters().getBackupId() != null) {
+            // Incremental backup uses NBD transfer backend
+            return ImageTransferBackend.NBD;
+        }
         return getParameters().getVolumeFormat() == VolumeFormat.RAW ?
                 ImageTransferBackend.NBD : ImageTransferBackend.FILE;
     }
