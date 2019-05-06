@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,8 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
     private OvfHelper ovfHelper;
     @Inject
     private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public UpdateConvertedVmCommand(Guid cmdId) {
         super(cmdId);
@@ -59,6 +62,7 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
             vm.setInterfaces(getParameters().getNetworkInterfaces());
             updateDiskVmElements(vm);
             addImportedDevices(vm);
+            addExtraData(vm);
             setSucceeded(true);
         } finally {
             deleteV2VJob();
@@ -96,6 +100,14 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
         vmStatic.setImages(new ArrayList<>());
         importUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
+    }
+
+    private void addExtraData(VM vm) {
+        VmStatic vmStatic = getVm().getStaticData();
+        if (!vmStatic.getBiosType().equals(vm.getBiosType())) {
+            vmStatic.setBiosType(vm.getBiosType());
+            getVmManager().update(vmStatic);
+        }
     }
 
     private void deleteV2VJob() {
