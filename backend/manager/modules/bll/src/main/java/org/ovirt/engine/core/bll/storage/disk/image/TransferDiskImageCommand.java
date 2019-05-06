@@ -178,7 +178,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 && validate(diskImagesValidator.diskImagesNotIllegal())
                 && validate(storageDomainValidator.isDomainExistAndActive());
         if (getParameters().getBackupId() != null) {
-            return isValid && validate(isVmBackupExists());
+            return isValid && validate(isVmBackupExists()) && validate(isFormatApplicableForBackup());
         }
         return isValid
                 && validateActiveDiskPluggedToAnyNonDownVm(diskImage, diskValidator)
@@ -193,6 +193,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         VmBackup vmBackup = vmBackupDao.get(getParameters().getBackupId());
         if (vmBackup == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_EXIST);
+        }
+        return ValidationResult.VALID;
+    }
+
+    private ValidationResult isFormatApplicableForBackup() {
+        if (getParameters().getVolumeFormat() == VolumeFormat.COW) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_FORMAT_NOT_APPLICABLE_FOR_BACKUP);
         }
         return ValidationResult.VALID;
     }
