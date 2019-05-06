@@ -4,14 +4,22 @@
 # with vdsm from engine.
 
 # download or install byteman rpm
-yum install byteman -y
+sudo yum install byteman -y
 
-# load the agent into a running engine
-bminstall $(pidof ovirt-engine)
+# get the running user and pid of ovirt-engine
+OEPID=$(pidof ovirt-engine)
+OEUSER=$(ps -o user -p ${OEPID} h)
 
-# load a script to print all outgoing vds commands and return values
+# attach the agent into a running engine. Jboss attaches the agent to
+# itself only if the command is run with the user that Jboss is run with
+# ('ovirt' by default)
+sudo -u $OEUSER bminstall $OEPID
 
-cat << EOF > byteman.btm
+# create a script to print all outgoing vds commands and return values
+# it might be required to:
+# - create the directory /home/$OEUSER
+# - chown -R $OEUSER:$OEUSER /home/$OEUSER
+cat << EOF | sudo -u $OEUSER tee /home/$OEUSER/byteman.btm
 RULE trace vdsbroker commands
 CLASS org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand
 METHOD executeVDSCommand
@@ -30,7 +38,5 @@ DO traceln("*** execute vdsbroker " + \$this.getCommandName() + " on " + \$this.
 ENDRULE
 EOF
 
-bmsubmit byteman.btm
-
-
-
+# load the script into the running jvm
+sudo -u $OEUSER bmsubmit -l /home/$OEUSER/byteman.btm
