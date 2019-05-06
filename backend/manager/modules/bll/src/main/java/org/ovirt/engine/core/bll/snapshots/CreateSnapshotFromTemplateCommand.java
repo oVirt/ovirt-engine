@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.snapshots;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDao;
  */
 
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTemplateParameters> extends
         CreateSnapshotCommand<T> {
 
