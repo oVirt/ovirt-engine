@@ -119,6 +119,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         log.info("Redefine previous VM checkpoints for VM '{}'", vmId);
         if (!redefineVmCheckpoints()) {
             setCommandStatus(CommandStatus.FAILED);
+            return;
         }
         log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
 
@@ -168,13 +169,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 break;
 
             case FINALIZING:
-                vmBackupDao.removeAllDisksFromBackup(getParameters().getVmBackup().getId());
-                unlockDisks();
+                finalizeVmBackup();
                 setCommandStatus(CommandStatus.SUCCEEDED);
                 break;
         }
     }
 
+    private void finalizeVmBackup() {
+        vmBackupDao.removeAllDisksFromBackup(getParameters().getVmBackup().getId());
+        unlockDisks();
+    }
 
     private Guid createVmBackup() {
         final VmBackup vmBackup = getParameters().getVmBackup();
@@ -275,6 +279,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected void endWithFailure() {
+        finalizeVmBackup();
         getReturnValue().setEndActionTryAgain(false);
         setSucceeded(true);
     }
