@@ -143,6 +143,7 @@ public class LibvirtVmXmlBuilder {
     private VmNic nic;
     private Disk disk;
     private VmDevice device;
+    private boolean mdevDisplayOn;
 
     /**
      * This constructor is meant for building a complete XML for runnning
@@ -239,6 +240,7 @@ public class LibvirtVmXmlBuilder {
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
+        mdevDisplayOn = isMdevDisplayOn(vmCustomProperties, vm);
     }
 
     public String buildCreateVm() {
@@ -1167,13 +1169,22 @@ public class LibvirtVmXmlBuilder {
                 VmDeviceCommonUtils.extractDiskVmElements(vm));
     }
 
+    boolean isMdevDisplayOn(Map<String, String> vmCustomProperties, VM vm) {
+        String mdevTypes = vmCustomProperties.get("mdev_type");
+        if (mdevTypes == null) {
+            return false;
+        }
+        String[] mdevDevices = mdevTypes.split(",");
+        boolean hasNoDisplay = mdevDevices.length > 0 && mdevDevices[0].equals("nodisplay");
+
+        return vm.getCompatibilityVersion().greaterOrEquals(Version.v4_3) && !hasNoDisplay;
+    }
+
     void writeVGpu() {
         String mdevTypes = vmCustomProperties.remove("mdev_type");
-        boolean display = true;
         if (StringUtils.isNotEmpty(mdevTypes)) {
             String[] mdevDevices = mdevTypes.split(",");
             if (mdevDevices.length > 0 && mdevDevices[0].equals("nodisplay")) {
-                display = false;
                 mdevDevices = Arrays.copyOfRange(mdevDevices, 1, mdevDevices.length);
             }
             for (String mdevType : mdevDevices) {
@@ -1181,7 +1192,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeAttributeString("mode", "subsystem");
                 writer.writeAttributeString("type", "mdev");
                 writer.writeAttributeString("model", "vfio-pci");
-                if (display && vm.getCompatibilityVersion().greaterOrEquals(Version.v4_3)) {
+                if (mdevDisplayOn) {
                     // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
                     // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
                     writer.writeAttributeString("display", "on");
@@ -2511,21 +2522,26 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeVideo(VmDevice device) {
+    void writeVideo(VmDevice device) {
         writer.writeStartElement("video");
 
         writer.writeStartElement("model");
-        writer.writeAttributeString("type", device.getDevice());
-        Object vram = device.getSpecParams().get(VdsProperties.VIDEO_VRAM);
-        writer.writeAttributeString("vram", vram != null ? vram.toString() : "32768");
-        Object heads = device.getSpecParams().get(VdsProperties.VIDEO_HEADS);
-        writer.writeAttributeString("heads", heads != null ? heads.toString() : "1");
-        if (device.getSpecParams().containsKey(VdsProperties.VIDEO_RAM)) {
-            writer.writeAttributeString("ram", device.getSpecParams().get(VdsProperties.VIDEO_RAM).toString());
+        if (mdevDisplayOn) {
+            writer.writeAttributeString("type", "none");
+        } else {
+            writer.writeAttributeString("type", device.getDevice());
+            Object vram = device.getSpecParams().get(VdsProperties.VIDEO_VRAM);
+            writer.writeAttributeString("vram", vram != null ? vram.toString() : "32768");
+            Object heads = device.getSpecParams().get(VdsProperties.VIDEO_HEADS);
+            writer.writeAttributeString("heads", heads != null ? heads.toString() : "1");
+            if (device.getSpecParams().containsKey(VdsProperties.VIDEO_RAM)) {
+                writer.writeAttributeString("ram", device.getSpecParams().get(VdsProperties.VIDEO_RAM).toString());
+            }
+            if (device.getSpecParams().containsKey(VdsProperties.VIDEO_VGAMEM)) {
+                writer.writeAttributeString("vgamem", device.getSpecParams().get(VdsProperties.VIDEO_VGAMEM).toString());
+            }
         }
-        if (device.getSpecParams().containsKey(VdsProperties.VIDEO_VGAMEM)) {
-            writer.writeAttributeString("vgamem", device.getSpecParams().get(VdsProperties.VIDEO_VGAMEM).toString());
-        }
+
         writer.writeEndElement();
         writeAlias(device);
         writeAddress(device);
