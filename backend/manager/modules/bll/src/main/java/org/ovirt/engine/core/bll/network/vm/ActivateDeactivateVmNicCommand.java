@@ -53,6 +53,7 @@ import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
 
@@ -90,6 +91,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Inject
     private HostLocking hostLocking;
+
+    @Inject
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -426,8 +430,15 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void updateDevice() {
-        vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
-        vmDeviceDao.update(vmDevice);
+        if (getParameters().getAction() == PlugAction.PLUG
+                && hotPlugVmNicRequired(getVm().getStatus())) {
+            VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(getVdsId(), System.nanoTime());
+            change.updateVm(getVmId(), VmDevicesMonitoring.UPDATE_HASH);
+            change.flush();
+        } else {
+            vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
+            vmDeviceDao.update(vmDevice);
+        }
     }
 
     @Override
