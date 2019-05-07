@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
  * The VM will be scheduled according to its affinity groups (properties and members) rules
  */
 public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable {
-    private static final long serialVersionUID = 3986203836822086129L;
+    private static final long serialVersionUID = 995196097595814894L;
 
     public static final double PRIORITY_PRECISION = 1E7;
 
@@ -120,6 +120,10 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
      */
     private long priority = 10000000;
 
+    // Transient filed, not stored in the DB.
+    // It is computed by queries returning affinity groups
+    private Boolean broken;
+
     public AffinityGroup() {}
 
     public AffinityGroup(AffinityGroup other) {
@@ -128,6 +132,7 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         description = other.description;
         clusterId = other.clusterId;
         priority = other.priority;
+        broken = other.broken;
 
         vmAffinityRule = other.vmAffinityRule;
         vmEnforcing = other.vmEnforcing;
@@ -234,6 +239,10 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         return vdsAffinityRule == EntityAffinityRule.POSITIVE;
     }
 
+    public boolean isVdsNegative() {
+        return vdsAffinityRule == EntityAffinityRule.NEGATIVE;
+    }
+
     public EntityAffinityRule getVdsAffinityRule() {
         return vdsAffinityRule;
     }
@@ -329,6 +338,14 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
 
     public void setPriorityFromDouble(double priority) {
         setPriority(Math.round(priority * PRIORITY_PRECISION));
+    }
+
+    public Boolean getBroken() {
+        return broken;
+    }
+
+    public void setBroken(Boolean broken) {
+        this.broken = broken;
     }
 
     @Override
