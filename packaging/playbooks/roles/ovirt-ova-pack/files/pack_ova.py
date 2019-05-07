@@ -50,7 +50,7 @@ def convert_disks(ova_path):
         vdsm_user = pwd.getpwnam('vdsm')
         os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)
         try:
-            qemu_cmd = ("qemu-img convert -T none -O qcow2 '%s' '%s'"
+            qemu_cmd = ("qemu-img convert -p -T none -O qcow2 '%s' '%s'"
                         % (path, loop))
             call(['su', '-p', '-c', qemu_cmd, 'vdsm'])
         finally:
