@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll.scheduling.queries;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-public class GetAffinityGroupsByVmIdQuery extends QueriesCommandBase<IdQueryParameters> {
+public class GetAffinityGroupsByVmIdQuery extends AffinityGroupsQueryBase<IdQueryParameters> {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
@@ -18,7 +20,10 @@ public class GetAffinityGroupsByVmIdQuery extends QueriesCommandBase<IdQueryPara
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(affinityGroupDao.getAllAffinityGroupsByVmId(getParameters().getId()));
+        List<AffinityGroup> groups = affinityGroupDao.getAllAffinityGroupsByVmId(getParameters().getId());
+        checkBrokenGroups(groups);
+
+        getQueryReturnValue().setReturnValue(groups);
     }
 
 }

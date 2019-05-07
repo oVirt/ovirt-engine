@@ -2941,6 +2941,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String fencingPolicyTabLabel();
 
+    String statusAffinityGroup();
+
     String nameAffinityGroup();
 
     String descriptionAffinityGroup();
@@ -2964,6 +2966,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String editAffinityGroupLabel();
 
     String removeAffinityGroupLabel();
+
+    String affinityGroupStatusOk();
+
+    String affinityGroupStatusBroken();
 
     String affinityGroupNameLabel();
 

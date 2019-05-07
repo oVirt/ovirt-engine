@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
  * The VM will be scheduled according to its affinity groups (properties and members) rules
  */
 public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable {
-    private static final long serialVersionUID = 6644745275483134922L;
+    private static final long serialVersionUID = 466595868044409104L;
 
     private Guid id;
     /**
@@ -83,6 +83,10 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
      * list of vds uuids that are included in affinity group.<br>
      */
     private List<Guid> vdsIds = new ArrayList<>();
+
+    // Transient filed, not stored in the DB.
+    // It is computed by queries returning affinity groups
+    private Boolean broken;
 
     @Override
     public Guid getId() {
@@ -176,6 +180,10 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         return vdsAffinityRule == EntityAffinityRule.POSITIVE;
     }
 
+    public boolean isVdsNegative() {
+        return vdsAffinityRule == EntityAffinityRule.NEGATIVE;
+    }
+
     public EntityAffinityRule getVdsAffinityRule() {
         return vdsAffinityRule;
     }
@@ -223,6 +231,14 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         if (vdsEntityNames == null) {
             this.vdsEntityNames = new ArrayList<>();
         }
+    }
+
+    public Boolean getBroken() {
+        return broken;
+    }
+
+    public void setBroken(Boolean broken) {
+        this.broken = broken;
     }
 
     @Override

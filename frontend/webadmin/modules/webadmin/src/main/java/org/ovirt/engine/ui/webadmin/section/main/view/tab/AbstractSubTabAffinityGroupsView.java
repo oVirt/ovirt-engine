@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AffinityGroupStatusColumn;
 
 public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDetailsModel, T extends AffinityGroupListModel<?>> extends AbstractSubTabTableView<I, AffinityGroup, M, T> {
 
@@ -25,6 +26,10 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
 
     private void initTable() {
         getTable().enableColumnResizing();
+
+        AffinityGroupStatusColumn statusColumn = new AffinityGroupStatusColumn();
+        statusColumn.makeSortable();
+        getTable().addColumn(statusColumn, constants.statusAffinityGroup(), "50px"); //$NON-NLS-1$
 
         AbstractTextColumn<AffinityGroup> nameColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
