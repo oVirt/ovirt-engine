@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
     public void testNoAffinityGroups() {
         List<VDS> hosts = Arrays.asList(host1, host2);
 
-        Map<Guid, Integer> scores = collectScores(hosts);
+        Map<Guid, Integer> scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host2.getId()));
     }
 
@@ -48,14 +47,14 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
                 vm1, vm2, newVm));
 
-        Map<Guid, Integer> scores = collectScores(hosts);
+        Map<Guid, Integer> scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host2.getId()));
 
         affinityGroups.clear();
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false,
                 vm1, vm2, newVm));
 
-        scores = collectScores(hosts);
+        scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host2.getId()));
     }
 
@@ -69,7 +68,7 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
                 vm1, vm2, newVm));
 
-        Map<Guid, Integer> scores = collectScores(hosts);
+        Map<Guid, Integer> scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host3.getId()));
         assertThat(scores.get(host1.getId())).isGreaterThan(scores.get(host2.getId()));
 
@@ -77,7 +76,7 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false,
                 vm1, vm2, newVm));
 
-        scores = collectScores(hosts);
+        scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host3.getId()));
         assertThat(scores.get(host1.getId())).isGreaterThan(scores.get(host2.getId()));
     }
@@ -93,7 +92,7 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
                 vm1, vm2, newVm));
 
-        Map<Guid, Integer> scores = collectScores(hosts);
+        Map<Guid, Integer> scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
         assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
 
@@ -101,7 +100,7 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         vm1.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm1.setOrigin(OriginType.HOSTED_ENGINE);
 
-        scores = collectScores(hosts);
+        scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
         assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
 
@@ -112,14 +111,14 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false,
                 vm1, vm2, newVm));
 
-        scores = collectScores(hosts);
+        scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
         assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
 
         vm1.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm1.setOrigin(OriginType.HOSTED_ENGINE);
 
-        scores = collectScores(hosts);
+        scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
         assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
     }
@@ -135,7 +134,7 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, true,
                 vm1, vm2, newVm));
 
-        Map<Guid, Integer> scores = collectScores(hosts);
+        Map<Guid, Integer> scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host3.getId()));
         assertThat(scores.get(host1.getId())).isGreaterThan(scores.get(host2.getId()));
 
@@ -143,13 +142,12 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, false,
                 vm1, vm2, newVm));
 
-        scores = collectScores(hosts);
+        scores = collectScores(policyUnit.score(context, hosts, newVm));
         assertEquals(scores.get(host1.getId()), scores.get(host3.getId()));
         assertThat(scores.get(host1.getId())).isGreaterThan(scores.get(host2.getId()));
     }
 
-    private Map<Guid, Integer> collectScores(List<VDS> hosts) {
-        return policyUnit.score(context, hosts, Collections.singletonList(newVm)).stream()
-                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
+    private Map<Guid, Integer> collectScores(List<Pair<Guid, Integer>> scores) {
+        return scores.stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
     }
 }

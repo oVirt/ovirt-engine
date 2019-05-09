@@ -34,7 +34,7 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         long highUtilization = context.getPolicyParameters().containsKey(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()) ?
                 Long.parseLong(context.getPolicyParameters().get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()))
                 : Long.MAX_VALUE;
@@ -57,7 +57,7 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
             }
 
             // Using negative score
-            int score = -(int)Math.round(calcHostLoadPerCore(vds, vmGroup, effectiveCpuCores, hostLoad));
+            int score = -(int)Math.round(calcHostLoadPerCore(vds, vm, effectiveCpuCores, hostLoad));
             scores.add(new Pair<>(vds.getId(), score));
         }
 

@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,9 +107,7 @@ public class PowerSavingWeightPolicyUnitTest extends AbstractPolicyUnitTest {
     }
 
     private <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
-        return unit.score(new SchedulingContext(new Cluster(), parameters, new SchedulingParameters()),
-                hosts,
-                Collections.singletonList(vm)).stream()
+        return unit.score(new SchedulingContext(new Cluster(), parameters, new SchedulingParameters()), hosts, vm).stream()
                 .min(Comparator.comparing(Pair::getSecond))
                 .map(Pair::getFirst)
                 .orElse(null);

@@ -40,7 +40,6 @@ public class NumaTestUtils {
 
     public static VmNumaNode createVmNumaNode(int index) {
         VmNumaNode vmNumaNode = new VmNumaNode();
-        vmNumaNode.setId(Guid.newGuid());
         vmNumaNode.setIndex(index);
         vmNumaNode.setMemTotal(1000);
         return vmNumaNode;

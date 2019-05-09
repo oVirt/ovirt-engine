@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,7 +22,7 @@ public class SlaValidator {
     private VmOverheadCalculator vmOverheadCalculator;
 
     /**
-     * Check whether a host has enough physical memory to start or receive the VMs.
+     * Check whether a host has enough physical memory to start or receive the VM.
      * We have to take swap into account here as it will increase the theoretical
      * limit QEMU/kernel uses to determine whether the required memory space can
      * be allocated (the actual memory is then allocated only when needed, but the
@@ -33,35 +32,28 @@ public class SlaValidator {
      * only after the VM was successfully started.
      *
      * @param curVds The host in question
-     * @param vmGroup The currently scheduled VM group
+     * @param vm The currently scheduled VM
      * @return true when there is enough memory, false otherwise
      */
-    public boolean hasPhysMemoryToRunVmGroup(VDS curVds, List<VM> vmGroup, int pendingMemory) {
+    public boolean hasPhysMemoryToRunVM(VDS curVds, VM vm, int pendingMemory) {
         if (curVds.getMemFree() != null) {
-            long vmMemRequired = vmGroup.stream()
-                    .mapToLong(vm -> HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
-                            + vmOverheadCalculator.getStaticOverheadInMb(vm))
-                    .sum();
+            double vmMemRequired = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
+                    + vmOverheadCalculator.getStaticOverheadInMb(vm);
+
+            if (HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
+                log.debug("VM uses HugePages - ignore its memory size");
+            }
 
             double vdsMemLimit = curVds.getMemFree() - pendingMemory;
 
-            if (log.isDebugEnabled()) {
-                vmGroup.stream()
-                        .filter(vm -> HugePageUtils.isBackedByHugepages(vm.getStaticData()))
-                        .forEach(vm -> log.debug("VM '{}' uses HugePages - ignore its memory size", vm.getName()));
+            log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB, required memory is {} MB; Guest overhead {} MB",
+                    curVds.getName(),
+                    vdsMemLimit,
+                    pendingMemory,
+                    curVds.getSwapFree(),
+                    vmMemRequired,
+                    vmOverheadCalculator.getStaticOverheadInMb(vm));
 
-                long totalStaticOverhead = vmGroup.stream()
-                        .mapToLong(vm -> vmOverheadCalculator.getStaticOverheadInMb(vm))
-                        .sum();
-
-                log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB, required memory is {} MB; Guest overhead {} MB",
-                        curVds.getName(),
-                        vdsMemLimit,
-                        pendingMemory,
-                        curVds.getSwapFree(),
-                        vmMemRequired,
-                        totalStaticOverhead);
-            }
             if (curVds.getSwapFree() != null) {
                 vdsMemLimit += curVds.getSwapFree();
             }
@@ -74,7 +66,7 @@ public class SlaValidator {
     }
 
     /**
-     * Check whether a host has enough memory to host the new VMs while
+     * Check whether a host has enough memory to host the new VM while
      * taking the engine overcommit limits into account.
      *
      * Swap space and real available memory is not important here, only
@@ -82,33 +74,25 @@ public class SlaValidator {
      * memory multiplied by overcommit.
      *
      * @param curVds The host in question
-     * @param vmGroup The currently scheduled VM group
+     * @param vm The currently scheduled VM
      * @return true when there is enough memory, false otherwise
      */
-    public boolean hasOvercommitMemoryToRunVM(VDS curVds, List<VM> vmGroup) {
-        long vmMemRequired = vmGroup.stream()
-                .mapToLong(vm -> vmOverheadCalculator.getTotalRequiredMemoryInMb(vm))
-                .sum();
+    public boolean hasOvercommitMemoryToRunVM(VDS curVds, VM vm) {
+        double vmMemRequired = vmOverheadCalculator.getTotalRequiredMemoryInMb(vm);
+
+        if (HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
+            log.debug("VM uses HugePages - ignore its memory size");
+        }
 
         double vdsMemLimit = curVds.getMaxSchedulingMemory();
 
-        if (log.isDebugEnabled()) {
-            vmGroup.stream()
-                    .filter(vm -> HugePageUtils.isBackedByHugepages(vm.getStaticData()))
-                    .forEach(vm -> log.debug("VM '{}' uses HugePages - ignore its memory size", vm.getName()));
+        log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Guest overhead {} MB",
+                curVds.getName(),
+                vdsMemLimit,
+                vmMemRequired,
+                vmOverheadCalculator.getOverheadInMb(vm));
 
-            long totalOverhead = vmGroup.stream()
-                    .mapToLong(vm -> vmOverheadCalculator.getOverheadInMb(vm))
-                    .sum();
-
-            log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Guest overhead {} MB",
-                    curVds.getName(),
-                    vdsMemLimit,
-                    vmMemRequired,
-                    totalOverhead);
-
-            log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
-        }
+        log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
         return vmMemRequired <= vdsMemLimit;
     }
 

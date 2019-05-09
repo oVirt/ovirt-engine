@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
-import org.ovirt.engine.core.common.action.MigrateMultipleVmsParameters;
+import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
@@ -136,12 +138,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
         boolean succeeded = true;
 
-        List<VM> vmsToMigrate = new ArrayList<>();
         for (VM vm : vms) {
             if (vm.isHostedEngine()) {
                 // check if there is host which can be used for HE
                 if (!canScheduleVm(vm)) {
                     succeeded = false;
+                    appendCustomCommaSeparatedValue("failedVms", vm.getName());
                     log.error("There is no host capable of running the hosted engine VM");
                 }
                 // The Hosted Engine vm is migrated by the HA agent
@@ -149,51 +151,41 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || vm.isAutoStartup())) {
-                vmsToMigrate.add(vm);
+                if (!migrateVm(vm, parentContext)) {
+                    succeeded = false;
+                    appendCustomCommaSeparatedValue("failedVms", vm.getName());
+                    log.error("Failed to migrate VM '{}'", vm.getName());
+                }
             }
-        }
-
-        if (!migrateVms(vmsToMigrate, parentContext)) {
-            succeeded = false;
-            // There is no way to find out which VMs failed to migrate, so the error message is general.
-            log.error("Failed to migrate one or more VMs.");
         }
         return succeeded;
     }
 
-    private boolean migrateVms(List<VM> vms, ExecutionContext parentContext) {
+    protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
         boolean forceMigration = !getParameters().isInternal();
-
-        MigrateMultipleVmsParameters parameters = new MigrateMultipleVmsParameters(
-                vms.stream().map(VM::getId).collect(Collectors.toList()),
-                forceMigration
-        );
-        parameters.setHostBlackList(Collections.singletonList(getVdsId()));
-
-        boolean canIgnoreVmAffinity = vms.stream()
-                .anyMatch(vm -> Config.<Boolean>getValue(
-                        ConfigValues.IgnoreVmToVmAffinityForHostMaintenance,
-                        vm.getCompatibilityVersion().getValue()
-                ));
-
-        if (canIgnoreVmAffinity) {
-            parameters.setCanIgnoreHardVmAffinity(true);
-        }
+        MigrateVmParameters parameters = new MigrateVmParameters(forceMigration, vm.getId());
+        parameters.setIgnoreHardVmToVmAffinity(Config.<Boolean>getValue(
+                ConfigValues.IgnoreVmToVmAffinityForHostMaintenance,
+                vm.getCompatibilityVersion().getValue()
+        ));
 
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
-        return runInternalAction(ActionType.MigrateMultipleVms,
+        return runInternalAction(ActionType.MigrateVm,
                 parameters,
-                createMigrateVmsContext(parentContext))
+                createMigrateVmContext(parentContext, vm))
                 .getSucceeded();
     }
 
-    protected CommandContext createMigrateVmsContext(ExecutionContext parentContext) {
+    protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {
         ExecutionContext ctx = new ExecutionContext();
         try {
+            Map<String, String> values = new HashMap<>();
+            values.put(VdcObjectType.VM.name().toLowerCase(), vm.getName());
+            values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getRunOnVdsName());
             Step step = executionHandler.addSubStep(getExecutionContext(),
                     parentContext.getJob().getStep(StepEnum.EXECUTING),
-                    StepEnum.MIGRATE_MULTIPLE_VMS,
-                    null);
+                    StepEnum.MIGRATE_VM,
+                    ExecutionMessageDirector.resolveStepMessage(StepEnum.MIGRATE_VM, values));
             ctx.setJob(parentContext.getJob());
             ctx.setStep(step);
             ctx.setMonitored(true);

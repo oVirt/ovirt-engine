@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -87,7 +88,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
     }
 
     @Override
-    protected CommandContext createMigrateVmsContext(ExecutionContext parentContext) {
+    protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {
         return ExecutionHandler.createInternalJobContext(getContext());
     }
 

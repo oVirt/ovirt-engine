@@ -42,7 +42,7 @@ public class CpuOverloadPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
         List<VDS> list = new ArrayList<>();
 
         final int highUtilization = NumberUtils.toInt(context.getPolicyParameters().get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),

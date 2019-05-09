@@ -157,6 +157,6 @@ public class HugePagesFilterPolicyUnitTest {
     }
 
     private List<VDS> filter(HugePagesFilterPolicyUnit unit) {
-        return unit.filter(context, Collections.singletonList(host1), Collections.singletonList(vm), new PerHostMessages());
+        return unit.filter(context, Collections.singletonList(host1), vm, new PerHostMessages());
     }
 }

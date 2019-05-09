@@ -9,46 +9,48 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.NumaNode;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 
 public class NumaPinningHelper {
 
-    private List<Pair<VmNumaNode, Map<Integer, Collection<Integer>>>> vmNodesAndCpuPinning;
+    private List<VmNumaNode> vmNodes;
+    private Map<Integer, Collection<Integer>> cpuPinning;
     private Map<Integer, List<Integer>> hostNodeCpuMap;
 
     private List<Runnable> commandStack;
     private Map<Integer, Long> hostNodeFreeMem;
-    private Map<Guid, Integer> currentAssignment;
+    private Map<Integer, Integer> currentAssignment;
 
-    private NumaPinningHelper(List<Pair<VmNumaNode, Map<Integer, Collection<Integer>>>> vmNodesAndCpuPinning,
+    private NumaPinningHelper(List<VmNumaNode> vmNodes,
+            Map<Integer, Collection<Integer>> cpuPinning,
             Map<Integer, List<Integer>> hostNodeCpuMap,
             Map<Integer, Long> hostNodeFreeMem) {
 
-        this.vmNodesAndCpuPinning = vmNodesAndCpuPinning;
+        this.vmNodes = vmNodes;
+        this.cpuPinning = cpuPinning;
         this.hostNodeCpuMap = hostNodeCpuMap;
         this.hostNodeFreeMem = hostNodeFreeMem;
     }
 
-    public static Map<Integer, List<Integer>> createCpuMap(Collection<? extends NumaNode> nodes) {
-        return nodes.stream().collect(Collectors.toMap(NumaNode::getIndex, NumaNode::getCpuIds));
+    public static Optional<Map<Integer, Integer>> findAssignment(List<VmNumaNode> vmNodes, List<VdsNumaNode> hostNodes) {
+        return findAssignment(vmNodes, hostNodes, null);
     }
 
     /**
      * Find one possible assignment of VM NUMA nodes to host NUMA nodes,
      * so that all VM nodes can fit to their assigned host nodes.
      *
-     * @param vms List of VMs to check NUMA pinnig
+     * @param vmNodes List of VM NUMA nodes
      * @param hostNodes List of host NUMA nodes
+     * @param cpuPinning Map of host CPU index to collection of VM cpu indices
      * @return Optional of Map from VM node index to host node index
      */
-    public static Optional<Map<Guid, Integer>> findAssignment(List<VM> vms, List<VdsNumaNode> hostNodes, boolean considerCpuPinning) {
+    public static Optional<Map<Integer, Integer>> findAssignment(List<VmNumaNode> vmNodes,
+            List<VdsNumaNode> hostNodes,
+            Map<Integer, Collection<Integer>> cpuPinning) {
 
-        boolean noNodes = vms.stream().allMatch(vm -> vm.getvNumaNodeList().isEmpty());
-        if (noNodes) {
+        if (vmNodes.isEmpty()) {
             return Optional.empty();
         }
 
@@ -59,8 +61,7 @@ public class NumaPinningHelper {
                 ));
 
         // Check if all VM nodes are pinned to existing host nodes
-        boolean allPinnedNodesExist = vms.stream()
-                .flatMap(vm -> vm.getvNumaNodeList().stream())
+        boolean allPinnedNodesExist = vmNodes.stream()
                 .flatMap(node -> node.getVdsNumaNodeList().stream())
                 .allMatch(hostNodeFreeMem::containsKey);
 
@@ -68,42 +69,33 @@ public class NumaPinningHelper {
             return Optional.empty();
         }
 
-        Map<Integer, List<Integer>> hostNodeCpuMap = considerCpuPinning ?
+        if (cpuPinning != null && cpuPinning.isEmpty()) {
+            cpuPinning = null;
+        }
+
+        Map<Integer, List<Integer>> hostNodeCpuMap = cpuPinning == null ?
+                null :
                 hostNodes.stream()
                         .collect(Collectors.toMap(
-                                NumaNode::getIndex,
-                                NumaNode::getCpuIds
-                        )) :
-                null;
+                            NumaNode::getIndex,
+                            NumaNode::getCpuIds
+                        ));
 
-        List<Pair<VmNumaNode, Map<Integer, Collection<Integer>>>> vmNodesAndCpuPinning = vms.stream()
-                .flatMap(vm -> {
-                    Map<Integer, Collection<Integer>> cpuPinning = considerCpuPinning ?
-                            CpuPinningHelper.parseCpuPinning(vm.getCpuPinning()).stream()
-                                    .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus())) :
-                            null;
-
-                    return vm.getvNumaNodeList().stream().map(node -> new Pair<>(node, cpuPinning));
-                })
-                .collect(Collectors.toList());
-
-        NumaPinningHelper helper = new NumaPinningHelper(vmNodesAndCpuPinning, hostNodeCpuMap, hostNodeFreeMem);
+        NumaPinningHelper helper = new NumaPinningHelper(vmNodes, cpuPinning, hostNodeCpuMap, hostNodeFreeMem);
         return Optional.ofNullable(helper.fitNodes());
     }
 
     private Runnable fitNodesRunnable(int vmNumaNodeIndex) {
         return () -> {
             // Stopping condition for recursion
-            if (vmNumaNodeIndex >= vmNodesAndCpuPinning.size()) {
+            if (vmNumaNodeIndex >= vmNodes.size()) {
                 // If all nodes fit, clear the commandStack to skip all other commands
                 // and return current assignment
                 commandStack.clear();
                 return;
             }
 
-            Pair<VmNumaNode, Map<Integer, Collection<Integer>>> pair = vmNodesAndCpuPinning.get(vmNumaNodeIndex);
-            VmNumaNode vmNode = pair.getFirst();
-            Map<Integer, Collection<Integer>> cpuPinning = pair.getSecond();
+            VmNumaNode vmNode = vmNodes.get(vmNumaNodeIndex);
 
             // If the node is not pinned, skip it.
             //
@@ -124,19 +116,17 @@ public class NumaPinningHelper {
                         return;
                     }
 
-                    if (cpuPinning != null && !vmNodeFitsHostNodeCpuPinning(vmNode,
-                            hostNodeCpuMap.get(pinnedIndex),
-                            cpuPinning)) {
+                    if (cpuPinning != null && !vmNodeFitsHostNodeCpuPinning(vmNode, hostNodeCpuMap.get(pinnedIndex))) {
                         return;
                     }
 
                     // The current VM node fits to the host node,
                     hostNodeFreeMem.put(pinnedIndex, hostFreeMem - vmNode.getMemTotal());
-                    currentAssignment.put(vmNode.getId(), pinnedIndex);
+                    currentAssignment.put(vmNode.getIndex(), pinnedIndex);
 
                     // Push revert command to the stack
                     commandStack.add(() -> {
-                        currentAssignment.remove(vmNode.getId());
+                        currentAssignment.remove(vmNode.getIndex());
                         hostNodeFreeMem.put(pinnedIndex, hostFreeMem);
                     });
 
@@ -147,7 +137,7 @@ public class NumaPinningHelper {
         };
     }
 
-    private Map<Guid, Integer> fitNodes() {
+    private Map<Integer, Integer> fitNodes() {
         // Algorithm uses explicit stack, to avoid stack overflow
         currentAssignment = new HashMap<>();
         commandStack = new ArrayList<>();
@@ -166,9 +156,7 @@ public class NumaPinningHelper {
         return currentAssignment;
     }
 
-    private boolean vmNodeFitsHostNodeCpuPinning(VmNumaNode vmNode,
-            List<Integer> hostNodeCpus,
-            Map<Integer, Collection<Integer>> cpuPinning) {
+    private boolean vmNodeFitsHostNodeCpuPinning(VmNumaNode vmNode, List<Integer> hostNodeCpus) {
         for (Integer vmCpuId: vmNode.getCpuIds()) {
             Collection<Integer> pinnedCpus = cpuPinning.get(vmCpuId);
             if (pinnedCpus == null) {

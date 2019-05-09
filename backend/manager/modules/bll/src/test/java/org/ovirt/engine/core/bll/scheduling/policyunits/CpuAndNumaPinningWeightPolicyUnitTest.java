@@ -102,7 +102,7 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
         ));
 
         assertThat(score()).extracting("first", "second").contains(
-                tuple(hostWithoutNuma.getId(), 1000),
+                tuple(hostWithoutNuma.getId(), 1),
                 tuple(hostWithOneCpuPerNode.getId(), 1),
                 tuple(hostWithTwoCpusPerNode.getId(), 1)
         );
@@ -124,8 +124,6 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
     }
 
     private List<Pair<Guid, Integer>> score() {
-        return unit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()),
-                hosts,
-                Collections.singletonList(vm));
+        return unit.score(new SchedulingContext(new Cluster(), Collections.emptyMap(), new SchedulingParameters()), hosts, vm);
     }
 }

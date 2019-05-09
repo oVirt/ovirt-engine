@@ -26,14 +26,12 @@ import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
-import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerBroker;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
@@ -47,8 +45,8 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.policyunits.RankSelectorPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
+import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper;
 import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -63,7 +61,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -81,7 +78,6 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -130,8 +126,6 @@ public class SchedulingManager implements BackendService {
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
-    @Inject
-    private AffinityGroupDao affinityGroupDao;
     @Inject
     private RunVmDelayer runVmDelayer;
     @Inject
@@ -355,10 +349,10 @@ public class SchedulingManager implements BackendService {
             splitFunctions(policy.getFunctions(), context);
             context.setShouldWeighClusterHosts(shouldWeighClusterHosts(cluster));
 
-            Function<List<VM>, Optional<Guid>> findBestHost = group -> {
+            Function<VM, Optional<Guid>> findBestHost = vm -> {
                 context.getMessages().clear();
                 refreshCachedPendingValues(hosts);
-                return selectHost(policy, hosts, group, destHostIdList, context, correlationId);
+                return selectHost(policy, hosts, vm, destHostIdList, context, correlationId);
             };
 
             Map<Guid, VDS> hostsMap = hosts.stream().collect(Collectors.toMap(VDS::getId, h -> h));
@@ -366,40 +360,34 @@ public class SchedulingManager implements BackendService {
             Set<Guid> hostsToNotifyPending = new HashSet<>();
             List<Runnable> vfsUpdates = new ArrayList<>();
             Map<Guid, Guid> vmToHostAssignment = new HashMap<>();
-            for (List<VM> vmGroup : groupVms(vms, context)) {
-                Optional<Guid> bestHost = findBestHost.apply(vmGroup);
+            for (VM vm : vms) {
+                Optional<Guid> bestHost = findBestHost.apply(vm);
                 // The delay is executed only once
                 if (delayWhenNeeded && context.isShouldDelay()) {
                     log.debug("Delaying scheduling...");
                     runVmDelayer.delay(hosts.stream().map(VDS::getId).collect(Collectors.toList()));
                     context.setCanDelay(false);
-                    bestHost = findBestHost.apply(vmGroup);
+                    bestHost = findBestHost.apply(vm);
                 }
 
                 if (!bestHost.isPresent()) {
                     continue;
                 }
 
-                Guid bestHostId = bestHost.get();
-                vmGroup.forEach(vm -> vmToHostAssignment.put(vm.getId(), bestHostId));
+                vmToHostAssignment.put(vm.getId(), bestHost.get());
 
-                List<VM> vmsNotOnHost = vmGroup.stream()
-                        .filter(vm -> vm.getRunOnVds() != bestHostId)
-                        .collect(Collectors.toList());
-
-                if (vmsNotOnHost.isEmpty()) {
+                if (bestHost.get().equals(vm.getRunOnVds())) {
                     continue;
                 }
 
+                Guid bestHostId = bestHost.get();
                 VDS host = hostsMap.get(bestHostId);
-                Map<Guid, Map<Integer, Long>> numaConsumptionPerVm = vmNumaRequirements(vmGroup, host);
-                updateHostNumaNodes(host, numaConsumptionPerVm);
+                Map<Integer, Long> numaConsumption = vmNumaRequirements(vm, host);
+                updateHostNumaNodes(host, numaConsumption);
 
-                for (VM vm : vmsNotOnHost) {
-                    addPendingResources(vm, bestHostId, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()));
-                    hostsToNotifyPending.add(bestHostId);
-                    vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
-                }
+                addPendingResources(vm, bestHostId, numaConsumption);
+                hostsToNotifyPending.add(bestHostId);
+                vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
             }
 
             hostsToNotifyPending.forEach(hostId -> getPendingResourceManager().notifyHostManagers(hostId));
@@ -441,12 +429,12 @@ public class SchedulingManager implements BackendService {
 
     private Optional<Guid> selectHost(ClusterPolicy policy,
             List<VDS> hosts,
-            List<VM> vmGroup,
+            VM vm,
             List<Guid> destHostIdList,
             SchedulingContext context,
             String correlationId) {
         List<VDS> hostList = runFilters(hosts,
-                        vmGroup,
+                        vm,
                         context,
                         true,
                         correlationId);
@@ -459,7 +447,7 @@ public class SchedulingManager implements BackendService {
             return Optional.empty();
         }
 
-        return selectBestHost(vmGroup, destHostIdList, hostList, policy, context);
+        return selectBestHost(vm, destHostIdList, hostList, policy, context);
     }
 
     private List<VDS> fetchHosts(Guid clusterId, List<Guid> blackList, List<Guid> whiteList) {
@@ -487,11 +475,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private void updateHostNumaNodes(VDS host, Map<Guid, Map<Integer, Long>> numaConsumptionPerVm) {
-        Map<Integer, Long> numaConsumption = numaConsumptionPerVm.values().stream()
-                .flatMap(m -> m.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Long::sum));
-
+    private void updateHostNumaNodes(VDS host, Map<Integer, Long> numaConsumption) {
         for (VdsNumaNode node : host.getNumaNodeList()) {
             long memFree = node.getNumaNodeStatistics().getMemFree();
             long memNeeded = numaConsumption.getOrDefault(node.getIndex(), 0L);
@@ -533,46 +517,43 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private  Map<Guid, Map<Integer, Long>> vmNumaRequirements(List<VM> vmGroup, VDS host) {
-        List<VM> filteredVms = vmGroup.stream()
-                .filter(vm -> vm.getNumaTuneMode() != NumaTuneMode.PREFERRED)
-                .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
-                .collect(Collectors.toList());
+    private Map<Integer, Long> vmNumaRequirements(VM vm, VDS host) {
+        if (vm.getNumaTuneMode() == NumaTuneMode.PREFERRED) {
+            return Collections.emptyMap();
+        }
 
+        if (host.getId().equals(vm.getRunOnVds())) {
+            return Collections.emptyMap();
+        }
 
-        boolean considerCpuPinning = filteredVms.stream()
-                .anyMatch(vm -> !StringUtils.isEmpty(vm.getCpuPinning()));
+        List<VmNumaNode> vmNodes = vm.getvNumaNodeList();
+        List<VdsNumaNode> hostNodes = host.getNumaNodeList();
 
-        Optional<Map<Guid, Integer>> nodeAssignment = Optional.empty();
-        if (considerCpuPinning) {
-            nodeAssignment = NumaPinningHelper.findAssignment(filteredVms, host.getNumaNodeList(), true);
+        Map<Integer, Collection<Integer>> cpuPinning = CpuPinningHelper.parseCpuPinning(vm.getCpuPinning()).stream()
+                .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus()));
+
+        Optional<Map<Integer, Integer>> nodeAssignment = Optional.empty();
+        if (!cpuPinning.isEmpty()) {
+            nodeAssignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes, cpuPinning);
         }
 
         if (!nodeAssignment.isPresent()) {
-            nodeAssignment = NumaPinningHelper.findAssignment(filteredVms, host.getNumaNodeList(), false);
+            nodeAssignment = NumaPinningHelper.findAssignment(vmNodes, hostNodes);
         }
 
         if (!nodeAssignment.isPresent()) {
             return Collections.emptyMap();
         }
 
-        Map<Guid, Map<Integer, Long>> result = new HashMap<>();
-        for (VM vm : filteredVms) {
-            if (vm.getvNumaNodeList().isEmpty()) {
+        Map<Integer, Long> result = new HashMap<>(hostNodes.size());
+        for (VmNumaNode vmNode: vmNodes) {
+            Integer hostNodeIndex = nodeAssignment.get().get(vmNode.getIndex());
+            // Ignore unpinned numa nodes
+            if (hostNodeIndex == null) {
                 continue;
             }
 
-            Map<Integer, Long> hostNumaMemRequirements = new HashMap<>();
-            for (VmNumaNode vmNode : vm.getvNumaNodeList()) {
-                Integer hostNodeIndex = nodeAssignment.get().get(vmNode.getId());
-                // Ignore unpinned numa nodes
-                if (hostNodeIndex == null) {
-                    continue;
-                }
-
-                hostNumaMemRequirements.merge(hostNodeIndex, vmNode.getMemTotal(), Long::sum);
-            }
-            result.put(vm.getId(), hostNumaMemRequirements);
+            result.merge(hostNodeIndex, vmNode.getMemTotal(), Long::sum);
         }
 
         return result;
@@ -630,69 +611,11 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<List<VM>> groupVms(List<VM> vms, SchedulingContext context) {
-        if (vms.size() < 2) {
-            return Collections.singletonList(vms);
-        }
-
-        if (context.getSchedulingParameters().isIgnoreHardVmToVmAffinity()) {
-            return vms.stream()
-                    .map(Collections::singletonList)
-                    .collect(Collectors.toList());
-        }
-
-        Guid vmAffinityPolicyunitId = Guid.createGuidFromString(
-                VmAffinityFilterPolicyUnit.class.getAnnotation(SchedulingUnit.class).guid());
-
-        boolean vmAffinityFilterActive = context.getInternalFilters().stream()
-                .map(PolicyUnitImpl::getGuid)
-                .anyMatch(id -> id.equals(vmAffinityPolicyunitId));
-
-        if (!vmAffinityFilterActive) {
-            return vms.stream()
-                    .map(Collections::singletonList)
-                    .collect(Collectors.toList());
-        }
-
-        // TODO - maybe optimize DB call to fetch only needed affinity groups?
-        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(context.getCluster().getId()).stream()
-                .filter(ag -> ag.isVmPositive() && ag.isVmEnforcing())
-                .collect(Collectors.toList());
-
-        if (allPositiveGroups.isEmpty()) {
-            return vms.stream()
-                    .map(Collections::singletonList)
-                    .collect(Collectors.toList());
-        }
-
-        Map<Guid, VM> vmsById = vms.stream().collect(Collectors.toMap(VM::getId, vm -> vm));
-        List<Set<Guid>> unifiedGroups = new ArrayList<>(AffinityRulesUtils.getUnifiedPositiveAffinityGroups(allPositiveGroups));
-
-        List<List<VM>> vmGroups = new ArrayList<>();
-        for (Set<Guid> group : unifiedGroups) {
-            group.retainAll(vmsById.keySet());
-            if (group.isEmpty()) {
-                continue;
-            }
-
-            vmGroups.add(group.stream()
-                    .map(vmsById::get)
-                    .collect(Collectors.toList()));
-
-            vmsById.keySet().removeAll(group);
-        }
-
-        // Create individual VmGroups for the rest of VMs that are not in affinity groups
-        vmsById.values().forEach(vm -> vmGroups.add(Collections.singletonList(vm)));
-
-        return vmGroups;
-    }
-
     /**
      * @param destHostIdList - used for RunAt preselection, overrides the ordering in vdsList
      * @param availableVdsList - presorted list of hosts (better hosts first) that are available
      */
-    private Optional<Guid> selectBestHost(List<VM> vmGroup,
+    private Optional<Guid> selectBestHost(VM vm,
             List<Guid> destHostIdList,
             List<VDS> availableVdsList,
             ClusterPolicy policy,
@@ -733,7 +656,7 @@ public class SchedulingManager implements BackendService {
             selectorInstance.init(functions, runnableGuids);
 
             if (!functions.isEmpty() && context.isShouldWeighClusterHosts()) {
-                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, runnableHosts, vmGroup, context);
+                Optional<Guid> bestHostByFunctions = runFunctions(selectorInstance, runnableHosts, vm, context);
                 if (bestHostByFunctions.isPresent()) {
                     return bestHostByFunctions;
                 }
@@ -803,14 +726,14 @@ public class SchedulingManager implements BackendService {
         splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
 
         Map<Guid, List<VDS>> res = new HashMap<>();
-        for (List<VM> vmGroup : groupVms(vms, context)) {
+        for (VM vm : vms) {
             List<VDS> filteredHosts = runFilters(hosts,
-                    vmGroup,
+                    vm,
                     context,
                     false,
                     null);
 
-            vmGroup.forEach(vm -> res.put(vm.getId(), filteredHosts));
+            res.put(vm.getId(), filteredHosts);
         }
         messages.addAll(context.getMessages());
         return res;
@@ -881,7 +804,7 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runFilters(List<VDS> hostList,
-            List<VM> vmGroup,
+            VM vm,
             SchedulingContext context,
             boolean shouldRunExternalFilters,
             String correlationId) {
@@ -894,13 +817,13 @@ public class SchedulingManager implements BackendService {
             return hostList;
         }
 
-        hostList = runInternalFilters(hostList, vmGroup, context, correlationId, result);
+        hostList = runInternalFilters(hostList, vm, context, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
                 && !context.getExternalFilters().isEmpty()
                 && !hostList.isEmpty()) {
-            hostList = runExternalFilters(hostList, vmGroup, context, correlationId, result);
+            hostList = runExternalFilters(hostList, vm, context, correlationId, result);
         }
 
         if (hostList.isEmpty()) {
@@ -941,7 +864,7 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runInternalFilters(List<VDS> hostList,
-            List<VM> vmGroup,
+            VM vm,
             SchedulingContext context,
             String correlationId,
             SchedulingResult result) {
@@ -950,7 +873,7 @@ public class SchedulingManager implements BackendService {
                 break;
             }
             List<VDS> currentHostList = new ArrayList<>(hostList);
-            hostList = filterPolicyUnit.filter(context, hostList, vmGroup, result.getDetails());
+            hostList = filterPolicyUnit.filter(context, hostList, vm, result.getDetails());
             logFilterActions(currentHostList,
                     toIdSet(hostList),
                     EngineMessage.VAR__FILTERTYPE__INTERNAL,
@@ -985,30 +908,28 @@ public class SchedulingManager implements BackendService {
     }
 
     private List<VDS> runExternalFilters(List<VDS> hostList,
-            List<VM> vmGroup,
+            VM vm,
             SchedulingContext context,
             String correlationId,
             SchedulingResult result) {
+
+        List<Guid> hostIDs = hostList.stream().map(VDS::getId).collect(Collectors.toList());
 
         List<String> filterNames = context.getExternalFilters().stream()
                 .filter(f -> !f.getPolicyUnit().isInternal())
                 .map(f -> f.getPolicyUnit().getName())
                 .collect(Collectors.toList());
-        for (VM vm : vmGroup) {
-            List<Guid> filteredIDs = externalBroker.runFilters(
-                    filterNames,
-                    hostList.stream().map(VDS::getId).collect(Collectors.toList()),
-                    vm.getId(),
-                    context.getPolicyParameters());
 
-            logFilterActions(hostList,
-                    new HashSet<>(filteredIDs),
-                    EngineMessage.VAR__FILTERTYPE__EXTERNAL,
-                    Arrays.toString(filterNames.toArray()),
-                    result,
-                    correlationId);
-            hostList = intersectHosts(hostList, filteredIDs);
-        }
+        List<Guid> filteredIDs =
+                externalBroker.runFilters(filterNames, hostIDs, vm.getId(), context.getPolicyParameters());
+        logFilterActions(hostList,
+                new HashSet<>(filteredIDs),
+                EngineMessage.VAR__FILTERTYPE__EXTERNAL,
+                Arrays.toString(filterNames.toArray()),
+                result,
+                correlationId);
+        hostList = intersectHosts(hostList, filteredIDs);
+
         return hostList;
     }
 
@@ -1023,13 +944,13 @@ public class SchedulingManager implements BackendService {
 
     private Optional<Guid> runFunctions(SelectorInstance selector,
             List<VDS> hostList,
-            List<VM> vmGroup,
+            VM vm,
             SchedulingContext context) {
-        runInternalFunctions(selector, hostList, vmGroup, context);
+        runInternalFunctions(selector, hostList, vm, context);
 
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) &&
                 !context.getExternalFilters().isEmpty()) {
-            runExternalFunctions(selector, hostList, vmGroup, context);
+            runExternalFunctions(selector, hostList, vm, context);
         }
 
         return selector.best();
@@ -1037,11 +958,11 @@ public class SchedulingManager implements BackendService {
 
     private void runInternalFunctions(SelectorInstance selector,
             List<VDS> hostList,
-            List<VM> vmGroup,
+            VM vm,
             SchedulingContext context) {
 
         for (Pair<PolicyUnitImpl, Integer> pair : context.getInternalScoreFunctions()) {
-            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(context, hostList, vmGroup);
+            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(context, hostList, vm);
             for (Pair<Guid, Integer> result : scoreResult) {
                 selector.record(pair.getFirst().getGuid(), result.getFirst(), result.getSecond());
             }
@@ -1050,7 +971,7 @@ public class SchedulingManager implements BackendService {
 
     private void runExternalFunctions(SelectorInstance selector,
             List<VDS> hostList,
-            List<VM> vmGroup,
+            VM vm,
             SchedulingContext context) {
         List<Guid> hostIDs = hostList.stream().map(VDS::getId).collect(Collectors.toList());
 
@@ -1064,15 +985,13 @@ public class SchedulingManager implements BackendService {
                 .collect(Collectors.toMap(pair -> pair.getFirst().getPolicyUnit().getName(),
                         pair -> pair.getFirst().getPolicyUnit().getId()));
 
-        for (VM vm : vmGroup) {
-            List<WeightResultEntry> externalScores =
-                    externalBroker.runScores(scoreNameAndWeight,
-                            hostIDs,
-                            vm.getId(),
-                            context.getPolicyParameters());
+        List<WeightResultEntry> externalScores =
+                externalBroker.runScores(scoreNameAndWeight,
+                        hostIDs,
+                        vm.getId(),
+                        context.getPolicyParameters());
 
-            sumScoreResults(selector, nameToGuidMap, externalScores);
-        }
+        sumScoreResults(selector, nameToGuidMap, externalScores);
     }
 
     private void sumScoreResults(SelectorInstance selector,

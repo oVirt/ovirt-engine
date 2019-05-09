@@ -36,11 +36,11 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         float maxMemoryOfVdsInCluster = getMaxMemoryOfVdsInCluster(hosts);
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
-            scores.add(new Pair<>(vds.getId(), calcHostScore(maxMemoryOfVdsInCluster, vds, vmGroup)));
+            scores.add(new Pair<>(vds.getId(), calcHostScore(maxMemoryOfVdsInCluster, vds, vm)));
         }
         return scores;
     }
@@ -52,13 +52,9 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
      * @param maxMemoryOfVdsInCluster maximum available memory for scheduling of a vds from all the available hosts
      * @return weight score for a single host
      */
-    private int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds, List<VM> vmGroup) {
-        int totalVmMemory = vmGroup.stream()
-                .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                .mapToInt(vm -> vmOverheadCalculator.getTotalRequiredMemoryInMb(vm))
-                .sum();
-
-        float hostSchedulingMem = vds.getMaxSchedulingMemory() - totalVmMemory;
+    private int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds, VM vm) {
+        float hostSchedulingMem = vds.getMaxSchedulingMemory() -
+                (vds.getId().equals(vm.getRunOnVds()) ? 0 : vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
 
         int score = Math.round(((hostSchedulingMem - 1) * (getMaxSchedulerWeight() - 1))
                 / (maxMemoryOfVdsInCluster - 1));

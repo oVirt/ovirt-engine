@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -41,24 +40,16 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
-        List<VM> vmsToCheck = vmGroup.stream()
-                // If Vm in Paused mode - no additional memory allocation needed
-                .filter(vm -> vm.getStatus() != VMStatus.Paused)
-                .collect(Collectors.toList());
-
-        if (vmGroup.isEmpty()) {
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
+        // If Vm in Paused mode - no additional memory allocation needed
+        if (vm.getStatus() == VMStatus.Paused) {
             return hosts;
         }
 
         List<VDS> filteredList = new ArrayList<>();
         for (VDS vds : hosts) {
             // Skip checks if the VM is currently running on the host
-            List<VM> vmsNotRunningOnHost = vmsToCheck.stream()
-                    .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                    .collect(Collectors.toList());
-
-            if (vmsNotRunningOnHost.isEmpty()) {
+            if (vds.getId().equals(vm.getRunOnVds())) {
                 filteredList.add(vds);
                 continue;
             }
@@ -68,7 +59,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             // allocation without provoked and fail if there is not enough memory
             int pendingRealMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
 
-            if (!slaValidator.hasPhysMemoryToRunVmGroup(vds, vmsNotRunningOnHost, pendingRealMemory)) {
+            if (!slaValidator.hasPhysMemoryToRunVM(vds, vm, pendingRealMemory)) {
                 Long hostAvailableMem = vds.getMemFree() + vds.getSwapFree();
                 log.debug(
                         "Host '{}' has insufficient memory to run the VM. Only {} MB of physical memory + swap are available.",
@@ -93,12 +84,8 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                 canDelay = true;
             }
 
-            List<VM> vmsNotRunningOnHost = vmsToCheck.stream()
-                    .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                    .collect(Collectors.toList());
-
             // Check logical memory using overcommit, pending and guaranteed memory rules
-            if (slaValidator.hasOvercommitMemoryToRunVM(vds, vmsNotRunningOnHost)) {
+            if (slaValidator.hasOvercommitMemoryToRunVM(vds, vm)) {
                 resultList.add(vds);
             } else {
                 overcommitFailed.add(vds);

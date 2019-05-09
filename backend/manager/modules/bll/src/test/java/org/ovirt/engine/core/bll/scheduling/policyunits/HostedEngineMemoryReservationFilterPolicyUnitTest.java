@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,14 +88,14 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
 
     @Test
     public void testWithNoRequiredSpares() {
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
     @Test
     public void testWithEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -110,7 +109,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     @Test
     public void testWithoutEnoughSpares() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "6");
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -125,7 +124,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     public void testWithoutEnoughSparesFullMemory() {
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(1, result.size());
         assertEquals("A", result.get(0).getName());
     }
@@ -143,7 +142,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hostedEngine.setOrigin(OriginType.OVIRT);
         doReturn(null).when(vmDao).getHostedEngineVm();
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -159,7 +158,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "5");
         hostedEngine.setVmMemSizeMb(7000);
         hostedEngine.setClusterId(Guid.SYSTEM);
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -184,7 +183,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -202,7 +201,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(3, result.size());
     }
 
@@ -220,7 +219,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(3, result.size());
     }
 
@@ -240,7 +239,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -260,7 +259,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -282,7 +281,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(2048);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
     }
 
@@ -306,7 +305,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(6000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -330,7 +329,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(6000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(4, result.size());
     }
 
@@ -353,7 +352,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         hosts.get(3).setPhysicalMemMb(7000);
         hosts.get(4).setPhysicalMemMb(2048);
 
-        List<VDS> result = filter(hostedEngine);
+        List<VDS> result = policyUnit.filter(context, hosts, hostedEngine, messages);
         assertEquals(5, result.size());
     }
 
@@ -365,12 +364,8 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     @Test
     public void testHostInMaintenance() {
         hosts.get(0).setHighlyAvailableLocalMaintenance(true);
-        List<VDS> result = filter(vm);
+        List<VDS> result = policyUnit.filter(context, hosts, vm, messages);
         assertEquals(5, result.size());
-    }
-
-    private List<VDS> filter(VM vm) {
-        return policyUnit.filter(context, hosts, Collections.singletonList(vm), messages);
     }
 
     private VDS prepareHost(String name, int freeMemoryMb, boolean heEnabled, int heScore, boolean localMaintnance) {

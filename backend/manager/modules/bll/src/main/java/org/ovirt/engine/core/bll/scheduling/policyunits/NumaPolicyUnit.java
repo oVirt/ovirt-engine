@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
@@ -12,6 +11,7 @@ import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -34,9 +34,9 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
-        boolean vmNumaPinned = vmGroup.stream()
-                .flatMap(vm -> vm.getvNumaNodeList().stream())
+    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
+        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
+        boolean vmNumaPinned = vmNumaNodes.stream()
                 .anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
 
         // If no VM numa node is pinned, all hosts are accepted.
@@ -46,32 +46,10 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        List<VM> vmsToCheck = vmGroup.stream()
-                .filter(vm -> !vm.getvNumaNodeList().isEmpty())
-                .collect(Collectors.toList());
-
-        if (vmsToCheck.isEmpty()) {
-            return hosts;
-        }
-
         List<VDS> result = new ArrayList<>();
         for (VDS host: hosts) {
-            List<VM> vmsToCheckOnHost = new ArrayList<>(vmsToCheck.size());
-            boolean skipHostCheck = true;
-            for (VM vm : vmsToCheck) {
-                // Skip checks if the VM is currently running on the host
-                if (host.getId().equals(vm.getRunOnVds())) {
-                    continue;
-                }
-                skipHostCheck = false;
-
-                // If the NUMA mode is PREFERRED, a host with any NUMA configuration is accepted.
-                if (vm.getNumaTuneMode() != NumaTuneMode.PREFERRED) {
-                    vmsToCheckOnHost.add(vm);
-                }
-            }
-
-            if (skipHostCheck) {
+            // Skip checks if the VM is currently running on the host
+            if (host.getId().equals(vm.getRunOnVds())) {
                 result.add(host);
                 continue;
             }
@@ -82,7 +60,8 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
                 continue;
             }
 
-            if (vmsToCheckOnHost.isEmpty()) {
+            // If the NUMA mode is PREFERRED, a host with any NUMA configuration is accepted.
+            if (vm.getNumaTuneMode() == NumaTuneMode.PREFERRED) {
                 result.add(host);
                 continue;
             }
@@ -91,7 +70,7 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
             //        For now, we use the same algorithm as for STRICT mode.
             //        This will cause the host to be filtered out even in some cases when INTERLEAVE nodes could fit.
 
-            if (!NumaPinningHelper.findAssignment(vmsToCheckOnHost, host.getNumaNodeList(), false).isPresent()) {
+            if (!NumaPinningHelper.findAssignment(vmNumaNodes, host.getNumaNodeList()).isPresent()) {
                 log.debug("Host '{}' cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes",
                         host.getName());
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NOT_MEMORY_PINNED_NUMA.toString());

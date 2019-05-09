@@ -194,7 +194,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getVmsByIds(Collection<Guid> vmsIds) {
+    public List<VM> getVmsByIds(List<Guid> vmsIds) {
         return getCallsHandler().executeReadList("GetVmsByIds",
                 vmRowMapper,
                 getCustomMapSqlParameterSource().addValue("vms_ids", createArrayOfUUIDs(vmsIds)));

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -387,34 +386,4 @@ public class VmValidator {
         return Injector.get(DiskVmElementDao.class);
     }
 
-    public ValidationResult canMigrate(boolean forceMigration) {
-        // If VM is pinned to host, no migration can occur
-        if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);
-        }
-
-        if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE && !forceMigration) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
-        }
-
-        switch (vm.getStatus()) {
-        case MigratingFrom:
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
-
-        case NotResponding:
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
-
-        case Paused:
-            if (vm.getVmPauseStatus() == VmPauseStatus.EIO) {
-                return new ValidationResult(EngineMessage.MIGRATE_PAUSED_EIO_VM_IS_NOT_SUPPORTED);
-            }
-            break;
-        }
-
-        if (!vm.isQualifyToMigrate()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
-        }
-
-        return ValidationResult.VALID;
-    }
 }

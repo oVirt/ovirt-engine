@@ -36,7 +36,7 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         boolean countThreadsAsCores = context.getCluster().getCountThreadsAsCores();
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         List<Guid> hostsWithMaxScore = new ArrayList<>();
@@ -47,7 +47,7 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
                 continue;
             }
 
-            int score = (int)Math.round(calcHostLoadPerCore(vds, vmGroup, effectiveCpuCores));
+            int score = (int)Math.round(calcHostLoadPerCore(vds, vm, effectiveCpuCores));
             scores.add(new Pair<>(vds.getId(), score));
         }
 
@@ -59,23 +59,23 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
         return scores;
     }
 
-    protected double calcHostLoadPerCore(VDS vds, List<VM> vmGroup, int hostCores) {
-        return calcHostLoadPerCore(vds, vmGroup, hostCores, null);
+    protected double calcHostLoadPerCore(VDS vds, VM vm, int hostCores) {
+        return calcHostLoadPerCore(vds, vm, hostCores, null);
     }
 
-    protected double calcHostLoadPerCore(VDS vds, List<VM> vmGroup, int hostCores, Integer hostLoad) {
+    protected double calcHostLoadPerCore(VDS vds, VM vm, int hostCores, Integer hostLoad) {
+        if (vds.getId().equals(vm.getRunOnVds())) {
+            return vds.getUsageCpuPercent();
+        }
         int vcpu = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
         hostLoad = hostLoad != null ? hostLoad : calcHostLoad(vds, hostCores, vcpu);
 
-        int addedVmLoad = vmGroup.stream()
-                .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                // If the VM is running, use its current CPU load, otherwise use the config value
-                .mapToInt(vm -> vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
-                        vm.getUsageCpuPercent() * vm.getNumOfCpus() :
-                        vcpu * vm.getNumOfCpus())
-                .sum();
+        // If the VM is running, use its current CPU load, otherwise use the config value
+        double vmLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
+                vm.getUsageCpuPercent() * vm.getNumOfCpus() :
+                vcpu * vm.getNumOfCpus();
 
-        return (double)(hostLoad + addedVmLoad) / (double)hostCores;
+        return (hostLoad + vmLoad) / hostCores;
     }
 
     protected int calcHostLoad(VDS host, int hostCores) {

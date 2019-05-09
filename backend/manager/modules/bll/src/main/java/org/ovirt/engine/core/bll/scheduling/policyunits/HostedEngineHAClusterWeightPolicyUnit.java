@@ -36,9 +36,9 @@ public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
+    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
-        boolean isHostedEngine = vmGroup.stream().anyMatch(VM::isHostedEngine);
+        boolean isHostedEngine = vm.isHostedEngine();
 
         if (isHostedEngine) {
             // If the max HA score is higher than the max weight, then we normalize. Otherwise the ratio is 1, keeping the value as is

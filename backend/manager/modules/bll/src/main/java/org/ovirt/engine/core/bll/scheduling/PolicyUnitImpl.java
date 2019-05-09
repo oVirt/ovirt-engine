@@ -66,26 +66,9 @@ public abstract class PolicyUnitImpl {
         this.pendingResourceManager = pendingResourceManager;
     }
 
-    public List<VDS> filter(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup, PerHostMessages messages) {
-        List<VDS> availableHosts = hosts;
-        for (VM vm : vmGroup) {
-            availableHosts = filter(context, availableHosts, vm, messages);
-        }
-        return availableHosts;
-    }
-
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
         log.error("Policy unit '{}' filter is not implemented", getPolicyUnit().getName());
         return hosts;
-    }
-
-    public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
-        return vmGroup.stream()
-                .flatMap(vm -> score(context, hosts, vm).stream())
-                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond, Integer::sum))
-                .entrySet().stream()
-                .map(e -> new Pair<>(e.getKey(), e.getValue()))
-                .collect(Collectors.toList());
     }
 
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
