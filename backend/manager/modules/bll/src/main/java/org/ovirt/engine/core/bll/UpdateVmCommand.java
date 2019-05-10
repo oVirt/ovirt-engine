@@ -216,9 +216,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getParameters().getVm().setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId()));
         }
 
-        if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none && !getParameters().isConsoleEnabled()) {
-            getParameters().getVmStaticData().setUsbPolicy(UsbPolicy.DISABLED);
-        }
+        updateUSB();
 
         getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
     }
@@ -965,6 +963,20 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     }
 
+    private void updateUSB() {
+        if (getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none && !isConsoleEnabled()) {
+            getParameters().getVmStaticData().setUsbPolicy(UsbPolicy.DISABLED);
+        }
+    }
+
+    private boolean isConsoleEnabled() {
+        if (getParameters().isConsoleEnabled() != null) {
+            return getParameters().isConsoleEnabled();
+        } else {
+            return getVmDeviceUtils().hasConsoleDevice(getVmId());
+        }
+    }
+
     private void addLogMessages(ActionReturnValue returnValueBase) {
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
@@ -1631,6 +1643,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void updateAffinityLabels() {
         List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels == null) {
+            // nothing to update
+            return;
+        }
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     @Valid
     private VmStatic vmStatic;
     private boolean makeCreatorExplicitOwner;
-    private Guid storageDomainId;
+    private Guid storageDomainId = Guid.Empty;
     private Map<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
@@ -132,25 +131,21 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      */
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.GRAPHICS, type = VmDeviceType.UNKNOWN,
                                    name = "graphicsProtocol")
-    private Map<GraphicsType, GraphicsDevice> graphicsDevices;
+    private Map<GraphicsType, GraphicsDevice> graphicsDevices = new HashMap<>();
 
+    /**
+     * This attribute contains information about affinity labels.
+     *
+     *  Update VM - if null preserve current configuration
+     */
     private List<Label> affinityLabels;
 
     public VmManagementParametersBase() {
-        init();
     }
 
     public VmManagementParametersBase(VmStatic vmStatic) {
         super(vmStatic.getId());
         this.vmStatic = vmStatic;
-        init();
-    }
-
-    private void init() {
-        storageDomainId = Guid.Empty;
-        consoleEnabled = Boolean.FALSE;
-        graphicsDevices = new HashMap<>();
-        affinityLabels = new ArrayList<>();
     }
 
     public VmManagementParametersBase(VM vm) {
