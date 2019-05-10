@@ -436,7 +436,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     @CopyOnNewVersion
-    @EditableVmField
+    @EditableVmField(onHostedEngine = true)
     @EditableVmTemplateField
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     private MigrationSupport migrationSupport;

@@ -1058,7 +1058,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         migrationPolicyInfoIcon = new InfoIcon(templates.italicText(messages.migrationPolicyInfo()));
 
-        migrationSelectInfoIcon = new InfoIcon(templates.italicText(messages.migrationSelectInfo()));
+        migrationSelectInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.migrationSelectInfo()));
 
         hostCpuInfoIcon = new InfoIcon(templates.italicText(messages.hostCpuInfo()));
 
