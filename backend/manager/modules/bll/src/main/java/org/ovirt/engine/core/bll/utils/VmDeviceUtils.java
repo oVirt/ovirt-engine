@@ -1391,7 +1391,7 @@ public class VmDeviceUtils {
                               List<VmDevice> srcDevices,
                               Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                               boolean isSoundEnabled,
-                              boolean isConsoleEnabled,
+                              Boolean isConsoleEnabled,
                               Boolean isVirtioScsiEnabled,
                               boolean isBalloonEnabled,
                               Set<GraphicsType> graphicsToSkip,
@@ -1499,7 +1499,7 @@ public class VmDeviceUtils {
                     break;
 
                 case CONSOLE:
-                    if (!isConsoleEnabled) {
+                    if (!Boolean.TRUE.equals(isConsoleEnabled)) {
                         continue;
                     }
                     specParams.putAll(device.getSpecParams());
@@ -1548,7 +1548,7 @@ public class VmDeviceUtils {
             addSoundDevice(dstVmBase, () -> cluster);
         }
 
-        if (isConsoleEnabled && !hasConsole) {
+        if (Boolean.TRUE.equals(isConsoleEnabled) && !hasConsole) {
             addConsoleDevice(dstId);
         }
 
@@ -1572,7 +1572,7 @@ public class VmDeviceUtils {
                                      Guid dstId,
                                      Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                                      boolean isSoundEnabled,
-                                     boolean isConsoleEnabled,
+                                     Boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
                                      boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,

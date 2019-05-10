@@ -1843,6 +1843,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private void addAffinityLabels() {
         List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels == null) {
+            return;
+        }
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());
