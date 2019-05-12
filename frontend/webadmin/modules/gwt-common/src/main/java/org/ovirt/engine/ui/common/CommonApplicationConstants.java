@@ -1097,15 +1097,21 @@ public interface CommonApplicationConstants extends Constants {
 
     String imageTransferPausedUser();
 
-    String imageTransferCancelled();
+    String imageTransferCancelledSystem();
+
+    String imageTransferCancelledUser();
 
     String imageTransferFinalizingSuccess();
 
     String imageTransferFinalizingFailure();
 
+    String imageTransferFinalizingCleanup();
+
     String imageTransferFinishedSuccess();
 
     String imageTransferFinishedFailure();
+
+    String imageTransferFinishedCleanup();
 
     String imageTransferringViaBrowser();
 

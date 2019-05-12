@@ -61,7 +61,7 @@ public class BackendImageTransferResource extends
     @Override
     public Response cancel(Action action) {
         return performAction(ActionType.TransferImageStatus,
-                prepareStatusParams(ImageTransferPhase.CANCELLED));
+                prepareStatusParams(ImageTransferPhase.CANCELLED_USER));
     }
 
     @Override
