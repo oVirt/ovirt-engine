@@ -66,8 +66,8 @@ import org.ovirt.engine.core.utils.MockConfigExtension;
 public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageGuid = Guid.newGuid();
-    private Guid destStorageId = Guid.newGuid();
-    private final Guid SRC_STORAGE_ID = Guid.newGuid();
+    private final Guid destStorageId = Guid.newGuid();
+    private final Guid srcStorageId = Guid.newGuid();
     private final VmDevice vmDevice = new VmDevice();
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
@@ -107,7 +107,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @InjectMocks
     protected MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> command =
             new MoveOrCopyDiskCommand<>(new MoveOrCopyImageGroupParameters(diskImageGuid,
-                    SRC_STORAGE_ID,
+                    srcStorageId,
                     destStorageId,
                     ImageOperation.Move),
                     null);
@@ -161,10 +161,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSameSourceAndDest() {
-        destStorageId = SRC_STORAGE_ID;
         initializeCommand(new DiskImage(), VmEntityType.VM);
-        command.getParameters().setStorageDomainId(destStorageId);
-        command.setStorageDomainId(destStorageId);
+        command.getParameters().setStorageDomainId(srcStorageId);
+        command.setStorageDomainId(srcStorageId);
         initSrcStorageDomain();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
     }
@@ -404,7 +403,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     protected void initializeCommand(DiskImage disk, VmEntityType vmEntityType) {
         disk.setVmEntityType(vmEntityType);
-        disk.setStorageIds(new ArrayList<>(Collections.singletonList(SRC_STORAGE_ID)));
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(srcStorageId)));
         when(diskDao.get(any())).thenReturn(disk);
         when(diskImageDao.get(any())).thenReturn(disk);
 
