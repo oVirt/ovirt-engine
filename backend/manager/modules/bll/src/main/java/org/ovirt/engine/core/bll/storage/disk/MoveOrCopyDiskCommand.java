@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -265,15 +267,18 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (isUnregisteredDiskExistsForCopyTemplate()) {
             return true;
         }
-        StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
-        if (validate(storageDomainValidator.isDomainWithinThresholds())) {
+
+        MultipleStorageDomainsValidator storageDomainsValidator =
+                createMultipleStorageDomainsValidator();
+
+        if (validate(storageDomainsValidator.allDomainsWithinThresholds())) {
             // If we are copying a template's disk we do not want all its copies
             if (getImage().getVmEntityType() == VmEntityType.TEMPLATE) {
                 getImage().getSnapshots().add(getImage());
             } else {
                 getImage().getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(getImage().getImageId()));
             }
-            return validate(storageDomainValidator.hasSpaceForDiskWithSnapshots(getImage()));
+            return validate(storageDomainsValidator.allDomainsHaveSpaceForDisksWithSnapshots(Collections.singletonList(getImage())));
         }
         return false;
     }
@@ -695,13 +700,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return jobProperties;
     }
 
-    protected StorageDomainValidator createStorageDomainValidator() {
-        return new StorageDomainValidator(getStorageDomain());
-    }
-
     protected MultipleDiskVmElementValidator createMultipleDiskVmElementValidator() {
         return new MultipleDiskVmElementValidator(getImage(),
                 diskVmElementDao.getAllDiskVmElementsByDiskId(getParameters().getImageGroupID()));
+    }
+
+    public MultipleStorageDomainsValidator createMultipleStorageDomainsValidator() {
+        return new MultipleStorageDomainsValidator(getStoragePoolId(),
+                Arrays.asList(getStorageDomainId(), getParameters().getSourceDomainId()));
     }
 
     private boolean isMoveOperation() {
