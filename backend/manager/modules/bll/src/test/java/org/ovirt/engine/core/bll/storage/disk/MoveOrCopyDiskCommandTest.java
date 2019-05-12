@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -87,6 +88,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private VmDao vmDao;
     @Mock
     private MultipleDiskVmElementValidator multipleDiskVmElementValidator;
+    @Mock
+    private MultipleStorageDomainsValidator multipleStorageDomainsValidator;
     @Mock
     private SnapshotsValidator snapshotsValidator;
     @Mock
@@ -384,7 +387,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainValidatorWithoutSpace() {
-        when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any())).thenReturn(
+        when(multipleStorageDomainsValidator.allDomainsHaveSpaceForDisksWithSnapshots(any())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
@@ -411,7 +414,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         when(vmDao.get(any())).thenReturn(vm);
 
-        doReturn(storageDomainValidator).when(command).createStorageDomainValidator();
+        doReturn(multipleStorageDomainsValidator).when(command).createMultipleStorageDomainsValidator();
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
         doReturn(diskValidator).when(command).createDiskValidator(disk);
         doReturn(diskImagesValidator).when(command).createDiskImagesValidator(disk);
