@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 
 @DisableInPrepareMode
@@ -37,6 +38,8 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
     private VmPoolMonitor vmPoolMonitor;
     @Inject
     private VmPoolDao vmPoolDao;
+    @Inject
+    private VmDao vmDao;
 
     private VmPool oldPool;
 
@@ -100,6 +103,10 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_AUTO_STORAGE_SELECT);
         }
 
+        if (isVmDeleteProtected()) {
+            return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_TEMPLATE_WHEN_DELETE_PROTECTED);
+        }
+
         return true;
     }
 
@@ -130,6 +137,19 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             updatePoolVms(poolVmsBeforeAdd);
         }
         vmPoolMonitor.triggerPoolMonitoringJob();
+    }
+
+    private boolean isVmDeleteProtected() {
+        List<VM> vmsInPool = vmDao.getAllForVmPool(oldPool.getVmPoolId());
+
+        for (VM vm : vmsInPool) {
+            if ((!vm.getVmtGuid().equals(getParameters().getVmStaticData().getVmtGuid()) ||
+                    vm.isUseLatestVersion() != getParameters().getVmStaticData().isUseLatestVersion()) &&
+                    vm.isDeleteProtected()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updatePoolVms(List<VM> vmsInPool) {

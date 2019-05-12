@@ -45,6 +45,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -59,6 +60,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private Cluster cluster = mockCluster();
     protected VM testVm = mockVm();
     protected VmPool vmPools = mockVmPools();
+    protected List<VM>  vms = mockVms();
     protected static int VM_COUNT = 5;
     protected VmTemplate vmTemplate = mockVmTemplate();
     protected StoragePool storagePool = mockStoragePool();
@@ -73,6 +75,9 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     @Mock
     protected VmPoolDao vmPoolDao;
+
+    @Mock
+    protected VmDao vmDao;
 
     @Mock
     protected StoragePoolDao storagePoolDao;
@@ -194,6 +199,12 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setName("my_vm");
         return vm;
+    }
+
+    private List<VM> mockVms() {
+        List<VM>  vms = new ArrayList<>();
+        vms.add(mockVm());
+        return vms;
     }
 
     private StorageDomain mockDomain(Guid id) {
