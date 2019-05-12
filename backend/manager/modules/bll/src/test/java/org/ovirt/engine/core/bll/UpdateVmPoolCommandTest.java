@@ -21,11 +21,15 @@ public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
     @Test
     public void validate() {
         mockVMPoolDao();
+        mockVMDao();
         setupForStorageTests();
         assertTrue(command.validate());
     }
 
     private void mockVMPoolDao() {
         when(vmPoolDao.get(vmPoolId)).thenReturn(vmPools);
+    }
+    private void mockVMDao() {
+        when(vmDao.getAllForVmPool(vmPoolId)).thenReturn(vms);
     }
 }
