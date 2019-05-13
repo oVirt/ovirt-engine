@@ -58,7 +58,9 @@ public class BackendDiskAttachmentResource
          * Href of the diskattachment must be set manually due to a bug (https://bugzilla.redhat.com/1647018).
          * The bug is the result of an exceptional case where the same entity (disk-attachment)
          * has the same parent (vm) in 2 different locations in the API, causing ambiguity
-         * in the link generation process.
+         * in the link generation process. Enhancing the infrastructure to deal with such cases
+         * in a generic way is complex and is not justified by this single occurrence, hence the
+         * hardly-typed solution.
          */
         diskAttachment.setHref("/ovirt-engine/api/vms/" + vmId.toString() + "/diskattachments/" + diskAttachment.getId());
         return diskAttachment;
@@ -88,7 +90,17 @@ public class BackendDiskAttachmentResource
                 }
             }
         }
-        return performUpdate(attachment, new AddDiskResolver(), ActionType.UpdateVmDisk, new UpdateParametersProvider());
+        DiskAttachment diskAttachment = performUpdate(attachment, new AddDiskResolver(), ActionType.UpdateVmDisk, new UpdateParametersProvider());
+        /*
+         * Href of the diskattachment must be fixed manually due to a bug (https://bugzilla.redhat.com/1647018).
+         * The bug is the result of an exceptional case where the same entity (disk-attachment)
+         * has the same parent (vm) in 2 different locations in the API, causing ambiguity
+         * in the link generation process. Enhancing the infrastructure to deal with such cases
+         * in a generic way is complex and is not justified by this single occurrence, hence the
+         * hardly-typed solution.
+         */
+        diskAttachment.setHref(diskAttachment.getHref().replace("/null/", "/diskattachments/"));
+        return diskAttachment;
     }
 
     private class AddDiskResolver extends EntityIdResolver<Guid> {
