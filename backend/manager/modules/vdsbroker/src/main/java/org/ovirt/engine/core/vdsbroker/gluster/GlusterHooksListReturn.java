@@ -12,7 +12,8 @@ public class GlusterHooksListReturn extends StatusReturn {
 
     private static final String HOOK_STATUS = "status";
     private static final String CONTENT_TYPE = "mimetype";
-    private static final String CHECKSUM = "md5sum";
+    private static final String CHECKSUM = "checksum";
+    private static final String OLD_CHECKSUM = "md5Sum";
     private static final String LEVEL = "level";
     private static final String COMMAND = "command";
     private static final String NAME = "name";
@@ -43,7 +44,14 @@ public class GlusterHooksListReturn extends StatusReturn {
         hook.setName(map.get(NAME).toString());
         hook.setGlusterCommand(map.get(COMMAND).toString());
         hook.setStage(map.get(LEVEL).toString());
-        hook.setChecksum(map.get(CHECKSUM).toString());
+        String checksum;
+        if (map.containsKey(CHECKSUM)) {
+            checksum = map.get(CHECKSUM).toString();
+        } else {
+            //changed the computation from md5sum in 4.3
+            checksum = map.get(OLD_CHECKSUM).toString();
+        }
+        hook.setChecksum(checksum);
         hook.setContentType(GlusterHookContentType.fromMimeType(map.get(CONTENT_TYPE).toString()));
         hook.setStatus(map.get(HOOK_STATUS).toString());
         return hook;
