@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
@@ -1374,8 +1375,14 @@ public class VmInfoBuildUtils {
     }
 
     public boolean isTabletEnabled(VM vm) {
+        UsbControllerModel usbController = osRepository.getOsUsbControllerModel(
+                vm.getVmOsId(),
+                vm.getCompatibilityVersion(),
+                vm.getBiosType().getChipsetType());
+
         return vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
                 && vm.getGraphicsInfos().size() == 1
+                && !usbController.equals(UsbControllerModel.NONE) // don't add tablet device if there's no USB controller
                 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
     }
 
