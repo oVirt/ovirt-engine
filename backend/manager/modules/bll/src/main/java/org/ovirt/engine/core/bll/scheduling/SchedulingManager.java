@@ -643,7 +643,7 @@ public class SchedulingManager implements BackendService {
         }
 
         // TODO - maybe optimize DB call to fetch only needed affinity groups?
-        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(context.getCluster().getId()).stream()
+        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(context.getCluster().getId()).stream()
                 .filter(ag -> ag.isVmPositive() && ag.isVmEnforcing())
                 .collect(Collectors.toList());
 
@@ -1076,7 +1076,7 @@ public class SchedulingManager implements BackendService {
         }
 
         // TODO - maybe optimize DB call to fetch only needed affinity groups?
-        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId()).stream()
+        List<AffinityGroup> allPositiveGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(cluster.getId()).stream()
                 .filter(ag -> ag.isVmPositive() && ag.isVmEnforcing())
                 .collect(Collectors.toList());
 

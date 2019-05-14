@@ -35,8 +35,22 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
+    public List<AffinityGroup> getAllAffinityGroupsWithFlatLabelsByClusterId(Guid clusterId) {
+        return getCallsHandler().executeReadList("getAllAffinityGroupsWithFlatLabelsByClusterId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
+    @Override
     public List<AffinityGroup> getAllAffinityGroupsByVmId(Guid vmId) {
         return getCallsHandler().executeReadList("getAllAffinityGroupsByVmId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
+
+    @Override
+    public List<AffinityGroup> getAllAffinityGroupsWithFlatLabelsByVmId(Guid vmId) {
+        return getCallsHandler().executeReadList("getAllAffinityGroupsWithFlatLabelsByVmId",
                 createEntityRowMapper(),
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
     }
@@ -99,7 +113,9 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 .addValue("vds_affinity_enabled", entity.isVdsAffinityEnabled())
                 .addValue("priority", entity.getPriority())
                 .addValue("vm_ids", createArrayOf("uuid", entity.getVmIds().toArray()))
-                .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()));
+                .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()))
+                .addValue("vm_label_ids", createArrayOf("uuid", entity.getVmLabels().toArray()))
+                .addValue("host_label_ids", createArrayOf("uuid", entity.getHostLabels().toArray()));
     }
 
     @Override
@@ -142,8 +158,13 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
 
             affinityGroup.setVmIds(readList(rs, "vm_ids", Guid::new));
             affinityGroup.setVdsIds(readList(rs, "vds_ids", Guid::new));
+            affinityGroup.setVmLabels(readList(rs, "vm_label_ids", Guid::new));
+            affinityGroup.setHostLabels(readList(rs, "host_label_ids", Guid::new));
+
             affinityGroup.setVmEntityNames(readList(rs, "vm_names"));
             affinityGroup.setVdsEntityNames(readList(rs, "vds_names"));
+            affinityGroup.setVmLabelNames(readList(rs, "vm_label_names"));
+            affinityGroup.setHostLabelNames(readList(rs, "host_label_names"));
 
             return affinityGroup;
         };

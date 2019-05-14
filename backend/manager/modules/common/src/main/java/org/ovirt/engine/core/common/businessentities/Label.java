@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
  * requirements and membership (not only) for VM scheduling purposes.
  */
 public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Queryable {
-    private static final long serialVersionUID = -6566155246916011274L;
+    private static final long serialVersionUID = 3694143455240550873L;
 
     @NotNull
     private Guid id;
@@ -42,6 +42,14 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Quer
      * A read-only flag prevents user initiated update and delete actions
      */
     private boolean readOnly;
+
+    /**
+     * Indicates if the label should behave as a VM to host affinity group,
+     * which is the legacy behavior for labels.
+     *
+     * This field is only used for cluster compatibility 4.3 or less.
+     */
+    private boolean implicitAffinityGroup;
 
     @Override
     public Object getQueryableId() {
@@ -98,6 +106,14 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Quer
         this.readOnly = readOnly;
     }
 
+    public boolean isImplicitAffinityGroup() {
+        return implicitAffinityGroup;
+    }
+
+    public void setImplicitAffinityGroup(boolean implicitAffinityGroup) {
+        this.implicitAffinityGroup = implicitAffinityGroup;
+    }
+
     /**
      * This constructor is meant to be used by introspection frameworks like
      * Jackson, GWT or for de-serialization.
@@ -117,12 +133,13 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Quer
      * @param readOnly A read-only flag prevents user initiated update and delete actions
      */
     protected Label(@NotNull Guid id, @NotNull String name, @NotNull Set<Guid> vms,
-            @NotNull Set<Guid> hosts, boolean readOnly) {
+            @NotNull Set<Guid> hosts, boolean readOnly, boolean implicitAffinityGroup) {
         this.id = id;
         this.name = name;
         this.vms = vms;
         this.hosts = hosts;
         this.readOnly = readOnly;
+        this.implicitAffinityGroup = implicitAffinityGroup;
     }
 
     /* The only business key for Label is the ID. Everything else can be changed

@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
@@ -51,12 +52,15 @@ public class VmToHostAffinityFilterPolicyUnit extends PolicyUnitImpl {
             VM vm,
             PerHostMessages messages) {
 
-        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId()).stream()
+        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByVmId(vm.getId()).stream()
                 .filter(ag -> ag.isVdsEnforcing() && ag.isVdsAffinityEnabled())
                 .collect(Collectors.toList());
 
-        List<Label> labels = labelDao.getAllByEntityIds(Collections.singleton(vm.getId()));
-        affinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(labels, context.getCluster().getId()));
+        // Affinity groups from labels are only considered for Version 4.3 or less
+        if (context.getCluster().getCompatibilityVersion().lessOrEquals(Version.v4_3)) {
+            List<Label> labels = labelDao.getAllByEntityIds(Collections.singleton(vm.getId()));
+            affinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(labels, context.getCluster().getId()));
+        }
 
         // no affinity groups found for VM return all hosts with no violations
         if (affinityGroups.isEmpty()) {

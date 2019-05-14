@@ -26,6 +26,7 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -62,6 +63,8 @@ public class AddVdsCommandTest {
     private EngineSSHClient sshClient;
     @Mock
     private HostValidator validator;
+    @Mock
+    private AffinityValidator affinityValidator;
 
     private VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();
@@ -99,6 +102,9 @@ public class AddVdsCommandTest {
         Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(version);
         doReturn(cluster).when(command).getCluster();
+
+        when(affinityValidator.validateAffinityUpdateForHost(any(), any(), any(), any()))
+                .thenReturn(AffinityValidator.Result.VALID);
     }
 
     private void mockHostValidator() {

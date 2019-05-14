@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -36,7 +37,8 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
 
     @Mock
     AffinityGroupDao affinityGroupDao;
-
+    @Mock
+    private LabelDao labelDao;
     @Mock
     VmStaticDao vmStaticDao;
 

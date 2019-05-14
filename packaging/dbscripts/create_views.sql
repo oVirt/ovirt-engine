@@ -3649,7 +3649,11 @@ SELECT affinity_groups.*,
     array_agg(affinity_group_members.vm_id::text) AS vm_ids,
     array_agg(vm_static.vm_name::text) AS vm_names,
     array_agg(affinity_group_members.vds_id::text) AS vds_ids,
-    array_agg(vds_static.vds_name::text) AS vds_names
+    array_agg(vds_static.vds_name::text) AS vds_names,
+    array_agg(affinity_group_members.vm_label_id::text) as vm_label_ids,
+    array_agg(vm_labels.label_name::text) AS vm_label_names,
+    array_agg(affinity_group_members.host_label_id::text) as host_label_ids,
+    array_agg(vds_labels.label_name::text) AS host_label_names
 FROM affinity_groups
 LEFT JOIN affinity_group_members
     ON affinity_group_members.affinity_group_id = affinity_groups.id
@@ -3657,6 +3661,10 @@ LEFT JOIN vm_static
     ON vm_static.vm_guid = affinity_group_members.vm_id -- postgres 8.X issue, need to group by all fields.
 LEFT JOIN vds_static
     ON vds_static.vds_id = affinity_group_members.vds_id
+LEFT JOIN labels AS vm_labels
+    ON vm_labels.label_id = affinity_group_members.vm_label_id
+LEFT JOIN labels AS vds_labels
+    ON vds_labels.label_id = affinity_group_members.host_label_id
 GROUP BY affinity_groups.id,
     affinity_groups.name,
     affinity_groups.description,
@@ -3670,6 +3678,68 @@ GROUP BY affinity_groups.id,
     affinity_groups.priority,
     affinity_groups._create_date,
     affinity_groups._update_date;
+
+
+-- Affinity group members view, where labels are substituted by the VMs and hosts they contain
+CREATE OR REPLACE VIEW affinity_groups_members_flat_labels_view AS
+
+SELECT affinity_group_id as affinity_group_id,
+    vm_id as vm_id,
+    vds_id as vds_id
+FROM affinity_group_members
+WHERE vm_id IS NOT NULL OR vds_id IS NOT NULL
+
+UNION
+
+SELECT affinity_group_members.affinity_group_id as affinity_group_id,
+    labels_map.vm_id as vm_id,
+    null as vds_id
+FROM affinity_group_members
+JOIN labels_map ON affinity_group_members.vm_label_id = labels_map.label_id
+WHERE labels_map.vm_id IS NOT NULL
+
+UNION
+
+SELECT affinity_group_members.affinity_group_id as group_id,
+    null as vm_id,
+    labels_map.vds_id as vds_id
+FROM affinity_group_members
+JOIN labels_map ON affinity_group_members.host_label_id = labels_map.label_id
+WHERE labels_map.vds_id IS NOT NULL;
+
+
+-- Affinity Groups view, including members from labels
+CREATE OR REPLACE VIEW affinity_groups_with_members_from_labels_view AS
+
+SELECT affinity_groups.*,
+    array_agg(members.vm_id::text) AS vm_ids,
+    array_agg(vm_static.vm_name::text) AS vm_names,
+    array_agg(members.vds_id::text) AS vds_ids,
+    array_agg(vds_static.vds_name::text) AS vds_names,
+    '{}'::TEXT[] as vm_label_ids,
+    '{}'::TEXT[] as vm_label_names,
+    '{}'::TEXT[] as host_label_ids,
+    '{}'::TEXT[] as host_label_names
+FROM affinity_groups
+LEFT JOIN affinity_groups_members_flat_labels_view AS members
+    ON members.affinity_group_id = affinity_groups.id
+LEFT JOIN vm_static
+    ON vm_static.vm_guid = members.vm_id -- postgres 8.X issue, need to group by all fields.
+LEFT JOIN vds_static
+    ON vds_static.vds_id = members.vds_id
+GROUP BY affinity_groups.id,
+    affinity_groups.name,
+    affinity_groups.description,
+    affinity_groups.cluster_id,
+    affinity_groups.vm_positive,
+    affinity_groups.vm_enforcing,
+    affinity_groups.vds_positive,
+    affinity_groups.vds_enforcing,
+    affinity_groups.vms_affinity_enabled,
+    affinity_groups.vds_affinity_enabled,
+    affinity_groups._create_date,
+    affinity_groups._update_date;
+
 
 -- Numa node cpus view
 CREATE OR REPLACE VIEW numa_node_cpus_view AS
@@ -3840,6 +3910,7 @@ CREATE OR REPLACE VIEW labels_map_view AS
 SELECT labels.label_id,
     labels.label_name,
     labels.read_only,
+    labels.has_implicit_affinity_group,
     array_agg(labels_map.vm_id::text) as vm_ids,
     array_agg(labels_map.vds_id::text) as vds_ids
 FROM labels

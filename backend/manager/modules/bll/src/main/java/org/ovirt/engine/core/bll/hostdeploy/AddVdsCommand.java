@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -584,13 +583,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private ValidationResult validateAffinityGroups() {
-        if (CollectionUtils.isEmpty(getParameters().getAffinityGroups())) {
-            return ValidationResult.VALID;
-        }
-
         AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForHost(getClusterId(),
                 getVdsId(),
-                getParameters().getAffinityGroups());
+                getParameters().getAffinityGroups(),
+                getParameters().getAffinityLabels());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

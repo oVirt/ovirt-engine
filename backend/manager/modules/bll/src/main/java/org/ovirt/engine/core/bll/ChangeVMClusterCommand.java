@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -45,6 +47,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     private VmStaticDao vmStaticDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
 
     @Inject
     private NetworkHelper networkHelper;
@@ -162,6 +166,15 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             log.info("Due to cluster change, removing VM from associated affinity group(s): {}", groups);
             affinityGroupDao.setAffinityGroupsForVm(vm.getId(), Collections.emptyList());
         }
+
+        // Remove VM from all labels
+        List<Label> labels = labelDao.getAllByEntityIds(Collections.singleton(vm.getId()));
+        if (!labels.isEmpty()) {
+            String labelNames = labels.stream().map(Label::getName).collect(Collectors.joining(" "));
+            log.info("Due to cluster change, removing VM from associated label(s): {}", labelNames);
+            labelDao.updateLabelsForVm(vm.getId(), Collections.emptyList());
+        }
+
         setSucceeded(true);
     }
 

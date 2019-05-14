@@ -350,7 +350,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private ValidationResult validateAffinityGroups() {
         AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForHost(getClusterId(),
                 getVdsId(),
-                getParameters().getAffinityGroups());
+                getParameters().getAffinityGroups(),
+                getParameters().getAffinityLabels());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

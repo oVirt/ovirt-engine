@@ -15,6 +15,22 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+
+-- get All Affinity Groups with members from labels by vm id
+CREATE OR REPLACE FUNCTION getAllAffinityGroupsWithFlatLabelsByVmId (v_vm_id UUID)
+RETURNS SETOF affinity_groups_with_members_from_labels_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT groups_view.*
+    FROM affinity_groups_with_members_from_labels_view as groups_view
+    INNER JOIN affinity_groups_members_flat_labels_view as members
+        ON v_vm_id = members.vm_id
+            AND members.affinity_group_id = groups_view.id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
 -- get All Affinity Groups with members by cluster id
 CREATE OR REPLACE FUNCTION getAllAffinityGroupsByClusterId (v_cluster_id UUID)
 RETURNS SETOF affinity_groups_view STABLE AS $PROCEDURE$
@@ -26,6 +42,20 @@ BEGIN
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+
+-- get All Affinity Groups with members from labels by cluster id
+CREATE OR REPLACE FUNCTION getAllAffinityGroupsWithFlatLabelsByClusterId (v_cluster_id UUID)
+RETURNS SETOF affinity_groups_with_members_from_labels_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM affinity_groups_with_members_from_labels_view
+    WHERE cluster_id = v_cluster_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 
 -- get Affinity Group with members by id
 CREATE OR REPLACE FUNCTION GetAffinityGroupByAffinityGroupId (v_id UUID)
@@ -65,7 +95,9 @@ CREATE OR REPLACE FUNCTION InsertAffinityGroupWithMembers (
     v_vds_affinity_enabled BOOLEAN,
     v_priority BIGINT,
     v_vm_ids UUID[],
-    v_vds_ids UUID[]
+    v_vds_ids UUID[],
+    v_vm_label_ids UUID[],
+    v_host_label_ids UUID[]
     )
 RETURNS VOID AS $PROCEDURE$
 DECLARE
@@ -122,6 +154,30 @@ BEGIN
         );
     END LOOP;
 
+    FOREACH o IN ARRAY v_vm_label_ids
+    LOOP
+        INSERT INTO affinity_group_members(
+            affinity_group_id,
+            vm_label_id
+        )
+        VALUES (
+            v_id,
+            o
+        );
+    END LOOP;
+
+    FOREACH o IN ARRAY v_host_label_ids
+    LOOP
+        INSERT INTO affinity_group_members(
+            affinity_group_id,
+            host_label_id
+        )
+        VALUES (
+            v_id,
+            o
+        );
+    END LOOP;
+
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -149,7 +205,9 @@ CREATE OR REPLACE FUNCTION UpdateAffinityGroupWithMembers (
     v_vds_affinity_enabled BOOLEAN,
     v_priority BIGINT,
     v_vm_ids UUID[],
-    v_vds_ids UUID[]
+    v_vds_ids UUID[],
+    v_vm_label_ids UUID[],
+    v_host_label_ids UUID[]
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -168,18 +226,20 @@ BEGIN
         v_vds_affinity_enabled,
         v_priority,
         v_vm_ids,
-        v_vds_ids);
+        v_vds_ids,
+        v_vm_label_ids,
+        v_host_label_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- Get All positive enforcing Affinity Groups which contain VMs running on given host id
 CREATE OR REPLACE FUNCTION getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId (v_vds_id UUID)
-RETURNS SETOF affinity_groups_view STABLE AS $PROCEDURE$
+RETURNS SETOF affinity_groups_with_members_from_labels_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT DISTINCT affinity_groups_view.*
-    FROM affinity_groups_view
+    SELECT DISTINCT affinity_groups_with_members_from_labels_view.*
+    FROM affinity_groups_with_members_from_labels_view
     INNER JOIN affinity_group_members
         ON id = affinity_group_members.affinity_group_id
     INNER JOIN vm_dynamic

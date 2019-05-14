@@ -501,6 +501,7 @@ public class AffinityRulesUtils {
 
     public static List<AffinityGroup> affinityGroupsFromLabels(List<Label> labels, Guid clusterId) {
         return labels.stream()
+                .filter(Label::isImplicitAffinityGroup)
                 .map(label -> {
                     AffinityGroup group = new AffinityGroup();
                     group.setId(label.getId());

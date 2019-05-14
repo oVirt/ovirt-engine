@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -66,9 +67,13 @@ public class AffinityRulesEnforcer {
      * @return Iterator returning valid VMs for migration
      */
     public Iterator<VM> chooseVmsToMigrate(Cluster cluster) {
-        List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId());
-        List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
-        allAffinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
+        List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(cluster.getId());
+
+        // Affinity groups from labels are only considered for Version 4.3 or less
+        if (cluster.getCompatibilityVersion().lessOrEquals(Version.v4_3)) {
+            List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
+            allAffinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
+        }
 
         Cache cache = new Cache(cluster, allAffinityGroups);
 

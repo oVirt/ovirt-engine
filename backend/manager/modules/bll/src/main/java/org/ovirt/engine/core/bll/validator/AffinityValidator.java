@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -16,11 +18,15 @@ import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils.AffinityGroupConflicts;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @Singleton
@@ -56,62 +62,132 @@ public class AffinityValidator {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
 
-    public Result validateAffinityUpdateForVm(Guid clusterId, Guid vmId, Collection<AffinityGroup> affinityGroups) {
-        return validateAffinityUpdate(clusterId, vmId, affinityGroups, AffinityGroup::getVmIds);
+    public Result validateAffinityUpdateForVm(Guid clusterId, Guid vmId, Collection<AffinityGroup> affinityGroups, Collection<Label> labels) {
+        return validateAffinityUpdate(clusterId, vmId, affinityGroups, labels, AffinityGroup::getVmIds, Label::getVms);
     }
 
-    public Result validateAffinityUpdateForHost(Guid clusterId, Guid hostId, Collection<AffinityGroup> affinityGroups) {
-        return validateAffinityUpdate(clusterId, hostId, affinityGroups, AffinityGroup::getVdsIds);
+    public Result validateAffinityUpdateForHost(Guid clusterId, Guid hostId, Collection<AffinityGroup> affinityGroups, Collection<Label> labels) {
+        return validateAffinityUpdate(clusterId, hostId, affinityGroups, labels, AffinityGroup::getVdsIds, Label::getHosts);
     }
 
     private Result validateAffinityUpdate(Guid clusterId,
             Guid entityId,
             Collection<AffinityGroup> affinityGroups,
-            Function<AffinityGroup, List<Guid>> entityIdsExtractor) {
+            Collection<Label> labels,
+            Function<AffinityGroup, Collection<Guid>> entityIdsExtractorFromGroup,
+            Function<Label, Collection<Guid>> entityIdsExtractorFromLabel) {
 
-        if (CollectionUtils.isEmpty(affinityGroups)) {
+        if (CollectionUtils.isEmpty(affinityGroups) && CollectionUtils.isEmpty(labels)) {
             return Result.VALID;
         }
 
-        Set<Guid> affinityGroupIds =  affinityGroups.stream()
+        Set<Guid> affinityGroupIds = affinityGroups == null ? null :
+                affinityGroups.stream()
                         .map(AffinityGroup::getId)
                         .collect(Collectors.toSet());
 
-        if (affinityGroupIds.stream().anyMatch(Guid::isNullOrEmpty)) {
+        Set<Guid> labelIds = labels == null ? null :
+                labels.stream()
+                        .map(Label::getId)
+                        .collect(Collectors.toSet());
+
+        if (affinityGroupIds != null && affinityGroupIds.stream().anyMatch(Guid::isNullOrEmpty)) {
             return Result.newFailed(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID));
         }
 
-        int groupsFromClusterCount = 0;
-        boolean groupsChanged = false;
-        List<AffinityGroup> groups = affinityGroupDao.getAllAffinityGroupsByClusterId(clusterId);
-        for (AffinityGroup group : groups) {
-            List<Guid> entityIds = entityIdsExtractor.apply(group);
+        if (labelIds != null && labelIds.stream().anyMatch(Guid::isNullOrEmpty)) {
+            return Result.newFailed(new ValidationResult(EngineMessage.AFFINITY_LABEL_NOT_EXISTS));
+        }
 
-            if (affinityGroupIds.contains(group.getId())) {
-                ++groupsFromClusterCount;
+        Map<Guid, Label> labelMap = labelDao.getAllByClusterId(clusterId).stream()
+                .collect(Collectors.toMap(Label::getId, label -> label));
+
+        List<AffinityGroup> groups = affinityGroupDao.getAllAffinityGroupsByClusterId(clusterId);
+
+        Pair<Boolean, Boolean> labelModResult = modifyLabelsOrGroups(labelMap.values(), entityId, labelIds, entityIdsExtractorFromLabel);
+        Pair<Boolean, Boolean> groupModResult = modifyLabelsOrGroups(groups, entityId, affinityGroupIds, entityIdsExtractorFromGroup);
+
+        if (!labelModResult.getFirst() && !groupModResult.getFirst()) {
+            return Result.VALID;
+        }
+
+        // Not all labels are from the cluster
+        if (!labelModResult.getSecond()) {
+            return Result.newFailed(new ValidationResult(EngineMessage.AFFINITY_LABEL_NOT_FROM_SELECTED_CLUSTER));
+        }
+
+        // Not all groups are from the cluster
+        if (!groupModResult.getSecond()) {
+            return Result.newFailed(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUPS_NOT_FROM_SELECTED_CLUSTER));
+        }
+
+        groups.forEach(group -> unpackAffinityGroupLabels(group, labelMap));
+
+        return checkAffinityGroupConflicts(groups);
+    }
+
+    private<T extends BusinessEntity<Guid>> Pair<Boolean, Boolean> modifyLabelsOrGroups(Collection<T> elements,
+            Guid entityId,
+            Set<Guid> elementsWithEntity,
+            Function<T, Collection<Guid>> entityIdsExtractor) {
+
+        if (elementsWithEntity == null) {
+            return new Pair<>(true, true);
+        }
+
+        int elementsFound = 0;
+        boolean collectionChanged = false;
+        for (T element : elements) {
+            Collection<Guid> entityIds = entityIdsExtractor.apply(element);
+
+            if (elementsWithEntity.contains(element.getId())) {
+                ++elementsFound;
                 if (!entityIds.contains(entityId)) {
                     entityIds.add(entityId);
-                    groupsChanged = true;
+                    collectionChanged = true;
                 }
             } else {
                 boolean removed = entityIds.remove(entityId);
                 if (removed) {
-                    groupsChanged = true;
+                    collectionChanged = true;
                 }
             }
         }
 
-        if (!groupsChanged) {
-            return Result.VALID;
-        }
+        return new Pair<>(collectionChanged, elementsFound == elementsWithEntity.size());
+    }
 
-        // Not all groups are from the cluster
-        if (groupsFromClusterCount < affinityGroupIds.size()) {
-            return Result.newFailed(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_GROUPS_NOT_FROM_SELECTED_CLUSTER));
-        }
+    public static void unpackAffinityGroupLabels(AffinityGroup group, Map<Guid, Label> labels) {
+        Set<Guid> vmIds = unpackAffinityGroupVmsFromLabels(group, labels);
+        Set<Guid> hostIds = unpackAffinityGroupHostsFromLabels(group, labels);
 
-        return checkAffinityGroupConflicts(groups);
+        group.setVmIds(new ArrayList<>(vmIds));
+        group.setVdsIds(new ArrayList<>(hostIds));
+        group.setVmLabels(Collections.emptyList());
+        group.setHostLabels(Collections.emptyList());
+    }
+
+    public static Set<Guid> unpackAffinityGroupVmsFromLabels(AffinityGroup group, Map<Guid, Label> labels) {
+        Set<Guid> vmIds = group.getVmLabels().stream()
+                .map(labels::get)
+                .flatMap(label -> label.getVms().stream())
+                .collect(Collectors.toSet());
+
+        vmIds.addAll(group.getVmIds());
+        return vmIds;
+    }
+
+    public static Set<Guid> unpackAffinityGroupHostsFromLabels(AffinityGroup group, Map<Guid, Label> labels) {
+        Set<Guid> hostIds = group.getHostLabels().stream()
+                .map(labels::get)
+                .flatMap(label -> label.getHosts().stream())
+                .collect(Collectors.toSet());
+
+        hostIds.addAll(group.getVdsIds());
+        return hostIds;
     }
 
     public static Result checkAffinityGroupConflicts(List<AffinityGroup> groups) {

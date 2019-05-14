@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -109,7 +110,7 @@ public class AffinityRulesEnforcerTest {
         possibleHosts = Stream.of(vm1, vm2, vm3, vm4, vm5, vm6)
                 .collect(Collectors.toMap(VM::getId, vm -> Arrays.asList(host1, host2, host3)));
 
-        when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenAnswer(invocation -> copyGroups());
+        when(affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(any())).thenAnswer(invocation -> copyGroups());
         when(labelDao.getAllByClusterId(any())).thenReturn(labels);
 
         when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), anyBoolean(), anyBoolean(), any())).thenReturn(possibleHosts);
@@ -565,10 +566,13 @@ public class AffinityRulesEnforcerTest {
 
     @Test
     public void shouldMigrateBasedOnLabel() {
+        cluster.setCompatibilityVersion(Version.v4_3);
+
         labels.add(new LabelBuilder()
                 .id(Guid.newGuid())
                 .name("Test Lable")
                 .entities(vm1, vm4, vm5, host1)
+                .implicitAffinityGroup(true)
                 .build()
         );
 
@@ -583,6 +587,7 @@ public class AffinityRulesEnforcerTest {
         cluster.setClusterId(id);
         cluster.setId(id);
         cluster.setName("Default cluster");
+        cluster.setCompatibilityVersion(Version.getLast());
         return cluster;
     }
 
@@ -628,20 +633,6 @@ public class AffinityRulesEnforcerTest {
         return ag;
     }
 
-    private AffinityGroup copyAffinityGroup(AffinityGroup group) {
-        AffinityGroup newGroup = new AffinityGroup();
-        newGroup.setId(group.getId());
-        newGroup.setVmAffinityRule(group.getVmAffinityRule());
-        newGroup.setClusterId(group.getClusterId());
-        newGroup.setVmEnforcing(group.isVmEnforcing());
-        newGroup.setVmIds(group.getVmIds());
-        newGroup.setVdsIds(group.getVdsIds());
-        newGroup.setVdsAffinityRule(group.getVdsAffinityRule());
-        newGroup.setVdsEnforcing(group.isVdsEnforcing());
-        return newGroup;
-    }
-
-
     private void prepareVmDao(VM... vmList) {
         doAnswer(invocation -> {
             final List<VM> selectedVms = new ArrayList<>();
@@ -657,7 +648,7 @@ public class AffinityRulesEnforcerTest {
 
     private List<AffinityGroup> copyGroups() {
         return affinityGroups.stream()
-                .map(this::copyAffinityGroup)
+                .map(AffinityGroup::new)
                 .collect(Collectors.toList());
     }
 

@@ -15,14 +15,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LabelDao;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicyUnitBaseTest {
 
     @Mock
@@ -45,7 +49,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = new ArrayList<>();
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains(
                 host_positive_enforcing,
@@ -58,7 +62,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains
                 (host_positive_enforcing).doesNotContain(host_not_in_affinity_group);
@@ -69,7 +73,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         hosts = Arrays.asList(host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(negative_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).contains
                 (host_not_in_affinity_group);
@@ -80,7 +84,7 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group, negative_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host_positive_enforcing)
@@ -98,17 +102,19 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positiveCollisionGroup, negative_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages())).isEmpty();
     }
 
     @Test
     public void testLabelSimple() {
+        cluster.setCompatibilityVersion(Version.v4_3);
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
         labels.add(new LabelBuilder()
                 .entities(vm, host_positive_enforcing)
+                .implicitAffinityGroup(true)
                 .build());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
@@ -117,15 +123,33 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     }
 
     @Test
-    public void testLabelNoValidHost() {
+    public void testLabelIgnoredForNewVersion() {
+        cluster.setCompatibilityVersion(Version.getLast());
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
         labels.add(new LabelBuilder()
                 .entities(vm, host_positive_enforcing)
+                .implicitAffinityGroup(true)
+                .build());
+
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
+                .contains(host_positive_enforcing)
+                .contains(host_not_in_affinity_group);
+    }
+
+    @Test
+    public void testLabelNoValidHost() {
+        cluster.setCompatibilityVersion(Version.v4_3);
+        hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
+
+        labels.add(new LabelBuilder()
+                .entities(vm, host_positive_enforcing)
+                .implicitAffinityGroup(true)
                 .build());
 
         labels.add(new LabelBuilder()
                 .entities(vm, host_not_in_affinity_group)
+                .implicitAffinityGroup(true)
                 .build());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
@@ -134,14 +158,17 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
 
     @Test
     public void testLabelWithHostsOnly() {
+        cluster.setCompatibilityVersion(Version.v4_3);
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
         labels.add(new LabelBuilder()
                 .entities(vm, host_positive_enforcing)
+                .implicitAffinityGroup(true)
                 .build());
 
         labels.add(new LabelBuilder()
                 .entities(host_positive_enforcing, host_not_in_affinity_group)
+                .implicitAffinityGroup(true)
                 .build());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))

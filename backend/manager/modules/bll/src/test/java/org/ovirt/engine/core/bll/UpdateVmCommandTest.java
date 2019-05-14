@@ -210,7 +210,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         when(vmHandler.isUpdateValid(any(), any(), any())).thenReturn(true);
 
-        when(affinityValidator.validateAffinityUpdateForVm(any(), any(), any())).thenReturn(AffinityValidator.Result.VALID);
+        when(affinityValidator.validateAffinityUpdateForVm(any(), any(), any(), any()))
+                .thenReturn(AffinityValidator.Result.VALID);
 
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();

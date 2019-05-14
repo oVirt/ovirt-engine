@@ -14,6 +14,7 @@ public class LabelBuilder {
     private Set<Guid> vms = new HashSet<>();
     private Set<Guid> hosts = new HashSet<>();
     private boolean readOnly = false;
+    private boolean implicitAffinityGroup = false;
 
     public LabelBuilder() {
     }
@@ -24,6 +25,7 @@ public class LabelBuilder {
         vmIds(label.getVms());
         hostIds(label.getHosts());
         readOnly = label.isReadOnly();
+        implicitAffinityGroup = label.isImplicitAffinityGroup();
     }
 
     public Label build() {
@@ -31,7 +33,7 @@ public class LabelBuilder {
             id = Guid.newGuid();
         }
 
-        return new Label(id, name, vms, hosts, readOnly);
+        return new Label(id, name, vms, hosts, readOnly, implicitAffinityGroup);
     }
 
     public LabelBuilder id(Guid id) {
@@ -96,6 +98,11 @@ public class LabelBuilder {
 
     public LabelBuilder readOnly(boolean readOnly) {
         this.readOnly = readOnly;
+        return this;
+    }
+
+    public LabelBuilder implicitAffinityGroup(boolean implicitAffinityGroup) {
+        this.implicitAffinityGroup = implicitAffinityGroup;
         return this;
     }
 

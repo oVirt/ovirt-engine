@@ -1698,7 +1698,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private ValidationResult validateAffinityGroups() {
         AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForVm(getClusterId(),
                 getVmId(),
-                getParameters().getAffinityGroups());
+                getParameters().getAffinityGroups(),
+                getParameters().getAffinityLabels());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

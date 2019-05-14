@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
@@ -44,6 +45,7 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
     public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());
+        cluster.setCompatibilityVersion(Version.getLast());
 
         context = new SchedulingContext(cluster, Collections.emptyMap());
 

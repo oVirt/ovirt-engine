@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
  * The VM will be scheduled according to its affinity groups (properties and members) rules
  */
 public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable {
-    private static final long serialVersionUID = 4751165178077660191L;
+    private static final long serialVersionUID = 995196097595814894L;
 
     public static final double PRIORITY_PRECISION = 1E7;
 
@@ -87,6 +87,30 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
     private List<Guid> vdsIds = new ArrayList<>();
 
     /**
+     * List of label uuids that contain VMs in this group
+     */
+    private List<Guid> vmLabels = new ArrayList<>();
+
+    /**
+     * List of host uuids that contain hosts in this group
+     */
+    private List<Guid> hostLabels = new ArrayList<>();
+
+    /**
+     * List of VM label names that are included in affinity group<br>
+     * each item index matches to vmLabels index,<br>
+     * i.e. vmLabelNames.get(5) is the name of the label with vmLabels.get(5) id.
+     */
+    private List<String> vmLabelNames = new ArrayList<>();
+
+    /**
+     * List of VM label names that are included in affinity group<br>
+     * each item index matches to hostLabels index,<br>
+     * i.e. hostLabelNames.get(5) is the name of the label with hostLabels.get(5) id.
+     */
+    private List<String> hostLabelNames = new ArrayList<>();
+
+    /**
      * Priority of the affinity group.
      *
      * Using 'long' type instead of 'double', because it is important to check
@@ -99,6 +123,29 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
     // Transient filed, not stored in the DB.
     // It is computed by queries returning affinity groups
     private Boolean broken;
+
+    public AffinityGroup() {}
+
+    public AffinityGroup(AffinityGroup other) {
+        id = other.id;
+        name = other.name;
+        description = other.description;
+        clusterId = other.clusterId;
+        priority = other.priority;
+        broken = other.broken;
+
+        vmAffinityRule = other.vmAffinityRule;
+        vmEnforcing = other.vmEnforcing;
+        vmIds = new ArrayList<>(other.vmIds);
+        vmEntityNames = new ArrayList<>(other.vmEntityNames);
+        vmLabels = new ArrayList<>(other.vmLabels);
+
+        vdsAffinityRule = other.vdsAffinityRule;
+        vdsEnforcing = other.vdsEnforcing;
+        vdsIds = new ArrayList<>(other.vdsIds);
+        vdsEntityNames = new ArrayList<>(other.vmEntityNames);
+        hostLabels = new ArrayList<>(other.hostLabels);
+    }
 
     @Override
     public Guid getId() {
@@ -223,6 +270,22 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         }
     }
 
+    public List<Guid> getVmLabels() {
+        return vmLabels;
+    }
+
+    public void setVmLabels(List<Guid> vmLabels) {
+        this.vmLabels = vmLabels;
+    }
+
+    public List<Guid> getHostLabels() {
+        return hostLabels;
+    }
+
+    public void setHostLabels(List<Guid> hostLabels) {
+        this.hostLabels = hostLabels;
+    }
+
     public List<String> getVmEntityNames() {
         return vmEntityNames;
     }
@@ -243,6 +306,22 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         if (vdsEntityNames == null) {
             this.vdsEntityNames = new ArrayList<>();
         }
+    }
+
+    public List<String> getVmLabelNames() {
+        return vmLabelNames;
+    }
+
+    public void setVmLabelNames(List<String> vmLabelNames) {
+        this.vmLabelNames = vmLabelNames != null ? vmLabelNames : new ArrayList<>();
+    }
+
+    public List<String> getHostLabelNames() {
+        return hostLabelNames;
+    }
+
+    public void setHostLabelNames(List<String> hostLabelNames) {
+        this.hostLabelNames = hostLabelNames != null ? hostLabelNames : new ArrayList<>();
     }
 
     public long getPriority() {

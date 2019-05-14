@@ -67,7 +67,7 @@ public class UpdateVdsCommandTest {
                 .when(underTestCommand)
                 .getUpdateHostValidator(oldHost, parameters.getvds(), parameters.isInstallHost());
 
-        when(affinityValidator.validateAffinityUpdateForHost(any(), any(), any()))
+        when(affinityValidator.validateAffinityUpdateForHost(any(), any(), any(), any()))
                 .thenReturn(AffinityValidator.Result.VALID);
     }
 
