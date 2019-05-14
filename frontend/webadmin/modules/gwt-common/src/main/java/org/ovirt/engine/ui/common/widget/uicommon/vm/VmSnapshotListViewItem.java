@@ -7,9 +7,12 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.gwtbootstrap3.client.ui.html.Italic;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -344,13 +347,44 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         } else if (SnapshotStatus.LOCKED.equals(getEntity().getStatus())) {
             iconSpan.addStyleName(IconType.LOCK.getCssName());
         } else if (getEntity().containsMemory()) {
-            iconSpan.addStyleName(IconType.MICROCHIP.getCssName());
+            iconSpan.add(createSnapshotWithMemoryIcon());
         } else {
             iconSpan.addStyleName(IconType.CAMERA.getCssName());
         }
         iconSpan.addStyleName(PatternflyConstants.PF_LIST_VIEW_ICON_SM);
         iconPanel.add(iconSpan);
         return iconPanel;
+    }
+
+    private Span createSnapshotWithMemoryIcon() {
+        Span holder = new Span();
+        holder.setStyleName(Styles.ICON_STACK);
+        holder.getElement().getStyle().setLeft(-0.2, Style.Unit.EM);
+        holder.getElement().getStyle().setTop(-0.2, Style.Unit.EM);
+
+        Italic cameraItalic = new Italic();
+        cameraItalic.addStyleName(Styles.FONT_AWESOME_BASE);
+        cameraItalic.addStyleName(IconType.CAMERA.getCssName());
+        cameraItalic.getElement().getStyle().setFontSize(1, Style.Unit.EM);
+
+        Italic memoryItalic = new Italic();
+        memoryItalic.addStyleName(Styles.FONT_AWESOME_BASE);
+        memoryItalic.addStyleName(Styles.ICON_STACK_TOP);
+        memoryItalic.addStyleName(PatternflyConstants.PFICON_MEMORY);
+        memoryItalic.getElement().getStyle().setTop(-4, Style.Unit.PX);
+        memoryItalic.getElement().getStyle().setLeft(18, Style.Unit.PX);
+        memoryItalic.getElement().getStyle().setColor("#0088ce"); //$NON-NLS-1$
+        memoryItalic.getElement().getStyle().setFontSize(11, Style.Unit.PX);
+        memoryItalic.getElement().getStyle().setWhiteSpace(Style.WhiteSpace.NOWRAP);
+
+        holder.add(cameraItalic);
+        holder.add(memoryItalic);
+
+        Tooltip memoryInfoToolTip = new Tooltip(memoryItalic);
+        memoryInfoToolTip.setTitle(constants.snapshotContainsMemory());
+        memoryInfoToolTip.setPlacement(Placement.RIGHT);
+        holder.add(memoryInfoToolTip);
+        return holder;
     }
 
     @Override
