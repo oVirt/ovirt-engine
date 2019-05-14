@@ -84,7 +84,7 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
 
     void localize() {
         memoryEditor.setLabel(constants.virtualMachineSnapshotPreviewPopupMemoryLabel());
-        messageLabel.setText(constants.snapshotContainsMemory());
+        messageLabel.setText(constants.previewSnapshotContainsMemory());
     }
 
     @Override

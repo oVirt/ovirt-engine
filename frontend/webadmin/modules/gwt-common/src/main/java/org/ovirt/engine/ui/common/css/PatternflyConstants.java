@@ -38,6 +38,8 @@ public class PatternflyConstants {
     public static final String PFICON_NETWORK = "pficon-network"; // $NON-NLS-1$
     public static final String PFICON_CLOSE = "pficon-close"; // $NON-NLS-1$
     public static final String PFICON_ERROR = "pficon-error-circle-o"; // $NON-NLS-1$
+    public static final String PFICON_MEMORY = "pficon-memory"; // $NON-NLS-1$
+
     public static final String PF_SPINNER = "spinner"; // $NON-NLS-1$
     public static final String PF_SPINNER_XS = "spinner-xs"; // $NON-NLS-1$
     public static final String PF_SPINNER_INLINE = "spinner-inline"; // $NON-NLS-1$

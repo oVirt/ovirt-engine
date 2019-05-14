@@ -273,6 +273,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String virtualMachineSnapshotPreviewPopupMemoryLabel();
 
+    String previewSnapshotContainsMemory();
+
     String snapshotContainsMemory();
 
     String loadingLabel();
