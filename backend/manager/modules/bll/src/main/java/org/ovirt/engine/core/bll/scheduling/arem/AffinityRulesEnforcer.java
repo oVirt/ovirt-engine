@@ -66,7 +66,7 @@ public class AffinityRulesEnforcer {
      * @return Iterator returning valid VMs for migration
      */
     public Iterator<VM> chooseVmsToMigrate(Cluster cluster) {
-        List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId());
+        List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(cluster.getId());
         List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
         allAffinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
 

@@ -34,7 +34,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
         hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
 
         List<AffinityGroup> affinityGroups = new ArrayList<>();
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
 
@@ -49,7 +49,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
 
         positive_enforcing_group.setVdsEnforcing(false);
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
         assertEquals(1, (long) results.get(host_positive_enforcing.getId()));
@@ -62,7 +62,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
 
         negative_enforcing_group.setVdsEnforcing(false);
         List<AffinityGroup> affinityGroups = Arrays.asList(negative_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
         assertEquals(2, (long) results.get(host_negative_enforcing.getId()));
@@ -77,7 +77,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
         negative_enforcing_group.setVdsEnforcing(false);
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group, negative_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
         assertEquals(3, (long) results.get(host_negative_enforcing.getId()));
@@ -94,7 +94,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
         vm.setRunOnVds(host_not_in_affinity_group.getId());
 
         List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group, negative_enforcing_group);
-        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
         assertEquals(3, (long) results.get(host_negative_enforcing.getId()));
@@ -117,7 +117,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
                         Collections.singletonList(vm), Collections.singletonList(host2))
         );
 
-        doReturn(groups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(groups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
         assertThat(results.get(host2.getId())).isLessThan(results.get(host1.getId()));
@@ -139,7 +139,7 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
                         Collections.singletonList(vm), Collections.singletonList(host2))
         );
 
-        doReturn(groups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(groups).when(affinityGroupDao).getAllAffinityGroupsWithFlatLabelsByVmId(any());
 
         Map<Guid, Integer> results = getScoreResults();
         assertThat(results.get(host3.getId())).isLessThan(results.get(host1.getId()));

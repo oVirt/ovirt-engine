@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,11 +19,14 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -32,10 +36,13 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     Guid clusterId = Guid.newGuid();
     Guid vmId = Guid.newGuid();
+    private Guid vmLabelId = Guid.newGuid();
+    private Guid hostLabelId = Guid.newGuid();
 
     @Mock
     AffinityGroupDao affinityGroupDao;
-
+    @Mock
+    private LabelDao labelDao;
     @Mock
     VmStaticDao vmStaticDao;
 
@@ -58,6 +65,10 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
         vmStatic.setClusterId(clusterId);
         vmStatic.setId(vmId);
         doReturn(Collections.singletonList(vmStatic)).when(vmStaticDao).getByIds(any());
+
+        Label vmLabel = new LabelBuilder().id(vmLabelId).build();
+        Label hostLabel = new LabelBuilder().id(hostLabelId).build();
+        doReturn(Arrays.asList(vmLabel, hostLabel)).when(labelDao).getAllByIds(any());
     }
 
     @Test
@@ -102,6 +113,21 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testInvalidLabels() {
+        doReturn(Collections.emptyList()).when(labelDao).getAllByIds(any());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_INVALID_LABEL_FOR_AFFINITY_GROUP);
+    }
+
+    @Test
+    public void testDuplicateLabels() {
+        affinityGroup.getVmLabels().add(vmLabelId);
+        affinityGroup.getHostLabels().add(hostLabelId);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_LABEL_IN_AFFINITY_GROUP);
+    }
+
+    @Test
     public void validate_nonEnforcing_Test() {
         affinityGroup.setVmEnforcing(false);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
@@ -123,6 +149,8 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
         affinityGroup.setVmIds(new ArrayList<>());
         affinityGroup.getVmIds().add(vmId);
         affinityGroup.setClusterId(clusterId);
+        affinityGroup.setVmLabels(new ArrayList<>(Collections.singletonList(vmLabelId)));
+        affinityGroup.setHostLabels(new ArrayList<>(Collections.singletonList(hostLabelId)));
         return affinityGroup;
     }
 }

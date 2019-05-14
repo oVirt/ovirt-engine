@@ -366,6 +366,33 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
         assertEquals(label, labelsForVm.get(0));
     }
 
+    @Test
+    public void testCreateAndGetWithImplicitAffinityGroup() {
+        Guid guid = Guid.newGuid();
+        Label label = new LabelBuilder()
+                .name("test_label")
+                .id(guid)
+                .implicitAffinityGroup(true)
+                .build();
+
+        dao.save(label);
+
+        Guid guid2 = Guid.newGuid();
+        Label label2 = new LabelBuilder()
+                .name("test_label_2")
+                .id(guid2)
+                .implicitAffinityGroup(false)
+                .build();
+
+        dao.save(label2);
+
+        Label labelFromDb = dao.get(guid);
+        Label labelFromDb2 = dao.get(guid2);
+
+        assertEquals(label.isImplicitAffinityGroup(), labelFromDb.isImplicitAffinityGroup());
+        assertEquals(label2.isImplicitAffinityGroup(), labelFromDb2.isImplicitAffinityGroup());
+    }
+
     private Label createAndSaveLabel(String labelName) {
         Label label = new LabelBuilder()
                 .name(labelName)

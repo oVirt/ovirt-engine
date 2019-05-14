@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -121,6 +123,7 @@ import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
@@ -169,6 +172,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private CloudInitHandler cloudInitHandler;
+
+    @Inject
+    private AffinityValidator affinityValidator;
 
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -224,6 +230,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
@@ -799,6 +807,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
+        }
+
+        if (!validate(validateAffinityGroups())) {
+            return false;
         }
 
         return true;
@@ -1841,6 +1853,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return clusterUpgradeValidator;
     }
 
+    private ValidationResult validateAffinityGroups() {
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForVm(getClusterId(),
+                getVmId(),
+                getParameters().getAffinityLabels());
+
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
     private void addAffinityLabels() {
         List<Label> affinityLabels = getParameters().getAffinityLabels();
         if (affinityLabels == null) {
@@ -1849,6 +1870,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());
+        affinityGroupLoggingMethod.accept(this, auditLogDirector);
         labelDao.addVmToLabels(getVmId(), labelIds);
     }
 }

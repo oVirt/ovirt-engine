@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -53,6 +56,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.LabelDao;
@@ -94,7 +98,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private LabelDao labelDao;
     @Inject
     private ClusterUtils clusterUtils;
+    @Inject
+    private AffinityValidator affinityValidator;
 
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -374,6 +381,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
+        if (!validate(validateAffinityGroups())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -568,11 +579,24 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
     }
 
+    private ValidationResult validateAffinityGroups() {
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForHost(getClusterId(),
+                getVdsId(),
+                getParameters().getAffinityLabels());
+
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
     private void addAffinityLabels() {
         List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels == null) {
+            return;
+        }
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());
+        affinityGroupLoggingMethod.accept(this, auditLogDirector);
         labelDao.addHostToLabels(getVdsId(), labelIds);
     }
 }

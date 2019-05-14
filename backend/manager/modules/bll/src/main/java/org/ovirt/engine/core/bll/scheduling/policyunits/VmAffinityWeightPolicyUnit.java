@@ -83,7 +83,7 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
     private List<HostInfo> getHostInfos(List<VM> vmGroup, List<VDS> hosts) {
         Set<AffinityGroup> affinityGroups = new HashSet<>();
         // TODO - get all affinity gorups in 1 DB call
-        vmGroup.forEach(vm -> affinityGroups.addAll(affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId()).stream()
+        vmGroup.forEach(vm -> affinityGroups.addAll(affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByVmId(vm.getId()).stream()
                 .filter(AffinityGroup::isVmAffinityEnabled)
                 .collect(Collectors.toList())));
 

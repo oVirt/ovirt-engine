@@ -13,9 +13,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -42,6 +44,8 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
     private VdsStaticDao vdsStaticDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
 
     AffinityGroup affinityGroup = null;
 
@@ -65,6 +69,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
         return validateVms() &&
                 validateHosts() &&
+                validateLabels() &&
                 affinityGroupsWithoutConflict(getParameters().getAffinityGroup());
 
     }
@@ -130,58 +135,54 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
         return true;
     }
 
+    private boolean validateLabels() {
+        List<Guid> vmLabels = getParameters().getAffinityGroup().getVmLabels();
+        List<Guid> hostLabels = getParameters().getAffinityGroup().getHostLabels();
+
+        Set<Guid> allLabelIds = new HashSet<>(vmLabels);
+        allLabelIds.addAll(hostLabels);
+
+        Map<Guid, Label> labels = labelDao.getAllByIds(allLabelIds).stream()
+                .collect(Collectors.toMap(Label::getId, label -> label));
+
+        if (vmLabels.stream().map(labels::get).anyMatch(Objects::isNull) ||
+                hostLabels.stream().map(labels::get).anyMatch(Objects::isNull)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_LABEL_FOR_AFFINITY_GROUP);
+        }
+
+        // TODO - check label cluster ID, once labels have cluster ID
+
+        Set<Guid> uniqueVmLabels = new HashSet<>(vmLabels);
+        Set<Guid> uniqueHostLabels = new HashSet<>(hostLabels);
+        if (uniqueVmLabels.size() < vmLabels.size() || uniqueHostLabels.size() < hostLabels.size()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_LABEL_IN_AFFINITY_GROUP);
+        }
+
+        return true;
+    }
+
     private boolean affinityGroupsWithoutConflict(AffinityGroup affinityGroup) {
         List<AffinityGroup> affinityGroups =
-                affinityGroupDao.getAllAffinityGroupsByClusterId(affinityGroup.getClusterId());
+                affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(affinityGroup.getClusterId());
+
+        List<Guid> labelIds = new ArrayList<>(affinityGroup.getVmLabels());
+        labelIds.addAll(affinityGroup.getHostLabels());
+
+        Map<Guid, Label> labels = labelDao.getAllByIds(labelIds).stream()
+                .collect(Collectors.toMap(Label::getId, label -> label));
+
+        AffinityGroup affinityGroupCopy = new AffinityGroup(affinityGroup);
+        AffinityValidator.unpackAffinityGroupLabels(affinityGroupCopy, labels);
 
         // Replace the existing affinity group by the updated copy
-        affinityGroups.removeIf(g -> g.getId().equals(affinityGroup.getId()));
-        affinityGroups.add(affinityGroup);
+        affinityGroups.removeIf(g -> g.getId().equals(affinityGroupCopy.getId()));
+        affinityGroups.add(affinityGroupCopy);
 
-        List<AffinityRulesUtils.AffinityGroupConflicts> conflicts = AffinityRulesUtils
-                .checkForAffinityGroupHostsConflict(affinityGroups);
-
-        for (AffinityRulesUtils.AffinityGroupConflicts conflict : conflicts) {
-
-            String affinityGroupsNames = AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups());
-            String hosts = conflict.getHosts().stream()
-                    .map(id -> id.toString())
-                    .collect(Collectors.joining(","));
-            String vms = conflict.getVms().stream()
-                    .map(id -> id.toString())
-                    .collect(Collectors.joining(","));
-
-            if (conflict.getType().canBeSaved()) {
-                addCustomValue("AffinityGroups", affinityGroupsNames);
-                addCustomValue("Hosts", hosts);
-                addCustomValue("Vms", vms);
-                auditLogDirector.log(this, conflict.getAuditLogType());
-            } else {
-                if (conflict.isVmToVmAffinity()) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
-                            String.format("$UnifiedAffinityGroups %1$s", vms),
-                            String.format("$negativeAR %1$s", affinityGroupsNames),
-                            String.format("$Vms %1$s", conflict.getNegativeVms().stream()
-                                    .map(id -> id.toString())
-                                    .collect(Collectors.joining(",")))
-                    );
-                } else {
-                    List<EngineMessage> engineMessages = new ArrayList<>();
-                    engineMessages.add(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_HOSTS_RULES_COLLISION);
-                    engineMessages.add(EngineMessage.AFFINITY_GROUPS_LIST);
-                    engineMessages.add(EngineMessage.HOSTS_LIST);
-                    engineMessages.add(EngineMessage.VMS_LIST);
-
-                    List<String> variableReplacements = new ArrayList<>();
-                    variableReplacements.add(String.format("$affinityGroups %1$s", affinityGroupsNames));
-                    variableReplacements.add(String.format("$hostsList %1$s", hosts));
-                    variableReplacements.add(String.format("$vmsList %1$s", vms));
-
-                    return failValidation(engineMessages, variableReplacements);
-                }
-            }
+        AffinityValidator.Result result = AffinityValidator.checkAffinityGroupConflicts(affinityGroups);
+        if (result.getValidationResult().isValid()) {
+            result.getLoggingMethod().accept(this, auditLogDirector);
         }
-        return true;
+        return validate(result.getValidationResult());
     }
 
     protected AffinityGroup getAffinityGroup() {

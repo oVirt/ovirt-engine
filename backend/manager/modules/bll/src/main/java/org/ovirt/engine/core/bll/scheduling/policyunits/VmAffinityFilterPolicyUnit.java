@@ -57,7 +57,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
 
         Set<AffinityGroup> affinityGroups = new HashSet<>();
         // TODO - get all affinity gorups in 1 DB call
-        vmGroup.forEach(vm -> affinityGroups.addAll(affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId())));
+        vmGroup.forEach(vm -> affinityGroups.addAll(affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByVmId(vm.getId())));
 
         // no affinity groups found for VM group return all hosts
         if (affinityGroups.isEmpty()) {

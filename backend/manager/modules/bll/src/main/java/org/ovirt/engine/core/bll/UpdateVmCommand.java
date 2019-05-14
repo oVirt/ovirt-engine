@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -180,12 +182,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private RngDeviceUtils rngDeviceUtils;
+    @Inject
+    private AffinityValidator affinityValidator;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
     private VmStatic newVmStatic;
     private List<GraphicsDevice> cachedGraphics;
     private boolean isUpdateVmTemplateVersion = false;
+
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
 
     public UpdateVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -1385,6 +1391,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
+        if (!validate(validateAffinityGroups())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1660,6 +1670,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return clusterUpgradeValidator;
     }
 
+    private ValidationResult validateAffinityGroups() {
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForVm(getClusterId(),
+                getVmId(),
+                getParameters().getAffinityLabels());
+
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
     private void updateAffinityLabels() {
         List<Label> affinityLabels = getParameters().getAffinityLabels();
         if (affinityLabels == null) {
@@ -1669,6 +1688,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());
+
+        affinityGroupLoggingMethod.accept(this, auditLogDirector);
 
         // Currently, this method does not use compensation to revert this operation,
         // because affinity groups are not changed when this command is called as a child of

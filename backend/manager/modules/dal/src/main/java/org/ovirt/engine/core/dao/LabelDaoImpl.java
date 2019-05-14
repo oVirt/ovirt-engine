@@ -32,6 +32,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                 .id(getGuidDefaultNewGuid(rs, "label_id"))
                 .name(rs.getString("label_name"))
                 .readOnly(rs.getBoolean("read_only"))
+                .implicitAffinityGroup(rs.getBoolean("has_implicit_affinity_group"))
                 .vmIds(vms.stream()
                         // Labels with no assignments will have null in the column
                         .filter(v -> v != null)
@@ -132,6 +133,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                 .addValue("label_id", label.getId())
                 .addValue("label_name", label.getName())
                 .addValue("readonly", label.isReadOnly())
+                .addValue("has_implicit_affinity_group", label.isImplicitAffinityGroup())
                 .addValue("vms", createArrayOf("uuid", label.getVms().toArray()))
                 .addValue("hosts", createArrayOf("uuid", label.getHosts().toArray()));
 
@@ -153,6 +155,7 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                 .addValue("label_id", label.getId())
                 .addValue("label_name", label.getName())
                 .addValue("readonly", label.isReadOnly())
+                .addValue("has_implicit_affinity_group", label.isImplicitAffinityGroup())
                 .addValue("vms", createArrayOf("uuid", label.getVms().toArray()))
                 .addValue("hosts", createArrayOf("uuid", label.getHosts().toArray()));
 

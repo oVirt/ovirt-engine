@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -11,12 +12,14 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -67,6 +70,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Inject
     private NetworkClusterHelper networkClusterHelper;
 
+    @Inject
+    private AffinityValidator affinityValidator;
+
     private VDS oldHost;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
             "host_name",
@@ -88,6 +94,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private FenceAgentDao fenceAgentDao;
     @Inject
     private LabelDao labelDao;
+
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
 
     public UpdateVdsCommand(T parameters, CommandContext cmdContext) {
         this(parameters, cmdContext, ActionType.InstallVdsInternal);
@@ -141,7 +149,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         oldHost.getClusterCompatibilityVersion().toString(),
                         validateAgents)
                 && validate(validator.supportsDeployingHostedEngine(
-                        getParameters().getHostedEngineDeployConfiguration()));
+                        getParameters().getHostedEngineDeployConfiguration()))
+                && validate(validateAffinityGroups());
     }
 
     UpdateHostValidator getUpdateHostValidator(VDS oldHost, VDS updatedHost, boolean installHost) {
@@ -336,11 +345,24 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion, validateAgents);
     }
 
+    private ValidationResult validateAffinityGroups() {
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForHost(getClusterId(),
+                getVdsId(),
+                getParameters().getAffinityLabels());
+
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
     private void updateAffinityLabels() {
         List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels == null) {
+            return;
+        }
         List<Guid> labelIds = affinityLabels.stream()
                 .map(Label::getId)
                 .collect(Collectors.toList());
+        affinityGroupLoggingMethod.accept(this, auditLogDirector);
         labelDao.updateLabelsForHost(getVdsId(), labelIds);
     }
 }

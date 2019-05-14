@@ -31,8 +31,22 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
+    public List<AffinityGroup> getAllAffinityGroupsWithFlatLabelsByClusterId(Guid clusterId) {
+        return getCallsHandler().executeReadList("getAllAffinityGroupsWithFlatLabelsByClusterId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
+    @Override
     public List<AffinityGroup> getAllAffinityGroupsByVmId(Guid vmId) {
         return getCallsHandler().executeReadList("getAllAffinityGroupsByVmId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
+
+    @Override
+    public List<AffinityGroup> getAllAffinityGroupsWithFlatLabelsByVmId(Guid vmId) {
+        return getCallsHandler().executeReadList("getAllAffinityGroupsWithFlatLabelsByVmId",
                 createEntityRowMapper(),
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
     }
@@ -91,7 +105,9 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 .addValue("vds_affinity_enabled", entity.isVdsAffinityEnabled())
                 .addValue("priority", entity.getPriority())
                 .addValue("vm_ids", createArrayOf("uuid", entity.getVmIds().toArray()))
-                .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()));
+                .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()))
+                .addValue("vm_label_ids", createArrayOf("uuid", entity.getVmLabels().toArray()))
+                .addValue("host_label_ids", createArrayOf("uuid", entity.getHostLabels().toArray()));
     }
 
     @Override
@@ -136,13 +152,23 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
             List<String> vms = Arrays.asList(rawUuids);
             rawUuids = (String[]) rs.getArray("vds_ids").getArray();
             List<String> hosts = Arrays.asList(rawUuids);
+            List<String> vmLabels = Arrays.asList((String[]) rs.getArray("vm_label_ids").getArray());
+            List<String> hostLabels = Arrays.asList((String[]) rs.getArray("host_label_ids").getArray());
+
             List<String> vmNames = Arrays.asList((String[]) rs.getArray("vm_names").getArray());
             List<String> vdsNames = Arrays.asList((String[]) rs.getArray("vds_names").getArray());
+            List<String> vmLabelNmaes = Arrays.asList((String[]) rs.getArray("vm_label_names").getArray());
+            List<String> hostLabelNames = Arrays.asList((String[]) rs.getArray("host_label_names").getArray());
 
             affinityGroup.setVmIds(vms.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
             affinityGroup.setVdsIds(hosts.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
+            affinityGroup.setVmLabels(vmLabels.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
+            affinityGroup.setHostLabels(hostLabels.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
+
             affinityGroup.setVmEntityNames(vmNames.stream().filter(v -> v != null).collect(Collectors.toList()));
             affinityGroup.setVdsEntityNames(vdsNames.stream().filter(v -> v != null).collect(Collectors.toList()));
+            affinityGroup.setVmLabelNames(vmLabelNmaes.stream().filter(v -> v != null).collect(Collectors.toList()));
+            affinityGroup.setHostLabelNames(hostLabelNames.stream().filter(v -> v != null).collect(Collectors.toList()));
 
             return affinityGroup;
         };

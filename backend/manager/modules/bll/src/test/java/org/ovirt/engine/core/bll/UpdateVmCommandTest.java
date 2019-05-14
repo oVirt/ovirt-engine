@@ -32,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -138,6 +139,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @Mock
     private CloudInitHandler cloudInitHandler;
+    @Mock
+    private AffinityValidator affinityValidator;
 
     private static Map<String, String> createMigrationMap() {
         Map<String, String> migrationMap = new HashMap<>();
@@ -205,6 +208,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
         when(vmHandler.isUpdateValid(any(), any(), any())).thenReturn(true);
+
+        when(affinityValidator.validateAffinityUpdateForVm(any(), any(), any()))
+                .thenReturn(AffinityValidator.Result.VALID);
 
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();

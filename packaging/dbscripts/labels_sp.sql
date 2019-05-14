@@ -2,6 +2,7 @@ CREATE OR REPLACE FUNCTION CreateLabel (
     v_label_id UUID,
     v_label_name VARCHAR(50),
     v_readonly BOOLEAN,
+    v_has_implicit_affinity_group BOOLEAN,
     v_vms uuid[],
     v_hosts uuid[]
     )
@@ -12,12 +13,14 @@ BEGIN
     INSERT INTO labels (
         label_id,
         label_name,
-        read_only
+        read_only,
+        has_implicit_affinity_group
         )
     VALUES (
         v_label_id,
         v_label_name,
-        v_readonly
+        v_readonly,
+        v_has_implicit_affinity_group
         );
 
     -- Insert VM references
@@ -52,6 +55,7 @@ CREATE OR REPLACE FUNCTION UpdateLabel (
     v_label_id UUID,
     v_label_name VARCHAR(50),
     v_readonly BOOLEAN,
+    v_has_implicit_affinity_group BOOLEAN,
     v_vms uuid[],
     v_hosts uuid[]
     )
@@ -63,7 +67,8 @@ DECLARE
 BEGIN
     UPDATE labels
     SET label_name = v_label_name,
-        read_only = v_readonly
+        read_only = v_readonly,
+        has_implicit_affinity_group = v_has_implicit_affinity_group
     WHERE label_id = v_label_id;
 
     DELETE FROM labels_map

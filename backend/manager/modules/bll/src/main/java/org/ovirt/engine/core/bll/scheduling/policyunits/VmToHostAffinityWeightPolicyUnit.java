@@ -44,7 +44,7 @@ public class VmToHostAffinityWeightPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
         // TODO - cache affinity groups in scheduling context
-        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId()).stream()
+        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByVmId(vm.getId()).stream()
                 .filter(ag -> ag.isVdsAffinityEnabled() && !ag.isVdsEnforcing())
                 .collect(Collectors.toList());
 

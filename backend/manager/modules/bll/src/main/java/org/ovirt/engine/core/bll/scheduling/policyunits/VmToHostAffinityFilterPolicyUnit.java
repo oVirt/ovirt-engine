@@ -51,7 +51,7 @@ public class VmToHostAffinityFilterPolicyUnit extends PolicyUnitImpl {
             VM vm,
             PerHostMessages messages) {
 
-        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId()).stream()
+        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByVmId(vm.getId()).stream()
                 .filter(ag -> ag.isVdsEnforcing() && ag.isVdsAffinityEnabled())
                 .collect(Collectors.toList());
 
