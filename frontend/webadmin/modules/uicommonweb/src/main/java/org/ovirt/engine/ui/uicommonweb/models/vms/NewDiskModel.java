@@ -233,7 +233,17 @@ public class NewDiskModel extends AbstractDiskModel {
             getVolumeType().setSelectedItem(VolumeType.Preallocated);
             getVolumeType().setIsChangeable(false);
         } else if (!isUserSelectedVolumeType) {
-            getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
+            VolumeType volumeType;
+
+            // Block based storage domain default volume type is preallocated.
+            // Due to bug 1644159 Gluster based storage domain default volume type
+            // should be preallocated also.
+            if (storageType.isBlockDomain() || storageType == StorageType.GLUSTERFS) {
+                volumeType = VolumeType.Preallocated;
+            } else {
+                volumeType = VolumeType.Sparse;
+            }
+            getVolumeType().setSelectedItem(volumeType);
             getVolumeType().setIsChangeable(true);
         }
     }
