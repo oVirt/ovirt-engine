@@ -92,8 +92,15 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml imageWithText(SafeHtml image, String text);
 
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
+                    + "<span style='position: relative; margin-left: 3px; margin-right: 3px; height: 14px; line-height: 14px;'>{1}</span></span>")
+    SafeHtml imageWithSafeHtml(SafeHtml image, SafeHtml html);
+
+    @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: normal; height: 14px; line-height: 14px;'>{1}</span></span>")
     SafeHtml imageTextSetupNetwork(SafeHtml image, SafeHtml text);
+
+    @Template("<span>{0}</span><ul>{1}</ul>")
+    SafeHtml unorderedListWithTitle(String title, SafeHtml listItems);
 
     @Template("<div style='{1} font-weight:bold; width:100%; padding:3px;'>{0}</div> ")
     SafeHtml titleSetupNetworkTooltip(String title, SafeStyles backgroundColor);

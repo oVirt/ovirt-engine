@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
@@ -65,6 +66,7 @@ import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -88,6 +90,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
@@ -166,6 +169,9 @@ public class VmHandler implements BackendService {
 
     @Inject
     private SnapshotDao snapshotDao;
+
+    @Inject
+    protected SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     @Inject
     private SnapshotsManager snapshotsManager;
@@ -583,6 +589,43 @@ public class VmHandler implements BackendService {
         if (vmManager != null) {
             vm.setStatisticsData(vmManager.getStatistics());
         }
+    }
+
+    public void updateNextRunChangedFields(final VM currentVM, DbUser user, boolean isFiltered) {
+        if (currentVM.isNextRunConfigurationExists()) {
+            VM nextVM = getNextRunVmConfiguration(currentVM.getId(), user.getId(), isFiltered, true);
+            if (nextVM == null) {
+                return;
+            }
+
+            VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
+                    currentVM.getCompatibilityVersion(), currentVM.getStaticData());
+            VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
+                    nextVM.getCompatibilityVersion(), nextVM.getStaticData());
+
+            currentVM.setNextRunChangedFields(getChangedFieldsForStatus(currentVM.getStaticData(), nextVM.getStaticData(), VMStatus.Up));
+        }
+    }
+
+    public VM getNextRunVmConfiguration(Guid vmID, Guid userID, boolean isFiltered, boolean loadAdditionalInformation) {
+        Snapshot snapshot = snapshotDao.get(
+                vmID, Snapshot.SnapshotType.NEXT_RUN, userID, isFiltered);
+        if (snapshot == null) {
+            return null;
+        }
+        VM nextVM = snapshotVmConfigurationHelper.getVmFromConfiguration(
+                snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+        if (nextVM == null) {
+            return null;
+        }
+        if (loadAdditionalInformation) {
+            // update information that is not saved in the config
+            updateDisksFromDb(nextVM);
+            updateVmGuestAgentVersion(nextVM);
+            updateNetworkInterfacesFromDb(nextVM);
+            updateVmStatistics(nextVM);
+        }
+        return nextVM;
     }
 
     /**

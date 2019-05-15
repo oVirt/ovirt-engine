@@ -17,12 +17,14 @@ public abstract class ConstantsManager {
     public abstract UIConstants getConstants();
     public abstract UIMessages getMessages();
     public abstract LocalizedEnums getEnums();
+    public abstract NextRunFieldMessages getNextRunFieldMessages();
 
     static class GwtConstantsManager extends ConstantsManager {
 
         private static UIConstants constants;
         private static UIMessages messages;
         private static LocalizedEnums enums;
+        private static NextRunFieldMessages nextRunFieldMessages;
 
         @Override
         public UIConstants getConstants() {
@@ -46,6 +48,14 @@ public abstract class ConstantsManager {
                 enums = GWT.create(LocalizedEnums.class);
             }
             return enums;
+        }
+
+        @Override
+        public NextRunFieldMessages getNextRunFieldMessages() {
+            if (nextRunFieldMessages == null) {
+                nextRunFieldMessages = GWT.create(NextRunFieldMessages.class);
+            }
+            return nextRunFieldMessages;
         }
     }
 }

@@ -39,4 +39,17 @@ public class MultiImageColumnHelper {
         return SafeHtmlUtils.fromTrustedString(tooltip);
     }
 
+    public static SafeHtml getTooltipFromSafeHtml(Map<SafeHtml, SafeHtml> imagesToText) {
+        String tooltip = ""; //$NON-NLS-1$
+
+        for (Map.Entry<SafeHtml, SafeHtml> imageToText : imagesToText.entrySet()) {
+            if (!tooltip.isEmpty()) {
+                tooltip = tooltip.concat(constants.lineBreak()); //$NON-NLS-1$
+            }
+            tooltip = tooltip.concat(templates.imageWithSafeHtml(imageToText.getKey(),
+                    imageToText.getValue()).asString());
+        }
+
+        return SafeHtmlUtils.fromTrustedString(tooltip);
+    }
 }

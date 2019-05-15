@@ -33,6 +33,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties;
     private ArchitectureType clusterArch;
     private boolean nextRunConfigurationExists;
+    private List<String> nextRunChangedFields;
     private boolean previewSnapshot;
     private LockInfo lockInfo;
     private int backgroundOperationProgress;
@@ -1583,6 +1584,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public boolean isNextRunConfigurationExists() {
         return nextRunConfigurationExists;
+    }
+
+    public void setNextRunChangedFields(List<String> nextRunChangedFields) {
+        this.nextRunChangedFields = nextRunChangedFields;
+    }
+
+    public List<String> getNextRunChangedFields() {
+        return nextRunChangedFields;
     }
 
     public NumaTuneMode getNumaTuneMode() {
