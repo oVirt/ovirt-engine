@@ -524,9 +524,6 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     private void updateShareableDiskEnabled() {
         StorageDomain storageDomain = getStorageDomain().getSelectedItem();
-        if (storageDomain != null && (StorageType.GLUSTERFS == storageDomain.getStorageType())) {
-            getVolumeType().setSelectedItem(VolumeType.Preallocated);
-        }
         if (storageDomain != null && (StorageType.GLUSTERFS == storageDomain.getStorageType()
                 || storageDomain.getStorageType().equals(StorageType.MANAGED_BLOCK_STORAGE))) {
             getIsShareable().setEntity(false);
