@@ -2164,4 +2164,6 @@ public interface UIConstants extends Constants {
     String diskMaxSizeReached();
 
     String largeNumberOfDevicesWarning();
+
+    String pendingVMChanges();
 }

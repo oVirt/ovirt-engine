@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.NextRunFieldMessages;
 
 import com.google.gwt.core.client.GWT;
@@ -97,7 +98,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
-    private static final NextRunFieldMessages nextRunMessages = GWT.create(NextRunFieldMessages.class);
+    private static final NextRunFieldMessages nextRunMessages = ConstantsManager.getInstance().getNextRunFieldMessages();
 
     public VmNextRunConfigurationWidget() {
         initEditors();

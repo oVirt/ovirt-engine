@@ -16,7 +16,7 @@ public class GetVmByVmIdForUpdateQuery<P extends IdQueryParameters> extends GetV
         if (vm == null) {
             return;
         }
-        VM nextRunVm = getNextRunVmConfiguration();
+        VM nextRunVm = vmHandler.getNextRunVmConfiguration(getParameters().getId(), getUserID(), getParameters().isFiltered(), false);
         if (nextRunVm != null) {
             vm.setCustomCompatibilityVersion(nextRunVm.getCustomCompatibilityVersion());
         }
