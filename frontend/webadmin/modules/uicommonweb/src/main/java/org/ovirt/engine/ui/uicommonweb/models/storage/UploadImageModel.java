@@ -23,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -174,8 +175,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     if (limitToStorageDomainId == null) {
                         super.updateStorageDomains(datacenter);
                     } else {
-                        AsyncDataProvider.getInstance().getStorageDomainById(
-                                new AsyncQuery<>(storageDomain -> getStorageDomain().setSelectedItem(storageDomain)),
+                        AsyncDataProvider backend = AsyncDataProvider.getInstance();
+                        backend.getStorageDomainById(
+                                new AsyncQuery<>(storageDomain -> {
+                                    getStorageDomain().setSelectedItem(storageDomain);
+                                    backend.getDataCentersByStorageDomain(new AsyncQuery<>(storagePools -> {
+                                        getDataCenter().setSelectedItem(Linq.firstOrNull(storagePools));
+                                    }), limitToStorageDomainId);
+                                }),
                                 limitToStorageDomainId);
                     }
                 }
