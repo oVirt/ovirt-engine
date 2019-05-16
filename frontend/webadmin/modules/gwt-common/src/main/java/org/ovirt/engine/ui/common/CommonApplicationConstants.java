@@ -1117,6 +1117,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cpuPinningLabelExplanation();
 
+    String diskFormatTypeMatrixInfo();
+
     String multiQueuesLabelExplanation();
 
     String monitors();
