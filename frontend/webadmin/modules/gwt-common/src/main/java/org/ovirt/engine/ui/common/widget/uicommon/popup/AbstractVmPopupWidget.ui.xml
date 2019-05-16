@@ -609,6 +609,7 @@
                     <b:Column size="SM_12">
                       <g:Label addStyleNames="{style.sectionLabel} {style.floatLeft}" text="{constants.storageAllocVmPopup}" />
                       <g:Label addStyleNames="{style.sectionComment}" text="{constants.availOnlyTemplSelectedVmPopup}" />
+                      <d:InfoIcon ui:field="diskFormatTypeMatrixInfo" addStyleNames="{style.infoIcon}"/>
                     </b:Column>
                   </b:Row>
                   <g:FlowPanel ui:field="provisionSelectionPanel">

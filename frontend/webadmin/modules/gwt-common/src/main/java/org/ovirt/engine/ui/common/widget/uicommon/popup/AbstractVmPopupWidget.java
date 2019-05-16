@@ -802,6 +802,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     protected Row cpuSharesEditorRow;
 
+    @UiField(provided = true)
+    protected InfoIcon diskFormatTypeMatrixInfo;
+
     @UiField
     protected FlowPanel storageAllocationPanel;
 
@@ -1061,6 +1064,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationSelectInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.migrationSelectInfo()));
 
         hostCpuInfoIcon = new InfoIcon(templates.italicText(messages.hostCpuInfo()));
+
+        diskFormatTypeMatrixInfo = new InfoIcon(multiLineItalicSafeHtml(constants.diskFormatTypeMatrixInfo()));
 
         priorityEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<EntityModel<Integer>>() {
             @Override
