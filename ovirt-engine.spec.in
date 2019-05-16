@@ -260,7 +260,7 @@ BuildRequires:	hystrix-core
 BuildRequires:	hystrix-metrics-event-stream
 BuildRequires:	rxjava
 BuildRequires:	java-1.8.0-openjdk-devel >= 1:1.8.0
-BuildRequires:	jpackage-utils
+BuildRequires:	javapackages-tools
 BuildRequires:	make
 BuildRequires:	maven
 BuildRequires:	python
@@ -305,7 +305,7 @@ Requires:	hystrix-core
 Requires:	hystrix-metrics-event-stream
 Requires:	jakarta-commons-httpclient
 Requires:	java-1.8.0-openjdk-headless >= 1:1.8.0
-Requires:	jpackage-utils
+Requires:	javapackages-tools
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.1.0
 Requires:	rxjava
