@@ -1729,17 +1729,23 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     }
 
     public boolean hasSmtDiscrepancyAlert() {
-        int threadsPerCore = getCpuThreads() / getCpuCores();
+        int threadsPerCore = getThreadsPerCore();
         return isKernelCmdlineSmtDisabled() && threadsPerCore > 1;
     }
 
     public boolean hasSmtClusterDiscrepancyAlert() {
-        int threadsPerCore = getCpuThreads() / getCpuCores();
+        int threadsPerCore = getThreadsPerCore();
         boolean settingsDifferent = isKernelCmdlineSmtDisabled() != isClusterSmtDisabled();
         boolean smtActual = threadsPerCore > 1;
         boolean disabledClusterButActual = smtActual && isClusterSmtDisabled();
         boolean disabledClusterEnabledHost = isKernelCmdlineSmtDisabled() && !isClusterSmtDisabled();
 
         return settingsDifferent && (disabledClusterButActual || disabledClusterEnabledHost);
+    }
+
+    private int getThreadsPerCore() {
+        int threads = getCpuThreads() == null ? 1 : getCpuThreads();
+        int cores = getCpuCores() == null ? 1 : getCpuCores();
+        return threads / cores;
     }
 }

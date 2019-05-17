@@ -218,6 +218,6 @@ public class HostStatusCell extends AbstractCell<VDS> {
     }
 
     private boolean hasSmtAlert(VDS vds) {
-        return vds.hasSmtDiscrepancyAlert() || vds.hasSmtClusterDiscrepancyAlert();
+        return vds != null && (vds.hasSmtDiscrepancyAlert() || vds.hasSmtClusterDiscrepancyAlert());
     }
 }
