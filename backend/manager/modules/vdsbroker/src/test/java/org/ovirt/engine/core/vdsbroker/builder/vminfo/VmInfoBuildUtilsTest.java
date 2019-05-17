@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -384,6 +385,7 @@ public class VmInfoBuildUtilsTest {
         assertTrue(userData.startsWith("#cloud-config"));
         assertTrue(userData.contains("packages: [foo]"));
     }
+
     @Test
     public void testBuildIgnition() {
         VmInit vmInit = new VmInit();
@@ -391,5 +393,13 @@ public class VmInfoBuildUtilsTest {
 
         Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
         assertTrue(new String(stringMap.get("openstack/latest/user_data")).startsWith("{\"ignition\""));
+    }
+
+    @Test
+    public void testBuildCloudInitWitNullCustomScript() {
+        VmInit vmInit = new VmInit();
+
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
+        Assertions.assertThat(stringMap.get("openstack/latest/user_data")).isNotEmpty();
     }
 }
