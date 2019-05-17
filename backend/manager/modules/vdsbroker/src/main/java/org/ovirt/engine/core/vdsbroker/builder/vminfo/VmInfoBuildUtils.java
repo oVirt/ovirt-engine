@@ -1422,11 +1422,13 @@ public class VmInfoBuildUtils {
         // detect ignition
         boolean isIgnition = false;
         try {
-            isIgnition = JsonHelper.jsonToMap(vmInit.getCustomScript()).containsKey("ignition");
-            if (isIgnition) {
-                // there is no json schema or a java library that validates ignition files yet. The passing criterira now
-                // is a valid json structure with an 'ignition' key
-                log.info("the json content under custom script is an ignition json file, the content has not been validated");
+            if (vmInit.getCustomScript() != null) {
+                isIgnition = JsonHelper.jsonToMap(vmInit.getCustomScript()).containsKey("ignition");
+                if (isIgnition) {
+                    // there is no json schema or a java library that validates ignition files yet. The passing criterira now
+                    // is a valid json structure with an 'ignition' key
+                    log.info("the json content under custom script is an ignition json file, the content has not been validated");
+                }
             }
         } catch (IOException e) {
             // not a json - probably not an ignition config
