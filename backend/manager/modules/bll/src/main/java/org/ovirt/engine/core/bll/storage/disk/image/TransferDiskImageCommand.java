@@ -628,7 +628,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 return image.getActualSizeInBytes();
             }
             // Needed to allow uploading fully allocated qcow (BZ#1697294)
-            return (long) Math.ceil(image.getSize() * StorageConstants.QCOW_OVERHEAD_FACTOR);
+            // Also, adding qcow header overhead to support small files.
+            return (long) Math.ceil(image.getSize() * StorageConstants.QCOW_OVERHEAD_FACTOR)
+                    + StorageConstants.QCOW_HEADER_OVERHEAD;
         }
         // Shouldn't happen
         throw new RuntimeException(String.format(

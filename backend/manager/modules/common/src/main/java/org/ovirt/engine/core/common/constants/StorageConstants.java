@@ -23,6 +23,7 @@ public class StorageConstants {
     public static final String OVA_AUTO_GENERATED_SNAPSHOT_DESCRIPTION = "Auto-generated for Export To OVA";
     public static final String GUID = "guid";
     public static final double QCOW_OVERHEAD_FACTOR = 1.1;
+    public static final long QCOW_HEADER_OVERHEAD = 1048576;
     public static final String STEP_DEVICE_TYPE = "device";
     public static final String GLUSTER_BACKUP_SERVERS_MNT_OPTION = "backup-volfile-servers";
     public static final String GLUSTER_VOL_SEPARATOR = ":/";
