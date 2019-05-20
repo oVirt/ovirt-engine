@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
@@ -113,6 +115,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -121,6 +124,7 @@ import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
@@ -136,6 +140,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
@@ -213,6 +218,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private VmTemplateDao vmTemplateDao;
     @Inject
+    private AffinityGroupDao affinityGroupDao;
+    @Inject
     private LabelDao labelDao;
 
     @Inject
@@ -224,6 +231,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
@@ -801,6 +810,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
+        if (!validate(validateAffinityGroups())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1008,7 +1021,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             addVmPermission();
             addVmInit();
             addVmRngDevice();
-            addAffinityLabels();
+            addAffinityGroupsAndLabels();
             getCompensationContext().stateChanged();
             return null;
         });
@@ -1841,14 +1854,36 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return clusterUpgradeValidator;
     }
 
-    private void addAffinityLabels() {
-        List<Label> affinityLabels = getParameters().getAffinityLabels();
-        if (affinityLabels == null) {
-            return;
+    private ValidationResult validateAffinityGroups() {
+        if (CollectionUtils.isEmpty(getParameters().getAffinityGroups())) {
+            return ValidationResult.VALID;
         }
-        List<Guid> labelIds = affinityLabels.stream()
-                .map(Label::getId)
-                .collect(Collectors.toList());
-        labelDao.addVmToLabels(getVmId(), labelIds);
+
+        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
+                .validateAffinityGroupsUpdateForVm(getClusterId(), getVmId(), getParameters().getAffinityGroups());
+
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
+    private void addAffinityGroupsAndLabels() {
+        // TODO - check permissions to modify affinity groups
+        List<AffinityGroup> affinityGroups = getParameters().getAffinityGroups();
+        if (affinityGroups != null) {
+            affinityGroupLoggingMethod.accept(this, auditLogDirector);
+            affinityGroupDao.setAffinityGroupsForVm(getVmId(),
+                    affinityGroups.stream()
+                            .map(AffinityGroup::getId)
+                            .collect(Collectors.toList()));
+        }
+
+        // TODO - check permissions to modify labels
+        List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels != null) {
+            List<Guid> labelIds = affinityLabels.stream()
+                    .map(Label::getId)
+                    .collect(Collectors.toList());
+            labelDao.addVmToLabels(getVmId(), labelIds);
+        }
     }
 }

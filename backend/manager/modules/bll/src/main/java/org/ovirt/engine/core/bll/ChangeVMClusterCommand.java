@@ -160,7 +160,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         if (!allAffinityGroupsByVmId.isEmpty()) {
             String groups = allAffinityGroupsByVmId.stream().map(AffinityGroup::getName).collect(Collectors.joining(" "));
             log.info("Due to cluster change, removing VM from associated affinity group(s): {}", groups);
-            affinityGroupDao.removeVmFromAffinityGroups(vm.getId());
+            affinityGroupDao.setAffinityGroupsForVm(vm.getId(), Collections.emptyList());
         }
         setSucceeded(true);
     }

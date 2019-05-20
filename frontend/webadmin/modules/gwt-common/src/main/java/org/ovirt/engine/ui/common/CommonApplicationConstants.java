@@ -1297,7 +1297,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String selectItemTooltip();
 
-    String affinityLabels();
+    String affinity();
+
+    String affinityGroupsDropDownInstruction();
 
     String affinityLabelsDropDownInstruction();
 

@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.TabbedView;
+import org.ovirt.engine.ui.common.widget.AffinityGroupSelectionWithListWidget;
 import org.ovirt.engine.ui.common.widget.AffinityLabelSelectionWithListWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
@@ -974,9 +975,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("providers")
     public ListModelListBoxEditor<Provider<OpenstackNetworkProviderProperties>> providersEditor;
 
-    // ==Affinity Labels Tab==
+    // ==Affinity Tab==
     @UiField
-    protected DialogTab affinityLabelsTab;
+    protected DialogTab affinityTab;
+
+    @UiField
+    @Path(value = "affinityGroupList.selectedItem")
+    @WithElementId("affinityGroupList")
+    public AffinityGroupSelectionWithListWidget affinityGroupSelectionWidget;
 
     @UiField
     @Path(value = "labelList.selectedItem")
@@ -1139,7 +1145,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab.getTabListItem());
         getTabNameMapping().put(TabName.ICON_TAB, this.iconTab.getTabListItem());
         getTabNameMapping().put(TabName.FOREMAN_TAB, foremanTab.getTabListItem());
-        getTabNameMapping().put(TabName.AFFINITY_LABELS, this.affinityLabelsTab.getTabListItem());
+        getTabNameMapping().put(TabName.AFFINITY_TAB, this.affinityTab.getTabListItem());
     }
 
     private void initDetachableFields() {
@@ -1573,7 +1579,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
         vmInitEditor.edit(model.getVmInitModel());
         serialNumberPolicyEditor.edit(model.getSerialNumberPolicy());
-        affinityLabelSelectionWidget.getListWidget().init(model.getLabelList());
+        affinityGroupSelectionWidget.init(model.getAffinityGroupList());
+        affinityLabelSelectionWidget.init(model.getLabelList());
         quotaEditor.setEnabled(!model.isHostedEngine());
         initTabAvailabilityListeners(model);
         initListeners(model);
@@ -1722,8 +1729,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             monitorsLabel.setEnabled(!isHeadlessEnabled);
             spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
         });
-
-        affinityLabelSelectionWidget.init(object.getLabelList());
 
         object.getMultiQueues().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
@@ -2043,7 +2048,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = foremanTab.setTabIndexes(nextTabIndex);
 
         // ==Affinity Labels Tab==
-        nextTabIndex = affinityLabelsTab.setTabIndexes(nextTabIndex);
+        nextTabIndex = affinityTab.setTabIndexes(nextTabIndex);
 
         return nextTabIndex;
     }
@@ -2114,7 +2119,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 systemTab.getTabListItem(),
                 iconTab.getTabListItem(),
                 foremanTab.getTabListItem(),
-                affinityLabelsTab.getTabListItem()
+                affinityTab.getTabListItem()
                 );
     }
 
@@ -2214,7 +2219,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             rngDeviceTab,
             iconTab,
             foremanTab,
-            affinityLabelsTab
+            affinityTab
         );
     }
 
@@ -2300,6 +2305,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     public UnitVmModel getModel() {
         return unitVmModel;
+    }
+
+    public HasClickHandlers getAddAffinityGroupButton() {
+        return affinityGroupSelectionWidget.getSelectionWidget().getAddSelectedItemButton();
     }
 
     public HasClickHandlers getAddAffinityLabelButton() {

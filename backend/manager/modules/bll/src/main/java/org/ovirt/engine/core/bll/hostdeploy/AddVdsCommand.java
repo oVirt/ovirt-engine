@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -49,10 +53,12 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.LabelDao;
@@ -61,6 +67,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
@@ -91,10 +98,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Inject
     private ProviderProxyFactory providerProxyFactory;
     @Inject
+    private AffinityGroupDao affinityGroupDao;
+    @Inject
     private LabelDao labelDao;
     @Inject
     private ClusterUtils clusterUtils;
 
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -137,7 +147,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             addVdsStaticToDb();
             addVdsDynamicToDb();
             addVdsStatisticsToDb();
-            addAffinityLabels();
+            addAffinityGroupsAndLabels();
             getCompensationContext().stateChanged();
             return null;
         });
@@ -374,6 +384,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
+        if (!validate(validateAffinityGroups())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -570,11 +584,36 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
     }
 
-    private void addAffinityLabels() {
+    private ValidationResult validateAffinityGroups() {
+        if (CollectionUtils.isEmpty(getParameters().getAffinityGroups())) {
+            return ValidationResult.VALID;
+        }
+
+        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
+                .validateAffinityGroupsUpdateForHost(getClusterId(), getVdsId(), getParameters().getAffinityGroups());
+
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
+    private void addAffinityGroupsAndLabels() {
+        // TODO - check permissions to modify affinity groups
+        List<AffinityGroup> affinityGroups = getParameters().getAffinityGroups();
+        if (affinityGroups != null) {
+            affinityGroupLoggingMethod.accept(this, auditLogDirector);
+            affinityGroupDao.setAffinityGroupsForHost(getVdsId(),
+                    affinityGroups.stream()
+                            .map(AffinityGroup::getId)
+                            .collect(Collectors.toList()));
+        }
+
+        // TODO - check permissions to modify labels
         List<Label> affinityLabels = getParameters().getAffinityLabels();
-        List<Guid> labelIds = affinityLabels.stream()
-                .map(Label::getId)
-                .collect(Collectors.toList());
-        labelDao.addHostToLabels(getVdsId(), labelIds);
+        if (affinityLabels != null) {
+            List<Guid> labelIds = affinityLabels.stream()
+                    .map(Label::getId)
+                    .collect(Collectors.toList());
+            labelDao.addHostToLabels(getVdsId(), labelIds);
+        }
     }
 }

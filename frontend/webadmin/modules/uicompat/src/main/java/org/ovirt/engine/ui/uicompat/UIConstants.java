@@ -1801,7 +1801,11 @@ public interface UIConstants extends Constants {
 
     String noAvailableVms();
 
+    String noAffinityGroupsSelected();
+
     String noAffinityLabelsSelected();
+
+    String selectedAffinityGroups();
 
     String selectedAffinityLabels();
 

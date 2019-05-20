@@ -65,7 +65,8 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(iconTab, hiddenField()).
                 putOne(consoleDisconnectActionEditor, hiddenField()).
                 putOne(resumeBehavior, hiddenField()).
-                putOne(customCompatibilityVersionEditor, hiddenField());
+                putOne(customCompatibilityVersionEditor, hiddenField()).
+                update(affinityTab, hiddenField());
     }
 
     @Override

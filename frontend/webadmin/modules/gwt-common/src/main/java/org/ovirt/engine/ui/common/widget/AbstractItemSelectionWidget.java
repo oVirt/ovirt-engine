@@ -2,10 +2,12 @@ package org.ovirt.engine.ui.common.widget;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.SuggestionMatcher;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
@@ -23,7 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
  *
  * @param <T> the type of values contained in the listbox editor
  */
-public abstract class AbstractItemSelectionWidget<T> extends Composite implements IsEditor<WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>>> {
+public abstract class AbstractItemSelectionWidget<T extends Nameable> extends Composite implements IsEditor<WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>>> {
 
     interface ViewUiBinder extends UiBinder<Widget, AbstractItemSelectionWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -43,20 +45,35 @@ public abstract class AbstractItemSelectionWidget<T> extends Composite implement
     @UiField
     Button addSelectedItemButton;
 
-    public void init() {
+    public AbstractItemSelectionWidget() {
         filterListEditor = createFilterListEditor();
         filterListEditor.hideLabel();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         addSelectedItemButton.addStyleName(Styles.PULL_RIGHT);
     }
 
-    protected abstract ListModelTypeAheadListBoxEditor<T> createFilterListEditor();
-
     public ListModelTypeAheadListBoxEditor<T> getFilterListEditor() {
         return filterListEditor;
     }
 
-    protected String typeAheadNameTemplateNullSafe(String name) {
+    private ListModelTypeAheadListBoxEditor<T> createFilterListEditor() {
+        return new ListModelTypeAheadListBoxEditor<>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<T>() {
+                    @Override
+                    public String getReplacementStringNullSafe(T item) {
+                        return item.getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(T item) {
+                        return typeAheadNameTemplateNullSafe(item.getName());
+                    }
+                },
+                new VisibilityRenderer.SimpleVisibilityRenderer(),
+                new SuggestionMatcher.ContainsSuggestionMatcher());
+    }
+
+    private String typeAheadNameTemplateNullSafe(String name) {
         if (StringHelper.isNotNullOrEmpty(name)) {
             return templates.typeAheadName(name).asString();
         } else {

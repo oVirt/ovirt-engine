@@ -375,6 +375,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setVmLargeIcon(IconUtils.filterPredefinedIcons(model.getIcon().getEntity().getIcon()));
+        parameters.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
         parameters.setAffinityLabels(model.getLabelList().getSelectedItems());
         setVmWatchdogToParams(model, parameters);
         setRngDeviceToParams(model, parameters);

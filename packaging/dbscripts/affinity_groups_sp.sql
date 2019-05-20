@@ -167,28 +167,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
--- Remove vm from all Affinity Group
-CREATE OR REPLACE FUNCTION RemoveVmFromAffinityGroups (v_vm_id UUID)
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    DELETE
-    FROM affinity_group_members
-    WHERE vm_id IS NOT NULL
-          AND vm_id = v_vm_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
--- Remove host from all Affinity Group
-CREATE OR REPLACE FUNCTION RemoveVdsFromAffinityGroups (v_vds_id UUID)
-    RETURNS VOID AS $PROCEDURE$
-BEGIN
-    DELETE
-    FROM affinity_group_members
-    WHERE vds_id IS NOT NULL
-          AND vds_id = v_vds_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 -- Get All positive enforcing Affinity Groups which contain VMs running on given host id
 CREATE OR REPLACE FUNCTION getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId (v_vds_id UUID)
 RETURNS SETOF affinity_groups_view STABLE AS $PROCEDURE$
@@ -207,4 +185,45 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+-- Set affinity groups for a VM
+CREATE OR REPLACE FUNCTION SetAffinityGroupsForVm (
+    v_vm_id UUID,
+    v_groups uuid[]
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    -- Remove existing entries for the VM
+    DELETE FROM affinity_group_members
+    WHERE vm_id IS NOT NULL
+        AND vm_id = v_vm_id;
+
+    -- Add the current entries for the VM
+    INSERT INTO affinity_group_members (
+        affinity_group_id,
+        vm_id
+    )
+    SELECT unnest(v_groups), v_vm_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Set affinity groups for a host
+CREATE OR REPLACE FUNCTION SetAffinityGroupsForHost (
+    v_host_id UUID,
+    v_groups uuid[]
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    -- Remove existing entries for the host
+    DELETE FROM affinity_group_members
+    WHERE vds_id IS NOT NULL
+        AND vds_id = v_host_id;
+
+    -- Add the current entries for the host
+    INSERT INTO affinity_group_members (
+        affinity_group_id,
+        vds_id
+    )
+    SELECT unnest(v_groups), v_host_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 

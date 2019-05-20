@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
@@ -47,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -1538,6 +1540,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return labelList;
     }
 
+    private ListModel<AffinityGroup> affinityGroupList;
+
+    public ListModel<AffinityGroup> getAffinityGroupList() {
+        return affinityGroupList;
+    }
+
+    public void setAffinityGroupList(ListModel<AffinityGroup> affinityGroupList) {
+        this.affinityGroupList = affinityGroupList;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior, ListModel<?> parentModel) {
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -1590,6 +1602,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setLabelList(new ListModel<Label>());
         getLabelList().getSelectedItemsChangedEvent().addListener(this);
         getLabelList().setIsAvailable(false);
+
+        setAffinityGroupList(new ListModel<>());
+        getAffinityGroupList().getSelectedItemChangedEvent().addListener(this);
+        getAffinityGroupList().setIsAvailable(false);
 
         setCdImage(new NotChangableForVmInPoolListModel<>());
         getCdImage().setIsChangeable(false);
@@ -1885,22 +1901,51 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }), ProviderType.FOREMAN);
     }
 
-    private void updateLabelList() {
-        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(allLabels -> {
-            boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
+    private void updateAffinityLists() {
+        boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
 
+        AsyncCallback<List<AffinityGroup>> affinityGroupsCallback = groups -> {
+            affinityGroupList.setItems(groups);
             if (isExistingVmBehavior) {
                 Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
-
-                AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(vmLabelsList -> {
-                    labelList.setItems(allLabels);
-                    labelList.setSelectedItems(vmLabelsList);
-                }), vmId);
+                affinityGroupList.setSelectedItems(groups.stream()
+                        .filter(ag -> ag.getVmIds().contains(vmId))
+                        .collect(Collectors.toList()));
             } else {
-                labelList.setItems(allLabels);
+                affinityGroupList.setSelectedItems(new ArrayList<>());
+            }
+        };
+
+        if (getSelectedCluster() == null) {
+            // This must be a modifiable list, otherwise an exception is thrown.
+            // Once the selected cluster is not null anymore and this list is changed for another one,
+            // somewhere the code adds an element to this list, even if it is not used.
+            affinityGroupsCallback.onSuccess(new ArrayList<>());
+        } else {
+            AsyncDataProvider.getInstance().getAffinityGroupsByClusterId(new AsyncQuery<>(affinityGroupsCallback),
+                    getSelectedCluster().getId());
+        }
+
+        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(labels -> {
+            labelList.setItems(labels);
+            if (isExistingVmBehavior) {
+                Guid vmId = ((ExistingVmModelBehavior) getBehavior()).getVm().getId();
+                labelList.setSelectedItems(labels.stream()
+                        .filter(label -> label.getVms().contains(vmId))
+                        .collect(Collectors.toList()));
+            } else {
                 labelList.setSelectedItems(new ArrayList<>());
             }
         }));
+    }
+
+    public void addAffinityGroup() {
+        AffinityGroup group = affinityGroupList.getSelectedItem();
+
+        if (!affinityGroupList.getSelectedItems().contains(group)) {
+            affinityGroupList.getSelectedItems().add(group);
+            affinityGroupList.getSelectedItemsChangedEvent().raise(affinityGroupList, EventArgs.EMPTY);
+        }
     }
 
     public void addAffinityLabel() {
@@ -1953,7 +1998,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initVncKeyboardLayout();
         initConsoleDisconnectAction();
         updateResumeBehavior();
-        updateLabelList();
+        updateAffinityLists();
 
         behavior.initialize();
     }
@@ -2364,6 +2409,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (!selectedTimeZone.isEmpty()) {
             getBehavior().updateTimeZone(selectedTimeZone);
         }
+
+        updateAffinityLists();
     }
 
     private void updateBootMenu() {

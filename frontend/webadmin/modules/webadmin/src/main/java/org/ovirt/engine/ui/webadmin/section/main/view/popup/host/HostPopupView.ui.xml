@@ -525,9 +525,12 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="affinityLabelsTab">
+                    <t:DialogTab ui:field="affinityTab">
                         <t:content>
-                            <w:AffinityLabelSelectionWithListWidget ui:field="affinityLabelSelectionWidget" />
+                            <b:Container fluid="true">
+                                <w:AffinityGroupSelectionWithListWidget ui:field="affinityGroupSelectionWidget" />
+                                <w:AffinityLabelSelectionWithListWidget ui:field="affinityLabelSelectionWidget" />
+                            </b:Container>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

@@ -52,6 +52,8 @@ public class UpdateVdsCommandTest {
         newHost = createTestHost(HOST_ID);
         parameters = createParameters(newHost);
         underTestCommand = new UpdateVdsCommand<>(parameters, null);
+        underTestCommand.setClusterId(newHost.getClusterId());
+
         MockitoAnnotations.initMocks(this);
         underTestCommand = spy(underTestCommand);
 

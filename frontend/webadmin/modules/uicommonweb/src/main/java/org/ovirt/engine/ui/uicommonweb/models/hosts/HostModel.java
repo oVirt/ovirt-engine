@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -24,12 +25,14 @@ import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.CpuVendor;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -701,6 +704,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private HostedEngineHostModel hostedEngineHostModel;
 
+    private ListModel<AffinityGroup> affinityGroupList;
+
+    public ListModel<AffinityGroup> getAffinityGroupList() {
+        return affinityGroupList;
+    }
+
+    public void setAffinityGroupList(ListModel<AffinityGroup> affinityGroupList) {
+        this.affinityGroupList = affinityGroupList;
+    }
+
     private ListModel<Label> labelList;
 
     public void setLabelList(ListModel<Label> labelList) {
@@ -858,8 +871,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         kernelCmdlineListener = new EnableableEventListener<>(null);
         setCurrentKernelCmdLine(new EntityModel<>(""));
         setHostedEngineHostModel(new HostedEngineHostModel());
+        setAffinityGroupList(new ListModel<>());
         setLabelList(new ListModel<Label>());
-        updateLabelList();
+        updateAffinityLists();
 
         setPasswordSectionViewable(true);
 
@@ -1080,6 +1094,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     protected void cluster_SelectedItemChanged() {
+        updateAffinityLists();
+
         Cluster cluster = getCluster().getSelectedItem();
         if (cluster == null) {
             return;
@@ -1334,7 +1350,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         addKernelCmdlineCheckboxesListeners();
         addKernelCmdlineListener();
         updateKernelCmdlineCheckboxesChangeability();
-        updateLabelList();
+        updateAffinityLists();
     }
 
     private void addKernelCmdlineListener() {
@@ -1465,18 +1481,49 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         resetKernelCmdlineCheckboxes();
     }
 
-    private void updateLabelList() {
-        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(allLabels -> {
+    private void updateAffinityLists() {
+        AsyncCallback<List<AffinityGroup>> affinityGroupsCallback = groups -> {
+            affinityGroupList.setItems(groups);
             if (getIsNew()) {
-                labelList.setItems(allLabels);
+                affinityGroupList.setSelectedItems(new ArrayList<>());
+            } else {
+                Guid hostId = getHostId();
+                affinityGroupList.setSelectedItems(groups.stream()
+                        .filter(ag -> ag.getVdsIds().contains(hostId))
+                        .collect(Collectors.toList()));
+            }
+        };
+
+        if (getCluster().getSelectedItem() == null) {
+            // This must be a modifiable list, otherwise an exception is thrown.
+            // Once the selected cluster is not null anymore and this list is changed for another one,
+            // somewhere the code adds an element to this list, even if it is not used.
+            affinityGroupsCallback.onSuccess(new ArrayList<>());
+        } else {
+            AsyncDataProvider.getInstance().getAffinityGroupsByClusterId(new AsyncQuery<>(affinityGroupsCallback),
+                    getCluster().getSelectedItem().getId());
+        }
+
+        AsyncDataProvider.getInstance().getLabelList(new AsyncQuery<>(labels -> {
+            labelList.setItems(labels);
+            if (getIsNew()) {
                 labelList.setSelectedItems(new ArrayList<>());
             } else {
-                AsyncDataProvider.getInstance().getLabelListByEntityId(new AsyncQuery<>(hostLabelsList -> {
-                    labelList.setItems(allLabels);
-                    labelList.setSelectedItems(hostLabelsList);
-                }), getHostId());
+                Guid hostId = getHostId();
+                labelList.setSelectedItems(labels.stream()
+                        .filter(label -> label.getHosts().contains(hostId))
+                        .collect(Collectors.toList()));
             }
         }));
+    }
+
+    public void addAffinityGroup() {
+        AffinityGroup group = affinityGroupList.getSelectedItem();
+
+        if (!affinityGroupList.getSelectedItems().contains(group)) {
+            affinityGroupList.getSelectedItems().add(group);
+            affinityGroupList.getSelectedItemsChangedEvent().raise(affinityGroupList, EventArgs.EMPTY);
+        }
     }
 
     public void addAffinityLabel() {

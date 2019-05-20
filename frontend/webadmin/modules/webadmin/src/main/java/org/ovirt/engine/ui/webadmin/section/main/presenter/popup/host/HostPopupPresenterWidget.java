@@ -20,6 +20,7 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
         void showPowerManagement();
         void setHostProviderVisibility(boolean visible);
         HasClickHandlers getKernelCmdlineResetButton();
+        HasClickHandlers getAddAffinityGroupButton();
         HasClickHandlers getAddAffinityLabelButton();
     }
 
@@ -36,14 +37,15 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
         addHostProviderListener(model);
         addRadioButtonsListeners(model);
         addKernelCmdlineResetListener(model);
-        addAddAffinityLabelButtonListener(model);
+        addAddAffinityButtonListeners(model);
     }
 
     private void addKernelCmdlineResetListener(final HostModel model) {
         registerHandler(getView().getKernelCmdlineResetButton().addClickHandler(event -> model.resetKernelCmdline()));
     }
 
-    private void addAddAffinityLabelButtonListener(final HostModel model) {
+    private void addAddAffinityButtonListeners(final HostModel model) {
+        registerHandler(getView().getAddAffinityGroupButton().addClickHandler(event -> model.addAffinityGroup()));
         registerHandler(getView().getAddAffinityLabelButton().addClickHandler(event -> model.addAffinityLabel()));
     }
 

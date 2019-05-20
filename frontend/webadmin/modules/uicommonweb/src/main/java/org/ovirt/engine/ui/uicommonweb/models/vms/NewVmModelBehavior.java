@@ -43,6 +43,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().getVmType().setIsChangeable(true);
         getModel().getVmId().setIsAvailable(true);
+        getModel().getAffinityGroupList().setIsAvailable(true);
         getModel().getLabelList().setIsAvailable(true);
 
         loadDataCenters();

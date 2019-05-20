@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -13,8 +12,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -138,50 +137,11 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
         affinityGroups.removeIf(g -> g.getId().equals(affinityGroup.getId()));
         affinityGroups.add(affinityGroup);
 
-        List<AffinityRulesUtils.AffinityGroupConflicts> conflicts = AffinityRulesUtils
-                .checkForAffinityGroupHostsConflict(affinityGroups);
-
-        for (AffinityRulesUtils.AffinityGroupConflicts conflict : conflicts) {
-
-            String affinityGroupsNames = AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups());
-            String hosts = conflict.getHosts().stream()
-                    .map(id -> id.toString())
-                    .collect(Collectors.joining(","));
-            String vms = conflict.getVms().stream()
-                    .map(id -> id.toString())
-                    .collect(Collectors.joining(","));
-
-            if (conflict.getType().canBeSaved()) {
-                addCustomValue("AffinityGroups", affinityGroupsNames);
-                addCustomValue("Hosts", hosts);
-                addCustomValue("Vms", vms);
-                auditLogDirector.log(this, conflict.getAuditLogType());
-            } else {
-                if (conflict.isVmToVmAffinity()) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
-                            String.format("$UnifiedAffinityGroups %1$s", vms),
-                            String.format("$negativeAR %1$s", affinityGroupsNames),
-                            String.format("$Vms %1$s", conflict.getNegativeVms().stream()
-                                    .map(id -> id.toString())
-                                    .collect(Collectors.joining(",")))
-                    );
-                } else {
-                    List<EngineMessage> engineMessages = new ArrayList<>();
-                    engineMessages.add(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_HOSTS_RULES_COLLISION);
-                    engineMessages.add(EngineMessage.AFFINITY_GROUPS_LIST);
-                    engineMessages.add(EngineMessage.HOSTS_LIST);
-                    engineMessages.add(EngineMessage.VMS_LIST);
-
-                    List<String> variableReplacements = new ArrayList<>();
-                    variableReplacements.add(String.format("$affinityGroups %1$s", affinityGroupsNames));
-                    variableReplacements.add(String.format("$hostsList %1$s", hosts));
-                    variableReplacements.add(String.format("$vmsList %1$s", vms));
-
-                    return failValidation(engineMessages, variableReplacements);
-                }
-            }
+        AffinityValidator.Result result = AffinityValidator.checkAffinityGroupConflicts(affinityGroups);
+        if (result.getValidationResult().isValid()) {
+            result.getLoggingMethod().accept(this, auditLogDirector);
         }
-        return true;
+        return validate(result.getValidationResult());
     }
 
     protected AffinityGroup getAffinityGroup() {

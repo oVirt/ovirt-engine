@@ -37,6 +37,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
         HasUiCommandClickHandlers getNumaSupportButton();
 
+        HasClickHandlers getAddAffinityGroupButton();
+
         HasClickHandlers getAddAffinityLabelButton();
     }
 
@@ -108,6 +110,7 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
         registerHandler(getView().getNumaSupportButton().addClickHandler(event -> getView().getNumaSupportButton().getCommand().execute()));
 
+        registerHandler(getView().getAddAffinityGroupButton().addClickHandler(event -> model.addAffinityGroup()));
         registerHandler(getView().getAddAffinityLabelButton().addClickHandler(event -> model.addAffinityLabel()));
     }
 

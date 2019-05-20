@@ -876,6 +876,8 @@ public class FixturesTool {
     public static final String DATA_CENTER_NAME = "rhel6.iscsi";
 
     public static final Guid EXISTING_AFFINITY_GROUP_ID = new Guid("6d849ebf-0ccc-4552-ad09-ccc90cda105d");
+    public static final Guid AFFINITY_GROUP_2 = new Guid("6d849ebf-0ccc-4552-ad09-ccc90cda105e");
+    public static final Guid AFFINITY_GROUP_3 = new Guid("6d849ebf-0ccc-4552-ad09-ccc90cda105f");
 
     /**
      * Id of predefined iscsi bond with the following properties:

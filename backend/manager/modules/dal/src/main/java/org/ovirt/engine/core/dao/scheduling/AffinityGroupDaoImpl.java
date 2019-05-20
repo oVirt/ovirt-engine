@@ -59,22 +59,26 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
-    public void removeVmFromAffinityGroups(Guid vmId) {
-        getCallsHandler().executeModification("RemoveVmFromAffinityGroups",
-                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
-    }
-
-    @Override
-    public void removeVdsFromAffinityGroups(Guid vdsId) {
-        getCallsHandler().executeModification("RemoveVdsFromAffinityGroups",
-                getCustomMapSqlParameterSource().addValue("vds_id", vdsId));
-    }
-
-    @Override
     public List<AffinityGroup> getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(Guid vdsId) {
         return getCallsHandler().executeReadList("getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId",
                 createEntityRowMapper(),
                 getCustomMapSqlParameterSource().addValue("vds_id", vdsId));
+    }
+
+    @Override
+    public void setAffinityGroupsForVm(Guid vmId, List<Guid> groupIds) {
+        getCallsHandler().executeModification("SetAffinityGroupsForVm",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId)
+                        .addValue("groups", createArrayOf("uuid", groupIds.toArray())));
+    }
+
+    @Override
+    public void setAffinityGroupsForHost(Guid hostId, List<Guid> groupIds) {
+        getCallsHandler().executeModification("SetAffinityGroupsForHost",
+                getCustomMapSqlParameterSource()
+                        .addValue("host_id", hostId)
+                        .addValue("groups", createArrayOf("uuid", groupIds.toArray())));
     }
 
     @Override

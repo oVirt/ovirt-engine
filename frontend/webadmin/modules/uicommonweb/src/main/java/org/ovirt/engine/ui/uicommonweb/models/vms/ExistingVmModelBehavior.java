@@ -71,6 +71,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getVmType().setIsChangeable(true);
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().getInstanceTypes().setIsChangeable(!vm.isRunning());
+        getModel().getAffinityGroupList().setIsAvailable(true);
         getModel().getLabelList().setIsAvailable(true);
 
         getModel().getVmId().setIsAvailable(true);

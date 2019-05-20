@@ -1807,6 +1807,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         updateVmParams.setApplyChangesLater(applyCpuChangesLater);
         updateVmParams.setUpdateNuma(model.isNumaChanged());
+        updateVmParams.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
         updateVmParams.setAffinityLabels(model.getLabelList().getSelectedItems());
         if (model.getIsHeadlessModeEnabled().getEntity()) {
             updateVmParams.getVmStaticData().setDefaultDisplayType(DisplayType.none);

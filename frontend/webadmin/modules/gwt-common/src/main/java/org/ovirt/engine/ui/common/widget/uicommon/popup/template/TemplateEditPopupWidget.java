@@ -32,7 +32,8 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(detachableInstanceTypesEditor, hiddenField()).
                 putOne(templateWithVersionEditor, hiddenField()).
-                putAll(resourceAllocationTemplateHiddenFields(), hiddenField());
+                putAll(resourceAllocationTemplateHiddenFields(), hiddenField()).
+                update(affinityTab, hiddenField());
 
         if (getModel() instanceof BlankTemplateModel) {
             popupWidgetConfigMap = popupWidgetConfigMap.

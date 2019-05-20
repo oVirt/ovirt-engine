@@ -59,7 +59,8 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 putOne(editPoolEditMaxAssignedVmsPerUserRow, hiddenField()).
                 putOne(baseTemplateEditor, hiddenField()).
                 update(templateVersionNameEditor, hiddenField()).
-                putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly());
+                putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly()).
+                update(affinityTab, hiddenField());
 
         updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
 

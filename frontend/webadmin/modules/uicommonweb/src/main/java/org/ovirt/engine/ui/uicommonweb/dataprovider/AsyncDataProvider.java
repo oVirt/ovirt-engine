@@ -176,6 +176,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetails
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibilityParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -955,6 +956,10 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.IsOvirtCockpitSSOStarted, new QueryParametersBase(), aQuery);
     }
 
+    public void getAffinityGroupsByClusterId(AsyncQuery<List<AffinityGroup>> aQuery, Guid clusterId) {
+        aQuery.converterCallback = new SortListByNameConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetAffinityGroupsByClusterId, new IdQueryParameters(clusterId), aQuery);
+    }
 
     public void getLabelList(AsyncQuery<List<Label>> aQuery) {
         aQuery.converterCallback = new SortListByNameConverter<>();

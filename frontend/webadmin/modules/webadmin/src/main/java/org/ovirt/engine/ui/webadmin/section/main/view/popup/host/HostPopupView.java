@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.AffinityGroupSelectionWithListWidget;
 import org.ovirt.engine.ui.common.widget.AffinityLabelSelectionWithListWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -106,7 +107,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @WithElementId
-    DialogTab affinityLabelsTab;
+    DialogTab affinityTab;
 
     @UiField
     @WithElementId
@@ -472,6 +473,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     Button kernelCmdlineResetButton;
 
     @UiField
+    @Path(value = "affinityGroupList.selectedItem")
+    @WithElementId("affinityGroupList")
+    public AffinityGroupSelectionWithListWidget affinityGroupSelectionWidget;
+
+    @UiField
     @Path(value = "labelList.selectedItem")
     @WithElementId("labelList")
     AffinityLabelSelectionWithListWidget affinityLabelSelectionWidget;
@@ -693,7 +699,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineInfoIcon()));
 
         // Affinity Labels Tab
-        affinityLabelsTab.setLabel(constants.affinityLabels());
+        affinityTab.setLabel(constants.affinity());
     }
 
     private void applyModeCustomizations() {
@@ -847,6 +853,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         hostedEngineTab.setVisible(object.getIsHeSystem() && object.getIsNew());
 
+        affinityGroupSelectionWidget.init(object.getAffinityGroupList());
         affinityLabelSelectionWidget.init(object.getLabelList());
 
         vgpuConsolidatedPlacementEditor.asRadioButton().addValueChangeHandler(event -> {
@@ -1102,7 +1109,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         hostedEngineDeployActionsEditor.setTabIndex(nextTabIndex++);
 
         // ==Affinity Labels Tab==
-        nextTabIndex = affinityLabelsTab.setTabIndexes(nextTabIndex);
+        nextTabIndex = affinityTab.setTabIndexes(nextTabIndex);
 
         return nextTabIndex;
     }
@@ -1131,6 +1138,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Override
     public HasClickHandlers getKernelCmdlineResetButton() {
         return kernelCmdlineResetButton;
+    }
+
+    @Override
+    public HasClickHandlers getAddAffinityGroupButton() {
+        return affinityGroupSelectionWidget.getSelectionWidget().getAddSelectedItemButton();
     }
 
     @Override

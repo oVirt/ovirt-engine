@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.common.widget;
 
+import java.util.ArrayList;
+
 import org.gwtbootstrap3.client.ui.Button;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -18,7 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
  *
  * @param <T> the type of values contained in the listbox editor and list widget
  */
-public abstract class AbstractItemSelectionWithListWidget<T> extends Composite implements IsEditor<WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>>> {
+public abstract class AbstractItemSelectionWithListWidget<T extends Nameable> extends Composite implements IsEditor<WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>>> {
 
     interface ViewUiBinder extends UiBinder<Widget, AbstractItemSelectionWithListWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -28,7 +31,7 @@ public abstract class AbstractItemSelectionWithListWidget<T> extends Composite i
     protected AbstractItemSelectionWidget<T> selectionWidget;
 
     @UiField(provided=true)
-    protected AbstractItemListWidget<ListModel<T>, T> listWidget;
+    protected AbstractItemListWidget<T> listWidget;
 
     public AbstractItemSelectionWithListWidget() {
         selectionWidget = initItemSelectionWidget();
@@ -38,13 +41,13 @@ public abstract class AbstractItemSelectionWithListWidget<T> extends Composite i
 
     public abstract AbstractItemSelectionWidget<T> initItemSelectionWidget();
 
-    public abstract AbstractItemListWidget<ListModel<T>, T> initItemListWidget();
+    public abstract AbstractItemListWidget<T> initItemListWidget();
 
     public WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>> asEditor() {
         return selectionWidget.asEditor();
     }
 
-    public AbstractItemListWidget<ListModel<T>, T> getListWidget() {
+    public AbstractItemListWidget<T> getListWidget() {
         return listWidget;
     }
 
@@ -54,5 +57,27 @@ public abstract class AbstractItemSelectionWithListWidget<T> extends Composite i
 
     public Button getAddSelectedItemButton() {
         return (Button) selectionWidget.getAddSelectedItemButton();
+    }
+
+    public void init(ListModel<T> listModel) {
+        getListWidget().init(listModel);
+
+        listModel.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (listModel.getSelectedItems() == null) {
+                listModel.setSelectedItems(new ArrayList<>());
+            }
+
+            getListWidget().refreshItems();
+
+            boolean itemsAvailable = !listModel.getItems().isEmpty();
+            getAddSelectedItemButton().setEnabled(itemsAvailable);
+            getSelectionWidget().getFilterListEditor().setEnabled(itemsAvailable);
+        });
+
+        listModel.getSelectedItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (listModel.getSelectedItems() != null) {
+                getListWidget().refreshItems();
+            }
+        });
     }
 }

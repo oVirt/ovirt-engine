@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -92,6 +94,7 @@ import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -121,6 +124,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -168,6 +172,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Inject
     private VmTemplateDao vmTemplateDao;
     @Inject
+    private AffinityGroupDao affinityGroupDao;
+    @Inject
     private LabelDao labelDao;
     @Inject
     private NetworkHelper networkHelper;
@@ -186,6 +192,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmStatic newVmStatic;
     private List<GraphicsDevice> cachedGraphics;
     private boolean isUpdateVmTemplateVersion = false;
+
+    private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
 
     public UpdateVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -310,7 +318,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         updateVmNetworks();
         updateVmNumaNodes();
-        updateAffinityLabels();
+        updateAffinityGroupsAndLabels();
         if (!updateVmLease()) {
             return;
         }
@@ -1393,6 +1401,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
+        if (!validate(validateAffinityGroups())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -1668,20 +1680,37 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return clusterUpgradeValidator;
     }
 
-    private void updateAffinityLabels() {
-        List<Label> affinityLabels = getParameters().getAffinityLabels();
-        if (affinityLabels == null) {
-            // nothing to update
-            return;
-        }
-        List<Guid> labelIds = affinityLabels.stream()
-                .map(Label::getId)
-                .collect(Collectors.toList());
+    private ValidationResult validateAffinityGroups() {
+        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
+                .validateAffinityGroupsUpdateForVm(getClusterId(), getVmId(), getParameters().getAffinityGroups());
 
+        affinityGroupLoggingMethod = result.getLoggingMethod();
+        return result.getValidationResult();
+    }
+
+    private void updateAffinityGroupsAndLabels() {
         // Currently, this method does not use compensation to revert this operation,
         // because affinity groups are not changed when this command is called as a child of
         // UpdateClusterCommand.
-        labelDao.updateLabelsForVm(getVmId(), labelIds);
+
+        // TODO - check permissions to modify affinity groups
+        List<AffinityGroup> affinityGroups = getParameters().getAffinityGroups();
+        if (affinityGroups != null) {
+            affinityGroupLoggingMethod.accept(this, auditLogDirector);
+            affinityGroupDao.setAffinityGroupsForVm(getVmId(),
+                    affinityGroups.stream()
+                            .map(AffinityGroup::getId)
+                            .collect(Collectors.toList()));
+        }
+
+        // TODO - check permissions to modify labels
+        List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels != null) {
+            List<Guid> labelIds = affinityLabels.stream()
+                    .map(Label::getId)
+                    .collect(Collectors.toList());
+            labelDao.updateLabelsForVm(getVmId(), labelIds);
+        }
     }
 
     @Override

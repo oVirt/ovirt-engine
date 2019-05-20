@@ -103,6 +103,11 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
+    public HasClickHandlers getAddAffinityGroupButton() {
+        return ((AbstractVmPopupWidget) getContentWidget()).getAddAffinityGroupButton();
+    }
+
+    @Override
     public HasClickHandlers getAddAffinityLabelButton() {
         return ((AbstractVmPopupWidget) getContentWidget()).getAddAffinityLabelButton();
     }

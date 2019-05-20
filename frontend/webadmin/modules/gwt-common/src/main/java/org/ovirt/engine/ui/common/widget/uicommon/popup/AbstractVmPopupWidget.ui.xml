@@ -785,9 +785,12 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="affinityLabelsTab" label="{constants.affinityLabels}">
+          <t:DialogTab ui:field="affinityTab" label="{constants.affinity}">
             <t:content>
-              <w:AffinityLabelSelectionWithListWidget ui:field="affinityLabelSelectionWidget" />
+              <b:Container addStyleNames="{style.container}" fluid="true">
+                <w:AffinityGroupSelectionWithListWidget ui:field="affinityGroupSelectionWidget" />
+                <w:AffinityLabelSelectionWithListWidget ui:field="affinityLabelSelectionWidget" />
+              </b:Container>
             </t:content>
           </t:DialogTab>
         </t:tab>

@@ -78,7 +78,8 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
                 update(editPoolIncreaseNumOfVmsRow, simpleField()).
                 update(foremanTab, hiddenField()).
                 update(editPoolEditMaxAssignedVmsPerUserRow, simpleField()).
-                update(templateVersionNameEditor, hiddenField());
+                update(templateVersionNameEditor, hiddenField()).
+                update(affinityTab, hiddenField());
     }
 
 }
