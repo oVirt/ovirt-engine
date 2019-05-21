@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -62,20 +63,31 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
         // TODO figure out how to handle hostModel
         if (vm.isUsingCpuPassthrough()
                 && Objects.nonNull(vm.getCpuName())) {
-            log.info("VM uses CPU flags passthrough, checking flags compatibility with: {}", vm.getCpuName());
             Set<String> requiredFlags = Arrays.stream(vm.getCpuName().split(","))
                     .collect(Collectors.toSet());
+
+            if (log.isInfoEnabled()) {
+                log.info("VM uses CPU flags passthrough, checking flags compatibility with: {}", formatFlags(requiredFlags));
+            }
 
             for (VDS host : hosts) {
                 Set<String> providedFlags = Arrays.stream(host.getCpuFlags().split(","))
                         .collect(Collectors.toSet());
-                log.info("Host {} provides flags: {}", host.getName(), String.join(", ", providedFlags));
+                if (log.isInfoEnabled()) {
+                    log.info("Host {} provides flags: {}", host.getName(), formatFlags(providedFlags));
+                }
 
                 if (requiredFlags.equals(providedFlags)) {
                     hostsToRunOn.add(host);
                 } else {
-                    log.info("Host {} can't run the VM because it's CPU flags are not exactly identical to VM's required CPU flags",
-                            host.getName());
+                    if (log.isInfoEnabled()) {
+                        log.info("Host {} can't run the VM because it's CPU flags are not exactly identical to VM's required CPU flags."
+                                        + " It is missing flags: {}."
+                                        + " And it has additional flags: {}",
+                                host.getName(),
+                                formatFlags(requiredFlags, providedFlags),
+                                formatFlags(providedFlags, requiredFlags));
+                    }
                 }
             }
             return hostsToRunOn;
@@ -120,5 +132,16 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             }
         }
         return hostsToRunOn;
+    }
+
+    private String formatFlags(Collection<String> flags) {
+        return formatFlags(flags, null);
+    }
+
+    private String formatFlags(Collection<String> flags, Collection<String> removedFlags) {
+        return flags.stream()
+                .filter(flag -> removedFlags == null || !removedFlags.contains(flag))
+                .sorted()
+                .collect(Collectors.joining(", "));
     }
 }
