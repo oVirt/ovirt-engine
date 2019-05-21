@@ -1395,11 +1395,16 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     }
 
     public String getCustomSerialNumber() {
-        return serialNumberPolicy == SerialNumberPolicy.CUSTOM ? customSerialNumber : null;
+        return customSerialNumber;
     }
 
     public void setCustomSerialNumber(String customSerialNumber) {
-        this.customSerialNumber = customSerialNumber;
+        if (serialNumberPolicy == SerialNumberPolicy.CUSTOM) {
+            this.customSerialNumber = customSerialNumber;
+        } else {
+            this.customSerialNumber = null;
+        }
+
     }
 
     public boolean isBootMenuEnabled() {
