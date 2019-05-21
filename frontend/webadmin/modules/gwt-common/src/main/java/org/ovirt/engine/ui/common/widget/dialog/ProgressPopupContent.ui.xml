@@ -5,6 +5,15 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <ui:style>
+        .messageLabel {
+            font-size: 14px;
+            position: absolute;
+            top: 55%;
+            width: 95%;
+            text-align: center;
+            white-space: pre;
+        }
+
         .spinner {
             top: 50%;
             left: 50%;
@@ -13,6 +22,9 @@
         }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="spinner spinner-lg {style.spinner}" />
+    <g:FlowPanel>
+        <g:FlowPanel addStyleNames="spinner spinner-lg {style.spinner}" />
+        <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" visible="false" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

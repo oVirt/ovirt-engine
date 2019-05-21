@@ -2162,4 +2162,6 @@ public interface UIConstants extends Constants {
     String portSecurityUndefined();
 
     String diskMaxSizeReached();
+
+    String largeNumberOfDevicesWarning();
 }
