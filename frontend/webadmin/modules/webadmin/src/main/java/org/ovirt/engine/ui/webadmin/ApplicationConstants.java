@@ -3522,4 +3522,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String portSecurityEnabledLabel();
 
     String networkNameInfo();
+
+    String bondLengthNameWarning();
 }

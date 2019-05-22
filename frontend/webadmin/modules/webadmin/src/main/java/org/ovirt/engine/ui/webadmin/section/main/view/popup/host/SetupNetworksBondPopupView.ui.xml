@@ -22,6 +22,14 @@
                     <ge:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" label="{constants.bondNameHostPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
+                    <b:Column size="SM_4">
+                    </b:Column>
+                    <b:Column size="SM_8">
+                        <g:Label ui:field="nameWarningLabel" text="{constants.bondLengthNameWarning}"
+                                 addStyleNames="form-group"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
                     <e:ListModelListBoxEditor ui:field="bondingModeEditor" label="{constants.bondingModeHostPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
