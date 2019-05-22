@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
@@ -82,4 +83,6 @@ public interface IVdsEventListener {
     void refreshHostCapabilities(Guid hostId);
 
     void restartVmsWithLease(List<Guid> vmIds);
+
+    Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId);
 }

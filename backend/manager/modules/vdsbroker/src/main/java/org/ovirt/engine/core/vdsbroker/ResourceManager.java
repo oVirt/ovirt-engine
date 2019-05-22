@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSAsyncReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -461,5 +462,9 @@ public class ResourceManager implements BackendService {
 
     public ScheduledExecutorService getExecutor() {
         return executor;
+    }
+
+    public Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId) {
+        return getEventListener().getVdsPoolAndStorageConnectionsLock(vdsId);
     }
 }

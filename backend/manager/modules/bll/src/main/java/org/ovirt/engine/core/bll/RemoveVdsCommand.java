@@ -78,7 +78,8 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private GlusterHooksDao glusterHooksDao;
     @Inject
     private ClusterUtils clusterUtils;
-
+    @Inject
+    private HostLocking hostLocking;
     @Inject
     private AnsibleExecutor ansibleExecutor;
 
@@ -333,6 +334,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         locks.put(getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        locks.putAll(hostLocking.getVdsPoolAndStorageConnectionsLock(getParameters().getVdsId()));
         return locks;
     }
 }

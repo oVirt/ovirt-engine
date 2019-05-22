@@ -58,6 +58,13 @@ public class HostLocking {
                 EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
     }
 
+    public Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId) {
+        return Collections.singletonMap(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.name() + vdsId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                    LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS,
+                    EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
     public void acquireHostDevicesLock(Guid vdsId) {
         lockManager.acquireLockWait(new EngineLock(getExclusiveLockForHostDevices(vdsId)));
     }

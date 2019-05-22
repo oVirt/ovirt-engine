@@ -51,12 +51,10 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
@@ -1580,9 +1578,7 @@ public class IrsProxy {
                 Guid currentReportId = entry.getValue();
 
                 vdsHandeledReportsOnUnseenDomains.put(vdsId, currentReportId);
-                Map<String, Pair<String, String>> lockMap = Collections.singletonMap(vdsId.toString(),
-                        new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
-                                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString()));
+                Map<String, Pair<String, String>> lockMap = resourceManager.getVdsPoolAndStorageConnectionsLock(vdsId);
                 EngineLock engineLock = new EngineLock(lockMap, null);
                 if (!lockManager.acquireLock(engineLock).getFirst()) {
                     log.info("Failed to acquire lock to refresh storage connection and pool metadata for host '{}', skipping it",
