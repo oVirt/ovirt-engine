@@ -61,13 +61,11 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
@@ -147,6 +145,8 @@ public class VdsEventListener implements IVdsEventListener {
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     private StoragePoolStatusHandler storagePoolStatusHandler;
+    @Inject
+    private HostLocking hostLocking;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -167,9 +167,7 @@ public class VdsEventListener implements IVdsEventListener {
             // when vds is being moved to maintenance, this is the part in which we disconnect it from the pool
             // and the storage server. it should be synced with the host autorecovery mechanism to try to avoid
             // leaving the host with storage/pool connection when it's on maintenance.
-            EngineLock lock = new EngineLock(Collections.singletonMap(vds.getId().toString(),
-                    new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
-                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString())), null);
+            EngineLock lock = new EngineLock(getVdsPoolAndStorageConnectionsLock(vds.getId()), null);
             try {
                 lockManager.acquireLockWait(lock);
                 clearDomainCache(vds);
@@ -618,6 +616,10 @@ public class VdsEventListener implements IVdsEventListener {
                         ExecutionHandler.createInternalJobContext(engineLock));
             }
         });
+    }
+
+    public Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId) {
+        return hostLocking.getVdsPoolAndStorageConnectionsLock(vdsId);
     }
 
     private RunVmParams buildRunVmParameters(Guid vmId) {
