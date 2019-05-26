@@ -568,18 +568,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
      * direction   storage    transfer    disk     ticket size
      * =================================================================================
      * upload      block      raw         *        virtual size
-     * upload      block      -           raw      lv size (virtual size)
-     * upload      block      -           qcow2    lv size (virtual size + cow overhead)
+     * upload      block      -           raw      virtual size (lv size)
+     * upload      block      -           qcow2    actual size (lv size)
      * ---------------------------------------------------------------------------------
      * upload      file       raw         *        virtual size
      * upload      file       -           raw      virtual size
-     * upload      file       -           qcow2    virtual size + cow overhead[1]
+     * upload      file       -           qcow2    virtual size + cow overhead
      * ---------------------------------------------------------------------------------
      * upload (ui) *          -           *        uploaded file size
      * ---------------------------------------------------------------------------------
      * download    block      raw         *        virtual size (using /map)
      * download    block      -           raw      virtual size
-     * download    block      -           qcow2    image-end-offset[2]
+     * download    block      -           qcow2    image-end-offset (returned by
+     *                                             "qemu-img check" - not implemented yet)
      * ---------------------------------------------------------------------------------
      * download    file       raw         *        virtual size (using /map)
      * download    file       -           raw      virtual size
