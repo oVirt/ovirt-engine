@@ -1,6 +1,19 @@
 
 
 -- Affinity Groups Stored Procedures script file
+
+-- get All Affinity Groups
+CREATE OR REPLACE FUNCTION getAllFromAffinityGroups ()
+RETURNS SETOF affinity_groups_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT affinity_groups_view.*
+    FROM affinity_groups_view;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
 -- get All Affinity Groups with members by vm id
 CREATE OR REPLACE FUNCTION getAllAffinityGroupsByVmId (v_vm_id UUID)
 RETURNS SETOF affinity_groups_view STABLE AS $PROCEDURE$
