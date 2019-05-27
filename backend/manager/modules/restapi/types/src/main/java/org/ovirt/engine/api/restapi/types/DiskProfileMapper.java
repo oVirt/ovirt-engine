@@ -23,8 +23,12 @@ public class DiskProfileMapper {
         if (model.isSetStorageDomain() && model.getStorageDomain().isSetId()) {
             entity.setStorageDomainId(GuidUtils.asGuid(model.getStorageDomain().getId()));
         }
-        if (model.isSetQos() && model.getQos().isSetId()) {
-            entity.setQosId(GuidUtils.asGuid(model.getQos().getId()));
+        if (model.isSetQos()) {
+            if (model.getQos().isSetId()) {
+                entity.setQosId(GuidUtils.asGuid(model.getQos().getId()));
+            } else {
+                entity.setQosId(null);
+            }
         }
         return entity;
     }
