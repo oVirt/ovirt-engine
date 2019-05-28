@@ -25,7 +25,7 @@ limitations under the License.
 
   <groupId>org.ovirt.engine</groupId>
   <artifactId>ovirt-findbugs-filters</artifactId>
-  <version>4.3.4.2-SNAPSHOT</version>
+  <version>4.3.4.2</version>
   <packaging>jar</packaging>
 
   <name>oVirt Findbugs Filters</name>
