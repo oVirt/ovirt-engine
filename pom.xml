@@ -67,7 +67,7 @@
     <sshd-core.version>2.1.0</sshd-core.version>
     <otopi.version>1.7.8</otopi.version>
     <ovirt-host-deploy.version>1.7.3</ovirt-host-deploy.version>
-    <vdsm-jsonrpc-java.version>1.4.17</vdsm-jsonrpc-java.version>
+    <vdsm-jsonrpc-java.version>1.4.18</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
     <gwt.version>2.8.0</gwt.version>
     <mockito.version>2.18.3</mockito.version>
