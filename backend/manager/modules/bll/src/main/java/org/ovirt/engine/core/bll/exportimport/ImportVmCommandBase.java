@@ -150,9 +150,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         macPool = getMacPool();
 
-        List<VmNetworkInterface> nicsUnableToBeImported = getVm().getInterfaces()
+        List<String> nicsUnableToBeImported = getVm().getInterfaces()
                 .stream()
                 .filter(this::ifaceMacCannotBeAddedToMacPool)
+                .map(v -> v.getName())
                 .collect(Collectors.toList());
 
         if (!nicsUnableToBeImported.isEmpty()) {
