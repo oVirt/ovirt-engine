@@ -359,14 +359,20 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // StartVmBackup should handle locks
             return locks;
         }
-        if (getDiskImage() != null) {
-            locks.put(getDiskImage().getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
-        }
         if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
             List<VM> vms = vmDao.getVmsListForDisk(getDiskImage().getId(), true);
             vms.forEach(vm -> locks.put(vm.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
+        }
+        return locks;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> locks = new HashMap<>();
+        if (getDiskImage() != null) {
+            locks.put(getDiskImage().getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
         }
         return locks;
     }
