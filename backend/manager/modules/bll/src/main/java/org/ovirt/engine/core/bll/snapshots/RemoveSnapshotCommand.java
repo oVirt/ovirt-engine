@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -496,12 +493,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateImages() {
-        List<DiskImage> imagesToValidate = getDiskImagesToValidate();
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
         List<DiskImage> allDiskImagesInSrcAndDstToValidate = getAllDiskImagesInSrcAndDstToValidate();
         DiskImagesValidator allDiskImagesInChainValidator = new DiskImagesValidator(allDiskImagesInSrcAndDstToValidate);
 
-        return validateImagesNotLocked(diskImagesValidator) &&
+        return validateImagesNotLocked(allDiskImagesInChainValidator) &&
                 (getVm().isQualifiedForLiveSnapshotMerge() || validate(allDiskImagesInChainValidator.diskImagesNotIllegal())) &&
                 (!getVm().isQualifiedForLiveSnapshotMerge() || validateSnapshotDisksArePlugged());
     }
@@ -515,15 +510,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         List<DiskImage> allDiskImages = new ArrayList<>(diskImageDao.getAllSnapshotsForParents(parentsIds));
         allDiskImages.addAll(getSourceImages());
         return allDiskImages;
-    }
-
-    private List<DiskImage> getDiskImagesToValidate() {
-        List<Disk> disks = diskDao.getAllForVm(getVmId());
-        List<DiskImage> allDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
-        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks);
-        allDisks.addAll(DisksFilter.filterManagedBlockStorageDisks(disks));
-        allDisks.addAll(cinderDisks);
-        return allDisks;
     }
 
     private boolean validateSnapshotDisksArePlugged() {
