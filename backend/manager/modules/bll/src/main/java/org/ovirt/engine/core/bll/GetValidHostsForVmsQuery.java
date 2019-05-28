@@ -55,13 +55,12 @@ public class GetValidHostsForVmsQuery<P extends GetValidHostsForVmsParameters> e
 
         Map<Guid, VDS> hostMap = new HashMap<>();
 
-        List<Set<Guid>> hostsLists = vms.stream()
-            .map(vm -> schedulingManager.prepareCall(cluster)
-                    .doNotGroupVms(!getParameters().isCheckVmsInAffinityClosure())
-                    .canSchedule(vm))
-            .map(hosts -> addToMap(hostMap, hosts))
-            .map(this::getIdSet)
-            .collect(Collectors.toList());
+        List<Set<Guid>> hostsLists = schedulingManager.prepareCall(cluster)
+                .doNotGroupVms(!getParameters().isCheckVmsInAffinityClosure())
+                .canSchedule(vms).values().stream()
+                .map(hosts -> addToMap(hostMap, hosts))
+                .map(this::getIdSet)
+                .collect(Collectors.toList());
 
         Set<Guid> validHostIds = hostsLists.isEmpty() ? new HashSet<>() : new HashSet<>(hostsLists.get(0));
 
