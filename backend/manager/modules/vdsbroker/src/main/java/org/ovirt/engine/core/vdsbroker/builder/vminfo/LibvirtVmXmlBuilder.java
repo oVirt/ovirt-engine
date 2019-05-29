@@ -567,7 +567,7 @@ public class LibvirtVmXmlBuilder {
             if (nodeSet != null) {
                 writer.writeStartElement("memory");
                 writer.writeAttributeString("mode", mode);
-                writer.writeAttributeString("modeset", nodeSet);
+                writer.writeAttributeString("nodeset", nodeSet);
                 writer.writeEndElement();
             }
 
