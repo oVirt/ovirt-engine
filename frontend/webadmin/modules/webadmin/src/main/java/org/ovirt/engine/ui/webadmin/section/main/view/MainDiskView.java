@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
-import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksContentTypeRadioGroup;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksContentTypeSelectionList;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -50,7 +50,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     SimplePanel tablePanel;
 
     private DisksViewRadioGroup disksViewRadioGroup;
-    private DisksContentTypeRadioGroup disksContentTypeRadioGroup;
+    private DisksContentTypeSelectionList disksContentTypeSelectionList;
     private boolean isQuotaVisible;
 
     private static AbstractTextColumn<Disk> aliasColumn;
@@ -95,9 +95,9 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     };
 
     /**
-     * Listen to disk content type changes from the UI button group - push the change through the model.
+     * Listen to disk content type changes from the UI selection list - push the change through the model.
      */
-    final DisksContentTypeRadioGroup.DisksContentViewChangeHandler diskContentViewTypeChange = newType -> {
+    final DisksContentTypeSelectionList.DisksContentViewChangeHandler diskContentViewTypeChange = newType -> {
         getMainModel().getDiskContentType().setEntity(newType);
     };
 
@@ -112,7 +112,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
 
     final IEventListener<EventArgs> diskContentTypeChangedEventListener = (ev, sender, args) -> {
         EntityModel<DiskContentType> diskContentType = (EntityModel<DiskContentType>) sender;
-        disksContentTypeRadioGroup.setDiskContentType(diskContentType.getEntity());
+        disksContentTypeSelectionList.setDiskContentType(diskContentType.getEntity());
         onDiskViewTypeOrContentTypeChanged();
     };
 
@@ -229,7 +229,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     }
 
     private void onDiskViewTypeOrContentTypeChanged() {
-        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType(), disksContentTypeRadioGroup.getDiskContentType());
+        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType(), disksContentTypeSelectionList.getDiskContentType());
         ensureColumnsVisible(disksViewRadioGroup.getDiskStorageType());
     }
 
@@ -268,12 +268,12 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         disksViewRadioGroup = new DisksViewRadioGroup();
         disksViewRadioGroup.addChangeHandler(diskViewTypeChange);
 
-        disksContentTypeRadioGroup = new DisksContentTypeRadioGroup();
-        disksContentTypeRadioGroup.addChangeHandler(diskContentViewTypeChange);
+        disksContentTypeSelectionList = new DisksContentTypeSelectionList();
+        disksContentTypeSelectionList.addChangeHandler(diskContentViewTypeChange);
 
         FlowPanel overheadPanel = new FlowPanel();
         overheadPanel.add(disksViewRadioGroup);
-        overheadPanel.add(disksContentTypeRadioGroup);
+        overheadPanel.add(disksContentTypeSelectionList);
         getTable().setTableOverhead(overheadPanel);
     }
 
