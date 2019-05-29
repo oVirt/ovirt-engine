@@ -72,6 +72,13 @@
         <version>${vdsm-jsonrpc-java.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <version>1.1.2</version>
+      <scope>test</scope>
+    </dependency>
+
     <!--  external dependencies-->
     <dependency>
       <groupId>commons-httpclient</groupId>
