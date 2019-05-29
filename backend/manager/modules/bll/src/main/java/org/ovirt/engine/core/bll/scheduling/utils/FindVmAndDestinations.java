@@ -113,7 +113,7 @@ public class FindVmAndDestinations {
 
             // Using host threads, so the predicted VM cpu is consistent
             // with the percentage that vdsm returns
-            int predictedVmCpu = (vm.getUsageCpuPercent() != null && vds.getCpuThreads() != null) ?
+            int predictedVmCpu = (vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null && vds.getCpuThreads() != null) ?
                     (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / vds.getCpuThreads() :
                     0;
 
