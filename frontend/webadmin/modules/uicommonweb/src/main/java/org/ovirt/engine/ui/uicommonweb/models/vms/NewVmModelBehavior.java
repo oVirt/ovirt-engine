@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,6 +57,15 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     protected void commonInitialize() {
         super.commonInitialize();
 
+        getModel().getIsHighlyAvailable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getModel().getIsHighlyAvailable().getEntity()) {
+                Guid bootableDiskStorageDomainId = getBootableDiskStorageDomainId();
+                if (bootableDiskStorageDomainId != null) {
+                    setVmLeaseDefaultStorageDomain(bootableDiskStorageDomainId);
+                }
+            }
+        });
+
         getModel().getIsStateless().getEntityChangedEvent().addListener(new UpdateTemplateWithVersionListener() {
             @Override
             protected void beforeUpdate() {
@@ -67,6 +78,26 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 return getModel().getIsStateless().getEntity();
             }
         });
+    }
+
+    private Guid getBootableDiskStorageDomainId() {
+        // In case of a new VM
+        List<DiskModel> instanceImages = getModel().getInstanceImages().getAllCurrentDisksModels();
+        if (instanceImages != null && instanceImages.size() > 0) {
+            DiskModel bootableDisk = instanceImages.stream()
+                    .filter(disk -> disk.getIsBootable().getEntity())
+                    .findFirst().orElse(null);
+            return bootableDisk != null ? bootableDisk.getStorageDomain().getSelectedItem().getId() : null;
+        }
+
+        // In case of new VM from template
+        List<DiskModel> modelDisks = getModel().getDisks();
+        if (modelDisks != null && modelDisks.size() > 0) {
+            List<Disk> disks = modelDisks.stream().map(DiskModel::getDisk).collect(Collectors.toList());
+            return findDefaultStorageDomainForVmLease(disks);
+        }
+
+        return null;
     }
 
     protected void loadDataCenters() {
