@@ -46,6 +46,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     private int hostCpu;
     private VDS runningOnHost;
+    private Guid bootableDiskStorageDomainId;
 
     public ExistingVmModelBehavior(VM vm) {
         this.vm = vm;
@@ -262,6 +263,24 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         instanceTypeManager.updateAll();
     }
 
+    @Override
+    protected void commonInitialize() {
+        super.commonInitialize();
+
+        getModel().getIsHighlyAvailable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            boolean ha = getModel().getIsHighlyAvailable().getEntity();
+            // VM set as HA
+            if (ha && !vm.isAutoStartup()) {
+                // bootableDiskStorageDomainId can be null in case of diskless VM or
+                // VM without bootable disk or in case of race condition when the
+                // VM disks aren't initialized yet
+                if (bootableDiskStorageDomainId != null) {
+                    setVmLeaseDefaultStorageDomain(bootableDiskStorageDomainId);
+                }
+            }
+        });
+    }
+
     private void updateInstanceImages() {
         AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(disks -> {
             List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
@@ -278,6 +297,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getInstanceImages().setIsChangeable(isChangeable);
             getModel().getInstanceImages().setItems(imageLineModels);
             getModel().getInstanceImages().setVm(getVm());
+
+            bootableDiskStorageDomainId = findDefaultStorageDomainForVmLease(disks);
         }), getVm().getId());
     }
 

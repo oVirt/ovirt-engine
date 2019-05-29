@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -37,8 +38,10 @@ import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAlias
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -139,6 +142,31 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         });
         getModel().getMigrationPolicies()
                 .setItems(AsyncDataProvider.getInstance().getMigrationPolicies(Version.getLast()));
+    }
+
+    protected Guid findDefaultStorageDomainForVmLease(Collection<Disk> disks) {
+        // The default storage domain for the VM lease will be the storage domain
+        // that contains the VM bootable disk
+        for (Disk disk : disks) {
+            DiskVmElement bootableDiskVmElement = disk.getDiskVmElements().stream()
+                    .filter(DiskVmElement::isBoot)
+                    .findFirst()
+                    .orElse(null);
+            if (bootableDiskVmElement != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                DiskImage diskImage = (DiskImage) disk;
+                return diskImage.getStorageIds().get(0);
+            }
+        }
+
+        return null;
+    }
+
+    protected void setVmLeaseDefaultStorageDomain(Guid defaultStorageDomainId) {
+        Collection<StorageDomain> domains = getModel().getLease().getItems();
+        domains.stream()
+                .filter(Objects::nonNull)
+                .filter(sd -> sd.getId().equals(defaultStorageDomainId))
+                .findFirst().ifPresent(sd -> getModel().getLease().setSelectedItem(sd));
     }
 
     public void dataCenterWithClusterSelectedItemChanged() {
