@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.tasks;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -18,29 +19,19 @@ import org.ovirt.engine.core.compat.Guid;
 @Singleton
 public class CommandContextsCacheImpl implements CommandContextsCache {
 
-    private final CommandsCache commandsCache;
-    private final JobRepository jobRepository;
-    private Map<Guid, CommandContext> contextsMap;
-    private volatile boolean cacheInitialized;
-    private Object LOCK = new Object();
+    @Inject
+    private CommandsCache commandsCache;
 
     @Inject
-    public CommandContextsCacheImpl(CommandsCache commandsCache, JobRepository jobRepository) {
-        this.commandsCache = commandsCache;
-        this.jobRepository = jobRepository;
-        contextsMap = new HashMap<>();
-    }
+    private JobRepository jobRepository;
 
-    private void initializeCache() {
-        if (!cacheInitialized) {
-            synchronized(LOCK) {
-                if (!cacheInitialized) {
-                    for (Guid cmdId : commandsCache.keySet()) {
-                        contextsMap.put(cmdId, buildCommandContext(commandsCache.get(cmdId)));
-                    }
-                    cacheInitialized = true;
-                }
-            }
+    private ConcurrentMap<Guid, CommandContext> contextsMap;
+
+    @PostConstruct
+    public void initContextsMap() {
+        contextsMap = new ConcurrentHashMap<>();
+        for (Guid cmdId : commandsCache.keySet()) {
+            contextsMap.put(cmdId, buildCommandContext(commandsCache.get(cmdId)));
         }
     }
 
@@ -63,7 +54,6 @@ public class CommandContextsCacheImpl implements CommandContextsCache {
 
     @Override
     public CommandContext get(Guid commandId) {
-        initializeCache();
         return contextsMap.get(commandId);
     }
 
