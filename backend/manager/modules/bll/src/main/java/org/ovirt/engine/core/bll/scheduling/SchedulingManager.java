@@ -493,7 +493,7 @@ public class SchedulingManager implements BackendService {
         getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
 
-        int cpuLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null ?
+        int cpuLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null ?
                 vm.getUsageCpuPercent() * vm.getNumOfCpus() :
                 vcpuLoadPerCore * vm.getNumOfCpus();
 
