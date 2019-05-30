@@ -166,11 +166,6 @@
            display: inline-block;
        }
 
-        .warningLabel {
-            color: red;
-            margin-bottom: 10px
-        }
-
         .inline {
             display: inline-block;
         }
@@ -410,12 +405,12 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <g:Label text="{constants.modifyingkernelCmdlineWarning}" addStyleNames="{style.warningLabel}"/>
+                                        <l:WarningNotificationLabel ui:field="kernelModificationCmdlineWarning" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <g:Label text="{constants.reinstallRequiredkernelCmdlineWarning}" addStyleNames="{style.warningLabel}"/>
+                                        <l:WarningNotificationLabel ui:field="kernelReinstallRequiredCmdlineWarning" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

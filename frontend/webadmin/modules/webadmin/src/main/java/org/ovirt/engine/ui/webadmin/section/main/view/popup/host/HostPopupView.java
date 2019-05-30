@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+import org.ovirt.engine.ui.common.widget.label.WarningNotificationLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -401,6 +402,12 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     DialogTab kernelTab;
 
     @UiField
+    WarningNotificationLabel kernelModificationCmdlineWarning;
+
+    @UiField
+    WarningNotificationLabel kernelReinstallRequiredCmdlineWarning;
+
+    @UiField
     @Path("currentKernelCmdLine.entity")
     Label currentKernelCmdLine;
 
@@ -669,6 +676,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalDiscoveredHostsEditor.setLabel(constants.discoveredHostsLabel());
         externalHostGroupsEditor.setLabel(constants.hostGroupsLabel());
         externalComputeResourceEditor.setLabel(constants.computeResourceLabel());
+
+        // Warnings
+        kernelModificationCmdlineWarning.setText(constants.modifyingkernelCmdlineWarning());
+        kernelReinstallRequiredCmdlineWarning.setText(constants.reinstallRequiredkernelCmdlineWarning());
 
         // Info icons
         kernelCmdlineUnsafeInterruptsInfoIcon.setText(
