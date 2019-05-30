@@ -1881,6 +1881,11 @@ public abstract class CommandBase<T extends ActionParametersBase>
         return lock;
     }
 
+    private EngineLock buildLockFromExclusives() {
+        Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
+        return exclusiveLocks != null ? new EngineLock(exclusiveLocks, null) : null;
+    }
+
     private void acquireLockAndWait() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (context.getLock() == null) {
@@ -1898,9 +1903,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
     private boolean acquireLockOrTimeout() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (context.getLock() == null) {
-            Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
-            if (exclusiveLocks != null) {
-                EngineLock lock = new EngineLock(exclusiveLocks, null);
+            EngineLock lock = buildLockFromExclusives();
+            if (lock != null) {
                 log.info("Before acquiring lock-timeout '{}'", lock);
                 Pair<Boolean, Set<String>> lockAcquireResult = lockManager.acquireLockWait(
                     lock, getLockProperties().getTimeoutMillis()
