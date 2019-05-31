@@ -554,31 +554,20 @@ public class LibvirtVmXmlBuilder {
         }
 
         // <numatune>
-        //   <memory mode='strict' nodeset='0-1'/>
         //   <memnode cellid='0' mode='strict' nodeset='1'>
         // </numatune>
-        String nodeSet = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_NODESET);
         String mode = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MODE);
         @SuppressWarnings("unchecked")
         List<Map<String, String>> memNodes = (List<Map<String, String>>) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MEMNODES);
-        if (nodeSet != null || memNodes != null) {
+        if (memNodes != null) {
             writer.writeStartElement("numatune");
 
-            if (nodeSet != null) {
-                writer.writeStartElement("memory");
+            for (Map<String, String> memnode : memNodes) {
+                writer.writeStartElement("memnode");
                 writer.writeAttributeString("mode", mode);
-                writer.writeAttributeString("nodeset", nodeSet);
+                writer.writeAttributeString("cellid", (String) memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX));
+                writer.writeAttributeString("nodeset", (String) memnode.get(VdsProperties.NUMA_TUNE_NODESET));
                 writer.writeEndElement();
-            }
-
-            if (memNodes != null) {
-                for (Map<String, String> memnode : memNodes) {
-                    writer.writeStartElement("memnode");
-                    writer.writeAttributeString("mode", mode);
-                    writer.writeAttributeString("cellid", (String) memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX));
-                    writer.writeAttributeString("nodeset", (String) memnode.get(VdsProperties.NUMA_TUNE_NODESET));
-                    writer.writeEndElement();
-                }
             }
 
             writer.writeEndElement();
