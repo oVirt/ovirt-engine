@@ -226,17 +226,6 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateVmLease() {
-        if (vm.getLeaseStorageDomainId() == null) {
-            return ValidationResult.VALID;
-        }
-
-        if (vm.getLeaseInfo() == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_LEASE);
-        }
-        return ValidationResult.VALID;
-    }
-
     /**
      * @return true if all VM network interfaces are valid
      */
