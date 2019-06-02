@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
+import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
@@ -252,6 +253,26 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
+    private void addMissingLeaseInfoToVmIfNeeded() {
+        // This API checks if the lease information is missing when a lease Storage
+        // Domain has been specified and resets the lease information during the launching
+        // of the VM. This may occur during upgrading from Version 4.1 to higher versions
+        // due to a change that moved the lease information data from the VM Static to VM
+        // Dynamic DB Tables.
+        if (getVm().getLeaseStorageDomainId() != null && getVm().getLeaseInfo() == null) {
+            ActionReturnValue retVal = runInternalAction(ActionType.GetVmLeaseInfo,
+                    new VmLeaseParameters(getVm().getStoragePoolId(),
+                            getVm().getLeaseStorageDomainId(),
+                            getParameters().getVmId()));
+            if (retVal == null || !retVal.getSucceeded()) {
+                throw new EngineException(EngineError.INVALID_HA_VM_LEASE);
+            }
+            getVm().setLeaseInfo(retVal.getActionReturnValue());
+            vmDynamicDao.updateVmLeaseInfo(getParameters().getVmId(), getVm().getLeaseInfo());
+        }
+        return;
+    }
+
     protected void runVm() {
         setActionReturnValue(VMStatus.Down);
         if (getVdsToRunOn()) {
@@ -259,6 +280,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             VMStatus status = null;
             try {
                 acquireHostDevicesLock();
+                addMissingLeaseInfoToVmIfNeeded();
                 if (connectLunDisks(getVdsId()) && updateCinderDisksConnections() &&
                         managedBlockStorageCommandUtil.attachManagedBlockStorageDisks(getVm(),
                                 vmHandler, getVds())) {
@@ -284,6 +306,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 case VDS_NETWORK_ERROR: // probably wrong xml format sent.
                 case PROVIDER_FAILURE:
                 case HOST_DEVICES_TAKEN_BY_OTHER_VM:
+                case INVALID_HA_VM_LEASE:
                     runningFailed();
                     throw e;
                 default:
@@ -1002,10 +1025,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (!validate(runVmValidator.validateNetworkInterfaces())) {
-            return false;
-        }
-
-        if (!validate(runVmValidator.validateVmLease())) {
             return false;
         }
 
