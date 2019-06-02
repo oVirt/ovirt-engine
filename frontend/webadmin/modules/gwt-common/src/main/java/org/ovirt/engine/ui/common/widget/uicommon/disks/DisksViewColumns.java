@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -46,6 +47,11 @@ public class DisksViewColumns {
 
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    private static final Predicate<Disk> diskImagePredicate =
+            disk -> disk.getDiskStorageType() == DiskStorageType.IMAGE ||
+                    disk.getDiskStorageType() == DiskStorageType.CINDER ||
+                    disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
 
     public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
         return getAliasColumn(null, sortBy);
@@ -236,9 +242,7 @@ public class DisksViewColumns {
     public static final AbstractTextColumn<Disk> storageTypeColumn = new AbstractEnumColumn<Disk, StorageType>() {
         @Override
         protected StorageType getRawValue(Disk object) {
-            if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
-                    object.getDiskStorageType() != DiskStorageType.CINDER &&
-                    object.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
+            if (!diskImagePredicate.test(object)) {
                 return null;
             }
             DiskImage disk = (DiskImage) object;
@@ -267,9 +271,7 @@ public class DisksViewColumns {
         AbstractDiskSizeColumn<Disk> column = new AbstractDiskSizeColumn<Disk>(SizeConverter.SizeUnit.GiB) {
             @Override
             protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ||
-                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
+                return diskImagePredicate.test(object) ?
                         Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
                         : (long) ((LunDisk) object).getLun().getDeviceSize();
             }
@@ -282,17 +284,12 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, VolumeType>() {
             @Override
             protected VolumeType getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ||
-                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
-                        ((DiskImage) object).getVolumeType() : null;
+                return diskImagePredicate.test(object) ? ((DiskImage) object).getVolumeType() : null;
             }
 
             @Override
             public SafeHtml getTooltip(Disk object) {
-                if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
-                        object.getDiskStorageType() != DiskStorageType.CINDER &&
-                        object.getDiskStorageType() != DiskStorageType.MANAGED_BLOCK_STORAGE) {
+                if (!diskImagePredicate.test(object)) {
                     return null;
                 }
 
@@ -350,10 +347,7 @@ public class DisksViewColumns {
         AbstractFullDateTimeColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override
             protected Date getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ||
-                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
-                        ((DiskImage) object).getCreationDate() : null;
+                return diskImagePredicate.test(object) ? ((DiskImage) object).getCreationDate() : null;
             }
         };
 
@@ -364,10 +358,7 @@ public class DisksViewColumns {
         AbstractFullDateTimeColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override
             protected Date getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ||
-                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
-                        ((DiskImage) object).getLastModified() : null;
+                return diskImagePredicate.test(object) ? ((DiskImage) object).getLastModified() : null;
             }
         };
 
@@ -402,10 +393,7 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        object.getDiskStorageType() == DiskStorageType.CINDER ||
-                        object.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE ?
-                        ((DiskImage) object).getImageStatus() : null;
+                return diskImagePredicate.test(object) ? ((DiskImage) object).getImageStatus() : null;
             }
 
             @Override
@@ -517,10 +505,7 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk disk) {
-                return disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        disk.getDiskStorageType() == DiskStorageType.CINDER ||
-                        disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE
-                                ? ((DiskImage) disk).getImageId().toString() : null;
+                return diskImagePredicate.test(disk) ? ((DiskImage) disk).getImageId().toString() : null;
             }
         };
 
