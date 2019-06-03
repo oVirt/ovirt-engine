@@ -553,7 +553,7 @@ public class VmDevicesConverter {
 
             // There is supposed to be one video device of each type (spice/vnc/..)
             VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
+                    .filter(d -> isNoneVideoDeviceValid(device, devices))
                     .findFirst()
                     .orElse(null));
 
@@ -569,6 +569,24 @@ public class VmDevicesConverter {
         }
 
         return result;
+    }
+
+    /** This function is called when a video device has not been correlated by its alias.
+     * Select the video device if libvirt sent video of type none but the VM needs a video device.
+     *
+     * @param device Libvirt device
+     * @param allDevices All devices in the DB
+     * @return true if "none" video device needs to be included
+     */
+    private boolean isNoneVideoDeviceValid(Map<String, Object> device, List<VmDevice> allDevices) {
+        // Video device is needed when there is a graphics console, even if the device is not plugged in.
+        // If not included, libvirt will add a default video device.
+        boolean videoNeeded = allDevices.stream().anyMatch(vmDevice -> vmDevice.getType() == VmDeviceGeneralType.GRAPHICS);
+
+        // When a vGPU is used as a display device, libvirt removes alias from VIDEO element. Tricks need to be
+        // used to correctly correlate the device.
+        // See https://bugzilla.redhat.com/show_bug.cgi?id=1720612
+        return device.get(VdsProperties.Device).equals("none") && videoNeeded;
     }
 
     /**
