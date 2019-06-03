@@ -303,6 +303,8 @@ public class DiskMapper {
             return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.FILTERED;
         case UNFILTERED:
             return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.UNFILTERED;
+        case DISABLED:
+            return null;
         default:
             return null;
         }
