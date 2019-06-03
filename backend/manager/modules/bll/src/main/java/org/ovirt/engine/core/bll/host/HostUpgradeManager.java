@@ -58,7 +58,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         AnsibleReturnValue ansibleReturnValue = null;
         try {
             AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(host.getHostName())
+                .hosts(host)
                 .checkMode(true)
                 .enableLogging(false)
                 .verboseLevel(AnsibleVerbosity.LEVEL0)
@@ -135,7 +135,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         long allowedExpirationDateInSeconds = TimeUnit.MILLISECONDS.toSeconds(
                 CertificationValidityChecker.computeFutureExpirationDate(daysAllowedUntilExpiration).getTimeInMillis());
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(host.getHostName())
+                .hosts(host)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible")

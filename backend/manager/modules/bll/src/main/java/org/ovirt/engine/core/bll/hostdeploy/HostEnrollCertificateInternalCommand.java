@@ -35,7 +35,7 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
     protected void executeCommand() {
         setVdsStatus(VDSStatus.Installing);
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 // /var/log/ovirt-engine/host-deploy/ovirt-enroll-certs-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-enroll-certs-ansible")

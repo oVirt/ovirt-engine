@@ -97,7 +97,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
 
     private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
                 .variable("ovirt_import_ova_disks",
                         diskPaths.stream()

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.exportimport.ExtractOvaCommand;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -43,16 +44,16 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     }
 
     private String runAnsibleQueryOvaInfoPlaybook() {
-        String hostname = vdsStaticDao.get(getParameters().getVdsId()).getHostName();
+        VdsStatic host = vdsStaticDao.get(getParameters().getVdsId());
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(hostname)
+                .hosts(host)
                 .variable("ovirt_query_ova_path", getParameters().getPath())
                 .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
                 .variable("entity_type", getEntityType().name().toLowerCase())
                 // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-query-ova-ansible")
-                .logFileName(hostname)
+                .logFileName(host.getHostName())
                 .verboseLevel(AnsibleVerbosity.LEVEL0)
                 .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);

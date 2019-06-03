@@ -156,7 +156,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private String runAnsibleImageMeasurePlaybook(String path) {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 .variable("image_path", path)
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
@@ -185,7 +185,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private boolean runAnsiblePackOvaPlaybook(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
         String encodedOvf = genOvfParameter(ovf);
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("entity_type", getParameters().getEntityType().name().toLowerCase())
                 .variable("ova_size", String.valueOf(calcOvaSize(disks, encodedOvf)))
