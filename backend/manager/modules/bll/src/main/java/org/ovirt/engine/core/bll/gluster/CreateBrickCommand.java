@@ -165,7 +165,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                 : getParameters().getNoOfPhysicalDisksInRaidVolume();
 
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 .variable("ssd", ssdDevice)
                 .variable("disks", JsonHelper.objectToJson(disks, false))
                 .variable("vgname", "RHGS_vg_" + getParameters().getLvName())

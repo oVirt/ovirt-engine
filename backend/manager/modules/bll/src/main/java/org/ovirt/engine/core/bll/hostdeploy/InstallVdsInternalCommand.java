@@ -244,7 +244,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
 
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
                 .variable("host_deploy_cluster_name", hostCluster.getName())
                 .variable("host_deploy_cluster_switch_type",

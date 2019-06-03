@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -119,8 +121,17 @@ public class AnsibleCommandBuilder {
         return this;
     }
 
-    public AnsibleCommandBuilder hostnames(String... hostnames) {
-        this.hostnames = Arrays.asList(hostnames);
+    public AnsibleCommandBuilder hosts(VdsStatic... hosts) {
+        this.hostnames =  Arrays.stream(hosts)
+                .map(h -> String.format("%1$s:%2$s", h.getHostName(), h.getSshPort()))
+                .collect(Collectors.toList());
+        return this;
+    }
+
+    public AnsibleCommandBuilder hosts(VDS... hosts) {
+        this.hostnames =  Arrays.stream(hosts)
+                .map(h -> String.format("%1$s:%2$s", h.getHostName(), h.getSshPort()))
+                .collect(Collectors.toList());
         return this;
     }
 

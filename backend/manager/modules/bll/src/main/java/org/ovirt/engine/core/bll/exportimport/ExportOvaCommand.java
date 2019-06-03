@@ -90,7 +90,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
 
     private ValidationResult validateTargetFolder() {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(getVds().getHostName())
+                .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
