@@ -392,7 +392,7 @@ public class SchedulingManager implements BackendService {
                 }
 
                 List<VM> vmsNotOnHost = vmGroup.stream()
-                        .filter(vm -> vm.getRunOnVds() != bestHostId)
+                        .filter(vm -> !bestHostId.equals(vm.getRunOnVds()))
                         .collect(Collectors.toList());
 
                 if (vmsNotOnHost.isEmpty()) {
