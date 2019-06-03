@@ -773,7 +773,12 @@ public class VmDeviceUtils {
             return;
         }
         if (UsbPolicy.ENABLED_NATIVE == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
-            updateSpiceUsb(newVm.getId(), oldNumberOfSlots, newNumberOfUsbSlots);
+            if (!oldVm.getBiosType().getChipsetType().equals(newVm.getBiosType().getChipsetType())) {
+                disableSpiceUsb(newVm.getId());
+                enableSpiceUsb(newVm.getId(), newNumberOfUsbSlots);
+            } else {
+                updateSpiceUsb(newVm.getId(), oldNumberOfSlots, newNumberOfUsbSlots);
+            }
             return;
         }
 
