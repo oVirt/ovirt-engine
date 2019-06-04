@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.tasks;
 
+import java.util.Date;
+
 import org.gwtbootstrap3.client.ui.Progress;
 import org.gwtbootstrap3.client.ui.ProgressBar;
 import org.gwtbootstrap3.client.ui.constants.ProgressBarType;
@@ -71,8 +73,8 @@ public class TaskWidget extends Composite {
         jobProgress.setActive(true);
         jobProgress.setType(ProgressType.STRIPED);
         jobProgressBar.setPercent(100);
-        jobProgressBar.setText(constants.startedTask() + ": " // $NON-NLS-1$
-                + DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(job.getStartTime()));
+        String startTime = formatDateToString(job.getStartTime());
+        jobProgressBar.setText(constants.startedTask() + ": " + startTime); // $NON-NLS-1$
         if (job.getSteps().isEmpty()) {
             model.updateSingleTask(correlationId);
         } else {
@@ -85,14 +87,19 @@ public class TaskWidget extends Composite {
 
     private void markJobFinished(Job job) {
         statusIcon.addStyleName(PatternflyIconType.PF_BASE.getCssName());
-        jobProgressBar.setText(constants.completedTask() + ": " // $NON-NLS-1$
-                + DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(job.getEndTime()));
+        String endTime = formatDateToString(job.getEndTime());
+        jobProgressBar.setText(constants.completedTask() + ": " + endTime); // $NON-NLS-1$
         jobProgressBar.setPercent(100);
         if (JobExecutionStatus.FINISHED.equals(job.getStatus())) {
             statusIcon.addStyleName(PatternflyConstants.PFICON_OK);
         } else {
             statusIcon.addStyleName(PatternflyConstants.PFICON_ERROR);
         }
+    }
+
+    private String formatDateToString(Date date) {
+        return date == null ? constants.notAvailableLabel() :
+                DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(date);
     }
 
     public static ProgressBarType getProgressBarType(JobExecutionStatus status) {
