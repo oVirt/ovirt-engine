@@ -184,6 +184,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private Map<Guid, Guid> memoryDiskDomainMap = new HashMap<>();
     private Map<Guid, Guid> memoryDiskImageMap = new HashMap<>();
 
+    private Map<Guid, QemuImageInfo> diskImageInfoMap = new HashMap<>();
+
     @Override
     protected void init() {
         super.init();
@@ -849,6 +851,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     protected void processImages() {
+        // Update the virtual size of every image with values
+        // queried from 'qemu-img info'
+        getImages().forEach(this::updateDiskSizeByQcowImageInfo);
         processImages(!isImagesAlreadyOnTarget());
         // if there are no tasks, we can just unlock the VM
         if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
@@ -1022,17 +1027,32 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void setQcowCompat(DiskImage diskImage) {
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
-        QemuImageInfo qemuImageInfo =
-                imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
-                        diskImage.getStorageIds().get(0),
-                        diskImage.getId(),
-                        diskImage.getImageId(),
-                        null,
-                        true);
+        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage);
         if (qemuImageInfo != null) {
             diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
         }
         imageDao.update(diskImage.getImage());
+    }
+
+    private void updateDiskSizeByQcowImageInfo(DiskImage diskImage) {
+        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage);
+        if (qemuImageInfo != null) {
+            diskImage.setSize(qemuImageInfo.getSize());
+        }
+        imageDao.update(diskImage.getImage());
+    }
+
+    private QemuImageInfo getQemuImageInfo(DiskImage diskImage) {
+        if (!diskImageInfoMap.containsKey(diskImage.getId())) {
+            diskImageInfoMap.put(diskImage.getId(),
+                    imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                            diskImage.getStorageIds().get(0),
+                            diskImage.getId(),
+                            diskImage.getImageId(),
+                            null,
+                            true));
+        }
+        return diskImageInfoMap.get(diskImage.getId());
     }
 
     protected void addVmExternalLuns() {
