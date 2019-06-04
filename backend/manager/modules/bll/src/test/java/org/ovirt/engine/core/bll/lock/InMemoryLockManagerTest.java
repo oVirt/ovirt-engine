@@ -179,4 +179,39 @@ public class InMemoryLockManagerTest {
     public void testAcquireLockNegativeTimeout() {
         assertThrows(IllegalArgumentException.class, () -> lockManager.acquireLockWait(lockLock1, -1000L));
     }
+
+    @Test
+    public void testLockHijack() {
+        new Thread(() -> {
+            System.out.println("t1 start " + System.currentTimeMillis());
+            assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+            System.out.println("t1 end " + System.currentTimeMillis());
+        }, "t1").start();
+
+        sleep();
+        new Thread(() -> {
+            System.out.println("t2 start " + System.currentTimeMillis());
+            assertFalse(lockManager.acquireLockWait(lockLock1, 100L).getFirst());
+            // lock "must" be released because EngineLock implements AutoCloseable
+            lockManager.releaseLock(lockLock1);
+            System.out.println("t2 end " + System.currentTimeMillis());
+        }, "t2").start();
+
+        sleep();
+        new Thread(() -> {
+            System.out.println("t3 start " + System.currentTimeMillis());
+            assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+            System.out.println("t3 end " + System.currentTimeMillis());
+        }, "t3").start();
+
+        sleep();
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
