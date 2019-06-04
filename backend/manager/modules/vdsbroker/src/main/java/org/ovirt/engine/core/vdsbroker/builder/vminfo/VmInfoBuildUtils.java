@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -1171,18 +1172,41 @@ public class VmInfoBuildUtils {
     }
 
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
+        int onlineCpus = vm.getNumOfCpus();
+        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
+                VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion())
+                : onlineCpus;
+        int offlineCpus = vcpus - onlineCpus;
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         if (!vmNumaNodes.isEmpty()) {
+            // When the NUMA Configuration is provided, distribute the remaining
+            // offline vCPUs evenly across all nodes
+            if (offlineCpus > 0) {
+                int numaCount = vmNumaNodes.size();
+                int index = onlineCpus;
+                for (VmNumaNode vmNode : vmNumaNodes) {
+                    if (numaCount <= 0) {
+                        break;
+                    }
+                    for (int i = vmNode.getCpuIds().size(); i < vcpus / numaCount; i++) {
+                        vmNode.getCpuIds().add(index++);
+                    }
+                    vcpus -= vcpus / numaCount;
+                    --numaCount;
+                }
+            }
             return vmNumaNodes;
         }
 
         // if user didn't set specific NUMA conf
         // create a default one with one guest numa node
-        if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
+        // and assign also offline vCPUs to it when CPU
+        // hotplug is supported.
+        if (offlineCpus > 0) {
             VmNumaNode vmNode = new VmNumaNode();
             vmNode.setIndex(0);
             vmNode.setMemTotal(vm.getMemSizeMb());
-            for (int i = 0; i < vm.getNumOfCpus(); i++) {
+            for (int i = 0; i < vcpus; i++) {
                 vmNode.getCpuIds().add(i);
             }
             return Collections.singletonList(vmNode);
