@@ -78,7 +78,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected long bytesToGigabyte(long bytes) {
-        return bytes / 1024 / 1024 / 1024;
+        return (long) Math.ceil(bytes / Math.pow(1024, 3));
     }
 
     @Override
