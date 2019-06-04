@@ -117,6 +117,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
         cmd.getVm().setName("vm1");
         doReturn(null).when(cmd).getVmFromConfiguration();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any());
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any());
         Snapshot snap = new Snapshot();
         snap.setType(Snapshot.SnapshotType.REGULAR);
         when(snapshotDao.get(SOURCE_SNAPSHOT_ID)).thenReturn(snap);

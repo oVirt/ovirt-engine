@@ -174,7 +174,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))
                 || !validate(snapshotsValidator.snapshotVmConfigurationBroken(getSnapshot(), getVmName()))
-                || !validate(snapshotsValidator.isRegularSnapshot(getSnapshot()))) {
+                || !validate(snapshotsValidator.isRegularSnapshot(getSnapshot()))
+                || !validate(snapshotsValidator.vmNotInPreview(getVmIdFromSnapshot()))) {
             return false;
         }
 
