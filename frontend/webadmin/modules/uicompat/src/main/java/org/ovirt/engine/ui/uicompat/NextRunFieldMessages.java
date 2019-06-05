@@ -48,6 +48,8 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String spiceFileTransferEnabled();
 
+    String spiceCopyPasteEnabled();
+
     String userDefinedProperties();
 
     String predefinedProperties();
@@ -77,6 +79,8 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
     String kernelParams();
 
     String initrdUrl();
+
+    String singleQxlPci();
 
     // Devices
 

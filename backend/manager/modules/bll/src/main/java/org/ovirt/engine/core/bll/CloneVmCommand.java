@@ -16,21 +16,18 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -40,7 +37,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -52,6 +48,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    protected VmDeviceUtils vmDeviceUtils;
     @Inject
     private VmDao vmDao;
     @Inject
@@ -254,50 +252,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         getParameters().setVm(vmToClone);
 
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(oldVmId);
-        getParameters().setSoundDeviceEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.SOUND));
-        getParameters().setConsoleEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONSOLE));
-        getParameters().setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
-        getParameters().setBalloonEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.BALLOON));
-        setGraphicsDevices(devices);
-
-        QueryReturnValue watchdogs = runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(oldVmId));
-        if (!((List<VmWatchdog>) watchdogs.getReturnValue()).isEmpty()) {
-            VmWatchdog watchdog = ((List<VmWatchdog>) watchdogs.getReturnValue()).iterator().next();
-            getParameters().setUpdateWatchdog(true);
-            getParameters().setWatchdog(watchdog);
-        }
-
+        vmDeviceUtils.updateVmDevicesInParameters(getParameters(), devices);
 
         fillDisksToParameters();
-    }
-
-    private void setGraphicsDevices(List<VmDevice> devices) {
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            getParameters().getGraphicsDevices().put(graphicsType, null); // prevent copying from the template
-        }
-
-        for (VmDevice device : devices) {
-            if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
-                GraphicsDevice graphicsDevice = new GraphicsDevice(device);
-                getParameters().getGraphicsDevices().put(graphicsDevice.getGraphicsType(), graphicsDevice);
-            }
-        }
-    }
-
-    private boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType generalType, VmDeviceType deviceType) {
-        for (VmDevice device : devices) {
-            if (device.getType() == generalType) {
-                if (deviceType == null || (deviceType.getName() != null && deviceType.getName().equals(device.getDevice()))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType type) {
-        return containsDeviceWithType(devices, type, null);
     }
 
     @Override

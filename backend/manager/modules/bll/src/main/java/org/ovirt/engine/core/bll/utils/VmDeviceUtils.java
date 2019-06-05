@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -1353,6 +1355,67 @@ public class VmDeviceUtils {
     }
 
     /**
+     * Update devices information in {@link VmManagementParametersBase}
+     *
+     * @param params destination parameters
+     * @param devices list of devices
+     */
+    public void updateVmDevicesInParameters(VmManagementParametersBase params, List<VmDevice> devices) {
+        params.setSoundDeviceEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.SOUND));
+        params.setConsoleEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONSOLE));
+        params.setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
+        params.setBalloonEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.BALLOON));
+
+        updateVmGraphicDevicesInParameters(params, devices);
+        updateWatchdogInParameters(params, devices);
+        updateRngInParameters(params, devices);
+    }
+
+    /**
+     * Update watchdog information in {@link VmManagementParametersBase}
+     * @param params destination parameters
+     * @param devices list of devices
+     */
+    private void updateWatchdogInParameters(VmManagementParametersBase params, List<VmDevice> devices) {
+        VmDevice watchDogDevice = getFirstDeviceWithType(devices, VmDeviceGeneralType.WATCHDOG, null);
+        params.setUpdateWatchdog(true);
+        if (watchDogDevice != null) {
+            params.setWatchdog(new VmWatchdog(watchDogDevice));
+        }
+    }
+
+    /**
+     * Update RNG information in {@link VmManagementParametersBase}
+     * @param params destination parameters
+     * @param devices list of devices
+     */
+    private void updateRngInParameters(VmManagementParametersBase params, List<VmDevice> devices) {
+        VmDevice rngDevice = getFirstDeviceWithType(devices, VmDeviceGeneralType.RNG, null);
+        params.setUpdateRngDevice(true);
+        if (rngDevice != null) {
+            params.setRngDevice(new VmRngDevice(rngDevice));
+        }
+    }
+
+    /**
+     * Update graphic devices information in {@link VmManagementParametersBase}
+     * @param params destination parameters
+     * @param devices list of devices
+     */
+    private void updateVmGraphicDevicesInParameters(VmManagementParametersBase params, List<VmDevice> devices) {
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            params.getGraphicsDevices().put(graphicsType, null); // prevent copying from the template
+        }
+
+        for (VmDevice device : devices) {
+            if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
+                GraphicsDevice graphicsDevice = new GraphicsDevice(device);
+                params.getGraphicsDevices().put(graphicsDevice.getGraphicsType(), graphicsDevice);
+            }
+        }
+    }
+
+    /**
      * Update the VM devices according to changes made in configuration.
      *
      * This method is executed before running the VM.
@@ -1928,10 +1991,10 @@ public class VmDeviceUtils {
                         device.setVmId(vm.getId());
                     }
                     if (device.getDeviceId() == null) {
-                        if (device.getType() == VmDeviceGeneralType.RNG) {
-                            // only one RNG device is allowed per VM
-                            VmDevice rng = VmDeviceCommonUtils.findVmDeviceByType(vmManagedDeviceMap, update.getType());
-                            device.setDeviceId(rng != null ? rng.getDeviceId() : Guid.newGuid());
+                        if (isSingletonDevice(device)) {
+                            // only one singleton device is allowed per VM
+                            VmDevice mapDevice = VmDeviceCommonUtils.findVmDeviceByType(vmManagedDeviceMap, update.getType());
+                            device.setDeviceId(mapDevice != null ? mapDevice.getDeviceId() : Guid.newGuid());
                         } else {
                             device.setDeviceId(Guid.newGuid());
                         }
@@ -1980,6 +2043,11 @@ public class VmDeviceUtils {
         return vmManagedDeviceMap;
     }
 
+    private boolean isSingletonDevice(VmDevice device) {
+        return VmDeviceGeneralType.RNG.equals(device.getType())
+                        || VmDeviceGeneralType.WATCHDOG.equals(device.getType());
+    }
+
     public <E extends VmDevice> Map<String, E> vmDevicesByDevice(Collection<E> deviceList) {
         return deviceList == null
                 ? Collections.emptyMap()
@@ -1988,4 +2056,24 @@ public class VmDeviceUtils {
                         .collect(Collectors.toMap(VmDevice::getDevice, Function.identity()));
     }
 
+    public VmDevice getFirstDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType generalType, VmDeviceType deviceType) {
+        for (VmDevice device : devices) {
+            if (device.getType() == generalType) {
+                if (deviceType == null || (deviceType.getName() != null && deviceType.getName().equals(device.getDevice()))) {
+                    return device;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType generalType, VmDeviceType deviceType) {
+        VmDevice foundDevice = getFirstDeviceWithType(devices, generalType, deviceType);
+        return foundDevice != null;
+    }
+
+    public boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType type) {
+        return containsDeviceWithType(devices, type, null);
+    }
 }

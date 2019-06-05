@@ -69,11 +69,11 @@ public class VmWatchdog implements Queryable {
         this.id = id;
     }
 
-    public VmDevice getVmDevice() {
+    public VmDevice createVmDevice() {
         Map<String, Object> specParams = getSpecParams();
 
         return new VmDevice(
-                new VmDeviceId(Guid.newGuid(), id),
+                new VmDeviceId(null, id),
                 VmDeviceGeneralType.WATCHDOG,
                 VmDeviceType.WATCHDOG.getName(),
                 "",
