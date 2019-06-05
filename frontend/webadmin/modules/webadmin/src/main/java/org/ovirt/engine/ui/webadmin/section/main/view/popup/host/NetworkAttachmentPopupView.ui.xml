@@ -57,7 +57,7 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <e:EnumRadioEditor ui:field="ipv4BootProtocol" />
+                                        <e:EnumRadioEditor ui:field="ipv4BootProtocol" addStyleNames="form-group" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
@@ -84,7 +84,7 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <e:EnumRadioEditor ui:field="ipv6BootProtocol" />
+                                        <e:EnumRadioEditor ui:field="ipv6BootProtocol" addStyleNames="form-group" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
