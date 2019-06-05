@@ -226,6 +226,14 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
         });
     }
 
+    public void addStyleName(String styleName) {
+        peer.addStyleName(styleName);
+    }
+
+    public void removeStyleName(String styleName) {
+        peer.removeStyleName(styleName);
+    }
+
     @Override
     public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
         return peer.addHandler(handler, KeyDownEvent.getType());
