@@ -402,4 +402,10 @@ public class VmInfoBuildUtilsTest {
         Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
         Assertions.assertThat(stringMap.get("openstack/latest/user_data")).isNotEmpty();
     }
+
+    @Test
+    public void testBuildCloudInitWitNullVmInit() {
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(null));
+        Assertions.assertThat(stringMap.get("openstack/latest/user_data")).isNotEmpty();
+    }
 }

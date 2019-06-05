@@ -1422,7 +1422,7 @@ public class VmInfoBuildUtils {
         // detect ignition
         boolean isIgnition = false;
         try {
-            if (vmInit.getCustomScript() != null) {
+            if (vmInit != null && vmInit.getCustomScript() != null) {
                 isIgnition = JsonHelper.jsonToMap(vmInit.getCustomScript()).containsKey("ignition");
                 if (isIgnition) {
                     // there is no json schema or a java library that validates ignition files yet. The passing criterira now
