@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -13,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
-import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 
 public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNextRunParameters>
@@ -59,27 +56,6 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         vmPropertiesUtils.separateCustomPropertiesToUserAndPredefined(
                 dstVm.getCompatibilityVersion(), dstStatic);
 
-        Set<String> result = new HashSet<>(vmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, VMStatus.Up));
-
-        for (VmDeviceUpdate device :
-                vmHandler.getVmDevicesFieldsToUpdateOnNextRun(srcVm.getId(), VMStatus.Up, getParameters().getUpdateVmParameters())) {
-            if (!device.getName().isEmpty()) {
-                result.add(device.getName());
-            } else {
-                switch (device.getType()) {
-                    case UNKNOWN:
-                    case VIRTIO:
-                        result.add(device.getGeneralType().name());
-                        break;
-
-                    default:
-                        result.add(device.getType().getName());
-                        break;
-                }
-            }
-        }
-
-        setReturnValue(new ArrayList<>(result));
+        setReturnValue(new ArrayList<>(vmHandler.getChangedFieldsForStatus(srcStatic, dstStatic, getParameters().getUpdateVmParameters(), VMStatus.Up)));
     }
-
 }

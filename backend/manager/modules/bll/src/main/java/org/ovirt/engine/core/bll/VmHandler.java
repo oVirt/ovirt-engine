@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -242,8 +243,12 @@ public class VmHandler implements BackendService {
                 : updateVmsStatic.isUpdateValid(source, destination, status);
     }
 
-    public List<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VMStatus status) {
-        return updateVmsStatic.getChangedFieldsForStatus(source, destination, status);
+    public Set<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VmManagementParametersBase params, VMStatus status) {
+        List<String> fields = updateVmsStatic.getChangedFieldsForStatus(source, destination, status);
+        List<VmDeviceUpdate> devices = getVmDevicesFieldsToUpdateOnNextRun(source.getId(), status, params);
+
+        fields.addAll(devices.stream().map(VmDeviceUpdate::getName).collect(Collectors.toList()));
+        return new HashSet<>(fields);
     }
 
     public boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
@@ -597,14 +602,22 @@ public class VmHandler implements BackendService {
             if (nextVM == null) {
                 return;
             }
-
-            VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                    currentVM.getCompatibilityVersion(), currentVM.getStaticData());
-            VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                    nextVM.getCompatibilityVersion(), nextVM.getStaticData());
-
-            currentVM.setNextRunChangedFields(getChangedFieldsForStatus(currentVM.getStaticData(), nextVM.getStaticData(), VMStatus.Up));
+            currentVM.setNextRunChangedFields(
+                getChangedFieldsForStatus(
+                    currentVM.getStaticData(),
+                    nextVM.getStaticData(),
+                    createVmManagementParametersBase(nextVM),
+                    VMStatus.Up));
         }
+    }
+
+    private VmManagementParametersBase createVmManagementParametersBase(VM vm) {
+        VmManagementParametersBase params = new VmManagementParametersBase(vm);
+        List<VmDevice> devices = new ArrayList<>(vm.getManagedVmDeviceMap().values());
+
+        vmDeviceUtils.updateVmDevicesInParameters(params, devices);
+
+        return params;
     }
 
     public VM getNextRunVmConfiguration(Guid vmID, Guid userID, boolean isFiltered, boolean loadAdditionalInformation) {
@@ -618,6 +631,10 @@ public class VmHandler implements BackendService {
         if (nextVM == null) {
             return null;
         }
+
+        VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
+            nextVM.getCompatibilityVersion(), nextVM.getStaticData());
+
         if (loadAdditionalInformation) {
             // update information that is not saved in the config
             updateDisksFromDb(nextVM);
@@ -894,8 +911,9 @@ public class VmHandler implements BackendService {
                 updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, (VmDevice) value));
             }
         } else if (value instanceof VmWatchdog) {
-            if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, ((VmWatchdog) value).getVmDevice())) {
-                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name,  ((VmWatchdog) value).getVmDevice()));
+            VmDevice watchdogDevice = ((VmWatchdog) value).createVmDevice();
+            if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, watchdogDevice)) {
+                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name,  watchdogDevice));
             }
         } else {
             log.warn("addDeviceUpdateOnNextRun: Unsupported value type: " +

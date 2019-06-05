@@ -60,7 +60,13 @@ public class VmDeviceUpdate {
     }
 
     public String getName() {
-        return name;
+        if (name != null && !name.isEmpty()) {
+            return name;
+        }
+        if (VmDeviceType.UNKNOWN.equals(type)) {
+            return generalType.name();
+        }
+        return type.getName();
     }
 
     public void setName(String name) {

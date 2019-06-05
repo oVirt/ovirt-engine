@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -84,7 +85,7 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         return res;
     }
 
-    private SafeHtml getNextRunChangedFieldsTooltip(List<String> changedFields) {
+    private SafeHtml getNextRunChangedFieldsTooltip(Set<String> changedFields) {
         if (changedFields == null || changedFields.isEmpty()) {
             return SafeHtmlUtils.EMPTY_SAFE_HTML;
         }
