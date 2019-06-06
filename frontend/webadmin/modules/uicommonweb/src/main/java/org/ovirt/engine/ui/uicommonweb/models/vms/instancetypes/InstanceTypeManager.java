@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -324,37 +326,51 @@ public abstract class InstanceTypeManager {
             getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypeSet));
 
             activate();
-        }
 
-        updateWatchdog(vmBase, true);
+            AsyncDataProvider.getInstance().getVmNextRunConfiguration(new AsyncQuery<>(result -> {
+                VM vm = result;
+                VmDevice device = VmDeviceCommonUtils.findVmDeviceByGeneralType(vm.getManagedVmDeviceMap(), VmDeviceGeneralType.WATCHDOG);
+
+                if (device == null) {
+                    updateWatchdog(vmBase, Collections.emptyList(), true);
+                } else {
+                    List<VmWatchdog> devices = new ArrayList<>();
+                    devices.add(new VmWatchdog(device));
+                    updateWatchdog(vmBase, devices, true);
+                }
+            }), vmBase.getId());
+        } else {
+            updateWatchdog(vmBase, true);
+        }
     }
 
     private void updateWatchdog(final VmBase vmBase, final boolean continueWithNext) {
         AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<QueryReturnValue>(returnValue -> {
-            deactivate();
-            @SuppressWarnings("unchecked")
-            Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
-
-            if (watchdogs.size() == 0) {
-                model.getWatchdogAction().setSelectedItem(model.getWatchdogAction().getItems().iterator().next());
-                model.getWatchdogModel().setSelectedItem(model.getWatchdogModel().getItems().iterator().next());
-            }
-
-            for (VmWatchdog watchdog : watchdogs) {
-                if (watchdogAvailable(watchdog.getModel())) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
-                            : watchdog.getAction());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? null //$NON-NLS-1$
-                            : watchdog.getModel());
-                }
-            }
-            activate();
-
-            if (continueWithNext) {
-                updateBalloon(vmBase, true);
-            }
-
+            updateWatchdog(vmBase, returnValue.getReturnValue(), continueWithNext);
         }), vmBase.getId());
+    }
+
+    private void updateWatchdog(final VmBase vmBase, List<VmWatchdog> watchdogs, final boolean continueWithNext) {
+        deactivate();
+
+        if (watchdogs.size() == 0) {
+            model.getWatchdogAction().setSelectedItem(model.getWatchdogAction().getItems().iterator().next());
+            model.getWatchdogModel().setSelectedItem(model.getWatchdogModel().getItems().iterator().next());
+        }
+
+        for (VmWatchdog watchdog : watchdogs) {
+            if (watchdogAvailable(watchdog.getModel())) {
+                model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
+                        : watchdog.getAction());
+                model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? null //$NON-NLS-1$
+                        : watchdog.getModel());
+            }
+        }
+        activate();
+
+        if (continueWithNext) {
+            updateBalloon(vmBase, true);
+        }
     }
 
     protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
