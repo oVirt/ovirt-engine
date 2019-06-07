@@ -64,6 +64,11 @@
     </dependency>
 
     <dependency>
+      <groupId>net.minidev</groupId>
+      <artifactId>accessors-smart</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
     </dependency>
@@ -300,6 +305,11 @@
               <module>
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
+                <moduleName>net.minidev</moduleName>
+              </module>
+              <module>
+                <groupId>net.minidev</groupId>
+                <artifactId>accessors-smart</artifactId>
                 <moduleName>net.minidev</moduleName>
               </module>
               <module>

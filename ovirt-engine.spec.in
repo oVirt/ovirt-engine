@@ -955,6 +955,7 @@ common/com/netflix/hystrix/main/hystrix-core.jar hystrix/hystrix-core.jar
 common/com/netflix/hystrix/contrib/main/hystrix-metrics-event-stream.jar hystrix/hystrix-metrics-event-stream.jar
 common/com/nimbusds/main/nimbus-jose-jwt.jar nimbus-jose-jwt/nimbus-jose-jwt.jar
 common/io/reactivex/rxjava/main/rxjava.jar
+common/net/minidev/main/accessors-smart.jar json-smart/accessors-smart.jar
 common/net/minidev/main/json-smart.jar json-smart.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
