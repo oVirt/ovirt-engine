@@ -97,7 +97,8 @@ public class GlusterBrickEventSubscriber implements GlusterEventSubscriber {
                     .filter(v -> v.getName().equals(peer)
                             || interfaceDao.getAllInterfacesForVds(v.getId())
                                     .stream()
-                                    .anyMatch(iface -> iface.getIpv4Address().equals(peer)))
+                                    .anyMatch(iface -> peer.equals(iface.getIpv4Address())
+                                            || peer.equals(iface.getIpv6Address())))
                     .findFirst()
                     .orElse(null);
             GlusterBrickEntity brick =
