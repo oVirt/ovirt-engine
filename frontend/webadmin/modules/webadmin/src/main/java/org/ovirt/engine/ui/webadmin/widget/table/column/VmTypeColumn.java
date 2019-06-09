@@ -99,12 +99,16 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         switch (vmType) {
             case Server:
                 tooltip = constants.pooledServer();
+                break;
             case Desktop:
                 tooltip = constants.pooledDesktop();
+                break;
             case HighPerformance:
                 tooltip = constants.pooledHighPerformance();
+                break;
             default:
                 tooltip = constants.pooledDesktop();
+                break;
         }
         return SafeHtmlUtils.fromString(tooltip);
     }
