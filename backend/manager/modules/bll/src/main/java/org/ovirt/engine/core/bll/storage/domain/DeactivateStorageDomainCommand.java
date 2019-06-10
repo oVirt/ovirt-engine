@@ -303,12 +303,12 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 deactivateManagedBlockStorageDomain();
                 break;
             default:
-                dectivateStorageDomain();
+                deactivateStorageDomain();
                 break;
         }
     }
 
-    private void dectivateStorageDomain() {
+    private void deactivateStorageDomain() {
         StorageDomainStatus lastStatus = getStorageDomain().getStatus();
         final StoragePoolIsoMap map =
                 storagePoolIsoMapDao.get
