@@ -1720,11 +1720,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String DiskContentType___HOSTED_ENGINE_CONFIGURATION();
 
-    String ResumeBehavior___AUTO_RESUME();
+    String VmResumeBehavior___AUTO_RESUME();
 
-    String ResumeBehavior___LEAVE_PAUSED();
+    String VmResumeBehavior___LEAVE_PAUSED();
 
-    String ResumeBehavior___KILL();
+    String VmResumeBehavior___KILL();
 
     String AuditLogType___GLUSTER_VOLUME_REBALANCE_START_DETECTED_FROM_CLI();
 

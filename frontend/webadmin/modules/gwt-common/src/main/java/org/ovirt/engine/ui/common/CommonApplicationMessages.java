@@ -87,6 +87,10 @@ public interface CommonApplicationMessages extends Messages {
 
     String migrationSelectInfo();
 
+    String leaseInfoIcon();
+
+    String resumeBehaviorInfoIcon();
+
     String migrationPolicyInfo();
 
     String hostCpuInfo();

@@ -763,12 +763,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path("lease.selectedItem")
     @WithElementId("lease")
-    public ListModelListBoxEditor<StorageDomain> leaseEditor;
+    public ListModelListBoxOnlyEditor<StorageDomain> leaseEditor;
+
+    @UiField(provided = true)
+    public InfoIcon leaseInfoIcon;
 
     @UiField(provided = true)
     @Path("resumeBehavior.selectedItem")
     @WithElementId("resumeBehavior")
-    public ListModelListBoxEditor<VmResumeBehavior> resumeBehavior;
+    public ListModelListBoxOnlyEditor<VmResumeBehavior> resumeBehavior;
+
+    @UiField(provided = true)
+    public InfoIcon resumeBehaviorInfoIcon;
 
     @UiField(provided = true)
     @Ignore
@@ -1083,14 +1089,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initSpiceProxy();
         initTotalVcpus();
         initDetachableFields();
-        leaseEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StorageDomain>() {
+        leaseEditor = new ListModelListBoxOnlyEditor<>(new AbstractRenderer<StorageDomain>() {
             @Override
             public String render(StorageDomain domain) {
                 return domain != null ? domain.getName() : constants.emptyLeaseStorageDomain();
             }
         });
 
-        resumeBehavior = new ListModelListBoxEditor<>(new EnumRenderer<VmResumeBehavior>() {
+        resumeBehavior = new ListModelListBoxOnlyEditor<>(new EnumRenderer<VmResumeBehavior>() {
             @Override
             public String render(VmResumeBehavior object) {
                 if (object == null) {
@@ -1100,6 +1106,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 return super.render(object);
             }
         }, new ModeSwitchingVisibilityRenderer());
+
+        leaseInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.leaseInfoIcon()));
+        resumeBehaviorInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.resumeBehaviorInfoIcon()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

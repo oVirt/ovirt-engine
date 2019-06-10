@@ -501,10 +501,22 @@
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="leaseEditor" label="{constants.leaseStorageDomain}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                  <b:Column size="SM_6">
+                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.leaseStorageDomain}" />
+                    <d:InfoIcon ui:field="leaseInfoIcon" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                  <b:Column size="SM_6">
+                    <e:ListModelListBoxOnlyEditor ui:field="leaseEditor" usePatternFly="true"/>
+                  </b:Column>
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="resumeBehavior" label="{constants.resumeBehavior}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                  <b:Column size="SM_6">
+                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.resumeBehavior}" />
+                    <d:InfoIcon ui:field="resumeBehaviorInfoIcon" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                  <b:Column size="SM_6">
+                    <e:ListModelListBoxOnlyEditor ui:field="resumeBehavior" usePatternFly="true"/>
+                  </b:Column>
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_6">
