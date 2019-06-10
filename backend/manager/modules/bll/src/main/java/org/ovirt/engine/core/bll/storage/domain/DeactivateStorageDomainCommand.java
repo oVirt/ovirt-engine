@@ -406,7 +406,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         return null;
                     });
 
-            if (spm != null) {
+            if (!isLastMaster && spm != null) {
                 getStorageHelper(getStorageDomain()).disconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
             }
         }

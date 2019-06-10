@@ -106,6 +106,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
             log.info(" Detach storage domain(master): destroy storage pool");
             masterDomainDetachWithDestroyPool(getStorageDomain());
             updateDetachedMasterStorageDomain();
+            disconnectHostsInUpToDomainStorageServer();
         } else {
             detachSucceeded = detachNonMasterStorageDomain();
         }
