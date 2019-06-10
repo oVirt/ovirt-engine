@@ -3,18 +3,22 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -23,6 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -108,6 +113,17 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     private void setChangeQuotaCommand(UICommand value) {
         privateChangeQuotaCommand = value;
     }
+
+    private UICommand refreshLUNCommand;
+
+    public UICommand getRefreshLUNCommand() {
+        return refreshLUNCommand;
+    }
+
+    private void setRefreshLUNCommand(UICommand value) {
+        refreshLUNCommand = value;
+    }
+
 
     private UICommand privateCopyCommand;
 
@@ -219,6 +235,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
+        setRefreshLUNCommand(new UICommand("refreshLUN", this)); //$NON-NLS-1$
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
         setUploadCommand(new UICommand("Upload", this)); //$NON-NLS-1$
@@ -464,6 +481,18 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         DownloadImageManager.getInstance().startDownload(getSelectedDiskImages());
     }
 
+    private void refreshLUN() {
+        Set<Guid> lunIds = getSelectedItems().stream()
+                .map(disk -> ((LunDisk) disk).getLun().getDiskId())
+                .collect(Collectors.toSet());
+        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(hosts -> {
+            for (VDS host : hosts) {
+                Frontend.getInstance().runAction(ActionType.SyncDirectLuns,
+                        new SyncDirectLunsParameters(host.getId(), lunIds));
+            }
+        }));
+    }
+
     private List<DiskImage> getSelectedDiskImages() {
         return getSelectedItems().stream().map(disk -> (DiskImage) disk).collect(Collectors.toList());
     }
@@ -487,6 +516,20 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
         getDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isDownloadAllowed(disks));
+        getRefreshLUNCommand().setIsExecutionAllowed(isRefreshLUNAllowed());
+    }
+
+    private boolean isRefreshLUNAllowed() {
+        List<Disk> disks = getSelectedItems();
+        if (disks == null || disks.size() == 0) {
+            return false;
+        }
+        for (Disk disk : disks) {
+            if (disk.getDiskStorageType() != DiskStorageType.LUN) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isDiskLocked(Disk disk) {
@@ -592,6 +635,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
             resumeUpload();
         } else if (command == getDownloadCommand()) {
             download();
+        } else if (command == getRefreshLUNCommand()) {
+            refreshLUN();
         }
     }
 
