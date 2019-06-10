@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -19,6 +22,7 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
+import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -128,6 +132,22 @@ public class JsonObjectSerializerTest {
             // ignore
         }
 
+    }
+
+    @Test
+    public void serializeDestroyImageParameters() {
+        List<Guid> guids = new ArrayList<>(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
+        DestroyImageParameters destroyImageParameters = new DestroyImageParameters(Guid.newGuid(),
+                Guid.newGuid(),
+                Guid.newGuid(),
+                Guid.newGuid(),
+                Guid.newGuid(),
+                guids,
+                true,
+                true);
+        JsonObjectSerializer serializer = new JsonObjectSerializer();
+        String json = serializer.serialize(destroyImageParameters);
+        assertTrue(json.length() > 0);
     }
 
     private String serialize(Object obj) throws IOException {
