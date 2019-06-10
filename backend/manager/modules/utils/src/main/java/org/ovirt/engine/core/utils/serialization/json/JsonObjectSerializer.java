@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -53,6 +54,8 @@ public class JsonObjectSerializer implements Serializer {
         formattedMapper.getSerializationConfig().addMixInAnnotations(Map.class, JsonMapMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(Cluster.class, JsonClusterMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(VdsDynamic.class, JsonVdsDynamicMixIn.class);
+        formattedMapper.getSerializationConfig()
+                .addMixInAnnotations(DestroyImageParameters.class, JsonDestroyImageParametersMixIn.class);
 
         formattedMapper.configure(Feature.INDENT_OUTPUT, true);
         formattedMapper.enableDefaultTyping();
