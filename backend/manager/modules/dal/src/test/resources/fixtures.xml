@@ -754,9 +754,9 @@
   <gluster_server_services id="c77b4d6a-a2c9-4c9f-a873-3dbff8a34720" server_id="23f6d691-5dfb-472b-86dc-9e1d2d3c18f3" service_id="c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1" pid="11111" status="RUNNING" message="Service is running" _create_date="2012-12-27 13:54:18" _update_date="2012-12-31 11:45:27"/>
   <gluster_server_services id="ae956031-6be2-43d6-bb8f-5191c9253314" server_id="2001751e-549b-4e7a-aff6-32d36856c125" service_id="fc00df54-4fcd-4495-8756-b217780bdad7" pid="22222" status="STOPPED" message="Service is stopped" _create_date="2012-12-28 09:27:18" _update_date="2012-12-31 11:54:27"/>
 
-  <affinity_groups id="6d849ebf-0ccc-4552-ad09-ccc90cda105d" name="affinityGroup1" description="desc" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" vm_positive="true" vm_enforcing="true" vds_positive="true" vds_enforcing="false" vms_affinity_enabled="true"/>
-  <affinity_groups id="6d849ebf-0ccc-4552-ad09-ccc90cda105e" name="affinityGroup2" description="desc" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" vm_positive="false" vm_enforcing="false" vds_positive="true" vds_enforcing="false" vms_affinity_enabled="true"/>
-  <affinity_groups id="6d849ebf-0ccc-4552-ad09-ccc90cda105f" name="affinityGroup3" description="desc" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" vm_positive="false" vm_enforcing="true" vds_positive="true" vds_enforcing="false" vms_affinity_enabled="true"/>
+  <affinity_groups id="6d849ebf-0ccc-4552-ad09-ccc90cda105d" name="affinityGroup1" description="desc" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" vm_positive="true" vm_enforcing="true" vds_positive="true" vds_enforcing="false" vms_affinity_enabled="true" priority="10000000"/>
+  <affinity_groups id="6d849ebf-0ccc-4552-ad09-ccc90cda105e" name="affinityGroup2" description="desc" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" vm_positive="false" vm_enforcing="false" vds_positive="true" vds_enforcing="false" vms_affinity_enabled="true" priority="10000000"/>
+  <affinity_groups id="6d849ebf-0ccc-4552-ad09-ccc90cda105f" name="affinityGroup3" description="desc" cluster_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1" vm_positive="false" vm_enforcing="true" vds_positive="true" vds_enforcing="false" vms_affinity_enabled="true" priority="10000000"/>
 
   <affinity_group_members affinity_group_id="6d849ebf-0ccc-4552-ad09-ccc90cda105d" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4354"/>
   <affinity_group_members affinity_group_id="6d849ebf-0ccc-4552-ad09-ccc90cda105d" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355"/>

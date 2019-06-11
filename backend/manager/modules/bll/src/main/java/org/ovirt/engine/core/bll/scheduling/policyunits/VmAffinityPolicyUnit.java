@@ -31,9 +31,9 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(VmAffinityPolicyUnit.class);
 
     @Inject
-    private AffinityGroupDao affinityGroupDao;
+    protected AffinityGroupDao affinityGroupDao;
     @Inject
-    private VmDao vmDao;
+    protected VmDao vmDao;
 
     protected VmAffinityPolicyUnit(PolicyUnit policyUnit, PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);

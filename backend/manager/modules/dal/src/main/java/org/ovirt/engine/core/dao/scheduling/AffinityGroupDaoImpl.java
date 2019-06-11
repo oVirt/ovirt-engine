@@ -89,6 +89,7 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 .addValue("vds_enforcing", entity.isVdsEnforcing())
                 .addValue("vms_affinity_enabled", entity.isVmAffinityEnabled())
                 .addValue("vds_affinity_enabled", entity.isVdsAffinityEnabled())
+                .addValue("priority", entity.getPriority())
                 .addValue("vm_ids", createArrayOf("uuid", entity.getVmIds().toArray()))
                 .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()));
     }
@@ -109,6 +110,7 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
             affinityGroup.setClusterId(getGuid(rs, "cluster_id"));
             affinityGroup.setVmEnforcing(rs.getBoolean("vm_enforcing"));
             affinityGroup.setVdsEnforcing(rs.getBoolean("vds_enforcing"));
+            affinityGroup.setPriority(rs.getLong("priority"));
 
             if (rs.getBoolean("vds_affinity_enabled")) {
                 if (rs.getBoolean("vds_positive")) {

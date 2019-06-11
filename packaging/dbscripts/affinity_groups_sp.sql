@@ -63,6 +63,7 @@ CREATE OR REPLACE FUNCTION InsertAffinityGroupWithMembers (
     v_vds_enforcing BOOLEAN,
     v_vms_affinity_enabled BOOLEAN,
     v_vds_affinity_enabled BOOLEAN,
+    v_priority BIGINT,
     v_vm_ids UUID[],
     v_vds_ids UUID[]
     )
@@ -80,7 +81,8 @@ BEGIN
         vds_positive,
         vds_enforcing,
         vms_affinity_enabled,
-        vds_affinity_enabled
+        vds_affinity_enabled,
+        priority
         )
     VALUES (
         v_id,
@@ -92,7 +94,8 @@ BEGIN
         v_vds_positive,
         v_vds_enforcing,
         v_vms_affinity_enabled,
-        v_vds_affinity_enabled
+        v_vds_affinity_enabled,
+        v_priority
         );
 
     FOREACH o IN ARRAY v_vm_ids
@@ -144,6 +147,7 @@ CREATE OR REPLACE FUNCTION UpdateAffinityGroupWithMembers (
     v_vds_enforcing BOOLEAN,
     v_vms_affinity_enabled BOOLEAN,
     v_vds_affinity_enabled BOOLEAN,
+    v_priority BIGINT,
     v_vm_ids UUID[],
     v_vds_ids UUID[]
     )
@@ -162,6 +166,7 @@ BEGIN
         v_vds_enforcing,
         v_vms_affinity_enabled,
         v_vds_affinity_enabled,
+        v_priority,
         v_vm_ids,
         v_vds_ids);
 END;$PROCEDURE$

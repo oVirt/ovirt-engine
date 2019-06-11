@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,7 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -97,6 +101,50 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
         assertEquals(2, (long) results.get(host_not_in_affinity_group.getId()));
     }
 
+
+    @Test
+    public void testPositiveAffinityWithPriority() {
+        VDS host1 = createHost(cluster);
+        VDS host2 = createHost(cluster);
+        VDS host3 = createHost(cluster);
+
+        hosts = Arrays.asList(host1, host2, host3);
+
+        List<AffinityGroup> groups = Arrays.asList(
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false, 1.0,
+                        Collections.singletonList(vm), Collections.singletonList(host1)),
+                createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false, 1.5,
+                        Collections.singletonList(vm), Collections.singletonList(host2))
+        );
+
+        doReturn(groups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+
+        Map<Guid, Integer> results = getScoreResults();
+        assertThat(results.get(host2.getId())).isLessThan(results.get(host1.getId()));
+        assertThat(results.get(host1.getId())).isLessThan(results.get(host3.getId()));
+    }
+
+    @Test
+    public void testNegativeAffinityWithPriority() {
+        VDS host1 = createHost(cluster);
+        VDS host2 = createHost(cluster);
+        VDS host3 = createHost(cluster);
+
+        hosts = Arrays.asList(host1, host2, host3);
+
+        List<AffinityGroup> groups = Arrays.asList(
+                createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, false, 1.0,
+                        Collections.singletonList(vm), Collections.singletonList(host1)),
+                createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, false, 1.5,
+                        Collections.singletonList(vm), Collections.singletonList(host2))
+        );
+
+        doReturn(groups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+
+        Map<Guid, Integer> results = getScoreResults();
+        assertThat(results.get(host3.getId())).isLessThan(results.get(host1.getId()));
+        assertThat(results.get(host1.getId())).isLessThan(results.get(host2.getId()));
+    }
 
     private Map<Guid, Integer> getScoreResults() {
         List<Pair<Guid, Integer>> weights = unit.score(context, hosts, vm);

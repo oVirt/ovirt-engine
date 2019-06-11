@@ -148,6 +148,38 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         assertThat(scores.get(host1.getId())).isGreaterThan(scores.get(host2.getId()));
     }
 
+    @Test
+    public void testPositiveAffinityWithPriority() {
+        List<VDS> hosts = Arrays.asList(host1, host2, host3);
+        VM vm1 = createVmRunning(host1);
+        VM vm2 = createVmRunning(host2);
+
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false, 1.0,
+                vm1, newVm));
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false, 1.5,
+                vm2, newVm));
+
+        Map<Guid, Integer> scores = collectScores(hosts);
+        assertThat(scores.get(host2.getId())).isLessThan(scores.get(host1.getId()));
+        assertThat(scores.get(host1.getId())).isLessThan(scores.get(host3.getId()));
+    }
+
+    @Test
+    public void testNegativeAffinityWithPriority() {
+        List<VDS> hosts = Arrays.asList(host1, host2, host3);
+        VM vm1 = createVmRunning(host1);
+        VM vm2 = createVmRunning(host2);
+
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, false, 1.0,
+                vm1, newVm));
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.NEGATIVE, false, 1.5,
+                vm2, newVm));
+
+        Map<Guid, Integer> scores = collectScores(hosts);
+        assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
+        assertThat(scores.get(host1.getId())).isLessThan(scores.get(host2.getId()));
+    }
+
     private Map<Guid, Integer> collectScores(List<VDS> hosts) {
         return policyUnit.score(context, hosts, Collections.singletonList(newVm)).stream()
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
