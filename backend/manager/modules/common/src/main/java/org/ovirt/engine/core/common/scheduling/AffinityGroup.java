@@ -21,7 +21,9 @@ import org.ovirt.engine.core.compat.Guid;
  * The VM will be scheduled according to its affinity groups (properties and members) rules
  */
 public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable {
-    private static final long serialVersionUID = 466595868044409104L;
+    private static final long serialVersionUID = 4751165178077660191L;
+
+    public static final double PRIORITY_PRECISION = 1E7;
 
     private Guid id;
     /**
@@ -83,6 +85,16 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
      * list of vds uuids that are included in affinity group.<br>
      */
     private List<Guid> vdsIds = new ArrayList<>();
+
+    /**
+     * Priority of the affinity group.
+     *
+     * Using 'long' type instead of 'double', because it is important to check
+     * if two affinity groups have equal priority. Equality check for doubles can be unstable.
+     *
+     * The 'double' values are converted to 'long' using fixed precision.
+     */
+    private long priority = 10000000;
 
     // Transient filed, not stored in the DB.
     // It is computed by queries returning affinity groups
@@ -231,6 +243,22 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
         if (vdsEntityNames == null) {
             this.vdsEntityNames = new ArrayList<>();
         }
+    }
+
+    public long getPriority() {
+        return priority;
+    }
+
+    public double getPriorityAsDouble() {
+        return ((double) getPriority()) / PRIORITY_PRECISION;
+    }
+
+    public void setPriority(long priority) {
+        this.priority = priority;
+    }
+
+    public void setPriorityFromDouble(double priority) {
+        setPriority(Math.round(priority * PRIORITY_PRECISION));
     }
 
     public Boolean getBroken() {

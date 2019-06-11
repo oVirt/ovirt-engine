@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -75,5 +76,30 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
 
     }
 
+    protected VDS createHost(Cluster cluster) {
+        VDS host = new VDS();
+        host.setId(Guid.newGuid());
+        host.setClusterId(cluster.getId());
+        return host;
+    }
+
+    protected AffinityGroup createAffinityGroup(Cluster cluster,
+            EntityAffinityRule hostRule,
+            boolean isEnforcing,
+            double priority,
+            List<VM> vms,
+            List<VDS> hosts) {
+        AffinityGroup ag = new AffinityGroup();
+        ag.setId(Guid.newGuid());
+        ag.setClusterId(cluster.getId());
+        ag.setPriorityFromDouble(priority);
+        ag.setVdsAffinityRule(hostRule);
+        ag.setVdsEnforcing(isEnforcing);
+
+        ag.setVmIds(vms.stream().map(VM::getId).collect(Collectors.toList()));
+        ag.setVdsIds(hosts.stream().map(VDS::getId).collect(Collectors.toList()));
+
+        return ag;
+    }
 }
 

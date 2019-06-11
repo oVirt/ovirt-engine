@@ -3651,6 +3651,7 @@ GROUP BY affinity_groups.id,
     affinity_groups.vds_enforcing,
     affinity_groups.vms_affinity_enabled,
     affinity_groups.vds_affinity_enabled,
+    affinity_groups.priority,
     affinity_groups._create_date,
     affinity_groups._update_date;
 
