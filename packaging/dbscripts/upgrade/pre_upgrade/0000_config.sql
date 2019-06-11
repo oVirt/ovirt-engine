@@ -161,7 +161,7 @@ select fn_db_add_config_value('GlusterMetaVolumeName', 'gluster_shared_storage',
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/home,/boot,/run/gluster/snaps/.*','general');
 select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
-select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
+select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster_bricks','general');
 
 -- Gluster Eventing--
 select fn_db_add_config_value_for_versions_up_to('GlusterEventingSupported', 'false', '4.1');
@@ -1198,6 +1198,7 @@ select fn_db_update_default_config_value('MaxPeakNetworkQoSValue', '2048', '3435
 -- Increase interval of polling gluster cli for info from 5 to 15 seconds
 select fn_db_update_default_config_value('GlusterRefreshRateLight', '5', '15', 'general', false);
 select fn_db_update_default_config_value('GlusterRefreshRateHeavy', '300', '900', 'general', false);
+select fn_db_update_default_config_value('GlusterDefaultBrickMountPoint', '/gluster-bricks', '/gluster_bricks', 'general', false);
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

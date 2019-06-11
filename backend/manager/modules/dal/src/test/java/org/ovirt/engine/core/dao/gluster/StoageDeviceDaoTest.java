@@ -74,7 +74,7 @@ public class StoageDeviceDaoTest extends BaseDaoTestCase<StorageDeviceDao > {
         StorageDevice storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
         assertNotNull(storageDevice, "storage device doesn't exists");
         storageDevice.setSize(1234567L);
-        storageDevice.setMountPoint("/gluster-bricks/brick1");
+        storageDevice.setMountPoint("/gluster_bricks/brick1");
         storageDevice.setFsType("xfs");
         dao.update(storageDevice);
         StorageDevice storageDeviceFromDB = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
