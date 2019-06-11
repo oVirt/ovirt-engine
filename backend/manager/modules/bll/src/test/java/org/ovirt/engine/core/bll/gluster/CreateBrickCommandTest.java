@@ -47,7 +47,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     public void validateSucceeds() {
         doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
-                "/gluster-bricks/brick1",
+                "/gluster_bricks/brick1",
                 RaidType.RAID0,
                 null,
                 null, Collections.singletonList(getStorageDevice("sda")),
@@ -85,7 +85,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
     public void validateFailsForNoStorageDevice() {
         doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
-                "/gluster-bricks/brick1",
+                "/gluster_bricks/brick1",
                 RaidType.RAID0,
                 null,
                 null, Collections.emptyList(),
@@ -103,7 +103,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
         storageDevice.setCanCreateBrick(false);
         doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
-                "/gluster-bricks/brick1",
+                "/gluster_bricks/brick1",
                 RaidType.RAID0,
                 null,
                 null, Collections.singletonList(storageDevice),
@@ -123,7 +123,7 @@ public class CreateBrickCommandTest extends BaseCommandTest {
 
         doReturn(new CreateBrickParameters(HOST_ID,
                 "brick1",
-                "/gluster-bricks/brick1",
+                "/gluster_bricks/brick1",
                 RaidType.RAID0,
                 null,
                 null, Arrays.asList(storageDevice1, storageDevice2),

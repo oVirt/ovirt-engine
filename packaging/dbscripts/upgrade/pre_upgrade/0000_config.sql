@@ -163,7 +163,7 @@ select fn_db_add_config_value('GlusterMetaVolumeName', 'gluster_shared_storage',
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/home,/boot,/run/gluster/snaps/.*','general');
 select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
-select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
+select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster_bricks','general');
 
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','ovirt-toolssetup[-_]','general');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
@@ -1170,6 +1170,7 @@ select fn_db_update_default_config_value('MaxPeakNetworkQoSValue', '2048', '3435
 -- Increase interval of polling gluster cli for info from 5 to 15 seconds
 select fn_db_update_default_config_value('GlusterRefreshRateLight', '5', '15', 'general', false);
 select fn_db_update_default_config_value('GlusterRefreshRateHeavy', '300', '900', 'general', false);
+select fn_db_update_default_config_value('GlusterDefaultBrickMountPoint', '/gluster-bricks', '/gluster_bricks', 'general', false);
 
 -- update to use aio=threads for gluster
 select fn_db_update_config_value('UseNativeIOForGluster','false','4.2');
