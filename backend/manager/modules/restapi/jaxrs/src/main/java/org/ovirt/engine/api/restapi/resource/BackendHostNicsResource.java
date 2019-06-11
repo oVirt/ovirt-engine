@@ -200,12 +200,12 @@ public class BackendHostNicsResource
         return hostNicVfsConfigs.get(nicId);
     }
 
-    public HostNic lookupNic(String id, boolean forcePopulate) {
+    public HostNic lookupNic(String id) {
         List<VdsNetworkInterface> ifaces = getCollection();
         for (VdsNetworkInterface iface : ifaces) {
             if (iface.getId().toString().equals(id)) {
                 HostNic hostNic = map(iface, ifaces);
-                if (forcePopulate) {
+                if (isPopulate()) {
                     deprecatedPopulate(hostNic, iface);
                     doPopulate(hostNic, iface);
                 } else {

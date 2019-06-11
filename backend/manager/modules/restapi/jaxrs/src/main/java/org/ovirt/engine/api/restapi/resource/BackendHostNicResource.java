@@ -41,7 +41,7 @@ public class BackendHostNicResource
 
     @Override
     public HostNic get() {
-        return parent.lookupNic(id, false);
+        return parent.lookupNic(id);
     }
 
     @Override
