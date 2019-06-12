@@ -1121,6 +1121,9 @@ select fn_db_update_config_value('ServerCPUList',
         || '5:IBM z14:sie,model_z14-base:z14-base:s390x;',
     '4.3');
 
+-- qemu-guest-agent is also a viable agent
+select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent,qemu-guest-agent','general');
+
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
 ------------------------------------------------------------------------------------
