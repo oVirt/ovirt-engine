@@ -260,6 +260,7 @@ public class VdsManager {
 
     public void refreshImpl() {
         boolean releaseLock = true;
+        log.debug("Before acquiring monitor lock for scheduled host refresh");
         if (lockManager.acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
