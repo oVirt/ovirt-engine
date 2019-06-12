@@ -29,7 +29,18 @@
             border-bottom: 1px solid #D1D1D1;
             margin-bottom: 5px;
         }
+        
+        .infoIcon {
+            float: left;
+            padding-left: 10px;
+            line-height: 30px;
+        }
 
+        .floatLeft {
+            float: left;
+            line-height: 30px;
+        }
+     
         .errorMessage {
             margin-top: 15px;
         }
@@ -111,7 +122,11 @@
                         <e:ListModelListBoxEditor ui:field="hostsEditor" label="{constants.ovaHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="ovaPathEditor" label="{constants.ovaPath}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+                        <b:Column size="SM_3">
+                            <g:Label text="{constants.ovaPath}" addStyleNames="{style.floatLeft}" />
+                            <d:InfoIcon ui:field="ovaPathInfoIcon" addStyleNames="{style.infoIcon}" />
+                        </b:Column>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="ovaPathEditor" usePatternFly="true" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
                         <b:Column size="SM_12">

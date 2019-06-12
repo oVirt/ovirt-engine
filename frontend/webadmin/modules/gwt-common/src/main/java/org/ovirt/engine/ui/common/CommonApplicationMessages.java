@@ -189,5 +189,7 @@ public interface CommonApplicationMessages extends Messages {
 
     String memoryHotUnplugNotSupportedForCompatibilityVersionAndArchitecture(Version compatibilityVersion,
             ArchitectureType clusterArch);
+
+    String ovaPathInfo();
 }
 

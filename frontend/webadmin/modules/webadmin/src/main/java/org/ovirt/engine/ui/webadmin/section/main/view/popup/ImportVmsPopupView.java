@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -19,6 +20,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -166,10 +168,13 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     @WithElementId("hosts")
     ListModelListBoxEditor<VDS> hostsEditor;
 
+    @UiField(provided = true)
+    public InfoIcon ovaPathInfoIcon;
+
     @UiField
     @Path("ovaPath.entity")
     @WithElementId("ovaPath")
-    StringEntityModelTextBoxEditor ovaPathEditor;
+    StringEntityModelTextBoxOnlyEditor ovaPathEditor;
 
     @Path("xenUri.entity")
     @WithElementId("xenUri")
@@ -246,6 +251,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public ImportVmsPopupView(EventBus eventBus) {
@@ -333,6 +339,8 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                         importedVms,
                         constants.externalVms(),
                         constants.importedVms());
+
+        ovaPathInfoIcon = new InfoIcon(templates.italicText(messages.ovaPathInfo()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables();
 
