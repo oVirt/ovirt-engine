@@ -45,6 +45,11 @@
         .topElement {
             padding-top: 15px;
         }
+
+       .infoIcon {
+           display: inline-block;
+           margin-left: 5px;
+       }
     </ui:style>
 
     <d:SimpleDialogPanel ui:field="mainPanel" width="845px" height="565px">
@@ -177,7 +182,10 @@
                                     <b:Column size="SM_6">
                                         <ge:EntityModelRadioButtonEditor
                                                 ui:field="physicalNetworkCustomRadioButtonEditor"
-                                                label="{constants.physicalNetworkCustomLabel}" usePatternFly="true" />
+                                                label="{constants.physicalNetworkCustomLabel}" usePatternFly="true"
+                                                addStyleNames="{style.floatLeft}"/>
+                                        <d:InfoIcon ui:field="physicalNetworkCustomInfo"
+                                                    addStyleNames="{style.infoIcon}"/>
                                     </b:Column>
                                     <b:Column size="SM_6">
                                         <ge:StringEntityModelTextBoxOnlyEditor

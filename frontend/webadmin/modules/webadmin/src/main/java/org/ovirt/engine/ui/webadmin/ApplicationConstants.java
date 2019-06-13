@@ -3518,4 +3518,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String networkNameInfo();
 
     String bondLengthNameWarning();
+
+    String physicalNetworkCustomInfo();
 }

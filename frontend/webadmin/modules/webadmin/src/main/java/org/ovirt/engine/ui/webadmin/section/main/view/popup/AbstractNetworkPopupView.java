@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
@@ -131,6 +132,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "usePhysicalNetworkFromCustom.entity")
     @WithElementId("physicalNetworkCustomRB")
     public EntityModelRadioButtonEditor physicalNetworkCustomRadioButtonEditor;
+
+    @UiField(provided = true)
+    public InfoIcon physicalNetworkCustomInfo;
 
     @UiField(provided = true)
     @Path(value = "connectedToPhysicalNetwork.entity")
@@ -257,9 +261,13 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         datacenterPhysicalNetworkEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<Network>());
         physicalNetworkDatacenterRadioButtonEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         physicalNetworkCustomRadioButtonEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        physicalNetworkCustomInfo = new InfoIcon(templates.italicText(constants.physicalNetworkCustomInfo()));
         physicalNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         physicalNetworkEditor.asCheckBox()
-                .addValueChangeHandler(event -> physicalNetworkLabel.setVisible(event.getValue()));
+                .addValueChangeHandler(event -> {
+                    physicalNetworkCustomInfo.setVisible(event.getValue());
+                    physicalNetworkLabel.setVisible(event.getValue());
+                });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
@@ -483,6 +491,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         messageLabel.setVisible(false);
         externalLabel.setVisible(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         physicalNetworkLabel.setVisible(false);
+        physicalNetworkCustomInfo.setVisible(false);
     }
 
     @Override
