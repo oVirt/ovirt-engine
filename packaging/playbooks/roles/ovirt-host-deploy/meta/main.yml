@@ -5,4 +5,3 @@ dependencies:
   - ovirt-host-deploy-firewalld
   - ovirt-host-deploy-vnc-certificates
   - ovirt-host-deploy-spice-encryption
-  - oVirt.metrics

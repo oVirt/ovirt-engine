@@ -7,6 +7,16 @@
       when: host_deploy_virt_enabled|bool and host_deploy_gluster_enabled|bool
 
   tasks:
+    - name: Gather the rpm package facts
+      package_facts:
+        manager: rpm
+      delegate_to: localhost
+
+    - name: Run metrics role if RPM package installed
+      include_role:
+        name: oVirt.metrics
+      when: "( 'ovirt-engine-metrics' in ansible_facts.packages ) or ( disable_metrics_rpm_check|d(false) )"
+
     - name: Check if post tasks file exists
       stat:
         path: "{{ host_deploy_post_tasks }}"
