@@ -4,12 +4,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -40,6 +44,10 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Inject
     private StorageDomainDao storageDomainDao;
+
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     private static final Logger log = LoggerFactory.getLogger(DestroyImageCommand.class);
 
@@ -79,6 +87,7 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
             // the casting in the next line.
             ((RemoveSnapshotSingleDiskParameters) getParameters().getParentParameters()).
                     setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
+            persistCommand(getParameters().getParentCommand());
         }
 
         setSucceeded(true);
@@ -112,5 +121,10 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     @Override
     public AsyncTaskType getTaskType() {
         return AsyncTaskType.deleteVolume;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return isMerge(getParentParameters().getParentCommand()) ? callbackProvider.get() : null;
     }
 }
