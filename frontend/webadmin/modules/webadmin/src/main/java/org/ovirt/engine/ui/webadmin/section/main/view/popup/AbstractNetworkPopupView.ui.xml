@@ -45,14 +45,6 @@
         .topElement {
             padding-top: 15px;
         }
-
-        .firstLevelPadding {
-            padding-left: 5%;
-        }
-
-        .secondLevelPadding {
-            padding-left: 10%;
-        }
     </ui:style>
 
     <d:SimpleDialogPanel ui:field="mainPanel" width="845px" height="565px">
@@ -147,29 +139,29 @@
                                         <g:Label ui:field="externalLabel" addStyleNames="{style.headerLabel}"/>
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                <b:Row>
                                     <e:ListModelListBoxEditor ui:field="externalProviderEditor" usePatternFly="true"
                                                               labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                <b:Row>
                                     <e:ListModelListBoxEditor ui:field="portSecuritySelectorEditor"
                                                                  usePatternFly="true" labelColSize="SM_6"
                                                                  widgetColSize="SM_6"/>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                <b:Row>
                                     <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="physicalNetworkEditor"
                                                                       usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                <b:Row>
                                     <b:Column size="SM_12">
                                         <g:Label ui:field="physicalNetworkLabel"
                                                  addStyleNames="{style.headerLabel}"
                                                  text="{constants.physicalNetworkLabel}"  />
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.secondLevelPadding}">
+                                <b:Row>
                                     <b:Column size="SM_6">
                                         <ge:EntityModelRadioButtonEditor
                                                 ui:field="physicalNetworkDatacenterRadioButtonEditor"
@@ -181,7 +173,7 @@
                                                 ui:field="datacenterPhysicalNetworkEditor" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
-                                <b:Row addStyleNames="{style.secondLevelPadding}">
+                                <b:Row>
                                     <b:Column size="SM_6">
                                         <ge:EntityModelRadioButtonEditor
                                                 ui:field="physicalNetworkCustomRadioButtonEditor"
