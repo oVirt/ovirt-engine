@@ -81,14 +81,36 @@ public class NumaSettingFactory {
     }
 
     private static String buildStringFromListForNuma(Collection<Integer> list) {
-        if (!list.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (Integer item : list) {
-                sb.append(item);
-                sb.append(",");
-            }
-            return sb.deleteCharAt(sb.length() - 1).toString();
+        if (list.isEmpty()) {
+            return "";
         }
-        return "";
+        StringBuilder sb = new StringBuilder();
+        int blockStart = -1;
+        int blockEnd = -1;
+        for (Integer item : list) {
+            if (blockStart == -1) {
+                blockEnd = blockStart = item;
+            } else if (blockEnd + 1 == item) {
+                ++blockEnd;
+            } else {
+                buildBlock(sb, blockStart, blockEnd);
+                blockEnd = blockStart = item;
+            }
+        }
+        if (blockStart != -1) {
+            buildBlock(sb, blockStart, blockEnd);
+        }
+        return sb.deleteCharAt(sb.length() - 1).toString();
+    }
+
+    private static void buildBlock(StringBuilder sb, int blockStart, int blockEnd) {
+        sb.append(blockStart);
+        if (blockStart == blockEnd) {
+            sb.append(",");
+        } else {
+            sb.append("-");
+            sb.append(blockEnd);
+            sb.append(",");
+        }
     }
 }

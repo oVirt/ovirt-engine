@@ -38,7 +38,7 @@ public class NumaSettingFactoryTest {
         assertTrue(vmNumaNodesSetting.get(0).containsKey(VdsProperties.NUMA_NODE_INDEX));
         assertEquals(0, vmNumaNodesSetting.get(0).get(VdsProperties.NUMA_NODE_INDEX));
         assertTrue(vmNumaNodesSetting.get(0).containsKey(VdsProperties.NUMA_NODE_CPU_LIST));
-        assertEquals("0,1,2,3", vmNumaNodesSetting.get(0).get(VdsProperties.NUMA_NODE_CPU_LIST));
+        assertEquals("0-3", vmNumaNodesSetting.get(0).get(VdsProperties.NUMA_NODE_CPU_LIST));
         assertTrue(vmNumaNodesSetting.get(1).containsKey(VdsProperties.VM_NUMA_NODE_MEM));
         assertEquals("1024", vmNumaNodesSetting.get(1).get(VdsProperties.VM_NUMA_NODE_MEM));
     }
@@ -49,9 +49,9 @@ public class NumaSettingFactoryTest {
                 NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, vdsNumaNodes);
         assertEquals(8, cpuPinning.size());
         assertTrue(cpuPinning.containsKey("3"));
-        assertEquals("0,1,2,3", cpuPinning.get("3"));
+        assertEquals("0-3", cpuPinning.get("3"));
         assertTrue(cpuPinning.containsKey("7"));
-        assertEquals("4,5,6,7", cpuPinning.get("7"));
+        assertEquals("4-7", cpuPinning.get("7"));
     }
 
     @Test
