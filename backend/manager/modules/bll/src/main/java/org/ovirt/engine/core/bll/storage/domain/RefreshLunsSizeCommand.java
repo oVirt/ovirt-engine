@@ -215,7 +215,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     }
 
     protected VDSReturnValue getStatsForDomain() {
-        Optional<VDS> vds = getAllRunningVdssInPool().stream().findFirst();
+        Optional<VDS> vds = getAllRunningVdssInPool().stream().filter(VDS::isSpm).findFirst();
         if (!vds.isPresent()) {
             return null;
         }
