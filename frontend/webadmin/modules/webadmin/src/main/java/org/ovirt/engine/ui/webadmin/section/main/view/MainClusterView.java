@@ -81,6 +81,7 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                     return object.getStoragePoolName();
                 }
             };
+            dataCenterColumn.makeSortable(ClusterConditionFieldAutoCompleter.DATACENTER);
             getTable().addColumn(dataCenterColumn, constants.dcCluster(), "150px"); //$NON-NLS-1$
         }
 
@@ -90,6 +91,7 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                 return object.getCompatibilityVersion().getValue();
             }
         };
+        versionColumn.makeSortable(ClusterConditionFieldAutoCompleter.COMPATIBILITY_LEVEL);
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "150px"); //$NON-NLS-1$
 
         AbstractTextColumn<Cluster> descColumn = new AbstractTextColumn<Cluster>() {
@@ -108,6 +110,7 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                     return object.getCpuName();
                 }
             };
+            cpuTypeColumn.makeSortable(ClusterConditionFieldAutoCompleter.CPU_TYPE);
             getTable().addColumn(cpuTypeColumn, constants.cpuTypeCluster(), "150px"); //$NON-NLS-1$
         }
 
