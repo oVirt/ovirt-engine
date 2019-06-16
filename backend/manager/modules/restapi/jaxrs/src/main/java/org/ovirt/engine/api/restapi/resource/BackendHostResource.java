@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -225,7 +226,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response syncAllNetworks(Action action) {
         return doAction(ActionType.SyncAllHostNetworks,
-                new VdsActionParameters(guid),
+                new PersistentHostSetupNetworksParameters(guid),
                 action);
     }
 

@@ -12,19 +12,18 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 
-public class SyncAllHostNetworksCommand extends VdsCommand {
+public class SyncAllHostNetworksCommand<T extends PersistentHostSetupNetworksParameters> extends VdsCommand<T> {
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;
 
-    public SyncAllHostNetworksCommand(VdsActionParameters parameters, CommandContext commandContext) {
+    public SyncAllHostNetworksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
@@ -59,8 +58,8 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
             networkAttachment.setOverrideConfiguration(true);
         }
         parameters.setNetworkAttachments(unSyncNetworkAttachments);
-        parameters.setSequence(parameters.getSequence() + 1);
-        parameters.setTotal(parameters.getTotal() + 1);
+        parameters.setTotal(getParameters().getTotal());
+        parameters.setSequence(getParameters().getSequence());
         parameters.setCommitOnSuccess(true);
         return parameters;
     }

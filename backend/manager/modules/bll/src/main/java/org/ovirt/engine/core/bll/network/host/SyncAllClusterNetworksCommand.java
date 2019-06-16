@@ -6,6 +6,7 @@ import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_NOTHING_TO_
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -48,9 +49,10 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
     @Override
     protected void executeCommand() {
         if (outOfSyncHostsExist()) {
+            AtomicInteger count = new AtomicInteger(1);
             List<ActionParametersBase> params = vdsIds.stream()
-                    .map(VdsActionParameters::new)
-                    .collect(Collectors.toList());
+                .map(id -> new PersistentHostSetupNetworksParameters(id, vdsIds.size(), count.getAndIncrement()))
+                .collect(Collectors.toList());
             runInternalMultipleActions(ActionType.SyncAllHostNetworks, params);
         }
         setSucceeded(true);
