@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -434,7 +434,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         }
         getWindow().startProgress();
         Frontend.getInstance().runAction(ActionType.SyncAllHostNetworks,
-                new VdsActionParameters(getEntity().getId()),
+                new PersistentHostSetupNetworksParameters(getEntity().getId()),
                 result -> {
                     getWindow().stopProgress();
                     cancel();

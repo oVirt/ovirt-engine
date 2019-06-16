@@ -15,7 +15,13 @@ public class PersistentHostSetupNetworksParameters extends HostSetupNetworksPara
     }
 
     public PersistentHostSetupNetworksParameters(Guid hostId) {
+        this(hostId, 1, 1);
+    }
+
+    public PersistentHostSetupNetworksParameters(Guid hostId, int total, int sequence) {
         super(hostId);
+        this.total = total;
+        this.sequence = sequence;
     }
 
     public int getSequence() {
