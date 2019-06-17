@@ -205,6 +205,7 @@ class Statement(base.Base):
         database=None,
         ownConnection=False,
         transaction=True,
+        logResult=True,
     ):
         # autocommit member is available at >= 2.4.2
         def __backup_autocommit(connection):
@@ -289,7 +290,7 @@ class Statement(base.Base):
             if _connection is not None:
                 _connection.close()
 
-        self.logger.debug('Result: %s', ret)
+        self.logger.debug('Result: %s', ret if logResult else 'Not logged')
         return ret
 
 
