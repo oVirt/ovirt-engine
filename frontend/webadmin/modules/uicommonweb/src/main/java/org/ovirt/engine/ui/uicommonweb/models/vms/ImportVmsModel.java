@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvaVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -92,7 +92,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private ListModel<VDS> hosts;
     private EntityModel<String> ovaPath;
-    private Map<String, String> vmNameToOva;
 
     private EntityModel<String> xenUri;
     private ListModel<VDS> xenProxyHosts;
@@ -233,7 +232,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromOvaModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
             importFromOvaModel.setIsoName(getOvaPath().getEntity());
             importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
-            importFromOvaModel.setVmNameToOva(vmNameToOva);
+            importFromOvaModel.setVmNameToOva(getVmNameToOva());
             selectedImportVmModel = importFromOvaModel;
             break;
         case XEN:
@@ -494,6 +493,18 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }
     }
 
+    public void validateImportedVms() {
+        if (importedVmModels == null || importedVmModels.getItems() == null) {
+            return;
+        }
+        clearProblem();
+        int setSize = importedVmModels.getItems().stream().map(e -> e.getEntity()).collect(Collectors.toSet()).size();
+        int listSize = importedVmModels.getItems().size();
+        if (setSize != listSize) {
+            setError(messages.noVmNameDuplicatesAllowed());
+        }
+    }
+
     private void clearVms() {
         importedVmModels.setItems(null);
         externalVmModels.setItems(null);
@@ -589,10 +600,8 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         startProgress();
         AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery<>(returnValue -> {
             if (returnValue.getSucceeded()) {
-                Map<VM, String> vmToOva = returnValue.getReturnValue();
-                vmNameToOva = vmToOva.entrySet().stream()
-                        .collect(Collectors.toMap(e -> e.getKey().getName(), Entry::getValue));
-                updateVms(vmToOva.keySet());
+                Map<String, VM> ovaToVm = returnValue.getReturnValue();
+                updateVmsFromOva(ovaToVm);
             } else {
                 setError(messages.failedToLoadOva(getOvaPath().getEntity()));
             }
@@ -784,11 +793,25 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         stopProgress();
     }
 
+    private void updateVmsFromOva(Map<String, VM> vms) {
+        clearVms();
+        externalVmModels.setItems(vms.entrySet().stream().map(e -> new OvaVmModel(e.getKey(), e.getValue())).collect(Collectors.toList()));
+        stopProgress();
+    }
+
     public List<VM> getVmsToImport() {
         return importedVmModels.getItems()
                 .stream()
                 .map(EntityModel::getEntity)
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, String> getVmNameToOva() {
+        return importedVmModels.getItems()
+            .stream()
+            .filter(e -> e instanceof OvaVmModel)
+            .map(e -> (OvaVmModel) e)
+            .collect(Collectors.toMap(e -> e.getEntity().getName(), e -> e.getOvaFileName()));
     }
 
     private void addImport() {
@@ -888,6 +911,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void setExternalVmModels(SortedListModel<EntityModel<VM>> externalVmModels) {
         this.externalVmModels = externalVmModels;
+        this.externalVmModels.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            validateImportedVms();
+        });
     }
 
     public SortedListModel<EntityModel<VM>> getImportedVmModels() {
@@ -896,6 +922,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void setImportedVmModels(SortedListModel<EntityModel<VM>> importedVmModels) {
         this.importedVmModels = importedVmModels;
+        this.importedVmModels.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            validateImportedVms();
+        });
     }
 
     public void clearVmModelsExceptItems() {

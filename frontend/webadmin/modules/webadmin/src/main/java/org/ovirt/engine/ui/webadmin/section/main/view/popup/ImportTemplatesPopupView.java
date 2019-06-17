@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvaTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplatesModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -146,6 +147,9 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
         externalTemplates.addColumn(new AbstractTextColumn<EntityModel<VmTemplate>>() {
             @Override
             public String getValue(EntityModel<VmTemplate> externalVmModel) {
+                if (externalVmModel instanceof OvaTemplateModel) {
+                    return externalVmModel.getEntity().getName() + " (" + ((OvaTemplateModel) externalVmModel).getOvaFileName() + ")";//$NON-NLS-1$ //$NON-NLS-2$
+                }
                 return externalVmModel.getEntity().getName();
             }
         }, constants.name());
@@ -153,6 +157,9 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
         importedTemplates.addColumn(new AbstractTextColumn<EntityModel<VmTemplate>>() {
             @Override
             public String getValue(EntityModel<VmTemplate> externalVmModel) {
+                if (externalVmModel instanceof OvaTemplateModel) {
+                    return externalVmModel.getEntity().getName() + " (" + ((OvaTemplateModel) externalVmModel).getOvaFileName() + ")";//$NON-NLS-1$ //$NON-NLS-2$
+                }
                 return externalVmModel.getEntity().getName();
             }
         }, constants.name());
@@ -179,6 +186,7 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
 
     private void updateErrorAndWarning(ImportTemplatesModel model) {
         errorRow.setVisible(false);
+        enableDefaultCommand(model, true);
         String message = model.getProblemDescription().getEntity();
         if (message == null) {
             return;
@@ -187,6 +195,7 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
             errorMessage.setType(AlertType.WARNING);
         } else {
             errorMessage.setType(AlertType.DANGER);
+            enableDefaultCommand(model, false);
         }
         errorMessage.setText(message);
         errorRow.setVisible(true);
@@ -215,5 +224,11 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
     @Override
     public HasEnabled getLoadOvaButton() {
         return loadOvaButton;
+    }
+
+    private void enableDefaultCommand(ImportTemplatesModel model, boolean enable) {
+        if (model.getDefaultCommand() != null) {
+            model.getDefaultCommand().setIsExecutionAllowed(enable);
+        }
     }
 }

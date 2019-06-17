@@ -68,23 +68,25 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
         return ansibleReturnValue.getStdout();
     }
 
-    private Map<T, String> parseOvfs(String stdout) {
+    private Map<String, T> parseOvfs(String stdout) {
         if (stdout.startsWith("{")) {
             stdout = stdout.substring(1, stdout.length()-1);
             return Arrays.stream(stdout.split("::"))
-                    .map(str -> {
-                        int delimiter = str.indexOf('=');
-                        return new String[] { str.substring(0, delimiter), str.substring(delimiter+1) };
-                    })
-                    .map(arr -> new Object[] { parseOvf(arr[1]), arr[0]})
+                    .map(this::splitToFileNameAndOvf)
+                    .map(arr -> new Object[] { parseOvf(arr[1]), arr[0] })
                     .filter(arr -> arr[0] != null)
-                    .collect(Collectors.toMap(arr -> (T) arr[0], arr -> (String) arr[1]));
+                    .collect(Collectors.toMap(arr -> (String) arr[1], arr -> (T) arr[0]));
         } else {
-            T vm = parseOvf(stdout);
-            return new HashMap<>(Collections.singletonMap(vm, null));
+            String[] splitted = splitToFileNameAndOvf(stdout);
+            T vm = parseOvf(splitted[1]);
+            return new HashMap<>(Collections.singletonMap(splitted[0], vm));
         }
     }
 
     protected abstract T parseOvf(String ovf);
     protected abstract VmEntityType getEntityType();
+
+    private String[] splitToFileNameAndOvf(String str) {
+        return str.split("=", 2);
+    }
 }

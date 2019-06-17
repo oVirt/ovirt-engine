@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvaTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EntityModelLexoNumericNameableComparator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
@@ -71,7 +72,6 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
 
     private ListModel<VDS> hosts;
     private EntityModel<String> ovaPath;
-    private Map<String, String> templateNameToOva;
 
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
@@ -164,6 +164,9 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
 
     public void setImportedTemplatesModels(SortedListModel<EntityModel<VmTemplate>> importedTemplatesModels) {
         this.importedTemplatesModels = importedTemplatesModels;
+        this.importedTemplatesModels.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            validateImportedTemplates();
+        });
     }
 
     public SortedListModel<EntityModel<VmTemplate>> getExternalTemplatesModels() {
@@ -172,6 +175,9 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
 
     public void setExternalTemplatesModels(SortedListModel<EntityModel<VmTemplate>> externalTemplatesModels) {
         this.externalTemplatesModels = externalTemplatesModels;
+        this.externalTemplatesModels.getItemsChangedEvent().addListener((ev, sender, args) -> {
+            validateImportedTemplates();
+        });
     }
 
     public void setExportDomain(EntityModel<StorageDomain> exportDomain) {
@@ -247,6 +253,18 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         clearProblem();
         if (importSources.getSelectedItem() == ImportSource.EXPORT_DOMAIN && exportDomain.getEntity() == null) {
             setError(constants.notAvailableWithNoActiveExportDomain());
+        }
+    }
+
+    public void validateImportedTemplates() {
+        if (importedTemplatesModels == null || importedTemplatesModels.getItems() == null) {
+            return;
+        }
+        clearProblem();
+        int setSize = importedTemplatesModels.getItems().stream().map(e -> e.getEntity()).collect(Collectors.toSet()).size();
+        int listSize = importedTemplatesModels.getItems().size();
+        if (setSize != listSize) {
+            setError(messages.noTemplateNameDuplicatesAllowed());
         }
     }
 
@@ -405,7 +423,7 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
             importFromOvaModel.init(templates, getDataCenters().getSelectedItem().getId());
             importFromOvaModel.setIsoName(getOvaPath().getEntity());
             importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
-            importFromOvaModel.setTemplateNameToOva(templateNameToOva);
+            importFromOvaModel.setTemplateNameToOva(getTemplateNameToOva());
             selectedImportVmModel = importFromOvaModel;
             break;
         default:
@@ -475,6 +493,14 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
                 .collect(Collectors.toList());
     }
 
+    public Map<String, String> getTemplateNameToOva() {
+        return importedTemplatesModels.getItems()
+            .stream()
+            .filter(e -> e instanceof OvaTemplateModel)
+            .map(e -> (OvaTemplateModel) e)
+            .collect(Collectors.toMap(e -> e.getEntity().getName(), e -> e.getOvaFileName()));
+    }
+
     @Override
     public void executeCommand(UICommand command) {
         if (getAddImportCommand().equals(command)) {
@@ -516,6 +542,16 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         stopProgress();
     }
 
+    private void updateTemplatesForOva(Map<String, VmTemplate> templates) {
+        clearTemplates();
+        externalTemplatesModels.setItems(
+            templates.entrySet()
+                .stream()
+                .map(e -> new OvaTemplateModel(e.getKey(), e.getValue()))
+                .collect(Collectors.toList()));
+        stopProgress();
+    }
+
     public void loadVmFromOva() {
         clearForLoad();
         if (!validateOvaConfiguration()) {
@@ -525,10 +561,8 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         startProgress();
         AsyncDataProvider.getInstance().getTemplateFromOva(new AsyncQuery<>(returnValue -> {
             if (returnValue.getSucceeded()) {
-                Map<VmTemplate, String> templateToOva = returnValue.getReturnValue();
-                templateNameToOva = new HashMap<>();
-                templateToOva.forEach((template, ova) -> templateNameToOva.put(template.getName(), ova));
-                updateTemplates(templateToOva.keySet());
+                Map<String, VmTemplate> templateToOva = returnValue.getReturnValue();
+                updateTemplatesForOva(templateToOva);
             } else {
                 setError(messages.failedToLoadOva(getOvaPath().getEntity()));
             }
