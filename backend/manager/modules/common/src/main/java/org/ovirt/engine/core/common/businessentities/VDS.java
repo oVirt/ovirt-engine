@@ -244,6 +244,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setNetworkOperationInProgress(isNetworkOperationInProgress());
         vds.setIsDefaultRouteRoleNetworkAttached(isDefaultRouteRoleNetworkAttached());
         vds.setClusterSmtDisabled(isClusterSmtDisabled());
+        vds.setTscFrequency(getTscFrequency());
         return vds;
     }
 
@@ -1755,5 +1756,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         int threads = getCpuThreads() == null ? 1 : getCpuThreads();
         int cores = getCpuCores() == null ? 1 : getCpuCores();
         return threads / cores;
+    }
+
+    public String getTscFrequency() {
+        return vdsDynamic.getTscFrequency();
+    }
+
+    public void setTscFrequency(String tscFrequency) {
+        vdsDynamic.setTscFrequency(tscFrequency);
     }
 }

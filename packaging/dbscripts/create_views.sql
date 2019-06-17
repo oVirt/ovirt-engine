@@ -1811,7 +1811,8 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.backup_enabled AS backup_enabled,
     vds_dynamic.supported_domain_versions AS supported_domain_versions,
     vds_dynamic.supported_block_size AS supported_block_size,
-    cluster.smt_disabled AS cluster_smt_disabled
+    cluster.smt_disabled AS cluster_smt_disabled,
+    vds_dynamic.tsc_frequency AS tsc_frequency
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1960,7 +1961,8 @@ SELECT cluster.cluster_id,
     vds_dynamic.backup_enabled AS backup_enabled,
     vds_dynamic.supported_domain_versions AS supported_domain_versions,
     vds_dynamic.supported_block_size AS supported_block_size,
-    cluster.smt_disabled AS cluster_smt_disabled
+    cluster.smt_disabled AS cluster_smt_disabled,
+    vds_dynamic.tsc_frequency AS tsc_frequency
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

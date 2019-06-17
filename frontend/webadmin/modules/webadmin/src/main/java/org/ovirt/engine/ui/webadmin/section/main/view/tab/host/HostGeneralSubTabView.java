@@ -109,6 +109,8 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     StringValueLabel coresPerSocket = new StringValueLabel();
     @Ignore
     StringValueLabel threadsPerCore = new StringValueLabel();
+    @Ignore
+    StringValueLabel tscFrequency = new StringValueLabel();
 
     @Path("OS")
     StringValueLabel oS = new StringValueLabel();
@@ -241,6 +243,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         hardwareFormBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2), 4, 8);
         hardwareFormBuilder.addFormItem(new FormItem(constants.hardwareSerialNumberGeneral(), hardwareSerialNumber, 1, 2), 4, 8);
         hardwareFormBuilder.addFormItem(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 2, 2), 4, 8);
+        hardwareFormBuilder.addFormItem(new FormItem(constants.tscFrequency(), tscFrequency, 3, 2), 4, 8);
     }
 
     private void populateGeneralFormPanel(boolean virtSupported) {
@@ -333,6 +336,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         numberOfSockets.setValue(model.getNumberOfSockets());
         coresPerSocket.setValue(model.getCoresPerSocket());
         threadsPerCore.setValue(model.getThreadsPerCore());
+        tscFrequency.setValue(model.getTscFrequency());
     }
 
     @Override

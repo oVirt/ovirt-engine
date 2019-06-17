@@ -1010,6 +1010,7 @@ public class VdsBrokerObjectsBuilder {
             vds.setSupportedDomainVersions(domain_versions);
         }
         vds.setSupportedBlockSize((Map<String, Object>) struct.get(VdsProperties.supported_block_size));
+        vds.setTscFrequency(assignStringValue(struct, VdsProperties.TSC_FREQUENCY));
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

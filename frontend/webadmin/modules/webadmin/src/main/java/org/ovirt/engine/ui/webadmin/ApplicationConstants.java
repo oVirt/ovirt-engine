@@ -3514,4 +3514,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String bondLengthNameWarning();
 
     String physicalNetworkCustomInfo();
+
+    String tscFrequency();
 }

@@ -219,6 +219,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Map<String, Object> supportedBlockSize;
 
+    private String tscFrequency;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -914,6 +916,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setSupportedBlockSize(Map<String, Object> supportedBlockSize) {
         this.supportedBlockSize = supportedBlockSize;
+    }
+
+    public String getTscFrequency() {
+        return tscFrequency;
+    }
+
+    public void setTscFrequency(String tscFrequency) {
+        this.tscFrequency = tscFrequency;
     }
 
     @Override
