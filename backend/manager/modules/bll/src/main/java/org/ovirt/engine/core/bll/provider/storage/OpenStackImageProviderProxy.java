@@ -92,7 +92,9 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     protected Glance getClient() {
         if (client == null) {
             client = new Glance(getProvider().getUrl() + API_VERSION);
-            client.setTokenProvider(getTokenProvider());
+            if (getProvider().isRequiringAuthentication()) {
+                setClientTokenProvider(client);
+            }
         }
         return client;
     }

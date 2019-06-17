@@ -57,50 +57,48 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     @Override
     protected Cinder getClient() {
-        return getClient("");
-    }
-
-    protected Cinder getClient(String tenantId) {
         if (client == null) {
-            client = new Cinder(getProvider().getUrl().concat(API_VERSION).concat(tenantId));
-            client.setTokenProvider(getTokenProvider());
+            client = new Cinder(getProvider().getUrl() + API_VERSION);
+            if (getProvider().isRequiringAuthentication()) {
+                setClientTokenProvider(client);
+            }
         }
         return client;
     }
 
     public String createSnapshot(SnapshotForCreate snapshotForCreate) {
-        Snapshot retCinderSnapshot = getClient(getTenantId()).snapshots().create(snapshotForCreate).execute();
+        Snapshot retCinderSnapshot = getClient().snapshots().create(snapshotForCreate).execute();
         return retCinderSnapshot.getId();
     }
 
     public void deleteSnapshot(String snapshotId) {
-        getClient(getTenantId()).snapshots().delete(snapshotId).execute();
+        getClient().snapshots().delete(snapshotId).execute();
     }
 
     public String cloneVolumeFromSnapshot(VolumeForCreate volumeForCreate) {
-        Volume retCinderVolume = getClient(getTenantId()).volumes().create(volumeForCreate).execute();
+        Volume retCinderVolume = getClient().volumes().create(volumeForCreate).execute();
         return retCinderVolume.getId();
     }
 
     public String createVolume(VolumeForCreate volumeForCreate) {
-        Volume retCinderVolume = getClient(getTenantId()).volumes().create(volumeForCreate).execute();
+        Volume retCinderVolume = getClient().volumes().create(volumeForCreate).execute();
         return retCinderVolume.getId();
     }
 
     public void deleteVolume(String volumeId) {
-        getClient(getTenantId()).volumes().delete(volumeId).execute();
+        getClient().volumes().delete(volumeId).execute();
     }
 
     public void updateVolume(String volumeId, VolumeForUpdate volumeForUpdate) {
-        getClient(getTenantId()).volumes().update(volumeId, volumeForUpdate).execute();
+        getClient().volumes().update(volumeId, volumeForUpdate).execute();
     }
 
     public void extendVolume(String volumeId, int newSize) {
-        getClient(getTenantId()).volumes().extend(volumeId, newSize).execute();
+        getClient().volumes().extend(volumeId, newSize).execute();
     }
 
     public CinderConnectionInfo initializeConnectionForVolume(String volumeId, ConnectionForInitialize connectionForInitialize) {
-        ConnectionInfo connectionInfo = getClient(getTenantId()).volumes().initializeConnection(volumeId, connectionForInitialize).execute();
+        ConnectionInfo connectionInfo = getClient().volumes().initializeConnection(volumeId, connectionForInitialize).execute();
         CinderConnectionInfo cinderConnectionInfo = new CinderConnectionInfo();
         cinderConnectionInfo.setDriverVolumeType(connectionInfo.getDriverVolumeType());
         cinderConnectionInfo.setData(connectionInfo.getData());
@@ -108,24 +106,24 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     }
 
     public Volume getVolumeById(String id) {
-        return getClient(getTenantId()).volumes().show(id).execute();
+        return getClient().volumes().show(id).execute();
     }
 
     public Snapshot getSnapshotById(String id) {
-        return getClient(getTenantId()).snapshots().show(id).execute();
+        return getClient().snapshots().show(id).execute();
     }
 
     public Limits getLimits() {
-        return getClient(getTenantId()).limits().list().execute();
+        return getClient().limits().list().execute();
     }
 
     public List<Volume> getVolumes() {
-        return getClient(getTenantId()).volumes().list(true).execute().getList();
+        return getClient().volumes().list(true).execute().getList();
     }
 
     public List<CinderVolumeType> getVolumeTypes() {
         ArrayList<CinderVolumeType> cinderVolumeTypes = new ArrayList<>();
-        OpenStackRequest<VolumeTypes> listRequest = getClient(getTenantId()).volumeTypes().list();
+        OpenStackRequest<VolumeTypes> listRequest = getClient().volumeTypes().list();
 
         VolumeTypes volumeTypes = listRequest.execute();
         for (VolumeType volumeType : volumeTypes) {

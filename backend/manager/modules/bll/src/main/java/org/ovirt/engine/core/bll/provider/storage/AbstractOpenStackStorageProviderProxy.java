@@ -6,6 +6,7 @@ import org.ovirt.engine.core.bll.context.ChildCompensationWrapper;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
+import org.ovirt.engine.core.bll.provider.network.openstack.OpenStackTokenProviderFactory;
 import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -30,7 +31,6 @@ import com.woorea.openstack.base.client.OpenStackClient;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
-import com.woorea.openstack.keystone.model.Access;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 
 public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackClient, T extends OpenStackProviderProperties, V extends ProviderValidator> implements ProviderProxy<V> {
@@ -73,27 +73,13 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
 
     protected OpenStackTokenProvider getTokenProvider() {
         if (tokenProvider == null && getProvider().isRequiringAuthentication()) {
-            String tenantName = provider.getAdditionalProperties().getTenantName();
-            tokenProvider = getKeystoneTokenProvider().getProviderByTenant(tenantName);
+            tokenProvider = OpenStackTokenProviderFactory.create(getProvider());
         }
         return tokenProvider;
     }
 
-    protected KeystoneTokenProvider getKeystoneTokenProvider() {
-        if (keystoneTokenProvider == null) {
-            keystoneTokenProvider = new KeystoneTokenProvider(getProvider().getAuthUrl(),
-                    getProvider().getUsername(), getProvider().getPassword());
-        }
-        return keystoneTokenProvider;
-    }
-
-    protected Access getAccess() {
-        String tenantName = provider.getAdditionalProperties().getTenantName();
-        return getKeystoneTokenProvider().getAccessByTenant(tenantName);
-    }
-
-    protected String getTenantId() {
-        return getAccess().getToken().getTenant().getId();
+    protected void setClientTokenProvider(OpenStackClient client) {
+        client.setTokenProvider(OpenStackTokenProviderFactory.create(getProvider()));
     }
 
     protected Guid addStorageDomain(StorageType storageType, StorageDomainType storageDomainType) {
