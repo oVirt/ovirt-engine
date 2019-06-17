@@ -381,6 +381,8 @@ public interface UIMessages extends Messages {
 
     String bracketsWithGB(int value);
 
+    String criticalSpaceActionBlockerBiggerThanStorageDomain(int value);
+
     String confirmDeleteFenceAgent(String agentDisplayString);
 
     String confirmDeleteAgentGroup(String agents);
