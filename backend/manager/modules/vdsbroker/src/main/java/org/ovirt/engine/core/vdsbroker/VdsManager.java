@@ -263,6 +263,7 @@ public class VdsManager {
                 setIsSetNonOperationalExecuted(false);
                 synchronized (this) {
                     refreshCachedVds();
+                    setMonitoringNeeded();
                     if (cachedVds == null) {
                         log.error("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for '{}'",
                                 getVdsId());
@@ -373,7 +374,6 @@ public class VdsManager {
 
     private void refreshCachedVds() {
         cachedVds = vdsDao.get(getVdsId());
-        setMonitoringNeeded();
     }
 
     /**
