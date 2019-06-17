@@ -1,8 +1,8 @@
 - name: Check for firewalld rules file
-  local_action:
-    module: stat
+  stat:
     path: "{{ role_path }}/vars/{{ firewald_rules_file }}"
-  register: firewalld_rule_file_stat
+    register: firewalld_rule_file_stat
+    delegate_to: localhost
 
 - block:
   - name: Include firewalld rules
