@@ -1003,7 +1003,7 @@ public class SchedulingManager implements BackendService {
         runInternalFunctions(selector, hostList, vmGroup, context);
 
         if (Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled) &&
-                !context.getExternalFilters().isEmpty()) {
+                !context.getExternalScoreFunctions().isEmpty()) {
             runExternalFunctions(selector, hostList, vmGroup, context);
         }
 
