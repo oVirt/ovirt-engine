@@ -2929,6 +2929,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String descriptionAffinityGroup();
 
+    String priorityAffinityGroup();
+
     String polarityAffinityGroup();
 
     String hostPolarityAffinityGroup();
@@ -2954,6 +2956,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String affinityGroupStatusBroken();
 
     String affinityGroupNameLabel();
+
+    String affinityGroupPriorityLabel();
+
+    String affinityGroupPriorityInfo();
 
     String affinityGroupPolarityLabel();
 
