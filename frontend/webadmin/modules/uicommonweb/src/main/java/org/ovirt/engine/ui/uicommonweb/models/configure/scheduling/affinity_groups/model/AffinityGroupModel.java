@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.HostsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.DoubleValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -30,6 +31,7 @@ public abstract class AffinityGroupModel extends Model {
 
     private EntityModel<String> name;
     private EntityModel<String> description;
+    private EntityModel<String> priority;
     private ListModel<EntityAffinityRule> vmAffinityRule;
     private EntityModel<Boolean> vmAffinityEnforcing;
     private ListModel<EntityAffinityRule> hostAffinityRule;
@@ -51,6 +53,7 @@ public abstract class AffinityGroupModel extends Model {
 
         setName(new EntityModel<>(getAffinityGroup().getName()));
         setDescription(new EntityModel<>(getAffinityGroup().getDescription()));
+        setPriority(new EntityModel<>(Double.toString(getAffinityGroup().getPriorityAsDouble())));
 
         // Set VM details
         setVmAffinityRule(new ListModel<EntityAffinityRule>());
@@ -125,6 +128,14 @@ public abstract class AffinityGroupModel extends Model {
         this.description = description;
     }
 
+    public EntityModel<String> getPriority() {
+        return priority;
+    }
+
+    public void setPriority(EntityModel<String> priority) {
+        this.priority = priority;
+    }
+
     public ListModel<EntityAffinityRule> getVmAffinityRule() {
         return vmAffinityRule;
     }
@@ -190,6 +201,7 @@ public abstract class AffinityGroupModel extends Model {
         group.setName(getName().getEntity());
         group.setDescription(getDescription().getEntity());
         group.setClusterId(clusterId);
+        group.setPriorityFromDouble(Double.parseDouble(getPriority().getEntity()));
 
         // Save VM details
         group.setVmEnforcing(getVmAffinityEnforcing().getEntity());
@@ -220,8 +232,9 @@ public abstract class AffinityGroupModel extends Model {
                 new LengthValidation(255),
                 new I18NNameValidation() });
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
+        getPriority().validateEntity(new IValidation[] { new DoubleValidation() });
 
-        return getName().getIsValid() && getDescription().getIsValid();
+        return getName().getIsValid() && getDescription().getIsValid() && getPriority().getIsValid();
     }
 
     @Override

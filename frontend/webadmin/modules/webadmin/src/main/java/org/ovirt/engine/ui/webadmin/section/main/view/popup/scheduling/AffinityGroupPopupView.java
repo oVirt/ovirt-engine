@@ -7,11 +7,13 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -51,6 +53,14 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @Path(value = "description.entity")
     @WithElementId("description")
     StringEntityModelTextBoxEditor descriptionEditor;
+
+    @Path(value = "priority.entity")
+    @WithElementId("priority")
+    StringEntityModelTextBoxOnlyEditor priorityEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo priorityEditorWithInfo;
 
     @Path(value = "vmAffinityRule.selectedItem")
     @UiField(provided=true)
@@ -111,6 +121,13 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     }
 
     private void initEditors() {
+        priorityEditor = new StringEntityModelTextBoxOnlyEditor();
+        EnableableFormLabel priorityLabel = new EnableableFormLabel();
+        priorityLabel.setText(constants.affinityGroupPriorityLabel());
+
+        priorityEditorWithInfo = new EntityModelWidgetWithInfo(priorityLabel, priorityEditor);
+        priorityEditorWithInfo.setExplanation(templates.italicText(constants.affinityGroupPriorityInfo()));
+
         vmAffinityRuleEditor = new ListModelListBoxEditor<>(new EnumRenderer<EntityAffinityRule>());
         vmAffinityRuleEditor.hideLabel();
         vmAffinityRuleEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupVmPolarityInfo()));

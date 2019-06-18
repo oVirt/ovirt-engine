@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -43,6 +44,15 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         };
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionAffinityGroup(), "150px"); //$NON-NLS-1$
+
+        AbstractTextColumn<AffinityGroup> priorityColumn = new AbstractTextColumn<AffinityGroup>() {
+            @Override
+            public String getValue(AffinityGroup group) {
+                return Double.toString(group.getPriorityAsDouble());
+            }
+        };
+        priorityColumn.makeSortable(Comparator.comparing(AffinityGroup::getPriority));
+        getTable().addColumn(priorityColumn, constants.priorityAffinityGroup(), "100px"); //$NON-NLS-1$
 
         AbstractBooleanColumn<AffinityGroup> vmPolarityColumn =
                 new AbstractBooleanColumn<AffinityGroup>(constants.positiveAffinity(), constants.negativeAffinity()) {
