@@ -477,8 +477,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             case PAUSED_USER:
                 handlePausedUser(context);
                 break;
-            case CANCELLED:
-                handleCancelled();
+            case CANCELLED_USER:
+                handleCancelledUser();
+                break;
+            case CANCELLED_SYSTEM:
+                handleCancelledSystem();
                 break;
             case FINALIZING_SUCCESS:
                 handleFinalizingSuccess(context);
@@ -486,11 +489,17 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             case FINALIZING_FAILURE:
                 handleFinalizingFailure(context);
                 break;
+            case FINALIZING_CLEANUP:
+                handleFinalizingCleanup(context);
+                break;
             case FINISHED_SUCCESS:
                 handleFinishedSuccess();
                 break;
             case FINISHED_FAILURE:
                 handleFinishedFailure();
+                break;
+            case FINISHED_CLEANUP:
+                handleFinishedCleanup();
                 break;
             }
     }
@@ -747,9 +756,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         handlePaused(context);
     }
 
-    private void handleCancelled() {
-        log.info("Transfer cancelled for {}", getTransferDescription());
-        setAuditLogTypeFromPhase(ImageTransferPhase.CANCELLED);
+    private void handleCancelledUser() {
+        log.info("Transfer cancelled by user for {}", getTransferDescription());
+        setAuditLogTypeFromPhase(ImageTransferPhase.CANCELLED_USER);
+        updateEntityPhase(ImageTransferPhase.FINALIZING_CLEANUP);
+    }
+
+    private void handleCancelledSystem() {
+        log.info("Transfer cancelled by system for {}", getTransferDescription());
+        setAuditLogTypeFromPhase(ImageTransferPhase.CANCELLED_SYSTEM);
         updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
     }
 
@@ -810,7 +825,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private void handleFinalizingFailure(final StateContext context) {
-        log.error("Finalizing failed transfer. {}", getTransferDescription());
+        cleanup(context, true);
+    }
+
+    private void handleFinalizingCleanup(final StateContext context) {
+        cleanup(context, false);
+    }
+
+    private void cleanup(final StateContext context, boolean failure) {
+        if (failure) {
+            log.error("Finalizing failed transfer. {}", getTransferDescription());
+        } else {
+            log.info("Cleaning up after cancelled transfer. {}", getTransferDescription());
+        }
         stopImageTransferSession(context.entity);
         // Setting disk status to ILLEGAL only on upload failure
         // (only if not disk snapshot)
@@ -822,9 +849,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // Teardown is required for all scenarios as we call prepareImage when
         // starting a new session.
         tearDownImage(vdsId, context.entity.getImagedTicketId(), context.entity.getBackupId());
-        updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
-        setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
+        if (failure) {
+            updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
+            setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
+        } else {
+            updateEntityPhase(ImageTransferPhase.FINISHED_CLEANUP);
+            setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_CLEANUP);
+        }
     }
+
 
     private void handleFinishedSuccess() {
         log.info("Transfer was successful. {}", getTransferDescription());
@@ -833,6 +866,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private void handleFinishedFailure() {
         log.error("Transfer failed. {}", getTransferDescription());
+        setCommandStatus(CommandStatus.FAILED);
+    }
+
+    private void handleFinishedCleanup() {
+        log.info("Cleanup after cancelled transfer done. {}", getTransferDescription());
         setCommandStatus(CommandStatus.FAILED);
     }
 
@@ -849,7 +887,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 // In download flows, we can cancel the transfer if there was no activity
                 // for a while, as the download is handled by the client.
                 auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
-                updateEntityPhase(ImageTransferPhase.CANCELLED);
+                updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
             } else {
                 updateEntityPhaseToStoppedBySystem(
                         AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
@@ -1193,7 +1231,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (getParameters().getTransferType() == TransferType.Upload) {
             updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
         } else {
-            updateEntityPhase(ImageTransferPhase.CANCELLED);
+            updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
         }
     }
 
@@ -1245,10 +1283,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         if (phase == ImageTransferPhase.FINISHED_SUCCESS) {
             getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_SUCCEEDED);
-        } else if (phase == ImageTransferPhase.CANCELLED) {
+        } else if (phase == ImageTransferPhase.CANCELLED_SYSTEM || phase == ImageTransferPhase.CANCELLED_USER) {
             getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_CANCELLED);
         } else if (phase == ImageTransferPhase.FINISHED_FAILURE) {
             getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_FAILED);
+        } else if (phase == ImageTransferPhase.FINISHED_CLEANUP) {
+            getParameters().setAuditLogType(AuditLogType.TRANSFER_IMAGE_CLEANED_UP);
         }
     }
 

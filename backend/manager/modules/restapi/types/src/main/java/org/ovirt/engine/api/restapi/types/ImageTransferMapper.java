@@ -96,16 +96,22 @@ public class ImageTransferMapper {
                 return ImageTransferPhase.PAUSED_SYSTEM;
             case PAUSED_USER:
                 return ImageTransferPhase.PAUSED_USER;
-            case CANCELLED:
-                return ImageTransferPhase.CANCELLED;
+            case CANCELLED_SYSTEM:
+                return ImageTransferPhase.CANCELLED_SYSTEM;
+            case CANCELLED_USER:
+                return ImageTransferPhase.CANCELLED_USER;
             case FINALIZING_SUCCESS:
                 return ImageTransferPhase.FINALIZING_SUCCESS;
             case FINALIZING_FAILURE:
                 return ImageTransferPhase.FINALIZING_FAILURE;
+            case FINALIZING_CLEANUP:
+                return ImageTransferPhase.FINALIZING_CLEANUP;
             case FINISHED_SUCCESS:
                 return ImageTransferPhase.FINISHED_SUCCESS;
             case FINISHED_FAILURE:
                 return ImageTransferPhase.FINISHED_FAILURE;
+            case FINISHED_CLEANUP:
+                return ImageTransferPhase.FINISHED_CLEANUP;
             default:
                 throw new IllegalArgumentException("The value \"" + phase + "\" isn't a valid image transfer phase.");
         }

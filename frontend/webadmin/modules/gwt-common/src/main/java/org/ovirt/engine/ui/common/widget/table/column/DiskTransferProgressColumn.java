@@ -88,16 +88,22 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
                 return constants.imageTransferPausedSystem();
             case PAUSED_USER:
                 return constants.imageTransferPausedUser();
-            case CANCELLED:
-                return constants.imageTransferCancelled();
+            case CANCELLED_SYSTEM:
+                return constants.imageTransferCancelledSystem();
+            case CANCELLED_USER:
+                return constants.imageTransferCancelledUser();
             case FINALIZING_SUCCESS:
                 return constants.imageTransferFinalizingSuccess();
             case FINALIZING_FAILURE:
                 return constants.imageTransferFinalizingFailure();
+            case FINALIZING_CLEANUP:
+                return constants.imageTransferFinalizingCleanup();
             case FINISHED_SUCCESS:
                 return constants.imageTransferFinishedSuccess();
             case FINISHED_FAILURE:
                 return constants.imageTransferFinishedFailure();
+            case FINISHED_CLEANUP:
+                return constants.imageTransferFinishedCleanup();
             }
         }
         return constants.imageTransferUnknown();

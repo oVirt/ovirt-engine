@@ -344,11 +344,14 @@ public class UploadImageHandler {
                 // The frontend may not receive these; the backend code iterates over the cancelled and
                 // finalizing states, and the image transfer entity is removed upon upload completion.
                 // In this case, the default case is reached which does largely the same thing.
-                case CANCELLED:
+                case CANCELLED_SYSTEM:
+                case CANCELLED_USER:
                 case FINALIZING_SUCCESS:
                 case FINALIZING_FAILURE:
+                case FINALIZING_CLEANUP:
                 case FINISHED_SUCCESS:
                 case FINISHED_FAILURE:
+                case FINISHED_CLEANUP:
                     log.info("Upload task terminating"); //$NON-NLS-1$
                     setContinuePolling(false);
                     stopJsUpload(UploadState.ENGINE_CANCEL);

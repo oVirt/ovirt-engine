@@ -13,11 +13,14 @@ public enum ImageTransferPhase implements Identifiable {
     RESUMING(3, "Resuming"),
     PAUSED_SYSTEM(4, "Paused by System"),
     PAUSED_USER(5, "Paused by User"),
-    CANCELLED(6, "Cancelled"),
+    CANCELLED_SYSTEM(6, "Cancelled"),
     FINALIZING_SUCCESS(7, "Finalizing Success"),
     FINALIZING_FAILURE(8, "Finalizing Failure"),
     FINISHED_SUCCESS(9, "Finished Success"),
-    FINISHED_FAILURE(10, "Finished Failure");
+    FINISHED_FAILURE(10, "Finished Failure"),
+    CANCELLED_USER(11, "Cancelled by User"),
+    FINALIZING_CLEANUP(12, "Finalizing Cleanup"),
+    FINISHED_CLEANUP(13, "Finished Cleanup");
 
     private int value;
     private String description;

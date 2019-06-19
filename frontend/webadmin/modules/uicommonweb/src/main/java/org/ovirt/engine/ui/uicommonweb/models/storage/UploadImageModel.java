@@ -494,7 +494,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Disk disk : disks) {
             ImageTransfer updates = new ImageTransfer();
-            updates.setPhase(ImageTransferPhase.CANCELLED);
+            updates.setPhase(ImageTransferPhase.CANCELLED_USER);
             TransferImageStatusParameters parameters = new TransferImageStatusParameters();
             parameters.setUpdates(updates);
             parameters.setDiskId(disk.getId());
