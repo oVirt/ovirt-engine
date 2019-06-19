@@ -21,9 +21,11 @@ import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * This command responsible to make snapshot of some Vm mapped to some drive be
@@ -121,11 +123,18 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
             Guid taskId = persistAsyncTaskPlaceHolder(ActionType.RestoreAllSnapshots);
 
-            vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
-                    postDeleteActionHandler.fixParameters(
-                            new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    _imagesToDelete, getDiskImage().isWipeAfterDelete(),
-                                    storageDomainDao.get(storageDomainId).getDiscardAfterDelete(), true)));
+            vdsReturnValue = TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () ->
+                runVdsCommand(VDSCommandType.DestroyImage,
+                        postDeleteActionHandler.fixParameters(new DestroyImageVDSCommandParameters(
+                                storagePoolId,
+                                storageDomainId,
+                                imageGroupId,
+                                _imagesToDelete,
+                                getDiskImage().isWipeAfterDelete(),
+                                storageDomainDao.get(storageDomainId).getDiscardAfterDelete(),
+                                true)))
+            );
+
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalVdsmTaskIdList().add(
