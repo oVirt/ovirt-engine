@@ -493,7 +493,7 @@ public class VmInfoBuildUtilsTest {
         vm.setVmType(VmType.Desktop);
         reset(osRepository);
         when(osRepository.getOsUsbControllerModel(anyInt(), any(), any())).thenReturn(UsbControllerModel.EHCI);
-        assertFalse(underTest.isTabletEnabled(vm));
+        assertTrue(underTest.isTabletEnabled(vm));
 
         // SPICE+VNC -- HighPerformance -- with USB Controller
         vm.setVmType(VmType.HighPerformance);
