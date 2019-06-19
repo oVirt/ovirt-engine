@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
-import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
@@ -255,7 +254,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private boolean removeDeprecatedOvirtEntry(final Guid oVirtId) {
 
         final VDS vds = vdsDao.get(oVirtId);
-        if (vds == null || !VdsHandler.isPendingOvirt(vds)) {
+        if (vds == null) {
             return false;
         }
 

@@ -494,10 +494,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     UserSessionTimeOutInterval(ClientAccessLevel.User),
 
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    RhevhLocalFSPath(ClientAccessLevel.Admin),
-
     @TypeConverterAttribute(String.class)
     UserDefinedVMProperties(ClientAccessLevel.User),
 

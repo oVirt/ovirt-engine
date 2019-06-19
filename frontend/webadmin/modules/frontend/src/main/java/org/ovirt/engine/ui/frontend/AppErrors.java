@@ -177,8 +177,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VDS_CANNOT_UPGRADE_BETWEEN_MAJOR_VERSION();
 
-    String VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE();
-
     String NO_AVAILABLE_UPDATES_FOR_HOST();
 
     String CANNOT_UPGRADE_HOST_WITHOUT_OS();

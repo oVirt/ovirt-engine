@@ -61,7 +61,6 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -75,7 +74,6 @@ import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.HostMaintenanceConfirmationModel;
@@ -514,8 +512,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-
-        getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateAvailableOvirtNodeUpgrades());
 
         getItemsChangedEvent().addListener((ev, sender, args) -> hostAffinityLabelListModel.loadEntitiesNameMap());
     }
@@ -1358,11 +1354,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         final VDS host = getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
 
-        if (!model.validate(host.isOvirtVintageNode())) {
-            model.setValidationFailed(new EntityModel<>(true));
-            return;
-        }
-
         final UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(host);
         param.setVdsId(host.getId());
@@ -1592,9 +1583,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private void configureLocalStorage() {
-
-        VDS host = getSelectedItem();
-
         if (getWindow() != null) {
             return;
         }
@@ -1604,21 +1592,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.setTitle(ConstantsManager.getInstance().getConstants().configureLocalStorageTitle());
         model.setHelpTag(HelpTag.configure_local_storage);
         model.setHashName("configure_local_storage"); //$NON-NLS-1$
-
-        if (host.isOvirtVintageNode()) {
-            configureLocalStorage2(model);
-        } else {
-            configureLocalStorage3(model);
-        }
-    }
-
-    private void configureLocalStorage2(ConfigureLocalStorageModel model) {
-        String prefix = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.RhevhLocalFSPath);
-        if (StringHelper.isNotNullOrEmpty(prefix)) {
-            EntityModel<String> pathModel = model.getStorage().getPath();
-            pathModel.setEntity(prefix);
-            pathModel.setIsChangeable(false);
-        }
 
         configureLocalStorage3(model);
     }
@@ -1763,19 +1736,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         updateActionAvailability();
     }
 
-    private void updateAvailableOvirtNodeUpgrades() {
-        final VDS host = getSelectedItem();
-        if (host == null) {
-            return;
-        }
-
-        if (!host.isOvirtVintageNode()) {
-            return;
-        }
-
-        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery<List<RpmVersion>>(), host.getId());
-    }
-
     @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
@@ -1808,11 +1768,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getActivateCommand().setIsExecutionAllowed(items.size() > 0
                 && ActionUtils.canExecute(items, VDS.class, ActionType.ActivateVds));
 
-        // or special case where its installation failed but its oVirt node
         boolean approveAvailability =
                 items.size() == 1
-                        && (ActionUtils.canExecute(items, VDS.class, ActionType.ApproveVds) || (items.get(0)
-                                .getStatus() == VDSStatus.InstallFailed && items.get(0).isOvirtVintageNode()));
+                        && (ActionUtils.canExecute(items, VDS.class, ActionType.ApproveVds));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
         boolean installAvailability = false;

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DisableInMaintenanceMode;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -148,11 +147,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 return false;
             }
             if (vdssByUniqueId.size() == 1) {
-                VDS vds = vdssByUniqueId.get(0);
-                if (!VdsHandler.isPendingOvirt(vds)) {
-                    returnValue.setExceptionString(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE.name());
-                    return false;
-                }
+                returnValue.setExceptionString(EngineMessage.VDS_STATUS_NOT_VALID_FOR_UPDATE.name());
+                return false;
             }
 
         } catch (RuntimeException ex) {

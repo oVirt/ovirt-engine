@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -39,12 +38,7 @@ public class UpgradeHostValidator {
 
     public ValidationResult updatesAvailable() {
         return ValidationResult.failWith(EngineMessage.NO_AVAILABLE_UPDATES_FOR_HOST)
-                .unless(host.isOvirtVintageNode() || host.isUpdateAvailable());
-    }
-
-    public ValidationResult imageProvidedForOvirtNode(String image) {
-        return ValidationResult.failWith(EngineMessage.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE)
-                .when(host.isOvirtVintageNode() && StringUtils.isBlank(image));
+                .unless(host.isUpdateAvailable());
     }
 
     public ValidationResult hostWasInstalled() {

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -94,18 +93,6 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 }
             } catch (Exception e) {
                 setVdsStatus(VDSStatus.InstallFailed);
-                return;
-            }
-        } else if (getVds().isOvirtVintageNode()) {
-            InstallVdsParameters parameters = new InstallVdsParameters(getVdsId());
-            parameters.setIsReinstallOrUpgrade(true);
-            parameters.setoVirtIsoFile(getParameters().getoVirtIsoFile());
-            parameters.setActivateHost(getParameters().getInitialStatus() == VDSStatus.Up);
-
-            ActionReturnValue result = runInternalAction(ActionType.UpgradeOvirtNodeInternal, parameters);
-            if (!result.getSucceeded()) {
-                setVdsStatus(VDSStatus.InstallFailed);
-                propagateFailure(result);
                 return;
             }
         }

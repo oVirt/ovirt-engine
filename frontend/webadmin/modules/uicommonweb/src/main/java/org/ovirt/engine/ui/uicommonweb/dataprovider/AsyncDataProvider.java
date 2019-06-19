@@ -185,7 +185,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
@@ -1949,11 +1948,6 @@ public class AsyncDataProvider {
         setAttachedTagsConverter(aQuery);
 
         Frontend.getInstance().runQuery(QueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
-    }
-
-    public void getoVirtISOsList(AsyncQuery<List<RpmVersion>> aQuery, Guid id) {
-        aQuery.converterCallback = new ListConverter<>();
-        Frontend.getInstance().runQuery(QueryType.GetoVirtISOs, new IdQueryParameters(id), aQuery);
     }
 
     public void getLunsByVgId(AsyncQuery<List<LUNs>> aQuery, String vgId, Guid vdsId) {

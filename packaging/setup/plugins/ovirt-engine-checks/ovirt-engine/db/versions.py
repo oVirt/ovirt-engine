@@ -171,6 +171,40 @@ class Plugin(plugin.PluginBase):
                     )
                 )
 
+    def _checkHostType(self):
+        statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        hosts = statement.execute(
+            statement="""
+                            select
+                                vds_name, vds_type
+                            from
+                                vds_static
+                            where
+                                vds_type = 2;
+                """,
+            ownConnection=True,
+            transaction=False,
+        )
+        if hosts:
+            names = [
+                host['vds_name']
+                for host in hosts
+            ]
+            raise RuntimeError(
+                _(
+                    'Cannot upgrade engine because legacy node hosts are not '
+                    'supported anymore, but some legacy nodes are still '
+                    'present in your setup: {}. '
+                    'Please remove those hosts from your setup and try to '
+                    'upgrade again.'
+                ).format(
+                    names
+                )
+            )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         after=(
@@ -186,6 +220,7 @@ class Plugin(plugin.PluginBase):
     def _validation(self):
         self._checkSupportedVersionsPresent()
         self._checkCompatibilityVersion()
+        self._checkHostType()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

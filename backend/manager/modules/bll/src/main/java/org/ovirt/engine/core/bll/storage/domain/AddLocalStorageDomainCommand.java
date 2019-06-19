@@ -9,10 +9,7 @@ import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -56,20 +53,6 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
         if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
             if (!checkMasterDomainIsUp()) {
-                return false;
-            }
-        }
-
-        // we limit RHEV-H local storage to its persistence mount - /data/images/rhev/
-        if (getVds().isOvirtVintageNode()) {
-
-            StorageServerConnections conn =
-                    storageServerConnectionDao.get(getParameters().getStorageDomain().getStorage());
-
-            String rhevhLocalFSPath = Config.getValue(ConfigValues.RhevhLocalFSPath);
-            if (!conn.getConnection().equals(rhevhLocalFSPath)) {
-                addValidationMessage(EngineMessage.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
-                addValidationMessageVariable("path", rhevhLocalFSPath);
                 return false;
             }
         }

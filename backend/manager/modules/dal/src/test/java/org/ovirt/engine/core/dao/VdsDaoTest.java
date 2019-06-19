@@ -44,6 +44,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
     private VDS existingVds;
     private VDS existingVds2;
     private Guid newVmId;
+    private final int UNREPRESENTED_VDS_TYPE = -1;
 
     @BeforeEach
     @Override
@@ -175,7 +176,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
      */
     @Test
     public void testGetAllOfTypeWithUnrepresentedType() {
-        List<VDS> result = dao.getAllOfType(VDSType.oVirtVintageNode);
+        List<VDS> result = dao.getAllOfType(VDSType.forValue(UNREPRESENTED_VDS_TYPE));
 
         assertIncorrectGetResult(result);
     }
@@ -200,7 +201,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
     @Test
     public void testGetAllOfTypesWithUnrepresentedTypes() {
         List<VDS> result = dao
-                .getAllOfTypes(new VDSType[] { VDSType.oVirtVintageNode });
+                .getAllOfTypes(new VDSType[] { VDSType.forValue(UNREPRESENTED_VDS_TYPE) });
 
         assertIncorrectGetResult(result);
     }

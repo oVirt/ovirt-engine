@@ -145,13 +145,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         params.setHostedEngineDeployConfiguration(HostResourceParametersUtil.getHostedEngineDeployConfiguration(this));
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, params);
-        if (vds.isOvirtVintageNode()) {
-            params.setReinstallOrUpgrade(true);
-            if (action.isSetImage()) {
-                params.setoVirtIsoFile(action.getImage());
-                return doAction(ActionType.UpgradeOvirtNode, params, action);
-            }
-        }
         // Installation is only done in maintenance mode, and should by default leave the host in maintenance mode.
         // this is why the default value for 'activate' here is false (vs in adding or approving a host, where it is 'true')
         boolean activate = action.isSetActivate() ? action.isActivate() :

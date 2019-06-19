@@ -388,9 +388,6 @@ public enum QueryType implements Serializable {
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
 
-    // oVirt
-    GetoVirtISOs,
-
     // Async Tasks
     GetTasksStatusesByTasksIDs(QueryAuthType.User),
 

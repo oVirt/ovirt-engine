@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -140,13 +139,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     case oVirtNode:
                         deploy.addUnit(new VdsDeployIptablesUnit(hostFirewallType.equals(FirewallType.IPTABLES)));
                     break;
-                    case oVirtVintageNode:
-                        log.warn(
-                            "Installation of Host {} will ignore Firewall Override option, since it is not supported for Host type {}",
-                            getVds().getName(),
-                            getVds().getVdsType().name()
-                        );
-                    break;
                     default:
                         throw new IllegalArgumentException(
                             String.format(
@@ -223,12 +215,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void runAnsibleHostDeployPlaybook(Cluster hostCluster) {
-        // TODO: Remove when we remove support for legacy oVirt node:
-        if (getVds().getVdsType().equals(VDSType.oVirtVintageNode)) {
-            log.warn("Skipping Ansible runner, because it isn't supported for legacy oVirt node.");
-            return;
-        }
-
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hosts(getVds())
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())

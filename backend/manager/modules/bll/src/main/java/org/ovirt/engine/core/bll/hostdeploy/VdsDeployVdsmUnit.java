@@ -48,10 +48,6 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
 
     private final List<Callable<Boolean>> CUSTOMIZATION_DIALOG = Arrays.asList(
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            handleNodeType(VdsmEnv.OVIRT_VINTAGE_NODE, VDSType.oVirtVintageNode);
-            return true;
-        }},
-        new Callable<Boolean>() { public Boolean call() throws Exception {
             handleNodeType(VdsmEnv.OVIRT_NODE, VDSType.oVirtNode);
             return true;
         }},

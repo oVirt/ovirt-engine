@@ -1451,10 +1451,6 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setPrettyName(prettyName);
     }
 
-    public boolean isOvirtVintageNode() {
-        return getVdsType() == VDSType.oVirtVintageNode;
-    }
-
     public boolean isOvirNode() {
         return getVdsType() == VDSType.oVirtNode;
     }

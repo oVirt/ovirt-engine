@@ -62,10 +62,6 @@ public class VdsHandler extends BaseHandler implements BackendService {
         return updateVdsStatic.isFieldsUpdated(source, destination, list);
     }
 
-    public static boolean isPendingOvirt(VDS vds) {
-        return vds.isOvirtVintageNode() && vds.getStatus() == VDSStatus.PendingApproval;
-    }
-
     /**
      * Extracts the oVirt OS version from raw material of {@code VDS.getHostOs()} field.
      *

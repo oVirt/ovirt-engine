@@ -415,7 +415,6 @@ select fn_db_add_config_value('QuotaGraceCluster','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');
 select fn_db_add_config_value('QuotaThresholdCluster','80','general');
 --Handling Connect to RDP console with Fully Qualified User-Name (user@domain)
-select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');
 --Handling SASL QOP
 select fn_db_add_config_value('SearchResultsLimit','100','general');
@@ -987,7 +986,6 @@ select fn_db_update_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
 select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
-select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.3.0','4.1');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');

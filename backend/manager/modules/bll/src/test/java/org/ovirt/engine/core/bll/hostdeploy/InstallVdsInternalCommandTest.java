@@ -31,7 +31,7 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
     @BeforeEach
     public void mockVdsDao() {
         VDS vds = new VDS();
-        vds.setVdsType(VDSType.oVirtVintageNode);
+        vds.setVdsType(VDSType.oVirtNode);
         when(vdsDao.get(any())).thenReturn(vds);
     }
 
@@ -43,7 +43,7 @@ public class InstallVdsInternalCommandTest extends BaseCommandTest {
 
     private void mockVdsWithOsVersion(String osVersion) {
         VDS vds = new VDS();
-        vds.setVdsType(VDSType.oVirtVintageNode);
+        vds.setVdsType(VDSType.oVirtNode);
         vds.setHostOs(osVersion);
         when(vdsDao.get(any())).thenReturn(vds);
     }

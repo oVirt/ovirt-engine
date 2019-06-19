@@ -47,8 +47,7 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
 
         return validate(validator.hostExists())
                 && validate(validator.statusSupportedForHostUpgrade())
-                && validate(validator.updatesAvailable())
-                && validate(validator.imageProvidedForOvirtNode(getParameters().getoVirtIsoFile()));
+                && validate(validator.updatesAvailable());
     }
 
     @Override
