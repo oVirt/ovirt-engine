@@ -1405,9 +1405,8 @@ public class VmInfoBuildUtils {
                 vm.getBiosType().getChipsetType());
 
         return vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
-                && vm.getGraphicsInfos().size() == 1
-                && !usbController.equals(UsbControllerModel.NONE) // don't add tablet device if there's no USB controller
-                && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
+                && !usbController.equals(UsbControllerModel.NONE) // or when there's no USB controller for this OS
+                && vm.getGraphicsInfos().containsKey(GraphicsType.VNC); // and VNC is requested (VNC or SPICE+VNC)
     }
 
     public boolean shouldUseNativeIO(VM vm, DiskImage diskImage, VmDevice device) {
