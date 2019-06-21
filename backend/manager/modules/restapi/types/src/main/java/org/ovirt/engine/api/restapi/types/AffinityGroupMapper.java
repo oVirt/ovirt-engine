@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,10 @@ public class AffinityGroupMapper {
         cluster.setId(entity.getClusterId().toString());
         model.setCluster(cluster);
 
+        BigDecimal priority = new BigDecimal(entity.getPriority());
+        BigDecimal precision = new BigDecimal(org.ovirt.engine.core.common.scheduling.AffinityGroup.PRIORITY_PRECISION);
+        model.setPriority(priority.divide(precision));
+
         Hosts hosts = model.getHosts();
         if (hosts == null) {
             hosts = new Hosts();
@@ -94,6 +99,10 @@ public class AffinityGroupMapper {
         }
         if (model.isSetCluster() && model.getCluster().isSetId()) {
             entity.setClusterId(GuidUtils.asGuid(model.getCluster().getId()));
+        }
+
+        if (model.isSetPriority()) {
+            entity.setPriorityFromDouble(model.getPriority().doubleValue());
         }
 
         AffinityRule hostsRule = model.getHostsRule();
