@@ -588,10 +588,10 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         }
     }
 
-    private Snapshot addSnapshotToDB(Guid snapshotId, MemoryImageBuilder memoryImageBuilder) {
+    private void addSnapshotToDB(Guid snapshotId, MemoryImageBuilder memoryImageBuilder) {
         // Reset cachedSelectedActiveDisks so new Cinder volumes can be fetched when calling getDisksList.
         cachedSelectedActiveDisks = null;
-        return getSnapshotsManager().addSnapshot(snapshotId,
+        getSnapshotsManager().addSnapshot(snapshotId,
                 getParameters().getDescription(),
                 Snapshot.SnapshotStatus.LOCKED,
                 getParameters().getSnapshotType(),
