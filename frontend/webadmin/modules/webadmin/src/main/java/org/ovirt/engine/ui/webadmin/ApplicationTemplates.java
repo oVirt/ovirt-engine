@@ -186,4 +186,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("<div class='networkUpdatingSpinner'><span class='spinner spinner-xs spinner-inline valign-middle'></span> {0}...</div>")
     SafeHtml networkUpdatingSpinner(String progressText);
+
+    @Template("<span class=\"fa-chain-broken fa\" style=\"color: red\"></span>")
+    SafeHtml brokenLinkRed();
 }

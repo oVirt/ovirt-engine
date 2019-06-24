@@ -1026,6 +1026,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostOutOfSync();
 
+    String hostsOutOfSyncWarning();
+
     String hostForOutOfSyncSentence();
 
     String dcForOutOfSyncSentence();
