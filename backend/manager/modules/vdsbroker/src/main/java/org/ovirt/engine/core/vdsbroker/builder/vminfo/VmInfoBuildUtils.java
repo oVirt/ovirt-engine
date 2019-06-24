@@ -1398,14 +1398,16 @@ public class VmInfoBuildUtils {
         return multiQueueUtils.isInterfaceQueuable(vmDevice, vmNic);
     }
 
-    public boolean isTabletEnabled(VM vm) {
-        UsbControllerModel usbController = osRepository.getOsUsbControllerModel(
+    private UsbControllerModel getUsbControllerModelForVm(VM vm) {
+        return osRepository.getOsUsbControllerModel(
                 vm.getVmOsId(),
                 vm.getCompatibilityVersion(),
                 vm.getBiosType().getChipsetType());
+    }
 
+    public boolean isTabletEnabled(VM vm) {
         return vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
-                && !usbController.equals(UsbControllerModel.NONE) // or when there's no USB controller for this OS
+                && getUsbControllerModelForVm(vm) != UsbControllerModel.NONE // or when there's no USB controller for this OS
                 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC); // and VNC is requested (VNC or SPICE+VNC)
     }
 
