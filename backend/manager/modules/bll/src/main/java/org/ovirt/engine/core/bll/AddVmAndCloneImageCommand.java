@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -156,6 +157,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         params.setParentParameters(getParameters());
         params.setParentCommand(parentCommandType);
+        params.setJobWeight(Job.MAX_WEIGHT);
+
         return params;
     }
 
