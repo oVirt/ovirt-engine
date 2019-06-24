@@ -4,6 +4,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -13,6 +14,7 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final String[] cpus = new String[]{"Intel Conroe Family", //$NON-NLS-1$
                                                       "Intel Penryn Family", //$NON-NLS-1$
                                                       "AMD Opteron G1", //$NON-NLS-1$
@@ -49,35 +51,62 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
 
     @Override
     public SafeHtml getEntityValue(Cluster object) {
-        if (object.isClusterCompatibilityLevelUpgradeNeeded() ||
-                isDeprecated(object)) {
-            return getImageSafeHtml(IconType.EXCLAMATION);
+        SafeHtmlBuilder images = new SafeHtmlBuilder();
+        boolean addSpace = false;
+        if (object.isClusterCompatibilityLevelUpgradeNeeded() || isDeprecated(object)) {
+            images.append(getImageSafeHtml(IconType.EXCLAMATION));
+            addSpace = true;
         }
-        return null;
+        if (!object.getHostsOutOfSync().isEmpty()) {
+            if (addSpace) {
+                images.appendHtmlConstant(constants.space());
+            }
+            images.append(templates.brokenLinkRed());
+        }
+        return templates.image(images.toSafeHtml());
     }
 
     @Override
     public SafeHtml getEntityTooltip(Cluster object) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        boolean hasWarning = false;
-
-        if (hasWarning = object.isClusterCompatibilityLevelUpgradeNeeded()) {
-            builder.appendHtmlConstant(constants.clusterLevelUpgradeNeeded());
+        SafeHtmlBuilder tooltip = new SafeHtmlBuilder();
+        boolean addLineBreaks = false;
+        if (object.isClusterCompatibilityLevelUpgradeNeeded()) {
+            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
+            tooltip.appendHtmlConstant(constants.space());
+            tooltip.appendHtmlConstant(constants.clusterLevelUpgradeNeeded());
+            addLineBreaks = true;
         }
 
         if (isDeprecated(object)) {
-            if (hasWarning) {
-                builder.appendHtmlConstant("<br/><br/>"); //$NON-NLS-1$
+            if (addLineBreaks) {
+                tooltip.appendHtmlConstant(constants.lineBreak());
+                tooltip.appendHtmlConstant(constants.lineBreak());
             }
-            builder.appendEscaped(messages.cpuDeprecationWarning(object.getCpuName()));
-            hasWarning = true;
+            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
+            tooltip.appendHtmlConstant(constants.space());
+            tooltip.appendEscaped(messages.cpuDeprecationWarning(object.getCpuName()));
+            addLineBreaks = true;
         }
-
-        if (hasWarning) {
-            return builder.toSafeHtml();
+        if (!object.getHostsOutOfSync().isEmpty()) {
+            if (addLineBreaks) {
+                tooltip.appendHtmlConstant(constants.lineBreak());
+                tooltip.appendHtmlConstant(constants.lineBreak());
+            }
+            tooltip.append(hostListText(object));
         }
+        return tooltip.toSafeHtml();
+    }
 
-        return null;
+    private SafeHtml hostListText(Cluster object) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.append(templates.brokenLinkRed());
+        builder.appendHtmlConstant(constants.space());
+        builder.appendEscaped(constants.hostsOutOfSyncWarning());
+        object.getHostsOutOfSync().forEach(vds -> {
+            builder.appendHtmlConstant(constants.lineBreak());
+            builder.appendEscaped(vds.getName());
+        });
+        return builder.toSafeHtml();
     }
 
     @Override

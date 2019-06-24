@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -9,16 +10,20 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 public class GetOutOfSyncHostsForClusterQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
+    @Inject
+    private VdsDao vdsDao;
     @Inject
     private InterfaceDao interfaceDao;
     @Inject
@@ -46,7 +51,11 @@ public class GetOutOfSyncHostsForClusterQuery<P extends IdQueryParameters> exten
             .map(Pair::getFirst)
             .collect(Collectors.toSet());
 
-        getQueryReturnValue().setReturnValue(vdsIdsWithOutOfSyncInterface);
+        List<VDS> hostsOutOfSync = vdsDao
+            .getAllForCluster(getParameters().getId())
+            .stream()
+            .filter(host -> vdsIdsWithOutOfSyncInterface.contains(host.getId()))
+            .collect(Collectors.toList());
+        getQueryReturnValue().setReturnValue(hostsOutOfSync);
     }
-
 }

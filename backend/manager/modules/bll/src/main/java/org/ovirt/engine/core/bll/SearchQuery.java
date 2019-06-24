@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -373,6 +374,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             clusters.forEach(cluster -> cluster.setClusterCompatibilityLevelUpgradeNeeded(
                             retVal.get().compareTo(cluster.getCompatibilityVersion()) > 0)
                     );
+        }
+        for(Cluster cluster: clusters) {
+            List<VDS> returnValue = backend.runInternalQuery(QueryType.GetOutOfSyncHostsForCluster,
+                new IdQueryParameters(cluster.getId())).getReturnValue();
+            cluster.setHostsOutOfSync(returnValue);
         }
         return clusters;
     }

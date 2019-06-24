@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -159,6 +160,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     private Guid migrationPolicyId;
     private Guid macPoolId;
     private Guid defaultNetworkProviderId;
+    private List<VDS> hostsOutOfSync;
 
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -176,6 +178,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         comment = "";
         cpuName = "";
         vncEncryptionEnabled = true;
+        hostsOutOfSync = Collections.emptyList();
     }
 
     @Override
@@ -642,6 +645,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.vncEncryptionEnabled = vncEncryptionEnabled;
     }
 
+    public List<VDS> getHostsOutOfSync() {
+            return hostsOutOfSync;
+    }
+
+    public void setHostsOutOfSync(List<VDS> clusterNetworksInSync) {
+        this.hostsOutOfSync = clusterNetworksInSync;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -688,7 +699,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 defaultNetworkProviderId,
                 logMaxMemoryUsedThreshold,
                 logMaxMemoryUsedThresholdType,
-                vncEncryptionEnabled
+                vncEncryptionEnabled,
+                hostsOutOfSync
         );
     }
 
@@ -748,7 +760,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(defaultNetworkProviderId, other.defaultNetworkProviderId)
                 && Objects.equals(logMaxMemoryUsedThreshold, other.logMaxMemoryUsedThreshold)
                 && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType
-                && vncEncryptionEnabled == other.vncEncryptionEnabled;
+                && vncEncryptionEnabled == other.vncEncryptionEnabled
+                && hostsOutOfSync == other.hostsOutOfSync;
     }
 
     @Override
