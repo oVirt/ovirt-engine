@@ -14,6 +14,7 @@ import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
+import org.ovirt.engine.api.restapi.resource.BackendEventSubscriptionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -85,7 +86,6 @@ public class BackendUserResource
 
     @Override
     public EventSubscriptionsResource getEventSubscriptionsResource() {
-        // TODO: implement
-        return null;
+        return inject(new BackendEventSubscriptionsResource(id));
     }
 }

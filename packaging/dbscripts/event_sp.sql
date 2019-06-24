@@ -83,6 +83,18 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION Getevent_subscription (v_subscriber_id UUID, v_event_up_name VARCHAR(100))
+RETURNS SETOF event_subscriber STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM event_subscriber
+    WHERE subscriber_id = v_subscriber_id
+        AND event_up_name = v_event_up_name;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION Deleteevent_subscriber (
     v_event_up_name VARCHAR(100),
     v_notification_method VARCHAR(32),

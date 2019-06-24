@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,6 +39,16 @@ public class EventDaoImpl extends BaseDao implements EventDao {
     }
 
     @Override
+    public EventSubscriber getEventSubscription(Guid id, AuditLogType event) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("subscriber_id", id)
+                .addValue("event_up_name", event.toString());
+        return getCallsHandler().executeRead("Getevent_subscription",
+                eventSubscriberRowMapper,
+                parameterSource);
+    }
+
+    @Override
     public void subscribe(EventSubscriber subscriber) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("event_up_name", subscriber.getEventUpName())
@@ -59,5 +70,5 @@ public class EventDaoImpl extends BaseDao implements EventDao {
 
         getCallsHandler().executeModification("Deleteevent_subscriber", parameterSource);
     }
-}
 
+}
