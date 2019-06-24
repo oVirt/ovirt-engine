@@ -7,7 +7,6 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAP
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -386,15 +385,12 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     @Override
     protected List<ActionParametersBase> getParametersForChildCommand() {
         List<ActionParametersBase> sortedList = getParameters().getImagesParameters();
-        Collections.sort(sortedList, new Comparator<ActionParametersBase>() {
-            @Override
-            public int compare(ActionParametersBase o1, ActionParametersBase o2) {
-                if (o1 instanceof ImagesActionsParametersBase && o2 instanceof ImagesActionsParametersBase) {
-                    return ((ImagesActionsParametersBase) o1).getDestinationImageId()
-                            .compareTo(((ImagesActionsParametersBase) o2).getDestinationImageId());
-                }
-                return 0;
+        sortedList.sort((o1, o2) -> {
+            if (o1 instanceof ImagesActionsParametersBase && o2 instanceof ImagesActionsParametersBase) {
+                return ((ImagesActionsParametersBase) o1).getDestinationImageId()
+                        .compareTo(((ImagesActionsParametersBase) o2).getDestinationImageId());
             }
+            return 0;
         });
 
         return sortedList;
