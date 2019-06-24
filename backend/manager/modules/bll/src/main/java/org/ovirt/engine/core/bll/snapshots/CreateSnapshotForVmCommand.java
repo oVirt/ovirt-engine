@@ -235,7 +235,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         return memoryBuilder;
     }
 
-    protected CinderDisksValidator getCinderDisksValidator(List<CinderDisk> cinderDisks) {
+    private CinderDisksValidator getCinderDisksValidator(List<CinderDisk> cinderDisks) {
         return new CinderDisksValidator(cinderDisks);
     }
 
@@ -330,7 +330,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         return toReturn;
     }
 
-    protected boolean validateVM(VmValidator vmValidator) {
+    private boolean validateVM(VmValidator vmValidator) {
         return validate(vmValidator.vmNotSavingRestoring()) &&
                 validate(vmValidator.validateVmStatusUsingMatrix(ActionType.CreateSnapshotForVm));
     }
@@ -369,7 +369,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                 && (getVm().isRunning() || getVm().getStatus() == VMStatus.Paused) && getVm().getRunOnVds() != null;
     }
 
-    protected boolean performLiveSnapshot(final Snapshot snapshot) {
+    private boolean performLiveSnapshot(final Snapshot snapshot) {
         try {
             TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () -> {
                 runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(snapshot));
@@ -437,7 +437,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
      *
      * @param createdSnapshotId The snapshot ID to return to being active.
      */
-    protected void revertToActiveSnapshot(Guid createdSnapshotId) {
+    private void revertToActiveSnapshot(Guid createdSnapshotId) {
         if (createdSnapshotId != null) {
             snapshotDao.remove(createdSnapshotId);
             snapshotDao.updateId(snapshotDao.getId(getVmId(), Snapshot.SnapshotType.ACTIVE), createdSnapshotId);
