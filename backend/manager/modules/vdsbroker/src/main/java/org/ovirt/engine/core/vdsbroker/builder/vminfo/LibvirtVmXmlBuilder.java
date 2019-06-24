@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -131,6 +132,8 @@ public class LibvirtVmXmlBuilder {
     private MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier;
     private MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier;
     private MemoizingSupplier<VgpuPlacement> hostVgpuPlacementSupplier;
+    private MemoizingSupplier<String> tscFrequencySupplier;
+    private MemoizingSupplier<String> cpuFlagsSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, String>> diskMetadata;
@@ -233,11 +236,15 @@ public class LibvirtVmXmlBuilder {
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsStatistics(hostId));
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.vgpuPlacement(hostId));
+            tscFrequencySupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getTscFrequency(hostId));
+            cpuFlagsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getCpuFlags(hostId));
         } else {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> Collections.emptyList());
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
+            tscFrequencySupplier = new MemoizingSupplier<>(() -> "");
+            cpuFlagsSupplier = new MemoizingSupplier<>(() -> "");
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
         mdevDisplayOn = isMdevDisplayOn(vmCustomProperties, vm);
@@ -368,13 +375,18 @@ public class LibvirtVmXmlBuilder {
     }
 
     @SuppressWarnings("incomplete-switch")
-    private void writeCpu(boolean addVmNumaNodes) {
+    void writeCpu(boolean addVmNumaNodes) {
         writer.writeStartElement("cpu");
 
         String cpuType = vm.getCpuName();
         if (vm.isUseHostCpuFlags()){
             cpuType = "hostPassthrough";
         }
+        if (isTscFrequencyNeeded()) {
+            cpuType += ",+invtsc";
+        }
+
+        String[] typeAndFlags = cpuType.split(",");
 
         switch(vm.getClusterArch().getFamily()) {
         case x86:
@@ -385,12 +397,13 @@ public class LibvirtVmXmlBuilder {
             switch(cpuType) {
             case "hostPassthrough":
                 writer.writeAttributeString("mode", "host-passthrough");
+                writeCpuFlags(typeAndFlags);
                 break;
             case "hostModel":
                 writer.writeAttributeString("mode", "host-model");
+                writeCpuFlags(typeAndFlags);
                 break;
             default:
-                String[] typeAndFlags = cpuType.split(",");
                 writer.writeElement("model", typeAndFlags[0]);
                 writeCpuFlags(typeAndFlags);
                 break;
@@ -399,7 +412,6 @@ public class LibvirtVmXmlBuilder {
         case ppc:
             writer.writeAttributeString("mode", "host-model");
             // needs to be lowercase for libvirt
-            String[] typeAndFlags = cpuType.split(",");
             writer.writeElement("model", typeAndFlags[0].toLowerCase());
             writeCpuFlags(typeAndFlags);
         }
@@ -649,7 +661,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeClock() {
+    void writeClock() {
         // <clock offset="variable" adjustment="-3600">
         //   <timer name="rtc" tickpolicy="catchup">
         // </clock>
@@ -685,8 +697,22 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("present", "no");
             writer.writeEndElement();
         }
+        if (isTscFrequencyNeeded()) {
+            writer.writeStartElement("timer");
+            writer.writeAttributeString("name", "tsc");
+            writer.writeAttributeString("frequency", tscFrequencySupplier.get().split("\\.")[0] + "000");
+            writer.writeEndElement();
+        }
+        // Intentionally no 'break;', as code for s390x is shared with x86
 
         writer.writeEndElement();
+    }
+
+    boolean isTscFrequencyNeeded() {
+        return vm.getClusterArch().getFamily().equals(ArchitectureType.x86)
+                && vm.getVmType().equals(VmType.HighPerformance)
+                && vm.getMigrationSupport() == MigrationSupport.MIGRATABLE
+                && cpuFlagsSupplier.get().contains("nonstop_tsc");
     }
 
     private void writeFeatures() {

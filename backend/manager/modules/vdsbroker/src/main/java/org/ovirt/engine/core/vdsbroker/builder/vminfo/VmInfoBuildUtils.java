@@ -95,6 +95,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
@@ -152,6 +153,7 @@ public class VmInfoBuildUtils {
     private final StorageServerConnectionDao storageServerConnectionDao;
     private final VdsNumaNodeDao vdsNumaNodeDao;
     private final VdsStaticDao vdsStaticDao;
+    private final VdsDynamicDao vdsDynamicDao;
     private final VdsStatisticsDao vdsStatisticsDao;
     private final HostDeviceDao hostDeviceDao;
     private final DiskVmElementDao diskVmElementDao;
@@ -185,6 +187,7 @@ public class VmInfoBuildUtils {
             StorageServerConnectionDao storageServerConnectionDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             VdsStaticDao vdsStaticDao,
+            VdsDynamicDao vdsDynamicDao,
             VdsStatisticsDao vdsStatisticsDao,
             HostDeviceDao hostDeviceDao,
             VmSerialNumberBuilder vmSerialNumberBuilder,
@@ -208,6 +211,7 @@ public class VmInfoBuildUtils {
         this.storageServerConnectionDao = Objects.requireNonNull(storageServerConnectionDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vdsStaticDao = Objects.requireNonNull(vdsStaticDao);
+        this.vdsDynamicDao = Objects.requireNonNull(vdsDynamicDao);
         this.vdsStatisticsDao = Objects.requireNonNull(vdsStatisticsDao);
         this.hostDeviceDao = Objects.requireNonNull(hostDeviceDao);
         this.vmSerialNumberBuilder = Objects.requireNonNull(vmSerialNumberBuilder);
@@ -331,6 +335,7 @@ public class VmInfoBuildUtils {
         }
         addProfileDataToNic(struct, vm, vmDevice, nic, vnicProfile);
     }
+
     public void addProfileDataToNic(Map<String, Object> struct,
             VM vm,
             VmDevice vmDevice,
@@ -1468,4 +1473,11 @@ public class VmInfoBuildUtils {
         return isIgnition ? new IgnitionHandler(vmInit).getFileData() : new CloudInitHandler(vmInit).getFileData();
     }
 
+    String getTscFrequency(Guid vdsGuid) {
+        return vdsDynamicDao.get(vdsGuid).getTscFrequency();
+    }
+
+    String getCpuFlags(Guid vdsGuid) {
+        return vdsDynamicDao.get(vdsGuid).getCpuFlags();
+    }
 }
