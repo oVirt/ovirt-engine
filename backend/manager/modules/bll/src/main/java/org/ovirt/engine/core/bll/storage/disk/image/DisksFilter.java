@@ -88,6 +88,7 @@ public class DisksFilter {
      * @param predicates The predicates to filter by
      * @return A filtered list of disks
      */
+    @SafeVarargs
     public static List<DiskImage> filterImageDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_IMAGES, predicates);
     }
@@ -100,6 +101,7 @@ public class DisksFilter {
      * @param predicates The predicates to filter by
      * @return A filtered list of disks
      */
+    @SafeVarargs
     public static List<LunDisk> filterLunDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_LUNS, predicates);
     }
@@ -112,6 +114,7 @@ public class DisksFilter {
      * @param predicates The predicates to filter by
      * @return A filtered list of disks
      */
+    @SafeVarargs
     public static List<CinderDisk> filterCinderDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_CINDER, predicates);
     }
@@ -124,6 +127,7 @@ public class DisksFilter {
      * @param predicates The predicates to filter by
      * @return A filtered list of disks
      */
+    @SafeVarargs
     public static List<ManagedBlockStorageDisk> filterManagedBlockStorageDisks(Collection<? extends Disk> disks, Predicate<Disk>... predicates) {
         return filterDisksByStorageType(disks, ONLY_MANAGED_BLOCK_STORAGE, predicates);
     }
@@ -137,6 +141,7 @@ public class DisksFilter {
      * @param predicates The predicates to filter by
      * @return A filtered list of disks
      */
+    @SafeVarargs
     private static <T extends Disk> List<T> filterDisksByStorageType
         (Collection<? extends Disk> disks, DiskStorageTypePredicate<T> storageTypePredicate, Predicate<Disk>... predicates) {
         Predicate<Disk> chain = Stream.concat(Stream.of(storageTypePredicate), Arrays.stream(predicates)).reduce(Predicate::and).orElse(p -> true);
