@@ -399,13 +399,13 @@ public class QuotaManager implements BackendService {
     }
 
     public boolean isVmStatusQuotaCountable(VMStatus status) {
-        if (nonCountableQutoaVmStatusesList.size() == 0) {
-            synchronized (nonCountableQutoaVmStatusesList) {
-                nonCountableQutoaVmStatusesList.addAll(
-                        getQuotaDao().getNonCountableQutoaVmStatuses());
-            }
+        synchronized (nonCountableQutoaVmStatusesList) {
+            if (nonCountableQutoaVmStatusesList.size() == 0) {
+                    nonCountableQutoaVmStatusesList.addAll(
+                            getQuotaDao().getNonCountableQutoaVmStatuses());
+                }
+            return !nonCountableQutoaVmStatusesList.contains(status.getValue());
         }
-        return !nonCountableQutoaVmStatusesList.contains(status.getValue());
     }
 
     public Guid getDefaultQuotaId(Guid storagePoolId) {
