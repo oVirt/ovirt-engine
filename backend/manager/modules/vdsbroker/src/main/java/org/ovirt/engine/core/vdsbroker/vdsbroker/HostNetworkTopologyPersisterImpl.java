@@ -212,7 +212,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     }
 
     private boolean isVmRunningOnHost(Guid hostId) {
-        return !vmDynamicDao.getAllRunningForVds(hostId).isEmpty();
+        return vmDynamicDao.isAnyVmRunOnVds(hostId);
     }
 
     private Collection<Network> findNetworksOnInterfaces(Collection<VdsNetworkInterface> ifaces,

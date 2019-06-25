@@ -85,7 +85,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
 
         }
 
-        if (hasVMs()
+        if (vmDynamicDao.isAnyVmRunOnVds(getVdsId())
                 && getVds().getStatus() != VDSStatus.NonResponsive
                 && getVds().getStatus() != VDSStatus.Reboot
                 && getVds().getStatus() != VDSStatus.Kdumping) {
@@ -95,7 +95,4 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
         return true;
     }
 
-    private boolean hasVMs() {
-        return !vmDynamicDao.getAllRunningForVds(getVdsId()).isEmpty();
-    }
 }
