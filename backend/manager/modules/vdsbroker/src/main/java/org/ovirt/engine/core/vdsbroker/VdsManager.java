@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -148,7 +149,7 @@ public class VdsManager {
     private volatile boolean beforeFirstRefresh = true;
     private volatile HostMonitoring hostMonitoring;
     private volatile boolean monitoringNeeded;
-    private List<VmDynamic> lastVmsList = Collections.emptyList();
+    private Map<Guid, VMStatus> lastVmsList = Collections.emptyMap();
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VmStatsRefresher vmsRefresher;
     protected AtomicInteger refreshIteration;
@@ -516,7 +517,9 @@ public class VdsManager {
         synchronized (this) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
-            HostMonitoring.refreshCommitedMemory(cachedVds, getVmDynamicDao().getAllRunningForVds(getVdsId()), resourceManager);
+            List<VmDynamic> vmsOnVds = getVmDynamicDao().getAllRunningForVds(getVdsId());
+            Map<Guid, VMStatus> vmIdToStatus = vmsOnVds.stream().collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
+            HostMonitoring.refreshCommitedMemory(cachedVds, vmIdToStatus, resourceManager);
             updateDynamicData(cachedVds.getDynamicData());
         }
     }
@@ -1174,14 +1177,14 @@ public class VdsManager {
         beforeFirstRefresh = value;
     }
 
-    public List<VmDynamic> getLastVmsList() {
+    public Map<Guid, VMStatus> getLastVmsList() {
         return lastVmsList;
     }
 
     /**
      * This method is not thread safe
      */
-    public void setLastVmsList(List<VmDynamic> lastVmsList) {
+    public void setLastVmsList(Map<Guid, VMStatus> lastVmsList) {
         this.lastVmsList = lastVmsList;
     }
 

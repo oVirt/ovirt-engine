@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -124,11 +126,12 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     }
 
     private void saveLastVmsList(List<Pair<VmDynamic, VdsmVm>> pairs) {
-        List<VmDynamic> vms = pairs.stream()
+        Map<Guid, VMStatus> vmIdToStatus = pairs.stream()
                 .filter(pair -> pair.getFirst() != null)
                 .map(pair -> pair.getSecond().getVmDynamic())
-                .collect(Collectors.toList());
-        vdsManager.setLastVmsList(vms);
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
+        vdsManager.setLastVmsList(vmIdToStatus);
     }
 
     protected List<Pair<VmDynamic, VdsmVm>> matchVms(List<VdsmVm> vdsmVms) {
