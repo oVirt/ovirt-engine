@@ -38,7 +38,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     @OnTimerMethodAnnotation("poll")
     public void poll() {
         if (isMonitoringNeeded(vdsManager.getStatus())) {
-            VmsListFetcher fetcher = new VmsStatisticsFetcher(vdsManager);
+            VmsListFetcher fetcher = new VmsListFetcher(vdsManager);
 
             long fetchTime = System.nanoTime();
             if (fetcher.fetch()) {
