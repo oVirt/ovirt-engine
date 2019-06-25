@@ -11,6 +11,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -24,6 +27,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @SchedulingUnit(
         guid = "84e6ddee-ab0d-42dd-82f0-c297779db567",
@@ -32,8 +37,13 @@ import org.ovirt.engine.core.compat.Guid;
                 + " on the same hypervisor host (positive) or on independent hypervisor hosts (negative)",
         type = PolicyUnitType.WEIGHT
 )
-public class VmAffinityWeightPolicyUnit extends VmAffinityPolicyUnit {
+public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
     private static final int DEFAULT_SCORE = 1;
+
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private VmDao vmDao;
 
     public VmAffinityWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {

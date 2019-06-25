@@ -5,6 +5,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -16,6 +19,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @SchedulingUnit(
         guid = "427aed70-dae3-48ba-8fe9-a902a9d563c8",
@@ -25,9 +29,12 @@ import org.ovirt.engine.core.compat.Guid;
                 + " or on independent hosts which are excluded from the hosts in group (negative)",
         type = PolicyUnitType.WEIGHT
 )
-public class VmToHostAffinityWeightPolicyUnit extends VmToHostAffinityPolicyUnit {
+public class VmToHostAffinityWeightPolicyUnit extends PolicyUnitImpl {
 
     private static final int DEFAULT_SCORE = 1;
+
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     public VmToHostAffinityWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
