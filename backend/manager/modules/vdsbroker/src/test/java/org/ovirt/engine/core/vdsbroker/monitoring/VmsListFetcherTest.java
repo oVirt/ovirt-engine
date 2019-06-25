@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +56,7 @@ public class VmsListFetcherTest {
     public void callToVDSMFailed() {
         // given
         stubFailedCalls();
-        assertFalse(vmsListFetcher.fetch());
+        assertNull(vmsListFetcher.fetch());
     }
 
     private void stubFailedCalls() {

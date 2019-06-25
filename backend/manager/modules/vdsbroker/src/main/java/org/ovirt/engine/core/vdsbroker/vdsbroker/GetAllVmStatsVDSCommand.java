@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
@@ -21,9 +20,9 @@ public class GetAllVmStatsVDSCommand<P extends VdsIdVDSCommandParametersBase> ex
     protected void executeVdsBrokerCommand() {
         vmListReturn = getBroker().getAllVmStats();
         proceedProxyReturnValue();
-        Map<Guid, VdsmVm> returnVMs = Arrays.stream(vmListReturn.infoList)
+        List<VdsmVm> returnVMs = Arrays.stream(vmListReturn.infoList)
                 .map(this::createVdsmVm)
-                .collect(Collectors.toMap(vm -> vm.getVmDynamic().getId(), vm -> vm));
+                .collect(Collectors.toList());
         setReturnValue(returnVMs);
     }
 

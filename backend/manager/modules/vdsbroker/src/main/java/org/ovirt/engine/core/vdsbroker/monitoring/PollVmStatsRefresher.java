@@ -30,6 +30,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService schedulerService;
     private ScheduledFuture vmsMonitoringJob;
+    private VmsListFetcher vmsFetcher;
 
     public PollVmStatsRefresher(VdsManager vdsManager) {
         super(vdsManager);
@@ -38,17 +39,24 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     @OnTimerMethodAnnotation("poll")
     public void poll() {
         if (isMonitoringNeeded(vdsManager.getStatus())) {
-            VmsListFetcher fetcher = new VmsListFetcher(vdsManager);
-
             long fetchTime = System.nanoTime();
-            if (fetcher.fetch()) {
-                getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, true);
-                Stream<VdsmVm> vdsmVmsToMonitor = filterVmsToDevicesMonitoring(fetcher.getChangedVms());
-                processDevices(vdsmVmsToMonitor, fetchTime);
-            } else {
+            List<Pair<VmDynamic, VdsmVm>> fetchedVms = getVmsListFetcher().fetch();
+            if (fetchedVms == null) {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
+                return;
             }
+
+            getVmsMonitoring().perform(fetchedVms, fetchTime, vdsManager, true);
+            Stream<VdsmVm> vdsmVmsToMonitor = filterVmsToDevicesMonitoring(fetchedVms);
+            processDevices(vdsmVmsToMonitor, fetchTime);
         }
+    }
+
+    private VmsListFetcher getVmsListFetcher() {
+        if (vmsFetcher == null) {
+            vmsFetcher = new VmsListFetcher(vdsManager);
+        }
+        return vmsFetcher;
     }
 
     private Stream<VdsmVm> filterVmsToDevicesMonitoring(List<Pair<VmDynamic, VdsmVm>> polledVms) {

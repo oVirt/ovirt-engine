@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VmsListFetcher {
 
-    protected VdsManager vdsManager;
-    protected List<Pair<VmDynamic, VdsmVm>> changedVms;
-    protected Map<Guid, VdsmVm> vdsmVms;
-    private Map<Guid, VmDynamic> dbVms;
+    private VdsManager vdsManager;
     private StringBuilder logBuilder;
 
     // dependencies
@@ -47,16 +43,14 @@ public class VmsListFetcher {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean fetch() {
+    public List<Pair<VmDynamic, VdsmVm>> fetch() {
         VDSReturnValue pollReturnValue = poll();
-        if (pollReturnValue.getSucceeded()) {
-            vdsmVms = (Map<Guid, VdsmVm>) pollReturnValue.getReturnValue();
-            onFetchVms();
-            return true;
-        } else {
-            onError();
-            return false;
+        if (!pollReturnValue.getSucceeded()) {
+            return null;
         }
+
+        List<VdsmVm> vdsmVms = (List<VdsmVm>) pollReturnValue.getReturnValue();
+        return onFetchVms(vdsmVms);
     }
 
     protected VDSReturnValue poll() {
@@ -65,7 +59,7 @@ public class VmsListFetcher {
                 new VdsIdVDSCommandParametersBase(vdsManager.getVdsId()));
     }
 
-    private void logNumOfVmsIfChanged() {
+    private void logNumOfVmsIfChanged(List<VdsmVm> vdsmVms) {
         int numOfVms = vdsmVms.size();
         Guid vdsId = vdsManager.getVdsId();
         Integer prevNumOfVms = vdsIdToNumOfVms.put(vdsId, numOfVms);
@@ -74,25 +68,24 @@ public class VmsListFetcher {
         }
     }
 
-    protected void onFetchVms() {
+    protected List<Pair<VmDynamic, VdsmVm>> onFetchVms(List<VdsmVm> vdsmVms) {
         if (log.isDebugEnabled()) {
             logBuilder = new StringBuilder();
         }
-        dbVms = getVmDynamicDao().getAllRunningForVds(vdsManager.getVdsId()).stream()
+        Map<Guid, VmDynamic> dbVms = getVmDynamicDao().getAllRunningForVds(vdsManager.getVdsId()).stream()
                 .collect(Collectors.toMap(VmDynamic::getId, Function.identity()));
-        changedVms = new ArrayList<>();
-        filterVms();
-        gatherNonRunningVms(dbVms);
-        saveLastVmsList(vdsmVms);
-        logNumOfVmsIfChanged();
+        List<Pair<VmDynamic, VdsmVm>> pairs = matchVms(dbVms, vdsmVms);
+        saveLastVmsList(vdsmVms, dbVms);
+        logNumOfVmsIfChanged(vdsmVms);
         if (log.isDebugEnabled()) {
             log.debug(logBuilder.toString());
         }
+        return pairs;
     }
 
-    private void saveLastVmsList(Map<Guid, VdsmVm> vdsmVms) {
+    private void saveLastVmsList(List<VdsmVm> vdsmVms, Map<Guid, VmDynamic> dbVms) {
         List<VmDynamic> vms = new ArrayList<>(vdsmVms.size());
-        for (VdsmVm vmInternalData : this.vdsmVms.values()) {
+        for (VdsmVm vmInternalData : vdsmVms) {
             if (dbVms.containsKey(vmInternalData.getVmDynamic().getId())) {
                 vms.add(vmInternalData.getVmDynamic());
             }
@@ -100,35 +93,23 @@ public class VmsListFetcher {
         vdsManager.setLastVmsList(vms);
     }
 
-    protected void onError() {
-        dbVms = Collections.emptyMap();
-        vdsmVms = Collections.emptyMap();
-    }
+    protected List<Pair<VmDynamic, VdsmVm>> matchVms(Map<Guid, VmDynamic> dbVms, List<VdsmVm> vdsmVms) {
+        List<Pair<VmDynamic, VdsmVm>> pairs = new ArrayList<>(vdsmVms.size());
+        for (VdsmVm vdsmVm : vdsmVms) {
+            VmDynamic dbVm = dbVms.remove(vdsmVm.getId());
+            pairs.add(new Pair<>(dbVm, vdsmVm));
 
-    protected void filterVms() {
-        for (VdsmVm vdsmVm : vdsmVms.values()) {
-            VmDynamic dbVm = dbVms.get(vdsmVm.getVmDynamic().getId());
-
-            gatherChangedVms(dbVm, vdsmVm);
-        }
-    }
-
-    protected void gatherChangedVms(VmDynamic dbVm, VdsmVm vdsmVm) {
-        changedVms.add(new Pair<>(dbVm, vdsmVm));
-        if (log.isDebugEnabled()) {
-            logBuilder.append(String.format("%s:%s ",
-                    vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
-                    vdsmVm.getVmDynamic().getStatus()));
-        }
-    }
-
-    private void gatherNonRunningVms(Map<Guid, VmDynamic> dbVms) {
-        for (VmDynamic dbVm : dbVms.values()) {
-            if (!vdsmVms.containsKey(dbVm.getId())) {
-                // non running vms are also treated as changed VMs
-                changedVms.add(new Pair<>(dbVm, null));
+            if (log.isDebugEnabled()) {
+                logBuilder.append(String.format("%s:%s ",
+                        vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
+                        vdsmVm.getVmDynamic().getStatus()));
             }
         }
+        for (VmDynamic dbVm : dbVms.values()) {
+            // non running vms are also treated as changed VMs
+            pairs.add(new Pair<>(dbVm, null));
+        }
+        return pairs;
     }
 
     public VmDynamicDao getVmDynamicDao() {
@@ -137,10 +118,6 @@ public class VmsListFetcher {
 
     public ResourceManager getResourceManager() {
         return resourceManager;
-    }
-
-    public List<Pair<VmDynamic, VdsmVm>> getChangedVms() {
-        return changedVms;
     }
 
 }
