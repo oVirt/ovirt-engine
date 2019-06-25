@@ -51,7 +51,7 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setId(vdsId);
         vdsFromDb.setClusterId(clusterId);
 
-        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), mockVmDao(), null, null));
+        virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), mockVmDao(), null));
         doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());
     }
 

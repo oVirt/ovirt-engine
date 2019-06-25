@@ -41,7 +41,7 @@ public class MultipleServicesMonitoringStrategyTest {
 
     public MultipleServicesMonitoringStrategyTest() {
         virtStrategy =
-                spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), mockVmDao(), null, null));
+                spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), mockVmDao(), null));
         doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any());
         glusterStrategy = spy(new GlusterMonitoringStrategy());
         doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());

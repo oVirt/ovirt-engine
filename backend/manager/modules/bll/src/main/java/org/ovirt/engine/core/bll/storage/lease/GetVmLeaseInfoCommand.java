@@ -21,14 +21,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class GetVmLeaseInfoCommand<T extends VmLeaseParameters> extends CommandBase<T> {
-
-    @Inject
-    private VmDynamicDao vmDynamicDao;
 
     @Inject
     private StorageDomainDao storageDomainDao;

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
@@ -39,7 +38,6 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     private final VdsDao vdsDao;
     private final VmDao vmDao;
     private final VmDynamicDao vmDynamicDao;
-    private final VmStaticDao vmStaticDao;
 
     @Inject
     private Instance<IVdsEventListener> eventListener;
@@ -48,13 +46,11 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     public VirtMonitoringStrategy(ClusterDao clusterDao,
             VdsDao vdsDao,
             VmDao vmDao,
-            VmDynamicDao vmDynamicDao,
-            VmStaticDao vmStaticDao) {
+            VmDynamicDao vmDynamicDao) {
         this.clusterDao = clusterDao;
         this.vdsDao = vdsDao;
         this.vmDao = vmDao;
         this.vmDynamicDao = vmDynamicDao;
-        this.vmStaticDao = vmStaticDao;
     }
 
     @Override

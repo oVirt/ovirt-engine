@@ -54,7 +54,6 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
@@ -111,9 +110,6 @@ public class VdsManager {
 
     @Inject
     private VmDynamicDao vmDynamicDao;
-
-    @Inject
-    private VmStaticDao vmStaticDao;
 
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
@@ -1112,7 +1108,7 @@ public class VdsManager {
             // log VM transition to unknown status
             AuditLogable logable = new AuditLogableImpl();
             logable.setVmId(vmId);
-            logable.setVmName(vmStaticDao.get(vmId).getName());
+            logable.setVmName(resourceManager.getVmManager(vmId).getName());
             auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
         });
     }
