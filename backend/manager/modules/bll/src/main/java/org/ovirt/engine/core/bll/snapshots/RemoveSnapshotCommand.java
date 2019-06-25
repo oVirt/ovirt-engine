@@ -150,7 +150,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         final Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
 
         boolean snapshotHasImages = hasImages();
-        boolean removeSnapshotMemory = isMemoryVolumeRemoveable(snapshot);
+        boolean removeSnapshotMemory = isMemoryVolumeRemovable(snapshot);
 
         // If the VM hasn't got any images and memory - simply remove the snapshot.
         // No need for locking, VDSM tasks, and all that jazz.
@@ -190,7 +190,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * There is a one to many relation between memory volumes and snapshots, so memory
      * volumes should be removed only if the only snapshot that points to them is removed
      */
-    protected boolean isMemoryVolumeRemoveable(Snapshot snapshot) {
+    private boolean isMemoryVolumeRemovable(Snapshot snapshot) {
         return snapshot.containsMemory() && snapshotDao.getNumOfSnapshotsByDisks(snapshot) == 1;
     }
 
