@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,9 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
+import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -19,6 +22,7 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @SchedulingUnit(
@@ -33,6 +37,8 @@ public class VmToHostAffinityFilterPolicyUnit extends PolicyUnitImpl {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
 
     public VmToHostAffinityFilterPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -48,6 +54,9 @@ public class VmToHostAffinityFilterPolicyUnit extends PolicyUnitImpl {
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId()).stream()
                 .filter(ag -> ag.isVdsEnforcing() && ag.isVdsAffinityEnabled())
                 .collect(Collectors.toList());
+
+        List<Label> labels = labelDao.getAllByEntityIds(Collections.singleton(vm.getId()));
+        affinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(labels, context.getCluster().getId()));
 
         // no affinity groups found for VM return all hosts with no violations
         if (affinityGroups.isEmpty()) {

@@ -68,7 +68,7 @@ public class AffinityRulesEnforcer {
     public Iterator<VM> chooseVmsToMigrate(Cluster cluster) {
         List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsByClusterId(cluster.getId());
         List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
-        allAffinityGroups.addAll(affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
+        allAffinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
 
         Cache cache = new Cache(cluster, allAffinityGroups);
 
@@ -100,26 +100,6 @@ public class AffinityRulesEnforcer {
                 .filter(vm -> !softConflictIds.contains(vm.getId()) ||
                         migrationImprovesSoftAffinity(vm, cache))
                 .iterator();
-    }
-
-    private List<AffinityGroup> affinityGroupsFromLabels(List<Label> labels, Guid clusterId) {
-        return labels.stream()
-                .map(label -> {
-                    AffinityGroup group = new AffinityGroup();
-                    group.setId(label.getId());
-                    group.setClusterId(clusterId);
-                    group.setName("Label: " + label.getName());
-
-                    group.setVdsAffinityRule(EntityAffinityRule.POSITIVE);
-                    group.setVdsEnforcing(true);
-                    group.setVmAffinityRule(EntityAffinityRule.DISABLED);
-
-                    group.setVmIds(new ArrayList<>(label.getVms()));
-                    group.setVdsIds(new ArrayList<>(label.getHosts()));
-
-                    return group;
-                })
-                .collect(Collectors.toList());
     }
 
     /**
