@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -35,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -51,7 +53,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private VmImportDiskListModel importDiskListModel;
     protected VmImportInterfaceListModel importInterfaceListModel;
     private List<VnicProfileView> networkProfiles;
-    private ListModel<RepoImage> iso;
+    private SortedListModel<RepoImage> iso;
     private EntityModel<Boolean> attachDrivers;
     private String winWithoutVirtioMessage;
     private boolean sourceIsNotKvm;
@@ -66,7 +68,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         setAllocation(new ListModel<VolumeType>());
         getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
         sourceIsNotKvm = true;
-        setIso(new ListModel<>());
+        setIso(new SortedListModel<>(new LexoNumericNameableComparator()));
         setAttachDrivers(new EntityModel<>(false));
         vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateWindowsWarningMessage());
         getClusterQuota().setIsAvailable(false);
@@ -333,11 +335,11 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         return true;
     }
 
-    public ListModel<RepoImage> getIso() {
+    public SortedListModel<RepoImage> getIso() {
         return iso;
     }
 
-    public void setIso(ListModel<RepoImage> iso) {
+    public void setIso(SortedListModel<RepoImage> iso) {
         this.iso = iso;
     }
 

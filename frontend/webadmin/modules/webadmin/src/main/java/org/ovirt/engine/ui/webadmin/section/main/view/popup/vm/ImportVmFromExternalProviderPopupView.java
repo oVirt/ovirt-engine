@@ -312,7 +312,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         cdImageEditor = new ListModelListBoxOnlyEditor<>(new NullSafeRenderer<RepoImage>() {
             @Override
             protected String renderNullSafe(RepoImage object) {
-                return object.getRepoImageId();
+                return object.getName();
             }
         });
     }
