@@ -205,12 +205,7 @@ public class BackendHostNicsResource
         for (VdsNetworkInterface iface : ifaces) {
             if (iface.getId().toString().equals(id)) {
                 HostNic hostNic = map(iface, ifaces);
-                if (isPopulate()) {
-                    deprecatedPopulate(hostNic, iface);
-                    doPopulate(hostNic, iface);
-                } else {
-                    populate(hostNic, iface);
-                }
+                populate(hostNic, iface);
                 for (org.ovirt.engine.core.common.businessentities.network.Network nwk : getClusterNetworks()) {
                     if (nwk.getName().equals(iface.getNetworkName())) {
                         hostNic.getNetwork().setId(nwk.getId().toString());
