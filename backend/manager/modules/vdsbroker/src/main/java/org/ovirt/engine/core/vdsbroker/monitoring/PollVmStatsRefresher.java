@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +44,6 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     @Inject
     private VmDynamicDao vmDynamicDao;
     private ScheduledFuture vmsMonitoringJob;
-    private StringBuilder logBuilder;
 
     public PollVmStatsRefresher(VdsManager vdsManager) {
         super(vdsManager);
@@ -58,7 +55,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
             long fetchTime = System.nanoTime();
             List<Pair<VmDynamic, VdsmVm>> fetchedVms = fetchVms();
             if (fetchedVms == null) {
-                log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
+                log.info("Failed to fetch vms info for host '{}'({}) - skipping VMs monitoring.", vdsManager.getVdsName(), vdsManager.getVdsId());
                 return;
             }
 
@@ -112,28 +109,17 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         }
 
         List<VdsmVm> vdsmVms = (List<VdsmVm>) returnValue.getReturnValue();
-        return onFetchVms(vdsmVms);
-    }
-
-    protected List<Pair<VmDynamic, VdsmVm>> onFetchVms(List<VdsmVm> vdsmVms) {
-        if (log.isDebugEnabled()) {
-            logBuilder = new StringBuilder();
-        }
         List<Pair<VmDynamic, VdsmVm>> pairs = matchVms(vdsmVms);
         saveLastVmsList(pairs);
-        logNumOfVmsIfChanged(vdsmVms);
-        if (log.isDebugEnabled()) {
-            log.debug(logBuilder.toString());
-        }
+        logNumOfVmsIfChanged(vdsmVms.size());
         return pairs;
     }
 
-    private void logNumOfVmsIfChanged(List<VdsmVm> vdsmVms) {
-        int numOfVms = vdsmVms.size();
+    private void logNumOfVmsIfChanged(int numOfReportedVms) {
         Guid vdsId = vdsManager.getVdsId();
-        Integer prevNumOfVms = vdsIdToNumOfVms.put(vdsId, numOfVms);
-        if (prevNumOfVms == null || prevNumOfVms.intValue() != numOfVms) {
-            log.info("Fetched {} VMs from VDS '{}'", numOfVms, vdsId);
+        Integer prevNumOfVms = vdsIdToNumOfVms.put(vdsId, numOfReportedVms);
+        if (prevNumOfVms == null || prevNumOfVms.intValue() != numOfReportedVms) {
+            log.info("Fetched {} VMs from VDS '{}'", numOfReportedVms, vdsId);
         }
     }
 
@@ -147,22 +133,28 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
 
     protected List<Pair<VmDynamic, VdsmVm>> matchVms(List<VdsmVm> vdsmVms) {
         Map<Guid, VmDynamic> dbVms = vmDynamicDao.getAllRunningForVds(vdsManager.getVdsId()).stream()
-                .collect(Collectors.toMap(VmDynamic::getId, Function.identity()));
-        List<Pair<VmDynamic, VdsmVm>> pairs = new ArrayList<>(dbVms.size());
-        for (VdsmVm vdsmVm : vdsmVms) {
-            VmDynamic dbVm = dbVms.remove(vdsmVm.getId());
-            pairs.add(new Pair<>(dbVm, vdsmVm));
+                .collect(Collectors.toMap(VmDynamic::getId, vm -> vm));
+        StringBuilder logBuilder = log.isDebugEnabled() ? new StringBuilder() : null;
+        List<Pair<VmDynamic, VdsmVm>> pairs = vdsmVms.stream()
+                .map(vdsmVm -> {
+                    if (logBuilder != null) {
+                        logBuilder.append(String.format("%s:%s ",
+                                vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
+                                vdsmVm.getVmDynamic().getStatus()));
+                    }
 
-            if (log.isDebugEnabled()) {
-                logBuilder.append(String.format("%s:%s ",
-                        vdsmVm.getVmDynamic().getId().toString().substring(0, 8),
-                        vdsmVm.getVmDynamic().getStatus()));
-            }
+                    VmDynamic dbVm = dbVms.remove(vdsmVm.getId());
+                    return new Pair<>(dbVm, vdsmVm);
+                })
+                .collect(Collectors.toList());
+
+        // the remaining db vms with no corresponding vdsm vm are added accordingly
+        dbVms.values().forEach(dbVm -> pairs.add(new Pair<>(dbVm, null)));
+
+        if (logBuilder != null) {
+            log.debug(logBuilder.toString());
         }
-        for (VmDynamic dbVm : dbVms.values()) {
-            // non running vms are also treated as changed VMs
-            pairs.add(new Pair<>(dbVm, null));
-        }
+
         return pairs;
     }
 
