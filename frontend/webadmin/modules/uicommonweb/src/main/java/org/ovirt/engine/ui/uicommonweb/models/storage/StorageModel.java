@@ -651,7 +651,7 @@ public class StorageModel extends Model {
         });
 
         getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
-                new NotEmptyValidation(), new IntegerValidation(0, getStorage().getTotalDiskSize())
+                new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE)
         });
 
         getWarningLowConfirmedSpaceIndicator().validateEntity(new IValidation[]{
