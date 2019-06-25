@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import java.util.Arrays;
-
 import org.gwtbootstrap3.client.ui.Icon;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -248,21 +246,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                         ConstantsManager.getInstance().getMessages().bracketsWithGB(getWarningLowSpaceSize(storageModel)));
             }
         });
-
-        criticalSpaceActionBlockerEditor.addKeyUpHandler(event -> {
-            int storageDomainTotalSize = getStorageDomainTotalSize(storageModel);
-            Integer criticalActionBlockerSpace = criticalSpaceActionBlockerEditor.asValueBox().getValue();
-            if (criticalActionBlockerSpace == null || criticalActionBlockerSpace > storageDomainTotalSize) {
-                criticalSpaceActionBlockerEditor.markAsInvalid(Arrays.asList(ConstantsManager.getInstance().getMessages()
-                        .criticalSpaceActionBlockerBiggerThanStorageDomain(storageDomainTotalSize)));
-            } else {
-                criticalSpaceActionBlockerEditor.markAsValid();
-            }
-        });
-    }
-
-    private Integer getStorageDomainTotalSize(StorageModel storageModel) {
-        return storageModel.getStorage() == null ? Integer.valueOf(0) : storageModel.getStorage().getTotalDiskSize();
     }
 
     private Integer getWarningLowSpaceSize(StorageModel storageModel) {
