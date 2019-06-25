@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
@@ -496,6 +497,26 @@ public class AffinityRulesUtils {
                     }
 
                 });
+    }
+
+    public static List<AffinityGroup> affinityGroupsFromLabels(List<Label> labels, Guid clusterId) {
+        return labels.stream()
+                .map(label -> {
+                    AffinityGroup group = new AffinityGroup();
+                    group.setId(label.getId());
+                    group.setClusterId(clusterId);
+                    group.setName("Label: " + label.getName());
+
+                    group.setVdsAffinityRule(EntityAffinityRule.POSITIVE);
+                    group.setVdsEnforcing(true);
+                    group.setVmAffinityRule(EntityAffinityRule.DISABLED);
+
+                    group.setVmIds(new ArrayList<>(label.getVms()));
+                    group.setVdsIds(new ArrayList<>(label.getHosts()));
+
+                    return group;
+                })
+                .collect(Collectors.toList());
     }
 
     public static class AffinityGroupConflicts {
