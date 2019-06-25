@@ -71,8 +71,7 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
             // to reduce volume creation time.
             // Later, the engine starts copy_data job on VDSM that invoke qemuimg.convert()
             // with preallocation="falloc" and allocates the entire volume size.
-            Long initialSize = Optional.ofNullable(getParameters().getInitialSize()).orElse(0L);
-            parameters.setImageInitialSizeInBytes(initialSize);
+            parameters.setImageInitialSizeInBytes(1L);
         }
         return parameters;
     }
