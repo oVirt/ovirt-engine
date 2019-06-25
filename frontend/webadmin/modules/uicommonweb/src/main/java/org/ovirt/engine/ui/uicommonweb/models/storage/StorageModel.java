@@ -650,8 +650,13 @@ public class StorageModel extends Model {
                 new NotEmptyValidation(), new IntegerValidation(0, StorageConstants.LOW_SPACE_THRESHOLD)
         });
 
+        int maxAllowedSpace = Integer.MAX_VALUE;
+
+        if (!isNewStorage() && getStorage().getTotalDiskSize() != 0 ) {
+            maxAllowedSpace = getStorage().getTotalDiskSize();
+        }
         getCriticalSpaceActionBlocker().validateEntity(new IValidation[] {
-                new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE)
+                new NotEmptyValidation(), new IntegerValidation(0, maxAllowedSpace)
         });
 
         getWarningLowConfirmedSpaceIndicator().validateEntity(new IValidation[]{
