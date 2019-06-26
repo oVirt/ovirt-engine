@@ -1791,6 +1791,15 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         return vdsDynamic.getTscFrequency();
     }
 
+    public String getTscFrequencyIntegral() {
+        String tscFrequency = getTscFrequency();
+        if (tscFrequency == null) {
+            return null;
+        }
+
+        return tscFrequency.split("\\.")[0];
+    }
+
     public void setTscFrequency(String tscFrequency) {
         vdsDynamic.setTscFrequency(tscFrequency);
     }

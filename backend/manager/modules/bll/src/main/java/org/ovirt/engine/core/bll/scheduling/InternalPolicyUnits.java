@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPo
 import org.ovirt.engine.core.bll.scheduling.policyunits.LabelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationTscFrequencyPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NumaPolicyUnit;
@@ -100,6 +101,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(RankSelectorPolicyUnit.class);
         enabledUnits.add(HighPerformanceCpuPolicyUnit.class);
         enabledUnits.add(CpuAndNumaPinningWeightPolicyUnit.class);
+        enabledUnits.add(MigrationTscFrequencyPolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {

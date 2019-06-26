@@ -2659,6 +2659,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__SAME_HOST();
 
+    String VAR__DETAIL__TSC_FREQ_MISMATCH();
+
     String VAR__DETAIL__HOSTDEV_DISABLED();
 
     String VAR__DETAIL__HOST_DEVICE_UNAVAILABLE();
