@@ -147,7 +147,7 @@ select fn_db_add_config_value('GlusterRefreshRateHealInfo', '600', 'general');
 select fn_db_add_config_value('GlusterUnSyncedEntriesHistoryLimit', '40', 'general');
 select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.3');
 select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.1');
-select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'true', '4.3');
+select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.3');
 select fn_db_add_config_value('GlusterVolumeFreeSpaceThresholdInPercent', '20', 'general');
 
 -- Gluster Geo-replication --
@@ -1124,6 +1124,9 @@ select fn_db_update_config_value('ServerCPUList',
 -- qemu-guest-agent is also a viable agent
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent,qemu-guest-agent','general');
 
+-- update to use aio=threads for gluster 
+select fn_db_update_config_value('UseNativeIOForGluster','false','4.2');
+select fn_db_update_config_value('UseNativeIOForGluster','false','4.3');
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
 ------------------------------------------------------------------------------------
