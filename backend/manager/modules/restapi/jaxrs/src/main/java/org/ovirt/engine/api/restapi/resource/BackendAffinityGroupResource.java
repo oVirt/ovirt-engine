@@ -40,6 +40,10 @@ public class BackendAffinityGroupResource
         return inject(new BackendAffinityGroupVmsResource(guid));
     }
 
+    @Override
+    public AffinityGroupHostsResource getHostsResource() {
+        return inject(new BackendAffinityGroupHostsResource(guid));
+    }
 
     @Override
     public Response remove() {
@@ -47,12 +51,6 @@ public class BackendAffinityGroupResource
         AffinityGroupCRUDParameters params = new AffinityGroupCRUDParameters();
         params.setAffinityGroupId(asGuid(id));
         return performAction(ActionType.RemoveAffinityGroup, params);
-    }
-
-    @Override
-    public AffinityGroupHostsResource getHostsResource() {
-        // TODO: implement
-        return null;
     }
 
     @Override
