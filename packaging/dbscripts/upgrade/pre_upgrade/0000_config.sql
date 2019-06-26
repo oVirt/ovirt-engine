@@ -148,7 +148,7 @@ select fn_db_add_config_value('GlusterRefreshRateHealInfo', '600', 'general');
 select fn_db_add_config_value('GlusterUnSyncedEntriesHistoryLimit', '40', 'general');
 select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.1');
-select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'true', '4.4');
+select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.4');
 select fn_db_add_config_value('GlusterVolumeFreeSpaceThresholdInPercent', '20', 'general');
 
 -- Gluster Geo-replication --
@@ -1237,6 +1237,11 @@ select fn_db_update_default_config_value('MaxPeakNetworkQoSValue', '2048', '3435
 -- Increase interval of polling gluster cli for info from 5 to 15 seconds
 select fn_db_update_default_config_value('GlusterRefreshRateLight', '5', '15', 'general', false);
 select fn_db_update_default_config_value('GlusterRefreshRateHeavy', '300', '900', 'general', false);
+
+-- update to use aio=threads for gluster 
+select fn_db_update_config_value('UseNativeIOForGluster','false','4.2');
+select fn_db_update_config_value('UseNativeIOForGluster','false','4.3');
+select fn_db_update_config_value('UseNativeIOForGluster','false','4.4');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
