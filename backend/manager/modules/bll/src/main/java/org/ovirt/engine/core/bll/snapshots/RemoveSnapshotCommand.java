@@ -188,7 +188,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     /**
      * There is a one to many relation between memory volumes and snapshots, so memory
-     * volumes should be removed only if the only snapshot that points to them is removed
+     * volumes should be removed only if the only snapshot that points to them is removed.
      */
     private boolean isMemoryVolumeRemovable(Snapshot snapshot) {
         return snapshot.containsMemory() && snapshotDao.getNumOfSnapshotsByDisks(snapshot) == 1;
@@ -418,7 +418,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      *
      * @return True if there is enough space in all relevant storage domains. False otherwise.
      */
-    protected boolean validateStorageDomains() {
+    private boolean validateStorageDomains() {
         MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
         if (DisksFilter.filterImageDisks(getSourceImages()).isEmpty()) {
             return true;
@@ -437,7 +437,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * @param snapshots list of the parent snapshot disks
      * @return list of subchains which contain the base and top snapshots.
      */
-    protected List<SubchainInfo> getAllDisksSnapshot(List<DiskImage> snapshots) {
+    private List<SubchainInfo> getAllDisksSnapshot(List<DiskImage> snapshots) {
         Set<DiskImage> topSnapshots = diskImageDao.getAllSnapshotsForParents(
                 snapshots
                     .stream()
@@ -475,15 +475,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
-    protected boolean validateVmSnapshotDisksNotDuringMerge() {
+    private boolean validateVmSnapshotDisksNotDuringMerge() {
         return validate(snapshotsValidator.vmSnapshotDisksNotDuringMerge(getVmId(), getParameters().getSnapshotId()));
     }
 
-    protected boolean validateVmNotInPreview() {
+    private boolean validateVmNotInPreview() {
         return validate(snapshotsValidator.vmNotInPreview(getVmId()));
     }
 
-    protected boolean validateSnapshotExists() {
+    private boolean validateSnapshotExists() {
         return validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getSnapshotId()));
     }
 
