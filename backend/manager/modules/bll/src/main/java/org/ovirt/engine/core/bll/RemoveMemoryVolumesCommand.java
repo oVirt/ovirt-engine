@@ -37,13 +37,11 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
     protected void executeCommand() {
         if (getParameters().getSnapshot().containsMemory() && isMemoryRemovable()) {
 
+            // As part of the RemoveDisk command, removing the memory_dump volume removes
+            // the memory_metadata volume as well.
             RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(getParameters().getSnapshot().getMemoryDiskId());
             removeMemoryDumpDiskParameters.setShouldBeLogged(false);
             runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
-
-            RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(getParameters().getSnapshot().getMetadataDiskId());
-            removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
-            runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         }
         setSucceeded(true);
     }
