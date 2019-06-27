@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -25,7 +25,7 @@ public class ObjectIdentityCheckerTest {
         Jedi jedi1 = new Jedi();
         Jedi jedi2 = new Jedi();
 
-        List<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
+        Collection<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
         assertEquals(0, changes.size(), "Should be no changes");
     }
 
@@ -35,7 +35,7 @@ public class ObjectIdentityCheckerTest {
         Jedi jedi2 = new Jedi();
         jedi2.saberColor = "red"; // Gone to the dark side
 
-        List<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
+        Collection<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
         assertEquals(1, changes.size(), "Should be 1 changes");
     }
 

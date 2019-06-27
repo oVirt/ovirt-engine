@@ -63,9 +63,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(DYNAMIC_RUNNING_COUNT, result.size());
-        for (VmDynamic vmdynamic : result) {
-            assertEquals(FixturesTool.VDS_RHEL6_NFS_SPM, vmdynamic.getRunOnVds());
-        }
+        result.forEach(vm -> assertEquals(FixturesTool.VDS_RHEL6_NFS_SPM, vm.getRunOnVds()));
     }
 
     @Test

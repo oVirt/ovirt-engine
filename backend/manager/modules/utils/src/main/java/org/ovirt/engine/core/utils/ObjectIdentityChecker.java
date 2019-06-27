@@ -2,7 +2,9 @@ package org.ovirt.engine.core.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
@@ -36,9 +39,7 @@ public class ObjectIdentityChecker {
 
     public ObjectIdentityChecker(Class<?> type, Iterable<Class<?>> aliases) {
         this(type);
-        for (Class<?> alias : aliases) {
-            ObjectIdentityChecker.aliases.put(alias.getSimpleName(), type);
-        }
+        aliases.forEach(alias -> ObjectIdentityChecker.aliases.put(alias.getSimpleName(), type));
     }
 
     public final void setContainer(IObjectDescriptorContainer value) {
@@ -51,20 +52,16 @@ public class ObjectIdentityChecker {
 
     public static boolean canUpdateField(String objectType, String fieldName, Enum<?> status, Object fieldContainer) {
         Class<?> type = aliases.get(objectType);
-        if (type != null) {
-            return canUpdateField(type, fieldName, status, fieldContainer);
-        } else {
+        if (type == null) {
             throw new RuntimeException("status type [null] not exist");
         }
+        return canUpdateField(type, fieldName, status, fieldContainer);
     }
 
     public static boolean canUpdateField(Class<?> objectType, String fieldName, Enum<?> status,
             Object fieldContainer) {
         ObjectIdentityChecker checker = identities.get(objectType);
-        if (checker != null) {
-            return checker.isFieldUpdatable(status, fieldName, fieldContainer);
-        }
-        return true;
+        return checker == null || checker.isFieldUpdatable(status, fieldName, fieldContainer);
     }
 
     public final <T extends Enum<T>> void addField(T status, String fieldName) {
@@ -77,21 +74,15 @@ public class ObjectIdentityChecker {
     }
 
     public final <T extends Enum<T>> void addField(Iterable<T> statuses, String fieldName) {
-        for (T status : statuses) {
-            addField(status, fieldName);
-        }
+        statuses.forEach(status -> addField(status, fieldName));
     }
 
     public final void addHostedEngineFields(String... fieldNames) {
-        for (String fieldName : fieldNames) {
-            permittedForHostedEngine.add(fieldName);
-        }
+        permittedForHostedEngine.addAll(Arrays.asList(fieldNames));
     }
 
     public final void addPermittedFields(String... fieldNames) {
-        for (String fieldName : fieldNames) {
-            permitted.add(fieldName);
-        }
+        permitted.addAll(Arrays.asList(fieldNames));
     }
 
     public final void addHotsetField(String fieldName, EnumSet<VMStatus> statuses) {
@@ -99,9 +90,7 @@ public class ObjectIdentityChecker {
     }
 
     public final void addTransientFields(String... fieldNames) {
-        for (String fieldName : fieldNames) {
-            transientFields.add(fieldName);
-        }
+        transientFields.addAll(Arrays.asList(fieldNames));
     }
 
     public final boolean isFieldUpdatable(String name) {
@@ -114,10 +103,7 @@ public class ObjectIdentityChecker {
 
     public final boolean isFieldHotSettableInStatus(String fieldName, VMStatus status) {
         final EnumSet<VMStatus> hotSettableStatuses = hotSettableFieldsInStates.get(fieldName);
-        if (hotSettableStatuses == null) {
-            return false;
-        }
-        return hotSettableStatuses.contains(status);
+        return hotSettableStatuses != null && hotSettableStatuses.contains(status);
     }
 
     public final boolean isTransientField(String name) {
@@ -189,24 +175,16 @@ public class ObjectIdentityChecker {
         if (source.getClass() != destination.getClass()) {
             return false;
         }
-        for (String fieldName : getChangedFields(source, destination)) {
-            if (!isFieldUpdatable(fieldName)) {
-                return false;
-            }
-        }
-        return true;
+        Collection<String> changedFields = getChangedFields(source, destination);
+        return changedFields.stream().allMatch(this::isFieldUpdatable);
     }
 
     public final boolean isHostedEngineUpdateValid(Object source, Object destination) {
         if (source.getClass() != destination.getClass()) {
             return false;
         }
-        for (String fieldName : getChangedFields(source, destination)) {
-            if (!isHostedEngineFieldUpdatable(fieldName)) {
-                return false;
-            }
-        }
-        return true;
+        Collection<String> changedFields = getChangedFields(source, destination);
+        return changedFields.stream().allMatch(this::isHostedEngineFieldUpdatable);
     }
 
     public final boolean isUpdateValid(Object source, Object destination, Enum<?> status) {
@@ -217,31 +195,28 @@ public class ObjectIdentityChecker {
         if (source.getClass() != destination.getClass()) {
             return false;
         }
-        for (String fieldName : getChangedFields(source, destination)) {
+        Collection<String> changedFields = getChangedFields(source, destination);
+        return changedFields.stream().allMatch(fieldName -> {
             if (!isFieldUpdatable(status, fieldName, null, hotsetEnabled) && !isTransientField(fieldName)) {
                 log.warn("ObjectIdentityChecker.isUpdateValid:: Not updatable field '{}' was updated",
                         fieldName);
                 return false;
             }
-        }
-        return true;
+            return true;
+        });
     }
 
     public final List<String> getChangedFieldsForStatus(Object source, Object destination, Enum<?> status) {
-        List<String> fields = new ArrayList<>();
         if (source.getClass() != destination.getClass()) {
-            return fields;
+            return Collections.emptyList();
         }
-        for (String fieldName : getChangedFields(source, destination)) {
-            if (!isFieldUpdatable(status, fieldName, null, false) && !isTransientField(fieldName)) {
-                fields.add(fieldName);
-            }
-        }
-        return fields;
+        return getChangedFields(source, destination).stream()
+                .filter(fieldName -> !isFieldUpdatable(status, fieldName, null, false) && !isTransientField(fieldName))
+                .collect(Collectors.toList());
     }
 
     public final boolean isFieldsUpdated(Object source, Object destination, Iterable<String> fields) {
-        List<String> changedFields = getChangedFields(source, destination);
+        Set<String> changedFields = getChangedFields(source, destination);
         for (String field : fields) {
             if (changedFields.contains(field)) {
                 return true;
@@ -250,20 +225,24 @@ public class ObjectIdentityChecker {
         return false;
     }
 
-    public static List<String> getChangedFields(Object source, Object destination) {
-        final List<String> returnValue = new ArrayList<>();
+    public static Set<String> getChangedFields(Object source, Object destination) {
         if (source.getClass().isInstance(destination)) {
             Class<?> objectType = source.getClass();
             List<PropertyInfo> properties = TypeCompat.getProperties(objectType);
-            for (PropertyInfo property : properties) {
-                Object sourceValue = property.getValue(source, null);
-                Object destinationValue = property.getValue(destination, null);
-
-                if (property.getCanWrite()&& !Objects.equals(sourceValue, destinationValue)) {
-                    returnValue.add(property.getName());
-                }
-            }
+            return properties.stream()
+                    .filter(property -> isFieldChanged(property, source, destination))
+                    .map(PropertyInfo::getName)
+                    .collect(Collectors.toSet());
         }
-        return returnValue;
+        return Collections.emptySet();
+    }
+
+    private static boolean isFieldChanged(PropertyInfo property, Object source, Object destination) {
+        if (!property.getCanWrite()) {
+            return false;
+        }
+        Object sourceValue = property.getValue(source, null);
+        Object destinationValue = property.getValue(destination, null);
+        return !Objects.equals(sourceValue, destinationValue);
     }
 }

@@ -702,7 +702,7 @@ public class VmAnalyzer {
         }
 
         // check if dynamic data changed - update cache and DB
-        List<String> changedFields = getChangedFields(dbVm, vdsmVm.getVmDynamic());
+        Collection<String> changedFields = getChangedFields(dbVm, vdsmVm.getVmDynamic());
         // remove all fields that should not be checked:
         changedFields.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
 

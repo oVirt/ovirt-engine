@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -64,7 +65,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         }
 
         // Collect changed fields to update in a list.
-        List<String> props = ObjectIdentityChecker.getChangedFields(oldDomain, getStorageDomain()
+        Collection<String> props = ObjectIdentityChecker.getChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
 
         // Allow changes to the following fields only:
