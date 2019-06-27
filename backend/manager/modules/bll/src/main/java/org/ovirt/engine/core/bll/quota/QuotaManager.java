@@ -401,8 +401,10 @@ public class QuotaManager implements BackendService {
     public boolean isVmStatusQuotaCountable(VMStatus status) {
         if (nonCountableQutoaVmStatusesList.size() == 0) {
             synchronized (nonCountableQutoaVmStatusesList) {
-                nonCountableQutoaVmStatusesList.addAll(
-                        getQuotaDao().getNonCountableQutoaVmStatuses());
+                if (nonCountableQutoaVmStatusesList.size() == 0) {
+                    nonCountableQutoaVmStatusesList.addAll(
+                            getQuotaDao().getNonCountableQutoaVmStatuses());
+                }
             }
         }
         return !nonCountableQutoaVmStatusesList.contains(status.getValue());
