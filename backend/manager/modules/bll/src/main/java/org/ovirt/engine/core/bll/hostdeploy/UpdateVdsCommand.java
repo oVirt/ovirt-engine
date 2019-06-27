@@ -72,6 +72,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Inject
     private NetworkClusterHelper networkClusterHelper;
 
+    @Inject
+    private AffinityValidator affinityValidator;
+
     private VDS oldHost;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList(
             "host_name",
@@ -345,8 +348,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     }
 
     private ValidationResult validateAffinityGroups() {
-        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
-                .validateAffinityGroupsUpdateForHost(getClusterId(), getVdsId(), getParameters().getAffinityGroups());
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForHost(getClusterId(),
+                getVdsId(),
+                getParameters().getAffinityGroups());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

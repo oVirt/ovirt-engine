@@ -3,13 +3,16 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils.AffinityGroupConflicts;
@@ -20,6 +23,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
+@Singleton
 public class AffinityValidator {
     public static class Result {
         private final ValidationResult validationResult;
@@ -50,51 +54,48 @@ public class AffinityValidator {
         public static final Result VALID = newValid((a, b) -> {});
     }
 
+    @Inject
     private AffinityGroupDao affinityGroupDao;
 
-    public AffinityValidator(AffinityGroupDao affinityGroupDao) {
-        this.affinityGroupDao = affinityGroupDao;
+    public Result validateAffinityUpdateForVm(Guid clusterId, Guid vmId, Collection<AffinityGroup> affinityGroups) {
+        return validateAffinityUpdate(clusterId, vmId, affinityGroups, AffinityGroup::getVmIds);
     }
 
-    public Result validateAffinityGroupsUpdateForVm(Guid clusterId, Guid vmId, Collection<AffinityGroup> affinityGroups) {
-        return validateAffinityGroupsUpdateForIdList(clusterId, vmId, affinityGroups, AffinityGroup::getVmIds);
+    public Result validateAffinityUpdateForHost(Guid clusterId, Guid hostId, Collection<AffinityGroup> affinityGroups) {
+        return validateAffinityUpdate(clusterId, hostId, affinityGroups, AffinityGroup::getVdsIds);
     }
 
-    public Result validateAffinityGroupsUpdateForHost(Guid clusterId, Guid hostId, Collection<AffinityGroup> affinityGroups) {
-        return validateAffinityGroupsUpdateForIdList(clusterId, hostId, affinityGroups, AffinityGroup::getVdsIds);
-    }
-
-    private Result validateAffinityGroupsUpdateForIdList(Guid clusterId,
-            Guid id,
+    private Result validateAffinityUpdate(Guid clusterId,
+            Guid entityId,
             Collection<AffinityGroup> affinityGroups,
-            Function<AffinityGroup, List<Guid>> idListExtractor) {
+            Function<AffinityGroup, List<Guid>> entityIdsExtractor) {
 
-        if (affinityGroups == null) {
+        if (CollectionUtils.isEmpty(affinityGroups)) {
             return Result.VALID;
         }
 
-        Set<Guid> affinityGroupIds = new HashSet<>();
-        for (AffinityGroup group : affinityGroups) {
-            if (Guid.isNullOrEmpty(group.getId())) {
-                return Result.newFailed(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID));
-            }
-            affinityGroupIds.add(group.getId());
+        Set<Guid> affinityGroupIds =  affinityGroups.stream()
+                        .map(AffinityGroup::getId)
+                        .collect(Collectors.toSet());
+
+        if (affinityGroupIds.stream().anyMatch(Guid::isNullOrEmpty)) {
+            return Result.newFailed(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_AFFINITY_GROUP_ID));
         }
 
         int groupsFromClusterCount = 0;
         boolean groupsChanged = false;
         List<AffinityGroup> groups = affinityGroupDao.getAllAffinityGroupsByClusterId(clusterId);
         for (AffinityGroup group : groups) {
-            List<Guid> idList = idListExtractor.apply(group);
+            List<Guid> entityIds = entityIdsExtractor.apply(group);
 
             if (affinityGroupIds.contains(group.getId())) {
                 ++groupsFromClusterCount;
-                if (!idList.contains(id)) {
-                    idList.add(id);
+                if (!entityIds.contains(entityId)) {
+                    entityIds.add(entityId);
                     groupsChanged = true;
                 }
             } else {
-                boolean removed = idList.remove(id);
+                boolean removed = entityIds.remove(entityId);
                 if (removed) {
                     groupsChanged = true;
                 }

@@ -175,6 +175,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private CloudInitHandler cloudInitHandler;
 
+    @Inject
+    private AffinityValidator affinityValidator;
+
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -1856,12 +1859,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private ValidationResult validateAffinityGroups() {
-        if (CollectionUtils.isEmpty(getParameters().getAffinityGroups())) {
-            return ValidationResult.VALID;
-        }
-
-        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
-                .validateAffinityGroupsUpdateForVm(getClusterId(), getVmId(), getParameters().getAffinityGroups());
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForVm(getClusterId(),
+                getVmId(),
+                getParameters().getAffinityGroups());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

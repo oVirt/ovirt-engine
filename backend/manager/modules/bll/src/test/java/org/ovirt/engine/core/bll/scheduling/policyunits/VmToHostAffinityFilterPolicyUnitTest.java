@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,13 +28,16 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     @Mock
     private LabelDao labelDao;
 
+    private List<Label> labels;
+
     @InjectMocks
     VmToHostAffinityFilterPolicyUnit unit =
             new VmToHostAffinityFilterPolicyUnit(null, null);
 
     @BeforeEach
     public void setUpLabelDao() {
-        when(labelDao.getAllByEntityIds(any())).thenReturn(Collections.emptyList());
+        labels = new ArrayList<>();
+        when(labelDao.getAllByEntityIds(any())).thenReturn(labels);
     }
 
     @Test
@@ -105,11 +107,9 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     public void testLabelSimple() {
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
-        Label label = new LabelBuilder()
+        labels.add(new LabelBuilder()
                 .entities(vm, host_positive_enforcing)
-                .build();
-
-        when(labelDao.getAllByEntityIds(any())).thenReturn(Collections.singletonList(label));
+                .build());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host_positive_enforcing)
@@ -120,15 +120,13 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     public void testLabelNoValidHost() {
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
-        Label label1 = new LabelBuilder()
+        labels.add(new LabelBuilder()
                 .entities(vm, host_positive_enforcing)
-                .build();
+                .build());
 
-        Label label2 = new LabelBuilder()
+        labels.add(new LabelBuilder()
                 .entities(vm, host_not_in_affinity_group)
-                .build();
-
-        when(labelDao.getAllByEntityIds(any())).thenReturn(Arrays.asList(label1, label2));
+                .build());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .isEmpty();
@@ -138,15 +136,13 @@ public class VmToHostAffinityFilterPolicyUnitTest extends VmToHostAffinityPolicy
     public void testLabelWithHostsOnly() {
         hosts = Arrays.asList(host_positive_enforcing, host_not_in_affinity_group);
 
-        Label label1 = new LabelBuilder()
+        labels.add(new LabelBuilder()
                 .entities(vm, host_positive_enforcing)
-                .build();
+                .build());
 
-        Label label2 = new LabelBuilder()
+        labels.add(new LabelBuilder()
                 .entities(host_positive_enforcing, host_not_in_affinity_group)
-                .build();
-
-        when(labelDao.getAllByEntityIds(any())).thenReturn(Arrays.asList(label1, label2));
+                .build());
 
         assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
                 .contains(host_positive_enforcing)

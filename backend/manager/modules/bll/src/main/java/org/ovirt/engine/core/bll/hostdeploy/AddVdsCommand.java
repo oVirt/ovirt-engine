@@ -102,6 +102,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private LabelDao labelDao;
     @Inject
     private ClusterUtils clusterUtils;
+    @Inject
+    private AffinityValidator affinityValidator;
 
     private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
     /**
@@ -586,8 +588,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return ValidationResult.VALID;
         }
 
-        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
-                .validateAffinityGroupsUpdateForHost(getClusterId(), getVdsId(), getParameters().getAffinityGroups());
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForHost(getClusterId(),
+                getVdsId(),
+                getParameters().getAffinityGroups());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.dao.scheduling;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
@@ -136,19 +140,23 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 affinityGroup.setVmAffinityRule(EntityAffinityRule.DISABLED);
             }
 
-            String[] rawUuids = (String[]) rs.getArray("vm_ids").getArray();
-            List<String> vms = Arrays.asList(rawUuids);
-            rawUuids = (String[]) rs.getArray("vds_ids").getArray();
-            List<String> hosts = Arrays.asList(rawUuids);
-            List<String> vmNames = Arrays.asList((String[]) rs.getArray("vm_names").getArray());
-            List<String> vdsNames = Arrays.asList((String[]) rs.getArray("vds_names").getArray());
-
-            affinityGroup.setVmIds(vms.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
-            affinityGroup.setVdsIds(hosts.stream().filter(v -> v != null).map(Guid::new).collect(Collectors.toList()));
-            affinityGroup.setVmEntityNames(vmNames.stream().filter(v -> v != null).collect(Collectors.toList()));
-            affinityGroup.setVdsEntityNames(vdsNames.stream().filter(v -> v != null).collect(Collectors.toList()));
+            affinityGroup.setVmIds(readList(rs, "vm_ids", Guid::new));
+            affinityGroup.setVdsIds(readList(rs, "vds_ids", Guid::new));
+            affinityGroup.setVmEntityNames(readList(rs, "vm_names"));
+            affinityGroup.setVdsEntityNames(readList(rs, "vds_names"));
 
             return affinityGroup;
         };
+    }
+
+    private List<String> readList(ResultSet rs, String columnLabel) throws SQLException {
+        return readList(rs, columnLabel, str -> str);
+    }
+
+    private<T> List<T> readList(ResultSet rs, String columnLabel, Function<String, T> converter) throws SQLException {
+        return Arrays.stream((String[]) rs.getArray(columnLabel).getArray())
+                .filter(Objects::nonNull)
+                .map(converter)
+                .collect(Collectors.toList());
     }
 }

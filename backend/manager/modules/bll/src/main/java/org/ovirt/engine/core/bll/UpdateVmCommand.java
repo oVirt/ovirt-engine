@@ -190,6 +190,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private RngDeviceUtils rngDeviceUtils;
+    @Inject
+    private AffinityValidator affinityValidator;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -1694,8 +1696,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private ValidationResult validateAffinityGroups() {
-        AffinityValidator.Result result = new AffinityValidator(affinityGroupDao)
-                .validateAffinityGroupsUpdateForVm(getClusterId(), getVmId(), getParameters().getAffinityGroups());
+        AffinityValidator.Result result = affinityValidator.validateAffinityUpdateForVm(getClusterId(),
+                getVmId(),
+                getParameters().getAffinityGroups());
 
         affinityGroupLoggingMethod = result.getLoggingMethod();
         return result.getValidationResult();

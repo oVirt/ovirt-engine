@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
@@ -40,6 +42,9 @@ public class UpdateVdsCommandTest {
     @Mock
     private UpdateHostValidator updateHostValidator;
 
+    @Mock
+    private AffinityValidator affinityValidator;
+
     @InjectMocks
     private UpdateVdsCommand<UpdateVdsActionParameters> underTestCommand;
 
@@ -61,6 +66,9 @@ public class UpdateVdsCommandTest {
         doReturn(updateHostValidator)
                 .when(underTestCommand)
                 .getUpdateHostValidator(oldHost, parameters.getvds(), parameters.isInstallHost());
+
+        when(affinityValidator.validateAffinityUpdateForHost(any(), any(), any()))
+                .thenReturn(AffinityValidator.Result.VALID);
     }
 
     @Test
