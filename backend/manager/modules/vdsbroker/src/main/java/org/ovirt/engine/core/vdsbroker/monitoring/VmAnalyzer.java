@@ -4,7 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.ovirt.engine.core.utils.CollectionUtils.nullToEmptyList;
-import static org.ovirt.engine.core.utils.ObjectIdentityChecker.getChangedFields;
+import static org.ovirt.engine.core.utils.ObjectIdentityChecker.isAnyFieldChanged;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,16 +89,16 @@ public class VmAnalyzer {
     private List<VmNetworkInterface> ifaces;
 
     private static final int TO_MEGA_BYTES = 1024;
-    /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
-    private static final List<String> UNCHANGEABLE_FIELDS_BY_VDSM;
+    /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that may change by VDSM */
+    private static final Set<String> CHANGEABLE_FIELDS_BY_VDSM;
     private static final Logger log = LoggerFactory.getLogger(VmAnalyzer.class);
 
     static {
-        List<String> tmpList = Arrays.stream(VmDynamic.class.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(UnchangeableByVdsm.class))
+        Set<String> tmpList = Arrays.stream(VmDynamic.class.getDeclaredFields())
+                .filter(field -> !field.isAnnotationPresent(UnchangeableByVdsm.class))
                 .map(Field::getName)
-                .collect(Collectors.toList());
-        UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
+                .collect(Collectors.toSet());
+        CHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableSet(tmpList);
     }
 
     private AuditLogDirector auditLogDirector;
@@ -701,18 +702,12 @@ public class VmAnalyzer {
             dbVm.setIp(extractVmIps(vmGuestAgentNics));
         }
 
-        // check if dynamic data changed - update cache and DB
-        Collection<String> changedFields = getChangedFields(dbVm, vdsmVm.getVmDynamic());
-        // remove all fields that should not be checked:
-        changedFields.removeAll(UNCHANGEABLE_FIELDS_BY_VDSM);
-
         if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
-            changedFields.remove(VmDynamic.APPLICATIONS_LIST_FIELD_NAME);
             vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
         }
 
         // if something relevant changed
-        if (!changedFields.isEmpty()) {
+        if (isAnyFieldChanged(dbVm, vdsmVm.getVmDynamic(), CHANGEABLE_FIELDS_BY_VDSM)) {
             dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
             saveDynamic(dbVm);
         }

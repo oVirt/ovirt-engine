@@ -237,6 +237,17 @@ public class ObjectIdentityChecker {
         return Collections.emptySet();
     }
 
+    public static boolean isAnyFieldChanged(Object source, Object destination, Set<String> changeableFields) {
+        if (source.getClass().isInstance(destination)) {
+            Class<?> objectType = source.getClass();
+            List<PropertyInfo> properties = TypeCompat.getProperties(objectType);
+            return properties.stream()
+                    .filter(p -> changeableFields.contains(p.getName()))
+                    .anyMatch(p -> isFieldChanged(p, source, destination));
+        }
+        return false;
+    }
+
     private static boolean isFieldChanged(PropertyInfo property, Object source, Object destination) {
         if (!property.getCanWrite()) {
             return false;
