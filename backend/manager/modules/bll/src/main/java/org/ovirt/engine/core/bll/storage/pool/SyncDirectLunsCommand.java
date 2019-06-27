@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.pool;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,6 +13,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -29,9 +29,9 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /**
- * Synchronizes all the direct luns that are attached to VMs in a given data center.
- * When given a direct lun ID from {@link SyncDirectLunsParameters#getDirectLunId},
- * the command synchronizes only that direct lun.
+ * Synchronizes all the direct LUNs that are attached to VMs in a given data center.
+ * When given a set of direct LUN IDs with {@link SyncDirectLunsParameters#getDirectLunIds},
+ * the command synchronizes only these direct LUNs.
  */
 @NonTransactiveCommandAttribute
 public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends AbstractSyncLunsCommand<T> {
@@ -53,7 +53,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
 
     @Override
     protected boolean validate() {
-        if (getParameters().getDirectLunId() == null) {
+        if (getParameters().getDirectLunIds().isEmpty()) {
             // To sync all the direct luns that are attached to VMs in
             // the storage pool, a valid and active storage pool is required.
             return validate(createStoragePoolValidator().existsAndUp());
@@ -67,12 +67,17 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     }
 
     private boolean directLunExists() {
-        return diskLunMapDao.getDiskLunMapByDiskId(getParameters().getDirectLunId()) != null ||
-                failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+        for (Guid id : getParameters().getDirectLunIds()) {
+            if (diskLunMapDao.getDiskLunMapByDiskId(id) == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+            }
+        }
+        return true;
     }
 
     @Override
     protected void executeCommand() {
+        auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_STARTED);
         Collection<LUNs> lunsToUpdateInDb = getLunsToUpdateInDb();
         if (lunsToUpdateInDb.size() > 0) {
             lunDao.updateAllInBatch(lunsToUpdateInDb);
@@ -83,6 +88,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         }
 
         setSucceeded(true);
+        auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_FINISHED);
     }
 
     @Override
@@ -111,18 +117,19 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     }
 
     private Stream<Guid> getIdsOfDirectLunsToSync() {
-        return Optional.ofNullable(getParameters().getDirectLunId())
-                .map(Stream::of)
-                .orElse(getLunToDiskIdsOfDirectLunsAttachedToVmsInPool().values().stream());
+        Set<Guid> lunIds = getParameters().getDirectLunIds();
+        return lunIds.isEmpty() ? getLunToDiskIdsOfDirectLunsAttachedToVmsInPool().values().stream() : lunIds.stream();
     }
 
     protected Collection<LUNs> getLunsToUpdateInDb() {
-        Map<String, Guid> lunToDirectLunIds = Optional.ofNullable(getParameters().getDirectLunId())
-                .map(diskLunMapDao::getDiskLunMapByDiskId)
-                .map(diskLunMap -> Stream.of(diskLunMap)
-                        .collect(Collectors.toMap(DiskLunMap::getLunId, DiskLunMap::getDiskId)))
-                .orElse(getLunToDiskIdsOfDirectLunsAttachedToVmsInPool());
-
+        Map<String, Guid> lunToDirectLunIds;
+        if (!getParameters().getDirectLunIds().isEmpty()) {
+            lunToDirectLunIds = getParameters().getDirectLunIds().stream()
+                    .map(diskLunMapDao::getDiskLunMapByDiskId)
+                    .collect(Collectors.toMap(DiskLunMap::getLunId, DiskLunMap::getDiskId));
+        } else {
+            lunToDirectLunIds = getLunToDiskIdsOfDirectLunsAttachedToVmsInPool();
+        }
         Set<String> lunsIds = lunToDirectLunIds.keySet();
         return getDeviceList(lunsIds)
                 .stream()

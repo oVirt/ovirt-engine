@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -233,7 +234,7 @@ public class BackendDiskResource
     public Response refreshLun(Action action) {
         validateParameters(action, "host.id|name");
         return doAction(ActionType.SyncDirectLuns,
-                new SyncDirectLunsParameters(getHostId(action), guid), action);
+                new SyncDirectLunsParameters(getHostId(action), Collections.singleton(guid)), action);
     }
 
     protected Disk addLinks(Disk model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
