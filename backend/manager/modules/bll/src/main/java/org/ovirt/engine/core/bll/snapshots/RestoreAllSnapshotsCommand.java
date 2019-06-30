@@ -190,11 +190,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         removeSnapshotsFromDB();
         succeeded = updateLeaseInfoIfNeeded() && succeeded;
 
-        if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty() ||
-                !managedBlockStorageDisksToRestore.isEmpty()) {
-            restoreManagedBlockSnapshot(managedBlockStorageDisksToRestore);
+        if (!getTaskIdList().isEmpty()) {
+            restoreManagedBlockSnapshotIfNeeded(managedBlockStorageDisksToRestore);
             deleteOrphanedImages(cinderDisksToRemove);
-            if (!restoreCinderDisks(removedSnapshot.getId(),
+            if (!restoreCinderDisksIfNeeded(removedSnapshot.getId(),
                     cinderDisksToRestore,
                     cinderDisksToRemove,
                     cinderVolumesToRemove)) {
@@ -209,15 +208,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         setSucceeded(succeeded);
     }
 
-    private void restoreManagedBlockSnapshot(List<ManagedBlockStorageDisk> images) {
-        RestoreAllManagedBlockSnapshotsParameters params = new RestoreAllManagedBlockSnapshotsParameters();
-        params.setManagedBlockStorageDisks(images);
-        params.setSnapshotAction(getParameters().getSnapshotAction());
-        params.setParentCommand(getActionType());
-        params.setParentParameters(getParameters());
-        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+    private void restoreManagedBlockSnapshotIfNeeded(List<ManagedBlockStorageDisk> images) {
+        if (!images.isEmpty()) {
+            RestoreAllManagedBlockSnapshotsParameters params = new RestoreAllManagedBlockSnapshotsParameters();
+            params.setManagedBlockStorageDisks(images);
+            params.setSnapshotAction(getParameters().getSnapshotAction());
+            params.setParentCommand(getActionType());
+            params.setParentParameters(getParameters());
+            params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
-        runInternalAction(ActionType.RestoreAllManagedBlockSnapshots, params);
+            runInternalAction(ActionType.RestoreAllManagedBlockSnapshots, params);
+        }
     }
 
     private void initializeSnapshotsLeasesDomainIds() {
@@ -433,7 +434,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
     }
 
-    private boolean restoreCinderDisks(Guid removedSnapshotId, List<CinderDisk> cinderDisksToRestore,
+    private boolean restoreCinderDisksIfNeeded(Guid removedSnapshotId, List<CinderDisk> cinderDisksToRestore,
                                   List<CinderDisk> cinderDisksToRemove,
                                   List<CinderDisk> cinderVolumesToRemove) {
         if (!cinderDisksToRestore.isEmpty() || !cinderDisksToRemove.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
