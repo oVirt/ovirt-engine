@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -90,6 +91,11 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);
+    }
+
+    @Override
+    protected LockProperties getLockProperties() {
+        return LockProperties.create(Scope.Command).withWaitTimeout(TimeUnit.MINUTES.toMillis(1));
     }
 
     @Override
