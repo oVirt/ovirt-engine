@@ -344,7 +344,10 @@ def remove_snapshot(args):
 
     logger.info("Removing volume '%s' snapshot '%s'",
                 args.volume_id, args.snapshot_id)
-    snap = [s for s in vol.snapshots if s.id == args.snapshot_id][0]
+    snap = _get_snapshot(vol, args.snapshot_id)
+    if snap is None:
+        return
+
     snap.delete()
 
 
@@ -354,10 +357,8 @@ def create_volume_from_snapshot(args):
     if vol is None:
         return
 
-    snap = [s for s in vol.snapshots if s.id == args.snapshot_id]
-    if not snap:
-        logger.error("Snapshot '%s' does not exist", args.snapshot_id)
-        _write_output("Snapshot '%s' not found")
+    snap = _get_snapshot(vol, args.snapshot_id)
+    if snap is None:
         return
 
     logger.info("Creating new volume from snapshot '%s' of volume '%s'",
@@ -374,6 +375,15 @@ def _get_volume(backend, vol_id):
         _write_output("Volume '%s' not found")
         return None
     return volumes[0]
+
+
+def _get_snapshot(vol, snapshot_id):
+    snapshots = [s for s in vol.snapshots if s.id == snapshot_id]
+    if not snapshots:
+        logger.error("Snapshot '%s' does not exist", snapshot_id)
+        _write_output("Snapshot '%s' not found")
+        return None
+    return snapshots[0]
 
 
 def _write_output(s):
