@@ -190,7 +190,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         removeSnapshotsFromDB();
         succeeded = updateLeaseInfoIfNeeded() && succeeded;
 
-        if (!getTaskIdList().isEmpty()) {
+        if (shouldInvokeChildCommand(cinderDisksToRestore, cinderVolumesToRemove, managedBlockStorageDisksToRestore)) {
             restoreManagedBlockSnapshotIfNeeded(managedBlockStorageDisksToRestore);
             deleteOrphanedImages(cinderDisksToRemove);
             if (!restoreCinderDisksIfNeeded(removedSnapshot.getId(),
@@ -206,6 +206,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         setSucceeded(succeeded);
+    }
+
+    // Check whether we should invoke additional commands based on the disk type
+    private boolean shouldInvokeChildCommand(List<CinderDisk> cinderDisksToRestore,
+            List<CinderDisk> cinderVolumesToRemove,
+            List<ManagedBlockStorageDisk> managedBlockStorageDisksToRestore) {
+        return !getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty() ||
+                !managedBlockStorageDisksToRestore.isEmpty();
     }
 
     private void restoreManagedBlockSnapshotIfNeeded(List<ManagedBlockStorageDisk> images) {
