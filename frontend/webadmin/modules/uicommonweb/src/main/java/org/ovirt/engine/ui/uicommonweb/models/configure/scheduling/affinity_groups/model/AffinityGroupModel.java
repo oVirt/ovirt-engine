@@ -15,16 +15,19 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.HostsSelectionModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.EntitySelectionModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.DoubleValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AffinityGroupModel extends Model {
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     private final AffinityGroup affinityGroup;
     private final ListModel<?> sourceListModel;
     private final ActionType saveActionType;
@@ -36,8 +39,8 @@ public abstract class AffinityGroupModel extends Model {
     private EntityModel<Boolean> vmAffinityEnforcing;
     private ListModel<EntityAffinityRule> hostAffinityRule;
     private EntityModel<Boolean> hostAffinityEnforcing;
-    private VmsSelectionModel vmsSelectionModel;
-    private HostsSelectionModel hostsSelectionModel;
+    private EntitySelectionModel vmsSelectionModel;
+    private EntitySelectionModel hostsSelectionModel;
     private final Guid clusterId;
     private final String clusterName;
 
@@ -60,14 +63,14 @@ public abstract class AffinityGroupModel extends Model {
         vmAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), affinityGroup.getVmAffinityRule());
         setVmAffinityEnforcing(new EntityModel<>(affinityGroup.isVmEnforcing()));
         vmAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateChangeableEnforcing());
-        setVmsSelectionModel(new VmsSelectionModel());
+        setVmsSelectionModel(new EntitySelectionModel(constants.selectVm(), constants.noAvailableVms()));
 
         // Set host details
         setHostAffinityRule(new ListModel<EntityAffinityRule>());
         hostAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), affinityGroup.getVdsAffinityRule());
         setHostAffinityEnforcing(new EntityModel<>(affinityGroup.isVdsEnforcing()));
         hostAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateChangeableEnforcing());
-        setHostsSelectionModel(new HostsSelectionModel());
+        setHostsSelectionModel(new EntitySelectionModel(constants.selectHost(), constants.noAvailableHosts()));
 
         updateChangeableEnforcing();
 
@@ -168,19 +171,19 @@ public abstract class AffinityGroupModel extends Model {
         this.hostAffinityEnforcing = hostAffinityEnforcing;
     }
 
-    public VmsSelectionModel getVmsSelectionModel() {
+    public EntitySelectionModel getVmsSelectionModel() {
         return vmsSelectionModel;
     }
 
-    private void setVmsSelectionModel(VmsSelectionModel vmsSelectionModel) {
+    private void setVmsSelectionModel(EntitySelectionModel vmsSelectionModel) {
         this.vmsSelectionModel = vmsSelectionModel;
     }
 
-    public HostsSelectionModel getHostsSelectionModel() {
+    public EntitySelectionModel getHostsSelectionModel() {
         return hostsSelectionModel;
     }
 
-    private void setHostsSelectionModel(HostsSelectionModel hostsSelectionModel) {
+    private void setHostsSelectionModel(EntitySelectionModel hostsSelectionModel) {
         this.hostsSelectionModel = hostsSelectionModel;
     }
 
@@ -206,12 +209,12 @@ public abstract class AffinityGroupModel extends Model {
         // Save VM details
         group.setVmEnforcing(getVmAffinityEnforcing().getEntity());
         group.setVmAffinityRule(getVmAffinityRule().getSelectedItem());
-        group.setVmIds(getVmsSelectionModel().getSelectedVmIds());
+        group.setVmIds(getVmsSelectionModel().getSelectedEntityIds());
 
         // Save host details
         group.setVdsEnforcing(getHostAffinityEnforcing().getEntity());
         group.setVdsAffinityRule(getHostAffinityRule().getSelectedItem());
-        group.setVdsIds(getHostsSelectionModel().getSelectedHostIds());
+        group.setVdsIds(getHostsSelectionModel().getSelectedEntityIds());
 
         startProgress();
 

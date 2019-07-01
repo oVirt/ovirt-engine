@@ -16,14 +16,17 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.HostsSelectionModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.EntitySelectionModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AffinityLabelModel extends Model {
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     private final Label affinityLabel;
     private final ListModel<?> sourceListModel;
     private final ActionType saveActionType;
@@ -32,8 +35,8 @@ public abstract class AffinityLabelModel extends Model {
     private final Guid clusterId;
     private final String clusterName;
 
-    private VmsSelectionModel vmsSelectionModel;
-    private HostsSelectionModel hostsSelectionModel;
+    private EntitySelectionModel vmsSelectionModel;
+    private EntitySelectionModel hostsSelectionModel;
 
     public AffinityLabelModel(Label affinityLabel, ListModel<?> sourceListModel,
                               ActionType saveActionType,
@@ -47,8 +50,8 @@ public abstract class AffinityLabelModel extends Model {
 
         setName(new EntityModel<>());
 
-        setVmsSelectionModel(new VmsSelectionModel());
-        setHostsSelectionModel(new HostsSelectionModel());
+        setVmsSelectionModel(new EntitySelectionModel(constants.selectVm(), constants.noAvailableVms()));
+        setHostsSelectionModel(new EntitySelectionModel(constants.selectHost(), constants.noAvailableHosts()));
 
         addCommands();
     }
@@ -93,19 +96,19 @@ public abstract class AffinityLabelModel extends Model {
         this.name = name;
     }
 
-    public VmsSelectionModel getVmsSelectionModel() {
+    public EntitySelectionModel getVmsSelectionModel() {
         return vmsSelectionModel;
     }
 
-    private void setVmsSelectionModel(VmsSelectionModel vmsSelectionModel) {
+    private void setVmsSelectionModel(EntitySelectionModel vmsSelectionModel) {
         this.vmsSelectionModel = vmsSelectionModel;
     }
 
-    public HostsSelectionModel getHostsSelectionModel() {
+    public EntitySelectionModel getHostsSelectionModel() {
         return hostsSelectionModel;
     }
 
-    private void setHostsSelectionModel(HostsSelectionModel hostsSelectionModel) {
+    private void setHostsSelectionModel(EntitySelectionModel hostsSelectionModel) {
         this.hostsSelectionModel = hostsSelectionModel;
     }
 
@@ -122,8 +125,8 @@ public abstract class AffinityLabelModel extends Model {
         Label label = getAffinityLabel();
         label.setName(getName().getEntity());
 
-        label.setVms(new HashSet<>(getVmsSelectionModel().getSelectedVmIds()));
-        label.setHosts(new HashSet<>(getHostsSelectionModel().getSelectedHostIds()));
+        label.setVms(new HashSet<>(getVmsSelectionModel().getSelectedEntityIds()));
+        label.setHosts(new HashSet<>(getHostsSelectionModel().getSelectedEntityIds()));
 
         startProgress();
 
