@@ -5,7 +5,6 @@ import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -420,11 +419,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         isoImageEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<RepoImage>() {
             @Override
             protected String renderNullSafe(RepoImage object) {
-                // For old ISO images from an ISO domain the image name is empty
-                if (StringHelper.isNullOrEmpty(object.getRepoImageName())) {
-                    return object.getRepoImageId();
-                }
-                return object.getRepoImageName();
+                return object.getName();
             }
         });
     }

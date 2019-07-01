@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -13,11 +12,13 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -38,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.CpuNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
@@ -97,13 +99,13 @@ public abstract class RunOnceModel extends Model {
         privateAttachIso = value;
     }
 
-    private ListModel<RepoImage> privateIsoImage;
+    private SortedListModel<RepoImage> privateIsoImage;
 
     public ListModel<RepoImage> getIsoImage() {
         return privateIsoImage;
     }
 
-    private void setIsoImage(ListModel<RepoImage> value) {
+    private void setIsoImage(SortedListModel<RepoImage> value) {
         privateIsoImage = value;
     }
 
@@ -564,7 +566,7 @@ public abstract class RunOnceModel extends Model {
         getFloppyImage().getSelectedItemChangedEvent().addListener(this);
         setAttachIso(new EntityModel<Boolean>());
         getAttachIso().getEntityChangedEvent().addListener(this);
-        setIsoImage(new ListModel<>());
+        setIsoImage(new SortedListModel(new LexoNumericNameableComparator<Nameable>()));
         getIsoImage().getSelectedItemChangedEvent().addListener(this);
         setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
         setBootSequence(new BootSequenceModel());
@@ -944,12 +946,6 @@ public abstract class RunOnceModel extends Model {
         ImagesDataProvider.getISOImagesList(new AsyncQuery<>(
                         images -> {
                             final RepoImage lastSelectedIso = getIsoImage().getSelectedItem();
-
-                            images.sort(
-                                    Comparator.nullsLast(
-                                            Comparator.comparing(RepoImage::getRepoImageName, new LexoNumericComparator())
-                                    ).thenComparing(RepoImage::getRepoImageId, new LexoNumericComparator())
-                            );
 
                             getIsoImage().setItems(images);
 
