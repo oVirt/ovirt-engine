@@ -17,8 +17,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.HostsSelectionModel;
-import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.EntitySelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.AffinityGroupModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -102,11 +101,11 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
 
     @UiField
     @Ignore
-    protected KeyWidget<VmsSelectionModel> addRemoveVmWidget;
+    protected KeyWidget<EntitySelectionModel> addRemoveVmWidget;
 
     @UiField
     @Ignore
-    protected KeyWidget<HostsSelectionModel> addRemoveHostWidget;
+    protected KeyWidget<EntitySelectionModel> addRemoveHostWidget;
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
