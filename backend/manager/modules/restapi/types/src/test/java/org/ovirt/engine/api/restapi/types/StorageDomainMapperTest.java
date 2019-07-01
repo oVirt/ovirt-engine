@@ -106,12 +106,24 @@ public class StorageDomainMapperTest extends
                 StorageDomainMapper.map(NfsVersion.V3, null));
         assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V4,
                 StorageDomainMapper.map(NfsVersion.V4, null));
+        assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V4_0,
+                StorageDomainMapper.map(NfsVersion.V4_0, null));
+        assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V4_1,
+                StorageDomainMapper.map(NfsVersion.V4_1, null));
+        assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.V4_2,
+                StorageDomainMapper.map(NfsVersion.V4_2, null));
         assertEquals(org.ovirt.engine.core.common.businessentities.NfsVersion.AUTO,
                 StorageDomainMapper.map(NfsVersion.AUTO, null));
         assertEquals(NfsVersion.V3, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.V3, null));
         assertEquals(NfsVersion.V4, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.V4, null));
+        assertEquals(NfsVersion.V4_0, StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.NfsVersion.V4_0, null));
+        assertEquals(NfsVersion.V4_1, StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.NfsVersion.V4_1, null));
+        assertEquals(NfsVersion.V4_2, StorageDomainMapper.map(org.ovirt.engine.core.common
+                .businessentities.NfsVersion.V4_2, null));
         assertEquals(NfsVersion.AUTO, StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.AUTO, null));
     }

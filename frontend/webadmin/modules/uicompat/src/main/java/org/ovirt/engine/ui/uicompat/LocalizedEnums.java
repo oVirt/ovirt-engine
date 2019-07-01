@@ -1359,6 +1359,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NfsVersion___V4();
 
+    String NfsVersion___V4_0();
+
     String NfsVersion___V4_1();
 
     String NfsVersion___AUTO();
