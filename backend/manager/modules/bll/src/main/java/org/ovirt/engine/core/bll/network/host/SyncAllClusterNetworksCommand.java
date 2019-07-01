@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.ovirt.engine.core.bll.CommandActionState.END_SUCCESS;
+import static org.ovirt.engine.core.bll.CommandActionState.EXECUTE;
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_FAILED;
+import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_FINISHED;
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_STARTED;
+import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_START_ERROR;
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_NOTHING_TO_DO;
 
 import java.util.List;
@@ -9,12 +13,16 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.ClusterCommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -34,6 +42,9 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
 
     @Inject
     private ClusterDao clusterDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     private List<VDS> outOfSyncHosts;
 
     public SyncAllClusterNetworksCommand(ClusterParametersBase parameters, CommandContext commandContext) {
@@ -54,6 +65,7 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
             List<ActionParametersBase> params = outOfSyncHosts.stream()
                 .map(host -> new PersistentHostSetupNetworksParameters(host.getId(), outOfSyncHosts.size(), count.getAndIncrement()))
                 .collect(Collectors.toList());
+            params.forEach(this::withRootCommandInfo);
             runInternalMultipleActions(ActionType.SyncAllHostNetworks, params);
         }
         setSucceeded(true);
@@ -61,8 +73,17 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getSucceeded()){
-            return outOfSyncHostsExist() ? CLUSTER_SYNC_ALL_NETWORKS_STARTED : CLUSTER_SYNC_NOTHING_TO_DO;
+        switch (getActionState()) {
+            case EXECUTE:
+                if (!getSucceeded()){
+                    return CLUSTER_SYNC_ALL_NETWORKS_START_ERROR;
+                } else if (!outOfSyncHostsExist()){
+                    return CLUSTER_SYNC_NOTHING_TO_DO;
+                } else {
+                    return CLUSTER_SYNC_ALL_NETWORKS_STARTED;
+                }
+            case END_SUCCESS:
+                return CLUSTER_SYNC_ALL_NETWORKS_FINISHED;
         }
         return CLUSTER_SYNC_ALL_NETWORKS_FAILED;
     }
@@ -96,5 +117,10 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
 
     private boolean outOfSyncHostsExist() {
         return CollectionUtils.isNotEmpty(outOfSyncHosts);
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }
