@@ -87,4 +87,13 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }
+
+    @Test
+    public void testValidateStorageDomainNotInDataCenter() {
+        Guid storagePoolId = Guid.newGuid();
+        when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
+        when(cmd.getStoragePoolId()).thenReturn(storagePoolId);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_BELONGS_TO_DIFFERENT_STORAGE_POOL);
+    }
 }
