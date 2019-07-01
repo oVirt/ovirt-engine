@@ -426,5 +426,11 @@ public interface UIMessages extends Messages {
     String biosTypeSupportedForX86Only();
 
     String glusterPeerNotMatchingHostFingerprint(String hostAddress, String glusterPeerAddress);
+
+    String vmName(String vmName);
+
+    String hostName(String hostName);
+
+    String labelName(String labelName);
 }
 
