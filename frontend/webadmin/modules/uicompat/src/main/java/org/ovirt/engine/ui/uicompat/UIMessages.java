@@ -430,5 +430,11 @@ public interface UIMessages extends Messages {
     String noTemplateNameDuplicatesAllowed();
 
     String noVmNameDuplicatesAllowed();
+
+    String vmName(String vmName);
+
+    String hostName(String hostName);
+
+    String labelName(String labelName);
 }
 

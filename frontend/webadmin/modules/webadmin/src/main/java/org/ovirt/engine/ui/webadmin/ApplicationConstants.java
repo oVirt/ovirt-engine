@@ -2947,9 +2947,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostEnforceAffinityGroup();
 
+    String hostLabelsAffinityGroup();
+
     String hostMembersAffinityGroup();
 
+    String vmLabelsAffinityGroup();
+
     String vmMembersAffinityGroup();
+
+    String noLabelsAffinityGroup();
 
     String noMembersAffinityGroup();
 

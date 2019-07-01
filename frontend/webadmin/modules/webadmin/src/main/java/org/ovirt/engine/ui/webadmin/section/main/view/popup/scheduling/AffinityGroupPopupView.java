@@ -146,8 +146,8 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
 
     public void edit(final AffinityGroupModel model) {
         driver.edit(model);
-        addRemoveVmWidget.edit(model.getVmsSelectionModel());
-        addRemoveHostWidget.edit(model.getHostsSelectionModel());
+        addRemoveVmWidget.edit(model.getVmsOrLabelsSelectionModel());
+        addRemoveHostWidget.edit(model.getHostsOrLabelsSelectionModel());
     }
 
     @Override

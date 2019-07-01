@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -104,31 +105,21 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         getTable().addColumn(hostEnforceColumn, constants.hostEnforceAffinityGroup(), "100px"); //$NON-NLS-1$
 
 
-        AbstractTextColumn<AffinityGroup> vmMembersColumn = new AbstractTextColumn<AffinityGroup>() {
-            @Override
-            public String getValue(AffinityGroup group) {
-                String vmNames = String.join(", ", getVmNames(group)); //$NON-NLS-1$
-                if (vmNames.isEmpty()) {
-                    return constants.noMembersAffinityGroup();
-                }
-                return vmNames;
-            }
-        };
-        vmMembersColumn.makeSortable();
-        getTable().addColumn(vmMembersColumn, constants.vmMembersAffinityGroup(), "500px"); //$NON-NLS-1$
+        getTable().addColumn(createListTextColumn(this::getVmNames, constants.noMembersAffinityGroup()),
+                constants.vmMembersAffinityGroup(),
+                "400px"); //$NON-NLS-1$
 
-        AbstractTextColumn<AffinityGroup> hostMembersColumn = new AbstractTextColumn<AffinityGroup>() {
-            @Override
-            public String getValue(AffinityGroup group) {
-                String hostNames = String.join(", ", getHostNames(group)); //$NON-NLS-1$
-                if (hostNames.isEmpty()) {
-                    return constants.noMembersAffinityGroup();
-                }
-                return hostNames;
-            }
-        };
-        hostMembersColumn.makeSortable();
-        getTable().addColumn(hostMembersColumn, constants.hostMembersAffinityGroup(), "500px"); //$NON-NLS-1$
+        getTable().addColumn(createListTextColumn(AffinityGroup::getVmLabelNames, constants.noLabelsAffinityGroup()),
+                constants.vmLabelsAffinityGroup(),
+                "300px"); //$NON-NLS-1$
+
+        getTable().addColumn(createListTextColumn(this::getHostNames, constants.noMembersAffinityGroup()),
+                constants.hostMembersAffinityGroup(),
+                "400px"); //$NON-NLS-1$
+
+        getTable().addColumn(createListTextColumn(AffinityGroup::getHostLabelNames, constants.noLabelsAffinityGroup()),
+                constants.hostLabelsAffinityGroup(),
+                "300px"); //$NON-NLS-1$
     }
 
     protected List<String> getVmNames(AffinityGroup group) {
@@ -140,4 +131,20 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
     }
 
     protected abstract void generateIds();
+
+    private AbstractTextColumn<AffinityGroup> createListTextColumn(Function<AffinityGroup, List<String>> extractor,
+            String noMembers) {
+        AbstractTextColumn<AffinityGroup> column = new AbstractTextColumn<AffinityGroup>() {
+            @Override
+            public String getValue(AffinityGroup group) {
+                String vmLabels = String.join(", ", extractor.apply(group)); //$NON-NLS-1$
+                if (vmLabels.isEmpty()) {
+                    return noMembers;
+                }
+                return vmLabels;
+            }
+        };
+        column.makeSortable();
+        return column;
+    }
 }
