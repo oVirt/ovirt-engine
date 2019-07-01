@@ -252,7 +252,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             handleCinderSnapshotDisks(cinderDisks);
         }
 
-        managedBlockDisks.forEach(disk -> removeManagedBlockSnapshot(disk));
+        managedBlockDisks.forEach(this::removeManagedBlockSnapshot);
     }
 
     private void removeManagedBlockSnapshot(ManagedBlockStorageDisk disk) {
