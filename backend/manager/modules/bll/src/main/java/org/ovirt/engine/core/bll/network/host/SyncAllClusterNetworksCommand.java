@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORK
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_NOTHING_TO_DO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -22,17 +23,18 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 @NonTransactiveCommandAttribute
 public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterParametersBase> {
 
     @Inject
-    private VdsDao vdsDao;
+    private ClusterDao clusterDao;
     private Set<Guid> vdsIds;
 
     public SyncAllClusterNetworksCommand(ClusterParametersBase parameters, CommandContext commandContext) {
@@ -71,6 +73,16 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
         return vdsIds.stream()
             .map(vdsId -> new PermissionSubject(vdsId, VdcObjectType.VDS, getActionType().getActionGroup()))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        Cluster cluster = clusterDao.get(getParameters().getClusterId());
+        jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), cluster.getName());
+        return jobProperties;
     }
 
     /**
