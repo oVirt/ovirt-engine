@@ -5,8 +5,11 @@ import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORK
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_NOTHING_TO_DO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.ClusterCommandBase;
@@ -19,14 +22,18 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.dao.ClusterDao;
 
 @NonTransactiveCommandAttribute
 public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterParametersBase> {
 
+    @Inject
+    private ClusterDao clusterDao;
     private List<VDS> outOfSyncHosts;
 
     public SyncAllClusterNetworksCommand(ClusterParametersBase parameters, CommandContext commandContext) {
@@ -65,6 +72,16 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
         return outOfSyncHosts.stream()
             .map(host -> new PermissionSubject(host.getId(), VdcObjectType.VDS, getActionType().getActionGroup()))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        Cluster cluster = clusterDao.get(getParameters().getClusterId());
+        jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), cluster.getName());
+        return jobProperties;
     }
 
     /**
