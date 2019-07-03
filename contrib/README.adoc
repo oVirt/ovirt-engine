@@ -68,6 +68,17 @@ $ ./thread-dump.sh -h
             Delay in seconds between each thread dump
 ```
 
+=== log-event.sh
+A script that sends a message to engine's REST API events endpoint.
+Engine creates an event that is written to the events tab and to
+engine.log with the message.
+
+For example to create an entry in the log with the message
+"my event message":
+```bash
+    log-event.sh my event message
+```
+
 = TODO
 - should we create an rpm for contrib - ovirt-engine-contrib?
  or just install with the rpm under /.../lib/ovirt-engine/contrib
