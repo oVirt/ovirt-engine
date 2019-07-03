@@ -18,11 +18,13 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -63,6 +65,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     private VM sourceVm;
 
+    private VM editedVM;
+
     protected CloneVmCommand(T params, CommandContext commandContext) {
         super(params, commandContext);
     }
@@ -70,7 +74,6 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     public CloneVmCommand(Guid commandId) {
         super(commandId);
     }
-
 
     @Override
     protected void init() {
@@ -86,6 +89,21 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             setVmId(getParameters().getNewVmGuid());
         }
         getParameters().setUseCinderCommandCallback(!getAdjustedDiskImagesFromConfiguration().isEmpty());
+    }
+
+    @Override
+    protected void executeVmCommand() {
+        super.executeVmCommand();
+
+        if (getReturnValue().getSucceeded() && getParameters().isEdited()) {
+            ActionReturnValue returnValue = runInternalAction(
+                    ActionType.UpdateVm,
+                    createUpdateVmParameters(),
+                    cloneContextWithNoCleanupCompensation());
+
+            returnValue.setActionReturnValue(getReturnValue().getActionReturnValue());
+            setReturnValue(returnValue);
+        }
     }
 
     @Override
@@ -246,15 +264,20 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void setupParameters() {
+        if (getParameters().isEdited()) {
+            editedVM = getParameters().getVm();
+        }
+
         setVmId(Guid.newGuid());
-        VM vmToClone = getVm();
         getParameters().setNewVmGuid(getVmId());
+        VM vmToClone = getVm();
         getParameters().setVm(vmToClone);
 
-        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(oldVmId);
-        vmDeviceUtils.updateVmDevicesInParameters(getParameters(), devices);
-
-        fillDisksToParameters();
+        if (!getParameters().isEdited()) {
+            List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(oldVmId);
+            vmDeviceUtils.updateVmDevicesInParameters(getParameters(), devices);
+            fillDisksToParameters();
+        }
     }
 
     @Override
@@ -280,5 +303,17 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     protected void updateOriginalTemplate(VmStatic vmStatic) {
         vmStatic.setOriginalTemplateGuid(getVm().getOriginalTemplateGuid());
         vmStatic.setOriginalTemplateName(getVm().getOriginalTemplateName());
+    }
+
+    private VmManagementParametersBase createUpdateVmParameters() {
+        editedVM.setId(getVmId());
+        editedVM.setVmCreationDate(getVm().getVmCreationDate());
+        editedVM.setCreatedByUserId(getVm().getCreatedByUserId());
+
+        VmManagementParametersBase params = new VmManagementParametersBase(getParameters());
+        params.setLockProperties(LockProperties.create(LockProperties.Scope.None));
+        params.setVm(editedVM);
+        params.setVmId(editedVM.getId());
+        return params;
     }
 }

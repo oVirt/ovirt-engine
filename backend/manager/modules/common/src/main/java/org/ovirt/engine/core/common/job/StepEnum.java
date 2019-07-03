@@ -26,6 +26,7 @@ public enum StepEnum {
     EXTRACTING_OVA,
     CREATING_OVA,
     ADD_VM,
+    UPDATE_VM,
 
     // Gluster
     SETTING_GLUSTER_OPTION,

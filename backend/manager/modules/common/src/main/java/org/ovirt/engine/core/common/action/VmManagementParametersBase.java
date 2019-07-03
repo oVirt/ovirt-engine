@@ -155,6 +155,35 @@ public class VmManagementParametersBase extends VmOperationParameterBase
         this(vm.getStaticData());
     }
 
+    public VmManagementParametersBase(VmManagementParametersBase baseParams) {
+        this(baseParams.getVmStaticData());
+        setMakeCreatorExplicitOwner(baseParams.isMakeCreatorExplicitOwner());
+        setStorageDomainId(baseParams.getStorageDomainId());
+        setVmPayload(baseParams.getVmPayload());
+        setClearPayload(baseParams.isClearPayload());
+        setCopyTemplatePermissions(baseParams.isCopyTemplatePermissions());
+        setApplyChangesLater(baseParams.applyChangesLater);
+        setClusterLevelChangeFromVersion(baseParams.getClusterLevelChangeFromVersion());
+        setMemoryHotUnplugEnabled(baseParams.isMemoryHotUnplugEnabled());
+
+        setSoundDeviceEnabled(baseParams.isSoundDeviceEnabled());
+        setConsoleEnabled(baseParams.isConsoleEnabled());
+        setBalloonEnabled(baseParams.isBalloonEnabled());
+        setVirtioScsiEnabled(baseParams.isVirtioScsiEnabled());
+        setUpdateNuma(baseParams.isUpdateNuma());
+        setUpdateRngDevice(baseParams.isUpdateRngDevice());
+        setRngDevice(baseParams.getRngDevice());
+        setUpdateWatchdog(baseParams.isUpdateWatchdog());
+        setWatchdog(baseParams.getWatchdog());
+        setAffinityGroups(baseParams.getAffinityGroups());
+        setAffinityLabels(baseParams.getAffinityLabels());
+
+        getGraphicsDevices().putAll(baseParams.getGraphicsDevices());
+        setDiskInfoDestinationMap(baseParams.getDiskInfoDestinationMap());
+
+        setVmLargeIcon(baseParams.getVmLargeIcon());
+    }
+
     public VmStatic getVmStaticData() {
         return vmStatic;
     }

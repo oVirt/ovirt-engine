@@ -638,22 +638,23 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.getInstance().getTemplateDiskList(asyncQuery(this::initTemplateDisks), template.getId());
     }
 
-    protected void initTemplateDisks(List<DiskImage> disks) {
+    protected void initTemplateDisks(List<? extends Disk> disks) {
         disks.sort(new DiskByDiskAliasComparator());
         ArrayList<DiskModel> list = new ArrayList<>();
 
-        for (DiskImage disk : disks) {
+        for (Disk disk : disks) {
             DiskModel diskModel = new DiskModel();
             diskModel.getAlias().setEntity(disk.getDiskAlias());
             diskModel.getVolumeType().setIsAvailable(false);
 
             switch (disk.getDiskStorageType()) {
                 case IMAGE:
-                    diskModel.setSize(new EntityModel<>((int) disk.getSizeInGigabytes()));
+                    DiskImage diskImage = (DiskImage) disk;
+                    diskModel.setSize(new EntityModel<>((int) diskImage.getSizeInGigabytes()));
                     ListModel volumes = new ListModel();
-                    volumes.setItems(disk.getVolumeType() == VolumeType.Preallocated ?
+                    volumes.setItems(diskImage.getVolumeType() == VolumeType.Preallocated ?
                             new ArrayList<>(Collections.singletonList(VolumeType.Preallocated))
-                            : AsyncDataProvider.getInstance().getVolumeTypeList(), disk.getVolumeType());
+                            : AsyncDataProvider.getInstance().getVolumeTypeList(), diskImage.getVolumeType());
                     diskModel.setVolumeType(volumes);
                     VM vm = new VM();
                     vm.setClusterCompatibilityVersion(getCompatibilityVersion());
@@ -813,7 +814,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             hasQuotaInList = defaultQuota.equals(quotaList.get(0).getId());
                         }
 
-                        // Add the quota to the list only in edit mode
+                        // Add the quota to the list only in edit or clone mode
                         if (!hasQuotaInList && !getModel().getIsNew()) {
                             Quota quota = new Quota();
                             quota.setId(defaultQuota);

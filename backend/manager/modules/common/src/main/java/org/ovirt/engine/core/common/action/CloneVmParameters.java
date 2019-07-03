@@ -9,12 +9,16 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class CloneVmParameters extends AddVmParameters {
 
+    private static final long serialVersionUID = 4851787064680308265L;
+
     private Guid newVmGuid;
 
     private String newName;
     private Map<Guid, Map<Guid, DiskImage>> srcToDstChainMap = new HashMap<>();
     private Guid destStorageDomainId;
     private CloneVmStage stage = CloneVmStage.COPY_DISKS;
+
+    private boolean edited;
 
     public CloneVmParameters() {
 
@@ -23,6 +27,12 @@ public class CloneVmParameters extends AddVmParameters {
     public CloneVmParameters(VM vm, String newName) {
         super(vm);
         this.newName = newName;
+    }
+
+    public CloneVmParameters(VM vm, String newName, boolean edited) {
+        super(vm);
+        this.newName = newName;
+        this.edited = edited;
     }
 
     public String getNewName() {
@@ -39,6 +49,14 @@ public class CloneVmParameters extends AddVmParameters {
 
     public void setNewVmGuid(Guid newVmGuid) {
         this.newVmGuid = newVmGuid;
+    }
+
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
 
     public Guid getDestStorageDomainId() {

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -365,7 +364,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void initTemplateDisks(List<DiskImage> disks) {
+    protected void initTemplateDisks(List<? extends Disk> disks) {
         // can not mix template disks with instance images
         adjustInstanceImages(disks.isEmpty());
         super.initTemplateDisks(disks);

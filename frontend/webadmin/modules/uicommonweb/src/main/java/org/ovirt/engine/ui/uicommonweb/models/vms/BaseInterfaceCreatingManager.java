@@ -86,7 +86,13 @@ public abstract class BaseInterfaceCreatingManager {
                 }
             }
 
-            doNicManipulation(createVnicParameters, updateVnicParameters, removeVnicParameters, unitVmModel.getIsNew(), vmId, unitVmModel);
+            doNicManipulation(
+                    createVnicParameters,
+                    updateVnicParameters,
+                    removeVnicParameters,
+                    unitVmModel.getIsNew() || unitVmModel.getIsClone(),
+                    vmId,
+                    unitVmModel);
         }), vmId, unitVmModel);
     }
 

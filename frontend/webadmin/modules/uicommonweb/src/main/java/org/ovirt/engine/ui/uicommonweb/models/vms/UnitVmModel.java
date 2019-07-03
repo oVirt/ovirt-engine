@@ -106,6 +106,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private boolean privateIsNew;
 
+    private boolean privateIsClone;
+
     private EntityModel<Boolean> valid;
 
     public EntityModel<Boolean> getValid() {
@@ -176,6 +178,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public void setIsNew(boolean value) {
         privateIsNew = value;
+    }
+
+    public boolean getIsClone() {
+        return privateIsClone;
+    }
+
+    public void setIsClone(boolean value) {
+        privateIsClone = value;
     }
 
     private boolean vmAttachedToPool;

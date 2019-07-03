@@ -143,7 +143,11 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return exportPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
                             return createSnapshotPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getEditCommand() || lastExecutedCommand == getModel().getNewVmCommand() || "OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                        } else if (
+                                   lastExecutedCommand == getModel().getCloneVmCommand() ||
+                                   lastExecutedCommand == getModel().getEditCommand() ||
+                                   lastExecutedCommand == getModel().getNewVmCommand() ||
+                                   "OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();
                             } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditVmDiskModel)) {
@@ -157,8 +161,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return vncWindoProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditConsoleCommand()) {
                             return consolePopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
-                            return cloneVmProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportOvaCommand()) {
                             return exportOvaPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getImportVmCommand()

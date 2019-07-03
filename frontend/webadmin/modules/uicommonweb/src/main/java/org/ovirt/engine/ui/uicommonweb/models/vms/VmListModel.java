@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.ExportVmToOvaParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
@@ -768,7 +769,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm), this);
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setVmAttachedToPool(vm.getVmPoolId() != null);
-        model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
+        model.setIsAdvancedModeLocalStorageKey(IS_ADVANCED_MODEL_LOCAL_STORAGE_KEY);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance()
                 .getConstants().editVmTitle());
@@ -1684,7 +1685,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         final UnitVmModel model = (UnitVmModel) getWindow();
         final String name = model.getName().getEntity();
 
-        if (!model.getIsNew() && model.getNumaEnabled().getEntity() &&
+        if (!model.getIsNew() && !model.getIsClone() && model.getNumaEnabled().getEntity() &&
                 (!model.getMemSize().getEntity().equals(getcurrentVm().getMemSizeMb()) ||
                 !model.getTotalCPUCores().getEntity().equals(Integer.toString(getcurrentVm().getNumOfCpus())) )) {
             model.setNumaChanged(true);
@@ -1759,6 +1760,48 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
     }
 
+    protected void setupCloneVmModel(UnitVmModel model, List<UICommand> uiCommands) {
+        model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmTitle());
+        model.setHelpTag(HelpTag.clone_vm);
+        model.setHashName(HelpTag.clone_vm.name());
+        model.setIsClone(true);
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
+        model.setIsAdvancedModeLocalStorageKey(IS_ADVANCED_MODEL_LOCAL_STORAGE_KEY);
+
+        setWindow(model);
+        model.initialize();
+
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
+
+        model.getProvisioning().setEntity(true);
+
+        model.getCommands().addAll(uiCommands);
+
+        model.initForemanProviders(null);
+    }
+
+    @Override
+    protected void cloneVM(final UnitVmModel model) {
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        model.startProgress();
+
+        VM vm = getcurrentVm();
+
+        CloneVmParameters parameters = getCloneVmParameters(vm, vm.getName(), true);
+        parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+
+        Frontend.getInstance()
+                .runAction(ActionType.CloneVm,
+                        parameters,
+                        new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, null),
+                        this);
+    }
+
     private boolean isHeadlessModeChanged(VM source, VmManagementParametersBase updateVmParameters) {
         return source.getDefaultDisplayType() != updateVmParameters.getVmStaticData().getDefaultDisplayType()
                 && (source.getDefaultDisplayType() == DisplayType.none
@@ -1810,29 +1853,40 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     public VmManagementParametersBase getUpdateVmParameters(boolean applyCpuChangesLater) {
-        UnitVmModel model = (UnitVmModel) getWindow();
         VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
-
-        setVmWatchdogToParams(model, updateVmParams);
-        updateVmParams.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-        updateVmParams.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-        updateVmParams.setBalloonEnabled(balloonEnabled(model));
-        updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        fillVmManagementParameters(updateVmParams);
         updateVmParams.setApplyChangesLater(applyCpuChangesLater);
-        updateVmParams.setUpdateNuma(model.isNumaChanged());
-        updateVmParams.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
-        updateVmParams.setAffinityLabels(model.getLabelList().getSelectedItems());
+        return updateVmParams;
+    }
+
+    public CloneVmParameters getCloneVmParameters(VM vm, String newName, boolean isEdited) {
+        CloneVmParameters params = new CloneVmParameters(vm, newName, isEdited);
+        fillVmManagementParameters(params);
+        return params;
+    }
+
+    public VmManagementParametersBase fillVmManagementParameters(VmManagementParametersBase params) {
+        UnitVmModel model = (UnitVmModel) getWindow();
+
+        setVmWatchdogToParams(model, params);
+        params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        params.setBalloonEnabled(balloonEnabled(model));
+        params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        params.setUpdateNuma(model.isNumaChanged());
+        params.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
+        params.setAffinityLabels(model.getLabelList().getSelectedItems());
         if (model.getIsHeadlessModeEnabled().getEntity()) {
-            updateVmParams.getVmStaticData().setDefaultDisplayType(DisplayType.none);
+            params.getVmStaticData().setDefaultDisplayType(DisplayType.none);
         }
         BuilderExecutor.build(
                 new Pair<>((UnitVmModel) getWindow(), getSelectedItem()),
-                updateVmParams,
+                params,
                 new VmIconUnitAndVmToParameterBuilder());
-        setRngDeviceToParams(model, updateVmParams);
-        BuilderExecutor.build(model, updateVmParams, new UnitToGraphicsDeviceParamsBuilder());
+        setRngDeviceToParams(model, params);
+        BuilderExecutor.build(model, params, new UnitToGraphicsDeviceParamsBuilder());
 
-        return updateVmParams;
+        return params;
     }
 
     private void retrieveIsoImages() {
@@ -2086,8 +2140,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             cancelConfirmation();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        } else if ("OnClone".equals(command.getName())) { //$NON-NLS-1$
-            onClone();
         } else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
         } else if ("OnExportOva".equals(command.getName())) { //$NON-NLS-1$
@@ -2213,29 +2265,21 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void cloneVm() {
+        if (getWindow() != null) {
+            return;
+        }
+
         final VM vm = getSelectedItem();
         if (vm == null) {
             return;
         }
 
-        CloneVmModel model = new CloneVmModel(vm, constants);
-        setWindow(model);
+        List<UICommand> commands = new ArrayList<>();
+        commands.add(UICommand.createDefaultOkUiCommand("OnSave", this)); //$NON-NLS-1$
+        commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
-        model.initialize();
-        model.setTitle(ConstantsManager.getInstance()
-                .getConstants().cloneVmTitle());
-
-        model.setHelpTag(HelpTag.clone_vm);
-        model.setHashName("clone_vm"); //$NON-NLS-1$
-
-        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnClone", this); //$NON-NLS-1$
-        model.getCommands().add(okCommand);
-        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(cancelCommand);
-    }
-
-    private void onClone() {
-        ((CloneVmModel) getWindow()).onClone(this, false);
+        UnitVmModel model = new UnitVmModel(new CloneVmModelBehavior(vm), this);
+        setupCloneVmModel(model, commands);
     }
 
     private void onConfigureVmsToImport() {
