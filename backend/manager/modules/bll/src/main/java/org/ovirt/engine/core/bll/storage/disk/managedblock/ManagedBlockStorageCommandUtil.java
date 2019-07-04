@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmHandler;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
-@Singleton
 public class ManagedBlockStorageCommandUtil {
     @Inject
     private BackendInternal backend;
