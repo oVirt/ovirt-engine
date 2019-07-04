@@ -5,10 +5,12 @@ import java.util.List;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,6 +42,9 @@ public class ManagedBlockStorageDiskUtil {
     @Inject
     private ImageDao imageDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     public void saveDisk(ManagedBlockStorageDisk disk) {
         imageStorageDomainMapDao.save(new ImageStorageDomainMap(disk.getImageId(),
                 disk.getStorageIds().get(0),
@@ -60,6 +65,13 @@ public class ManagedBlockStorageDiskUtil {
         imageDao.update(oldImage.getImage());
     }
 
+    public void lockImage(Guid imageId) {
+        imagesHandler.updateImageStatus(imageId, ImageStatus.LOCKED);
+    }
+
+    public void unlockImage(Guid imageId) {
+        imagesHandler.updateImageStatus(imageId, ImageStatus.OK);
+    }
 
     private Guid findImageForSameDrive(Snapshot.SnapshotType snapshotType, DiskImage diskImage) {
         List<VM> vmsListForDisk = vmDao.getVmsListForDisk(diskImage.getId(), false);

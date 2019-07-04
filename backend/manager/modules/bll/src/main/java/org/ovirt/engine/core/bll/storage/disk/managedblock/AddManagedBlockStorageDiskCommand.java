@@ -126,6 +126,8 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
                 addManagedDeviceForDisk(volumeId);
             }
 
+            managedBlockStorageDiskUtil.lockImage(disk.getImageId());
+
             return null;
         });
     }
@@ -189,6 +191,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
 
     @Override
     protected void endSuccessfully() {
-        setSucceeded(true);
+        managedBlockStorageDiskUtil.unlockImage(getParameters().getDiskInfo().getId());
+        super.endSuccessfully();
     }
 }
