@@ -183,23 +183,30 @@ public class ManagedBlockStorageCommandUtil {
 
         // Disk is being disconnected as part of live migration
         Guid destVdsId = (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.DEST_VDS_ID);
-        if (destVdsId != null) {
+        if (destVdsId == null) {
+            vmDevice.getSpecParams().remove(ManagedBlockStorageDisk.ATTACHED_VDS_ID);
+        } else {
             if (!removeDest) {
                 vmDevice.getSpecParams().put(ManagedBlockStorageDisk.ATTACHED_VDS_ID, destVdsId);
             }
 
             // The device is now attached only to the destination host
             vmDevice.getSpecParams().remove(ManagedBlockStorageDisk.DEST_VDS_ID);
-            TransactionSupport.executeInNewTransaction(() -> {
-                vmDeviceDao.update(vmDevice);
-                return null;
-            });
         }
 
         parameters.setVdsId(vdsId);
         ActionReturnValue returnValue =
                 backend.runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, parameters);
 
-        return returnValue.getSucceeded();
+        if (returnValue.getSucceeded()) {
+            TransactionSupport.executeInNewTransaction(() -> {
+                vmDeviceDao.update(vmDevice);
+                return null;
+            });
+
+            return true;
+        }
+
+        return false;
     }
 }
