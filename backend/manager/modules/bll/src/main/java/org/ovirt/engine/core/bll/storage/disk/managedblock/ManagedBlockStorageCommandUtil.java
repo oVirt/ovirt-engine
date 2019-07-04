@@ -130,7 +130,7 @@ public class ManagedBlockStorageCommandUtil {
         });
     }
 
-    public VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
+    private VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
         ActionReturnValue returnValue = getConnectionInfo(disk, vds);
 
         if (!returnValue.getSucceeded()) {
