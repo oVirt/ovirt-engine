@@ -116,6 +116,9 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
     SafeHtml divWithStyle(String style, String id, SafeHtml text);
 
+    @Template("<div style=\"{0}\" id=\"{1}\">{2}</div>")
+    SafeHtml divWithStringStyle(String style, String id, SafeHtml text);
+
     @Template("<strong style='{1}'>{0}</strong>")
     SafeHtml strongTextWithColor(String text, SafeStyles color);
 
