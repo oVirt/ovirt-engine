@@ -181,6 +181,11 @@ public class ManagedBlockStorageCommandUtil {
         Guid vdsId = removeDest ? (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.DEST_VDS_ID) :
                 (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.ATTACHED_VDS_ID);
 
+        // Attach has likely failed so we have nothing to disconnect
+        if (vdsId == null) {
+            return false;
+        }
+
         // Disk is being disconnected as part of live migration
         Guid destVdsId = (Guid) vmDevice.getSpecParams().get(ManagedBlockStorageDisk.DEST_VDS_ID);
         if (destVdsId == null) {
