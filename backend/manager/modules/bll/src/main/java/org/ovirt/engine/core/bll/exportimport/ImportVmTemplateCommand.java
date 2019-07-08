@@ -136,6 +136,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
     private Guid sourceTemplateId;
+    private Map<Guid, QemuImageInfo> diskImageInfoMap = new HashMap<>();
 
     public ImportVmTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -367,6 +368,8 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
     private void initImportClonedTemplateDisks() {
         for (DiskImage image : getImages()) {
+            // Update the virtual size with value queried from 'qemu-img info'
+            updateDiskSizeByQcowImageInfo(image);
             if (getParameters().isImportAsNewEntity()) {
                 generateNewDiskId(image);
                 updateManagedDeviceMap(image, getVmTemplate().getManagedDeviceMap());
@@ -771,17 +774,32 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
     protected void setQcowCompat(DiskImage diskImage) {
         diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
-        QemuImageInfo qemuImageInfo =
-                imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
-                        diskImage.getStorageIds().get(0),
-                        diskImage.getId(),
-                        diskImage.getImageId(),
-                        null,
-                        true);
+        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, diskImage.getStorageIds().get(0));
         if (qemuImageInfo != null) {
             diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
         }
         imageDao.update(diskImage.getImage());
+    }
+
+    protected void updateDiskSizeByQcowImageInfo(DiskImage diskImage) {
+        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, getParameters().getSourceDomainId());
+        if (qemuImageInfo != null) {
+            diskImage.setSize(qemuImageInfo.getSize());
+        }
+        imageDao.update(diskImage.getImage());
+    }
+
+    private QemuImageInfo getQemuImageInfo(DiskImage diskImage, Guid storageId) {
+        if (!diskImageInfoMap.containsKey(diskImage.getId())) {
+            diskImageInfoMap.put(diskImage.getId(),
+                    imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
+                            storageId,
+                            diskImage.getId(),
+                            diskImage.getImageId(),
+                            null,
+                            true));
+        }
+        return diskImageInfoMap.get(diskImage.getId());
     }
 
     /**
