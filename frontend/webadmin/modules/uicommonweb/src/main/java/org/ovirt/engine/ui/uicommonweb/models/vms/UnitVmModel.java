@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -66,6 +68,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
@@ -1095,13 +1098,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateSecondBootDevice = value;
     }
 
-    private NotChangableForVmInPoolListModel<RepoImage> privateCdImage;
+    private NotChangableForVmInPoolSortedListModel<RepoImage> privateCdImage;
 
     public ListModel<RepoImage> getCdImage() {
         return privateCdImage;
     }
 
-    private void setCdImage(NotChangableForVmInPoolListModel<RepoImage> value) {
+    private void setCdImage(NotChangableForVmInPoolSortedListModel<RepoImage> value) {
         privateCdImage = value;
     }
 
@@ -1605,7 +1608,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getAffinityGroupList().getSelectedItemChangedEvent().addListener(this);
         getAffinityGroupList().setIsAvailable(false);
 
-        setCdImage(new NotChangableForVmInPoolListModel<>());
+        setCdImage(new NotChangableForVmInPoolSortedListModel<>(new LexoNumericNameableComparator<>()));
         getCdImage().setIsChangeable(false);
 
         setMemoryBalloonDeviceEnabled(new EntityModel<Boolean>());
@@ -3299,6 +3302,20 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private class NotChangableForVmInPoolListModel<T> extends ListModel<T> {
+        @Override
+        public ListModel<T> setIsChangeable(boolean value) {
+            if (!isVmAttachedToPool()) {
+                super.setIsChangeable(value);
+            }
+            return this;
+        }
+    }
+
+    private class NotChangableForVmInPoolSortedListModel<T> extends SortedListModel<T> {
+        public NotChangableForVmInPoolSortedListModel(Comparator<? super T> comparator) {
+            super(comparator);
+        }
+
         @Override
         public ListModel<T> setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {
