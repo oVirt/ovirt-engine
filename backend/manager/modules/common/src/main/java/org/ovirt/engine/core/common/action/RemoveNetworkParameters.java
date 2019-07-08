@@ -11,6 +11,8 @@ public class RemoveNetworkParameters extends ActionParametersBase {
     private Guid id;
 
     private boolean removeFromNetworkProvider;
+    private String networkName;
+    private Guid storagePoolId;
 
     public RemoveNetworkParameters() {
     }
@@ -38,5 +40,21 @@ public class RemoveNetworkParameters extends ActionParametersBase {
 
     public void setRemoveFromNetworkProvider(boolean removeFromNetworkProvider) {
         this.removeFromNetworkProvider = removeFromNetworkProvider;
+    }
+
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
+
+    public Guid getStoragePoolId() {
+        return storagePoolId;
+    }
+
+    public void setStoragePoolId(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
     }
 }

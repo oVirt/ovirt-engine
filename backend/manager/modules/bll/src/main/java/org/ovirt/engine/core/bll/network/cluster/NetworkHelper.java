@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,12 +13,9 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
@@ -163,20 +159,6 @@ public class NetworkHelper {
         }
 
         return false;
-    }
-
-    public void removeNetworkFromHostsInDataCenter(Network network, Guid dataCenterId, CommandContext context) {
-        List<VdsNetworkInterface> nics = interfaceDao.getAllInterfacesByLabelForDataCenter(dataCenterId, network.getLabel());
-        removeNetworkFromHosts(network, context, nics);
-    }
-
-    private void removeNetworkFromHosts(Network network, CommandContext context, List<VdsNetworkInterface> nics) {
-        ArrayList<ActionParametersBase> parameters = removeNetworkParametersBuilder.buildParameters(network, nics);
-
-        if (!parameters.isEmpty()) {
-            HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
-            backend.runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters, context);
-        }
     }
 
     public static boolean shouldRemoveNetworkFromHostUponNetworkRemoval(Network persistedNetwork) {

@@ -118,7 +118,7 @@ public enum ActionType {
 
     // Network
     AddNetwork(154, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
-    RemoveNetwork(155, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    RemoveNetwork(155, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, QuotaDependency.NONE),
     UpdateNetwork(156, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, QuotaDependency.NONE),
     CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     ImportExternalNetwork(158, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
