@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_UPDATE_NETWORK;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_UPDATE_NETWORK_FAILED;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_UPDATE_NETWORK_STARTED;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_UPDATE_NETWORK_START_ERROR;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_UPDATE_NOTHING_TO_DO;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,9 +15,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
@@ -21,6 +30,7 @@ import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.HasStoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,6 +40,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -45,6 +56,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -68,6 +80,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private NetworkClusterDao networkClusterDao;
     @Inject
     private NetworkLocking networkLocking;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private Network oldNetwork;
 
@@ -112,6 +129,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
+            parameters.forEach(this::withRootCommandInfo);
             runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters);
         }
     }
@@ -185,7 +203,23 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.NETWORK_UPDATE_NETWORK : AuditLogType.NETWORK_UPDATE_NETWORK_FAILED;
+        switch (getActionState()) {
+        case EXECUTE:
+            if (!getSucceeded()) {
+                return NETWORK_UPDATE_NETWORK_START_ERROR;
+            } else if (skipHostSetupNetworks()) {
+                return NETWORK_UPDATE_NOTHING_TO_DO;
+            } else {
+                return NETWORK_UPDATE_NETWORK_STARTED;
+            }
+        case END_SUCCESS:
+            return NETWORK_UPDATE_NETWORK;
+        }
+        return NETWORK_UPDATE_NETWORK_FAILED;
+    }
+
+    private boolean skipHostSetupNetworks() {
+        return getNetwork().isExternal() || syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork()).isEmpty();
     }
 
     @Override
@@ -521,5 +555,20 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        StoragePool pool = storagePoolDao.get(getParameters().getNetwork().getDataCenterId());
+        jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), pool.getName());
+        return jobProperties;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }
