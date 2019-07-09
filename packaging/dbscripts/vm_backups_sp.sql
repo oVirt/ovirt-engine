@@ -128,7 +128,7 @@ BEGIN
     SET backup_id = v_backup_id,
         disk_id = v_disk_id,
         backup_url = v_backup_url
-    WHERE backup_id = v_backup_id;
+    WHERE backup_id = v_backup_id AND disk_id = v_disk_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
