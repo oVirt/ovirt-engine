@@ -14,13 +14,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -56,6 +60,10 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
 
     @Inject
     private UpdateNetworkClusterPermissionsChecker updatePermissionChecker;
+
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public ManageNetworkClustersCommand(
             ManageNetworkClustersParameters parameters,
@@ -115,6 +123,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     }
 
     private void propagateNetworksChanges() {
+        withRootCommandInfo(getParameters());
         runInternalAction(ActionType.PropagateNetworksToClusterHosts, getParameters());
     }
 
@@ -246,5 +255,10 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             }
         }
         return ValidationResult.VALID;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }

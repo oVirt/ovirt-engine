@@ -12,15 +12,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformer;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformerFactory;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -34,6 +38,10 @@ public class PropagateNetworksToClusterHostsCommand extends CommandBase<ManageNe
     @Inject
     private NetworkClustersToSetupNetworksParametersTransformerFactory
             networkClustersToSetupNetworksParametersTransformerFactory;
+
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public PropagateNetworksToClusterHostsCommand(ManageNetworkClustersParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -60,6 +68,7 @@ public class PropagateNetworksToClusterHostsCommand extends CommandBase<ManageNe
         );
 
         HostSetupNetworksParametersBuilder.updateParametersSequencing(setupNetworksParams);
+        setupNetworksParams.forEach(this::withRootCommandInfo);
         runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, setupNetworksParams);
     }
 
@@ -93,5 +102,10 @@ public class PropagateNetworksToClusterHostsCommand extends CommandBase<ManageNe
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }

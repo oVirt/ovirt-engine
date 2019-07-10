@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_ADD_NETWORK;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_ADD_NETWORK_FAILED;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_ADD_NETWORK_STARTED;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_ADD_NETWORK_START_ERROR;
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_ADD_NOTHING_TO_DO;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,19 +13,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HasStoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
@@ -27,6 +39,7 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -35,6 +48,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
@@ -55,6 +69,11 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     private ProviderDao providerDao;
     @Inject
     private NetworkLocking networkLocking;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public AddNetworkCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -78,6 +97,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         });
 
         // Run cluster attachment, AddVnicProfile and  auto-define in separated thread
+        ExecutionHandler.setAsyncJob(getExecutionContext(), true);
         CompletableFuture.runAsync(this::runClusterAttachment, ThreadPoolUtil.getExecutorService())
                 .thenRunAsync(this::runAddVnicProfile).thenRunAsync(this::runAutodefine);
 
@@ -120,7 +140,40 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.NETWORK_ADD_NETWORK : AuditLogType.NETWORK_ADD_NETWORK_FAILED;
+        switch (getActionState()) {
+        case EXECUTE:
+            if (!getSucceeded()) {
+                return NETWORK_ADD_NETWORK_START_ERROR;
+            } else if (skipHostSetupNetworks()) {
+                return NETWORK_ADD_NOTHING_TO_DO;
+            } else {
+                return NETWORK_ADD_NETWORK_STARTED;
+            }
+        case END_SUCCESS:
+            return NETWORK_ADD_NETWORK;
+        }
+        return NETWORK_ADD_NETWORK_FAILED;
+    }
+
+    @Override
+    public ActionReturnValue endAction() {
+        getExecutionContext().setShouldEndJob(true);
+        return super.endAction();
+    }
+
+    private boolean skipHostSetupNetworks() {
+        return getParameters().getNetworkClusterList() == null;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        StoragePool pool = storagePoolDao.get(getNetwork().getDataCenterId());
+        jobProperties.put(VdcObjectType.Network.name().toLowerCase(), getNetwork().getName());
+        jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), pool.getName());
+        return jobProperties;
     }
 
     @Override
@@ -163,8 +216,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     private void attachToClusters(List<NetworkCluster> networkAttachments, Guid networkId) {
         networkAttachments.forEach(networkCluster -> networkCluster.setNetworkId(networkId));
+        ManageNetworkClustersParameters parameters = new ManageNetworkClustersParameters(networkAttachments);
+        withRootCommandInfo(parameters);
         runInternalAction(ActionType.ManageNetworkClusters,
-                new ManageNetworkClustersParameters(networkAttachments),
+                parameters,
                 getContext().clone().withoutLock());
     }
 
@@ -253,5 +308,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             return getNetworks().stream().anyMatch(
                     otherNetwork -> network.getProvidedBy().getPhysicalNetworkId().equals(otherNetwork.getId()));
         }
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }

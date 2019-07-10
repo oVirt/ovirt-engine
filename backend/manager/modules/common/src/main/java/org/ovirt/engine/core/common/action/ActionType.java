@@ -117,7 +117,7 @@ public enum ActionType {
     HostUpgradeCheckInternal(142, QuotaDependency.NONE),
 
     // Network
-    AddNetwork(154, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    AddNetwork(154, ActionGroup.CREATE_STORAGE_POOL_NETWORK, QuotaDependency.NONE),
     RemoveNetwork(155, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, QuotaDependency.NONE),
     UpdateNetwork(156, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, QuotaDependency.NONE),
     CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
@@ -134,7 +134,7 @@ public enum ActionType {
     UnlabelNetwork(164, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
     LabelNic(165, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
     UnlabelNic(166, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
-    PropagateNetworksToClusterHosts(167, false, QuotaDependency.NONE),
+    PropagateNetworksToClusterHosts(167, QuotaDependency.NONE),
 
     // SR-IOV
     UpdateHostNicVfsConfig(175, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
@@ -262,7 +262,7 @@ public enum ActionType {
     DetachNetworkFromClusterInternal(710, false, QuotaDependency.NONE),
     UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
 
-    ManageNetworkClusters(712, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
+    ManageNetworkClusters(712, ActionGroup.ASSIGN_CLUSTER_NETWORK, QuotaDependency.NONE),
     StartClusterUpgrade(713, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     FinishClusterUpgrade(714, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
 
