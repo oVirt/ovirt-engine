@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -63,6 +64,8 @@ public abstract class AffinityLabelListModel<E extends BusinessEntity<Guid>> ext
     protected abstract Guid getClusterId();
 
     protected abstract String getClusterName();
+
+    protected abstract Version getClusterCompatibilityVersion();
 
     @Override
     protected void selectedItemsChanged() {
@@ -125,8 +128,12 @@ public abstract class AffinityLabelListModel<E extends BusinessEntity<Guid>> ext
             return;
         }
 
-        AffinityLabelModel model =
-                new NewAffinityLabelModel(getNewAffinityLabel(), this, getClusterId(), getClusterName());
+        AffinityLabelModel model = new NewAffinityLabelModel(getNewAffinityLabel(),
+                this,
+                getClusterId(),
+                getClusterName(),
+                getClusterCompatibilityVersion().lessOrEquals(Version.v4_3));
+
         model.init();
         setWindow(model);
     }
@@ -143,7 +150,12 @@ public abstract class AffinityLabelListModel<E extends BusinessEntity<Guid>> ext
         if (affinityLabel == null) {
             return;
         }
-        AffinityLabelModel model = new EditAffinityLabelModel(affinityLabel, this, getClusterId(), getClusterName());
+        AffinityLabelModel model = new EditAffinityLabelModel(affinityLabel,
+                this,
+                getClusterId(),
+                getClusterName(),
+                getClusterCompatibilityVersion().lessOrEquals(Version.v4_3));
+
         model.init();
         setWindow(model);
     }

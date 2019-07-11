@@ -404,6 +404,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String affinityGroupSubTabLabel();
 
+    String affinityLabelsImplicitGroupInfo();
+
+    String affinityLabelsImplicitGroupLabel();
+
     String affinityLabelsNameLabel();
 
     String affinityLabelsSubTabLabel();

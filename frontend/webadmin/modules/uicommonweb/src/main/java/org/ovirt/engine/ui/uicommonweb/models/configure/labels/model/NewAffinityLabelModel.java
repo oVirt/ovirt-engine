@@ -12,11 +12,14 @@ public class NewAffinityLabelModel extends AffinityLabelModel {
     public NewAffinityLabelModel(Label affinityLabel,
                                  ListModel<?> sourceListModel,
                                  Guid clusterId,
-                                 String clusterName) {
-        super(affinityLabel, sourceListModel, ActionType.AddLabel, clusterId, clusterName);
+                                 String clusterName,
+                                 boolean affinityGroupAvailable) {
+        super(affinityLabel, sourceListModel, ActionType.AddLabel, clusterId, clusterName, affinityGroupAvailable);
         setTitle(ConstantsManager.getInstance().getConstants().newAffinityLabelTitle());
         setHelpTag(HelpTag.new_affinity_label);
         setHashName("new_affinity_label"); //$NON-NLS-1$
+
+        getImplicitAffinityGroup().setEntity(false);
     }
 
 }

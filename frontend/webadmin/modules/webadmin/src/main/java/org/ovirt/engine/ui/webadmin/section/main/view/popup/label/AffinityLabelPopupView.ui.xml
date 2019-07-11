@@ -18,6 +18,15 @@
         .firstRow {
             padding-top: 15px;
         }
+
+        .floatLeft {
+            float: left;
+        }
+
+        .infoIcon {
+            float: left;
+            padding-left: 2px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="520px" height="345px">
@@ -25,6 +34,14 @@
             <b:Container addStyleNames="{style.container}">
                 <b:Row addStyleNames="{style.firstRow}">
                     <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.affinityLabelsNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <g:FlowPanel ui:field="implicitAffinityGroupPanel">
+                        <b:Column size="SM_12">
+                            <ge:EntityModelCheckBoxEditor ui:field="implicitAffinityGroup" label="{constants.affinityLabelsImplicitGroupLabel}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
+                            <d:InfoIcon ui:field="implicitAffinityGroupInfoIcon" addStyleNames="{style.infoIcon}" />
+                        </b:Column>
+                    </g:FlowPanel>
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_6">

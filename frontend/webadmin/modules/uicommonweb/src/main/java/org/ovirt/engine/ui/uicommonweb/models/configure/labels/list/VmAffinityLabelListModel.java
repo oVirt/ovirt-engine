@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmAffinityLabelListModel extends AffinityLabelListModel<VM> {
 
@@ -26,5 +27,10 @@ public class VmAffinityLabelListModel extends AffinityLabelListModel<VM> {
     @Override
     protected String getClusterName() {
         return getEntity().getClusterName();
+    }
+
+    @Override
+    protected Version getClusterCompatibilityVersion() {
+        return getEntity().getClusterCompatibilityVersion();
     }
 }
