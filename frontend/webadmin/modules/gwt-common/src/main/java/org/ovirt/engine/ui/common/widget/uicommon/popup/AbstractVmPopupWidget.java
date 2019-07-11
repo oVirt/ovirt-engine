@@ -1136,6 +1136,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         getTabNameMapping().put(TabName.INITIAL_RUN_TAB, this.initialRunTab.getTabListItem());
         getTabNameMapping().put(TabName.POOL_TAB, this.poolTab.getTabListItem());
         getTabNameMapping().put(TabName.RESOURCE_ALLOCATION_TAB, this.resourceAllocationTab.getTabListItem());
+        getTabNameMapping().put(TabName.TAB_RNG, this.rngDeviceTab.getTabListItem());
         getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab.getTabListItem());
         getTabNameMapping().put(TabName.ICON_TAB, this.iconTab.getTabListItem());
         getTabNameMapping().put(TabName.FOREMAN_TAB, foremanTab.getTabListItem());
