@@ -12,13 +12,15 @@ public class EditAffinityLabelModel extends AffinityLabelModel {
     public EditAffinityLabelModel(Label affinityLabel,
                                   ListModel<?> sourceListModel,
                                   Guid clusterId,
-                                  String clusterName) {
-        super(affinityLabel, sourceListModel, ActionType.UpdateLabel, clusterId, clusterName);
+                                  String clusterName,
+                                  boolean affinityGroupAvailable) {
+        super(affinityLabel, sourceListModel, ActionType.UpdateLabel, clusterId, clusterName, affinityGroupAvailable);
         setTitle(ConstantsManager.getInstance().getConstants().editAffinityLabelTitle());
         setHelpTag(HelpTag.edit_affinity_label);
         setHashName("edit_affinity_label"); //$NON-NLS-1$
 
         getName().setEntity(getAffinityLabel().getName());
+        getImplicitAffinityGroup().setEntity(getAffinityLabel().isImplicitAffinityGroup());
     }
 
 }

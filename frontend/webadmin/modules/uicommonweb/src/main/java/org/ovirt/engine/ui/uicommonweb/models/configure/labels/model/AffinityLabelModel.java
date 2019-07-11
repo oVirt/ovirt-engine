@@ -32,6 +32,8 @@ public abstract class AffinityLabelModel extends Model {
     private final ActionType saveActionType;
 
     private EntityModel<String> name;
+    private EntityModel<Boolean> implicitAffinityGroup;
+    private final boolean affinityGroupAvailable;
     private final Guid clusterId;
     private final String clusterName;
 
@@ -41,14 +43,17 @@ public abstract class AffinityLabelModel extends Model {
     public AffinityLabelModel(Label affinityLabel, ListModel<?> sourceListModel,
                               ActionType saveActionType,
                               Guid clusterId,
-                              String clusterName) {
+                              String clusterName,
+                              boolean affinityGroupAvailable) {
         this.affinityLabel = affinityLabel;
         this.sourceListModel = sourceListModel;
         this.saveActionType = saveActionType;
         this.clusterId = clusterId;
         this.clusterName = clusterName;
+        this.affinityGroupAvailable = affinityGroupAvailable;
 
         setName(new EntityModel<>());
+        setImplicitAffinityGroup(new EntityModel<>());
 
         setVmsSelectionModel(new EntitySelectionModel(constants.selectVm(), constants.noAvailableVms()));
         setHostsSelectionModel(new EntitySelectionModel(constants.selectHost(), constants.noAvailableHosts()));
@@ -96,6 +101,18 @@ public abstract class AffinityLabelModel extends Model {
         this.name = name;
     }
 
+    public EntityModel<Boolean> getImplicitAffinityGroup() {
+        return implicitAffinityGroup;
+    }
+
+    public boolean isAffinityGroupAvailable() {
+        return affinityGroupAvailable;
+    }
+
+    public void setImplicitAffinityGroup(EntityModel<Boolean> implicitAffinityGroup) {
+        this.implicitAffinityGroup = implicitAffinityGroup;
+    }
+
     public EntitySelectionModel getVmsSelectionModel() {
         return vmsSelectionModel;
     }
@@ -124,6 +141,7 @@ public abstract class AffinityLabelModel extends Model {
 
         Label label = getAffinityLabel();
         label.setName(getName().getEntity());
+        label.setImplicitAffinityGroup(affinityGroupAvailable && getImplicitAffinityGroup().getEntity());
 
         label.setVms(new HashSet<>(getVmsSelectionModel().getSelectedEntityIds()));
         label.setHosts(new HashSet<>(getHostsSelectionModel().getSelectedEntityIds()));
