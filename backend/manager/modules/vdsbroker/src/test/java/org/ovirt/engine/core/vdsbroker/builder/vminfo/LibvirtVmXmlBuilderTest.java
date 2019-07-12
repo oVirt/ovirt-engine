@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder.adjustSpiceSecureChannels;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +21,13 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.FieldSetter;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockedConfig;
@@ -149,6 +154,42 @@ public class LibvirtVmXmlBuilderTest {
         verify(writer, times(0)).writeAttributeString("display", "on");
     }
 
+    @Test
+    void testNoneVideo() throws NoSuchFieldException, IllegalAccessException {
+        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
+        XmlTextWriter writer = mock(XmlTextWriter.class);
+
+        setupNoneVideoTest(underTest);
+        setWriter(underTest, writer);
+
+        underTest.writeDevices();
+        verify(writer, times(1)).writeStartElement("video");
+        verify(writer, times(1)).writeStartElement("model");
+        verify(writer, times(1)).writeAttributeString("type", "none");
+    }
+
+    private void setupNoneVideoTest(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException {
+        doCallRealMethod().when(underTest).writeDevices();
+
+        VmInfoBuildUtils utils = mock(VmInfoBuildUtils.class);
+        when(utils.getVmDevices(any())).thenReturn(new ArrayList<>());
+        setVmInfoBuildUtils(underTest, utils);
+
+        VM vm = mock(VM.class);
+        when(vm.getId()).thenReturn(Guid.newGuid());
+        when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getBootSequence()).thenReturn(BootSequence.C);
+        setVm(underTest, vm);
+
+        setVolumeLeases(underTest, new ArrayList<>());
+    }
+
+    private void setVolumeLeases(LibvirtVmXmlBuilder underTest, ArrayList<Object> volumeLeases) throws NoSuchFieldException {
+        Field volumeLeasesField = LibvirtVmXmlBuilder.class.getDeclaredField("volumeLeases");
+        FieldSetter.setField(underTest, volumeLeasesField, volumeLeases);
+    }
+
     private VM getVm(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException, IllegalAccessException {
         Field vmField = LibvirtVmXmlBuilder.class.getDeclaredField("vm");
         vmField.setAccessible(true);
@@ -191,5 +232,10 @@ public class LibvirtVmXmlBuilderTest {
     private void setProperties(LibvirtVmXmlBuilder underTest, Map<String, String> properties) throws NoSuchFieldException {
         Field propField = LibvirtVmXmlBuilder.class.getDeclaredField("vmCustomProperties");
         FieldSetter.setField(underTest, propField, properties);
+    }
+
+    private void setVmInfoBuildUtils(LibvirtVmXmlBuilder underTest, VmInfoBuildUtils utils) throws NoSuchFieldException {
+        Field vmInfoBuildUtilsField = LibvirtVmXmlBuilder.class.getDeclaredField("vmInfoBuildUtils");
+        FieldSetter.setField(underTest, vmInfoBuildUtilsField, utils);
     }
 }

@@ -911,7 +911,7 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
-    private void writeDevices() {
+    void writeDevices() {
         List<VmDevice> devices = vmInfoBuildUtils.getVmDevices(vm.getId());
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
@@ -944,6 +944,7 @@ public class LibvirtVmXmlBuilder {
 
         boolean spiceExists = false;
         boolean balloonExists = false;
+        boolean videoExists = false;
         boolean forceRefreshDevices = false;
         boolean pciERootExists = false;
         int pciEPorts = 0;
@@ -967,6 +968,7 @@ public class LibvirtVmXmlBuilder {
                 // memory devices are only used for hot-plug
                 break;
             case VIDEO:
+                videoExists = true;
                 writeVideo(device);
                 break;
             case CONTROLLER:
@@ -1063,6 +1065,10 @@ public class LibvirtVmXmlBuilder {
 
         if (!balloonExists) {
             writeDefaultBalloon();
+        }
+
+        if (!videoExists) {
+            writeDefaultVideo();
         }
 
         writeSerialConsole(serialConsolePath);
@@ -2534,6 +2540,14 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
         writeAlias(device);
         writeAddress(device);
+        writer.writeEndElement();
+    }
+
+    private void writeDefaultVideo() {
+        writer.writeStartElement("video");
+        writer.writeStartElement("model");
+        writer.writeAttributeString("type", "none");
+        writer.writeEndElement();
         writer.writeEndElement();
     }
 
