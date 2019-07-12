@@ -800,6 +800,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public List<VM> getVmsToImport() {
+        if (importedVmModels.getItems() == null) {
+            return Collections.emptyList();
+        }
         return importedVmModels.getItems()
                 .stream()
                 .map(EntityModel::getEntity)
@@ -822,6 +825,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         Collection<EntityModel<VM>> selectedVms = getImportedVmModels().getSelectedItems();
         Collection<EntityModel<VM>> totalVmsSetToImport = getImportedVmModels().getItems();
         getDefaultCommand().setIsExecutionAllowed(selectedVms.size() < totalVmsSetToImport.size());
+    }
+
+    public boolean validate() {
+        List<VM> vmsToImport = getVmsToImport();
+        return !vmsToImport.isEmpty() &&
+                        getProblemDescription().getIsValid() &&
+                        vmsToImportHaveFullInfo() &&
+                        validateArchitectures(vmsToImport);
     }
 
     /**

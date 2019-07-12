@@ -2227,17 +2227,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void onConfigureVmsToImport() {
         final ImportVmsModel importVmsModel = (ImportVmsModel) getWindow();
-        if (importVmsModel == null) {
+        if (importVmsModel == null || !importVmsModel.validate()) {
             return;
         }
 
         boolean vmsToImportHaveFullInfo = importVmsModel.vmsToImportHaveFullInfo();
-
-
-        if (vmsToImportHaveFullInfo && !importVmsModel.validateArchitectures(importVmsModel.getVmsToImport())) {
-            return;
-        }
-
         final ImportVmModel model = importVmsModel.getSpecificImportModel(vmsToImportHaveFullInfo);
 
         if (vmsToImportHaveFullInfo) {
