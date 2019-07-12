@@ -27,5 +27,6 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.getCustomCpu().setSelectedItem(vm.getCustomCpuName());
         model.getBiosType().setSelectedItem(vm.getBiosType());
         model.getHostCpu().setEntity(vm.isUseHostCpuFlags());
+        model.getTscFrequency().setEntity(vm.getUseTscFrequency());
     }
 }

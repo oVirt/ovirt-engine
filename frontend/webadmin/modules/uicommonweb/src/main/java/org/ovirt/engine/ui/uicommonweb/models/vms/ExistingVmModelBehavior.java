@@ -200,6 +200,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().updateResumeBehavior();
 
             getModel().getMigrationMode().setSelectedItem(vm.getMigrationSupport());
+
+            getModel().getTscFrequency().setEntity(vm.getUseTscFrequency());
         });
     }
 

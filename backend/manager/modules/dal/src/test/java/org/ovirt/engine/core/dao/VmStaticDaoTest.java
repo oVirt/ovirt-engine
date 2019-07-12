@@ -72,6 +72,7 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
         newVmStatic.setSmallIconId(FixturesTool.SMALL_ICON_ID);
         newVmStatic.setLargeIconId(FixturesTool.LARGE_ICON_ID);
         newVmStatic.setConsoleDisconnectAction(ConsoleDisconnectAction.REBOOT);
+        newVmStatic.setUseTscFrequency(true);
         return newVmStatic;
     }
 

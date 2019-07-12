@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -31,10 +29,8 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -223,49 +219,6 @@ public class LibvirtVmXmlBuilderTest {
         FieldSetter.setField(underTest, volumeLeasesField, volumeLeases);
     }
 
-    void testIsTscFrequencyNeeded() throws NoSuchFieldException {
-        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
-        XmlTextWriter writer = mock(XmlTextWriter.class);
-        Map<String, String> properties = new HashMap<>();
-        VM vm = mock(VM.class);
-        when(vm.getVmType()).thenReturn(VmType.Desktop);
-        when(vm.getMigrationSupport()).thenReturn(MigrationSupport.PINNED_TO_HOST);
-
-        setUpTscTest(underTest, vm, writer, properties);
-
-        // CPU does not support invtsc
-        setCpuFlagsSupplier(underTest, "tsc,constant_tsc");
-        assertFalse(underTest.isTscFrequencyNeeded());
-
-        setCpuFlagsSupplier(underTest, "tsc,constant_tsc,nonstop_tsc");
-
-        // Not migratable, not HP
-        assertFalse(underTest.isTscFrequencyNeeded());
-
-        // Not migratable, HP VM
-        when(vm.getVmType()).thenReturn(VmType.HighPerformance);
-        assertFalse(underTest.isTscFrequencyNeeded());
-
-        // Migratable, HP VM
-        when(vm.getMigrationSupport()).thenReturn(MigrationSupport.MIGRATABLE);
-        assertTrue(underTest.isTscFrequencyNeeded());
-
-        // Migratable, not HP
-        when(vm.getVmType()).thenReturn(VmType.Server);
-        assertFalse(underTest.isTscFrequencyNeeded());
-
-        when(vm.getVmType()).thenReturn(VmType.Desktop);
-        assertFalse(underTest.isTscFrequencyNeeded());
-
-        // Not on PPC or s390
-        when(vm.getVmType()).thenReturn(VmType.HighPerformance);
-        when(vm.getClusterArch()).thenReturn(ArchitectureType.ppc);
-        assertFalse(underTest.isTscFrequencyNeeded());
-
-        when(vm.getClusterArch()).thenReturn(ArchitectureType.s390x);
-        assertFalse(underTest.isTscFrequencyNeeded());
-    }
-
     @Test
     @MockedConfig("tscConfig")
     void testTscFrequencyCpu() throws NoSuchFieldException {
@@ -273,8 +226,7 @@ public class LibvirtVmXmlBuilderTest {
         XmlTextWriter writer = mock(XmlTextWriter.class);
         Map<String, String> properties = new HashMap<>();
         VM vm = mock(VM.class);
-        when(vm.getVmType()).thenReturn(VmType.HighPerformance);
-        when(vm.getMigrationSupport()).thenReturn(MigrationSupport.MIGRATABLE);
+        when(vm.getUseTscFrequency()).thenReturn(true);
 
         setUpTscTest(underTest, vm, writer, properties);
         setCpuFlagsSupplier(underTest, "tsc,constant_tsc,nonstop_tsc");
@@ -292,8 +244,7 @@ public class LibvirtVmXmlBuilderTest {
         XmlTextWriter writer = mock(XmlTextWriter.class);
         Map<String, String> properties = new HashMap<>();
         VM vm = mock(VM.class);
-        when(vm.getVmType()).thenReturn(VmType.HighPerformance);
-        when(vm.getMigrationSupport()).thenReturn(MigrationSupport.MIGRATABLE);
+        when(vm.getUseTscFrequency()).thenReturn(true);
 
         setUpTscTest(underTest, vm, writer, properties);
         setTscFreqSupplier(underTest);
@@ -350,7 +301,6 @@ public class LibvirtVmXmlBuilderTest {
     private void setUpTscTest(LibvirtVmXmlBuilder underTest, VM vm, XmlTextWriter writer, Map<String, String> properties) throws NoSuchFieldException {
         doCallRealMethod().when(underTest).writeCpu(false);
         doCallRealMethod().when(underTest).writeClock();
-        when(underTest.isTscFrequencyNeeded()).thenCallRealMethod();
         Map<String, Map<String, String>> metadata = new HashMap<>();
         when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
 

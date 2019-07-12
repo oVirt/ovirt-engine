@@ -725,7 +725,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_custom_compatibility_version VARCHAR(40),
     v_migration_policy_id UUID,
     v_lease_sd_id UUID,
-    v_multi_queues_enabled BOOLEAN)
+    v_multi_queues_enabled BOOLEAN,
+    v_use_tsc_frequency BOOLEAN)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -809,7 +810,8 @@ INSERT INTO vm_static(description,
                       custom_compatibility_version,
                       migration_policy_id,
                       lease_sd_id,
-                      multi_queues_enabled)
+                      multi_queues_enabled,
+                      use_tsc_frequency)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -885,7 +887,8 @@ INSERT INTO vm_static(description,
            v_custom_compatibility_version,
            v_migration_policy_id,
            v_lease_sd_id,
-           v_multi_queues_enabled);
+           v_multi_queues_enabled,
+           v_use_tsc_frequency);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1087,7 +1090,8 @@ v_resume_behavior VARCHAR(64),
 v_custom_compatibility_version VARCHAR(40),
 v_migration_policy_id UUID,
 v_lease_sd_id UUID,
-v_multi_queues_enabled BOOLEAN)
+v_multi_queues_enabled BOOLEAN,
+v_use_tsc_frequency BOOLEAN)
 
 RETURNS VOID
 
@@ -1170,7 +1174,8 @@ BEGIN
      custom_compatibility_version=v_custom_compatibility_version,
      migration_policy_id = v_migration_policy_id,
      lease_sd_id = v_lease_sd_id,
-     multi_queues_enabled = v_multi_queues_enabled
+     multi_queues_enabled = v_multi_queues_enabled,
+     use_tsc_frequency = v_use_tsc_frequency
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

@@ -1866,4 +1866,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public BiosType getEffectiveBiosType() {
         return getBiosType() != BiosType.CLUSTER_DEFAULT ? getBiosType() : getClusterBiosType();
     }
+
+    public Boolean getUseTscFrequency() {
+        return vmStatic.getUseTscFrequency();
+    }
+
+    public void setUseTscFrequency(boolean value) {
+        vmStatic.setUseTscFrequency(value);
+    }
 }

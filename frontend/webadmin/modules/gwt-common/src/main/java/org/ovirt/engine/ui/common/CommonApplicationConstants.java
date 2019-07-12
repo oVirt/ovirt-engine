@@ -509,6 +509,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String passThroughHostCpu();
 
+    String tscFrequency();
+
     String allowMigrationOnlyAdminVmPopup();
 
     String highlyAvailableVmPopup();

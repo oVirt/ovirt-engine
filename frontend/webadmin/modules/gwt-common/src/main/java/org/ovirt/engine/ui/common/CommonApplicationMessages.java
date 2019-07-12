@@ -95,6 +95,8 @@ public interface CommonApplicationMessages extends Messages {
 
     String hostCpuInfo();
 
+    String tscFrequencyInfo();
+
     String hotPlugUnplugCpuWarning();
 
     String threadsPerCoreInfo();

@@ -961,7 +961,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.console_disconnect_action AS console_disconnect_action,
     vm_templates.resume_behavior AS resume_behavior,
     vm_templates.custom_compatibility_version as custom_compatibility_version,
-    vm_templates.multi_queues_enabled AS multi_queues_enabled
+    vm_templates.multi_queues_enabled AS multi_queues_enabled,
+    vm_templates.use_tsc_frequency AS use_tsc_frequency
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id
@@ -1421,7 +1422,8 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.custom_compatibility_version as custom_compatibility_version,
     vm_dynamic.guest_containers AS guest_containers,
     image_details.has_illegal_images,
-    vm_static.multi_queues_enabled AS multi_queues_enabled
+    vm_static.multi_queues_enabled AS multi_queues_enabled,
+    vm_static.use_tsc_frequency AS use_tsc_frequency
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1631,7 +1633,8 @@ SELECT DISTINCT vms.vm_name,
     vms.custom_compatibility_version as custom_compatibility_version,
     vms.guest_containers as guest_containers,
     vms.has_illegal_images,
-    vms.multi_queues_enabled
+    vms.multi_queues_enabled,
+    vms.use_tsc_frequency
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

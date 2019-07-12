@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -382,7 +381,7 @@ public class LibvirtVmXmlBuilder {
         if (vm.isUseHostCpuFlags()){
             cpuType = "hostPassthrough";
         }
-        if (isTscFrequencyNeeded()) {
+        if (vm.getUseTscFrequency()) {
             cpuType += ",+invtsc";
         }
 
@@ -394,7 +393,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("match", "exact");
 
             // is this a list of strings??..
-            switch(cpuType) {
+            switch(typeAndFlags[0]) {
             case "hostPassthrough":
                 writer.writeAttributeString("mode", "host-passthrough");
                 writeCpuFlags(typeAndFlags);
@@ -697,7 +696,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("present", "no");
             writer.writeEndElement();
         }
-        if (isTscFrequencyNeeded()) {
+        if (vm.getUseTscFrequency()) {
             writer.writeStartElement("timer");
             writer.writeAttributeString("name", "tsc");
             writer.writeAttributeString("frequency", tscFrequencySupplier.get().split("\\.")[0] + "000");
@@ -706,13 +705,6 @@ public class LibvirtVmXmlBuilder {
         // Intentionally no 'break;', as code for s390x is shared with x86
 
         writer.writeEndElement();
-    }
-
-    boolean isTscFrequencyNeeded() {
-        return vm.getClusterArch().getFamily().equals(ArchitectureType.x86)
-                && vm.getVmType().equals(VmType.HighPerformance)
-                && vm.getMigrationSupport() == MigrationSupport.MIGRATABLE
-                && cpuFlagsSupplier.get().contains("nonstop_tsc");
     }
 
     private void writeFeatures() {

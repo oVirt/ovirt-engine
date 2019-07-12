@@ -1217,6 +1217,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.hostCpu = hostCpu;
     }
 
+    private EntityModel<Boolean> tscFrequency;
+
+    public EntityModel<Boolean> getTscFrequency() {
+        return tscFrequency;
+    }
+
+    public void setTscFrequency(EntityModel<Boolean> tscFrequency) {
+        this.tscFrequency = tscFrequency;
+    }
+
     private NotChangableForVmInPoolListModel<MigrationSupport> migrationMode;
 
     public ListModel<MigrationSupport> getMigrationMode() {
@@ -1712,6 +1722,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setHostCpu(new NotChangableForVmInPoolEntityModel<Boolean>());
         getHostCpu().getEntityChangedEvent().addListener(this);
 
+        setTscFrequency(new NotChangableForVmInPoolEntityModel<Boolean>());
+        getTscFrequency().getEntityChangedEvent().addListener(this);
+
         setWatchdogAction(new NotChangableForVmInPoolListModel<VmWatchdogAction>());
         getWatchdogAction().getSelectedItemChangedEvent().addListener(this);
         ArrayList<VmWatchdogAction> watchDogActions = new ArrayList<>();
@@ -1987,6 +2000,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 compatibilityVersionChanged(sender, args);
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
+                updateTscFrequency();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
             } else if (sender == getTimeZone()) {
@@ -2024,6 +2038,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
+                updateTscFrequency();
             } else if (sender == getMigrationPolicies()) {
                 updateMigrationRelatedFields();
             } else if (sender == getCpuSharesAmountSelection()) {
@@ -2147,6 +2162,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void vmTypeChanged() {
         behavior.vmTypeChanged(getVmType().getSelectedItem());
+        updateTscFrequency();
     }
 
     private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {
@@ -2264,6 +2280,20 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsHeadlessModeEnabled().getEntityChangedEvent().addListener(this);
         getDisplayType().getSelectedItemChangedEvent().addListener(this);
         getGraphicsType().getSelectedItemChangedEvent().addListener(this);
+    }
+
+    private void updateTscFrequency() {
+        if (getSelectedCluster() == null || getVmType() == null || getMigrationMode() == null) {
+            return;
+        }
+
+        boolean isChangeable = ArchitectureType.x86.equals(getSelectedCluster().getArchitecture().getFamily())
+                && VmType.HighPerformance.equals(getVmType().getSelectedItem())
+                && (MigrationSupport.MIGRATABLE.equals(getMigrationMode().getSelectedItem())
+                 || MigrationSupport.IMPLICITLY_NON_MIGRATABLE.equals(getMigrationMode().getSelectedItem()));
+        // If it's editable, set it to true. Users might override the value manually if needed
+        tscFrequency.setIsChangeable(isChangeable);
+        tscFrequency.setEntity(isChangeable);
     }
 
     private void updateDisplayAndGraphics() {

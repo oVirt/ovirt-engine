@@ -423,6 +423,12 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="tscFrequencyEditor" label="{constants.tscFrequency}" usePatternFly="true" addStyleNames="{style.floatLeft} "/>
+                    <d:InfoIcon ui:field="tscFrequencyInfoIcon" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="SM_12">
                     <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
                   </b:Column>
                 </b:Row>

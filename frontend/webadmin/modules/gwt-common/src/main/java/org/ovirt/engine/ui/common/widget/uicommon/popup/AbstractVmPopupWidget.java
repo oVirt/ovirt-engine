@@ -624,7 +624,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelCheckBoxEditor hostCpuEditor;
 
     @UiField(provided = true)
+    @Path(value = "tscFrequency.entity")
+    @WithElementId("tscFrequency")
+    public EntityModelCheckBoxEditor tscFrequencyEditor;
+
+    @UiField(provided = true)
     public InfoIcon hostCpuInfoIcon;
+
+    @UiField(provided = true)
+    public InfoIcon tscFrequencyInfoIcon;
 
     @UiField
     @Ignore
@@ -1006,6 +1014,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        tscFrequencyEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         watchdogModelEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VmWatchdogType>() {
@@ -1071,6 +1080,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationSelectInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.migrationSelectInfo()));
 
         hostCpuInfoIcon = new InfoIcon(templates.italicText(messages.hostCpuInfo()));
+        tscFrequencyInfoIcon = new InfoIcon(templates.italicText(messages.tscFrequencyInfo()));
 
         diskFormatTypeMatrixInfo = new InfoIcon(multiLineItalicSafeHtml(constants.diskFormatTypeMatrixInfo()));
 
@@ -2017,6 +2027,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrateCompressedEditor.setTabIndex(nextTabIndex++);
         migrateEncryptedEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
+        tscFrequencyEditor.setTabIndexes(nextTabIndex++);
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);

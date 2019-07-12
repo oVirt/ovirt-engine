@@ -537,6 +537,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmField
     private Guid migrationPolicyId;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
+    private Boolean useTscFrequency;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -606,7 +611,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getMigrationPolicyId(),
                 vmBase.getLeaseStorageDomainId(),
                 vmBase.getResumeBehavior(),
-                vmBase.isMultiQueuesEnabled());
+                vmBase.isMultiQueuesEnabled(),
+                vmBase.getUseTscFrequency());
     }
 
     public VmBase(
@@ -678,7 +684,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             Guid migrationPolicyId,
             Guid leaseStorageDomainId,
             VmResumeBehavior resumeBehavior,
-            boolean multiQueuesEnabled) {
+            boolean multiQueuesEnabled,
+            boolean useTscFrequency) {
         this();
         this.name = name;
         this.id = id;
@@ -749,6 +756,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.leaseStorageDomainId = leaseStorageDomainId;
         this.resumeBehavior = resumeBehavior;
         this.multiQueuesEnabled = multiQueuesEnabled;
+        this.useTscFrequency = useTscFrequency;
     }
 
     @Override
@@ -1164,7 +1172,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 consoleDisconnectAction,
                 customCompatibilityVersion,
                 resumeBehavior,
-                multiQueuesEnabled
+                multiQueuesEnabled,
+                useTscFrequency
         );
     }
 
@@ -1235,7 +1244,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction)
                 && Objects.equals(resumeBehavior, other.resumeBehavior)
                 && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion)
-                && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled);
+                && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled)
+                && Objects.equals(useTscFrequency, other.useTscFrequency);
     }
 
     public Guid getQuotaId() {
@@ -1596,4 +1606,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.resumeBehavior = resumeBehavior;
     }
 
+    public Boolean getUseTscFrequency() {
+        return useTscFrequency;
+    }
+
+    public void setUseTscFrequency(Boolean useTscFrequency) {
+        this.useTscFrequency = useTscFrequency;
+    }
 }

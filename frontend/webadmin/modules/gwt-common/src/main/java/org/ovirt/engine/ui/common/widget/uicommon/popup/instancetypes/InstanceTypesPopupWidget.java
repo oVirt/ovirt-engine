@@ -55,6 +55,7 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(ssoMethodNone, hiddenField()).
                 putOne(ssoMethodGuestAgent, hiddenField()).
                 putOne(hostCpuEditor, hiddenField()).
+                putOne(tscFrequencyEditor, hiddenField()).
                 putOne(templateVersionNameEditor, hiddenField()).
                 putOne(bootMenuEnabledEditor, hiddenField()).
                 putOne(serialNumberPolicyEditor, hiddenField()).
