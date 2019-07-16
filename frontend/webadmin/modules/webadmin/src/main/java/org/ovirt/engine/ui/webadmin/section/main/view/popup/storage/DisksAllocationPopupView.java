@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -47,8 +49,15 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
         disksAllocationView = new DisksAllocationView();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         disksAllocationView.setUsePatternFly(true);
+        setParentOverflowVisible(disksAllocationView.getElement());
 
         driver.initialize(this);
+    }
+
+    private void setParentOverflowVisible(Element element) {
+        for (Element elm = element; elm != null && !elm.equals(asWidget().getElement()); elm = elm.getParentElement()) {
+            elm.getParentElement().getStyle().setOverflow(Style.Overflow.VISIBLE);
+        }
     }
 
     @Override
