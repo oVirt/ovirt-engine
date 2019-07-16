@@ -464,6 +464,7 @@ public class AffinityRulesEnforcer {
     }
 
     private boolean migrationImprovesSoftAffinity(VM vm, Cache cache) {
+        log.debug("Testing if migration would improve soft affinity. VM: {}", vm.getName());
         Guid sourceHost = vm.getRunOnVds();
         Guid targetHost = schedulingManager.prepareCall(cache.getCluster()).scheduleStateless(vm).orElse(null);
 
@@ -474,6 +475,8 @@ public class AffinityRulesEnforcer {
         if (targetHost.equals(sourceHost)) {
             return false;
         }
+
+        log.debug("Source host is '{}', target host is '{}'", sourceHost, targetHost);
 
         List<AffinityGroup> sortedAffinityGroupsForVm = cache.getAllGroupsForVmSorted(vm.getId());
 
@@ -491,6 +494,8 @@ public class AffinityRulesEnforcer {
                 if (ag.getPriority() < priority) {
                     // If the conflict count changed, it is not needed to check groups with lower priority
                     if (oldConflictCount != newConflictCount) {
+                        log.debug("Host conflicts on source: {}, on destination: {}. Affinity priority: {}",
+                                oldConflictCount, newConflictCount, priority);
                         return newConflictCount < oldConflictCount;
                     }
                     priority = ag.getPriority();
@@ -500,6 +505,8 @@ public class AffinityRulesEnforcer {
                 newConflictCount += (ag.getVdsIds().contains(targetHost) != ag.isVdsPositive()) ? 1 : 0;
             }
 
+            log.debug("Host conflicts on source: {}, on destination: {}. Affinity priority: {}",
+                    oldConflictCount, newConflictCount, priority);
             return newConflictCount < oldConflictCount;
         };
 
@@ -515,11 +522,10 @@ public class AffinityRulesEnforcer {
 
                 if (group.getPriority() < priority) {
                     // If some score is non-zero it is not needed to check groups with lower priority
-                    if (posAffScore < 0 || negAffScore < 0) {
-                        return false;
-                    }
-                    if (posAffScore > 0 || negAffScore > 0) {
-                        return true;
+                    if (posAffScore != 0 || negAffScore != 0) {
+                        log.debug("VM conflicts: positive affinity score: {}, negative affinity score: {}, affinity priority: {}",
+                                posAffScore, negAffScore, priority);
+                        return posAffScore >= 0 && negAffScore >= 0;
                     }
                     priority = group.getPriority();
                 }
@@ -535,6 +541,9 @@ public class AffinityRulesEnforcer {
                     negAffScore += vmCountOnHosts.containsKey(targetHost) ? -1 : 0;
                 }
             }
+
+            log.debug("VM conflicts: positive affinity score: {}, negative affinity score: {}, affinity priority: {}",
+                    posAffScore, negAffScore, priority);
 
             // If any of the scores is worse, the vm affinity did not improve
             if (posAffScore < 0 || negAffScore < 0) {
