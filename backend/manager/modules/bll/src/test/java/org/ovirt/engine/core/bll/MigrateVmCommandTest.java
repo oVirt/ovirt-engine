@@ -38,11 +38,20 @@ public class MigrateVmCommandTest {
     @Test
     public void testValidationFailsWhenVmHasDisksPluggedWithScsiReservation() {
         doNothing().when(command).logValidationFailed();
+        doReturn(false).when(command).isVmDuringBackup();
         doReturn(vmValidator).when(command).getVmValidator();
         when(vmValidator.isVmPluggedDiskNotUsingScsiReservation()).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION));
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION);
+    }
+
+    @Test
+    public void testValidationFailsWhenVmIsDuringBackup() {
+        doNothing().when(command).logValidationFailed();
+        doReturn(true).when(command).isVmDuringBackup();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
     }
 }

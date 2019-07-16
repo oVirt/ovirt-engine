@@ -194,6 +194,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
 
+        if (isVmDuringBackup()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
+        }
+
         if (getCluster().isInUpgradeMode()) {
             return failValidation(EngineMessage.VM_CANNOT_SUSPEND_CLUSTER_UPGRADING);
         }

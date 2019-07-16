@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.TagDao;
+import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSuccessListener;
@@ -101,6 +103,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private VmInfoBuildUtils vmInfoBuildUtils;
     @Inject
     private OvfDataUpdater ovfDataUpdater;
+    @Inject
+    private VmBackupDao vmBackupDao;
 
     @Inject
     protected ImagesHandler imagesHandler;
@@ -582,5 +586,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return validate(ManagedBlockStorageDomainValidator.isOperationSupportedByManagedBlockStorage(getActionType()));
         }
         return true;
+    }
+
+    public boolean isVmDuringBackup() {
+        List<VmBackup> vmBackups = vmBackupDao.getAllForVm(getVmId());
+        return vmBackups != null && !vmBackups.isEmpty();
     }
 }

@@ -60,6 +60,10 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
+        if (isVmDuringBackup()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
+        }
+
         if (!canRunActionOnNonManagedVm()) {
             return false;
         }

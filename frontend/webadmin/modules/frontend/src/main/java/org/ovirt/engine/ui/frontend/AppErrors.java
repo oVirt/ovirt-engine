@@ -3000,5 +3000,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_CINDERLIB_DATA_BASE_REQUIRED();
 
     String CPU_HOTPLUG_TOPOLOGY_INVALID();
+
+    String ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP();
 }
 
