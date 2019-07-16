@@ -2,11 +2,14 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
@@ -69,17 +72,28 @@ public class VmsListFetcher {
         changedVms = new ArrayList<>();
         filterVms();
         gatherNonRunningVms(dbVms);
-        saveLastVmsList(vdsmVms);
+        saveLastVmsList();
     }
 
-    private void saveLastVmsList(Map<Guid, VdsmVm> vdsmVms) {
-        List<VmDynamic> vms = new ArrayList<>(vdsmVms.size());
-        for (VdsmVm vmInternalData : this.vdsmVms.values()) {
-            if (dbVms.containsKey(vmInternalData.getVmDynamic().getId())) {
-                vms.add(vmInternalData.getVmDynamic());
-            }
-        }
-        vdsManager.setLastVmsList(vms);
+    private void saveLastVmsList() {
+        Map<Guid, VMStatus> vmIdToStatus = matchVms().stream()
+                .filter(pair -> pair.getFirst() != null)
+                .map(pair -> pair.getSecond().getVmDynamic())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
+        vdsManager.setLastVmsList(vmIdToStatus);
+    }
+
+    private List<Pair<VmDynamic, VdsmVm>> matchVms() {
+        Map<Guid, VmDynamic> localDbVms = new HashMap<>(this.dbVms); // Shallow copy
+        List<Pair<VmDynamic, VdsmVm>> pairs = vdsmVms.values().stream()
+                .map(vdsmVm -> {
+                    VmDynamic dbVm = localDbVms.remove(vdsmVm.getId());
+                    return new Pair<>(dbVm, vdsmVm);
+                })
+                .collect(Collectors.toList());
+
+        return pairs;
     }
 
     protected void onError() {

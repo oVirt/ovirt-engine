@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
@@ -873,18 +872,18 @@ public class HostMonitoring {
      * only vms we know their memory definition are calculated, thus
      * external VMs are added to db on the 1st cycle they appear, and then being added to this calculation
      */
-    public static boolean refreshCommitedMemory(VDS host, List<VmDynamic> vms, ResourceManager resourceManager) {
+    public static boolean refreshCommitedMemory(VDS host, Map<Guid, VMStatus> vmIdToStatus, ResourceManager resourceManager) {
         boolean memoryUpdated = false;
 
         int memCommited = host.getGuestOverhead();
         int vmsCoresCount = 0;
 
-        for (VmDynamic vm : vms) {
+        for (Map.Entry<Guid, VMStatus> entry : vmIdToStatus.entrySet()) {
+            VMStatus status = entry.getValue();
             // VMs' pending resources are cleared in powering up, so in launch state
             // we shouldn't include them as committed.
-            if (vm != null && vm.getStatus() != VMStatus.WaitForLaunch &&
-                    vm.getStatus() != VMStatus.Down) {
-                final VmManager vmManager = resourceManager.getVmManager(vm.getId());
+            if (status != VMStatus.WaitForLaunch && status != VMStatus.Down) {
+                VmManager vmManager = resourceManager.getVmManager(entry.getKey());
                 memCommited += vmManager.getVmMemoryWithOverheadInMB();
                 vmsCoresCount += vmManager.getNumOfCpus();
             }

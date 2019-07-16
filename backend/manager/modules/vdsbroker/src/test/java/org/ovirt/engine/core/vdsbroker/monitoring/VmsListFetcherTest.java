@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +24,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.InjectorExtension;
@@ -48,7 +49,7 @@ public class VmsListFetcherTest {
     @InjectedMock
     public VmDynamicDao vmDynamicDao;
     @Captor
-    ArgumentCaptor<List<VmDynamic>> vdsManagerArgumentCaptor;
+    ArgumentCaptor<Map<Guid, VMStatus>> vdsManagerArgumentCaptor;
 
     @BeforeEach
     public void setup() {
@@ -99,7 +100,8 @@ public class VmsListFetcherTest {
         assumeTrue(data.dbVm() != null);
         //then
         verify(vdsManager).setLastVmsList(vdsManagerArgumentCaptor.capture());
-        assertEquals(data.vdsmVm().getVmDynamic(), vdsManagerArgumentCaptor.getValue().get(0));
+        Guid id = data.vdsmVm().getVmDynamic().getId();
+        assertEquals(data.vdsmVm().getVmDynamic().getStatus(), vdsManagerArgumentCaptor.getValue().get(id));
     }
 
     @ParameterizedTest
