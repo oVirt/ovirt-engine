@@ -147,6 +147,7 @@ public final class VdsProperties {
     public static final String supported_cluster_levels = "clusterLevels";
     public static final String domain_versions = "domain_versions";
     public static final String name_servers = "nameservers";
+    public static final String supported_block_size = "supported_block_size";
     public static final String supported_engines = "supportedENGINEs";
     public static final String emulatedMachine = "emulatedMachine";
     public static final String emulatedMachines = "emulatedMachines";

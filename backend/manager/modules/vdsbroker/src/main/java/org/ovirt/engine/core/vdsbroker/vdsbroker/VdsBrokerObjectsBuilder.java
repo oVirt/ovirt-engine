@@ -1008,6 +1008,7 @@ public class VdsBrokerObjectsBuilder {
                     .collect(Collectors.toSet());
             vds.setSupportedDomainVersions(domain_versions);
         }
+        vds.setSupportedBlockSize((Map<String, Object>) struct.get(VdsProperties.supported_block_size));
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

@@ -1720,6 +1720,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setSupportedDomainVersionsAsString(supportedDomainVersions);
     }
 
+    public Map<String, Object> getSupportedBlockSize() {
+        return vdsDynamic.getSupportedBlockSize();
+    }
+
+    public void setSupportedBlockSize(Map<String, Object> supportedBlockSize) {
+        vdsDynamic.setSupportedBlockSize(supportedBlockSize);
+    }
+
     public boolean isClusterSmtDisabled() {
         return isClusterSmtDisabled;
     }
