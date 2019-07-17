@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum StorageBlockSize {
+    BLOCK_AUTO(0),
     BLOCK_512(512),
     BLOCK_4K(4096);
 

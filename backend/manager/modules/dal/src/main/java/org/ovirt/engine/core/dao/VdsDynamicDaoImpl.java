@@ -128,6 +128,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 ObjectUtils.mapNullable(rs.getString("connector_info"), JsonHelper::jsonToMapUnchecked));
         entity.setBackupEnabled(rs.getBoolean("backup_enabled"));
         entity.setSupportedDomainVersionsAsString(rs.getString("supported_domain_versions"));
+        entity.setSupportedBlockSize(ObjectUtils.mapNullable(
+                rs.getString("supported_block_size"), JsonHelper::jsonToMapUnchecked));
 
         return entity;
     };
@@ -325,7 +327,9 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("connector_info",
                     ObjectUtils.mapNullable(vds.getConnectorInfo(), JsonHelper::mapToJsonUnchecked))
                 .addValue("backup_enabled", vds.isBackupEnabled())
-                .addValue("supported_domain_versions", vds.getSupportedDomainVersionsAsString());
+                .addValue("supported_domain_versions", vds.getSupportedDomainVersionsAsString())
+                .addValue("supported_block_size",
+                        ObjectUtils.mapNullable(vds.getSupportedBlockSize(), JsonHelper::mapToJsonUnchecked));
     }
 
     @Override

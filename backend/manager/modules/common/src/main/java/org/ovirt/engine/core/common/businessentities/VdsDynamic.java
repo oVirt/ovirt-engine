@@ -217,6 +217,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean vncEncryptionEnabled;
 
+    private Map<String, Object> supportedBlockSize;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -906,6 +908,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         backupEnabled = value;
     }
 
+    public Map<String, Object> getSupportedBlockSize() {
+        return supportedBlockSize;
+    }
+
+    public void setSupportedBlockSize(Map<String, Object> supportedBlockSize) {
+        this.supportedBlockSize = supportedBlockSize;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -979,7 +989,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 vncEncryptionEnabled,
                 connectorInfo,
                 backupEnabled,
-                supportedDomainVersions
+                supportedDomainVersions,
+                supportedBlockSize
         );
     }
 
@@ -1064,6 +1075,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
                 && Objects.equals(connectorInfo, other.connectorInfo)
                 && backupEnabled == other.backupEnabled
-                && Objects.equals(supportedDomainVersions, other.supportedDomainVersions);
+                && Objects.equals(supportedDomainVersions, other.supportedDomainVersions)
+                && Objects.equals(supportedBlockSize, other.supportedBlockSize);
     }
 }

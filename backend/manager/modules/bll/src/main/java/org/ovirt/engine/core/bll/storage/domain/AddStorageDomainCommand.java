@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -97,11 +99,16 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     protected boolean addStorageDomainInIrs() {
+        StorageDomainStatic storageDomainStatic = getStorageDomain().getStorageStaticData();
+        if (isBlockSizeAutoDetectionSupported()) {
+            storageDomainStatic.setBlockSize(StorageBlockSize.BLOCK_AUTO);
+        }
         // No need to run in separate transaction - counting on rollback of external transaction wrapping the command
         return runVdsCommand(
-                        VDSCommandType.CreateStorageDomain,
-                        new CreateStorageDomainVDSCommandParameters(getVds().getId(), getStorageDomain()
-                                .getStorageStaticData(), getStorageArgs())).getSucceeded();
+                VDSCommandType.CreateStorageDomain,
+                new CreateStorageDomainVDSCommandParameters(getVds().getId(),
+                        storageDomainStatic,
+                        getStorageArgs())).getSucceeded();
     }
 
     protected void addStorageDomainInDb() {
@@ -229,6 +236,30 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_VERSION_UNSUPPORTED, replacements);
         }
         return true;
+    }
+
+    private Boolean isBlockSizeAutoDetectionSupported() {
+        if (getStorageDomain().getStorageFormat().compareTo(StorageFormatType.V5) < 0) {
+            // Block size auto detection is supported only for storage format >= V5
+            return false;
+        }
+        StorageType storageType = getStorageDomain().getStorageType();
+        return vdsDao.getAllForStoragePool(getStoragePoolId())
+                .stream()
+                .allMatch(vds -> {
+                    if (vds.getSupportedBlockSize() == null) {
+                        // Old VDSM without 'supported_block_size'
+                        return false;
+                    }
+                    if (!vds.getSupportedBlockSize().containsKey(storageType.name())) {
+                        // No block size support specified for storage type
+                        return false;
+                    }
+                    @SuppressWarnings("unchecked")
+                    List<Integer> blockSizeForStorage =
+                            (List<Integer>) vds.getSupportedBlockSize().get(storageType.name());
+                    return blockSizeForStorage.contains(0);
+                });
     }
 
     private void ensureStorageFormatInitialized() {
