@@ -233,6 +233,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("free_text_comment", cluster.getComment())
                 .addValue("cluster_id", cluster.getId())
                 .addValue("cpu_name", cluster.getCpuName())
+                .addValue("cpu_flags", cluster.getCpuFlags())
+                .addValue("cpu_verb", cluster.getCpuVerb())
                 .addValue("storage_pool_id", cluster.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
                         cluster.getMaxVdsMemoryOverCommit())
@@ -303,6 +305,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setId(getGuidDefaultEmpty(rs, "cluster_id"));
         entity.setComment(rs.getString("free_text_comment"));
         entity.setCpuName(rs.getString("cpu_name"));
+        entity.setCpuFlags(rs.getString("cpu_flags"));
+        entity.setCpuVerb(rs.getString("cpu_verb"));
         entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setMaxVdsMemoryOverCommit(rs.getInt("max_vds_memory_over_commit"));

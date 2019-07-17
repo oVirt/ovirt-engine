@@ -296,6 +296,8 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
         entity.setCpuFlags(rs.getString("cpu_flags"));
         entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
+        entity.setClusterFlags(rs.getString("cluster_cpu_flags"));
+        entity.setClusterVerb(rs.getString("cluster_cpu_verb"));
         entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setPendingVcpusCount((Integer) rs.getObject("pending_vcpus_count"));

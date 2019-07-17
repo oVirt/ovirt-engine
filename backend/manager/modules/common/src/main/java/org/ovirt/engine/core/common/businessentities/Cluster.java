@@ -47,6 +47,10 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
     private String cpuName;
 
+    private String cpuFlags;
+
+    private String cpuVerb;
+
     private Guid storagePoolId;
 
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
@@ -230,6 +234,22 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setCpuName(String value) {
         cpuName = value;
+    }
+
+    public String getCpuFlags() {
+        return cpuFlags;
+    }
+
+    public void setCpuFlags(String cpuFlags) {
+        this.cpuFlags = cpuFlags;
+    }
+
+    public String getCpuVerb() {
+        return cpuVerb;
+    }
+
+    public void setCpuVerb(String cpuVerb) {
+        this.cpuVerb = cpuVerb;
     }
 
     @Override
@@ -670,6 +690,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 compatVersion,
                 compatibilityVersion,
                 cpuName,
+                cpuFlags,
+                cpuVerb,
                 description,
                 maxVdsMemoryOverCommit,
                 countThreadsAsCores,
@@ -730,6 +752,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(compatVersion, other.compatVersion)
                 && Objects.equals(compatibilityVersion, other.compatibilityVersion)
                 && Objects.equals(cpuName, other.cpuName)
+                && Objects.equals(cpuFlags, other.cpuFlags)
+                && Objects.equals(cpuVerb, other.cpuVerb)
                 && Objects.equals(description, other.description)
                 && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
                 && countThreadsAsCores == other.countThreadsAsCores

@@ -45,6 +45,8 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private Version clusterCompatibilityVersion;
     private String clusterName;
     private String clusterCpuName;
+    private String clusterCpuFlags;
+    private String clusterCpuVerb;
     private Map<Guid, Disk> diskMap;
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
     // ignores the final fields
@@ -944,6 +946,22 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.clusterName = value;
     }
 
+    public String getClusterCpuFlags() {
+        return clusterCpuFlags;
+    }
+
+    public void setClusterCpuFlags(String clusterCpuFlags) {
+        this.clusterCpuFlags = clusterCpuFlags;
+    }
+
+    public String getClusterCpuVerb() {
+        return clusterCpuVerb;
+    }
+
+    public void setClusterCpuVerb(String clusterCpuVerb) {
+        this.clusterCpuVerb = clusterCpuVerb;
+    }
+
     public String getClusterCpuName() {
         return this.clusterCpuName;
     }
@@ -1238,6 +1256,8 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         result =
                 prime * result + ((clusterCompatibilityVersion == null) ? 0 : clusterCompatibilityVersion.hashCode());
         result = prime * result + ((clusterCpuName == null) ? 0 : clusterCpuName.hashCode());
+        result = prime * result + ((clusterCpuFlags == null) ? 0 : clusterCpuFlags.hashCode());
+        result = prime * result + ((clusterCpuVerb == null) ? 0 : clusterCpuVerb.hashCode());
         result = prime * result + ((clusterName == null) ? 0 : clusterName.hashCode());
         result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
         result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());

@@ -346,6 +346,8 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setVmPoolId(getGuid(rs, "vm_pool_id"));
         entity.setRunOnVdsName(rs.getString("run_on_vds_name"));
         entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
+        entity.setClusterCpuFlags(rs.getString("cluster_cpu_flags"));
+        entity.setClusterCpuVerb(rs.getString("cluster_cpu_verb"));
         entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));

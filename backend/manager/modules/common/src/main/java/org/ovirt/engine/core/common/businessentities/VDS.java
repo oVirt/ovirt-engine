@@ -32,6 +32,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     private VdsSpmStatus spmStatus;
     private Version clusterCompatibilityVersion;
     private String clusterName;
+    private String clusterFlags;
+    private String clusterVerb;
     private String clusterDescription;
     private String clusterCpuName;
     private Boolean clusterVirtService;
@@ -95,6 +97,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 clusterCpuName,
                 clusterDescription,
                 clusterName,
+                clusterFlags,
+                clusterVerb,
                 clusterVirtService,
                 clusterGlusterService,
                 balloonEnabled,
@@ -131,6 +135,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
                 && Objects.equals(clusterCpuName, other.clusterCpuName)
                 && Objects.equals(clusterDescription, other.clusterDescription)
                 && Objects.equals(clusterName, other.clusterName)
+                && Objects.equals(clusterFlags, other.clusterFlags)
+                && Objects.equals(clusterVerb, other.clusterVerb)
                 && Objects.equals(clusterVirtService, other.clusterVirtService)
                 && Objects.equals(clusterGlusterService, other.clusterGlusterService)
                 && glusterPeerStatus == other.glusterPeerStatus
@@ -286,6 +292,22 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setClusterName(String value) {
         clusterName = value;
+    }
+
+    public String getClusterFlags() {
+        return clusterFlags;
+    }
+
+    public void setClusterFlags(String clusterFlags) {
+        this.clusterFlags = clusterFlags;
+    }
+
+    public String getClusterVerb() {
+        return clusterVerb;
+    }
+
+    public void setClusterVerb(String clusterVerb) {
+        this.clusterVerb = clusterVerb;
     }
 
     public String getClusterDescription() {
