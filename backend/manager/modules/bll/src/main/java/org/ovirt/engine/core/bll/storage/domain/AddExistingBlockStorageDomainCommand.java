@@ -53,7 +53,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
         // Add StorageDomain object to DB and update statistics
         addStorageDomainInDb();
-        updateStorageDomainDynamicFromIrs();
+        updateStorageDomainFromIrs();
 
         // Add relevant LUNs to DB
         List<LUNs> luns = getLUNsFromVgInfo();

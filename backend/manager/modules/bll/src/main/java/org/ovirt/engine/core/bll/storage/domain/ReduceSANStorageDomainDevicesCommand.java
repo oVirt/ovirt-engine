@@ -288,7 +288,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
     }
 
     private void endOperation() {
-        updateStorageDomainDynamicFromIrs();
+        updateStorageDomainFromIrs();
         try {
             disconnectHostFromDomain();
         } catch (Exception e) {
