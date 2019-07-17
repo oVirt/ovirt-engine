@@ -51,7 +51,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 getVds().getClusterCompatibilityVersion()));
 
         if (getMaxServerCpu() != null) {
-            updateClusterCpuName(getMaxServerCpu().getCpuName(), getMaxServerCpu().getArchitecture());
+            updateClusterCpuInfo(getMaxServerCpu().getCpuName(), getMaxServerCpu().getArchitecture());
         } else {
             log.error("Could not find server cpu for server '{}' ({}), flags: '{}'",
                     getVds().getName(),
@@ -70,16 +70,13 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                     params,
                     ExecutionHandler.createInternalJobContext(getContext()));
         } else {
-            List<String> missingFlags = getCpuFlagsManagerHandler().missingServerCpuFlags(
-                                           getCluster().getCpuName(),
-                                           getVds().getCpuFlags(),
-                                           getCluster().getCompatibilityVersion());
+            List<String> missingFlags = getCpuFlagsManagerHandler().missingClusterCpuFlags(
+                    getCluster().getCpuFlags(),
+                    getVds().getCpuFlags());
             if (vdsContainsFlags() && !cpuFlagsMatch(missingFlags)) {
-                if (missingFlags != null) {
-                    addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
-                    if (missingFlags.contains("nx")) {
-                        auditLogDirector.log(this, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
-                    }
+                addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
+                if (missingFlags.contains("nx")) {
+                    auditLogDirector.log(this, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
                 }
                 SetNonOperationalVdsParameters params = new SetNonOperationalVdsParameters(getVdsId(),
                        NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
@@ -95,23 +92,29 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         setSucceeded(true);
     }
 
-    private void updateClusterCpuName(String cpuName, ArchitectureType architecture) {
+    private void updateClusterCpuInfo(String cpuName, ArchitectureType architecture) {
+        // use suppress in order to update group even if action fails
+        // (out of the transaction)
+        ManagementNetworkOnClusterOperationParameters params =
+                new ManagementNetworkOnClusterOperationParameters(getCluster());
+        params.setTransactionScopeOption(TransactionScopeOption.Suppress);
+        params.setIsInternalCommand(true);
+
         if (maxServerFound() &&
                 (StringUtils.isEmpty(getCluster().getCpuName()) ||
                         ArchitectureType.undefined.equals(getCluster().getArchitecture()))) {
             getCluster().setCpuName(cpuName);
             getCluster().setArchitecture(architecture);
-
-            updateMigrateOnError(getCluster());
-
-            // use suppress in order to update group even if action fails
-            // (out of the transaction)
-            ManagementNetworkOnClusterOperationParameters params =
-                    new ManagementNetworkOnClusterOperationParameters(getCluster());
-            params.setTransactionScopeOption(TransactionScopeOption.Suppress);
-            params.setIsInternalCommand(true);
-            runInternalAction(ActionType.UpdateCluster, params);
+            params.setUpdateCpuFlags(true);
         }
+
+        if (StringUtils.isEmpty(getCluster().getCpuFlags()) && !StringUtils.isEmpty(getClusterName())) {
+            params.setUpdateCpuFlags(true);
+        }
+
+        updateMigrateOnError(getCluster());
+
+        runInternalAction(ActionType.UpdateCluster, params);
     }
 
     private boolean architecturesMatch() {
@@ -120,7 +123,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     }
 
     private boolean cpuFlagsMatch(List<String> missingFlags) {
-        return missingFlags == null;
+        return missingFlags.isEmpty();
     }
 
     private boolean vdsContainsFlags() {

@@ -66,6 +66,9 @@ public class AddClusterCommandTest extends BaseCommandTest {
     @Mock
     private NetworkClusterDao networkClusterDao;
 
+    @Mock
+    private ClusterCpuFlagsManager clusterCpuFlagsManager;
+
     private Cluster cluster = createCluster();
     private ManagementNetworkOnClusterOperationParameters parameters = createParameters(cluster);
     private CommandContext commandContext = CommandContext.createContext(parameters.getSessionId());

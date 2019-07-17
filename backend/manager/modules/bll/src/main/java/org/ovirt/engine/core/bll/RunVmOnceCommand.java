@@ -56,7 +56,17 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         super.init();
-        String vmClusterCpuName = getCpuFlagsManagerHandler().getCpuId(getVm().getClusterCpuName(), getVm().getCompatibilityVersion());
+        String vmClusterCpuName;
+        // use cluster value if the compatibility versions of vm and cluster are the same
+        if (getCluster().getCompatibilityVersion().equals(getVm().getCompatibilityVersion())) {
+            vmClusterCpuName = getCluster().getCpuVerb();
+        } else {
+         // use configured value if the compatibility versions of vm and cluster are different
+            vmClusterCpuName = getCpuFlagsManagerHandler().getCpuId(
+                    getVm().getClusterCpuName(),
+                    getVm().getCompatibilityVersion());
+        }
+
         if (getParameters().getCustomCpuName() != null && !getParameters().getCustomCpuName().equals(
                 getVm().getCustomCpuName() != null ?
                         getVm().getCustomCpuName() :

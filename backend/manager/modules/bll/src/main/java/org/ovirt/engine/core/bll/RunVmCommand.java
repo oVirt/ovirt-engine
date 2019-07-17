@@ -749,25 +749,33 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // update dynamic cluster-parameters
 
-        // Record the used CPU name, but
-        // - wait when cpu flags passthrough is used as we need
-        //   to select the host first in that case
-        // - keep run-once selection if present
-        if (!getVm().isUsingCpuPassthrough()
-                && getVm().getCpuName() == null) {
-            if (getVm().getCustomCpuName() != null) {
-                getVm().setCpuName(getVm().getCustomCpuName());
+        updateCpuName();
+
+        if (getVm().getEmulatedMachine() == null) {
+            getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
+        }
+    }
+
+    private void updateCpuName() {
+        // do not set cpuName if using passthrough or it has already been set (e.g from run once command)
+        if (getVm().isUsingCpuPassthrough()
+                || getVm().getCpuName() != null) {
+            return;
+        }
+
+        // use custom cpu name if set
+        if (getVm().getCustomCpuName() != null) {
+            getVm().setCpuName(getVm().getCustomCpuName());
+        } else {
+            // use cluster value if the compatibility versions of vm and cluster are the same
+            if (getCluster().getCompatibilityVersion().equals(getVm().getCompatibilityVersion())) {
+                getVm().setCpuName(getCluster().getCpuVerb());
             } else {
-                // get what cpu flags should be passed to vdsm according to the cluster
+                // use configured value if the compatibility versions of vm and cluster are different
                 getVm().setCpuName(getCpuFlagsManagerHandler().getCpuId(
                         getVm().getClusterCpuName(),
                         getVm().getCompatibilityVersion()));
             }
-        }
-
-
-        if (getVm().getEmulatedMachine() == null) {
-            getVm().setEmulatedMachine(getEffectiveEmulatedMachine());
         }
     }
 

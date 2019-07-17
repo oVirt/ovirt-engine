@@ -129,6 +129,8 @@ public class UpdateClusterCommandTest {
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
+    private ClusterCpuFlagsManager clusterCpuFlagsManager;
+    @Mock
     private MoveMacs moveMacs;
     @Mock
     private SchedulingManager schedulingManager;
@@ -860,7 +862,7 @@ public class UpdateClusterCommandTest {
     }
 
     private void cpuFlagsNotMissing() {
-        doReturn(null).when(cmd).missingServerCpuFlags(any());
+        doReturn(Collections.emptyList()).when(cmd).missingServerCpuFlags(any());
     }
 
     private void cpuManufacturersDontMatch() {

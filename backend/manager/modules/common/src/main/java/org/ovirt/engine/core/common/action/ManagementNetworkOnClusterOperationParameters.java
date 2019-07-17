@@ -9,6 +9,8 @@ public class ManagementNetworkOnClusterOperationParameters extends ClusterOperat
 
     private Guid managementNetworkId;
 
+    private boolean updateCpuFlags;
+
     public ManagementNetworkOnClusterOperationParameters(Cluster cluster) {
         this(cluster, null);
     }
@@ -24,6 +26,14 @@ public class ManagementNetworkOnClusterOperationParameters extends ClusterOperat
 
     public void setManagementNetworkId(Guid managementNetworkId) {
         this.managementNetworkId = managementNetworkId;
+    }
+
+    public boolean isUpdateCpuFlags() {
+        return updateCpuFlags;
+    }
+
+    public void setUpdateCpuFlags(boolean updateCpuFlags) {
+        this.updateCpuFlags = updateCpuFlags;
     }
 
     public ManagementNetworkOnClusterOperationParameters() {

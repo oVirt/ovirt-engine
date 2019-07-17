@@ -110,6 +110,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Inject
     private ClusterDao clusterDao;
     @Inject
+    private ClusterCpuFlagsManager clusterCpuFlagsManager;
+    @Inject
     private VmStaticDao vmStaticDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
@@ -155,6 +157,16 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 && !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
             vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
             templatesLockedForUpdate = filterTemplatesInClusterNeedUpdate();
+        }
+
+        // isUpdateCpuFlags can be set to true by client or if the cpuName is changed
+        if (oldCluster == null ||
+              !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName())) {
+            getParameters().setUpdateCpuFlags(true);
+        }
+
+        if (getParameters().isUpdateCpuFlags() && !StringUtils.isEmpty(getCluster().getCpuName())) {
+            clusterCpuFlagsManager.updateCpuFlags(getCluster());
         }
     }
 
@@ -268,6 +280,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
             if (scMin != null) {
                 getCluster().setCpuName(scMin.getCpuName());
+                clusterCpuFlagsManager.updateCpuFlags(getCluster());
                 addCustomValue("CPU", scMin.getCpuName());
                 addCustomValue("Cluster", getParameters().getCluster().getName());
                 auditLogDirector.log(this, AuditLogType.CLUSTER_UPDATE_CPU_WHEN_DEPRECATED);
@@ -717,7 +730,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 valid = false;
                 lowerVersionHosts.add(vds.getName());
             }
-            if (getCluster().supportsVirtService() && missingServerCpuFlags(vds) != null) {
+            if (getCluster().supportsVirtService() && !missingServerCpuFlags(vds).isEmpty()) {
                 valid = false;
                 lowCpuHosts.add(vds.getName());
             }
@@ -829,10 +842,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     protected List<String> missingServerCpuFlags(VDS vds) {
-        return cpuFlagsManagerHandler.missingServerCpuFlags(
-                getCluster().getCpuName(),
-                vds.getCpuFlags(),
-                getCluster().getCompatibilityVersion());
+        return cpuFlagsManagerHandler.missingClusterCpuFlags(
+                getCluster().getCpuFlags(),
+                vds.getCpuFlags());
     }
 
     protected boolean isCpuUpdatable(Cluster cluster) {

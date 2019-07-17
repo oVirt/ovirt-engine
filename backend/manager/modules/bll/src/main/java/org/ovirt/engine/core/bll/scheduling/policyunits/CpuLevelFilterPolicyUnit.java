@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -54,7 +54,6 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             return hostsToRunOn;
         }
 
-        String customCpu; // full name of the vm cpu
         Version compatibilityVer = vm.getCompatibilityVersion();
 
         // Migration checks for a VM with CPU passthrough.
@@ -93,41 +92,40 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             return hostsToRunOn;
         }
 
-        /* get required cpu name */
-        if (StringUtils.isNotEmpty(vm.getCpuName())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster
-            customCpu = vm.getCpuName();
-        } else if (StringUtils.isNotEmpty(vm.getCustomCpuName())) { // static check - used only for cases where the dynamic value hasn't been updated yet(validate)
-            customCpu = vm.getCustomCpuName();
+        Cluster cluster = context.getCluster();
+        String vmFlags;
+
+        if (StringUtils.isNotEmpty(vm.getCpuName())
+                        && StringUtils.isNotEmpty(cluster.getCpuVerb())
+                        && StringUtils.isNotEmpty(cluster.getCpuFlags())
+                        && vm.getCpuName().equals(cluster.getCpuVerb())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster
+            vmFlags = cluster.getCpuFlags();
+        } else if (StringUtils.isNotEmpty(vm.getCpuName()) && !vm.getCpuName().equals(cluster.getCpuVerb())) {
+            String cpuName = cpuFlagsManagerHandler.getCpuNameByCpuId(vm.getCpuName(), compatibilityVer);
+            vmFlags = cpuFlagsManagerHandler.getFlagsByCpuName(cpuName, compatibilityVer);
+        } else if (StringUtils.isNotEmpty(vm.getCustomCpuName())) { // static check - used only for cases where the
+                                                                  // dynamic value hasn't been updated yet(validate)
+            String cpuName = cpuFlagsManagerHandler.getCpuNameByCpuId(vm.getCustomCpuName(), compatibilityVer);
+            vmFlags = cpuFlagsManagerHandler.getFlagsByCpuName(cpuName, compatibilityVer);
         } else { // use cluster default - all hosts are valid
             return hosts;
         }
 
-        customCpu = cpuFlagsManagerHandler.getCpuNameByCpuId(customCpu, compatibilityVer); // translate vdsVerb to full cpu name
-        if(StringUtils.isNotEmpty(customCpu)) { // checks if there's a cpu with the given vdsVerb
+        /* find compatible hosts */
+        for (VDS host : hosts) {
+            List<String> missingFlags = cpuFlagsManagerHandler.missingClusterCpuFlags(vmFlags, host.getCpuFlags());
 
-            /* find compatible hosts */
-            for (VDS host : hosts) {
-                ServerCpu cpu = cpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(), compatibilityVer);
-                String hostCpuName = cpu == null ? null : cpu.getCpuName();
-                if (StringUtils.isNotEmpty(hostCpuName)) {
-                    if (cpuFlagsManagerHandler.checkIfCpusSameManufacture(customCpu, hostCpuName, compatibilityVer)) { // verify comparison uses only one cpu-level scale
-                        int compareResult = cpuFlagsManagerHandler.compareCpuLevels(customCpu, hostCpuName, compatibilityVer);
-                        if (compareResult <= 0) {
-                            hostsToRunOn.add(host);
-                            log.debug("Host '{}' wasn't filtered out as it has a CPU level ({}) which is higher or equal than the CPU level the VM was run with ({})",
-                                    host.getName(),
-                                    hostCpuName,
-                                    customCpu);
-                        } else {
-                            log.debug("Host '{}' was filtered out as it has a CPU level ({}) which is lower than the CPU level the VM was run with ({})",
-                                    host.getName(),
-                                    hostCpuName,
-                                    customCpu);
-                            messages.addMessage(host.getId(), String.format("$hostCPULevel %1$s", hostCpuName));
-                            messages.addMessage(host.getId(), String.format("$vmCPULevel %1$s", customCpu));
-                            messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__LOW_CPU_LEVEL.toString());
-                        }
-                    }
+            if (missingFlags.isEmpty()) {
+                hostsToRunOn.add(host);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Host {} can't run the VM because its CPU flags are missing VM's required CPU flags."
+                                    + " It is missing flags: {}.",
+                            host.getName(),
+                            formatFlags(missingFlags)
+                        );
+                    messages.addMessage(host.getId(), String.format("$cpuFlags %1$s", formatFlags(missingFlags)));
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__LOW_CPU_LEVEL.toString());
                 }
             }
         }

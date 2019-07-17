@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -44,6 +45,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     private ClusterDao clusterDao;
     @Inject
     private NetworkClusterDao networkClusterDao;
+    @Inject
+    private ClusterCpuFlagsManager clusterCpuFlagsManager;
 
     public AddClusterCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -59,6 +62,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     protected void executeCommand() {
         Cluster cluster = getCluster();
         cluster.setArchitecture(getArchitecture());
+        setCpuFlags();
         setDefaultSwitchTypeIfNeeded();
         setDefaultFirewallTypeIfNeeded();
         setDefaultLogMaxMemoryUsedThresholdIfNeeded();
@@ -87,6 +91,12 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
         setActionReturnValue(cluster.getId());
         setSucceeded(true);
+    }
+
+    private void setCpuFlags() {
+        if (!StringUtils.isEmpty(getCluster().getCpuName())) {
+            clusterCpuFlagsManager.updateCpuFlags(getCluster());
+        }
     }
 
     private void addDefaultCpuProfile() {
