@@ -15,7 +15,11 @@ import org.ovirt.engine.core.compat.Version;
 public class FeatureSupported {
 
     public static boolean supportedInConfig(ConfigValues feature, Version version) {
-        return Config.<Boolean> getValue(feature, version.getValue());
+        Boolean value = Config.<Boolean> getValue(feature, version.getValue());
+        if (value == null) {
+            throw new IllegalArgumentException(feature.toString() + " has no value for version: " + version);
+        }
+        return value;
     }
 
     public static boolean supportedInConfig(ConfigValues feature, Version version, ArchitectureType arch) {
