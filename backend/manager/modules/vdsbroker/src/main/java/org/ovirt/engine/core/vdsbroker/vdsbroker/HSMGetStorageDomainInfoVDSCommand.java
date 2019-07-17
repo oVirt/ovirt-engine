@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.SANState;
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -85,6 +86,10 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                 if (struct.containsKey("vgMetadataDevice")) {
                     sdStatic.setVgMetadataDevice(Objects.toString(struct.get("vgMetadataDevice")));
                 }
+            }
+            if (struct.containsKey("block_size")) {
+                sdStatic.setBlockSize(StorageBlockSize.forValue(
+                        Integer.parseInt(Objects.toString(struct.get("block_size")))));
             }
         }
         if (struct.containsKey("state")) {

@@ -142,7 +142,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             getReturnValue().setFault(fault);
             setSucceeded(false);
         } else if (addStorageDomainInIrs()) {
-            updateStorageDomainDynamicFromIrs();
+            updateStorageDomainFromIrs();
             setSucceeded(true);
         }
     }

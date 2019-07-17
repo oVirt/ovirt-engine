@@ -52,7 +52,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         }
         getStorageDomain().setStorage(storage);
         if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && addStorageDomainInIrs()) {
-            updateStorageDomainDynamicFromIrs();
+            updateStorageDomainFromIrs();
             proceedVGLunsInDb();
             blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
                     getVds().getId());

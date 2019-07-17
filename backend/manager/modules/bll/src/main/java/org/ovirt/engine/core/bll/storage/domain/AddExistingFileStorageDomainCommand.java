@@ -49,7 +49,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                                     .getConnection(), getVds().getId(), false)).getActionReturnValue());
         }
         addStorageDomainInDb();
-        updateStorageDomainDynamicFromIrs();
+        updateStorageDomainFromIrs();
         setSucceeded(true);
     }
 
