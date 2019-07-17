@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -303,6 +304,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         }
         if (spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()) {
             return checkMasterDomainIsUp();
+        }
+        if (getStorageDomain().getBlockSize() == StorageBlockSize.BLOCK_4K &&
+                !validate(storageDomainToPoolRelationValidator.isBlockSizeAutoDetectionSupported())) {
+            return false;
         }
         return true;
     }

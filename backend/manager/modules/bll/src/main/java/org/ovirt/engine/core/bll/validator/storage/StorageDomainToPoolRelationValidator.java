@@ -1,14 +1,23 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
  * Validate validation methods for attaching a storage domain to a DC (pool).
@@ -24,6 +33,10 @@ public class StorageDomainToPoolRelationValidator {
 
     protected StorageDomainDao getStorageDomainDao() {
         return Injector.get(StorageDomainDao.class);
+    }
+
+    protected VdsDao getVdsDao() {
+        return Injector.get(VdsDao.class);
     }
 
     private boolean isStorageDomainOfTypeIsoOrExport() {
@@ -116,6 +129,35 @@ public class StorageDomainToPoolRelationValidator {
             if (!(valResult = validateAmountOfIsoAndExportDomainsInDC()).isValid()) {
                 return valResult;
             }
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult isBlockSizeAutoDetectionSupported() {
+        StorageType storageType = storageDomainStatic.getStorageType();
+        List<String> withoutSupportVDSes = getVdsDao().getAllForStoragePool(storagePool.getId())
+                .stream()
+                .filter(vds -> {
+                    if (vds.getSupportedBlockSize() == null) {
+                        // Old VDSM without 'supported_block_size'
+                        return true;
+                    }
+                    if (!vds.getSupportedBlockSize().containsKey(storageType.name())) {
+                        // No block size support specified for storage type
+                        return true;
+                    }
+                    @SuppressWarnings("unchecked")
+                    List<Integer> blockSizeForStorage =
+                            (List<Integer>) vds.getSupportedBlockSize().get(storageType.name());
+                    return !blockSizeForStorage.contains(StorageBlockSize.BLOCK_AUTO.getValue());
+                })
+                .map(VDS::getName)
+                .collect(Collectors.toList());
+        if (!withoutSupportVDSes.isEmpty()) {
+            List<String> replacements = Collections.singletonList(
+                    ReplacementUtils.createSetVariableString("hosts", withoutSupportVDSes));
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_4K_UNSUPPORTED,
+                    replacements);
         }
         return ValidationResult.VALID;
     }
