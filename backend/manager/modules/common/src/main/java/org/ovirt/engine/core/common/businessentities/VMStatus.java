@@ -86,6 +86,17 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
+     * This method reflects whether the VM is qualified to start a backup operation (full/incremental).
+     * For this to be true, the VM must up.
+     *
+     * @return true if this status indicates that the VM status indicates that snapshot live merge
+     * may be possible, otherwise false
+     */
+    public boolean isQualifiedForVmBackup() {
+        return this == Up;
+    }
+
+    /**
      * This method reflects whether the VM is qualified for console connection.
      *
      * @return true if the VM status indicates that console connection may be possible, otherwise false

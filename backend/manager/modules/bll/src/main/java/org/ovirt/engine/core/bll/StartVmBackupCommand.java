@@ -95,8 +95,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
             return false;
         }
-        if (!getVm().isRunningOrPaused()) {
-            return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS);
+        if (!getVm().getStatus().isQualifiedForVmBackup()) {
+            return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_STATUS);
         }
         if (!vmBackupDao.getAllForVm(getVmId()).isEmpty()) {
             return failValidation(EngineMessage.CANNOT_START_BACKUP_ALREADY_IN_PROGRESS);
