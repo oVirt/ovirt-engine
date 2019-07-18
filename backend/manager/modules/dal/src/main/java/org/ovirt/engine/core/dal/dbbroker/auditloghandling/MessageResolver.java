@@ -45,13 +45,13 @@ public class MessageResolver {
             token = matcher.group();
 
             // remove leading ${ and trailing }
-            token = token.substring(2, token.length() - 1);
+            token = token.substring(2, token.length() - 1).toLowerCase();
 
             // get value from value map
-            value = values.get(token.toLowerCase());
+            value = values.get(token);
             if (value == null || value.isEmpty()) {
                 // replace value with UNKNOWN_VARIABLE_VALUE if value not defined
-                switch (token.toLowerCase()) {
+                switch (token) {
                 case REASON_TOKEN:
                     value = UNKNOWN_REASON_VALUE;
                     break;
