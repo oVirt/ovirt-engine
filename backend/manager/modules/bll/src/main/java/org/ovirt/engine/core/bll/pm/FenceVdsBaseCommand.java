@@ -202,7 +202,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     @Override
     public Map<String, String> getJobMessageProperties() {
         Map<String, String> map = super.getJobMessageProperties();
-        map.put(VdcObjectType.Cluster.name(), getClusterName());
+        map.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         return map;
     }
 }
