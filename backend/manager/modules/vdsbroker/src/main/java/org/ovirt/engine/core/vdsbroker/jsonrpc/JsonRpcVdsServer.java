@@ -1648,7 +1648,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("hookLevel", stage)
                         .withParameter("hookName", hookName)
                         .withParameter("hookData", content)
-                        .withParameter("hookMd5Sum", checksum)
+                        .withParameter("hookChecksum", checksum)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
@@ -1666,7 +1666,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("hookLevel", stage)
                         .withParameter("hookName", hookName)
                         .withParameter("hookData", content)
-                        .withParameter("hookMd5Sum", checksum)
+                        .withParameter("hookChecksum", checksum)
                         .withParameter("enable", enabled)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -2466,6 +2466,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    @Override
     public StatusOnlyReturn glusterWebhookSync() {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterEvent.webhookSync").build();
