@@ -5,42 +5,22 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
-import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupVmResource
-        extends AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
+        extends BackendAffinityGroupSubResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements AffinityGroupVmResource {
 
-    private Guid groupId;
-
     public BackendAffinityGroupVmResource(Guid groupId, String vmId) {
-        super(vmId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
-        this.groupId = groupId;
+        super(groupId, vmId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
     @Override
     public Response remove() {
-        AffinityGroup group = getGroup();
-        if (group == null || !group.getVmIds().remove(asGuid(id))) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        return performAction(
-            ActionType.EditAffinityGroup,
-            new AffinityGroupCRUDParameters(groupId, group)
-        );
-    }
-
-    private org.ovirt.engine.core.common.scheduling.AffinityGroup getGroup() {
-        return getEntity(
-            org.ovirt.engine.core.common.scheduling.AffinityGroup.class,
-            QueryType.GetAffinityGroupById,
-            new IdQueryParameters(groupId),
-            groupId.toString()
-        );
+        return editAffinityGroup(group -> {
+            if (!group.getVmIds().remove(asGuid(id))) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
+        });
     }
 }
