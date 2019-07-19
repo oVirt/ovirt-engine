@@ -12,6 +12,7 @@ public class AffinityLabelMapper {
         entity.setId(model.getId().toString());
         entity.setName(model.getName());
         entity.setReadOnly(model.isReadOnly());
+        entity.setHasImplicitAffinityGroup(model.isImplicitAffinityGroup());
 
         return entity;
     }
@@ -30,6 +31,10 @@ public class AffinityLabelMapper {
 
         if (model.isSetReadOnly()) {
             entity.readOnly(model.isReadOnly());
+        }
+
+        if (model.isSetHasImplicitAffinityGroup()) {
+            entity.implicitAffinityGroup(model.isHasImplicitAffinityGroup());
         }
 
         if (model.isSetVms() && model.getVms().isSetVms()) {

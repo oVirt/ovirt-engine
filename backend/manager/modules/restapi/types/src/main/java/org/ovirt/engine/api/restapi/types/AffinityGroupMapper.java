@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.api.model.AffinityGroup;
+import org.ovirt.engine.api.model.AffinityLabel;
+import org.ovirt.engine.api.model.AffinityLabels;
 import org.ovirt.engine.api.model.AffinityRule;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
@@ -79,6 +81,26 @@ public class AffinityGroupMapper {
             vm.setId(id.toString());
             return vm;
         }).forEach(model.getVms().getVms()::add);
+
+        if (model.getVmLabels() == null) {
+            model.setVmLabels(new AffinityLabels());
+        }
+
+        entity.getVmLabels().stream().map(id -> {
+            AffinityLabel label = new AffinityLabel();
+            label.setId(id.toString());
+            return label;
+        }).forEach(model.getVmLabels().getAffinityLabels()::add);
+
+        if (model.getHostLabels() == null) {
+            model.setHostLabels(new AffinityLabels());
+        }
+
+        entity.getHostLabels().stream().map(id -> {
+            AffinityLabel label = new AffinityLabel();
+            label.setId(id.toString());
+            return label;
+        }).forEach(model.getHostLabels().getAffinityLabels()::add);
 
         return model;
     }

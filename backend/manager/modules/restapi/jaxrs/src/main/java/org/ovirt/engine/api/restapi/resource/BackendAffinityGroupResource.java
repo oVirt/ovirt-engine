@@ -50,13 +50,11 @@ public class BackendAffinityGroupResource
 
     @Override
     public AffinityGroupVmLabelsResource getVmLabelsResource() {
-        // TODO: implement
-        return null;
+        return inject(new BackendAffinityGroupVmLabelsResource(guid));
     }
 
     @Override
     public AffinityGroupHostLabelsResource getHostLabelsResource() {
-        // TODO: implement
-        return null;
+        return inject(new BackendAffinityGroupHostLabelsResource(guid));
     }
 }

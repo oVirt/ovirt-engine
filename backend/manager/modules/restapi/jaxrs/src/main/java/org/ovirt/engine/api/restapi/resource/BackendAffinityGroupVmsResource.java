@@ -6,62 +6,41 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
-import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
+public class BackendAffinityGroupVmsResource
+        extends BackendAffinityGroupSubListResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements AffinityGroupVmsResource {
-    private final Guid affinityGroupId;
 
     public BackendAffinityGroupVmsResource(Guid affinityGroupId) {
-        super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
-        this.affinityGroupId = affinityGroupId;
+        super(affinityGroupId, Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
     @Override
     public Vms list() {
         Vms vms = new Vms();
-        AffinityGroup affinityGroup = getEntity();
-
-        if (affinityGroup.getVmIds() != null) {
-            for (int i = 0; i < affinityGroup.getVmIds().size(); i++) {
-                Vm vm = new Vm();
-                vm.setId(affinityGroup.getVmIds().get(i).toString());
-                vm.setName(affinityGroup.getVmEntityNames().get(i));
-                vm = addLinks(populate(vm, null));
-                // remove vm actions, not relevant to this context
-                vm.setActions(null);
-                vms.getVms().add(vm);
-            }
-        }
+        vms.getVms().addAll(listResources(
+                AffinityGroup::getVmIds,
+                AffinityGroup::getVmEntityNames,
+                (id, name) -> {
+                    Vm vm = new Vm();
+                    vm.setId(id.toString());
+                    vm.setName(name);
+                    return vm;
+                }));
 
         return vms;
     }
 
     @Override
     public Response add(Vm vm) {
-        AffinityGroup affinityGroup = getEntity();
-
-        affinityGroup.getVmIds().add(asGuid(vm.getId()));
-        return performAction(ActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
-                affinityGroup));
-    }
-
-    @Override
-    protected org.ovirt.engine.core.common.scheduling.AffinityGroup getEntity() {
-        return getEntity(org.ovirt.engine.core.common.scheduling.AffinityGroup.class,
-                QueryType.GetAffinityGroupById,
-                new IdQueryParameters(affinityGroupId),
-                affinityGroupId.toString());
+        return editAffinityGroup(group -> group.getVmIds().add(asGuid(vm.getId())));
     }
 
     @Override
     public AffinityGroupVmResource getVmResource(String id) {
-        return inject(new BackendAffinityGroupVmResource(affinityGroupId, id));
+        return inject(new BackendAffinityGroupVmResource(getAffinityGroupId(), id));
     }
 }
