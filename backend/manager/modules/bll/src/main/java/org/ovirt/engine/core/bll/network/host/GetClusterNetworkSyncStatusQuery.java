@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 
 public class GetClusterNetworkSyncStatusQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -22,8 +22,8 @@ public class GetClusterNetworkSyncStatusQuery<P extends IdQueryParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        List<VDS> hosts = backend.runInternalQuery(QueryType.GetOutOfSyncHostsForCluster,
+        Set<Guid> vdsIds = backend.runInternalQuery(QueryType.GetOutOfSyncHostsForCluster,
             new IdQueryParameters(getParameters().getId())).getReturnValue();
-        getQueryReturnValue().setReturnValue(!hosts.isEmpty());
+        getQueryReturnValue().setReturnValue(!vdsIds.isEmpty());
     }
 }

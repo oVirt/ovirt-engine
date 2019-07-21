@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -186,6 +188,13 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
                 networkRowMapper,
                 getCustomMapSqlParameterSource().addValue("vdsm_name", vdsmName)
                         .addValue("data_center_id", dataCenterId));
+    }
+
+    @Override
+    public Map<String, Network> getNetworksForCluster(Guid clusterId) {
+        return getAllForCluster(clusterId)
+            .stream()
+            .collect(Collectors.toMap(Network::getName, Function.identity()));
     }
 
     @Override

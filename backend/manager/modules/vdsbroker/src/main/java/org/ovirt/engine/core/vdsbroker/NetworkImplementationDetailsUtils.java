@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,7 +21,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkInSyncWithVdsNetworkInterface;
 
 @Singleton
@@ -29,6 +34,8 @@ public class NetworkImplementationDetailsUtils {
     private final VdsStaticDao vdsStaticDao;
     private final VdsDynamicDao vdsDynamicDao;
     private final ClusterDao clusterDao;
+    private final InterfaceDao interfaceDao;
+    private final NetworkDao networkDao;
     private final CalculateBaseNic calculateBaseNic;
 
     @Inject
@@ -37,6 +44,8 @@ public class NetworkImplementationDetailsUtils {
             VdsStaticDao vdsStaticDao,
             VdsDynamicDao vdsDynamicDao,
             ClusterDao clusterDao,
+            InterfaceDao interfaceDao,
+            NetworkDao networkDao,
             CalculateBaseNic calculateBaseNic,
             DefaultRouteUtil defaultRouteUtil) {
 
@@ -44,9 +53,30 @@ public class NetworkImplementationDetailsUtils {
         this.vdsStaticDao = Objects.requireNonNull(vdsStaticDao);
         this.vdsDynamicDao = Objects.requireNonNull(vdsDynamicDao);
         this.clusterDao = Objects.requireNonNull(clusterDao);
+        this.interfaceDao = Objects.requireNonNull(interfaceDao);
+        this.networkDao = Objects.requireNonNull(networkDao);
         this.calculateBaseNic = Objects.requireNonNull(calculateBaseNic);
         this.networkAttachmentDao = Objects.requireNonNull(networkAttachmentDao);
         this.defaultRouteUtil = Objects.requireNonNull(defaultRouteUtil);
+    }
+
+    public Set<VdsNetworkInterface> getAllInterfacesOutOfSync(Guid clusterId) {
+        Map<String, Network> clusterNetworksByName = networkDao
+                .getNetworksForCluster(clusterId);
+
+        return interfaceDao.getAllInterfacesByClusterId(clusterId)
+            .stream()
+            .filter(iface -> isNetworkOutOfSync(iface, clusterNetworksByName.get(iface.getNetworkName())))
+            .collect(Collectors.toSet());
+
+    }
+
+    public boolean isNetworkOutOfSync(VdsNetworkInterface iface, Network network) {
+        return isNetworkOutOfSync(calculateNetworkImplementationDetails(iface, network));
+    }
+
+    private boolean isNetworkOutOfSync(NetworkImplementationDetails details) {
+        return details != null && details.isManaged() && !details.isInSync();
     }
 
     /**

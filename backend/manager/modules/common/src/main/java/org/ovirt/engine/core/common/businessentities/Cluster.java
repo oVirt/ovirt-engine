@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -160,7 +159,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     private Guid migrationPolicyId;
     private Guid macPoolId;
     private Guid defaultNetworkProviderId;
-    private List<VDS> hostsOutOfSync;
+    private String hostNamesOutOfSync;
 
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -178,7 +177,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         comment = "";
         cpuName = "";
         vncEncryptionEnabled = true;
-        hostsOutOfSync = Collections.emptyList();
+        hostNamesOutOfSync = "";
     }
 
     @Override
@@ -645,12 +644,12 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.vncEncryptionEnabled = vncEncryptionEnabled;
     }
 
-    public List<VDS> getHostsOutOfSync() {
-            return hostsOutOfSync;
+    public String getHostNamesOutOfSync() {
+            return hostNamesOutOfSync;
     }
 
-    public void setHostsOutOfSync(List<VDS> clusterNetworksInSync) {
-        this.hostsOutOfSync = clusterNetworksInSync;
+    public void setHostNamesOutOfSync(String hostNamesOutOfSync) {
+        this.hostNamesOutOfSync = hostNamesOutOfSync;
     }
 
     @Override
@@ -700,7 +699,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 logMaxMemoryUsedThreshold,
                 logMaxMemoryUsedThresholdType,
                 vncEncryptionEnabled,
-                hostsOutOfSync
+                hostNamesOutOfSync
         );
     }
 
@@ -761,7 +760,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(logMaxMemoryUsedThreshold, other.logMaxMemoryUsedThreshold)
                 && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
-                && hostsOutOfSync == other.hostsOutOfSync;
+                && Objects.equals(hostNamesOutOfSync, other.hostNamesOutOfSync);
     }
 
     @Override

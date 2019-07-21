@@ -376,9 +376,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     );
         }
         for(Cluster cluster: clusters) {
-            List<VDS> returnValue = backend.runInternalQuery(QueryType.GetOutOfSyncHostsForCluster,
+            String names = backend.runInternalQuery(QueryType.GetOutOfSyncHostNamesForCluster,
                 new IdQueryParameters(cluster.getId())).getReturnValue();
-            cluster.setHostsOutOfSync(returnValue);
+            cluster.setHostNamesOutOfSync(names);
         }
         return clusters;
     }
