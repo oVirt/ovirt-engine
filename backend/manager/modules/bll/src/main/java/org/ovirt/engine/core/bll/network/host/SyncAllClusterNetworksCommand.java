@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.ovirt.engine.core.bll.CommandActionState.END_SUCCESS;
-import static org.ovirt.engine.core.bll.CommandActionState.EXECUTE;
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_FAILED;
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_FINISHED;
 import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_ALL_NETWORKS_STARTED;
@@ -10,6 +8,7 @@ import static org.ovirt.engine.core.common.AuditLogType.CLUSTER_SYNC_NOTHING_TO_
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -31,10 +30,10 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 
 @NonTransactiveCommandAttribute
@@ -45,7 +44,7 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
-    private List<VDS> outOfSyncHosts;
+    private Set<Guid> outOfSyncVdsIds;
 
     public SyncAllClusterNetworksCommand(ClusterParametersBase parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -55,15 +54,17 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
     protected void init() {
         QueryReturnValue qRetVal = runInternalQuery(
             QueryType.GetOutOfSyncHostsForCluster, new IdQueryParameters(getParameters().getClusterId()));
-        outOfSyncHosts = qRetVal.getReturnValue();
+        outOfSyncVdsIds = qRetVal.getReturnValue();
     }
 
     @Override
     protected void executeCommand() {
         if (outOfSyncHostsExist()) {
             AtomicInteger count = new AtomicInteger(1);
-            List<ActionParametersBase> params = outOfSyncHosts.stream()
-                .map(host -> new PersistentHostSetupNetworksParameters(host.getId(), outOfSyncHosts.size(), count.getAndIncrement()))
+            List<ActionParametersBase> params = outOfSyncVdsIds.stream()
+                .map(vdsId -> new PersistentHostSetupNetworksParameters(
+                    vdsId, outOfSyncVdsIds.size(), count.getAndIncrement())
+                )
                 .collect(Collectors.toList());
             params.forEach(this::withRootCommandInfo);
             runInternalMultipleActions(ActionType.SyncAllHostNetworks, params);
@@ -90,8 +91,8 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return outOfSyncHosts.stream()
-            .map(host -> new PermissionSubject(host.getId(), VdcObjectType.VDS, getActionType().getActionGroup()))
+        return outOfSyncVdsIds.stream()
+            .map(vdsId -> new PermissionSubject(vdsId, VdcObjectType.VDS, getActionType().getActionGroup()))
             .collect(Collectors.toList());
     }
 
@@ -116,7 +117,7 @@ public class SyncAllClusterNetworksCommand extends ClusterCommandBase<ClusterPar
     }
 
     private boolean outOfSyncHostsExist() {
-        return CollectionUtils.isNotEmpty(outOfSyncHosts);
+        return CollectionUtils.isNotEmpty(outOfSyncVdsIds);
     }
 
     @Override

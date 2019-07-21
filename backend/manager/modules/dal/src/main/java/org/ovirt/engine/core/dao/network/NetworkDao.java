@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao.network;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -183,4 +184,6 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the {@link Network}
      */
     Network getNetworkByVdsmNameAndDataCenterId(String vdsmName, Guid dataCenterId);
+
+    Map<String, Network> getNetworksForCluster(Guid clusterId);
 }
