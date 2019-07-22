@@ -235,12 +235,9 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
         Frontend.getInstance().runMultipleAction(ActionType.AddPermission, list,
                 result -> {
-
-                    QuotaUserListModel localModel = (QuotaUserListModel) result.getState();
-                    localModel.stopProgress();
+                    model.stopProgress();
                     cancel();
-
-                }, model);
+                });
         cancel();
     }
 
