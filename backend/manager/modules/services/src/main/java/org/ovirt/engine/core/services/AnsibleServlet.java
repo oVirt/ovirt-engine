@@ -100,7 +100,7 @@ public class AnsibleServlet extends HttpServlet {
                 AnsibleReturnValue ansibleReturnValue;
                 String timeout = request.getParameter("execution_timeout");
                 if (timeout != null) {
-                    ansibleReturnValue = ansibleExecutor.runCommand(command, Integer.valueOf(timeout));
+                    ansibleReturnValue = ansibleExecutor.runCommand(command, Integer.parseInt(timeout));
                 } else {
                     ansibleReturnValue = ansibleExecutor.runCommand(command);
                 }

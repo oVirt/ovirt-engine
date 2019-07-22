@@ -48,7 +48,7 @@ public class VmMigrationProgressMonitoring extends EventSubscriber implements Ba
             map.entrySet().forEach(vmInfo -> {
                 Guid vmId = new Guid(vmInfo.getKey());
                 Map<?, ?> properties = (Map<?, ?>) vmInfo.getValue();
-                int progress = Integer.valueOf(properties.get(VdsProperties.vm_migration_progress).toString());
+                int progress = Integer.parseInt(properties.get(VdsProperties.vm_migration_progress).toString());
                 VmStatistics vmStatistics = resourceManager.getVmManager(vmId).getStatistics();
                 vmStatistics.setMigrationProgressPercent(progress);
                 resourceManager.getEventListener().migrationProgressReported(vmId, progress);
