@@ -387,7 +387,7 @@ public class SnapshotsManager {
      *            The user that performs the action
      * @param vmInterfaceManager vmInterfaceManager instance
      */
-    public void attempToRestoreVmConfigurationFromSnapshot(VM vm,
+    public void attemptToRestoreVmConfigurationFromSnapshot(VM vm,
             Snapshot snapshot,
             Guid activeSnapshotId,
             List<DiskImage> images,

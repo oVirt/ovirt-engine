@@ -211,7 +211,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             activeSnapshotLeaseDomainId = getVm().getStaticData().getLeaseStorageDomainId();
         }
 
-        getSnapshotsManager().attempToRestoreVmConfigurationFromSnapshot(getVm(),
+        getSnapshotsManager().attemptToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
                 snapshotDao.getId(getVm().getId(), SnapshotType.ACTIVE),
                 getImagesToPreview(),

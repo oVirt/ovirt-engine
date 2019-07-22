@@ -613,7 +613,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         snapshotsToRemove.add(removedSnapshot.getId());
         getSnapshotsManager().removeAllIllegalDisks(removedSnapshot.getId(), getVmId());
 
-        getSnapshotsManager().attempToRestoreVmConfigurationFromSnapshot(getVm(),
+        getSnapshotsManager().attemptToRestoreVmConfigurationFromSnapshot(getVm(),
                 targetSnapshot,
                 targetSnapshot.getId(),
                 null,
