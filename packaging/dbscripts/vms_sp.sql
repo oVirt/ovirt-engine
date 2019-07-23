@@ -270,7 +270,7 @@ LANGUAGE plpgsql;
 --
 CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_app_list TEXT,
-    v_guest_cur_user_name VARCHAR(255),
+    v_guest_cur_user_name TEXT,
     v_console_cur_user_name VARCHAR(255),
     v_runtime_name VARCHAR(255),
     v_console_user_id UUID,
@@ -437,7 +437,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_app_list TEXT,
-    v_guest_cur_user_name VARCHAR(255),
+    v_guest_cur_user_name TEXT,
     v_console_cur_user_name VARCHAR(255),
     v_runtime_name VARCHAR(255),
     v_console_user_id UUID,
@@ -554,7 +554,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateConsoleUserWithOptimisticLocking (
     v_vm_guid UUID,
     v_console_user_id UUID,
-    v_guest_cur_user_name VARCHAR(255),
+    v_guest_cur_user_name TEXT,
     v_console_cur_user_name VARCHAR(255),
     OUT v_updated BOOLEAN
     ) AS $PROCEDURE$
