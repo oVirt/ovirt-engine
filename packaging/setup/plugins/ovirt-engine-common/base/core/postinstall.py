@@ -60,31 +60,40 @@ class Plugin(plugin.PluginBase):
                 name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
             )
         )
-        content = ['[environment:default]']
+        content = ['[environment:default]\n']
         consts = []
         for constobj in self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
         ]:
             consts.extend(constobj.__dict__['__osetup_attrs__'])
         for c in consts:
-            for k in c.__dict__.values():
-                if hasattr(k, '__osetup_attrs__'):
-                    if k.__osetup_attrs__['postinstallfile']:
-                        k = k.fget(None)
-                        if k in self.environment:
-                            v = self.environment[k]
+            for key in c.__dict__.values():
+                if hasattr(key, '__osetup_attrs__'):
+                    if key.__osetup_attrs__['postinstallfile']:
+                        key = key.fget(None)
+                        if key in self.environment:
+                            value = self.environment[key]
                             content.append(
-                                '%s=%s:%s' % (
-                                    k,
-                                    common.typeName(v),
-                                    '\n'.join(v) if isinstance(v, list)
-                                    else v,
+                                '{key}={type}:{value}\n'.format(
+                                    key=key,
+                                    type=common.typeName(value),
+                                    value=(
+                                        '\n '.join(value)
+                                        # We want the next lines to be
+                                        # indented, so that
+                                        # configparser will treat them
+                                        # as a single multi-line value.
+                                        # So we join with '\n '.
+                                        if isinstance(value, list)
+                                        else value
+                                    ),
                                 )
                             )
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
-                content=content,
+                content=''.join(content),
+                binary=True,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
