@@ -73,4 +73,8 @@ public class TooltippedIcon extends FocusPanel {
         tooltip.setMaxWidth(width);
     }
 
+    public void setTooltip(String tooltipText) {
+        tooltip.setText(tooltipText);
+    }
+
 }

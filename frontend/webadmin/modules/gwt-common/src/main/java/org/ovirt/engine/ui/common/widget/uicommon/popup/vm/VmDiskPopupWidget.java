@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -199,6 +200,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @UiField
     Label message;
 
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon hostInfoIcon;
+
     @Ignore
     IscsiStorageView iscsiStorageView;
 
@@ -258,6 +263,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isIncrementalBackupEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
+        hostInfoIcon = new InfoIcon(SafeHtmlUtils.fromString(constants.hostToUseToolTip()));
         interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()));
         cinderVolumeTypeInfoIcon = new InfoIcon(templates.italicText(constants.cinderVolumeTypeInfoIcon()));
         scsiReservationInfoIcon = new InfoIcon(templates.italicText(constants.scsiReservationInfoIcon()));
@@ -491,6 +497,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         diskProfileEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         hostListEditor.setTabIndex(nextTabIndex++);
+        hostInfoIcon.setTabIndex(nextTabIndex++);
         storageTypeEditor.setTabIndex(nextTabIndex++);
         plugDiskToVmEditor.setTabIndex(nextTabIndex++);
         wipeAfterDeleteEditor.setTabIndex(nextTabIndex++);

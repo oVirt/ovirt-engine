@@ -889,6 +889,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostVmDiskPopup();
 
+    String hostToUseToolTip();
+
     String aliasVmDiskPopup();
 
     String dcVmDiskPopup();
