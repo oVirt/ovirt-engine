@@ -312,6 +312,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String storagePopupHostLabel();
 
+    String hostToUseToolTip();
+
     String activateDomainLabel();
 
     String wipeAfterDelete();

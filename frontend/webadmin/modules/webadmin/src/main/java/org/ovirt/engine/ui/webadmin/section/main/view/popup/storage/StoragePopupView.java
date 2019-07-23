@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import java.util.Arrays;
 
+import org.gwtbootstrap3.client.ui.FormGroup;
 import org.gwtbootstrap3.client.ui.Icon;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -14,6 +15,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -35,6 +37,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -148,6 +151,13 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @WithElementId("discardAfterDelete")
     EntityModelCheckBoxEditor discardAfterDeleteEditor;
 
+    @UiField (provided = true)
+    @Ignore
+    InfoIcon hostInfoIcon;
+
+    @UiField
+    FormGroup hostLabelIconListViewFormGroup;
+
     @UiField
     Icon datacenterAlertIcon;
 
@@ -215,6 +225,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         backup = new EntityModelCheckBoxEditor(Align.RIGHT);
         discardAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        hostInfoIcon = new InfoIcon(SafeHtmlUtils.fromString(constants.hostToUseToolTip()));
     }
 
     void localize() {

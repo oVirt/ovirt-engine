@@ -29,10 +29,6 @@
             width: 100%;
         }
 
-        .nopadding {
-            padding: 0px;
-        }
-
         .topElement {
             padding-top: 15px;
         }
@@ -44,13 +40,23 @@
         .iconPadding {
             padding-left: 5px;
         }
+
+        .hostInfoIcon {
+            float: left;
+            padding-left: 10px;
+            line-height: 20px;
+        }
+
+        .noPadding {
+            padding: 0px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="1060px" height="840px">
         <d:content>
             <b:Container addStyleNames="{style.container}">
                 <b:Row addStyleNames="{style.topElement}">
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_6" addStyleNames="{style.noPadding}">
                         <g:FlowPanel>
                             <b:Column size="SM_6">
                                 <g:Label addStyleNames="{style.floatLeft} control-label labelEnabled" text="{constants.storagePopupDataCenterLabel}" />
@@ -59,30 +65,36 @@
                             <e:ListModelListBoxEditor ui:field="datacenterListEditor" usePatternFly="true" widgetColSize="SM_6" />
                         </g:FlowPanel>
                     </b:Column>
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_6" addStyleNames="{style.noPadding}">
                         <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.storagePopupNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_6" addStyleNames="{style.noPadding}">
                         <e:ListModelListBoxEditor ui:field="domainFunctionListEditor" label="{constants.storagePopupDomainFunctionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Column>
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_6" addStyleNames="{style.noPadding}">
                         <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.storagePopupDescriptionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_6" addStyleNames="{style.noPadding}">
                         <e:ListModelListBoxEditor ui:field="storageTypeListEditor" label="{constants.storagePopupStorageTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Column>
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_6" addStyleNames="{style.noPadding}">
                         <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Column>
                 </b:Row>
                 <b:Row addStyleNames="{style.topDecorator}">
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                        <e:ListModelListBoxEditor ui:field="hostListEditor" label="{constants.storagePopupHostLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                    </b:Column>
+                    <b:FormGroup ui:field="hostLabelIconListViewFormGroup">
+                        <b:Column size="SM_3">
+                            <g:Label addStyleNames="{style.floatLeft}" text="{constants.storagePopupHostLabel}" />
+                            <d:InfoIcon ui:field="hostInfoIcon" addStyleNames="{style.hostInfoIcon}" />
+                        </b:Column>
+                        <b:Column size="SM_3" addStyleNames="{style.noPadding}" >
+                            <e:ListModelListBoxEditor ui:field="hostListEditor" usePatternFly="true" widgetColSize="SM_12" />
+                        </b:Column>
+                    </b:FormGroup>
                 </b:Row>
                 <b:Row>
                     <g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
