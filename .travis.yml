@@ -12,7 +12,7 @@ before_script:
   - sudo rm -rf /etc/securetty  # Work around ServletUtilsTest test
 script:
   - "PGPASSWORD=\"test\" ./packaging/dbscripts/schema.sh -d engine_dao_tests -u engine_test -s localhost -p 5433 -c apply"
-  - for i in `seq 1 60`; do sleep 60; echo 'keep alive'; done & mvn --quiet clean org.jacoco:jacoco-maven-plugin:prepare-agent install -P enable-dao-tests sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN -Dengine.db.username=engine_test -Dengine.db.password=test -Dengine.db.url=jdbc:postgresql://localhost:5433/engine_dao_tests
+  - for i in `seq 1 60`; do sleep 60; echo 'keep alive'; done & mvn --quiet clean org.jacoco:jacoco-maven-plugin:prepare-agent install -P enable-dao-tests sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dengine.db.username=engine_test -Dengine.db.password=test -Dengine.db.url=jdbc:postgresql://localhost:5433/engine_dao_tests
 env:
   global:
     - secure: kgBwT3IHk1vg1PHD4KKqkIOFlv4MGkOA+IK+nsTbPRJEvWpzZSgpHLuL+/2YuB4tntNMMj3LHwPTSJmaGLRdxaSjjv0MfzQA/fudLqTJ+FL3MuA++YcLSfjj6wj1dlMRj+0vYgCQcBMKTktDhGMdE6gUh42AQBzywqe1IcnX5Qs=
