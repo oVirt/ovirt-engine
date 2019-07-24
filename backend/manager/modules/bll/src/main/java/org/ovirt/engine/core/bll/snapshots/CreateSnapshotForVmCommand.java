@@ -429,7 +429,11 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         // this will be handled in: https://bugzilla.redhat.com/1568887
         incrementVmGeneration();
         thawVm();
-        endActionOnDisks();
+        TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () -> {
+            endActionOnDisks();
+
+            return null;
+        });
         setSucceeded(getParameters().getTaskGroupSuccess() &&
                 (!getParameters().isLiveSnapshotRequired() || getParameters().isLiveSnapshotSucceeded()));
         getReturnValue().setEndActionTryAgain(false);
