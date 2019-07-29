@@ -3,11 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -30,11 +32,10 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmsMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,10 +82,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
     private BackendInternal backend;
 
     @Inject
-    private VmDynamicDao vmDynamicDao;
-
-    @Inject
-    private ResourceManager resourceManager;
+    protected VmDao vmDao;
 
     @Inject
     private SnapshotDao snapshotDao;
@@ -93,12 +91,15 @@ public abstract class AutoStartVmsRunner implements BackendService {
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
 
-    /** Records of VMs that need to be started */
-    private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
+    private Map<Guid, AutoStartVmToRestart> autoStartVmsToRestart;
+
+    private Set<Guid> vmsToAdd;
+    private final Object vmsToAddLock = new Object();
 
     @PostConstruct
     private void init() {
-        autoStartVmsToRestart = new CopyOnWriteArraySet<>(getInitialVmsToStart());
+        autoStartVmsToRestart = getInitialVmsToStart().stream()
+            .collect(Collectors.toMap(AutoStartVmToRestart::getVmId, a -> a));
 
         long autoStartVmsRunnerIntervalInSeconds =
                 Config.<Long>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
@@ -118,11 +119,16 @@ public abstract class AutoStartVmsRunner implements BackendService {
      *              List of VM IDs to start in the next iteration of the job
      */
     public void addVmsToRun(List<Guid> vmIds) {
-        ArrayList<AutoStartVmToRestart> vmsToAdd = new ArrayList<>(vmIds.size());
-        for (Guid vmId: vmIds) {
-            vmsToAdd.add(new AutoStartVmToRestart(vmId));
+        if (vmIds.isEmpty()) {
+            return;
         }
-        autoStartVmsToRestart.addAll(vmsToAdd);
+
+        synchronized (vmsToAddLock) {
+            if (vmsToAdd == null) {
+                vmsToAdd = new HashSet<>();
+            }
+            vmsToAdd.addAll(vmIds);
+        }
     }
 
     private void startFailedAutoStartVms() {
@@ -135,12 +141,22 @@ public abstract class AutoStartVmsRunner implements BackendService {
     }
 
     private void startFailedAutoStartVmsImpl() {
-        LinkedList<AutoStartVmToRestart> vmsToRemove = new LinkedList<>();
+        processVmsToAdd();
+        if (autoStartVmsToRestart.isEmpty()) {
+            return;
+        }
+
         final DateTime iterationStartTime = DateTime.getNow();
         final Date nextTimeOfRetryToRun = iterationStartTime.addSeconds(RETRY_TO_RUN_AUTO_START_VM_INTERVAL);
         final Date delayedTimeOfRetryToRun = iterationStartTime.addSeconds(DELAY_TO_RUN_AUTO_START_VM_INTERVAL);
 
-        for (AutoStartVmToRestart autoStartVmToRestart : autoStartVmsToRestart) {
+        Collection<Guid> vmIds = autoStartVmsToRestart.keySet();
+        List<AutoStartVmToRestart> vmsToRestart = new ArrayList<>(autoStartVmsToRestart.values());
+
+        Map<Guid, VM> vms = vmDao.getVmsByIds(vmIds).stream()
+                .collect(Collectors.toMap(VM::getId, vm -> vm));
+
+        for (AutoStartVmToRestart autoStartVmToRestart : vmsToRestart) {
             // if it is not the time to try to run the VM yet, skip it for now
             // (we'll try again in the next iteration)
             if (!autoStartVmToRestart.isTimeToRun(iterationStartTime)) {
@@ -148,17 +164,23 @@ public abstract class AutoStartVmsRunner implements BackendService {
             }
 
             Guid vmId = autoStartVmToRestart.getVmId();
+            VM vm = vms.get(vmId);
+
+            if (!isVmNeedsToBeAutoStarted(vm)) {
+                autoStartVmsToRestart.remove(vmId);
+                continue;
+            }
 
             if (isNextRunConfiguration(vmId)) {
                 // if the NextRun config exists then give the ProcessDownVmCommand time to apply it
-                log.debug("NextRun config found for '{}' vm, the RunVm will be delayed", vmId);
+                log.debug("NextRun config found for '{}' vm, the RunVm will be delayed", vm.getName());
                 if (autoStartVmToRestart.delayNextTimeToRun(delayedTimeOfRetryToRun)) {
                     // Skip attempt to run the VM for now.
                     // The priority is to run the VM even if the NextRun fails to be applied
                     continue;
                 }
                 // Waiting for NextRun config is over, let's run the VM even with the non-applied Next-Run
-                log.warn("Failed to wait for the NextRun config to be applied on vm '{}', trying to run the VM anyway", vmId);
+                log.warn("Failed to wait for the NextRun config to be applied on vm '{}', trying to run the VM anyway", vm.getName());
             }
 
             EngineLock runVmLock = createEngineLockForRunVm(vmId);
@@ -166,35 +188,48 @@ public abstract class AutoStartVmsRunner implements BackendService {
             // try to acquire the required lock for running the VM, if the lock cannot be
             // acquired, skip for now  and we'll try again in the next iteration
             if (!acquireLock(runVmLock)) {
-                log.debug("Could not acquire lock for auto starting VM '{}'", vmId);
+                log.debug("Could not acquire lock for auto starting VM '{}'", vm.getName());
                 continue;
             }
 
-            if (!isVmNeedsToBeAutoStarted(vmId)) {
+            // Test again, after acquiring the lock
+            if (!isVmNeedsToBeAutoStarted(vm)) {
                 // if the VM doesn't need to be auto started anymore, release the lock and
                 // remove the VM from the collection of VMs that should be auto started
                 releaseLock(runVmLock);
-                vmsToRemove.add(autoStartVmToRestart);
+                autoStartVmsToRestart.remove(vmId);
                 continue;
             }
 
-            if (runVm(vmId, runVmLock)) {
+            if (runVm(vm.getId(), runVmLock)) {
                 // the VM reached WaitForLunch, so from now on this job is not responsible
                 // to auto start it, future failures will be detected by the monitoring
-                vmsToRemove.add(autoStartVmToRestart);
-            } else {
-                logFailedAttemptToRestartVm(vmId);
+                autoStartVmsToRestart.remove(vmId);
+                continue;
+            }
 
-                if (!autoStartVmToRestart.scheduleNextTimeToRun(nextTimeOfRetryToRun)) {
-                    // if we could not schedule the next time to run the VM, it means
-                    // that we reached the maximum number of tried so don't try anymore
-                    vmsToRemove.add(autoStartVmToRestart);
-                    logFailureToRestartVm(vmId);
-                }
+            logFailedAttemptToRestartVm(vm);
+            if (!autoStartVmToRestart.scheduleNextTimeToRun(nextTimeOfRetryToRun)) {
+                // if we could not schedule the next time to run the VM, it means
+                // that we reached the maximum number of tried so don't try anymore
+                autoStartVmsToRestart.remove(vmId);
+                logFailureToRestartVm(vm);
             }
         }
+    }
 
-        autoStartVmsToRestart.removeAll(vmsToRemove);
+    private void processVmsToAdd() {
+        Set<Guid> vms = vmsToAdd;
+        synchronized (vmsToAddLock) {
+            vmsToAdd = null;
+        }
+
+        if (vms == null) {
+            return;
+        }
+
+        // The VMs are added even if they are already there, this resets the counters
+        vms.forEach(vmId -> autoStartVmsToRestart.put(vmId, new AutoStartVmToRestart(vmId)));
     }
 
     /**
@@ -212,29 +247,29 @@ public abstract class AutoStartVmsRunner implements BackendService {
         lockManager.releaseLock(lock);
     }
 
-    protected abstract boolean isVmNeedsToBeAutoStarted(Guid vmId);
+    protected abstract boolean isVmNeedsToBeAutoStarted(VM vm);
 
-    private void logFailedAttemptToRestartVm(Guid vmId) {
-        logVmEvent(vmId, getRestartFailedAuditLogType());
+    private void logFailedAttemptToRestartVm(VM vm) {
+        logVmEvent(vm, getRestartFailedAuditLogType());
     }
 
     protected abstract AuditLogType getRestartFailedAuditLogType();
 
-    private void logFailureToRestartVm(Guid vmId) {
-        logVmEvent(vmId, getExceededMaxNumOfRestartsAuditLogType());
+    private void logFailureToRestartVm(VM vm) {
+        logVmEvent(vm, getExceededMaxNumOfRestartsAuditLogType());
     }
 
     protected abstract AuditLogType getExceededMaxNumOfRestartsAuditLogType();
 
-    private void logVmEvent(Guid vmId, AuditLogType restartFailedAuditLogType) {
-        AuditLogable event = createVmEvent(vmId);
+    private void logVmEvent(VM vm, AuditLogType restartFailedAuditLogType) {
+        AuditLogable event = createVmEvent(vm);
         auditLogDirector.log(event, restartFailedAuditLogType);
     }
 
-    private AuditLogable createVmEvent(Guid vmId) {
+    private AuditLogable createVmEvent(VM vm) {
         AuditLogable event = new AuditLogableImpl();
-        event.setVmId(vmId);
-        event.setVmName(resourceManager.getVmManager(vmId).getName());
+        event.setVmId(vm.getId());
+        event.setVmName(vm.getName());
         return event;
     }
 
@@ -246,10 +281,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     private String getLockMessage() {
         return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
-    }
-
-    protected VmDynamicDao getVmDynamicDao() {
-        return vmDynamicDao;
     }
 
     private boolean runVm(Guid vmId, EngineLock lock) {
@@ -308,23 +339,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
         Guid getVmId() {
             return vmId;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof AutoStartVmToRestart)) {
-                return false;
-            }
-            AutoStartVmToRestart other = (AutoStartVmToRestart) obj;
-            return Objects.equals(vmId, other.vmId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(vmId);
         }
     }
 }

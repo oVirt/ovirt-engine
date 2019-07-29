@@ -6,10 +6,9 @@ import java.util.Collections;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This class represent a job which is responsible for starting VMs as part of
@@ -24,10 +23,9 @@ public class ColdRebootAutoStartVmsRunner extends AutoStartVmsRunner {
     }
 
     @Override
-    protected boolean isVmNeedsToBeAutoStarted(Guid vmId) {
-        VmDynamic vmDynamic = getVmDynamicDao().get(vmId);
-        return vmDynamic.getStatus() == VMStatus.Down &&
-                vmDynamic.getExitStatus() == VmExitStatus.Normal;
+    protected boolean isVmNeedsToBeAutoStarted(VM vm) {
+        return vm.getStatus() == VMStatus.Down &&
+                vm.getExitStatus() == VmExitStatus.Normal;
     }
 
     @Override

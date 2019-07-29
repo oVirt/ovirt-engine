@@ -4,25 +4,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * This class represent a job which is responsible for running HA VMs
  */
 @Singleton
 public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
-
-    @Inject
-    private VmDao vmDao;
 
     @Override
     protected Collection<AutoStartVmToRestart> getInitialVmsToStart() {
@@ -40,10 +33,10 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
     }
 
     @Override
-    protected boolean isVmNeedsToBeAutoStarted(Guid vmId) {
-        VmDynamic vmDynamic = getVmDynamicDao().get(vmId);
-        return vmDynamic.getStatus() == VMStatus.Down &&
-                vmDynamic.getExitStatus() == VmExitStatus.Error;
+    protected boolean isVmNeedsToBeAutoStarted(VM vm) {
+        return vm.isAutoStartup() &&
+                vm.getStatus() == VMStatus.Down &&
+                vm.getExitStatus() == VmExitStatus.Error;
     }
 
     @Override
