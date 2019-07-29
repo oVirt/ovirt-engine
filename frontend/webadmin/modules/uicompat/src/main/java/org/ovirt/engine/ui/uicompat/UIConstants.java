@@ -1435,6 +1435,8 @@ public interface UIConstants extends Constants {
 
     String nfsVersion4();
 
+    String nfsVersion40();
+
     String nfsVersion41();
 
     String nfsVersion42();
