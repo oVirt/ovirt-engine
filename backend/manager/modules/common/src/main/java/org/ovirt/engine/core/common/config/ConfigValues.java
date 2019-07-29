@@ -1144,13 +1144,16 @@ public enum ConfigValues {
     AutoStartVmsRunnerIntervalInSeconds,
 
     @TypeConverterAttribute(Integer.class)
-    RetryToRunAutoStartVmIntervalInSeconds,
+    RetryToRunAutoStartVmShortIntervalInSeconds,
+
+    @TypeConverterAttribute(Integer.class)
+    RetryToRunAutoStartVmLongIntervalInSeconds,
 
     @TypeConverterAttribute(Integer.class)
     DelayToRunAutoStartVmIntervalInSeconds,
 
     @TypeConverterAttribute(Integer.class)
-    MaxNumOfTriesToRunFailedAutoStartVm,
+    NumOfTriesToRunFailedAutoStartVmInShortIntervals,
 
     @TypeConverterAttribute(Integer.class)
     MaxNumOfSkipsBeforeAutoStartVm,

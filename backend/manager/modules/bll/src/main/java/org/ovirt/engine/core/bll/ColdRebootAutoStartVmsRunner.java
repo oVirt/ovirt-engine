@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This class represent a job which is responsible for starting VMs as part of
@@ -26,6 +27,11 @@ public class ColdRebootAutoStartVmsRunner extends AutoStartVmsRunner {
     protected boolean isVmNeedsToBeAutoStarted(VM vm) {
         return vm.getStatus() == VMStatus.Down &&
                 vm.getExitStatus() == VmExitStatus.Normal;
+    }
+
+    @Override
+    protected AutoStartVmToRestart createAutoStartVmToRestart(Guid vmId) {
+        return new AutoStartVmToRestart(vmId);
     }
 
     @Override

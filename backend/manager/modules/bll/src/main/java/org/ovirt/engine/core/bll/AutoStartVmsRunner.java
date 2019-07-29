@@ -55,20 +55,13 @@ import org.slf4j.LoggerFactory;
  * - If the VM is locked by other module, we skip it in the current cycle and try again in the next cycle.
  * - If we managed to lock the VM, we check if it still needs to be automatically started. If not, we remove
  * it from the list of VMs to start and skip it (the VM will not be automatically started).
- * - Otherwise, we try to start the VM. If we immediately fail, we retry every {@link ConfigValues#RetryToRunAutoStartVmIntervalInSeconds}
- * sec to start it for {@link ConfigValues#MaxNumOfTriesToRunFailedAutoStartVm} times. When all those attempts immediately fail,
+ * - Otherwise, we try to start the VM. If we immediately fail, we retry every {@link ConfigValues#RetryToRunAutoStartVmShortIntervalInSeconds}
+ * sec to start it for {@link ConfigValues#NumOfTriesToRunFailedAutoStartVmInShortIntervals} times. When all those attempts immediately fail,
  * we remove the VM from the list of VMs to start and skip it (the VM will not be automatically started).
  * - Otherwise, we successfully scheduled an attempt to start the VM. From this point on, it is the monitoring
  * module ({@link VmsMonitoring}) that will track the VM and re-register it to this service in case of a failure.
  */
 public abstract class AutoStartVmsRunner implements BackendService {
-
-    /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
-    private static final int RETRY_TO_RUN_AUTO_START_VM_INTERVAL =
-            Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);
-    /** How long to wait before next check whether the NextRun configuration is applied */
-    private static final int DELAY_TO_RUN_AUTO_START_VM_INTERVAL =
-            Config.<Integer> getValue(ConfigValues.DelayToRunAutoStartVmIntervalInSeconds);
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -147,8 +140,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
         }
 
         final DateTime iterationStartTime = DateTime.getNow();
-        final Date nextTimeOfRetryToRun = iterationStartTime.addSeconds(RETRY_TO_RUN_AUTO_START_VM_INTERVAL);
-        final Date delayedTimeOfRetryToRun = iterationStartTime.addSeconds(DELAY_TO_RUN_AUTO_START_VM_INTERVAL);
 
         Collection<Guid> vmIds = autoStartVmsToRestart.keySet();
         List<AutoStartVmToRestart> vmsToRestart = new ArrayList<>(autoStartVmsToRestart.values());
@@ -174,7 +165,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
             if (isNextRunConfiguration(vmId)) {
                 // if the NextRun config exists then give the ProcessDownVmCommand time to apply it
                 log.debug("NextRun config found for '{}' vm, the RunVm will be delayed", vm.getName());
-                if (autoStartVmToRestart.delayNextTimeToRun(delayedTimeOfRetryToRun)) {
+                if (autoStartVmToRestart.delayNextTimeToRun(iterationStartTime)) {
                     // Skip attempt to run the VM for now.
                     // The priority is to run the VM even if the NextRun fails to be applied
                     continue;
@@ -209,7 +200,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
             }
 
             logFailedAttemptToRestartVm(vm);
-            if (!autoStartVmToRestart.scheduleNextTimeToRun(nextTimeOfRetryToRun)) {
+            if (!autoStartVmToRestart.scheduleNextTimeToRun(iterationStartTime)) {
                 // if we could not schedule the next time to run the VM, it means
                 // that we reached the maximum number of tried so don't try anymore
                 autoStartVmsToRestart.remove(vmId);
@@ -229,7 +220,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
         }
 
         // The VMs are added even if they are already there, this resets the counters
-        vms.forEach(vmId -> autoStartVmsToRestart.put(vmId, new AutoStartVmToRestart(vmId)));
+        vms.forEach(vmId -> autoStartVmsToRestart.put(vmId, createAutoStartVmToRestart(vmId)));
     }
 
     /**
@@ -246,6 +237,8 @@ public abstract class AutoStartVmsRunner implements BackendService {
     private void releaseLock(EngineLock lock) {
         lockManager.releaseLock(lock);
     }
+
+    protected abstract AutoStartVmToRestart createAutoStartVmToRestart(Guid vmId);
 
     protected abstract boolean isVmNeedsToBeAutoStarted(VM vm);
 
@@ -293,15 +286,22 @@ public abstract class AutoStartVmsRunner implements BackendService {
     protected static class AutoStartVmToRestart {
         /** The earliest date in Java */
         private static final Date MIN_DATE = DateTime.getMinValue();
+        /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
+        protected static final int RETRY_TO_RUN_AUTO_START_VM_SHORT_INTERVAL =
+                Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmShortIntervalInSeconds);
         /** How many times to try to restart highly available VM that went down */
-        private static final int MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM =
-                Config.<Integer> getValue(ConfigValues.MaxNumOfTriesToRunFailedAutoStartVm);
+        protected static final int MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM_IN_SHORT_INTERVALS =
+                Config.<Integer> getValue(ConfigValues.NumOfTriesToRunFailedAutoStartVmInShortIntervals);
         private static final int MAXIMUM_NUM_OF_SKIPS_BEFORE_AUTO_START_VM =
                 Config.<Integer> getValue(ConfigValues.MaxNumOfSkipsBeforeAutoStartVm);
+        /** How long to wait before next check whether the NextRun configuration is applied */
+        private static final int DELAY_TO_RUN_AUTO_START_VM_INTERVAL =
+                Config.<Integer> getValue(ConfigValues.DelayToRunAutoStartVmIntervalInSeconds);
+
         /** The next time we should try to run the VM */
-        private Date timeToRunTheVm;
+        protected Date timeToRunTheVm;
         /** Number of tries that were made so far to run the VM */
-        private int numOfRuns;
+        protected int numOfRuns;
         /** Number of skips that were made so far before attempt to run the VM */
         private int numOfSkips;
         /** The ID of the VM */
@@ -316,9 +316,9 @@ public abstract class AutoStartVmsRunner implements BackendService {
          * Set the next time we should try to rerun the VM.
          * If we reached the maximum number of tries, the method returns false.
          */
-        boolean scheduleNextTimeToRun(Date timeToRunTheVm) {
-            this.timeToRunTheVm = timeToRunTheVm;
-            return ++numOfRuns < MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM;
+        public boolean scheduleNextTimeToRun(DateTime currentTime) {
+            this.timeToRunTheVm = currentTime.addSeconds(RETRY_TO_RUN_AUTO_START_VM_SHORT_INTERVAL);
+            return ++numOfRuns < MAXIMUM_NUM_OF_TRIES_TO_AUTO_START_VM_IN_SHORT_INTERVALS;
         }
 
         /**
@@ -326,8 +326,8 @@ public abstract class AutoStartVmsRunner implements BackendService {
          * Return false if count of skips reached thresh-hold.
          * Do not increase the attempt-counter 'numOfRuns'.
          */
-        boolean delayNextTimeToRun(Date timeToRunTheVm) {
-            this.timeToRunTheVm = timeToRunTheVm;
+        boolean delayNextTimeToRun(DateTime currentTime) {
+            this.timeToRunTheVm = currentTime.addSeconds(DELAY_TO_RUN_AUTO_START_VM_INTERVAL);
             numOfSkips++;
             numOfSkips %= MAXIMUM_NUM_OF_SKIPS_BEFORE_AUTO_START_VM;
             return numOfSkips != 0;

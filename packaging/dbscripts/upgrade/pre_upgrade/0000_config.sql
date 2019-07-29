@@ -44,6 +44,8 @@ select fn_db_rename_config_key('FreeSpaceCriticalLowInGB','CriticalSpaceActionBl
 select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'general');
 select fn_db_rename_config_key('ImageProxyURL', 'ImageProxyAddress', 'general');
 select fn_db_rename_config_key('MaxBlockDiskSize', 'MaxBlockDiskSizeInGibiBytes', 'general');
+select fn_db_rename_config_key('RetryToRunAutoStartVmIntervalInSeconds','RetryToRunAutoStartVmShortIntervalInSeconds','general');
+select fn_db_rename_config_key('MaxNumOfTriesToRunFailedAutoStartVm','NumOfTriesToRunFailedAutoStartVmInShortIntervals','general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -604,9 +606,11 @@ select fn_db_add_config_value('VmPriorityMaxValue','100','general');
 --How often we'll go over the HA VMs that went down and try to restart them
 select fn_db_add_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 --How often we'll try to run HA VM that we couldn't run before
-select fn_db_add_config_value('RetryToRunAutoStartVmIntervalInSeconds','30','general');
---How many times we'll try to automatically restart HA VM that went down
-select fn_db_add_config_value('MaxNumOfTriesToRunFailedAutoStartVm','10','general');
+select fn_db_add_config_value('RetryToRunAutoStartVmShortIntervalInSeconds','30','general');
+--How often we'll try to run HA VM that we couldn't run in a while
+select fn_db_add_config_value('RetryToRunAutoStartVmLongIntervalInSeconds','1800','general');
+--How many times we'll try to automatically restart HA VM, with short delays between retries
+select fn_db_add_config_value('NumOfTriesToRunFailedAutoStartVmInShortIntervals','10','general');
 --How long to wait for HA VM NextRun configuration to be applied before attempt to rerun it
 select fn_db_add_config_value('DelayToRunAutoStartVmIntervalInSeconds','10','general');
 --How many times we try to wait for the HA VM NextRun configuration to be applied
