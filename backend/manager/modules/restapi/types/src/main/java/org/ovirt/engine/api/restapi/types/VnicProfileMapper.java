@@ -36,8 +36,12 @@ public class VnicProfileMapper {
             entity.setCustomProperties(DevicePropertiesUtils.getInstance()
                     .convertProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperties())));
         }
-        if (model.isSetQos() && model.getQos().isSetId()) {
-            entity.setNetworkQosId(GuidUtils.asGuid(model.getQos().getId()));
+        if (model.isSetQos()) {
+            if (model.getQos().isSetId()) {
+                entity.setNetworkQosId(GuidUtils.asGuid(model.getQos().getId()));
+            } else {
+                entity.setNetworkQosId(null);
+            }
         }
         if (model.isSetPassThrough() && model.getPassThrough().isSetMode()) {
             entity.setPassthrough(map(model.getPassThrough().getMode()));
