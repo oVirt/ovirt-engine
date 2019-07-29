@@ -830,9 +830,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     public boolean validate() {
         List<VM> vmsToImport = getVmsToImport();
         return !vmsToImport.isEmpty() &&
-                        getProblemDescription().getIsValid() &&
-                        vmsToImportHaveFullInfo() &&
-                        validateArchitectures(vmsToImport);
+                getProblemDescription().getIsValid() &&
+                (!vmsToImportHaveFullInfo() ||
+                        validateArchitectures(vmsToImport));
     }
 
     /**
