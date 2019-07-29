@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -87,12 +88,21 @@ public class CommandCoordinatorUtil implements BackendService {
     }
 
     /**
-     * Poll vdsm for the task status and update the task
+     * Poll vdsm for the task status and update the task, returning a list of task statuses.
      * @param taskIdList The list of task ids
      * @return List of async task status
      */
     public ArrayList<AsyncTaskStatus> pollTasks(java.util.ArrayList<Guid> taskIdList) {
         return asyncTaskManager.get().pollTasks(taskIdList);
+    }
+
+    /**
+     * Poll vdsm for the task status and update the task, returning a map from task id to task status.
+     * @param taskIds The set of task ids
+     * @return Map from task id to its status.
+     */
+    public Map<Guid, AsyncTaskStatus> pollTasks(Set<Guid> taskIds) {
+        return asyncTaskManager.get().pollTasksWithStatus(taskIds);
     }
 
     /**
