@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
@@ -23,7 +24,7 @@ public abstract class AbstractBackendVnicProfileResource
     }
 
     protected VnicProfile get() {
-        return performGet(QueryType.GetVnicProfileById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetVnicProfileById, new IdQueryParameters(guid), LinkHelper.NO_PARENT);
     }
 
     protected AssignedPermissionsResource getPermissionsResource() {
