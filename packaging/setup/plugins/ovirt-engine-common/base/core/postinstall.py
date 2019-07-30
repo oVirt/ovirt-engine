@@ -93,7 +93,7 @@ class Plugin(plugin.PluginBase):
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
                 content=''.join(content),
-                binary=True,
+                binary=False,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
