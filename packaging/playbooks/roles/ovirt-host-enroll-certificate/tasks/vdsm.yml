@@ -4,12 +4,18 @@
 # to something sane.
 # rhbz#1008328
 #
+- name: Check that the spice pki directory exists
+  stat:
+    path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"
+  register: stat_result
+
 - name: Set proper spice pki directory
   file:
     path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"
     mode: 0755
     owner: 'vdsm'
     group: 'kvm'
+  when: stat_result.stat.exists
 # LEGACY-END
 
 - block:
