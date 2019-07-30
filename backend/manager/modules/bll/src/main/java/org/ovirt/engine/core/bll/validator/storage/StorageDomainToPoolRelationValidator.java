@@ -18,8 +18,6 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Validate validation methods for attaching a storage domain to a DC (pool).
@@ -27,8 +25,6 @@ import org.slf4j.LoggerFactory;
 public class StorageDomainToPoolRelationValidator {
     private final StorageDomainStatic storageDomainStatic;
     private final StoragePool storagePool;
-
-    protected Logger log = LoggerFactory.getLogger(getClass());
 
     public StorageDomainToPoolRelationValidator(StorageDomainStatic domainStatic, StoragePool pool) {
         storageDomainStatic = domainStatic;
