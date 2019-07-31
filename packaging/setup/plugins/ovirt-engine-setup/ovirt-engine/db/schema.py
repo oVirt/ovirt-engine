@@ -183,6 +183,8 @@ class Plugin(plugin.PluginBase):
         if snapshots:
             for snapshot in snapshots:
                 vm_configuration = snapshot['vm_configuration']
+                creation_date = 'UnknownDate'
+                snapshot_cl = 'UnknownLevel'
                 try:
                     doc = libxml2.parseDoc(vm_configuration)
                     ctx = doc.xpathNewContext()
@@ -192,11 +194,20 @@ class Plugin(plugin.PluginBase):
                     compat_level_nodes = ctx.xpathEval(
                         "/ovf:Envelope/Content/ClusterCompatibilityVersion"
                     )
-                    creation_date = ctx.xpathEval(
+                    if not compat_level_nodes:
+                        # Didn't find them, probably because in <= 4.2 we
+                        # had a wrong namespace. Try also that one.
+                        ctx.xpathRegisterNs(
+                            'ovf', 'http://schemas.dmtf.org/ovf/envelope/1'
+                        )
+                        compat_level_nodes = ctx.xpathEval(
+                            "/ovf:Envelope/Content/ClusterCompatibilityVersion"
+                        )
+                    creation_date_nodes = ctx.xpathEval(
                         "/ovf:Envelope/Content/CreationDate"
                     )
-                    if creation_date:
-                        creation_date = creation_date[0].content
+                    if creation_date_nodes:
+                        creation_date = creation_date_nodes[0].content
                     if compat_level_nodes:
                         snapshot_cl = compat_level_nodes[0].content
                 except Exception:
