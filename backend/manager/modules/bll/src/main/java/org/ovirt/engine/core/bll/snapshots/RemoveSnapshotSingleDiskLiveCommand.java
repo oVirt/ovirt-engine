@@ -134,18 +134,27 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.REDUCE_IMAGE);
             break;
         case REDUCE_IMAGE:
-            Pair<ActionType, ? extends ActionParametersBase> reduceImageCommand =
-                    buildReduceImageCommand();
-            ActionReturnValue returnValue = CommandHelper.validate(reduceImageCommand.getFirst(),
-                    reduceImageCommand.getSecond(), getContext().clone());
-            if (returnValue.isValid()) {
-                nextCommand = reduceImageCommand;
-                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
-            } else {
-                // Couldn't validate reduce image command for execution, however, we don't
-                // want to fail the remove snapshot command as this step isn't mandatory.
-                log.warn("Couldn't validate reduce image command, skipping its execution.");
+            if (shouldSkipReduceImage()) {
+                log.info("No need to execute reduce image command, skipping its execution. " +
+                                "Storage Type: '{}', Disk: '{}' Snapshot: '{}'",
+                        getStorageDomain().getStorageType(),
+                        getImage().getName(),
+                        getImage().getDescription());
                 setCommandStatus(CommandStatus.SUCCEEDED);
+            } else {
+                Pair<ActionType, ? extends ActionParametersBase> reduceImageCommand =
+                        buildReduceImageCommand();
+                ActionReturnValue returnValue = CommandHelper.validate(reduceImageCommand.getFirst(),
+                        reduceImageCommand.getSecond(), getContext().clone());
+                if (returnValue.isValid()) {
+                    nextCommand = reduceImageCommand;
+                    getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
+                } else {
+                    // Couldn't validate reduce image command for execution, however, we don't
+                    // want to fail the remove snapshot command as this step isn't mandatory.
+                    log.warn("Couldn't validate reduce image command, skipping its execution.");
+                    setCommandStatus(CommandStatus.SUCCEEDED);
+                }
             }
             break;
         case COMPLETE:
@@ -175,6 +184,12 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             }
         }
         return RemoveSnapshotSingleDiskStep.EXTEND;
+    }
+
+    private boolean shouldSkipReduceImage() {
+        // Skipping file domains and live merge scenarios.
+        return getStorageDomain().getStorageType().isFileDomain() ||
+                (getActiveDiskImage() == null || getActiveDiskImage().getParentId().equals(getImageId()));
     }
 
     private boolean completedMerge() {
