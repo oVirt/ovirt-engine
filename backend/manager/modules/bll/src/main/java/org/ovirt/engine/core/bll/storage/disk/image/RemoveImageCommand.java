@@ -132,7 +132,8 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             }
 
             if (getParameters().getParentCommand() != ActionType.RemoveVmFromImportExport
-                    && getParameters().getParentCommand() != ActionType.RemoveVmTemplateFromImportExport) {
+                    && getParameters().getParentCommand() != ActionType.RemoveVmTemplateFromImportExport
+                    && getParameters().getParentCommand() != ActionType.RemoveUnregisteredVmTemplate) {
                 performImageDbOperations();
             }
         } else {

@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.GetUnregisteredEntityQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -198,7 +199,21 @@ public class BackendStorageDomainTemplateResourceTest
     public void testRemove() {
         setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        setUpGetUnregisteredVmTemplateExpectations(true);
         setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplateFromImportExport,
+                VmTemplateImportExportParameters.class,
+                new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
+                new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveUnregisteredTemplate() {
+        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        setUpGetUnregisteredVmTemplateExpectations(false);
+        setUriInfo(setUpActionExpectations(ActionType.RemoveUnregisteredVmTemplate,
                 VmTemplateImportExportParameters.class,
                 new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
                 new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
@@ -218,6 +233,7 @@ public class BackendStorageDomainTemplateResourceTest
     }
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
+        setUpGetUnregisteredVmTemplateExpectations(true);
         setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplateFromImportExport,
@@ -352,6 +368,15 @@ public class BackendStorageDomainTemplateResourceTest
         default:
             break;
         }
+    }
+
+    private void setUpGetUnregisteredVmTemplateExpectations(boolean notFound) {
+        setUpEntityQueryExpectations(
+                QueryType.GetUnregisteredVmTemplate,
+                GetUnregisteredEntityQueryParameters.class,
+                new String[] { "StorageDomainId", "EntityId" },
+                new Object[] { STORAGE_DOMAIN_ID, TEMPLATE_ID },
+                notFound ? null : getEntity(1));
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
