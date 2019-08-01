@@ -120,8 +120,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
-    private EngineLock liveStorageMigrationEngineLock;
-
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
 
     private StorageDomain dstStorageDomain;
@@ -339,9 +337,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         ExecutionContext ctx = new ExecutionContext();
         ctx.setStep(addedStep);
         ctx.setMonitored(true);
-        CommandContext commandCtx = ExecutionHandler.createDefaultContextForTasks(getContext(), null)
+        return ExecutionHandler.createDefaultContextForTasks(getContext(), null)
                 .withExecutionContext(ctx);
-        return commandCtx;
     }
 
     private void unlockDisk() {
@@ -739,7 +736,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     protected boolean lockVm(Guid vmId) {
-        liveStorageMigrationEngineLock = new EngineLock();
+        EngineLock liveStorageMigrationEngineLock = new EngineLock();
         liveStorageMigrationEngineLock.setExclusiveLocks(Collections.singletonMap(vmId.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.LIVE_STORAGE_MIGRATION,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED)));

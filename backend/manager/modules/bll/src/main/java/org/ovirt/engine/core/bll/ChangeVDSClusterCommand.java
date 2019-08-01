@@ -325,8 +325,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         permissionList.add(new PermissionSubject(getParameters().getClusterId(), VdcObjectType.Cluster, getActionType().getActionGroup()));
-        List<PermissionSubject> unmodifiableList = Collections.unmodifiableList(permissionList);
-        return unmodifiableList;
+        return Collections.unmodifiableList(permissionList);
     }
 
     @Override

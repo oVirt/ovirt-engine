@@ -60,13 +60,12 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     @Override
     protected boolean validate() {
         StoragePoolValidator validator = createStoragePoolValidator();
-        boolean returnValue = validate(validator.exists())
+        return validate(validator.exists())
                 && validate(validator.isNotInStatus(StoragePoolStatus.Uninitialized))
                 && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && checkForActiveVds() != null
                 && isSupportedByManagedBlockStorageDomain(getStorageDomain());
-        return returnValue;
     }
 
     @Override

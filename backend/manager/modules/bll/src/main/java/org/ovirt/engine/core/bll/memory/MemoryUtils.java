@@ -180,7 +180,7 @@ public class MemoryUtils {
             int currentMemoryMb,
             int desiredMemoryMb) {
         final int memoryToHotUnplugMb = currentMemoryMb - desiredMemoryMb;
-        final List<VmDevice> memoryDevicesToUnplug = vmMemoryDevices.stream()
+        return vmMemoryDevices.stream()
                 .filter(VmDeviceCommonUtils::isMemoryDeviceHotUnpluggable)
                 .filter(memoryDevice ->
                         memoryToHotUnplugMb >= VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(memoryDevice).get())
@@ -194,7 +194,6 @@ public class MemoryUtils {
                             listA.addAll(listB);
                             return listA;
                         }));
-        return memoryDevicesToUnplug;
     }
 
     /**

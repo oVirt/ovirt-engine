@@ -139,9 +139,7 @@ public class ManagedBlockStorageCommandUtil {
         AttachManagedBlockStorageVolumeVDSCommandParameters params =
                 new AttachManagedBlockStorageVolumeVDSCommandParameters(vds, returnValue.getActionReturnValue());
         params.setVolumeId(disk.getImageId());
-        VDSReturnValue vdsReturnValue =
-                resourceManager.runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, params);
-        return vdsReturnValue;
+        return resourceManager.runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, params);
     }
 
     private ActionReturnValue getConnectionInfo(ManagedBlockStorageDisk disk, VDS vds) {
@@ -149,9 +147,7 @@ public class ManagedBlockStorageCommandUtil {
         params.setDiskId(disk.getImageId());
         params.setStorageDomainId(disk.getStorageIds().get(0));
         params.setConnectorInfo(vds.getConnectorInfo());
-        ActionReturnValue actionReturnValue =
-                backend.runInternalAction(ActionType.ConnectManagedBlockStorageDevice, params);
-        return actionReturnValue;
+        return backend.runInternalAction(ActionType.ConnectManagedBlockStorageDevice, params);
     }
 
     public boolean disconnectManagedBlockStorageDisks(VM vm, VmHandler vmHandler) {

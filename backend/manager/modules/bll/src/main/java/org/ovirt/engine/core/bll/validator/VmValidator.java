@@ -219,8 +219,7 @@ public class VmValidator {
     }
 
     private VnicProfile getVnicProfile(VmNic vnic) {
-        VnicProfile profile = Injector.get(VnicProfileDao.class).get(vnic.getVnicProfileId());
-        return profile;
+        return Injector.get(VnicProfileDao.class).get(vnic.getVnicProfileId());
     }
 
     /**

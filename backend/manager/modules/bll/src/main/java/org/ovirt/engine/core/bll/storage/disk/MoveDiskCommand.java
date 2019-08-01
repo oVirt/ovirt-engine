@@ -44,8 +44,6 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
     @Inject
     private DiskImageDao diskImageDao;
 
-    private EngineLock engineLock;
-
     private String cachedDiskIsBeingMigratedMessage;
 
 
@@ -90,7 +88,7 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
                     ExecutionHandler.createInternalJobContext(getContext(), getLock())));
         } else {
             Guid vmId = diskVmElements.get(0).getVmId();
-            engineLock = lockVmWithWait(vmId);
+            EngineLock engineLock = lockVmWithWait(vmId);
             setReturnValue(runInternalAction(actionType,
                     createLiveMigrateDiskParameters(getParameters(), vmId),
                     ExecutionHandler.createInternalJobContext(getContext(), engineLock)));

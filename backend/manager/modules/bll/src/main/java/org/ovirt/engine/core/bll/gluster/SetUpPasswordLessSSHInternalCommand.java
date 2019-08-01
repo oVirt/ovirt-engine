@@ -61,8 +61,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
                                 pubKeys, userName));
             });
         }
-        List<ActionReturnValue> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
-        return returnStatuses;
+        return ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
     }
 
     @Override

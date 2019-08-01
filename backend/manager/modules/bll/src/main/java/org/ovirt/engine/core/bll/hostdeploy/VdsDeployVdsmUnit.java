@@ -171,7 +171,6 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
     );
 
     private VdsDeployBase _deploy;
-    private boolean _isNode = false;
 
     /**
      * set vds object with unique id.
@@ -231,7 +230,6 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
      * Set host to be node.
      */
     private void setNode(VDSType hostType) {
-        _isNode = true;
 
         _deploy.getVds().setVdsType(hostType);
 

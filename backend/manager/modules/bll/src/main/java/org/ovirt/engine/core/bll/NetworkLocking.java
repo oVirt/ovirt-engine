@@ -17,12 +17,9 @@ public class NetworkLocking {
             return null;
         }
 
-        Map<String, Pair<String, String>> locks = Collections.singletonMap(
-                providerId.toString(),
+        return Collections.singletonMap(providerId.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.PROVIDER,
                         new LockMessage(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_LOCKED)
                                 .with("providerId", providerId.toString())));
-
-        return locks;
     }
 }

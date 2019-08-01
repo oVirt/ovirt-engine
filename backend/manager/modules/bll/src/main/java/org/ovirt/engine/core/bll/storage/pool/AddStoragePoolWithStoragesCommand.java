@@ -324,12 +324,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     @Override
     protected boolean validate() {
         StoragePoolValidator spValidator = createStoragePoolValidator();
-        boolean returnValue = super.validate()
+        return super.validate()
                 && validate(spValidator.exists())
                 && validate(spValidator.isInStatus(StoragePoolStatus.Uninitialized))
                 && initializeVds()
                 && checkStorageDomainsInPool();
-        return returnValue;
     }
 
     @Override

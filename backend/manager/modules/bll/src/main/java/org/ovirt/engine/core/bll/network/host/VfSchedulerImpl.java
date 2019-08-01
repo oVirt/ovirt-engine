@@ -102,14 +102,12 @@ public class VfSchedulerImpl implements VfScheduler {
         List<HostNicVfsConfig> vfsConfigs =
                 networkDeviceHelper.getHostNicVfsConfigsWithNumVfsDataByHostId(hostId);
 
-        String freeVf = findFreeVfForVnic(vfsConfigs,
+        return findFreeVfForVnic(vfsConfigs,
                 new HashMap<>(),
                 new HashMap<>(),
                 vnicNetwork,
                 vmId,
                 false);
-
-        return freeVf;
     }
 
     private List<VmNetworkInterface> getPluggedPassthroughVnics(List<VmNetworkInterface> vnics) {

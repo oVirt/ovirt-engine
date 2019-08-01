@@ -140,11 +140,6 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
         }
     }
 
-    protected boolean isAllowClusterWithVirtGluster() {
-        Boolean allowVirGluster = Config.<Boolean> getValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
-        return allowVirGluster;
-    }
-
     protected boolean validateClusterPolicy(Cluster oldCluster) {
         Cluster newCluster = getCluster();
         boolean alreadyInUpgradeMode = oldCluster != null && oldCluster.isInUpgradeMode();

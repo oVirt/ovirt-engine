@@ -70,13 +70,12 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     @Override
     protected boolean validate() {
         StoragePoolValidator validator = createStoragePoolValidator();
-        boolean returnValue = validate(validator.exists())
+        return validate(validator.exists())
                 && validate(validator.isNotInStatus(StoragePoolStatus.Uninitialized))
                 && checkStorageDomain()
                 && storageDomainStatusIsValid()
                 && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp())
                 && checkForActiveVds() != null;
-        return returnValue;
     }
 
     private void syncStorageDomainInfo(List<Pair<Guid, Boolean>> hostConnectionInfo) {

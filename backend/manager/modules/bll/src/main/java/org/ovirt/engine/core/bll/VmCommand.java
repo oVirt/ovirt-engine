@@ -357,9 +357,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      */
     protected boolean isVmNameValidLength(VM vm) {
         int maxLength = Config.<Integer> getValue(ConfigValues.MaxVmNameLength);
-        boolean nameLengthValid = vm.getName().length() <= maxLength;
-
-        return nameLengthValid;
+        return vm.getName().length() <= maxLength;
     }
 
     /**

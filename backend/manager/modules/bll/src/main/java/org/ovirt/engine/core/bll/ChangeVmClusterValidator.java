@@ -46,14 +46,9 @@ public class ChangeVmClusterValidator {
     @Inject
     private NetworkHelper networkHelper;
 
-    @Inject
-    private MoveMacs moveMacs;
-
     private VmCommand parentCommand;
     private final Guid targetClusterId;
     private Version vmCompatibilityVersion;
-
-    private Cluster targetCluster;
 
     public static ChangeVmClusterValidator create(VmCommand parentCommand,
             Guid targetClusterId,
@@ -75,7 +70,7 @@ public class ChangeVmClusterValidator {
             parentCommand.addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         } else {
-            targetCluster = clusterDao.get(targetClusterId);
+            Cluster targetCluster = clusterDao.get(targetClusterId);
             if (targetCluster == null) {
                 parentCommand.addValidationMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
                 return false;

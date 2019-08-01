@@ -75,13 +75,11 @@ public abstract class NetworkClusterValidatorBase {
                 new IsRoleNetworkIpConfigurationValid(networkCluster);
         final List<VdsNetworkInterface> interfacesByClusterId =
                 interfaceDao.getAllInterfacesByClusterId(networkCluster.getClusterId());
-        final VdsNetworkInterface missingIpNic =
-                interfacesByClusterId.stream()
-                        .filter(nic -> networkName.equals(nic.getNetworkName()))
-                        .filter(isRoleNetworkIpConfigurationValid::isIpAddressMissingForRole)
-                        .findFirst()
-                        .orElse(null);
-        return missingIpNic;
+        return interfacesByClusterId.stream()
+                .filter(nic -> networkName.equals(nic.getNetworkName()))
+                .filter(isRoleNetworkIpConfigurationValid::isIpAddressMissingForRole)
+                .findFirst()
+                .orElse(null);
     }
 
     /**

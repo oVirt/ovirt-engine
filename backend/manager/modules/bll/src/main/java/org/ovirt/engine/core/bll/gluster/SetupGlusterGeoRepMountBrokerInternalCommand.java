@@ -92,8 +92,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
                 new GlusterServiceVDSParameters(serverId,
                         Collections.singletonList("glusterd"),
                         GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART);
-        VDSReturnValue restartGlusterdReturnValue = runVdsCommand(VDSCommandType.ManageGlusterService, params);
-        return restartGlusterdReturnValue;
+        return runVdsCommand(VDSCommandType.ManageGlusterService, params);
     }
 
     @Override
@@ -135,8 +134,7 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
                                 remoteVolumeName,
                                 partial));
         if (mountBrokerReturnValue.getSucceeded()) {
-            VDSReturnValue restartGlusterdReturnValue = restartGlusterd(currentHostId);
-            return restartGlusterdReturnValue;
+            return restartGlusterd(currentHostId);
         }
         return mountBrokerReturnValue;
     }

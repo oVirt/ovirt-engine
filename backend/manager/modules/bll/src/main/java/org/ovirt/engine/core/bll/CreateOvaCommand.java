@@ -179,8 +179,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             throw new EngineException(EngineError.GeneralException, "Failed to measure image");
         }
 
-        String a = ansibleReturnValue.getStdout();
-        return a;
+        return ansibleReturnValue.getStdout();
     }
 
     private boolean runAnsiblePackOvaPlaybook(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {

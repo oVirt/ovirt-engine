@@ -81,12 +81,7 @@ public class NicNameNicIdCompleter {
 
     private boolean shouldUpdateIdAndName(Guid targetNicId, String targetNicName, VdsNetworkInterface existingInterface) {
         boolean bothIdentificationSet = targetNicId != null && targetNicName != null;
-        if (bothIdentificationSet) {
-            return false;
-        } else {
-            boolean updatePossible = existingInterface != null;
-            return updatePossible;
-        }
+        return !bothIdentificationSet && existingInterface != null;
     }
 
     interface NicNameAndNicIdAccessors {

@@ -161,8 +161,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     private Guid cleanupVfs() {
-        Guid hostId = networkDeviceHelper.removeVmIdFromVfs(getVmId());
-        return hostId;
+        return networkDeviceHelper.removeVmIdFromVfs(getVmId());
     }
 
     private void refreshHostIfNeeded(Guid hostId) {

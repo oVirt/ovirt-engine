@@ -374,8 +374,7 @@ public class ClusterValidator {
     }
 
     protected boolean isAllowClusterWithVirtGluster() {
-        Boolean allowVirGluster = Config.<Boolean> getValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
-        return allowVirGluster;
+        return Config.<Boolean> getValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
     }
 
     public ValidationResult disableVirt() {

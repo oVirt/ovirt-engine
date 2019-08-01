@@ -277,15 +277,13 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
      */
     private EventResult connectHostToPool() {
         final VDS vds = getVds();
-        EventResult result =
-                eventQueue.submitEventSync(new Event(getStoragePool().getId(),
-                                null,
-                                vds.getId(),
-                                EventType.VDSCONNECTTOPOOL,
-                                "Trying to connect host " + vds.getHostName() + " with id " + vds.getId()
-                                        + " to the pool " + getStoragePool().getId()),
-                        () -> runConnectHostToPoolEvent(getStoragePool().getId(), vds));
-        return result;
+        return eventQueue.submitEventSync(new Event(getStoragePool().getId(),
+                        null,
+                        vds.getId(),
+                        EventType.VDSCONNECTTOPOOL,
+                        "Trying to connect host " + vds.getHostName() + " with id " + vds.getId()
+                                + " to the pool " + getStoragePool().getId()),
+                () -> runConnectHostToPoolEvent(getStoragePool().getId(), vds));
     }
 
     private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {

@@ -314,7 +314,7 @@ public class CoCoAsyncTaskHelper {
         if (ActionType.Unknown.equals(command.getParameters().getCommandType())) {
             command.getParameters().setCommandType(command.getActionType());
         }
-        AsyncTask asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
+        return new AsyncTask(AsyncTaskResultEnum.success,
                 AsyncTaskStatusEnum.running,
                 command.getUserId(),
                 asyncTaskCreationInfo.getVdsmTaskId(),
@@ -325,7 +325,6 @@ public class CoCoAsyncTaskHelper {
                         parentCommand,
                         parentParameters),
                 getChildCommandEntity(command, parentCommand));
-        return asyncTask;
     }
 
     private CommandEntity getChildCommandEntity(CommandBase<?> command, ActionType parentCommand) {

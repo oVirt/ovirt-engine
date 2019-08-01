@@ -335,10 +335,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                                                                                Guid storagePoolId,
                                                                                StorageType storageType,
                                                                                StorageServerConnections storageServerConnection) {
-        StorageServerConnectionManagementVDSParameters newConnectionParametersForVdsm =
-                new StorageServerConnectionManagementVDSParameters(vdsmId, storagePoolId, storageType,
-                        new ArrayList<>(Arrays.asList(storageServerConnection)));
-        return newConnectionParametersForVdsm;
+        return new StorageServerConnectionManagementVDSParameters(vdsmId, storagePoolId, storageType,
+                new ArrayList<>(Arrays.asList(storageServerConnection)));
     }
 
     @Override

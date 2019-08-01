@@ -60,9 +60,8 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     protected boolean validateNotificationMethod(EventNotificationMethod eventNotificationMethod,
                                                  EventSubscriber eventSubscriber, DbUser user) {
         boolean retValue = true;
-        EventNotificationMethod notificationMethod = eventNotificationMethod;
 
-        switch (notificationMethod) {
+        switch (eventNotificationMethod) {
         case SMTP:
             String mailAddress = StringUtils.isEmpty(eventSubscriber.getMethodAddress()) ? user.getEmail()
                     : eventSubscriber.getMethodAddress();
