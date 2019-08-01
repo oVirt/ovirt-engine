@@ -372,7 +372,7 @@ public class VmInfoBuildUtils {
                     VdsProperties.PORT_MIRRORING,
                     network == null
                             ? Collections.<String> emptyList()
-                            : Collections.singletonList(network.getName()));
+                            : Collections.singletonList(network.getVdsmName()));
         }
 
     }
