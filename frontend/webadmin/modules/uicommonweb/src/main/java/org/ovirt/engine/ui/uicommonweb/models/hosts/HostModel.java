@@ -1354,10 +1354,10 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             case INTEL:
             case AMD:
             case IBMS390:
-                setKernelCmdlineCheckboxesValue(false);
+                resetKernelCmdlineCheckboxesValue();
                 break;
             case IBM:
-                setKernelCmdlineCheckboxesValue(true);
+                resetKernelCmdlineCheckboxesValuePpc();
                 break;
             default:
                 throw new RuntimeException("Unknown CpuVendor type: " + cpuVendor); //$NON-NLS-1$
@@ -1382,6 +1382,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 setKernelCmdlineCheckboxesChangeability(
                         false,
                         constants.kernelCmdlineNotAvailableInClusterWithIbmCpu());
+                // FIPS and SMT kernel params should be available on POWER
+                getKernelCmdlineFips().setIsChangeable(isKernelCmdlineParsable());
+                getKernelCmdlineSmtDisabled().setIsChangeable(isKernelCmdlineParsable());
                 break;
             default:
                 throw new RuntimeException("Unknown CpuVendor type: " + cpuVendor); //$NON-NLS-1$
@@ -1398,14 +1401,28 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineSmtDisabled().setIsChangeable(changeable, reason);
     }
 
-    private void setKernelCmdlineCheckboxesValue(boolean checked) {
-        getKernelCmdlineBlacklistNouveau().setEntity(checked);
-        getKernelCmdlineIommu().setEntity(checked);
-        getKernelCmdlineKvmNested().setEntity(checked);
-        getKernelCmdlineUnsafeInterrupts().setEntity(checked);
-        getKernelCmdlinePciRealloc().setEntity(checked);
-        getKernelCmdlineFips().setEntity(checked);
-        getKernelCmdlineSmtDisabled().setEntity(checked);
+    private void resetKernelCmdlineCheckboxesValue() {
+        getKernelCmdlineBlacklistNouveau().setEntity(false);
+        getKernelCmdlineIommu().setEntity(false);
+        getKernelCmdlineKvmNested().setEntity(false);
+        getKernelCmdlineUnsafeInterrupts().setEntity(false);
+        getKernelCmdlinePciRealloc().setEntity(false);
+        getKernelCmdlineFips().setEntity(false);
+        getKernelCmdlineSmtDisabled().setEntity(false);
+    }
+
+    private void resetKernelCmdlineCheckboxesValuePpc() {
+        // PPC processors are specific:
+        // * they don't require flag to turn iommu on - flag needs to be true
+        // * FIPS and SMT are available to be set by users
+        // * nesting and other options are not available - flag needs to be false
+        getKernelCmdlineBlacklistNouveau().setEntity(false);
+        getKernelCmdlineIommu().setEntity(true);
+        getKernelCmdlineKvmNested().setEntity(false);
+        getKernelCmdlineUnsafeInterrupts().setEntity(false);
+        getKernelCmdlinePciRealloc().setEntity(false);
+        getKernelCmdlineFips().setEntity(false);
+        getKernelCmdlineSmtDisabled().setEntity(false);
     }
 
     /**
