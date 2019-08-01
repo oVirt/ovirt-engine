@@ -500,7 +500,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             return;
         }
         clearProblem();
-        int setSize = importedVmModels.getItems().stream().map(e -> e.getEntity()).collect(Collectors.toSet()).size();
+        int setSize = importedVmModels.getItems().stream().map(e -> e.getEntity().getName()).collect(Collectors.toSet()).size();
         int listSize = importedVmModels.getItems().size();
         if (setSize != listSize) {
             setError(messages.noVmNameDuplicatesAllowed());
