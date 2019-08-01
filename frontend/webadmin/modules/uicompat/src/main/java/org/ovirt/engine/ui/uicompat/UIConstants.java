@@ -317,6 +317,8 @@ public interface UIConstants extends Constants {
 
     String removeTemplatesTitle();
 
+    String removeUnregisteredTemplatesTitle();
+
     String guestAgentNotResponsiveTitle();
 
     String dataCenterTitle();

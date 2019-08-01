@@ -35,6 +35,13 @@ public class StorageRegisterTemplateActionPanelPresenterWidget extends
                 return getDetailModel().getImportCommand();
             }
         });
+
+        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

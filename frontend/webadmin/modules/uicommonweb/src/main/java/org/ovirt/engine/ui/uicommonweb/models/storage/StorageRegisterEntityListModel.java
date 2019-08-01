@@ -4,17 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 /**
  * @param <T> business entity type
@@ -24,19 +30,29 @@ public abstract class StorageRegisterEntityListModel<T extends Queryable, D exte
         extends SearchableListModel<StorageDomain, T> {
 
     private UICommand importCommand;
+    private UICommand removeCommand;
 
     public UICommand getImportCommand() {
         return importCommand;
+    }
+
+    public UICommand getRemoveCommand() {
+        return removeCommand;
     }
 
     private void setImportCommand(UICommand value) {
         importCommand = value;
     }
 
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
+    }
+
     public StorageRegisterEntityListModel() {
         setIsTimerDisabled(true);
 
         setImportCommand(new UICommand("Import", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
     }
@@ -69,7 +85,9 @@ public abstract class StorageRegisterEntityListModel<T extends Queryable, D exte
         boolean isDomainActive =
                 getEntity() != null && getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active;
 
-        getImportCommand().setIsExecutionAllowed(isItemSelected && isDomainActive);
+        boolean isExecutionAllowed = isItemSelected && isDomainActive;
+        getImportCommand().setIsExecutionAllowed(isExecutionAllowed);
+        getRemoveCommand().setIsExecutionAllowed(isExecutionAllowed);
     }
 
     @Override
@@ -96,6 +114,8 @@ public abstract class StorageRegisterEntityListModel<T extends Queryable, D exte
 
         if (command == getImportCommand()) {
             restore();
+        } else if (command == getRemoveCommand()) {
+            remove();
         } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
         }
@@ -127,7 +147,31 @@ public abstract class StorageRegisterEntityListModel<T extends Queryable, D exte
         model.initialize();
     }
 
-    private void cancel() {
+    protected void remove() {
+        if (getWindow() != null) {
+            return;
+        }
+        ConfirmationModel window = new ConfirmationModel();
+        setWindow(window);
+        window.setTitle(ConstantsManager.getInstance().getConstants().removeUnregisteredTemplatesTitle());
+        window.setHelpTag(HelpTag.remove_unregistered_template);
+        window.setHashName("remove_unregistered_templates"); //$NON-NLS-1$
+
+        List<String> items = getSelectedItems().stream()
+                .map(item -> (VmTemplate) item)
+                .filter(vmTemplate -> !Guid.isNullOrEmpty(vmTemplate.getId()))
+                .map(VmTemplate::getName)
+                .collect(Collectors.toList());
+
+        window.setItems(items);
+
+        UICommand onRemoveUiCommand = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
+        window.getCommands().add(onRemoveUiCommand);
+        UICommand cancelUiCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        window.getCommands().add(cancelUiCommand);
+    }
+
+    protected void cancel() {
         setWindow(null);
     }
 }
