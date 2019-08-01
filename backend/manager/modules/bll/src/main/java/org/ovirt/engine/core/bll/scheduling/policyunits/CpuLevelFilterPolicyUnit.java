@@ -65,28 +65,32 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             Set<String> requiredFlags = Arrays.stream(vm.getCpuName().split(","))
                     .collect(Collectors.toSet());
 
-            if (log.isInfoEnabled()) {
-                log.info("VM uses CPU flags passthrough, checking flags compatibility with: {}", formatFlags(requiredFlags));
+            if (log.isDebugEnabled()) {
+                log.debug("VM uses CPU flags passthrough, checking flags compatibility with: {}", formatFlags(requiredFlags));
             }
 
             for (VDS host : hosts) {
                 Set<String> providedFlags = Arrays.stream(host.getCpuFlags().split(","))
                         .collect(Collectors.toSet());
-                if (log.isInfoEnabled()) {
-                    log.info("Host {} provides flags: {}", host.getName(), formatFlags(providedFlags));
+                if (log.isDebugEnabled()) {
+                    log.debug("Host {} provides flags: {}", host.getName(), formatFlags(providedFlags));
                 }
 
                 if (requiredFlags.equals(providedFlags)) {
                     hostsToRunOn.add(host);
                 } else {
-                    if (log.isInfoEnabled()) {
-                        log.info("Host {} can't run the VM because it's CPU flags are not exactly identical to VM's required CPU flags."
-                                        + " It is missing flags: {}."
-                                        + " And it has additional flags: {}",
-                                host.getName(),
-                                formatFlags(requiredFlags, providedFlags),
-                                formatFlags(providedFlags, requiredFlags));
-                    }
+                    String missingFlags = formatFlags(requiredFlags, providedFlags);
+                    String additionalFlags = formatFlags(providedFlags, requiredFlags);
+                    log.debug("Host {} can't run the VM because it's CPU flags are not exactly identical to VM's required CPU flags."
+                                    + " It is missing flags: {}."
+                                    + " And it has additional flags: {}",
+                            host.getName(),
+                            missingFlags,
+                            additionalFlags);
+
+                    messages.addMessage(host.getId(), String.format("$missingFlags %1$s", missingFlags));
+                    messages.addMessage(host.getId(), String.format("$additionalFlags %1$s", additionalFlags));
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__CPU_FLAGS_NOT_IDENTICAL.toString());
                 }
             }
             return hostsToRunOn;

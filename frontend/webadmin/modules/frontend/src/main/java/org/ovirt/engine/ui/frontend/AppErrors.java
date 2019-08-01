@@ -2583,6 +2583,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__LOW_CPU_LEVEL();
 
+    String VAR__DETAIL__CPU_FLAGS_NOT_IDENTICAL();
+
     String VAR__DETAIL__INVALID_OS();
 
     String VAR__DETAIL__WRONG_OS();
