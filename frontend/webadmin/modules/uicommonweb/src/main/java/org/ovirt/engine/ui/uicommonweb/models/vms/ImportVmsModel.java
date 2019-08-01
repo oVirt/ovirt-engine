@@ -494,7 +494,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public void validateImportedVms() {
-        if (importedVmModels == null || importedVmModels.getItems() == null) {
+        if (!ImportSource.OVA.equals(importSources.getSelectedItem()) ||
+                importedVmModels == null ||
+                importedVmModels.getItems() == null) {
             return;
         }
         clearProblem();
