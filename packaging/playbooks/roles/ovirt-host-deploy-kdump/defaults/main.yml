@@ -1,0 +1,2 @@
+---
+kdump_config_file: '/etc/kdump.conf'

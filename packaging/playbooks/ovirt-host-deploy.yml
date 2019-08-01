@@ -5,6 +5,8 @@
     - role: ovirt-host-deploy
     - role: hc-gluster-cgroups
       when: host_deploy_virt_enabled|bool and host_deploy_gluster_enabled|bool
+    - role: ovirt-host-deploy-kdump
+      when: host_deploy_kdump_integration|bool
 
   tasks:
     - name: Gather the rpm package facts

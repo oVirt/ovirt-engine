@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.network.FirewallType;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
@@ -128,7 +131,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new VdsDeployMiscUnit(),
                 new VdsDeployVdsmUnit(hostCluster.getCompatibilityVersion()),
                 new VdsDeployPKIUnit(),
-                new VdsDeployKdumpUnit(),
                 new VdsDeployKernelUnit()
             );
 
@@ -215,6 +217,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void runAnsibleHostDeployPlaybook(Cluster hostCluster) {
+        String kdumpDestinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);
+        if (StringUtils.isBlank(kdumpDestinationAddress)) {
+            // destination address not entered, use engine FQDN
+            kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
+        }
+
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hosts(getVds())
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
@@ -231,6 +239,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(getVds()))
                 .variable("host_deploy_ovn_central", getOvnCentral())
                 .variable("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
+                .variable("host_deploy_kdump_integration", getVds().isPmEnabled() && getVds().isPmKdumpDetection())
+                .variable("host_deploy_kdump_destination_address", kdumpDestinationAddress)
+                .variable("host_deploy_kdump_destination_port",
+                        Config.getValue(ConfigValues.FenceKdumpDestinationPort))
+                .variable("host_deploy_kdump_message_interval",
+                        Config.getValue(ConfigValues.FenceKdumpMessageInterval))
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-deploy-ansible")
