@@ -36,7 +36,8 @@ from ovirt_setup_lib import dialog
 _SSL_REQUESTS_LOG_FORMAT = (
     'CustomLog logs/ovirt-requests-log '
     ' "%t %h \\"Correlation-Id: %{Correlation-Id}o\\" '
-    '\\"Duration: %Dus\\" \\"%r\\" %b"'
+    '\\"Duration: %Dus\\" \\"%r\\" %b" '
+    '"expr=%{QUERY_STRING} !~ /username.*password|password.*username/"'
 )
 
 
