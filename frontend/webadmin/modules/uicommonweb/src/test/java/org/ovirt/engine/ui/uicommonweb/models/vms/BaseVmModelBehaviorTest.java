@@ -37,9 +37,6 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setVncKeyboardLayout(VNC_KEYBOARD_LAYOUT);
         vm.setDeleteProtected(true);
         vm.setSsoMethod(SsoMethod.GUEST_AGENT);
-        vm.setKernelParams(KERNEL_PARAMS);
-        vm.setKernelUrl(KERNEL_PATH);
-        vm.setInitrdUrl(INITRD_PATH);
         vm.setSerialNumberPolicy(SerialNumberPolicy.CUSTOM);
         vm.setCustomSerialNumber(CUSTOM_SERIAL_NUMBER);
         vm.setSpiceCopyPasteEnabled(true);
@@ -126,7 +123,6 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder} */
     protected void verifyBuiltCore(UnitVmModel model) {
-        verifyBuiltKernelParams(model);
         verifyBuiltSerialNumber(model);
 
         assertTrue(model.getBootMenuEnabled().getEntity());
@@ -147,13 +143,6 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     protected void verifyBuiltSerialNumber(UnitVmModel model) {
         assertEquals(SERIAL_NUMBER_POLICY, model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         assertEquals(CUSTOM_SERIAL_NUMBER, model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
-    }
-
-    /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToUnitBuilder} */
-    protected void verifyBuiltKernelParams(UnitVmModel model) {
-        assertEquals(KERNEL_PARAMS, model.getKernel_parameters().getEntity());
-        assertEquals(KERNEL_PATH, model.getKernel_path().getEntity());
-        assertEquals(INITRD_PATH, model.getInitrd_path().getEntity());
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyVmBaseToUnitBuilder} */

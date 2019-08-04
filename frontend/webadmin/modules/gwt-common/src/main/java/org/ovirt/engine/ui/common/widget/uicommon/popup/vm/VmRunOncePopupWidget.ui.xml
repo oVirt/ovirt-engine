@@ -148,29 +148,6 @@
                         </b:Row>
                     </b:Container>
                 </g:DisclosurePanel>
-                <g:DisclosurePanel ui:field="linuxBootOptionsPanel" label="{constants.runOncePopupLinuxBootOptionsLabel}" addStyleNames="{style.panelStyle}">
-                    <b:Container ui:field="linuxBootOptionsContainer" fluid="true">
-                        <b:Row>
-                            <b:Column size="SM_5">
-                                <g:Label text="{constants.runOncePopupKernelPathLabel}" />
-                            </b:Column>
-                            <b:Column size="SM_1">
-                                <g:PushButton ui:field="linuxBootOptionsRefreshButton" addStyleNames="{style.refreshButton}">
-                                   <g:upFace image='{resources.refreshButtonImage}'/>
-                                </g:PushButton>
-                            </b:Column>
-                            <b:Column size="SM_6">
-                                <e:ListModelTypeAheadChangeableListBoxEditor ui:field="kernelImageEditor" usePatternFly="true" />
-                            </b:Column>
-                        </b:Row>
-                        <b:Row>
-                            <e:ListModelTypeAheadChangeableListBoxEditor ui:field="initrdImageEditor" label="{constants.runOncePopupInitrdPathLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                        </b:Row>
-                        <b:Row>
-                            <ge:StringEntityModelTextBoxEditor ui:field="kernelParamsEditor" label="{constants.runOncePopupKernelParamsLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                        </b:Row>
-                    </b:Container>
-                </g:DisclosurePanel>
                 <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
                     <b:Container ui:field="initialRunContainer" fluid="true">
                         <b:Row>

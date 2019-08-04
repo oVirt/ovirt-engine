@@ -44,12 +44,6 @@ public class BaseVmTest {
     protected static final SsoMethod SSO_METHOD = SsoMethod.GUEST_AGENT;
     protected static final BootSequence BOOT_SEQUENCE = BootSequence.CD;
     protected static final String ISO_NAME = "foo.iso";  //$NON-NLS-1$
-    protected static final String INITRD_PATH = "initrd_path1";  //$NON-NLS-1$
-    protected static final String KERNEL_PATH = "kernel_path1";  //$NON-NLS-1$
-    protected static final String KERNEL_PARAMS = "kernel_params1"; //$NON-NLS-1$
-    protected static final String INITRD_PATH_2 = "initrd_path2";    //$NON-NLS-1$
-    protected static final String KERNEL_PATH_2 = "kernel_path2";    //$NON-NLS-1$
-    protected static final String KERNEL_PARAMS_2 = "kernel_params2";  //$NON-NLS-1$
     protected static final String CUSTOM_PROPERTIES = "custom_properties"; //$NON-NLS-1$
     protected static final Guid INSTANCE_TYPE_ID = Guid.newGuid();
     protected static final Guid QUOTA_ID = Guid.newGuid();

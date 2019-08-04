@@ -83,7 +83,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IconWithOsDefaultValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotNullIntegerValidation;
@@ -338,9 +337,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getSecondBootDevice().setIsChangeable(false);
             getCdAttached().setIsChangeable(false);
             getCdImage().setIsChangeable(false);
-            getKernel_path().setIsChangeable(false);
-            getInitrd_path().setIsChangeable(false);
-            getKernel_parameters().setIsChangeable(false);
 
             // ==Random Generator Tab==
             getIsRngEnabled().setIsChangeable(false);
@@ -1128,36 +1124,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         cdAttached = value;
     }
 
-    private NotChangableForVmInPoolEntityModel<String> privateInitrd_path;
-
-    public EntityModel<String> getInitrd_path() {
-        return privateInitrd_path;
-    }
-
-    private void setInitrd_path(NotChangableForVmInPoolEntityModel<String> value) {
-        privateInitrd_path = value;
-    }
-
-    private NotChangableForVmInPoolEntityModel<String> privateKernel_path;
-
-    public EntityModel<String> getKernel_path() {
-        return privateKernel_path;
-    }
-
-    private void setKernel_path(NotChangableForVmInPoolEntityModel<String> value) {
-        privateKernel_path = value;
-    }
-
-    private NotChangableForVmInPoolEntityModel<String> privateKernel_parameters;
-
-    public EntityModel<String> getKernel_parameters() {
-        return privateKernel_parameters;
-    }
-
-    private void setKernel_parameters(NotChangableForVmInPoolEntityModel<String> value) {
-        privateKernel_parameters = value;
-    }
-
     private NotChangableForVmInPoolEntityModel<String> privateCustomProperties;
 
     public EntityModel<String> getCustomProperties() {
@@ -1636,9 +1602,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());
-        setKernel_parameters(new NotChangableForVmInPoolEntityModel<String>());
-        setKernel_path(new NotChangableForVmInPoolEntityModel<String>());
-        setInitrd_path(new NotChangableForVmInPoolEntityModel<String>());
         setCustomProperties(new NotChangableForVmInPoolEntityModel<String>());
         setCustomPropertySheet(new NotChangableForVmInPoolKeyValueModel());
         setDisplayType(new NotChangableForVmInPoolListModel<DisplayType>());
@@ -2480,15 +2443,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(osType));
         setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(osType));
 
-        getInitrd_path().setIsChangeable(getIsLinuxOS());
-        getInitrd_path().setIsAvailable(getIsLinuxOS());
-
-        getKernel_path().setIsChangeable(getIsLinuxOS());
-        getKernel_path().setIsAvailable(getIsLinuxOS());
-
-        getKernel_parameters().setIsChangeable(getIsLinuxOS());
-        getKernel_parameters().setIsAvailable(getIsLinuxOS());
-
         getBehavior().updateDefaultTimeZone();
 
         handleQxlClusterLevel();
@@ -2898,30 +2852,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getCdImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
-        if (getIsLinuxOS()) {
-            getKernel_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getInitrd_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getKernel_parameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-
-            // initrd path and kernel params require kernel path to be filled
-            if (StringHelper.isNullOrEmpty(getKernel_path().getEntity())) {
-
-                if (!StringHelper.isNullOrEmpty(getInitrd_path().getEntity())) {
-                    getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());
-                    getInitrd_path().setIsValid(false);
-                    getKernel_path().getInvalidityReasons().add(constants.initrdPathInvalid());
-                    getKernel_path().setIsValid(false);
-                }
-
-                if (!StringHelper.isNullOrEmpty(getKernel_parameters().getEntity())) {
-                    getKernel_parameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
-                    getKernel_parameters().setIsValid(false);
-                    getKernel_path().getInvalidityReasons().add(constants.kernelParamsInvalid());
-                    getKernel_path().setIsValid(false);
-                }
-            }
-        }
-
         if (!getBehavior().isBlankTemplateBehavior()) {
             setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
                     && getDataCenterWithClustersList().getIsValid()
@@ -2936,7 +2866,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 && getCpuSharesAmount().getIsValid() && diskAliasesValid);
 
         setValidTab(TabName.BOOT_OPTIONS_TAB, isValidTab(TabName.BOOT_OPTIONS_TAB) &&
-                getCdImage().getIsValid() && getKernel_path().getIsValid());
+                getCdImage().getIsValid());
 
         boolean vmInitIsValid = getVmInitModel().validate();
         setValidTab(TabName.INITIAL_RUN_TAB, isValidTab(TabName.INITIAL_RUN_TAB) && vmInitIsValid);

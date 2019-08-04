@@ -46,13 +46,11 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MatchFieldsValidator;
-import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class RunOnceModel extends Model {
 
@@ -109,26 +107,6 @@ public abstract class RunOnceModel extends Model {
         privateIsoImage = value;
     }
 
-    private ListModel<String> kernelImage;
-
-    public ListModel<String> getKernelImage() {
-        return kernelImage;
-    }
-
-    public void setKernelImage(ListModel<String> kernelImage) {
-        this.kernelImage = kernelImage;
-    }
-
-    private ListModel<String> initrdImage;
-
-    public ListModel<String> getInitrdImage() {
-        return initrdImage;
-    }
-
-    public void setInitrdImage(ListModel<String> initrdImage) {
-        this.initrdImage = initrdImage;
-    }
-
     private ListModel<EntityModel<DisplayType>> privateDisplayProtocol;
 
     public ListModel<EntityModel<DisplayType>> getDisplayProtocol() {
@@ -137,18 +115,6 @@ public abstract class RunOnceModel extends Model {
 
     private void setDisplayProtocol(ListModel<EntityModel<DisplayType>> value) {
         privateDisplayProtocol = value;
-    }
-
-    // Linux Boot Options tab
-
-    private EntityModel<String> privateKernelParameters;
-
-    public EntityModel<String> getKernelParameters() {
-        return privateKernelParameters;
-    }
-
-    private void setKernel_parameters(EntityModel<String> value) {
-        privateKernelParameters = value;
     }
 
     // Initial Boot tab - Sysprep
@@ -243,16 +209,6 @@ public abstract class RunOnceModel extends Model {
 
     private void setIsVmFirstRun(EntityModel<Boolean> value) {
         privateIsVmFirstRun = value;
-    }
-
-    private EntityModel<Boolean> privateIsLinuxOptionsAvailable;
-
-    public EntityModel<Boolean> getIsLinuxOptionsAvailable() {
-        return privateIsLinuxOptionsAvailable;
-    }
-
-    private void setIsLinuxOptionsAvailable(EntityModel<Boolean> value) {
-        privateIsLinuxOptionsAvailable = value;
     }
 
     // Initial Boot tab - Cloud-Init
@@ -392,17 +348,6 @@ public abstract class RunOnceModel extends Model {
     }
 
     // Misc
-
-    private boolean privateIsLinuxOS;
-
-    public boolean getIsLinuxOS() {
-        return privateIsLinuxOS;
-    }
-
-    public void setIsLinuxOS(boolean value) {
-        privateIsLinuxOS = value;
-    }
-
     private boolean privateIsWindowsOS;
 
     public boolean getIsWindowsOS() {
@@ -571,11 +516,6 @@ public abstract class RunOnceModel extends Model {
         setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
         setBootSequence(new BootSequenceModel());
 
-        // Linux Boot Options tab
-        setKernel_parameters(new EntityModel<String>());
-        setKernelImage(new ListModel<String>());
-        setInitrdImage(new ListModel<String>());
-
         // Initial Boot tab - Sysprep
         setIsCloudInitEnabled(new EntityModel<>(false));
 
@@ -644,13 +584,10 @@ public abstract class RunOnceModel extends Model {
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
         // availability/visibility
-        setIsLinuxOptionsAvailable(new EntityModel<>(false));
-
         setIsHostTabVisible(true);
 
         setIsCustomPropertiesSheetVisible(true);
 
-        setIsLinuxOS(false);
         setIsWindowsOS(false);
 
         setVolatileRun(new EntityModel<>(false));
@@ -676,11 +613,6 @@ public abstract class RunOnceModel extends Model {
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
 
-        // passing Kernel parameters
-        getKernelParameters().setEntity(vm.getKernelParams());
-
-        setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(vm.getVmOsId()));
-        getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
         setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
 
@@ -691,7 +623,6 @@ public abstract class RunOnceModel extends Model {
         updateDomainList();
         updateSystemTabLists();
         updateIsoList();
-        updateUnknownTypeImagesList();
         updateFloppyImages();
         updateInitialRunFields();
 
@@ -763,21 +694,6 @@ public abstract class RunOnceModel extends Model {
         params.setRunAsStateless(getRunAsStateless().getEntity());
         params.setInitializationType(getInitializationType());
         params.setCustomProperties(getCustomPropertySheet().serialize());
-
-        // kernel params
-        String selectedKernelImage = getKernelImage().getSelectedItem();
-        if (StringHelper.isNotNullOrEmpty(selectedKernelImage)) {
-            params.setKernelUrl(selectedKernelImage);
-        }
-
-        if (getKernelParameters().getEntity() != null) {
-            params.setKernelParams(getKernelParameters().getEntity());
-        }
-
-        String selectedInitrdImage = getInitrdImage().getSelectedItem();
-        if (StringHelper.isNotNullOrEmpty(selectedInitrdImage)) {
-            params.setInitrdUrl(selectedInitrdImage);
-        }
 
         // Sysprep params
         if (getSysPrepUserName().getEntity() != null) {
@@ -926,20 +842,6 @@ public abstract class RunOnceModel extends Model {
 
     public void updateIsoList() {
         updateIsoList(false);
-    }
-
-    public void updateUnknownTypeImagesList() {
-        updateUnknownTypeImagesList(false);
-    }
-
-    public void updateUnknownTypeImagesList(boolean forceRefresh) {
-        ImagesDataProvider.getUnknownImageList(new AsyncQuery<>(images -> {
-            getKernelImage().setItems(images);
-            getInitrdImage().setItems(images);
-
-            getKernelImage().setSelectedItem(null);
-            getInitrdImage().setSelectedItem(null);
-        }), vm.getStoragePoolId(), forceRefresh);
     }
 
     public void updateIsoList(boolean forceRefresh) {
@@ -1160,31 +1062,6 @@ public abstract class RunOnceModel extends Model {
 
         boolean customPropertyValidation = getCustomPropertySheet().validate();
 
-        if (getIsLinuxOS()) {
-            getKernelImage().validateSelectedItem(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getInitrdImage().validateSelectedItem(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getKernelParameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-
-            // initrd path and kernel params require kernel path to be filled
-            if (StringHelper.isNullOrEmpty(getKernelImage().getSelectedItem())) {
-                final UIConstants constants = ConstantsManager.getInstance().getConstants();
-
-                if (!StringHelper.isNullOrEmpty(getInitrdImage().getSelectedItem())) {
-                    getInitrdImage().getInvalidityReasons().add(constants.initrdPathInvalid());
-                    getInitrdImage().setIsValid(false);
-                    getKernelImage().getInvalidityReasons().add(constants.initrdPathInvalid());
-                    getKernelImage().setIsValid(false);
-                }
-
-                if (!StringHelper.isNullOrEmpty(getKernelParameters().getEntity())) {
-                    getKernelParameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
-                    getKernelParameters().setIsValid(false);
-                    getKernelImage().getInvalidityReasons().add(constants.kernelParamsInvalid());
-                    getKernelImage().setIsValid(false);
-                }
-            }
-        }
-
         if (getIsAutoAssign().getEntity() != null && !getIsAutoAssign().getEntity()) {
             getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         } else {
@@ -1209,9 +1086,6 @@ public abstract class RunOnceModel extends Model {
 
         return getIsoImage().getIsValid()
                 && getFloppyImage().getIsValid()
-                && getKernelImage().getIsValid()
-                && getInitrdImage().getIsValid()
-                && getKernelParameters().getIsValid()
                 && getDefaultHost().getIsValid()
                 && customPropertyValidation
                 && cloudInitIsValid

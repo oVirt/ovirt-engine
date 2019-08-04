@@ -1145,10 +1145,6 @@ public interface UIConstants extends Constants {
 
     String couldNotRetrieveLUNsLunsFailure();
 
-    String kernelParamsInvalid();
-
-    String initrdPathInvalid();
-
     String allocCanBeModifiedOnlyWhenImportSingleVm();
 
     String vmCreateVirtualDiskAction();

@@ -18,20 +18,9 @@ import org.ovirt.engine.ui.frontend.Frontend;
 
 public class ImagesDataProvider {
 
-    private static final String ISO_PREFIX = "iso://"; //$NON-NLS-1$
-
     public static void getFloppyImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
         getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy,
                 new RepoImageToImageFileNameAsyncConverter());
-    }
-
-    public static void getUnknownImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
-        getIrsImageList(aQuery,
-                storagePoolId,
-                forceRefresh,
-                ImageFileType.All,
-                new RepoImageToImageFileNameAsyncConverter(image -> ISO_PREFIX + image.getRepoImageId(),
-                        image -> ImageFileType.Unknown == image.getFileType()));
     }
 
     public static void getISOImagesList(AsyncQuery<List<RepoImage>> aQuery, Guid storagePoolId) {
@@ -68,11 +57,6 @@ public class ImagesDataProvider {
         private Predicate<RepoImage> imagePredicate = image -> true;
 
         public RepoImageToImageFileNameAsyncConverter() {
-        }
-
-        RepoImageToImageFileNameAsyncConverter(Function<RepoImage, String> transform, Predicate<RepoImage> imagePredicate) {
-            this.transform = transform;
-            this.imagePredicate = imagePredicate;
         }
 
         @Override

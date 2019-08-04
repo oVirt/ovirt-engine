@@ -14,7 +14,6 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
 
     public CoreVmBaseToUnitBuilder() {
         this(
-                new KernelParamsVmBaseToUnitBuilder(),
                 new SerialNumberPolicyVmBaseToUnitBuilder(),
                 new IconVmBaseToUnitBuilder()
         );
