@@ -29,12 +29,14 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.RemoveUnregisteredEntityParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.GetUnregisteredEntityQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -205,6 +207,7 @@ public class BackendStorageDomainVmResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        setUpGetUnregisteredVmExpectations(true);
         String[] names = new String[] { "VmId", "StorageDomainId", "StoragePoolId" };
         Object[] values = new Object[] { GUIDS[1], GUIDS[3], DATA_CENTER_ID };
         setUpActionExpectations(ActionType.RemoveVmFromImportExport,
@@ -214,6 +217,28 @@ public class BackendStorageDomainVmResourceTest
                 true,
                 true);
         verifyRemove(resource.remove());
+    }
+
+    @Test
+    public void testRemoveUnregisteredTemplate() {
+        setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
+        setUpGetUnregisteredVmExpectations(false);
+        setUriInfo(setUpActionExpectations(ActionType.RemoveUnregisteredVm,
+                RemoveUnregisteredEntityParameters.class,
+                new String[] { "EntityId", "StorageDomainId", "StoragePoolId" },
+                new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
+                true,
+                true));
+        verifyRemove(resource.remove());
+    }
+
+    private void setUpGetUnregisteredVmExpectations(boolean notFound) {
+        setUpEntityQueryExpectations(
+                QueryType.GetUnregisteredVm,
+                GetUnregisteredEntityQueryParameters.class,
+                new String[] { "StorageDomainId", "EntityId" },
+                new Object[] { STORAGE_DOMAIN_ID, VM_ID },
+                notFound ? null : getEntity(1));
     }
 
     protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) {

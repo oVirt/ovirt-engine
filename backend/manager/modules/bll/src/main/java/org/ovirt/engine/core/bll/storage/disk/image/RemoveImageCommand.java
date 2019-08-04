@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -46,6 +49,13 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
+
+    private static final Set<ActionType> ACTIONS_NOT_REQUIRED_DB_OPERATION = new HashSet<>(
+            Arrays.asList(
+                    ActionType.RemoveVmFromImportExport,
+                    ActionType.RemoveVmTemplateFromImportExport,
+                    ActionType.RemoveUnregisteredVmTemplate,
+                    ActionType.RemoveUnregisteredVm));
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
@@ -131,9 +141,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 }
             }
 
-            if (getParameters().getParentCommand() != ActionType.RemoveVmFromImportExport
-                    && getParameters().getParentCommand() != ActionType.RemoveVmTemplateFromImportExport
-                    && getParameters().getParentCommand() != ActionType.RemoveUnregisteredVmTemplate) {
+            if (!ACTIONS_NOT_REQUIRED_DB_OPERATION.contains(getParameters().getParentCommand())) {
                 performImageDbOperations();
             }
         } else {
