@@ -16,6 +16,7 @@ import org.ovirt.engine.api.restapi.types.ExternalVnicProfileMappingMapper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.action.RemoveUnregisteredEntityParameters;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
@@ -161,7 +162,7 @@ public class BackendStorageDomainTemplateResource
     public Response remove() {
         if (isUnregisteredTemplate()) {
             return performAction(ActionType.RemoveUnregisteredVmTemplate,
-                    new VmTemplateImportExportParameters(guid,
+                    new RemoveUnregisteredEntityParameters(guid,
                             parent.storageDomainId,
                             getDataCenterId(parent.storageDomainId)));
         }

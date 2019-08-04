@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.action.RemoveUnregisteredEntityParameters;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -214,8 +215,8 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         setUpGetUnregisteredVmTemplateExpectations(false);
         setUriInfo(setUpActionExpectations(ActionType.RemoveUnregisteredVmTemplate,
-                VmTemplateImportExportParameters.class,
-                new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
+                RemoveUnregisteredEntityParameters.class,
+                new String[] { "EntityId", "StorageDomainId", "StoragePoolId" },
                 new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
                 true,
                 true));

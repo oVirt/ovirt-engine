@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
+import org.ovirt.engine.core.common.action.RemoveUnregisteredEntityParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -66,16 +66,16 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
         }
         model.startProgress();
 
-        List<ActionParametersBase> vmTemplateImportExportParams = getSelectedItems()
+        List<ActionParametersBase> removeUnregisteredEntityParams = getSelectedItems()
                 .stream()
-                .map(item -> new VmTemplateImportExportParameters(item.getId(),
+                .map(item -> new RemoveUnregisteredEntityParameters(item.getId(),
                         getEntity().getId(),
                         getEntity().getStoragePoolId()))
                 .collect(Collectors.toList());
 
         Frontend.getInstance().runMultipleAction(
                 ActionType.RemoveUnregisteredVmTemplate,
-                vmTemplateImportExportParams,
+                removeUnregisteredEntityParams,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
