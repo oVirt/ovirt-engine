@@ -9,8 +9,7 @@ import org.ovirt.engine.core.common.action.RemoveUnregisteredEntityParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
@@ -50,37 +49,35 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
     }
 
     @Override
-    public void executeCommand(UICommand command) {
-        super.executeCommand(command);
-
-        if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$)
-            onRemove();
-        }
+    ConfirmationModel createRemoveEntityModel() {
+        ConfirmationModel confirmationModel = new ConfirmationModel();
+        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().removeUnregisteredTemplatesTitle());
+        confirmationModel.setHelpTag(HelpTag.remove_unregistered_template);
+        confirmationModel.setHashName("remove_unregistered_templates"); //$NON-NLS-1$
+        return confirmationModel;
     }
 
-    private void onRemove() {
-        ConfirmationModel model = (ConfirmationModel) getWindow();
-
-        if (model.getProgress() != null) {
-            return;
-        }
-        model.startProgress();
-
-        List<ActionParametersBase> removeUnregisteredEntityParams = getSelectedItems()
-                .stream()
-                .map(item -> new RemoveUnregisteredEntityParameters(item.getId(),
-                        getEntity().getId(),
-                        getEntity().getStoragePoolId()))
+    @Override
+    List<String> getSelectedItemsNames() {
+        return getSelectedItems().stream()
+                .filter(vmTemplate -> !Guid.isNullOrEmpty(vmTemplate.getId()))
+                .map(VmTemplate::getName)
                 .collect(Collectors.toList());
+    }
 
-        Frontend.getInstance().runMultipleAction(
-                ActionType.RemoveUnregisteredVmTemplate,
-                removeUnregisteredEntityParams,
-                result -> {
-                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    localModel.stopProgress();
-                    cancel();
-                },
-                model);
+    @Override
+    List<ActionParametersBase> getRemoveUnregisteredEntityParams(Guid storagePoolId) {
+        return getSelectedItems()
+                .stream()
+                .map(item -> new RemoveUnregisteredEntityParameters(
+                        item.getId(),
+                        getEntity().getId(),
+                        storagePoolId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    ActionType getRemoveActionType() {
+        return ActionType.RemoveUnregisteredVmTemplate;
     }
 }

@@ -455,6 +455,8 @@ public interface UIConstants extends Constants {
 
     String removeVirtualMachineTitle();
 
+    String removeUnregisteredVirtualMachineTitle();
+
     String removeTagsTitle();
 
     String editTagTitle();

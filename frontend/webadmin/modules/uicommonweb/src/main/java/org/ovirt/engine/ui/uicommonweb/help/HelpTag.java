@@ -480,6 +480,8 @@ public enum HelpTag {
 
     remove_virtual_machine("remove_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Remove Desktop(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    remove_unregistered_virtual_machine("remove_unregistered_virtual_machine", HelpTagType.WEBADMIN, "Storage Tab > Import VM > Remove VM(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
     remove_vnic_prfoile("remove_vnic_prfoile", HelpTagType.WEBADMIN, "'Networks' main tab -> 'Profiles' sub-tab -> 'Remove VM (Network) Interface Profile(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_volume("remove_volume", HelpTagType.WEBADMIN, "Volumes Tab > Remove Volume"), //$NON-NLS-1$ //$NON-NLS-2$
