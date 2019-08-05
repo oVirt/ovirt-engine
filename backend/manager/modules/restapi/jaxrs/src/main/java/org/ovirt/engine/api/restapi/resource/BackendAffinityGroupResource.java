@@ -3,7 +3,10 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.AffinityGroup;
+import org.ovirt.engine.api.resource.AffinityGroupHostLabelsResource;
+import org.ovirt.engine.api.resource.AffinityGroupHostsResource;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
+import org.ovirt.engine.api.resource.AffinityGroupVmLabelsResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -44,5 +47,23 @@ public class BackendAffinityGroupResource
         AffinityGroupCRUDParameters params = new AffinityGroupCRUDParameters();
         params.setAffinityGroupId(asGuid(id));
         return performAction(ActionType.RemoveAffinityGroup, params);
+    }
+
+    @Override
+    public AffinityGroupHostsResource getHostsResource() {
+        // TODO: implement
+        return null;
+    }
+
+    @Override
+    public AffinityGroupVmLabelsResource getVmLabelsResource() {
+        // TODO: implement
+        return null;
+    }
+
+    @Override
+    public AffinityGroupHostLabelsResource getHostLabelsResource() {
+        // TODO: implement
+        return null;
     }
 }
