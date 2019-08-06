@@ -156,6 +156,10 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
         if (model.getHasSmtClusterDiscrepancyAlert()) {
             addTextAlert(view, messages.hostHasSmtClusterDiscrepancyAlert());
         }
+        if (!model.getMissingCpuFlags().isEmpty()) {
+            addTextAlert(view, messages.hostHasMissingCpuFlagsAlert(
+                    String.join(", ", model.getMissingCpuFlags()))); //$NON-NLS-1$
+        }
     }
 
     private void addTextAlert(final ViewDef view, final String text, AlertType type) {

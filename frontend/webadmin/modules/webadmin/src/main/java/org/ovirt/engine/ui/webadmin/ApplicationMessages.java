@@ -30,6 +30,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostHasSmtClusterDiscrepancyAlert();
 
+    String hostHasMissingCpuFlagsAlert(String flags);
+
     String hostHasMissingCpuFlagsTooltipAlert(String flags);
 
     String manaulFencePopupMessageLabel(String hostName);

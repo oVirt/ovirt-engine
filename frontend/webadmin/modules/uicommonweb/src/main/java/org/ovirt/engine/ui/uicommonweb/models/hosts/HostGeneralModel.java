@@ -3,8 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
@@ -736,6 +738,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private Set<String> missingCpuFlags;
+
+    public Set<String> getMissingCpuFlags() {
+        if (missingCpuFlags == null) {
+            return new HashSet<>();
+        }
+        return missingCpuFlags;
+    }
+
+    public void setMissingCpuFlags(Set<String> missingCpuFlags) {
+        this.missingCpuFlags = missingCpuFlags;
+    }
+
     private NonOperationalReason nonOperationalReasonEntity;
 
     public NonOperationalReason getNonOperationalReasonEntity() {
@@ -1055,6 +1070,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasNICsAlert(false);
         setHasGlusterDisconnectedAlert(false);
         setHasDefaultRouteAlert(false);
+        setMissingCpuFlags(null);
 
 
         // Check the network alert presense.
@@ -1096,6 +1112,9 @@ public class HostGeneralModel extends EntityModel<VDS> {
         // Update SMT status
         setHasSmtDiscrepancyAlert(getEntity() != null && getEntity().hasSmtDiscrepancyAlert());
         setHasSmtClusterDiscrepancyAlert(getEntity() != null && getEntity().hasSmtClusterDiscrepancyAlert());
+
+        // Set missing CPU flags
+        setMissingCpuFlags(getEntity() == null ? null : getEntity().getCpuFlagsMissing());
 
         setNonOperationalReasonEntity(getEntity().getNonOperationalReason() == NonOperationalReason.NONE ?
                 null : getEntity().getNonOperationalReason());
