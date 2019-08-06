@@ -499,6 +499,8 @@ public interface UIConstants extends Constants {
 
     String removeDisksTitle();
 
+    String removeUnregisteredDisksTitle();
+
     String sparsifyDisksTitle();
 
     String sparsifyConfirmationPopupMessage();

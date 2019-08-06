@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -13,29 +17,40 @@ import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class StorageRegisterDiskImageListModel extends SearchableListModel<StorageDomain, Disk> {
     private UICommand registerCommand;
+    private UICommand removeCommand;
 
     public UICommand getRegisterCommand() {
         return registerCommand;
     }
 
+    public UICommand getRemoveCommand() {
+        return removeCommand;
+    }
+
     private void setRegisterCommand(UICommand value) {
         registerCommand = value;
+    }
+    private void setRemoveCommand(UICommand value) {
+        removeCommand = value;
     }
 
     public StorageRegisterDiskImageListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksImportTitle());
         setHashName("disk_image_register"); //$NON-NLS-1$
         setRegisterCommand(new UICommand("ImportDiskImage", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("RemoveUnregisteredDiskImage", this)); //$NON-NLS-1$
     }
 
     @Override
@@ -94,9 +109,9 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
 
     private void updateActionAvailability() {
         List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
-
-        getRegisterCommand().setIsExecutionAllowed(disks.size() > 0
-                && getEntity().getStatus() == StorageDomainStatus.Active);
+        boolean isExecutionAllowed = disks.size() > 0 && getEntity().getStatus() == StorageDomainStatus.Active;
+        getRegisterCommand().setIsExecutionAllowed(isExecutionAllowed);
+        getRemoveCommand().setIsExecutionAllowed(isExecutionAllowed);
     }
 
     private void register() {
@@ -124,13 +139,68 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         }), getEntity().getStoragePoolId());
     }
 
+    private void remove() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        ConfirmationModel window = new ConfirmationModel();
+        setWindow(window);
+        window.setTitle(ConstantsManager.getInstance().getConstants().removeUnregisteredDisksTitle());
+        window.setHelpTag(HelpTag.remove_unregistered_disk);
+        window.setHashName("remove_unregistered_disks"); //$NON-NLS-1$
+
+        List<String> items = getSelectedItems().stream()
+                .filter(disk -> !Guid.isNullOrEmpty(disk.getId()))
+                .map(Disk::getName)
+                .collect(Collectors.toList());
+
+        window.setItems(items);
+
+        UICommand onRemoveUiCommand = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
+        window.getCommands().add(onRemoveUiCommand);
+        UICommand cancelUiCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        window.getCommands().add(cancelUiCommand);
+    }
+
+    private void onRemove() {
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null) {
+            return;
+        }
+        model.startProgress();
+
+        List<ActionParametersBase> removeDiskParameters = getSelectedItems()
+                .stream()
+                .map(item -> {
+                    RemoveDiskParameters params = new RemoveDiskParameters(item.getId(), getEntity().getId());
+                    params.setUnregisteredDisk(true);
+                    return params;
+                })
+                .collect(Collectors.toList());
+
+        Frontend.getInstance().runMultipleAction(
+                ActionType.RemoveDisk,
+                removeDiskParameters,
+                result -> {
+                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
+                }, model);
+    }
+
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
         if (command == getRegisterCommand()) {
             register();
-        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if (command == getRemoveCommand()) {
+            remove();
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+            onRemove();
+        }else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

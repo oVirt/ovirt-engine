@@ -34,6 +34,13 @@ public class StorageRegisterDiskImageActionPanelPresenterWidget
                 return getDetailModel().getRegisterCommand();
             }
         });
+
+        addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveCommand();
+            }
+        });
     }
 
 }

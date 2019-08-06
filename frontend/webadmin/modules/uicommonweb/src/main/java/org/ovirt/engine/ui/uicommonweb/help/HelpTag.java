@@ -426,6 +426,8 @@ public enum HelpTag {
 
     remove_disk("remove_disk", HelpTagType.WEBADMIN, "VMs Tab > Disks Sub-Tab > Remove Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    remove_unregistered_disk("remove_unregistered_disk", HelpTagType.WEBADMIN, "Storage Tab > Disk Import > Remove Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
     sparsify_disk("sparsify_disk", HelpTagType.WEBADMIN, "VMs Tab > Disks Sub-Tab > Sparsify Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_external_subnet("remove_external_subnet", HelpTagType.WEBADMIN, "Networks main tab -> External Subnet sub tab -> Remove"), //$NON-NLS-1$ //$NON-NLS-2$
