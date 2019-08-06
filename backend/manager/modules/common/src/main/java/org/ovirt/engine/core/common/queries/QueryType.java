@@ -17,6 +17,7 @@ public enum QueryType implements Serializable {
     GetUnregisteredVms,
     GetUnregisteredVmTemplate,
     GetUnregisteredVmTemplates,
+    GetUnregisteredDiskFromDB,
     GetUnregisteredDisksFromDB,
     GetVmsRunningOnOrMigratingToVds,
     GetVmsByStorageDomain,

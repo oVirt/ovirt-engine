@@ -65,6 +65,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -72,6 +75,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -109,6 +113,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private VmDao vmDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
@@ -439,6 +445,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 removeManagedBlockStorageDisk();
                 break;
         }
+        if (getParameters().isUnregisteredDisk()) {
+            unregisteredDisksDao.removeUnregisteredDisk(getParameters().getDiskId(), getParameters().getStorageDomainId());
+        }
     }
 
     private void removeManagedBlockStorageDisk() {
@@ -645,10 +654,29 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     protected Disk getDisk() {
         if (disk == null) {
-            disk = diskDao.get(getParameters().getDiskId());
+            disk = getParameters().isUnregisteredDisk() ?
+                    getUnregisteredDisk() :
+                    diskDao.get(getParameters().getDiskId());
         }
 
         return disk;
+    }
+
+    private Disk getUnregisteredDisk() {
+        QueryReturnValue queryReturnValue = backend.runInternalQuery(QueryType.GetUnregisteredDisk,
+                new GetUnregisteredDiskQueryParameters(
+                        getParameters().getDiskId(),
+                        getParameters().getStorageDomainId(),
+                        getStoragePoolId()));
+
+        if (queryReturnValue.getSucceeded()) {
+            return queryReturnValue.getReturnValue();
+        }
+
+        log.error("Failed to find unregistered disk with the following ID '{}' in storage domain '{}'",
+                getParameters().getDiskId(),
+                getStorageDomain().getName());
+        return null;
     }
 
     protected DiskImage getDiskImage() {

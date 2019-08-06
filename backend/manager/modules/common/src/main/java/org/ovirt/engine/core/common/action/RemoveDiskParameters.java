@@ -8,6 +8,7 @@ public class RemoveDiskParameters extends ActionParametersBase {
     private Guid storageDomainId;
     private boolean forceDelete;
     private boolean suppressContentTypeCheck;
+    private boolean unregisteredDisk;
 
     public RemoveDiskParameters() {
     }
@@ -51,5 +52,13 @@ public class RemoveDiskParameters extends ActionParametersBase {
 
     public void setSuppressContentTypeCheck(boolean suppressContentTypeCheck) {
         this.suppressContentTypeCheck = suppressContentTypeCheck;
+    }
+
+    public boolean isUnregisteredDisk() {
+        return unregisteredDisk;
+    }
+
+    public void setUnregisteredDisk(boolean unregisteredDisk) {
+        this.unregisteredDisk = unregisteredDisk;
     }
 }
