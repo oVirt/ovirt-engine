@@ -46,6 +46,10 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     private Double imagesLastDelay;
     private ServerCpu cpuName;
     private Integer vdsSpmId;
+    /**
+     * Flags that are required by the CPU configuration but are missing on the host
+     */
+    private Set<String> cpuFlagsMissing;
 
     /**
      * Maximal memory available for scheduling a new VM in MiB. This is a dynamic field
@@ -76,6 +80,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         interfaces = new ArrayList<>();
         networkNames = new HashSet<>();
         fenceAgents = new LinkedList<>();
+        cpuFlagsMissing = new HashSet<>();
     }
 
     @Override
@@ -251,6 +256,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setIsDefaultRouteRoleNetworkAttached(isDefaultRouteRoleNetworkAttached());
         vds.setClusterSmtDisabled(isClusterSmtDisabled());
         vds.setTscFrequency(getTscFrequency());
+        vds.setCpuFlagsMissing(getCpuFlagsMissing());
         return vds;
     }
 
@@ -1782,5 +1788,17 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setTscFrequency(String tscFrequency) {
         vdsDynamic.setTscFrequency(tscFrequency);
+    }
+
+    public Set<String> getCpuFlagsMissing() {
+        return cpuFlagsMissing;
+    }
+
+    public void setCpuFlagsMissing(Set<String> cpuFlagsMissing) {
+        if (cpuFlagsMissing == null) {
+            this.cpuFlagsMissing = new HashSet<>();
+        } else {
+            this.cpuFlagsMissing = cpuFlagsMissing;
+        }
     }
 }

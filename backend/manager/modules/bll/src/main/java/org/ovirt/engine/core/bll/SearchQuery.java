@@ -269,6 +269,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         for (VDS vds : data) {
             vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     vds.getClusterCompatibilityVersion()));
+            List<String> missingFlags = cpuFlagsManagerHandler.missingServerCpuFlags(
+                    vds.getClusterCpuName(),
+                    vds.getCpuFlags(),
+                    vds.getClusterCompatibilityVersion());
+            if (missingFlags != null) {
+                vds.setCpuFlagsMissing(missingFlags.stream().collect(Collectors.toSet()));
+            }
             setNetworkOperationInProgressOnVds(vds);
         }
         return data;

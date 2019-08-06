@@ -172,6 +172,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div id=\"{0}\" style='text-align: center;'>{1}</div>")
     SafeHtml hostAdditionalStatusIcon(String id, SafeHtml statusImage);
 
+    @Template("<div style='padding-bottom: 5px;'>{0}</div>")
+    SafeHtml hostAlertTooltip(String text);
+
     @Template("{0} {1} {2}")
     SafeHtml hostOutOfSyncPreviewSentence(SafeHtml host, SafeHtml outOfsyncSentence, SafeHtml dc);
 

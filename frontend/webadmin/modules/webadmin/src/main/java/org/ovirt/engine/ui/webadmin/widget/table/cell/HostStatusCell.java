@@ -8,7 +8,9 @@ import org.ovirt.engine.ui.common.utils.JqueryUtils;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.dom.client.Element;
@@ -22,10 +24,10 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class HostStatusCell extends AbstractCell<VDS> {
 
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
     private static final ApplicationResources resources = AssetProvider.getResources();
-
-    private static final String LINE_SEPARATOR = "\n"; //$NON-NLS-1$
 
     @Override
     public void render(Context context, VDS vds, SafeHtmlBuilder sb, String id) {
@@ -99,9 +101,11 @@ public class HostStatusCell extends AbstractCell<VDS> {
         // - there are network configuration changes that haven't been saved yet
         // - there are Gluster related issues
         // - host reinstall is required
+        // - CPU configuration is not compatible with configured values (vds has missing flags)
         if (hasPMAlert(vds) || hasNetconfigDirty(vds) || hasGlusterAlert(vds)
                 || vds.getStaticData().isReinstallRequired()
-                || hasDefaultRouteAlert(vds)) {
+                || hasDefaultRouteAlert(vds)
+                || cpuFlagsMissing(vds)) {
             sb.append(alertImageHtml);
         }
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
@@ -190,12 +194,17 @@ public class HostStatusCell extends AbstractCell<VDS> {
             appendLine(sb, constants.hostSmtAlert());
         }
 
+        if (cpuFlagsMissing(vds)) {
+            appendLine(sb,
+                    messages.hostHasMissingCpuFlagsTooltipAlert(
+                            String.join(", ", vds.getCpuFlagsMissing())));//$NON-NLS-1$);
+        }
+
         return sb.toSafeHtml();
     }
 
     private void appendLine(SafeHtmlBuilder sb, String text) {
-        sb.append(SafeHtmlUtils.fromSafeConstant(text));
-        sb.appendEscapedLines(LINE_SEPARATOR);
+        sb.append(templates.hostAlertTooltip(text));
     }
 
     private boolean hasNetconfigDirty(VDS vds) {
@@ -215,6 +224,10 @@ public class HostStatusCell extends AbstractCell<VDS> {
                 .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
                         vds.getClusterCompatibilityVersion().getValue())
                 && !vds.isDefaultRouteRoleNetworkAttached();
+    }
+
+    private boolean cpuFlagsMissing(VDS vds) {
+        return !vds.getCpuFlagsMissing().isEmpty();
     }
 
     private boolean hasSmtAlert(VDS vds) {
