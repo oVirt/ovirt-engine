@@ -5,9 +5,9 @@ source automation/jvm-opts.sh
 MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
 export MAVEN_OPTS
 
-BUILD_UT=1
-RUN_DAO_TESTS=1
-BUILD_GWT=1
+BUILD_UT=0
+RUN_DAO_TESTS=0
+BUILD_GWT=0
 
 # Check for DB upgrade scripts modifications without the
 # "Allow-db-upgrade-script-changes:Yes" in the patch header
@@ -56,6 +56,7 @@ if git show --pretty="format:" --name-only | egrep \
     RUN_DAO_TESTS=1
 fi
 
+SUFFIX=".git$(git rev-parse --short HEAD)"
 
 if [ -d /root/.m2/repository/org/ovirt ]; then
     echo "Deleting ovirt folder from maven cache"
@@ -133,7 +134,9 @@ make dist
 rpmbuild \
     -D "_srcrpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
+    -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
+    -D "ovirt_build_quick 1" \
     -ts ./*.gz
 
 # install any build requirements
@@ -150,8 +153,10 @@ fi
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
+    -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_ut $BUILD_UT" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
+    -D "${RPM_BUILD_MODE} 1" \
     --rebuild output/*.src.rpm
 
 # Move any relevant artifacts to exported-artifacts for the ci system to
