@@ -21,12 +21,9 @@ class PermissionWithUniqueKeyEquals extends Permission {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getAdElementId() == null) ? 0 : getAdElementId().hashCode());
-        result = prime * result + ((getObjectId() == null) ? 0 : getObjectId().hashCode());
-        result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
-        return result;
+        return Objects.hash(getAdElementId(),
+                getObjectId(),
+                getRoleId());
     }
 
     @Override

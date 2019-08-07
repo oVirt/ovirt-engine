@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 /**
@@ -85,10 +87,9 @@ public class TemplateWithVersion implements Comparable<TemplateWithVersion> {
 
     @Override
     public int hashCode() {
-        int result = baseTemplate.hashCode();
-        result = 31 * result + templateVersion.hashCode();
-        result = 31 * result + (templateVersion instanceof LatestVmTemplate ? 1 : 0);
-        return result;
+        return Objects.hash(baseTemplate,
+                templateVersion,
+                templateVersion instanceof LatestVmTemplate);
     }
 
     @Override

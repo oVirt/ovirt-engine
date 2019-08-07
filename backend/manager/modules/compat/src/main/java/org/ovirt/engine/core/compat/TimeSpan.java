@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class TimeSpan implements Comparable<TimeSpan>, Serializable {
@@ -53,24 +54,16 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Days;
-        result = prime * result + Hours;
-        result = prime * result + Milliseconds;
-        result = prime * result + Minutes;
-        result = prime * result + Seconds;
-        long temp;
-        temp = Double.doubleToLongBits(TotalDays);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(TotalHours);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (int) (TotalMilliseconds ^ (TotalMilliseconds >>> 32));
-        temp = Double.doubleToLongBits(TotalMinutes);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(TotalSeconds);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(Days,
+                Hours,
+                Milliseconds,
+                Minutes,
+                Seconds,
+                TotalDays,
+                TotalHours,
+                TotalMilliseconds,
+                TotalMinutes,
+                TotalSeconds);
     }
 
     @Override

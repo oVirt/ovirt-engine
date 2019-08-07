@@ -1245,36 +1245,29 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = (long)_actualDiskWithSnapthotsSize;
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((cdPath == null) ? 0 : cdPath.hashCode());
-        result = prime * result + ((diskMap == null) ? 0 : diskMap.hashCode());
-        temp = (long)diskSize;
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
-        result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
-        result = prime * result + ((runOnVdsName == null) ? 0 : runOnVdsName.hashCode());
-        result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
-        result = prime * result + ((spiceDriverVersion == null) ? 0 : spiceDriverVersion.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
-        result = prime * result + (transparentHugePages ? 1231 : 1237);
-        result =
-                prime * result + ((clusterCompatibilityVersion == null) ? 0 : clusterCompatibilityVersion.hashCode());
-        result = prime * result + ((clusterCpuName == null) ? 0 : clusterCpuName.hashCode());
-        result = prime * result + ((clusterCpuFlags == null) ? 0 : clusterCpuFlags.hashCode());
-        result = prime * result + ((clusterCpuVerb == null) ? 0 : clusterCpuVerb.hashCode());
-        result = prime * result + ((clusterName == null) ? 0 : clusterName.hashCode());
-        result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
-        result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());
-        result = prime * result + ((vmPoolName == null) ? 0 : vmPoolName.hashCode());
-        result = prime * result + ((vmStatic == null) ? 0 : vmStatic.hashCode());
-        result = prime * result + ((vmStatistics == null) ? 0 : vmStatistics.hashCode());
-        result = prime * result + ((vmtName == null) ? 0 : vmtName.hashCode());
-        return result;
+        return Objects.hash(_actualDiskWithSnapthotsSize,
+                cdPath,
+                diskMap,
+                diskSize,
+                floppyPath,
+                privateGuestAgentVersion,
+                runOnVdsName,
+                snapshots,
+                spiceDriverVersion,
+                storagePoolId,
+                storagePoolName,
+                transparentHugePages,
+                clusterCompatibilityVersion,
+                clusterCpuName,
+                clusterCpuFlags,
+                clusterCpuVerb,
+                clusterName,
+                vmDynamic,
+                vmPoolId,
+                vmPoolName,
+                vmStatic,
+                vmStatistics,
+                vmtName);
     }
 
     public String getVmPoolName() {
