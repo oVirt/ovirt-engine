@@ -181,6 +181,7 @@ public enum QueryType implements Serializable {
     GetClusterNetworkSyncStatus,
     GetOutOfSyncHostsForCluster,
     GetOutOfSyncHostNamesForCluster,
+    GetHostsWithMissingFlagsForCluster,
 
     // Certificate
     GetCACertificate(QueryAuthType.User),

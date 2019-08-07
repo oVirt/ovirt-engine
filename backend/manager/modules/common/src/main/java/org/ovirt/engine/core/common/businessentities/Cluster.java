@@ -93,6 +93,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private boolean haReservation;
 
+    private boolean hasHostWithMissingCpuFlags;
+
     private Guid clusterPolicyId;
 
     private String clusterPolicyName;
@@ -402,6 +404,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.haReservation = haReservation;
     }
 
+    public boolean hasHostWithMissingCpuFlags() {
+        return hasHostWithMissingCpuFlags;
+    }
+
+    public void setHasHostWithMissingCpuFlags(boolean hasHostWithMissingCpuFlags) {
+        this.hasHostWithMissingCpuFlags = hasHostWithMissingCpuFlags;
+    }
+
     public boolean isInUpgradeMode(){
         return ClusterPolicy.UPGRADE_POLICY_GUID.equals(clusterPolicyId);
     }
@@ -709,6 +719,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 biosType,
                 trustedService,
                 haReservation,
+                hasHostWithMissingCpuFlags,
                 clusterPolicyName,
                 clusterPolicyProperties,
                 additionalRngSources,
@@ -771,6 +782,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && biosType == other.biosType
                 && trustedService == other.trustedService
                 && haReservation == other.haReservation
+                && hasHostWithMissingCpuFlags == other.hasHostWithMissingCpuFlags
                 && Objects.equals(clusterPolicyId, other.clusterPolicyId)
                 && Objects.equals(clusterPolicyName, other.clusterPolicyName)
                 && Objects.equals(clusterPolicyProperties, other.clusterPolicyProperties)

@@ -53,7 +53,9 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
     public SafeHtml getEntityValue(Cluster object) {
         SafeHtmlBuilder images = new SafeHtmlBuilder();
         boolean addSpace = false;
-        if (object.isClusterCompatibilityLevelUpgradeNeeded() || isDeprecated(object)) {
+        if (object.isClusterCompatibilityLevelUpgradeNeeded()
+                || isDeprecated(object)
+                || object.hasHostWithMissingCpuFlags()) {
             images.append(getImageSafeHtml(IconType.EXCLAMATION));
             addSpace = true;
         }
@@ -93,6 +95,18 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
                 tooltip.appendHtmlConstant(constants.lineBreak());
             }
             tooltip.append(hostListText(object));
+            addLineBreaks = true;
+        }
+
+        if (object.hasHostWithMissingCpuFlags()) {
+            if (addLineBreaks) {
+                tooltip.appendHtmlConstant(constants.lineBreak());
+                tooltip.appendHtmlConstant(constants.lineBreak());
+            }
+            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
+            tooltip.appendHtmlConstant(constants.space());
+            tooltip.appendEscaped(constants.clusterHasHostWithMissingCpuFlagsWarning());
+            addLineBreaks = true;
         }
         return tooltip.toSafeHtml();
     }
