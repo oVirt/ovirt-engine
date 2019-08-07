@@ -301,6 +301,17 @@ For example, to build only the English and Japanese locale:
 +
 To build for all supported locales, use `BUILD_LOCALES=1`.
 
++
+For example to build engine without obfuscated Javascript code:
++
+    DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.style=pretty"
++
+
++
+To build engine without obfuscated CSS styles:
++
+    DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.cssResourceStyle=pretty"
++
 
 DEV_REBUILD:: Disable if only packaging components were modified.
 Default is `1`.

@@ -148,7 +148,6 @@
           </dependencies>
           <configuration>
             <logLevel>${gwt.logLevel}</logLevel>
-            <style>OBF</style>
             <port>${engine.port.http}</port>
             <!-- Don't run embedded web server, use Engine instead -->
             <noServer>true</noServer>
