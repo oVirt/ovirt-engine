@@ -296,8 +296,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         if (getSelectedItem() != null) {
             Disk disk = getSelectedItem();
 
-            vmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
-            templateListModel.setIsAvailable(disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType());
+            vmListModel.setIsAvailable(!isTemplateDisk(disk));
+            templateListModel.setIsAvailable(isTemplateDisk(disk));
             storageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE ||
                     disk.getDiskStorageType() == DiskStorageType.CINDER);
         }
@@ -542,12 +542,16 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         return false;
     }
 
+    private boolean isTemplateDisk(Disk disk) {
+        return disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType();
+    }
+
     private boolean isRemoveCommandAvailable() {
         List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
 
         for (Disk disk : disks) {
             // check if the disk is template disk
-            if (disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType()) {
+            if (isTemplateDisk(disk)) {
                 return false;
             }
 
