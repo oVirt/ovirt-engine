@@ -176,6 +176,16 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
     }
 
     @Override
+    public void updateKernelCmdlines(Guid vdsStaticId, VdsStatic staticData) {
+        String kernelCmdline = KernelCmdlineColumn.fromVdsStatic(staticData).toJson();
+        getCallsHandler().executeModification(
+                "UpdateVdsStaticKernelCmdlines",
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vdsStaticId)
+                        .addValue("kernel_cmdline", kernelCmdline));
+    }
+
+    @Override
     public void updateReinstallRequired(Guid vdsStaticId, boolean reinstallRequired) {
         getCallsHandler().executeModification(
                 "UpdateVdsReinstallRequired",

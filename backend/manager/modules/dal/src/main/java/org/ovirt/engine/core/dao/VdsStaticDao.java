@@ -64,6 +64,8 @@ public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
      */
     void updateLastStoredKernelCmdline(Guid vdsStaticId, String lastStoredKernelCmdline);
 
+    void updateKernelCmdlines(Guid vdsStaticId, VdsStatic staticData);
+
     /**
      * Separate update method for {@code reinstall_required} column
      * @param vdsStaticId the vds static id

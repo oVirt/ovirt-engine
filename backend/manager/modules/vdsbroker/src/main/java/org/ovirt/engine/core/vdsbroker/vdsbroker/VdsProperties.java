@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+@SuppressWarnings("WeakerAccess")
 public final class VdsProperties {
     // vds configuration (i.e. VdsStatic)
     // vds runtime (i.e. VdsDynamic req getVdsCapabilities)
@@ -544,4 +545,6 @@ public final class VdsProperties {
     public static final String BACKUP_ENABLED = "backupEnabled";
 
     public static final String TSC_FREQUENCY = "tscFrequency";
+
+    public static final String FIPS_MODE = "fipsEnabled";
 }

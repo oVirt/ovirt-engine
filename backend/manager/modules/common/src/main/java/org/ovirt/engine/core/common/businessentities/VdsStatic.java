@@ -545,6 +545,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(kernelCmdlineKvmNested, other.kernelCmdlineKvmNested)
                 && Objects.equals(kernelCmdlinePciRealloc, other.kernelCmdlinePciRealloc)
                 && Objects.equals(kernelCmdlineUnsafeInterrupts, other.kernelCmdlineUnsafeInterrupts)
+                && Objects.equals(kernelCmdlineFips, other.kernelCmdlineFips)
+                && Objects.equals(kernelCmdlineSmtDisabled, other.kernelCmdlineSmtDisabled)
                 && reinstallRequired == other.reinstallRequired
                 && vgpuPlacement == other.vgpuPlacement;
     }

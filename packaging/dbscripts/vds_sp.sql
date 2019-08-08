@@ -753,6 +753,25 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION UpdateVdsStaticKernelCmdlines (
+    v_vds_id UUID,
+    v_kernel_cmdline TEXT
+    )
+RETURNS VOID
+    --The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    AS $PROCEDURE$
+BEGIN
+    BEGIN
+        UPDATE vds_static
+        SET kernel_cmdline = v_kernel_cmdline,
+            last_stored_kernel_cmdline = v_kernel_cmdline
+        WHERE vds_id = v_vds_id;
+    END;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION UpdateVdsReinstallRequired (
     v_vds_id UUID,
     v_reinstall_required BOOLEAN
