@@ -47,6 +47,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private String clusterCpuName;
     private String clusterCpuFlags;
     private String clusterCpuVerb;
+    private String configuredCpuVerb;
     private Map<Guid, Disk> diskMap;
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
     // ignores the final fields
@@ -960,6 +961,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public void setClusterCpuVerb(String clusterCpuVerb) {
         this.clusterCpuVerb = clusterCpuVerb;
+    }
+
+    public String getConfiguredCpuVerb() {
+        return configuredCpuVerb;
+    }
+
+    public void setConfiguredCpuVerb(String configuredCpuVerb) {
+        this.configuredCpuVerb = configuredCpuVerb;
     }
 
     public String getClusterCpuName() {

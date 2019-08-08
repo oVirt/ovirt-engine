@@ -611,6 +611,13 @@ public class VmHandler implements BackendService {
         }
     }
 
+    public void updateConfiguredCpuVerb(final VM vm) {
+        String configuredCpuVerb = cpuFlagsManagerHandler.getCpuId(
+                        vm.getClusterCpuName(),
+                        vm.getCompatibilityVersion());
+        vm.setConfiguredCpuVerb(configuredCpuVerb);
+    }
+
     public VmManagementParametersBase createVmManagementParametersBase(VM vm) {
         VmManagementParametersBase params = new VmManagementParametersBase(vm);
         List<VmDevice> devices = new ArrayList<>(vm.getManagedVmDeviceMap().values());

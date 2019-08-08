@@ -3520,4 +3520,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String physicalNetworkCustomInfo();
 
     String tscFrequency();
+
+    String vmCpuTypeDoesNotMatchClusterCpuType();
 }

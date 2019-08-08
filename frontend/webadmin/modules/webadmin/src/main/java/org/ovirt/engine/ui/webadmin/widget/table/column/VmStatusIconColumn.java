@@ -83,6 +83,10 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
                 }
             }
 
+            if (!cpuVerbMatchesConfiguredCpuVerb(vm)) {
+                tooltip += "<br/><br/>" + constants.vmCpuTypeDoesNotMatchClusterCpuType(); //$NON-NLS-1$
+            }
+
             if (vm.getStatus() == VMStatus.Up) {
                 if (hasGuestAgent(vm)) {
                     if (hasDifferentTimezone(vm)) {
@@ -118,7 +122,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
         if (vm.getStatus() == VMStatus.Up) {
             alertRequired = !hasGuestAgent(vm) || hasDifferentTimezone(vm) || hasDifferentOSType(vm);
         }
-        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm)  || hasIllegalImages(vm) || isNameChanged(vm);
+        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm) || hasIllegalImages(vm) || isNameChanged(vm) || !cpuVerbMatchesConfiguredCpuVerb(vm);
     }
 
     private static boolean hasDifferentOSType(VM vm) {
@@ -160,6 +164,18 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
 
     private static boolean hasIllegalImages(VM vm) {
         return vm.hasIllegalImages();
+    }
+
+    private static boolean cpuVerbMatchesConfiguredCpuVerb(VM vm) {
+        if (vm.isUseHostCpuFlags()) {
+            return false;
+        }
+
+        String cpuVerb = vm.getCustomCpuName() != null ? vm.getCustomCpuName() : vm.getClusterCpuVerb();
+        if (cpuVerb == null) {
+            return false;
+        }
+        return cpuVerb.equals(vm.getConfiguredCpuVerb());
     }
 
     private String getStatusTooltipText(VMStatus status) {
