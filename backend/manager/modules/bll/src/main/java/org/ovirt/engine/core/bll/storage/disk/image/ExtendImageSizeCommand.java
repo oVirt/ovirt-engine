@@ -152,7 +152,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
      * Refreshes the size of an extended volume for the VM having the image to extend attached.
      * Note that because this is not an active layer image, it can only be in use by a single VM.
      */
-    public void refreshVolume() {
+    private void refreshVolume() {
         List<VM> vms = getVmsDiskPluggedTo();
         if (vms.isEmpty() || vms.get(0).getStatus().isDownOrSuspended()) {
             return;
