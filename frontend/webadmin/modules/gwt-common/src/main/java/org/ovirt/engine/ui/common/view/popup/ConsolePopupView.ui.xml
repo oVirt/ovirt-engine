@@ -85,7 +85,7 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
-                    <v:WidgetWithInfo ui:field="vncHeadline" />
+                    <v:WidgetWithTooltippedIcon ui:field="vncHeadline" />
                     <ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     <t:WidgetTooltip ui:field="noVncImplRadioButtonTooltip">
                         <ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton" usePatternFly="true" removeFormGroup="true" />
@@ -95,7 +95,7 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
-                    <v:WidgetWithInfo ui:field="rdpHeadline" />
+                    <v:WidgetWithTooltippedIcon ui:field="rdpHeadline" />
                     <ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     <ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     <t:WidgetTooltip ui:field="rdpPluginImplRadioButtonTooltip">

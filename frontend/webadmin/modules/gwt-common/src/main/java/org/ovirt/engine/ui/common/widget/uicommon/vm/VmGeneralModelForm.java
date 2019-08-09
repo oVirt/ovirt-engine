@@ -1,10 +1,16 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+
+import static org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel.CONFIGURED_CPU_TYPE_PROPERTY_CHANGE;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel.GUEST_CPU_TYPE_PROPERTY_CHANGE;
+
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.widget.WidgetWithWarn;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
@@ -12,9 +18,11 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.Widget;
 
 public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralModel> {
 
@@ -57,6 +65,8 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider) {
@@ -91,7 +101,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), guestCpuType, 5, 1));
+        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), createGuestCpuTypeWidget(), 5, 1));
         formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 6, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 7, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 8, 1));
@@ -152,4 +162,32 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         driver.cleanup();
     }
 
+    private Widget createGuestCpuTypeWidget() {
+        WidgetWithWarn warn = new WidgetWithWarn(guestCpuType,
+                messages.vmGuestCpuTypeWarning(
+                        getModel().getConfiguredCpuType()));
+
+        updateCpuTypeWarning(warn);
+
+        getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(CONFIGURED_CPU_TYPE_PROPERTY_CHANGE)
+                        || key.equals(GUEST_CPU_TYPE_PROPERTY_CHANGE)) {
+                    updateCpuTypeWarning(warn);
+                }
+            }
+        });
+
+        return warn;
+    }
+
+    private void updateCpuTypeWarning(WidgetWithWarn warn) {
+        if (getModel().getConfiguredCpuType() == null) {
+            warn.setIconVisible(false);
+            return;
+        }
+
+        warn.setIconVisible(!getModel().getConfiguredCpuType().equals(getModel().getGuestCpuType()));
+    }
 }

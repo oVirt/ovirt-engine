@@ -33,6 +33,12 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
+    public static final String GUEST_CPU_TYPE_PROPERTY_CHANGE = "GuestCpuType";//$NON-NLS-1$
+
+    public static final String CONFIGURED_CPU_TYPE_PROPERTY_CHANGE = "ConfiguredCpuType";//$NON-NLS-1$
+
+    public static final String STATUS = "Status";//$NON-NLS-1$
+
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -71,7 +77,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     public void setStatus(VMStatus value) {
         if (!Objects.equals(status, value)) {
             status = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(STATUS)); //$NON-NLS-1$
         }
     }
 
@@ -523,7 +529,20 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     public void setGuestCpuType(String value) {
         if (!Objects.equals(guestCpuType, value)) {
             guestCpuType = value;
-            onPropertyChanged(new PropertyChangedEventArgs("GuestCpuType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(GUEST_CPU_TYPE_PROPERTY_CHANGE));
+        }
+    }
+
+    private String configuredCpuType;
+
+    public String getConfiguredCpuType() {
+        return configuredCpuType;
+    }
+
+    public void setConfiguredCpuType(String value) {
+        if (!Objects.equals(configuredCpuType, value)) {
+            configuredCpuType = value;
+            onPropertyChanged(new PropertyChangedEventArgs(CONFIGURED_CPU_TYPE_PROPERTY_CHANGE));
         }
     }
 
@@ -703,6 +722,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
 
         setGuestCpuType(guestCpuType);
+        setConfiguredCpuType(vm.getConfiguredCpuVerb());
     }
 
     @Override

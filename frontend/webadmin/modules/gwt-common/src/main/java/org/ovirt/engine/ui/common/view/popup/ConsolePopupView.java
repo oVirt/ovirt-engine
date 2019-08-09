@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.WidgetWithInfo;
+import org.ovirt.engine.ui.common.widget.WidgetWithTooltippedIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
@@ -128,10 +129,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     FlowPanel spicePanel;
 
     @UiField(provided = true)
-    WidgetWithInfo vncHeadline;
+    WidgetWithTooltippedIcon vncHeadline;
 
     @UiField(provided = true)
-    WidgetWithInfo rdpHeadline;
+    WidgetWithTooltippedIcon rdpHeadline;
 
     @UiField
     FlowPanel vncPanel;
@@ -325,9 +326,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         rdpInvocationLabel.setText(constants.consoleInvocation());
 
         vncHeadline= new WidgetWithInfo(vncInvocationLabel);
-        vncHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createVncInvocationInfo()));
+        vncHeadline.setIconTooltipText(SafeHtmlUtils.fromTrustedString(createVncInvocationInfo()));
         rdpHeadline= new WidgetWithInfo(rdpInvocationLabel);
-        rdpHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createRdpInvocationInfo()));
+        rdpHeadline.setIconTooltipText(SafeHtmlUtils.fromTrustedString(createRdpInvocationInfo()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);

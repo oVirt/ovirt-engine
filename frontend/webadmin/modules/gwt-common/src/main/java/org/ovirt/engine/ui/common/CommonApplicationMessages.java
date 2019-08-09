@@ -191,5 +191,7 @@ public interface CommonApplicationMessages extends Messages {
             ArchitectureType clusterArch);
 
     String ovaPathInfo();
+
+    String vmGuestCpuTypeWarning(String cpuType);
 }
 
