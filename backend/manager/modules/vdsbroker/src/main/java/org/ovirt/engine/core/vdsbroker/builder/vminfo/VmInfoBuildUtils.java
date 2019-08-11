@@ -895,15 +895,20 @@ public class VmInfoBuildUtils {
     public VmDevice createSysprepPayloadDevice(String sysPrepContent, VM vm) {
         // We do not validate the size of the content being passed to the VM payload by VmPayload.isPayloadSizeLegal().
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
+        boolean cdromPayload = !osRepository.isFloppySupported(vm.getOs(), vm.getCompatibilityVersion());
         VmPayload vmPayload = new VmPayload();
-        vmPayload.setDeviceType(VmDeviceType.FLOPPY);
+        if (cdromPayload) {
+            vmPayload.setDeviceType(VmDeviceType.CDROM);
+        } else {
+            vmPayload.setDeviceType(VmDeviceType.FLOPPY);
+        }
         vmPayload.getFiles().put(
                 osRepository.getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
                 new String(BASE_64.encode(sysPrepContent.getBytes()), StandardCharsets.UTF_8));
 
         return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                 VmDeviceGeneralType.DISK,
-                VmDeviceType.FLOPPY.getName(),
+                cdromPayload ? VmDeviceType.CDROM.getName() : VmDeviceType.FLOPPY.getName(),
                 "",
                 vmPayload.getSpecParams(),
                 true,
