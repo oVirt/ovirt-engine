@@ -1701,7 +1701,7 @@ public class VmDeviceUtils {
     }
 
     private Cluster getCluster(Guid clusterId, Cluster cluster) {
-        return clusterId == cluster.getId() ? cluster : getCluster(clusterId);
+        return cluster != null && clusterId == cluster.getId() ? cluster : getCluster(clusterId);
     }
 
     private Version getVmCompatibilityVersion(VmBase base) {

@@ -1562,8 +1562,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isChipsetChanged() {
-        return getParameters().getVm().getEffectiveBiosType().getChipsetType()
-                != getVm().getEffectiveBiosType().getChipsetType();
+        return getEffectiveBiosType().getChipsetType() != getVm().getEffectiveBiosType().getChipsetType();
     }
 
     @Override

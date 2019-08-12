@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -654,6 +655,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     diskModel.setVolumeType(volumes);
                     VM vm = new VM();
                     vm.setClusterCompatibilityVersion(getCompatibilityVersion());
+                    vm.setClusterBiosType(getSelectedBiosType());
                     diskModel.setVm(vm);
                     break;
                 case CINDER:
@@ -1517,6 +1519,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected Version getCompatibilityVersion() {
         return getModel().getCompatibilityVersion();
+    }
+
+    protected BiosType getSelectedBiosType() {
+        return getModel().getBiosType().getSelectedItem();
     }
 
     protected Version latestCluster() {

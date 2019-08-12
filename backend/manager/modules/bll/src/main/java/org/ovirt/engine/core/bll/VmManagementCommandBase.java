@@ -8,9 +8,11 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
+import org.ovirt.engine.core.bll.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -46,6 +48,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     private InstanceType instanceType;
     private Version effectiveCompatibilityVersion;
+    private BiosType effectiveBiosType;
 
     protected VmManagementCommandBase(Guid commandId) {
         super(commandId);
@@ -63,11 +66,17 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     protected void init() {
         super.init();
         initEffectiveCompatibilityVersion();
+        initEffectiveBiosType();
     }
 
     protected void initEffectiveCompatibilityVersion() {
         setEffectiveCompatibilityVersion(
                 CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getCluster));
+    }
+
+    protected void initEffectiveBiosType() {
+        setEffectiveBiosType(
+                BiosTypeUtils.getEffective(getParameters().getVmStaticData(), this::getCluster));
     }
 
     protected Guid getInstanceTypeId() {
@@ -90,6 +99,14 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
         this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
+    }
+
+    public BiosType getEffectiveBiosType() {
+        return effectiveBiosType;
+    }
+
+    public void setEffectiveBiosType(BiosType effectiveBiosType) {
+        this.effectiveBiosType = effectiveBiosType;
     }
 
     protected VDS getVds(Guid id) {

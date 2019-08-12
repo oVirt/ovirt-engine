@@ -1722,7 +1722,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         boolean isOsSupportedForVirtIoScsi = vmValidationUtils.isDiskInterfaceSupportedByOs(
                 getParameters().getVm().getOs(), getEffectiveCompatibilityVersion(),
-                getParameters().getVm().getEffectiveBiosType().getChipsetType(), DiskInterface.VirtIO_SCSI);
+                getEffectiveBiosType().getChipsetType(), DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;
     }
