@@ -53,7 +53,7 @@ public class BackendEventsResource
 
     private List<AuditLog> getBackendCollection() {
         if (isFiltered()) {
-            return getBackendCollection(QueryType.GetAllEventMessages, new QueryParametersBase());
+            return getBackendCollection(QueryType.GetAllEventMessages, new QueryParametersBase(), SearchType.AuditLog);
         } else {
             return getBackendCollection(SearchType.AuditLog);
         }
