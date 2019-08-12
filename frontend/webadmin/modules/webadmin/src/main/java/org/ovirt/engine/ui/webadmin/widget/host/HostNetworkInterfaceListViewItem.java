@@ -251,7 +251,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     }
 
     private boolean containsOutOfSync(List<HostVLan> logicalNetworks) {
-        return logicalNetworks.stream().anyMatch(v -> isOutOfSync(v.getInterface().getNetworkImplementationDetails()));
+        return logicalNetworks.stream().anyMatch(this::isOutOfSync);
     }
 
     private boolean containsManagement(List<HostVLan> logicalNetworks) {
@@ -318,16 +318,12 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         AbstractIconTypeColumn<HostVLan> sync = new AbstractIconTypeColumn<HostVLan>() {
             @Override
             public IconType getValue(HostVLan logicalNetwork) {
-                if (logicalNetwork != null && logicalNetwork.getInterface() != null &&
-                        isOutOfSync(logicalNetwork.getInterface().getNetworkImplementationDetails())) {
-                    return IconType.CHAIN_BROKEN;
-                }
-                return null;
+                return isOutOfSync(logicalNetwork) ? IconType.CHAIN_BROKEN : null;
             }
 
             @Override
             public SafeHtml getTooltip(HostVLan logicalNetwork) {
-                return SafeHtmlUtils.fromSafeConstant(constants.hostOutOfSync());
+                return isOutOfSync(logicalNetwork) ? SafeHtmlUtils.fromSafeConstant(constants.hostOutOfSync()) : null;
             }
         };
         IconTypeHeader syncHeader = new IconTypeHeader(IconType.CHAIN_BROKEN,
@@ -395,7 +391,12 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         return hostInterface;
     }
 
-    private boolean isOutOfSync(NetworkImplementationDetails networkImplementationDetails) {
+    private boolean isOutOfSync(HostVLan iface) {
+        if (!hasInternalInterface(iface)) {
+            return false;
+        }
+        NetworkImplementationDetails networkImplementationDetails =
+                iface.getInterface().getNetworkImplementationDetails();
         boolean managed = false;
         boolean sync = false;
         if (networkImplementationDetails != null) {
@@ -403,6 +404,10 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
             sync = networkImplementationDetails.isInSync();
         }
         return managed && !sync;
+    }
+
+    private boolean hasInternalInterface(HostVLan iface) {
+        return iface != null && iface.getInterface() != null;
     }
 
     protected IsWidget createManagementStatusPanel() {
