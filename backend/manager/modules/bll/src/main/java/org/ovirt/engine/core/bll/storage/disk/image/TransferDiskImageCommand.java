@@ -262,16 +262,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                         image, teardownImageVdsRetVal.getVdsError());
                 tearDownFailed = true;
             }
-        } else if (getTransferBackend() == ImageTransferBackend.NBD) {
-            NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
-            nbdServerVDSParameters.setServerId(imageTicketId);
-            VDSReturnValue stopNbdServerVdsRetVal = runVdsCommand(VDSCommandType.StopNbdServer,
-                    nbdServerVDSParameters);
-            if (!stopNbdServerVdsRetVal.getSucceeded()) {
-                log.warn("Failed to stop NBD server of image '{}' for image transfer session: {}",
-                        image, stopNbdServerVdsRetVal.getVdsError());
-                tearDownFailed = true;
-            }
         }
 
         if (tearDownFailed) {
@@ -280,6 +270,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             addCustomValue("DiskAlias", image != null ? image.getDiskAlias() : "(unknown)");
             auditLogDirector.log(this, AuditLogType.TRANSFER_IMAGE_TEARDOWN_FAILED);
         }
+    }
+
+    private boolean stopNbdServer(Guid vdsId, Guid imageTicketId) {
+        NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
+        nbdServerVDSParameters.setServerId(imageTicketId);
+        VDSReturnValue stopNbdServerVdsRetVal = runVdsCommand(VDSCommandType.StopNbdServer,
+                nbdServerVDSParameters);
+        if (!stopNbdServerVdsRetVal.getSucceeded()) {
+            log.warn("Failed to stop NBD server for ticket id '{}': {}",
+                    imageTicketId, stopNbdServerVdsRetVal.getVdsError());
+            return false;
+        }
+        return true;
     }
 
     private AddDiskParameters getAddDiskParameters() {
@@ -778,6 +781,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
+            Guid imageTicketId = context.entity.getImagedTicketId();
+
+            // Stopping NBD server if necessary
+            if (getTransferBackend() == ImageTransferBackend.NBD) {
+                stopNbdServer(transferingVdsId, imageTicketId);
+            }
+
             // Verify image is relevant only on upload
             if (getParameters().getTransferType() == TransferType.Download) {
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
@@ -841,6 +851,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             log.info("Cleaning up after cancelled transfer. {}", getTransferDescription());
         }
         stopImageTransferSession(context.entity);
+
+        // Stopping NBD server if necessary
+        if (getTransferBackend() == ImageTransferBackend.NBD) {
+            stopNbdServer(context.entity.getVdsId(), context.entity.getImagedTicketId());
+        }
+
         // Setting disk status to ILLEGAL only on upload failure
         // (only if not disk snapshot)
         if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
