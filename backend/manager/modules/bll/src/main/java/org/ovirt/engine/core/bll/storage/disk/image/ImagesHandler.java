@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
@@ -73,6 +75,8 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.monitoring.FullListAdapter;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +130,9 @@ public class ImagesHandler {
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
+
+    @Inject
+    private FullListAdapter fullListAdapter;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -1001,5 +1008,57 @@ public class ImagesHandler {
                         newStorageDomainID,
                         newImageGroupId,
                         newImageId));
+    }
+
+    public Set<Guid> getVolumeChain(Guid vmId, Guid vdsId, DiskImage activeImage) {
+        Map[] vms = null;
+        try {
+            vms = getVms(vdsId, vmId);
+        } catch (EngineException e) {
+            log.error("Failed to retrieve images list of VM {}.", vmId, e);
+        }
+
+        if (vms == null || vms.length == 0) {
+            log.error("Failed to retrieve VM information");
+            return null;
+        }
+
+        Map vm = vms[0];
+        if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
+            log.error("Received incomplete VM information");
+            return null;
+        }
+
+        Guid receivedVmId = new Guid((String) vm.get(VdsProperties.vm_guid));
+        if (!receivedVmId.equals(vmId)) {
+            log.error("Invalid VM returned when querying status: expected '{}', got '{}'",
+                    vmId, receivedVmId);
+            return null;
+        }
+
+        Set<Guid> images = new HashSet<>();
+        DiskImage activeDiskImage = activeImage;
+        for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
+            Map device = (Map<String, Object>) o;
+            if (VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))
+                    && activeDiskImage.getId().equals(Guid.createGuidFromString(
+                    (String) device.get(VdsProperties.ImageId)))) {
+                Object[] volumeChain = (Object[]) device.get(VdsProperties.VolumeChain);
+                for (Object v : volumeChain) {
+                    Map<String, Object> volume = (Map<String, Object>) v;
+                    images.add(Guid.createGuidFromString((String) volume.get(VdsProperties.VolumeId)));
+                }
+                break;
+            }
+        }
+        return images;
+    }
+
+    private Map[] getVms(Guid vdsId, Guid vmId) {
+        return (Map[]) fullListAdapter.getVmFullList(
+                vdsId,
+                Collections.singletonList(vmId),
+                true)
+                .getReturnValue();
     }
 }
