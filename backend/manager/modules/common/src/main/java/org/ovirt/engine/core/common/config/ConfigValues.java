@@ -648,6 +648,10 @@ public enum ConfigValues {
     DefaultManagementNetwork,
 
     @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    VdsmUseNmstate,
+
+    @Reloadable
     @TypeConverterAttribute(String.class)
     OvirtInitialSupportedIsoVersion,
 
