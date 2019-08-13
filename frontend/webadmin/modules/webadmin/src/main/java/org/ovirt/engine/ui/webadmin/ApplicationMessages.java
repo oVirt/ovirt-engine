@@ -123,5 +123,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String vmStartedWithDifferentName(String runtimeName);
 
     String cpuDeprecationWarning(String cpuType);
+
+    String clusterCpuTypeInfo(String cpuVerb);
 }
 

@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+
+import static org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel.CONFIGURED_CPU_VERB_PROPERTY_CHANGE;
+
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.widget.WidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
@@ -12,11 +16,15 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<ClusterGeneralModel> {
 
@@ -41,6 +49,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider) {
         super(modelProvider, 3, 6);
@@ -83,7 +92,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
                 && glusterSupported));
 
         // properties for virt support
-        formBuilder.addFormItem(new FormItem(constants.cpuTypeCluster(), cpuType, 0, 1, virtSupported)
+        formBuilder.addFormItem(new FormItem(constants.cpuTypeCluster(), createCpuType(), 0, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
         formBuilder.addFormItem(new FormItem(constants.cpuThreadsCluster(), cpuThreads, 1, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
@@ -115,4 +124,31 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         driver.cleanup();
     }
 
+    private Widget createCpuType() {
+        cpuType.getElement().getStyle().setWidth(90, Unit.PCT);
+        cpuType.getElement().getStyle().setPaddingRight(5, Unit.PX);
+
+        WidgetWithInfo cpuTypeWithInfo = new WidgetWithInfo(cpuType);
+        updateCpuTypeInfo(cpuTypeWithInfo);
+
+        getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(CONFIGURED_CPU_VERB_PROPERTY_CHANGE)) {
+                    updateCpuTypeInfo(cpuTypeWithInfo);
+                }
+            }
+        });
+        return cpuTypeWithInfo;
+    }
+
+    private void updateCpuTypeInfo(WidgetWithInfo widgetWithInfo) {
+        if (getModel().getCpuVerb() != null) {
+            widgetWithInfo.setIconVisible(true);
+            String cpuVerb = getModel().getCpuVerb().replace(",", ", ");//$NON-NLS-1$ //$NON-NLS-2$
+            widgetWithInfo.setIconTooltipText(messages.clusterCpuTypeInfo(cpuVerb));
+        } else {
+            widgetWithInfo.setIconVisible(false);
+        }
+    }
 }

@@ -51,6 +51,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private String cpuVerb;
 
+    private String configuredCpuVerb;
+
     private Guid storagePoolId;
 
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
@@ -252,6 +254,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setCpuVerb(String cpuVerb) {
         this.cpuVerb = cpuVerb;
+    }
+
+    public String getConfiguredCpuVerb() {
+        return configuredCpuVerb;
+    }
+
+    public void setConfiguredCpuVerb(String configuredCpuVerb) {
+        this.configuredCpuVerb = configuredCpuVerb;
     }
 
     @Override

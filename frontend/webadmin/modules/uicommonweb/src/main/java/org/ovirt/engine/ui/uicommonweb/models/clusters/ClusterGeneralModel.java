@@ -37,6 +37,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class ClusterGeneralModel extends EntityModel<Cluster> {
 
+    public static final String CONFIGURED_CPU_VERB_PROPERTY_CHANGE = "configuredCpuVerb";//$NON-NLS-1$
+
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
     private Integer noOfVolumesDown;
@@ -149,6 +151,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
     private String name;
     private String description;
     private String cpuType;
+    private String cpuVerb;
     private String dataCenterName;
     private String compatibilityVersion;
     private int memoryOverCommit;
@@ -205,6 +208,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         setName(cluster.getName());
         setDescription(cluster.getDescription());
         setCpuType(cluster.getCpuName());
+        setCpuVerb(cluster.getConfiguredCpuVerb());
         setDataCenterName(cluster.getStoragePoolName());
         setMemoryOverCommit(cluster.getMaxVdsMemoryOverCommit());
         setCpuThreads(cluster.getCountThreadsAsCores());
@@ -613,6 +617,17 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
     public void setCpuType(String cpuType) {
         this.cpuType = cpuType;
+    }
+
+    public String getCpuVerb() {
+        return cpuVerb;
+    }
+
+    public void setCpuVerb(String cpuVerb) {
+        if (!Objects.equals(this.cpuVerb, cpuVerb)) {
+            this.cpuVerb = cpuVerb;
+            onPropertyChanged(new PropertyChangedEventArgs(CONFIGURED_CPU_VERB_PROPERTY_CHANGE));
+        }
     }
 
     public String getDataCenterName() {
