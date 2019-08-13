@@ -437,7 +437,6 @@ public class ClusterValidator {
                 .when(FeatureSupported.isBiosTypeSupported(eCluster.getCompatibilityVersion())
                     && eCluster.getBiosType() != BiosType.CLUSTER_DEFAULT
                     && eCluster.getBiosType() != BiosType.I440FX_SEA_BIOS
-                    && architecture != null
                     && architecture != ArchitectureType.undefined
                     && architecture.getFamily() != ArchitectureType.x86);
     }

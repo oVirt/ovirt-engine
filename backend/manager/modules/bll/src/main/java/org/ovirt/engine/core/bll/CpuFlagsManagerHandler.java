@@ -64,7 +64,7 @@ public class CpuFlagsManagerHandler implements BackendService {
 
     public ArchitectureType getArchitectureByCpuName(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
-        return cpuFlagsManager != null ? cpuFlagsManager.getArchitectureByCpuName(name) : null;
+        return cpuFlagsManager != null ? cpuFlagsManager.getArchitectureByCpuName(name) : ArchitectureType.undefined;
     }
 
     public List<ServerCpu> allServerCpuList(Version ver) {
