@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -20,6 +22,8 @@ import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -55,6 +59,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     private StorageDomainDao storageDomainDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private ImagesHandler imagesHandler;
 
     protected DiskImage newDiskImage;
 
@@ -175,8 +181,11 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected void endWithFailure() {
         revertTasks();
 
+        List<VM> vms = vmDao.getVmsListForDisk(getDestinationDiskImage().getId(), false);
         if (getDestinationDiskImage() != null
-                && !vmDao.getVmsListForDisk(getDestinationDiskImage().getId(), false).isEmpty()) {
+                && !vms.isEmpty()
+                && !isSnapshotUsed(vms.get(0))) {
+
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getImageTemplateId())) {
@@ -191,14 +200,40 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                     imageDao.update(previousSnapshot.getImage());
                 }
             }
-
             // Remove the image from the storage
             runInternalAction(ActionType.DestroyImage,
                     buildDestroyImageParameters(getParameters().getImageGroupID(),
                             Collections.singletonList(getParameters().getImageId())));
+
+            super.endWithFailure();
         }
 
-        super.endWithFailure();
+        if (!getParameters().isLeaveLocked()) {
+            unLockImage();
+        }
+        setSucceeded(true);
+    }
+
+    private boolean isSnapshotUsed(VM vm) {
+        if (vm.getStatus() != VMStatus.Down) {
+            Set<Guid> volumeChain = imagesHandler.getVolumeChain(vm.getId(),
+                    vm.getRunOnVds(),
+                    getDiskImage());
+
+            if (volumeChain == null) {
+                log.warn("Could not retrieve chain, skipping deletion");
+                return true;
+            }
+
+            if (volumeChain.contains(getDiskImage().getImageId())) {
+                log.warn("Image '{}' appears to be in use by VM '{}', skipping deletion",
+                        getDiskImage().getImageId(),
+                        vm.getId());
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList) {

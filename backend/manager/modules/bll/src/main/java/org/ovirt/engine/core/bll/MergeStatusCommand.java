@@ -3,12 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -19,9 +19,7 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -30,8 +28,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.vdsbroker.monitoring.FullListAdapter;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +44,7 @@ public class MergeStatusCommand<T extends MergeParameters>
     @Inject
     private VmDynamicDao vmDynamicDao;
     @Inject
-    private FullListAdapter fullListAdapter;
+    private ImagesHandler imagesHandler;
 
     public MergeStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -72,7 +68,9 @@ public class MergeStatusCommand<T extends MergeParameters>
                 images = getVolumeChainFromRecovery();
             }
         } else {
-            images = getVolumeChain();
+            images = imagesHandler.getVolumeChain(getParameters().getVmId(),
+                                                  getParameters().getVdsId(),
+                                                  getParameters().getActiveImage());
         }
         if (images == null || images.isEmpty()) {
             log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId());
@@ -116,58 +114,6 @@ public class MergeStatusCommand<T extends MergeParameters>
         setSucceeded(true);
         persistCommand(getParameters().getParentCommand(), true);
         setCommandStatus(CommandStatus.SUCCEEDED);
-    }
-
-    private Set<Guid> getVolumeChain() {
-        Map[] vms = null;
-        try {
-            vms = getVms();
-        } catch (EngineException e) {
-            log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId(), e);
-        }
-
-        if (vms == null || vms.length == 0) {
-            log.error("Failed to retrieve VM information");
-            return null;
-        }
-
-        Map vm = vms[0];
-        if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
-            log.error("Received incomplete VM information");
-            return null;
-        }
-
-        Guid vmId = new Guid((String) vm.get(VdsProperties.vm_guid));
-        if (!vmId.equals(getParameters().getVmId())) {
-            log.error("Invalid VM returned when querying status: expected '{}', got '{}'",
-                    getParameters().getVmId(), vmId);
-            return null;
-        }
-
-        Set<Guid> images = new HashSet<>();
-        DiskImage activeDiskImage = getParameters().getActiveImage();
-        for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
-            Map device = (Map<String, Object>) o;
-            if (VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))
-                    && activeDiskImage.getId().equals(Guid.createGuidFromString(
-                    (String) device.get(VdsProperties.ImageId)))) {
-                Object[] volumeChain = (Object[]) device.get(VdsProperties.VolumeChain);
-                for (Object v : volumeChain) {
-                    Map<String, Object> volume = (Map<String, Object>) v;
-                    images.add(Guid.createGuidFromString((String) volume.get(VdsProperties.VolumeId)));
-                }
-                break;
-            }
-        }
-        return images;
-    }
-
-    private Map[] getVms() {
-        return (Map[]) fullListAdapter.getVmFullList(
-                getParameters().getVdsId(),
-                Collections.singletonList(getParameters().getVmId()),
-                true)
-                .getReturnValue();
     }
 
     private Set<Guid> getVolumeChainFromRecovery() {
