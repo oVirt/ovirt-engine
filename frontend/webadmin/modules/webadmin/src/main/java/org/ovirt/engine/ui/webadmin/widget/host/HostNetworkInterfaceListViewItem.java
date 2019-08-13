@@ -255,7 +255,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     }
 
     private boolean containsManagement(List<HostVLan> logicalNetworks) {
-        return logicalNetworks.stream().anyMatch(v -> v.getInterface().getIsManagement());
+        return logicalNetworks.stream().anyMatch(this::isManagementNetwork);
     }
 
     private List<HostVLan> calculateLogicalNetworks(HostInterfaceLineModel entity) {
@@ -297,15 +297,14 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         AbstractIconTypeColumn<HostVLan> management = new AbstractIconTypeColumn<HostVLan>() {
             @Override
             public IconType getValue(HostVLan logicalNetwork) {
-                if (logicalNetwork.getInterface() != null && logicalNetwork.getInterface().getIsManagement()) {
-                    return IconType.INSTITUTION;
-                }
-                return null;
+                return isManagementNetwork(logicalNetwork) ? IconType.INSTITUTION : null;
             }
 
             @Override
             public SafeHtml getTooltip(HostVLan logicalNetwork) {
-                return SafeHtmlUtils.fromSafeConstant(constants.managementNetworkLabel());
+                return isManagementNetwork(logicalNetwork) ?
+                        SafeHtmlUtils.fromSafeConstant(constants.managementNetworkLabel()) :
+                        null;
             }
         };
         IconTypeHeader managementHeader = new IconTypeHeader(IconType.INSTITUTION,
@@ -389,6 +388,10 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         VdsNetworkInterface hostInterface =
                 getEntity().getIsBonded() ? getEntity().getInterface() : getEntity().getInterfaces().get(0).getInterface();
         return hostInterface;
+    }
+
+    private boolean isManagementNetwork(HostVLan iface) {
+        return hasInternalInterface(iface) && iface.getInterface().getIsManagement();
     }
 
     private boolean isOutOfSync(HostVLan iface) {
