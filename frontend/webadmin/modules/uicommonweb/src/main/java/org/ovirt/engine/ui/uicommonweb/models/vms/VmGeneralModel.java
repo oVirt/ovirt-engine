@@ -711,7 +711,11 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                 ? vm.getCpuName()
                 : (vm.getCustomCpuName() != null
                         ? vm.getCustomCpuName()
-                        : vm.getClusterCpuName());
+                        : vm.getClusterCpuVerb());
+
+        if (vm.getCpuName() == null && vm.isUseHostCpuFlags()) {
+            guestCpuType = constants.cpuPassthrough();
+        }
 
         // if cpu-pass through is enabled then guestCpuType includes a list of cpu flags and supported cpu models reported by the host.
         // Need to filter out all supported CPU models from of the list and leave only all cpu flags that the vm is running with
