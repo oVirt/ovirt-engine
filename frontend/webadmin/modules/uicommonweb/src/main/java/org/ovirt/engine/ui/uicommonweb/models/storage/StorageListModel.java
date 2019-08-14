@@ -1464,6 +1464,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
         saveBaseStorageProperties(model);
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
