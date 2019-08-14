@@ -89,7 +89,7 @@ public class SyncDirectLunsCommandTest {
     public void testGetLunsToUpdateInDbWithDirectLunId() {
         command.getParameters().setDeviceList(Arrays.asList(lun1, lun2, lun3));
         mockLunToDiskIdsOfDirectLunsAttachedToVmsInPool(lun1, lun2);
-        command.getParameters().setDirectLunId(lun1.getDiskId());
+        command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
         when(diskLunMapDao.getDiskLunMapByDiskId(lun1.getDiskId())).thenReturn(disk1Lun1Map);
         assertEquals(Collections.singletonList(lun1), command.getLunsToUpdateInDb());
     }
@@ -104,23 +104,23 @@ public class SyncDirectLunsCommandTest {
 
     @Test
     public void validateWithDirectLunIdAndInvalidVds() {
-        command.getParameters().setDirectLunId(Guid.newGuid());
+        command.getParameters().setDirectLunIds(Collections.singleton(Guid.newGuid()));
         doReturn(false).when(command).validateVds();
         assertFalse(command.validate());
     }
 
     @Test
     public void validateWithRandomDirectLunId() {
-        command.getParameters().setDirectLunId(Guid.newGuid());
+        command.getParameters().setDirectLunIds(Collections.singleton(Guid.newGuid()));
         doReturn(true).when(command).validateVds();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void validateWithValidDirectLunId() {
-        command.getParameters().setDirectLunId(lun1.getDiskId());
+        command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
         when(diskLunMapDao.getDiskLunMapByDiskId(any())).thenReturn(disk1Lun1Map);
-        command.getParameters().setDirectLunId(Guid.newGuid());
+        command.getParameters().setDirectLunIds(Collections.singleton(Guid.newGuid()));
         doReturn(true).when(command).validateVds();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }

@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class SyncDirectLunsParameters extends SyncLunsParameters {
 
     private static final long serialVersionUID = -8932897991614156001L;
 
-    private Guid directLunId;
+    private Set<Guid> directLunIds;
 
     public SyncDirectLunsParameters() {
         this(null);
@@ -14,19 +17,20 @@ public class SyncDirectLunsParameters extends SyncLunsParameters {
 
     public SyncDirectLunsParameters(Guid storagePoolId) {
         super(storagePoolId);
+        setDirectLunIds(Collections.emptySet());
     }
 
-    public SyncDirectLunsParameters(Guid vdsId, Guid directLunId) {
+    public SyncDirectLunsParameters(Guid vdsId, Set<Guid> directLunIds) {
         this(Guid.Empty);
         setVdsId(vdsId);
-        setDirectLunId(directLunId);
+        setDirectLunIds(directLunIds);
     }
 
-    public Guid getDirectLunId() {
-        return directLunId;
+    public Set<Guid> getDirectLunIds() {
+        return directLunIds;
     }
 
-    public void setDirectLunId(Guid directLunId) {
-        this.directLunId = directLunId;
+    public void setDirectLunIds(Set<Guid> directLunIds) {
+        this.directLunIds = directLunIds;
     }
 }
