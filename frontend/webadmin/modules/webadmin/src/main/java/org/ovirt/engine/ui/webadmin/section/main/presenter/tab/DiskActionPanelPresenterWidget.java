@@ -76,6 +76,13 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
             }
         });
 
+        addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.refreshLUN()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getRefreshLUNCommand();
+            }
+        });
+
         // Upload operations drop down
         List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
         uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageStart()) {

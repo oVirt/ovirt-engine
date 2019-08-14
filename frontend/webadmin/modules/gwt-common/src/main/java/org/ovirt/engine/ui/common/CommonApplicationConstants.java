@@ -1157,6 +1157,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String assignQuota();
 
+    String refreshLUN();
+
     String increaseNumberOfVMsInPoolBy();
 
     String vms();
