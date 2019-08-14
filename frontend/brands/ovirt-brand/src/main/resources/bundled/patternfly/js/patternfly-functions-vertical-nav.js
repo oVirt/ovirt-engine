@@ -3,16 +3,22 @@
 (function ($) {
   'use strict';
 
-  $.fn.setupVerticalNavigation = function (handleItemSelections) {
+  $.fn.setupVerticalNavigation = function (handleItemSelections, ignoreDrawer, userOptions) {
 
-    var navElement = $('.nav-pf-vertical'),
+    var options = $.extend({
+        hoverDelay: 500,
+        hideDelay: 700,
+        rememberOpenState: true,
+        storage: 'localStorage',
+      }, userOptions || {}),
+
+      navElement = $('.nav-pf-vertical'),
       bodyContentElement = $('.container-pf-nav-pf-vertical'),
       toggleNavBarButton = $('.navbar-toggle'),
       handleResize = true,
       explicitCollapse = false,
       subDesktop = false,
-      hoverDelay = 500,
-      hideDelay = hoverDelay + 200,
+      storageLocation = options.storage === 'sessionStorage' ? 'sessionStorage' : 'localStorage',
 
       inMobileState = function () {
         return bodyContentElement.hasClass('hidden-nav');
@@ -48,6 +54,10 @@
         navElement.find('.mobile-nav-item-pf').each(function (index, item) {
           $(item).removeClass('mobile-nav-item-pf');
         });
+
+        navElement.find('.is-hover').each(function (index, item) {
+          $(item).removeClass('is-hover');
+        });
       },
 
       hideTertiaryMenu = function () {
@@ -60,6 +70,10 @@
 
         navElement.find('.mobile-nav-item-pf').each(function (index, item) {
           $(item).removeClass('mobile-nav-item-pf');
+        });
+
+        navElement.find('.is-hover').each(function (index, item) {
+          $(item).removeClass('is-hover');
         });
       },
 
@@ -249,6 +263,8 @@
 
       bindMenuBehavior = function () {
         toggleNavBarButton.on('click', function (e) {
+          var $drawer;
+
           enableTransitions();
 
           if (inMobileState()) {
@@ -259,12 +275,25 @@
               // Always start at the primary menu
               updateMobileMenu();
               navElement.addClass('show-mobile-nav');
+
+              // If the notification drawer is shown, hide it
+              if (!ignoreDrawer) {
+                $drawer = $('.drawer-pf');
+                if ($drawer.length) {
+                  $('.drawer-pf-trigger').removeClass('open');
+                  $drawer.addClass('hide');
+                }
+              }
             }
           } else if (navElement.hasClass('collapsed')) {
-            window.localStorage.setItem('patternfly-navigation-primary', 'expanded');
+            if (options.rememberOpenState) {
+              window[storageLocation].setItem('patternfly-navigation-primary', 'expanded');
+            }
             expandMenu();
           } else {
-            window.localStorage.setItem('patternfly-navigation-primary', 'collapsed');
+            if (options.rememberOpenState) {
+              window[storageLocation].setItem('patternfly-navigation-primary', 'collapsed');
+            }
             collapseMenu();
           }
         });
@@ -371,12 +400,16 @@
               e.stopImmediatePropagation();
             } else {
               if ($this.hasClass('collapsed')) {
-                window.localStorage.setItem('patternfly-navigation-secondary', 'expanded');
-                window.localStorage.setItem('patternfly-navigation-tertiary', 'expanded');
+                if (options.rememberOpenState) {
+                  window[storageLocation].setItem('patternfly-navigation-secondary', 'expanded');
+                  window[storageLocation].setItem('patternfly-navigation-tertiary', 'expanded');
+                }
                 updateSecondaryCollapsedState(false, $this);
                 forceHideSecondaryMenu();
               } else {
-                window.localStorage.setItem('patternfly-navigation-secondary', 'collapsed');
+                if (options.rememberOpenState) {
+                  window[storageLocation].setItem('patternfly-navigation-secondary', 'collapsed');
+                }
                 updateSecondaryCollapsedState(true, $this);
               }
             }
@@ -397,12 +430,16 @@
                 e.stopImmediatePropagation();
               } else {
                 if ($this.hasClass('collapsed')) {
-                  window.localStorage.setItem('patternfly-navigation-secondary', 'expanded');
-                  window.localStorage.setItem('patternfly-navigation-tertiary', 'expanded');
+                  if (options.rememberOpenState) {
+                    window[storageLocation].setItem('patternfly-navigation-secondary', 'expanded');
+                    window[storageLocation].setItem('patternfly-navigation-tertiary', 'expanded');
+                  }
                   updateTertiaryCollapsedState(false, $this);
                   forceHideSecondaryMenu();
                 } else {
-                  window.localStorage.setItem('patternfly-navigation-tertiary', 'collapsed');
+                  if (options.rememberOpenState) {
+                    window[storageLocation].setItem('patternfly-navigation-tertiary', 'collapsed');
+                  }
                   updateTertiaryCollapsedState(true, $this);
                 }
               }
@@ -428,7 +465,7 @@
                 navElement.addClass('hover-secondary-nav-pf');
                 $this.addClass('is-hover');
                 $this[0].navHoverTimeout = undefined;
-              }, hoverDelay);
+              }, options.hoverDelay);
             }
           }
         });
@@ -438,14 +475,15 @@
           if ($this[0].navHoverTimeout !== undefined) {
             clearTimeout($this[0].navHoverTimeout);
             $this[0].navHoverTimeout = undefined;
-          } else if ($this[0].navUnHoverTimeout === undefined) {
+          } else if ($this[0].navUnHoverTimeout === undefined &&
+              navElement.find('.secondary-nav-item-pf.is-hover').length > 0) {
             $this[0].navUnHoverTimeout = setTimeout(function () {
               if (navElement.find('.secondary-nav-item-pf.is-hover').length <= 1) {
                 navElement.removeClass('hover-secondary-nav-pf');
               }
               $this.removeClass('is-hover');
               $this[0].navUnHoverTimeout = undefined;
-            }, hideDelay);
+            }, options.hideDelay);
           }
         });
 
@@ -461,7 +499,7 @@
                 navElement.addClass('hover-tertiary-nav-pf');
                 $this.addClass('is-hover');
                 $this[0].navHoverTimeout = undefined;
-              }, hoverDelay);
+              }, options.hoverDelay);
             }
           }
         });
@@ -477,7 +515,7 @@
               }
               $this.removeClass('is-hover');
               $this[0].navUnHoverTimeout = undefined;
-            }, hideDelay);
+            }, options.hideDelay);
           }
         });
       },
@@ -487,16 +525,16 @@
           return;
         }
 
-        if (window.localStorage.getItem('patternfly-navigation-primary') === 'collapsed') {
+        if (window[storageLocation].getItem('patternfly-navigation-primary') === 'collapsed') {
           collapseMenu();
         }
 
         if ($('.nav-pf-vertical.nav-pf-vertical-collapsible-menus').length > 0) {
-          if (window.localStorage.getItem('patternfly-navigation-secondary') === 'collapsed') {
+          if (window[storageLocation].getItem('patternfly-navigation-secondary') === 'collapsed') {
             updateSecondaryCollapsedState(true, $('.secondary-nav-item-pf.active [data-toggle=collapse-secondary-nav]'));
           }
 
-          if (window.localStorage.getItem('patternfly-navigation-tertiary') === 'collapsed') {
+          if (window[storageLocation].getItem('patternfly-navigation-tertiary') === 'collapsed') {
             updateTertiaryCollapsedState(true, $('.tertiary-nav-item-pf.active [data-toggle=collapse-tertiary-nav]'));
           }
         }
@@ -533,7 +571,9 @@
         //Set tooltips
         setTooltips();
 
-        loadFromLocalStorage();
+        if (options.rememberOpenState) {
+          loadFromLocalStorage();
+        }
 
         // Show the nav menus
         navElement.removeClass('hide-nav-pf');

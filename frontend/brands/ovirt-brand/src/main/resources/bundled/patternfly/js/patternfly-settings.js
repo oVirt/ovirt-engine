@@ -2,7 +2,7 @@
   'use strict';
 
   var patternfly = {
-    version: "3.26.1",
+    version: "0.0.0-semantically-released",
   };
 
   // definition of breakpoint sizes for tablet and desktop modes
@@ -13,10 +13,13 @@
 
   window.patternfly = patternfly;
 
-})(window);
+})(typeof window !== 'undefined' ? window : global);
 
 (function (window) {
   'use strict';
+
+  // Ensure we are assigning these to the patternfly property of the window argument, and not the implicit global patternfly
+  var patternfly = window.patternfly;
 
   // Util: PatternFly Palette colors
   patternfly.pfPaletteColors = {
@@ -101,18 +104,21 @@
     red400:        '#470000',
     red500:        '#2c0000'
   };
-})(window);
+})(typeof window !== 'undefined' ? window : global);
 
 
 (function (window) {
   'use strict';
 
+  // Ensure we are assigning these to the patternfly property of the window argument, and not the implicit global patternfly
+  var patternfly = window.patternfly;
+
   // Util: PatternFly C3 Chart Defaults
   patternfly.pfSetDonutChartTitle = function (selector, primary, secondary) {
     var donutChartRightTitle = window.d3.select(selector).select('text.c3-chart-arcs-title');
     donutChartRightTitle.text("");
-    donutChartRightTitle.insert('tspan').text(primary).classed('donut-title-big-pf', true).attr('dy', 0).attr('x', 0);
-    donutChartRightTitle.insert('tspan').text(secondary).classed('donut-title-small-pf', true).attr('dy', 20).attr('x', 0);
+    donutChartRightTitle.insert('tspan').text(primary).classed('donut-title-big-pf', true).attr('y', 0).attr('x', 0);
+    donutChartRightTitle.insert('tspan').text(secondary).classed('donut-title-small-pf', true).attr('y', 20).attr('x', 0);
   };
 
   patternfly.pfDonutTooltipContents = function (d, defaultTitleFormat, defaultValueFormat, color) {
@@ -261,6 +267,18 @@
           ]
         };
       },
+      getDefaultRelationshipDonutColors = function () {
+        return {
+          pattern: [
+            patternfly.pfPaletteColors.blue,
+            patternfly.pfPaletteColors.red100,
+            patternfly.pfPaletteColors.orange400,
+            patternfly.pfPaletteColors.green400,
+            patternfly.pfPaletteColors.cyan500,
+            patternfly.pfPaletteColors.gold200,
+          ]
+        };
+      },
       getDefaultDonutTooltip = function () {
         return {
           show: false
@@ -277,6 +295,15 @@
           size: this.getDefaultDonutSize(),
           legend: this.getDefaultDonutLegend(),
           color: this.getDefaultDonutColors(),
+          tooltip: this.getDefaultDonutTooltip()
+        };
+      },
+      getDefaultRelationshipDonutConfig = function (title) {
+        return {
+          donut: this.getDefaultDonut(title),
+          size: this.getDefaultDonutSize(),
+          legend: this.getDefaultDonutLegend(),
+          color: this.getDefaultRelationshipDonutColors(),
           tooltip: this.getDefaultDonutTooltip()
         };
       },
@@ -497,9 +524,11 @@
       getDefaultDonutTooltip: getDefaultDonutTooltip,
       getDefaultDonutLegend: getDefaultDonutLegend,
       getDefaultDonutConfig: getDefaultDonutConfig,
+      getDefaultRelationshipDonutConfig: getDefaultRelationshipDonutConfig,
       getDefaultPie: getDefaultPie,
       getDefaultPieSize: getDefaultPieSize,
       getDefaultPieColors: getDefaultPieColors,
+      getDefaultRelationshipDonutColors: getDefaultRelationshipDonutColors,
       getDefaultPieTooltip: getDefaultPieTooltip,
       getDefaultPieLegend: getDefaultPieLegend,
       getDefaultPieConfig: getDefaultPieConfig,
@@ -526,4 +555,4 @@
       getDefaultSingleAreaConfig: getDefaultSingleAreaConfig
     };
   };
-})(window);
+})(typeof window !== 'undefined' ? window : global);
