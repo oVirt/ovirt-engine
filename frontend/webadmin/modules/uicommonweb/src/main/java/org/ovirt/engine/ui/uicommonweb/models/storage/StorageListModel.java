@@ -1055,16 +1055,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         this.context = context;
 
-        StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
         final PosixStorageModel posixModel = (PosixStorageModel) storageModel;
         path = posixModel.getPath().getEntity();
 
-        storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
-        saveBaseStorageProperties(model);
-        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        setStorageProperties();
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
@@ -1089,15 +1086,12 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         this.context = context;
 
-        StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
         final ManagedBlockStorageModel managedBlockStorageModel = (ManagedBlockStorageModel) storageModel;
 
-        storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
-        saveBaseStorageProperties(model);
-        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        setStorageProperties();
 
         if (isNew) {
             AsyncDataProvider.getInstance().getManagedBlockStorageDomainsByDrivers(new AsyncQuery<>(storages -> {
@@ -1252,19 +1246,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     private void saveNfsStorage(TaskContext context) {
         this.context = context;
 
-        StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getCurrentStorageItem();
         final NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
         path = nfsModel.getPath().getEntity();
 
-        storageDomain =
-                isNew ? new StorageDomainStatic()
-                        : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
-
-        saveBaseStorageProperties(model);
-        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        setStorageProperties();
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
@@ -1448,16 +1436,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 }, this);
     }
 
-    private void saveLocalStorage(TaskContext context) {
-        this.context = context;
-
+    private void setStorageProperties() {
         StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
-        VDS host = model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
-        storageModel = model.getCurrentStorageItem();
-        LocalStorageModel localModel = (LocalStorageModel) storageModel;
-        path = localModel.getPath().getEntity();
 
         storageDomain =
                 isNew ? new StorageDomainStatic()
@@ -1465,6 +1447,19 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         saveBaseStorageProperties(model);
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+    }
+
+    private void saveLocalStorage(TaskContext context) {
+        this.context = context;
+
+        StorageModel model = (StorageModel) getWindow();
+        VDS host = model.getHost().getSelectedItem();
+        boolean isNew = model.getStorage() == null;
+        storageModel = model.getCurrentStorageItem();
+        LocalStorageModel localModel = (LocalStorageModel) storageModel;
+        path = localModel.getPath().getEntity();
+
+        setStorageProperties();
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery<>(storages -> {
