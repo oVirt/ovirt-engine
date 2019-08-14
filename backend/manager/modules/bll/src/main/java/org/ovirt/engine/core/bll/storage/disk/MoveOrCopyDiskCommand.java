@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -268,8 +267,15 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return true;
         }
 
+        List<Guid> sdsToValidate = new ArrayList<>();
+        sdsToValidate.add(getStorageDomainId());
+
+        if (getActionType() == ActionType.LiveMigrateDisk) {
+            sdsToValidate.add(getParameters().getSourceDomainId());
+        }
+
         MultipleStorageDomainsValidator storageDomainsValidator =
-                createMultipleStorageDomainsValidator();
+                createMultipleStorageDomainsValidator(sdsToValidate);
 
         if (validate(storageDomainsValidator.allDomainsWithinThresholds())) {
             // If we are copying a template's disk we do not want all its copies
@@ -705,9 +711,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 diskVmElementDao.getAllDiskVmElementsByDiskId(getParameters().getImageGroupID()));
     }
 
-    public MultipleStorageDomainsValidator createMultipleStorageDomainsValidator() {
-        return new MultipleStorageDomainsValidator(getStoragePoolId(),
-                Arrays.asList(getStorageDomainId(), getParameters().getSourceDomainId()));
+    public MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(List<Guid> sdsToValidate) {
+        return new MultipleStorageDomainsValidator(getStoragePoolId(), sdsToValidate);
     }
 
     private boolean isMoveOperation() {
