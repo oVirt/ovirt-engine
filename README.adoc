@@ -117,6 +117,13 @@ accessible from the outside. For example, on fedora:
     firewall-cmd --add-port=8080/tcp --permanent
     firewall-cmd --add-port=8443/tcp --permanent
     firewall-cmd --add-port=8787/tcp --permanent
+
+If you also want to connect to the database from the outside:
+
+   firewall-cmd --add-port=5432/tcp --permanent
+
+Finally, apply changes using:
+
     firewall-cmd --reload
 
 If compiling in a virtual machine, javac might experience difficulties on guests with dynamically growing RAM so it's
@@ -140,6 +147,8 @@ Locate `pg_hba.conf` within your distribution, common locations are:
 Within `pg_hba.conf` set method to `password` for `127.0.0.1/32` and
 `::1/128` for IPv4 and IPv6 local connections correspondingly.
 
+If you want to make postgres accessible from the outside, change `127.0.0.1/32` to `0.0.0.0/0` and `::1/128` to `::/0`.
+
 Tune PostgreSQL configuration:
 Locate `postgresql.conf` within your distribution, common locations are:
 
@@ -147,13 +156,18 @@ Locate `postgresql.conf` within your distribution, common locations are:
 - `/etc/postgresql*`
 - `/var/opt/rh/rh-postgresql10/lib/pgsql/data/postgresql.conf` (el7 with rh-postgresql10)
 
-Within `postgresql.conf` set:
+Within `postgresql.conf` make sure following values are set:
 
+  max_connections = 150
+  work_mem = 8MB
+  autovacuum_max_workers = 6
   autovacuum_vacuum_scale_factor = 0.01
   autovacuum_analyze_scale_factor = 0.075
-  autovacuum_max_workers = 6
-  max_connections = 150
-  work_mem = 8192
+  maintenance_work_mem = 64MB
+
+If you want to connect from the outside, set also:
+
+  listen_addresses = '*'
 
 Enable and start (`systemctl enable rh-postgresql10-postgresql --now`) or restart the PostgreSQL service
 (`systemctl restart rh-postgresql10-postgresql` for the SCL one).
@@ -169,10 +183,14 @@ work to create a user named `engine` that owns database named `engine`:
   template1=# drop database engine;
   template1=# create database engine owner engine template template0
   encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
+  template1=# \q
 
 Enable uuid-ossp extension for the database:
 
- su - postgres -c "psql -d engine -c \"CREATE EXTENSION \\\"uuid-ossp\\\";\""
+  # su - postgres -c "psql -d engine" # if on fedora or
+  # su - postgres -c "scl enable rh-postgresql10 -- psql -d engine" # if on el7 with rh-postgresql10
+  engine=# CREATE EXTENSION "uuid-ossp";
+  engine=# \q
 
 == Development
 
@@ -326,6 +344,8 @@ set to empty string. Default is
 To setup the product use the following command:
 
   $ "${PREFIX}/bin/engine-setup"
+
+NOTE: If on el7, make sure you run `scl enable rh-postgresql10 bash` first.
 
 During engine setup, a certificate has to be issued and you will be asked for a hostname. If you want to use
 imageio-proxy along with the engine, it has to be the name by which your machine is accessible from the outside.
