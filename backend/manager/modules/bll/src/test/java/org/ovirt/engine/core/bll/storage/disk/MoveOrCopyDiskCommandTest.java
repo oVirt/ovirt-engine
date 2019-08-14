@@ -414,7 +414,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         when(vmDao.get(any())).thenReturn(vm);
 
-        doReturn(multipleStorageDomainsValidator).when(command).createMultipleStorageDomainsValidator();
+        doReturn(multipleStorageDomainsValidator).when(command).createMultipleStorageDomainsValidator(any());
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
         doReturn(diskValidator).when(command).createDiskValidator(disk);
         doReturn(diskImagesValidator).when(command).createDiskImagesValidator(disk);
