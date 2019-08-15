@@ -371,6 +371,11 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
         ServerCpu resultCpu = new ServerCpu();
         resultCpu.setCpuName("cpu");
         when(cpuFlagsManagerHandler.findMaxServerCpuByFlags("flag", Version.getLast())).thenReturn(resultCpu);
+        ServerCpu resultCpu2 = new ServerCpu();
+        ServerCpu resultCpu3 = new ServerCpu();
+        ServerCpu resultCpu4 = new ServerCpu();
+        when(cpuFlagsManagerHandler.findServerCpusByFlags("flag", Version.getLast()))
+                .thenReturn(java.util.Arrays.asList(resultCpu, resultCpu2, resultCpu3, resultCpu4));
     }
 
     @Test

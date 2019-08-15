@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
+import static org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel.SUPPORTED_CPUS_PROPERTY_CHANGE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
@@ -12,6 +16,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
+import org.ovirt.engine.ui.common.widget.WidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
@@ -19,11 +24,14 @@ import org.ovirt.engine.ui.common.widget.label.BooleanTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.MemorySizeTextBoxLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostGeneralSubTabPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
@@ -39,6 +47,7 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -58,6 +67,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Path("IScsiInitiatorName")
     StringValueLabel iScsiInitiatorName = new StringValueLabel();
@@ -237,7 +247,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
 
         hardwareFormBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 0, 1), 4, 8);
         hardwareFormBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 1, 1), 4, 8);
-        hardwareFormBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 2, 1), 4, 8);
+        hardwareFormBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), createCpuType(), 2, 1), 4, 8);
         hardwareFormBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 3, 1), 4, 8);
 
         hardwareFormBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2), 4, 8);
@@ -402,5 +412,47 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
                 hbaInventory.add(hbaFormPanel);
             }
         }
+    }
+
+    private Widget createCpuType() {
+        cpuType.getElement().getStyle().setWidth(90, Unit.PCT);
+        cpuType.getElement().getStyle().setPaddingRight(5, Unit.PX);
+
+        WidgetWithInfo cpuTypeWithInfo = new WidgetWithInfo(cpuType);
+        updateCpuTypeInfo(cpuTypeWithInfo, getDetailModel().getSupportedCpus());
+
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(SUPPORTED_CPUS_PROPERTY_CHANGE)) {
+                    updateCpuTypeInfo(cpuTypeWithInfo, getDetailModel().getSupportedCpus());
+                }
+            }
+        });
+        return cpuTypeWithInfo;
+    }
+
+    private void updateCpuTypeInfo(WidgetWithInfo widgetWithInfo, List<String> supportedCpus) {
+        if (supportedCpus == null || supportedCpus.isEmpty()) {
+            widgetWithInfo.setIconVisible(false);
+            return;
+        }
+
+        List<String> otherCpus = new ArrayList<>(supportedCpus);
+        otherCpus.remove(0);
+
+        String tooltip;
+        if (otherCpus.isEmpty()) {
+            tooltip = constants.noSupportedCpusInfo();
+            widgetWithInfo.setIconTooltipMaxWidth(TooltipWidth.W220);
+        } else {
+            tooltip = constants.supportedCpusInfo();
+            String listItems = otherCpus.stream().map(cpu -> templates.listItem(cpu).asString()).collect(Collectors.joining());
+            tooltip = templates.unorderedListWithTitle(tooltip, SafeHtmlUtils.fromTrustedString(listItems)).asString();
+            widgetWithInfo.setIconTooltipMaxWidth(TooltipWidth.W520);
+        }
+
+        widgetWithInfo.setIconTooltipText(SafeHtmlUtils.fromTrustedString(tooltip));
+        widgetWithInfo.setIconVisible(true);
     }
 }

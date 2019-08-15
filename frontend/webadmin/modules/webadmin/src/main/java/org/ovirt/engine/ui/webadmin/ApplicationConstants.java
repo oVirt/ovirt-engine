@@ -3524,4 +3524,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String clusterHasHostWithMissingCpuFlagsWarning();
 
     String vmCpuTypeDoesNotMatchClusterCpuType();
+
+    String supportedCpusInfo();
+
+    String noSupportedCpusInfo();
 }

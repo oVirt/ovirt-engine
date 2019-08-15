@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UserSession;
@@ -268,8 +269,15 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     private List<VDS> searchVDSsByDb() {
         List<VDS> data = genericSearch(vdsDao, true);
         for (VDS vds : data) {
-            vds.setCpuName(cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
-                    vds.getClusterCompatibilityVersion()));
+            List<ServerCpu> supportedCpus = cpuFlagsManagerHandler.findServerCpusByFlags(
+                    vds.getCpuFlags(),
+                    vds.getClusterCompatibilityVersion());
+
+            vds.setSupportedCpus(supportedCpus.stream().map(cpu -> cpu.getCpuName()).collect(Collectors.toList()));
+            if (!supportedCpus.isEmpty()) {
+                vds.setCpuName(supportedCpus.get(0));
+            }
+
             List<String> missingFlags = cpuFlagsManagerHandler.missingServerCpuFlags(
                     vds.getClusterCpuName(),
                     vds.getCpuFlags(),

@@ -125,6 +125,13 @@ public class CpuFlagsManagerHandler implements BackendService {
         return cpuFlagsManager != null ? cpuFlagsManager.findMaxServerCpuByFlags(flags) : null;
     }
 
+    /**
+     * Finds all server cpus matching the specified cpu flags
+     */
+    public List<ServerCpu> findServerCpusByFlags(String flags, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = managersDictionary.get(ver);
+        return cpuFlagsManager != null ? cpuFlagsManager.findServerCpusByFlags(flags) : Collections.emptyList();
+    }
 
     public Version getLatestDictionaryVersion() {
         return Collections.max(managersDictionary.keySet());
@@ -401,43 +408,42 @@ public class CpuFlagsManagerHandler implements BackendService {
          * Finds max server cpu by server cpu flags only
          */
         public ServerCpu findMaxServerCpuByFlags(String flags) {
-            ServerCpu result = null;
+            List<ServerCpu> allCpus = findServerCpusByFlags(flags);
+            return allCpus.isEmpty() ? null : allCpus.get(0);
+        }
+
+        public List<ServerCpu> findServerCpusByFlags(String flags) {
+            List<ServerCpu> foundCpus = new ArrayList<>();
             Set<String> lstFlags = StringUtils.isEmpty(flags) ? new HashSet<>()
                     : new HashSet<>(parseFlags(flags));
 
             if (lstFlags.contains(CpuVendor.INTEL.getFlag())) {
                 for (int i = intelCpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(intelCpuList.get(i), lstFlags)) {
-                        result = intelCpuList.get(i);
-                        break;
+                        foundCpus.add(intelCpuList.get(i));
                     }
                 }
             } else if (lstFlags.contains(CpuVendor.AMD.getFlag())) {
                 for (int i = amdCpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(amdCpuList.get(i), lstFlags)) {
-                        result = amdCpuList.get(i);
-                        break;
+                        foundCpus.add(amdCpuList.get(i));
                     }
                 }
             } else if (lstFlags.contains(CpuVendor.IBM.getFlag())) {
                 for (int i = ibmCpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(ibmCpuList.get(i), lstFlags)) {
-                        result = ibmCpuList.get(i);
-                        break;
+                        foundCpus.add(ibmCpuList.get(i));
                     }
                 }
             } else if (lstFlags.contains(CpuVendor.IBMS390.getFlag())) {
                 for (int i = s390CpuList.size() - 1; i >= 0; i--) {
                     if (checkIfFlagsContainsCpuFlags(s390CpuList.get(i), lstFlags)) {
-                        result = s390CpuList.get(i);
-                        break;
+                        foundCpus.add(s390CpuList.get(i));
                     }
                 }
             }
-            return result;
+            return foundCpus;
         }
-
-
 
 
         /**

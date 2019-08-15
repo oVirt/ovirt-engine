@@ -50,7 +50,10 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
      * Flags that are required by the CPU configuration but are missing on the host
      */
     private Set<String> cpuFlagsMissing;
-
+    /**
+     * Cpu names that are supported by this host. The list is ordered - see CpuFlagsManager for details.
+     */
+    private List<String> supportedCpus;
     /**
      * Maximal memory available for scheduling a new VM in MiB. This is a dynamic field
      * that is recomputed every time one of the inputs changes.
@@ -81,6 +84,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         networkNames = new HashSet<>();
         fenceAgents = new LinkedList<>();
         cpuFlagsMissing = new HashSet<>();
+        supportedCpus = new ArrayList<>();
     }
 
     @Override
@@ -257,6 +261,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setClusterSmtDisabled(isClusterSmtDisabled());
         vds.setTscFrequency(getTscFrequency());
         vds.setCpuFlagsMissing(getCpuFlagsMissing());
+        vds.setSupportedCpus(getSupportedCpus());
         return vds;
     }
 
@@ -1799,6 +1804,18 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
             this.cpuFlagsMissing = new HashSet<>();
         } else {
             this.cpuFlagsMissing = cpuFlagsMissing;
+        }
+    }
+
+    public List<String> getSupportedCpus() {
+        return supportedCpus;
+    }
+
+    public void setSupportedCpus(List<String> supportedCpus) {
+        if (supportedCpus == null) {
+            this.supportedCpus = new ArrayList<>();
+        } else {
+            this.supportedCpus = supportedCpus;
         }
     }
 }

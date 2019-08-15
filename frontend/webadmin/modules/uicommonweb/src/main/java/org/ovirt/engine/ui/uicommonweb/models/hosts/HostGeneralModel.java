@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel<VDS> {
+    public static final String SUPPORTED_CPUS_PROPERTY_CHANGE = "supportedCpus"; //$NON-NLS-1$
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -751,6 +753,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         this.missingCpuFlags = missingCpuFlags;
     }
 
+    private List<String> supportedCpus;
+
+    public List<String> getSupportedCpus() {
+        return supportedCpus;
+    }
+
+    public void setSupportedCpus(List<String> supportedCpus) {
+        if (!Objects.equals(this.supportedCpus, supportedCpus)) {
+            this.supportedCpus = supportedCpus;
+            onPropertyChanged(new PropertyChangedEventArgs(SUPPORTED_CPUS_PROPERTY_CHANGE)); //$NON-NLS-1$
+        }
+    }
+
     private NonOperationalReason nonOperationalReasonEntity;
 
     public NonOperationalReason getNonOperationalReasonEntity() {
@@ -1113,8 +1128,9 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasSmtDiscrepancyAlert(getEntity() != null && getEntity().hasSmtDiscrepancyAlert());
         setHasSmtClusterDiscrepancyAlert(getEntity() != null && getEntity().hasSmtClusterDiscrepancyAlert());
 
-        // Set missing CPU flags
+        // Set cpu information
         setMissingCpuFlags(getEntity() == null ? null : getEntity().getCpuFlagsMissing());
+        setSupportedCpus(getEntity().getSupportedCpus());
 
         setNonOperationalReasonEntity(getEntity().getNonOperationalReason() == NonOperationalReason.NONE ?
                 null : getEntity().getNonOperationalReason());
