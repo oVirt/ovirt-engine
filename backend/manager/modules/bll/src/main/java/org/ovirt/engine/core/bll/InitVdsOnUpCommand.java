@@ -107,6 +107,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private HostedEngineHelper hostedEngineHelper;
+    @Inject
+    private ClusterCpuFlagsManager clusterCpuFlagsManager;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -143,6 +145,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         Cluster cluster = getCluster();
 
         boolean initSucceeded = true;
+
+        // make sure the CPU flags are stored in the DB
+        vdsDynamicDao.updateCpuFlags(getVds().getId(), getVds().getCpuFlags());
+        clusterCpuFlagsManager.updateClusterCpuFlags(getCluster());
 
         initHostKdumpDetectionStatus();
 
