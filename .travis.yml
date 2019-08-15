@@ -6,9 +6,9 @@ services:
   - postgresql
 install: true
 before_script:
-  - psql -U travis -c "CREATE USER engine_test WITH PASSWORD 'test';"
-  - psql -U travis -d template1 -c "CREATE DATABASE engine_dao_tests OWNER engine_test;"
-  - psql -U travis -d engine_dao_tests -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
+  - psql -U travis -h localhost -p 5433 -c "CREATE USER engine_test WITH PASSWORD 'test';"
+  - psql -U travis -h localhost -p 5433 -d template1 -c "CREATE DATABASE engine_dao_tests OWNER engine_test;"
+  - psql -U travis -h localhost -p 5433 -d engine_dao_tests -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
   - sudo rm -rf /etc/securetty  # Work around ServletUtilsTest test
 script:
   - "PGPASSWORD=\"test\" ./packaging/dbscripts/schema.sh -d engine_dao_tests -u engine_test -s localhost -p 5433 -c apply"
