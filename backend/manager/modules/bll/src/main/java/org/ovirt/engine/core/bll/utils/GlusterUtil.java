@@ -471,4 +471,27 @@ public class GlusterUtil {
         return GlusterStatus.UNKNOWN;
     }
 
+    /**
+     * Returns GlusterStatus for checking id gluster service is running
+     *
+     * @param vdsId
+     *            input Guid
+     * @return GlusterStatus
+     */
+    public GlusterStatus isGlusterRunning(Guid vdsId) {
+        VDSReturnValue result = resourceManager.runVdsCommand(VDSCommandType.ManageGlusterService,
+                new GlusterServiceVDSParameters(vdsId, Arrays.asList("glusterd"), "status"));
+
+        if (result.getSucceeded()) {
+            @SuppressWarnings("unchecked")
+            ArrayList<GlusterServerService> serviceList = (ArrayList<GlusterServerService>) result.getReturnValue();
+            if (serviceList != null && !serviceList.isEmpty()) {
+                return serviceList.get(0).getStatus().getStatusMsg().equalsIgnoreCase("up")
+                        ? GlusterStatus.UP
+                        : GlusterStatus.DOWN;
+            }
+        }
+        return GlusterStatus.UNKNOWN;
+    }
+
 }

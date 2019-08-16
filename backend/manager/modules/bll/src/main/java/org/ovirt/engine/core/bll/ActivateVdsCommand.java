@@ -76,8 +76,27 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
                 // Start glusterd service on the node, which would haven been stopped due to maintenance
                 if (vds.getClusterSupportsGlusterService()) {
-                    runVdsCommand(VDSCommandType.ManageGlusterService,
-                            new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
+                    // Check gluster service running status
+                    GlusterStatus isGlusterRunning = glusterUtil.isGlusterRunning(vds.getId());
+                    switch(isGlusterRunning) {
+                    case DOWN:
+                        log.info("Gluster service on host '{}' is down, starting it",
+                                vds.getHostName());
+                        runVdsCommand(VDSCommandType.ManageGlusterService,
+                                new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "start"));
+                        break;
+                    case UP:
+                        log.debug("Gluster service on host '{}' is up, continuing",
+                                vds.getHostName());
+                           break;
+                    case UNKNOWN:
+                        log.warn("Gluster service on host '{}' has some issues, trying to restart it",
+                                vds.getHostName());
+                        runVdsCommand(VDSCommandType.ManageGlusterService,
+                                new GlusterServiceVDSParameters(vds.getId(), Arrays.asList("glusterd"), "restart"));
+                        break;
+                    }
+
                     // starting vdo service
                     GlusterStatus isRunning = glusterUtil.isVDORunning(vds.getId());
                     switch (isRunning) {
