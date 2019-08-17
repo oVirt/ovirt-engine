@@ -9,9 +9,20 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -25,12 +36,32 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmHandlerTest {
+
+    @Mock
+    private ManagedScheduledExecutorService executor;
+
+    @Spy
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
+
+    @InjectMocks
     private VmHandler vmHandler = new VmHandler();
+
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.WindowsGuestAgentUpdateCheckInternal, 180),
+                MockConfigDescriptor.of(ConfigValues.GuestToolsSetupIsoPrefix, ".*rhe?v-toolssetup_"));
+    }
 
     @BeforeEach
     public void setUp() {
@@ -210,7 +241,7 @@ public class VmHandlerTest {
         isoNames.add("Rhev-toolSsetup_4.2_5.iso");
 
         // When
-        String latestVersion = VmHandler.getLatestGuestToolsVersion(isoNames);
+        String latestVersion = vmHandler.getLatestGuestToolsVersion(isoNames);
 
         // Then
         assertEquals(latestVersion, "4.2.8");

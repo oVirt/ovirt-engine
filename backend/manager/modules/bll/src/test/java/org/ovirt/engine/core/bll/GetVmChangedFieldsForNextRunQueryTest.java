@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class GetVmChangedFieldsForNextRunQueryTest
 
     @BeforeEach
     public void init() {
+        doNothing().when(vmHandler).enableVmsToolVersionCheck();
         vmHandler.init();
         mockVmPropertiesUtils();
     }

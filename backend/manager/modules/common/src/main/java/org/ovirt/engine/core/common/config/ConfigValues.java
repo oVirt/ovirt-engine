@@ -751,6 +751,9 @@ public enum ConfigValues {
     VmPoolMonitorMaxAttempts,
 
     @TypeConverterAttribute(Integer.class)
+    WindowsGuestAgentUpdateCheckInternal,
+
+    @TypeConverterAttribute(Integer.class)
     PayloadSize,
 
     @TypeConverterAttribute(Integer.class)

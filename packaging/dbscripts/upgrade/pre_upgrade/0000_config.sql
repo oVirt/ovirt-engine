@@ -541,6 +541,7 @@ select fn_db_add_config_value('VdsRecoveryTimeoutInMinutes','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
+select fn_db_add_config_value('WindowsGuestAgentUpdateCheckInternal', '180', 'general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value_for_versions_up_to('VM32BitMaxMemorySizeInMB','20480','4.4');
 select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4194304','4.4');

@@ -13,22 +13,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -50,6 +54,8 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.TransientField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -74,6 +80,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -103,8 +110,10 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -114,6 +123,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -144,6 +154,9 @@ public class VmHandler implements BackendService {
     private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
+
+    @Inject
     private VdsDao vdsDao;
 
     @Inject
@@ -165,10 +178,16 @@ public class VmHandler implements BackendService {
     private DiskDao diskDao;
 
     @Inject
+    private DiskImageDao diskImageDao;
+
+    @Inject
     private DiskVmElementDao diskVmElementDao;
 
     @Inject
     private SnapshotDao snapshotDao;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     @Inject
     protected SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
@@ -184,6 +203,10 @@ public class VmHandler implements BackendService {
 
     @Inject
     private OsRepository osRepository;
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     private ObjectIdentityChecker updateVmsStatic;
 
@@ -234,8 +257,32 @@ public class VmHandler implements BackendService {
                 updateVmsStatic.addHostedEngineFields(fieldName);
             }
         }
+        enableVmsToolVersionCheck();
     }
 
+    void enableVmsToolVersionCheck() {
+        executor.scheduleWithFixedDelay(this::performToolsVersionCheck,
+                Config.<Integer>getValue(ConfigValues.WindowsGuestAgentUpdateCheckInternal),
+                Config.<Integer>getValue(ConfigValues.WindowsGuestAgentUpdateCheckInternal),
+                TimeUnit.SECONDS);
+    }
+
+    private void performToolsVersionCheck() {
+        try {
+            List<StoragePool> storagePools = storagePoolDao.getAllByStatus(StoragePoolStatus.Up);
+            for (StoragePool sp : storagePools) {
+                Guid storagePoolId = sp.getId();
+                // If ISO Domains is active on the SP, the IsoDomainListSynchronizer will have interval check
+                // therefore we skip the check here.
+                if (isoDomainListSynchronizer.findActiveISODomain(storagePoolId) == null) {
+                    refreshVmsToolsVersion(storagePoolId, Set.of());
+                }
+            }
+        } catch (Throwable t){
+            log.error("Exception while checking guest tools version: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
     public boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
         return source.isManagedHostedEngine() ?
                 updateVmsStatic.isHostedEngineUpdateValid(source, destination)
@@ -1019,10 +1066,6 @@ public class VmHandler implements BackendService {
     private static final Pattern TOOLS_PATTERN_1 = Pattern.compile("rhev-tools\\s+([\\d\\.]+)");
     private static final Pattern TOOLS_PATTERN_2 = Pattern.compile("ovirt guest tools\\s+([\\d\\.-]+)");
     private static final Pattern QEMU_GA_PATTERN = Pattern.compile("(?i:qemu-guest-agent-|QEMU guest agent)");
-    // FIXME: currently oVirt-ToolsSetup is not present in app_list when it does
-    // ISO_VERSION_PATTERN should address this pattern as well as the TOOLS_PATTERN
-    // if the name will be different.
-    private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhe?v-toolssetup_(\\d\\.\\d\\_\\d).*");
 
     private void updateOvirtGuestAgentStatus(VM vm, GuestAgentStatus ovirtGuestAgentStatus) {
         if (vm.getOvirtGuestAgentStatus() != ovirtGuestAgentStatus) {
@@ -1048,7 +1091,10 @@ public class VmHandler implements BackendService {
      *            list of iso file names
      */
     public void refreshVmsToolsVersion(Guid poolId, Set<String> isoList) {
-        String latestVersion = getLatestGuestToolsVersion(isoList);
+        Set<String> isoNamesAsSet = diskImageDao.getIsoDisksForStoragePoolAsRepoImages(poolId).stream()
+                .map(RepoImage::getRepoImageName).collect(Collectors.toSet());
+        isoNamesAsSet.addAll(isoList);
+        String latestVersion = getLatestGuestToolsVersion(isoNamesAsSet);
         if (latestVersion == null) {
             return;
         }
@@ -1111,12 +1157,15 @@ public class VmHandler implements BackendService {
      *            list of iso file names
      * @return latest iso version or null if no iso tools was found
      */
-    protected static String getLatestGuestToolsVersion(Set<String> isoList) {
-        String latestVersion = null;
+    protected String getLatestGuestToolsVersion(Set<String> isoList) {
+        Version latestVersion = null;
+        Pattern toolsPattern = Pattern.compile(isoDomainListSynchronizer.getRegexToolPattern());
         for (String iso: isoList) {
-            Matcher m = ISO_VERSION_PATTERN.matcher(iso.toLowerCase());
-            if (m.matches() && m.groupCount() > 0) {
-                String isoVersion = m.group(1).replace('_', '.');
+            Matcher m = toolsPattern.matcher(iso.toLowerCase());
+            if (m.find()) {
+                Version isoVersion = new Version(String.join(".",
+                        m.group(IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL),
+                        m.group(IsoDomainListSynchronizer.TOOL_VERSION)));
                 if (latestVersion == null) {
                     latestVersion = isoVersion;
                 } else if (latestVersion.compareTo(isoVersion) < 0) {
@@ -1124,7 +1173,7 @@ public class VmHandler implements BackendService {
                 }
             }
         }
-        return latestVersion;
+        return latestVersion != null ? latestVersion.toString() : null;
     }
 
     /**

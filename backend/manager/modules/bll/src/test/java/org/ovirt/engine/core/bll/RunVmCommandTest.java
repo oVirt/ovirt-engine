@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,6 +35,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
@@ -71,8 +73,10 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
 
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RunVmCommandTest extends BaseCommandTest {
     /**
@@ -321,6 +325,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(anyInt())).thenReturn(false);
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
+        doNothing().when(vmHandler).enableVmsToolVersionCheck();
         vmHandler.init();
 
         mockSuccessfulRunVmValidator();
