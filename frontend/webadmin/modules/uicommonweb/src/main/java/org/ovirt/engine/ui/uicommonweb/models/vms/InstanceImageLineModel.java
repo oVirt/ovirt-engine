@@ -81,7 +81,8 @@ public class InstanceImageLineModel extends EntityModel {
         String diskName = disk.getDiskAlias();
         String size = Long.toString(disk.getSize());
 
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER
+                || disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
             size = Long.toString(((DiskImage) disk).getSizeInGigabytes());
         }
 
@@ -285,7 +286,9 @@ public class InstanceImageLineModel extends EntityModel {
                     fillData();
 
                     Disk disk = super.getDisk();
-                    if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                    if (disk.getDiskStorageType() == DiskStorageType.IMAGE
+                            || disk.getDiskStorageType() == DiskStorageType.CINDER
+                            || disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
                         ((DiskImage) disk).setActive(true);
                     }
                 }
