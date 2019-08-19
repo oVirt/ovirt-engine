@@ -479,6 +479,14 @@ public abstract class AbstractDiskModel extends DiskModel {
                 }
 
                 getDataCenter().setItems(filteredDataCenters);
+                if (!getIsNew()) {
+                    if (getDiskStorageType().getEntity() != DiskStorageType.LUN) {
+                        getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
+                                new Linq.IdPredicate<>(getDiskImage().getStoragePoolId())));
+                    } else {
+                        getDataCenter().setIsAvailable(false);
+                    }
+                }
 
                 if (filteredDataCenters.isEmpty()) {
                     setMessage(constants.noActiveDataCenters());

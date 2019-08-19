@@ -116,7 +116,7 @@ public class InstanceImageLineModel extends EntityModel {
             return;
         }
 
-        final AbstractDiskModel model = new EditDiskModel() {
+        final AbstractDiskModel model = new EditVmDiskModel() {
             @Override
             public void onSave() {
                 if (validate()) {

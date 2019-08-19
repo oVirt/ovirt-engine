@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class ReadOnlyDiskModel extends EditDiskModel {
+public class ReadOnlyDiskModel extends EditVmDiskModel {
 
     @Override
     public void initialize() {

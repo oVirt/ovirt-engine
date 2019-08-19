@@ -266,7 +266,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             return;
         }
 
-        EditDiskModel model = new EditDiskModel();
+        EditVmDiskModel model = new EditVmDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
         model.setHelpTag(HelpTag.edit_virtual_disk);
         model.setHashName("edit_virtual_disk"); //$NON-NLS-1$

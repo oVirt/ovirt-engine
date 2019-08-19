@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.EditVmDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportTemplatesPopupPresenterWidget;
@@ -102,7 +102,7 @@ public class TemplateModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getCreateVmFromTemplateCommand()) {
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();
-                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditDiskModel)) {
+                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditVmDiskModel)) {
                                 return newDiskPopupProvider.get();
                             } else {
                                 return createVmPopupProvider.get();

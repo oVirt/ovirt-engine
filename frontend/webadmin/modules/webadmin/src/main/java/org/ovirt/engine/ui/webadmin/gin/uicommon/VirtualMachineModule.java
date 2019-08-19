@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.EditVmDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
@@ -146,7 +146,7 @@ public class VirtualMachineModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getEditCommand() || lastExecutedCommand == getModel().getNewVmCommand() || "OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();
-                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditDiskModel)) {
+                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditVmDiskModel)) {
                                 return newDiskPopupProvider.get();
                             } else {
                                 return newVmPopupProvider.get();
