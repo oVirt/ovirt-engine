@@ -116,10 +116,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.LibgfApiSupported, version);
     }
 
-    public static boolean isQemuimgCommitSupported(Version version) {
-        return supportedInConfig(ConfigValues.QemuimgCommitSupported, version);
-    }
-
     public static boolean isIpv6MigrationProperlyHandled(Version version) {
         return supportedInConfig(ConfigValues.Ipv6MigrationProperlyHandled, version);
     }

@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -431,8 +430,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     /**
-     * The base snapshot is the parent of the top snapshot. This is reversed the if old cold merge
-     * is performed (pre-4.1).
+     * The base snapshot is the parent of the top snapshot.
      *
      * @param snapshots list of the parent snapshot disks
      * @return list of subchains which contain the base and top snapshots.
@@ -451,13 +449,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         return topSnapshots
             .stream()
-            .map(topSnapshot -> {
-                if (!isQemuimgCommitSupported() && getSnapshotActionType() == ActionType.RemoveSnapshotSingleDisk) {
-                    return new SubchainInfo(topSnapshot, baseSnapshotMap.get(topSnapshot.getParentId()));
-                } else {
-                    return new SubchainInfo(baseSnapshotMap.get(topSnapshot.getParentId()), topSnapshot);
-                }
-            })
+            .map(topSnapshot -> new SubchainInfo(baseSnapshotMap.get(topSnapshot.getParentId()), topSnapshot))
             .collect(Collectors.toList());
     }
 
@@ -571,10 +563,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (getVm().isQualifiedForLiveSnapshotMerge()) {
             return ActionType.RemoveSnapshotSingleDiskLive;
         }
-        if (isQemuimgCommitSupported()) {
-            return ActionType.ColdMergeSnapshotSingleDisk;
-        }
-        return ActionType.RemoveSnapshotSingleDisk;
+        return ActionType.ColdMergeSnapshotSingleDisk;
     }
 
     @Override
@@ -600,14 +589,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             return null;
         }
 
-        if (vm.isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback() ||
-                isQemuimgCommitSupported()) {
+        if (vm.isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback()
+                || getSnapshotActionType() == ActionType.ColdMergeSnapshotSingleDisk) {
             return callbackProvider.get();
         }
         return null;
-    }
-
-    private boolean isQemuimgCommitSupported() {
-        return FeatureSupported.isQemuimgCommitSupported(getStoragePool().getCompatibilityVersion());
     }
 }

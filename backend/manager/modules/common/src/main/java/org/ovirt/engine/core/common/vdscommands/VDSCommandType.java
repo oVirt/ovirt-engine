@@ -67,7 +67,6 @@ public enum VDSCommandType {
     DownloadImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     UploadImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CreateVolume("org.ovirt.engine.core.vdsbroker.irsbroker"),
-    MergeSnapshots("org.ovirt.engine.core.vdsbroker.irsbroker"),
     Merge("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ReconcileVolumeChain("org.ovirt.engine.core.vdsbroker.irsbroker"),
     RefreshVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),

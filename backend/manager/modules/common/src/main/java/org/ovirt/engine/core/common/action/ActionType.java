@@ -176,7 +176,6 @@ public enum ActionType {
     RestoreAllSnapshots(224, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
     CopyImageGroup(225, QuotaDependency.STORAGE),
     MoveOrCopyDisk(228, QuotaDependency.STORAGE),
-    RemoveSnapshotSingleDisk(227, QuotaDependency.STORAGE),
     CreateCloneOfTemplate(229, QuotaDependency.STORAGE),
     RemoveDisk(230, QuotaDependency.STORAGE),
     MoveImageGroup(231, QuotaDependency.STORAGE),

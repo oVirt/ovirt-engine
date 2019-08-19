@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -158,7 +157,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
      * @param removeImages Remove the images from the database, or if false, only
      *                     mark them illegal
      */
-    protected void syncDbRecords(VmBlockJobType blockJobType, DiskImage imageFromVdsm, Set<Guid> imagesToUpdate, boolean removeImages) {
+    protected void syncDbRecords(DiskImage imageFromVdsm, Set<Guid> imagesToUpdate, boolean removeImages) {
         TransactionSupport.executeInNewTransaction(() -> {
             // If deletion failed after a backwards merge, the snapshots' images need to be swapped
             // as they would upon success.  Instead of removing them, mark them illegal.
@@ -168,8 +167,6 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
             // The vdsm merge verb may decide to perform a forward or backward merge.
             if (topImage == null) {
                 log.info("No merge destination image, not updating image/snapshot association");
-            } else if (blockJobType == VmBlockJobType.PULL) {
-                handleForwardMerge(topImage, baseImage, imageFromVdsm);
             } else {
                 handleBackwardMerge(topImage, baseImage, imageFromVdsm);
             }
@@ -198,24 +195,6 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                                                                               List<Guid> images) {
         return new Pair<>(actionToRun, buildDestroyImageParameters(getActiveDiskImage().getId(),
                 images, parentCommand));
-    }
-
-    private void handleForwardMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {
-        // For forward merge, the volume format and type may change.
-        topImage.setVolumeFormat(baseImage.getVolumeFormat());
-        topImage.setVolumeType(baseImage.getVolumeType());
-        topImage.setParentId(baseImage.getParentId());
-        getDestinationDiskImage().setSize(baseImage.getSize());
-        getDestinationDiskImage().setActualSizeInBytes(getImageInfoFromVdsm(getDestinationDiskImage()).getActualSizeInBytes());
-
-        baseDiskDao.update(topImage);
-        imageDao.update(topImage.getImage());
-        updateDiskImageDynamic(imageFromVdsm, topImage);
-
-        removeTopImageMemoryIfNeeded(topImage);
-
-        updateVmConfigurationForImageChange(getDestinationDiskImage().getImage().getSnapshotId(),
-                getDestinationDiskImage().getImageId(), getDestinationDiskImage());
     }
 
     private void handleBackwardMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {

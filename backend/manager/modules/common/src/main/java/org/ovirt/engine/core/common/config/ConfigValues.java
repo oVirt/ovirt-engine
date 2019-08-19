@@ -1457,9 +1457,6 @@ public enum ConfigValues {
     ipv6IscsiSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    QemuimgCommitSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     Ipv6MigrationProperlyHandled,
 
     @TypeConverterAttribute(Boolean.class)

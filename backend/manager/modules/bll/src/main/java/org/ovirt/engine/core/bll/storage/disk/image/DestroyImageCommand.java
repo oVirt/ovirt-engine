@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -75,11 +74,11 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
             getTaskIdList().add(result);
             getReturnValue().getVdsmTaskIdList().add(result);
             log.info("Successfully started task to remove orphaned volumes");
-        } else if (isMerge(getParentParameters().getParentCommand())) {
+        } else if (getParentParameters().getParentCommand() == ActionType.RemoveSnapshotSingleDiskLive) {
             log.info("Retrying deleting image {}/{}", getParameters().getImageGroupId(),
                     getParameters().getImageList().stream().findFirst().get());
-            MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT,
-                    new HashSet<>(getParameters().getImageList()));
+            MergeStatusReturnValue returnValue =
+                    new MergeStatusReturnValue(new HashSet<>(getParameters().getImageList()));
             getReturnValue().setActionReturnValue(returnValue);
             // At this point, we know that this command was executed during live merge and it is safe to do
             // the casting in the next line.
@@ -89,11 +88,6 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
         }
 
         setSucceeded(true);
-    }
-
-    private boolean isMerge(ActionType actionType) {
-        return ActionType.RemoveSnapshotSingleDisk == actionType ||
-                ActionType.RemoveSnapshotSingleDiskLive == actionType;
     }
 
     private VDSParametersBase createVDSParameters() {
@@ -122,7 +116,9 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return isMerge(getParentParameters().getParentCommand()) ? callbackProvider.get() : null;
+        return getParentParameters().getParentCommand() == ActionType.RemoveSnapshotSingleDiskLive ?
+                callbackProvider.get() :
+                null;
     }
 
     @Override

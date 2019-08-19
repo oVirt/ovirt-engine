@@ -93,9 +93,8 @@ public class MergeStatusCommand<T extends MergeParameters>
 
         if (!images.contains(getParameters().getBaseImage().getImageId())) {
             // If the base image isn't found in qemu chain, it means that the image was already deleted.
-            // In this case, we will not allow PULL merge but rather ask the user to check if the parent
-            // snapshot contains illegal volume(s). If so, that snapshot must be deleted before deleting
-            // other snapshots
+            // In this case, we will ask the user to check if the parent snapshot contains illegal volume(s).
+            // If so, that snapshot must be deleted before deleting other snapshots
             addCustomValue("SnapshotName", snapshotDao.get(getParameters().getBaseImage().getSnapshotId()).getDescription());
             addCustomValue("BaseVolumeId", getParameters().getBaseImage().getImageId().toString());
             auditLog(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_BASE_IMAGE_NOT_FOUND);
@@ -108,8 +107,7 @@ public class MergeStatusCommand<T extends MergeParameters>
         // For now, only COMMIT type is supported
         log.info("Volume merge type '{}'", VmBlockJobType.COMMIT.name());
 
-        MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT,
-                Collections.singleton(topImage));
+        MergeStatusReturnValue returnValue = new MergeStatusReturnValue(Collections.singleton(topImage));
         getReturnValue().setActionReturnValue(returnValue);
         setSucceeded(true);
         persistCommand(getParameters().getParentCommand(), true);

@@ -330,8 +330,6 @@ public class StorageDomainValidator {
      * raw  | min(virtual_size(top) / 1.1, virtual_size(base) - actual_size(base))  | 0
      *      |                                                                       |
      *
-     * If the cold merge operation performed is pre-4.1,
-     * we return min(actual_size(top) + actual_size(base), virtual_size(top))
      *  * The qcow/raw refers to the base snapshot format
      *  * base/top - base snapshot/ top snapshot
      *  * 1.1 - qcow2 overhead
@@ -343,14 +341,6 @@ public class StorageDomainValidator {
     private double getRequiredSizeForMerge(SubchainInfo subchain, ActionType snapshotActionType) {
         DiskImage baseSnapshot = subchain.getBaseImage();
         DiskImage topSnapshot = subchain.getTopImage();
-
-        // We are doing a pre-4.1 cold merge, using block-rebase
-        // IMPORTANT: baseSnapshot and topSnapshot are swapped becuase
-        // this is the old cold merge flow
-        if (snapshotActionType == ActionType.RemoveSnapshotSingleDisk) {
-            return Math.min(baseSnapshot.getActualSizeInBytes() + topSnapshot.getActualSizeInBytes(),
-                    baseSnapshot.getSize()) * StorageConstants.QCOW_OVERHEAD_FACTOR;
-        }
 
         // The snapshot is the root snapshot
         if (Guid.isNullOrEmpty(baseSnapshot.getParentId())) {

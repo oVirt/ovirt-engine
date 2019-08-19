@@ -165,42 +165,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturn mergeSnapshots(String sdUUID,
-            String spUUID,
-            String vmGUID,
-            String imgGUID,
-            String ancestorUUID,
-            String successorUUID,
-            String postZero) {
-        // vmGUID not used and can be removed from the interface
-        return mergeSnapshots(sdUUID, spUUID, vmGUID, imgGUID, ancestorUUID, successorUUID, postZero, null);
-    }
-
-    @Override
-    public OneUuidReturn mergeSnapshots(String sdUUID,
-            String spUUID,
-            String vmGUID,
-            String imgGUID,
-            String ancestorUUID,
-            String successorUUID,
-            String postZero,
-            Boolean discard) {
-        // vmGUID not used and can be removed from the interface
-        JsonRpcRequest request =
-                new RequestBuilder("Image.mergeSnapshots").withParameter("imageID", imgGUID)
-                        .withParameter("storagepoolID", spUUID)
-                        .withParameter("storagedomainID", sdUUID)
-                        .withParameter("ancestor", ancestorUUID)
-                        .withParameter("successor", successorUUID)
-                        .withParameter("postZero", postZero)
-                        .withOptionalParameter("discard", discard)
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("uuid");
-        return new OneUuidReturn(response);
-    }
-
-    @Override
     public VolumeListReturn reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
             String leafVolUUID) {
         JsonRpcRequest request =

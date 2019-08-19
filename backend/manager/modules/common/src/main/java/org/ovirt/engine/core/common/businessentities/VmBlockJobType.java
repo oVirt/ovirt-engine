@@ -5,8 +5,6 @@ import java.util.Map;
 
 public enum VmBlockJobType implements Identifiable {
     UNKNOWN(0),
-    PULL(1),
-    COPY(2),
     COMMIT(3);
 
     private final int blockJobType;

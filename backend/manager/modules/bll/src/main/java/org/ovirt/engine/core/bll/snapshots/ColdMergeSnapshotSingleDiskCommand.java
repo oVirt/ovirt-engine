@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
-import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -116,10 +115,7 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
 
     @Override
     public void endSuccessfully() {
-        syncDbRecords(VmBlockJobType.COMMIT,
-                getImageInfoFromVdsm(getDiskImage()),
-                Collections.singleton(getDestinationImageId()),
-                true);
+        syncDbRecords(getImageInfoFromVdsm(getDiskImage()), Collections.singleton(getDestinationImageId()), true);
 
         if (getParameters().getVmSnapshotId() != null) {
             lockVmSnapshotsWithWait(getVm());

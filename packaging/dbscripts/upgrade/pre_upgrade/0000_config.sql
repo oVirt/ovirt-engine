@@ -186,7 +186,6 @@ select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86
 select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.4');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
-select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('AgentChannelNamingSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('AgentChannelNamingSupported', 'true', '4.4');
 select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86":"false","ppc":"false"}', '4.1');
@@ -878,7 +877,6 @@ select fn_db_update_config_value('FenceStartStatusRetries','18','general');
 select fn_db_update_config_value('FenceStopStatusDelayBetweenRetriesInSec','10','general');
 select fn_db_update_config_value('FenceStopStatusRetries','18','general');
 select fn_db_update_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ilo_ssh=power_wait,ipmilan=power_wait,redfish=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
-select fn_db_update_config_value('QemuimgCommitSupported','true','4.1');
 select fn_db_update_config_value('AgentChannelNamingSupported','true','4.2');
 select fn_db_update_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*','general');
 

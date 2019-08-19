@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
-import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -226,14 +225,11 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private MergeStatusReturnValue synthesizeMergeStatusReturnValue() {
         Set<Guid> images = new HashSet<>();
         images.add(getDiskImage().getImageId());
-        return new MergeStatusReturnValue(VmBlockJobType.UNKNOWN, images);
+        return new MergeStatusReturnValue(images);
     }
 
     public void onSucceeded() {
-        syncDbRecords(getParameters().getMergeStatusReturnValue().getBlockJobType(),
-                getTargetImageInfoFromVdsm(),
-                getParameters().getMergeStatusReturnValue().getImagesToRemove(),
-                true);
+        syncDbRecords(getTargetImageInfoFromVdsm(), getParameters().getMergeStatusReturnValue().getImagesToRemove(), true);
         log.info("Successfully merged snapshot '{}' images '{}'..'{}'",
                 getDiskImage().getImage().getSnapshotId(),
                 getDiskImage().getImageId(),
@@ -249,8 +245,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     private DiskImage getTargetImageInfoFromVdsm() {
-        VmBlockJobType blockJobType = getParameters().getMergeStatusReturnValue().getBlockJobType();
-        return getImageInfoFromVdsm(blockJobType == VmBlockJobType.PULL ? getDestinationDiskImage() : getDiskImage());
+        return getImageInfoFromVdsm(getDiskImage());
     }
 
     @Override
@@ -278,8 +273,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             );
 
         } else {
-            syncDbRecords(getParameters().getMergeStatusReturnValue().getBlockJobType(),
-                    getTargetImageInfoFromVdsm(),
+            syncDbRecords(getTargetImageInfoFromVdsm(),
                     getParameters().getMergeStatusReturnValue().getImagesToRemove(),
                     false);
             log.error("Snapshot '{}' images '{}'..'{}' merged, but volume removal failed." +

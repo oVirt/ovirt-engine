@@ -27,12 +27,6 @@ public interface IIrsServer {
 
     OneUuidReturn uploadImage(Map methodInfo, String spUUID, String sdUUID, String srcImgGUID, String srcVolUUID);
 
-    OneUuidReturn mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
-            String ancestorUUID, String successorUUID, String postZero);
-
-    OneUuidReturn mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
-            String ancestorUUID, String successorUUID, String postZero, Boolean discard);
-
     VolumeListReturn reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
             String leafVolUUID);
 

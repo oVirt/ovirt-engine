@@ -36,7 +36,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -327,9 +326,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         ImagesContainterParametersBase parameters = buildRemoveSnapshotSingleDiskParameters(nextImageId);
 
-        ActionType actionType = FeatureSupported.isQemuimgCommitSupported(getStoragePool().getCompatibilityVersion()) ?
-                ActionType.ColdMergeSnapshotSingleDisk : ActionType.RemoveSnapshotSingleDisk;
-        commandCoordinatorUtil.executeAsyncCommand(actionType,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.ColdMergeSnapshotSingleDisk,
                 parameters,
                 cloneContextAndDetachFromParent());
 
