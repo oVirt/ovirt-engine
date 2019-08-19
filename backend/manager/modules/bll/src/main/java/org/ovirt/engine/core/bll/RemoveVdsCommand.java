@@ -136,14 +136,15 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @SuppressWarnings("unchecked")
     private void runAnsibleRemovePlaybook() {
+        VDS vds = getVds();
         AuditLogable auditable = new AuditLogableImpl();
-        auditable.setVdsName(getVds().getName());
-        auditable.setVdsId(getVds().getId());
+        auditable.setVdsName(vds.getName());
+        auditable.setVdsId(vds.getId());
         auditable.setCorrelationId(getCorrelationId());
 
         try {
             AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
-                    .hosts(getVds())
+                    .hosts(vds)
                     .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK)
                     .build();
 
@@ -153,15 +154,24 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
             auditable.addCustomValue("LogFile", ansibleReturnValue.getLogFile().getAbsolutePath());
 
-            if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
-                auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED);
-            } else {
+            AnsibleReturnCode ansibleReturnCode = ansibleReturnValue.getAnsibleReturnCode();
+            if (ansibleReturnCode == AnsibleReturnCode.OK
+                    // we did best to remove it and if it failed ... so be it bugzilla: 1707451
+                    || isUnreachableHostDown(vds.getStatus(), ansibleReturnCode)) {
                 auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED);
+            } else {
+                auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED);
             }
         } catch (Exception e) {
             auditable.addCustomValue("Message", e.getMessage());
             auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_EXECUTION_FAILED);
         }
+    }
+
+    private boolean isUnreachableHostDown(VDSStatus vdsStatus, AnsibleReturnCode returnCode) {
+        return (returnCode == AnsibleReturnCode.UNREACHABLE
+                || returnCode == AnsibleReturnCode.PARSE_ERROR) // due: https://github.com/ansible/ansible/issues/19720
+                && vdsStatus == VDSStatus.Down;
     }
 
     @Override

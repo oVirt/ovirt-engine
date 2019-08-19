@@ -1,25 +1,35 @@
 package org.ovirt.engine.core.bll;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -31,8 +41,13 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -46,6 +61,9 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveVdsCommandTest extends BaseCommandTest {
+
+    private static final AnsibleReturnValue ANSIBLE_RETURN_OK = new AnsibleReturnValue(AnsibleReturnCode.OK);
+
     @Mock
     private VdsDynamicDao vdsDynamicDao;
 
@@ -89,7 +107,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     private VdsStatisticsDao vdsStatisticsDao;
 
     @Mock
-    private AuditLogDirector auditLogDirector;
+    public AuditLogDirector auditLogDirector;
+
+    @Mock
+    private AnsibleExecutor ansibleExecutor;
 
     /**
      * The command under test.
@@ -101,10 +122,68 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     private Guid clusterId;
 
+    private static Stream<Arguments> removeWithAnsiblePlaybookScenarios() {
+        return Stream.of(
+                Arguments.of(AnsibleReturnCode.OK,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED),
+                Arguments.of(AnsibleReturnCode.UNREACHABLE,
+                        VDSStatus.Down,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED),
+                Arguments.of(AnsibleReturnCode.PARSE_ERROR, //https://github.com/ansible/ansible/issues/19720
+                        VDSStatus.Down,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED),
+                Arguments.of(AnsibleReturnCode.UNREACHABLE,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED),
+                Arguments.of(AnsibleReturnCode.BAD_OPTIONS,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED),
+                Arguments.of(AnsibleReturnCode.ERROR,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED),
+                Arguments.of(AnsibleReturnCode.FAIL,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED),
+                Arguments.of(AnsibleReturnCode.PARSE_ERROR,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED),
+                Arguments.of(AnsibleReturnCode.UNEXPECTED_ERROR,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED),
+                Arguments.of(AnsibleReturnCode.USER_INTERRUPTED,
+                        VDSStatus.Maintenance,
+                        AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED)
+        );
+    }
+
+    private static Stream<Arguments> validVDSStatusesForRemoval() {
+        return Stream.of(
+                Arguments.of(VDSStatus.NonResponsive),
+                Arguments.of(VDSStatus.Maintenance),
+                Arguments.of(VDSStatus.Unassigned),
+                Arguments.of(VDSStatus.InstallFailed),
+                Arguments.of(VDSStatus.PendingApproval),
+                Arguments.of(VDSStatus.NonOperational),
+                Arguments.of(VDSStatus.InstallingOS),
+                Arguments.of(VDSStatus.Down));
+    }
+
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> invalidVDSStatusesForRemoval() {
+        Set<VDSStatus> validStatuses = validVDSStatusesForRemoval()
+                .map(arg -> (VDSStatus) arg.get()[0])
+                .collect(Collectors.toSet());
+        return Stream.of(VDSStatus.values())
+                .filter(status -> !validStatuses.contains(status))
+                .map(Arguments::of);
+    }
+
     @BeforeEach
     public void setUp() {
         clusterId = Guid.newGuid();
         doReturn(cluster).when(clusterDao).get(any());
+        when(ansibleExecutor.runCommand(any(AnsibleCommandConfig.class))).thenReturn(ANSIBLE_RETURN_OK);
         when(glusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
 
@@ -121,7 +200,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         vds.setStatus(status);
         return vds;
     }
-
 
     @Test
     public void validateSucceeds() {
@@ -171,6 +249,34 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
+    @ParameterizedTest(name = "Status {0} is valid for removal")
+    @MethodSource("validVDSStatusesForRemoval")
+    public void validateHostStatusSucceeds(VDSStatus vdsStatus) {
+        mockVdsWithStatus(vdsStatus);
+        mockVdsDynamic();
+        mockVmsPinnedToHost(Collections.emptyList());
+
+        mockIsGlusterEnabled(false);
+        mockHasVolumeOnServer(false);
+
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @ParameterizedTest(name = "Status {0} is invalid for removal")
+    @MethodSource("invalidVDSStatusesForRemoval")
+    public void validateHostStatusFails(VDSStatus vdsStatus) {
+        mockVdsWithStatus(vdsStatus);
+        mockVdsDynamic();
+        mockVmsPinnedToHost(Collections.emptyList());
+
+        mockIsGlusterEnabled(false);
+        mockHasVolumeOnServer(false);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL);
+        List<String> validationMessages = command.getReturnValue().getValidationMessages();
+        assertThat(validationMessages).containsExactly(EngineMessage.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL.name());
+    }
+
     @Test
     public void validateFailsWhenVMsPinnedToHost() {
         mockVdsWithStatus(VDSStatus.Maintenance);
@@ -199,12 +305,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(true);
+
         command.executeCommand();
-        assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
-        verify(vdsDynamicDao, times(1)).remove(any());
-        verify(vdsStatisticsDao, times(1)).remove(any());
-        verify(volumeDao, never()).removeByClusterId(any());
-        verify(hooksDao, never()).removeAllInCluster(any());
+
+        assertHostRemoved(true);
     }
 
     @Test
@@ -213,12 +317,38 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
+
         command.executeCommand();
+
+        assertHostRemoved(false);
+    }
+
+    @ParameterizedTest(name = "Ansible remove playbook execution completed with {0} for vds with status {1} should be audited as {2}")
+    @MethodSource("removeWithAnsiblePlaybookScenarios")
+    public void auditAnsibleRemoveVdsPlaybookExecution(AnsibleReturnCode ansibleReturnCode,
+                                                       VDSStatus vdsStatus,
+                                                       AuditLogType  expectedAuditLogType) {
+        mockVdsWithStatus(vdsStatus);
+        mockVdsDynamic();
+        mockIsGlusterEnabled(true);
+        mockHasMultipleClusters(false);
+        AnsibleReturnValue ansibleReturnValue = new AnsibleReturnValue(ansibleReturnCode);
+        ansibleReturnValue.setLogFile(new File("ansible_unit_test.log"));
+        when(ansibleExecutor.runCommand(any(AnsibleCommandConfig.class))).thenReturn(ansibleReturnValue);
+
+        command.executeCommand();
+
+        verify(auditLogDirector).log(any(AuditLogable.class), eq(expectedAuditLogType));
+        assertHostRemoved(false);
+    }
+
+    private void assertHostRemoved(boolean multipleHosts) {
         assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
-        verify(vdsDynamicDao, times(1)).remove(any());
-        verify(vdsStatisticsDao, times(1)).remove(any());
-        verify(volumeDao, times(1)).removeByClusterId(any());
-        verify(hooksDao, times(1)).removeAllInCluster(any());
+        verify(vdsDynamicDao).remove(any());
+        verify(vdsStatisticsDao).remove(any());
+        VerificationMode multipleHostsRemovedVerificationMode = multipleHosts ? never() : times(1);
+        verify(volumeDao, multipleHostsRemovedVerificationMode).removeByClusterId(any());
+        verify(hooksDao, multipleHostsRemovedVerificationMode).removeAllInCluster(any());
     }
 
     /**
