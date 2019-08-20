@@ -4,7 +4,7 @@ SRCDIR="$(dirname "$0")/.."
 
 cd "${SRCDIR}"
 
-images="$(find frontend packaging -iname '*.jpg')"
+images="$(find frontend packaging -iname '*.jpg' ! -ipath 'frontend/brands/*/bundled/*')"
 
 if [ -z "${images}" ]; then
 	ret=0
