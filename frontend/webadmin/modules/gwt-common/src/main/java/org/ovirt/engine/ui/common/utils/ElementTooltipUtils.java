@@ -75,6 +75,25 @@ public final class ElementTooltipUtils {
     }
 
     /**
+     * Apply tooltip on the given element or replace existing text if tooltip already exists
+     */
+    public static void setOrReplaceTooltipOnElement(Element e, SafeHtml tooltip, TooltipConfig config) {
+
+        // Try not to set the same tooltip again.
+        if (sameTooltipOnElement(e, tooltip)) {
+            return;
+        }
+
+        // if tooltip already exists, just replace the text
+        if (hasTooltip(e)) {
+            replaceTooltipContent(e, getTooltipHtmlString(tooltip));
+            return;
+        }
+
+        setTooltipOnElement(e, tooltip, config);
+    }
+
+    /**
      * Apply tooltip on the given element.
      */
     public static void setTooltipOnElement(Element e, SafeHtml tooltip, TooltipConfig config) {
@@ -117,6 +136,13 @@ public final class ElementTooltipUtils {
     private static String getTooltipHtmlString(SafeHtml tooltip) {
         return (tooltip != null) ? tooltip.asString() : "";
     }
+
+    private static native void replaceTooltipContent(Element element, String html) /*-{
+        var $e = $wnd.jQuery(element);
+        $e.attr('data-tooltip-content', html);
+        $e.attr('data-original-title', html);
+
+    }-*/;
 
     private static native void replaceTooltipContent(String elementId, String html) /*-{
         var $e = $wnd.jQuery('#' + elementId);
