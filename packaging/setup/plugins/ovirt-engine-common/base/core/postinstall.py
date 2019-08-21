@@ -60,7 +60,7 @@ class Plugin(plugin.PluginBase):
                 name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
             )
         )
-        content = ['[environment:default]\n']
+        content = [u'[environment:default]']
         consts = []
         for constobj in self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
@@ -74,11 +74,11 @@ class Plugin(plugin.PluginBase):
                         if key in self.environment:
                             value = self.environment[key]
                             content.append(
-                                '{key}={type}:{value}\n'.format(
+                                u'{key}={type}:{value}'.format(
                                     key=key,
                                     type=common.typeName(value),
                                     value=(
-                                        '\n '.join(value)
+                                        u'\n '.join(value)
                                         # We want the next lines to be
                                         # indented, so that
                                         # configparser will treat them
@@ -92,8 +92,7 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
-                content=''.join(content),
-                binary=False,
+                content=content,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
