@@ -21,6 +21,7 @@
 
 import datetime
 import gettext
+import io
 import os
 
 from otopi import constants as otopicons
@@ -86,7 +87,11 @@ class Plugin(plugin.PluginBase):
             )
             # Generate the answer file only if valid path is passed
             try:
-                with open(self.resolveFile(answer), 'w') as f:
+                with io.open(
+                    self.resolveFile(answer),
+                    mode='w',
+                    encoding='utf-8',
+                ) as f:
                     os.fchmod(f.fileno(), 0o600)
                     f.write(
                         self.environment[
