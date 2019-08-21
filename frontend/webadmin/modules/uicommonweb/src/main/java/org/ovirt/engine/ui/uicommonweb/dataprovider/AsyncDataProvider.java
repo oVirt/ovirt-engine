@@ -126,6 +126,7 @@ import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetClusterFeaturesByVersionAndCategoryParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
+import org.ovirt.engine.core.common.queries.GetCpuByFlagsParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
@@ -1715,6 +1716,13 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getCpuByFlags(AsyncQuery<ServerCpu> aQuery, String cpuFlags, Version newVersion) {
+        aQuery.converterCallback = new DefaultConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetCpuByFlags,
+                new GetCpuByFlagsParameters(cpuFlags, newVersion),
+                aQuery);
+    }
+
     public void getPmTypeList(AsyncQuery<List<String>> aQuery, Version version) {
         aQuery.converterCallback = source -> {
             ArrayList<String> list = new ArrayList<>();
@@ -3085,6 +3093,13 @@ public class AsyncDataProvider {
     public void getClusterEditWarnings(AsyncQuery<ClusterEditWarnings> aQuery, Guid clusterId, Cluster cluster) {
         aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(QueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
+    }
+
+    private static class DefaultConverter<T> implements Converter<T, T> {
+        @Override
+        public T convert(T source) {
+            return (T) source;
+        }
     }
 
     private static class CastingConverter<T extends S, S> implements Converter<T, S> {

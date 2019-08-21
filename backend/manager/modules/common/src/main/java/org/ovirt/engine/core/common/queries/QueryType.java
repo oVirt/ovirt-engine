@@ -315,6 +315,7 @@ public enum QueryType implements Serializable {
     // License queries
     GetAllServerCpuList(QueryAuthType.User),
     GetSupportedCpuList(QueryAuthType.User),
+    GetCpuByFlags,
 
     // Multi Level Administration queries
     GetAllRoles(QueryAuthType.User),

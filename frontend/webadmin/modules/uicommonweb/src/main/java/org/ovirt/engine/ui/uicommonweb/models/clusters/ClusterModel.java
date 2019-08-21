@@ -2003,8 +2003,25 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getArchitecture().setSelectedItem(ArchitectureType.undefined);
         }
 
+        boolean shouldFindEquivalentCpu = getCPU().getSelectedItem() == null;
         // enable CPU Architecture-Type filtering
         initCpuArchTypeFiltering();
+
+        if (shouldFindEquivalentCpu) {
+            String flags;
+            if (oldSelectedCpu != null) {
+                flags = String.join(",", oldSelectedCpu.getFlags());//$NON-NLS-1$
+            } else if (getEntity() != null && getEntity().getCpuFlags() != null){
+                flags = getEntity().getCpuFlags();
+            } else {
+                return;
+            }
+
+            AsyncDataProvider.getInstance().getCpuByFlags(new AsyncQuery<>(cpu -> {
+                getCPU().setSelectedItem(cpu != null ?
+                        Linq.firstOrNull(getCPU().getItems(), new Linq.ServerCpuPredicate(cpu.getCpuName())) : null);
+            }), flags, getEffectiveVersion());
+        }
     }
 
     private void initCpuArchTypeFiltering() {
