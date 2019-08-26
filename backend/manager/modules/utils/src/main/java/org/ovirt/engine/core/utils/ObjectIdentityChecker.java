@@ -129,9 +129,6 @@ public class ObjectIdentityChecker {
                     returnValue = status instanceof VMStatus && isFieldHotSettableInStatus(name, (VMStatus) status);
                 }
             }
-            if (!returnValue) {
-                log.warn("Field '{}' can not be updated when status is '{}'", name, status);
-            }
         }
         return returnValue;
     }
