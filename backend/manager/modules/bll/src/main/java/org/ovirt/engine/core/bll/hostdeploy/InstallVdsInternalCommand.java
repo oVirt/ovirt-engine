@@ -130,8 +130,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             deploy.addUnit(
                 new VdsDeployMiscUnit(),
                 new VdsDeployVdsmUnit(hostCluster.getCompatibilityVersion()),
-                new VdsDeployPKIUnit(),
-                new VdsDeployKernelUnit()
+                new VdsDeployPKIUnit()
             );
 
             FirewallType hostFirewallType = hostCluster.getFirewallType();
@@ -245,6 +244,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                         Config.getValue(ConfigValues.FenceKdumpDestinationPort))
                 .variable("host_deploy_kdump_message_interval",
                         Config.getValue(ConfigValues.FenceKdumpMessageInterval))
+                .variable("host_deploy_kernel_cmdline_new", getVds().getCurrentKernelCmdline())
+                .variable("host_deploy_kernel_cmdline_old", getVds().getLastStoredKernelCmdline())
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-deploy-ansible")
