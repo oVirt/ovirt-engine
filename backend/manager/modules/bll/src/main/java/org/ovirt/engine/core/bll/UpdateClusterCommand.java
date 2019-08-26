@@ -21,7 +21,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
@@ -44,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -70,16 +68,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -91,9 +85,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Inject
     private AuditLogDirector auditLogDirector;
-
-    @Inject
-    private SupportedHostFeatureDao hostFeatureDao;
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
     @Inject
@@ -116,15 +107,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Inject
     private VmTemplateDao vmTemplateDao;
     @Inject
-    private SnapshotDao snapshotDao;
-    @Inject
     private NetworkClusterDao networkClusterDao;
     @Inject
     private VdsDao vdsDao;
-    @Inject
-    private StoragePoolDao storagePoolDao;
-    @Inject
-    private GlusterVolumeDao glusterVolumeDao;
     @Inject
     private VmDao vmDao;
     @Inject
@@ -133,8 +118,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private VmHandler vmHandler;
     @Inject
     private VmInitDao vmInitDao;
-    @Inject
-    private SnapshotsManager snapshotsManager;
 
     private List<VDS> allForCluster;
 
@@ -761,35 +744,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return getEmulatedMachineOfHostInCluster(vds) != null;
     }
 
-    private Set<SupportedAdditionalClusterFeature> getAdditionalClusterFeaturesAdded() {
-        // Lets not modify the existing collection. Hence creating a new hashset.
-        Set<SupportedAdditionalClusterFeature> featuresSupported =
-                new HashSet<>(getCluster().getAddtionalFeaturesSupported());
-        featuresSupported.removeAll(clusterFeatureDao.getAllByClusterId(getCluster().getId()));
-        return featuresSupported;
-    }
-
-    private boolean checkClusterFeaturesSupported(List<VDS> vdss,
-            Set<SupportedAdditionalClusterFeature> newFeaturesEnabled) {
-        Set<String> featuresNamesEnabled = new HashSet<>();
-        for (SupportedAdditionalClusterFeature feature : newFeaturesEnabled) {
-            featuresNamesEnabled.add(feature.getFeature().getName());
-        }
-
-        for (VDS vds : vdss) {
-            Set<String> featuresSupportedByVds = hostFeatureDao.getSupportedHostFeaturesByHostId(vds.getId());
-            if (!featuresSupportedByVds.containsAll(featuresNamesEnabled)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean hasNextRunConfiguration(VM vm) {
-        return snapshotDao.exists(vm.getId(), Snapshot.SnapshotType.NEXT_RUN);
-    }
-
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
@@ -849,10 +803,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     protected boolean isCpuUpdatable(Cluster cluster) {
         return cpuFlagsManagerHandler.isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
-    }
-
-    private boolean areAllVdssInMaintenance(List<VDS> vdss) {
-        return vdss.stream().allMatch(vds -> vds.getStatus() == VDSStatus.Maintenance);
     }
 
     protected int compareCpuLevels(Cluster otherGroup) {
