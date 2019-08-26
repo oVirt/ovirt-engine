@@ -1115,6 +1115,19 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     @Override
+    protected void postExportGetSnapshots(VM selectedEntity) {
+        AsyncDataProvider.getInstance().getVmSnapshotList(
+            new AsyncQuery<>(snapshots -> {
+                if (snapshots.size() == 1 && getSelectedItems().size() == 1) {
+                    ExportVmModel model = (ExportVmModel) getWindow();
+                    model.getCollapseSnapshots().setIsChangeable(false);
+                }
+                postExportInitStorageDomains(selectedEntity);
+            }),
+        selectedEntity.getId());
+    }
+
+    @Override
     protected void setupExportModel(ExportVmModel model) {
         super.setupExportModel(model);
         model.setTitle(constants.exportVirtualMachineTitle());

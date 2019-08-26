@@ -126,7 +126,15 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         setWindow(model);
         model.startProgress();
         setupExportModel(model);
+        postExportGetSnapshots(selectedEntity);
+    }
 
+    protected void postExportGetSnapshots(T selectedEntity) {
+        // Override if fetching snapshots is needed
+        postExportInitStorageDomains(selectedEntity);
+    }
+
+    protected void postExportInitStorageDomains(T selectedEntity) {
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
                 storageDomains -> {
                     List<StorageDomain> filteredStorageDomains = new ArrayList<>();
