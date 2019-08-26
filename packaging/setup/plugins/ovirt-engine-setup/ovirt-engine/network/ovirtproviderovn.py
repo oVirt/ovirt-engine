@@ -22,6 +22,7 @@ import base64
 import gettext
 import os
 import random
+import stat
 import string
 import uuid
 
@@ -772,19 +773,19 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _customization(self):
-        provider_installed = self._is_provider_installed()
+        self._provider_installed = self._is_provider_installed()
         if (
             self.environment[OvnEnv.OVIRT_PROVIDER_OVN] is None and
-            not provider_installed
+            not self._provider_installed
         ):
             self.environment[OvnEnv.OVIRT_PROVIDER_OVN] = \
                 self._query_install_ovn()
 
         self._enabled = (
             self.environment[OvnEnv.OVIRT_PROVIDER_OVN] and
-            not provider_installed
+            not self._provider_installed
         )
-        if self._enabled or provider_installed:
+        if self._enabled or self._provider_installed:
             self._setup_firewalld_services()
 
     def _print_commands(self, message, commands):
@@ -877,6 +878,36 @@ class Plugin(plugin.PluginBase):
         self._generate_client_secret()
         self._configure_ovirt_provider_ovn()
         self._upate_external_providers_keystore()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: self._provider_installed,
+    )
+    def _upgrade(self):
+        self._sanitize_config_file_permissions()
+
+    def _sanitize_config_file_permissions(self):
+        current_premissions = stat.S_IMODE(
+            os.lstat(
+                oenginecons.OvnFileLocations.
+                OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+            ).st_mode
+        )
+        permissions_to_remove = stat.S_IRWXO | stat.S_IRWXG
+        desired_permissions = current_premissions & ~permissions_to_remove
+        if desired_permissions != current_premissions:
+            self.logger.info(_(
+                'Removing unnecessary permissions on {file}.'
+            ).format(
+                file=oenginecons.OvnFileLocations.
+                OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+            ))
+            # This is not reverted on rollback.
+            os.chmod(
+                oenginecons.OvnFileLocations.
+                OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE,
+                desired_permissions
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
