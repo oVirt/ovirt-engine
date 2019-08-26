@@ -45,6 +45,10 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
     void initTable() {
         getTable().enableColumnResizing();
 
+        ClusterAdditionalStatusColumn additionalStatusColumn = new ClusterAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusCluster());
+        getTable().addColumn(additionalStatusColumn, constants.statusCluster(), "75px"); //$NON-NLS-1$
+
         AbstractTextColumn<Cluster> nameColumn = new AbstractLinkColumn<Cluster>(new FieldUpdater<Cluster, String>() {
 
             @Override
@@ -64,10 +68,6 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
         };
         nameColumn.makeSortable(ClusterConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
-
-        ClusterAdditionalStatusColumn additionalStatusColumn = new ClusterAdditionalStatusColumn();
-        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusCluster());
-        getTable().addColumn(additionalStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         CommentColumn<Cluster> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn,

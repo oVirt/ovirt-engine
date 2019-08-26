@@ -1188,6 +1188,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String dcHost();
 
+    String statusCluster();
+
     String statusHost();
 
     String statusIconHost();
