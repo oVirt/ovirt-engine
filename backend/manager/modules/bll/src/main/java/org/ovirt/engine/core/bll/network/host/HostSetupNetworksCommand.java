@@ -618,7 +618,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         BusinessEntityMap<VdsNetworkInterface> nics = getExistingNicsBusinessEntityMap();
 
         List<NetworkAttachment> attachments = getAttachmentsWithMissingUpdatedDefaultRoute();
-        removeIpv6GatewayFromPreviousDefaultRouteAttachment(findPreviousDefaultRouteNic(), attachments);
+        removeIpv6GatewayFromPreviousDefaultRouteAttachment(attachments);
         for (NetworkAttachment attachment : attachments) {
             Network network = existingNetworkRelatedToAttachment(attachment);
             NetworkCluster networkCluster = network.getCluster();
@@ -660,8 +660,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         VdsNetworkInterface previousDefaultRouteNic = findPreviousDefaultRouteNic();
         NetworkAttachment previousDefaultRouteNetworkAttachment = findNetworkAttachmentByNetworkName(previousDefaultRouteNic, getExistingAttachments());
 
-        if (currentDefaultRouteNetworkAttachment != null && previousDefaultRouteNetworkAttachment != null
-                && currentDefaultRouteNetworkAttachment.getId().equals(previousDefaultRouteNetworkAttachment.getId())) {
+        if (sameNetworkAttachment(currentDefaultRouteNetworkAttachment, previousDefaultRouteNetworkAttachment)) {
             return getParameters().getNetworkAttachments();
         }
 
@@ -674,15 +673,22 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return extendedAttachments;
     }
 
-    private void removeIpv6GatewayFromPreviousDefaultRouteAttachment(
-            VdsNetworkInterface previousDefaultRouteNic, List<NetworkAttachment> extendedAttachments) {
+    private boolean sameNetworkAttachment(NetworkAttachment first, NetworkAttachment second) {
+        return first != null && second != null && first.getId().equals(second.getId());
+    }
+
+    private void removeIpv6GatewayFromPreviousDefaultRouteAttachment(List<NetworkAttachment> extendedAttachments) {
         NetworkAttachment previousDefaultRouteAttachment = findNetworkAttachmentByNetworkName(
-                previousDefaultRouteNic, extendedAttachments
+                findPreviousDefaultRouteNic(), extendedAttachments
         );
-        if (hasIpv6StaticBootProto(previousDefaultRouteAttachment)) {
-            previousDefaultRouteAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
-            auditLog(auditEventRemoveIpv6Gateway(previousDefaultRouteAttachment),
-                AuditLogType.NETWORK_REMOVING_IPV6_GATEWAY_FROM_OLD_DEFAULT_ROUTE_ROLE_ATTACHMENT);
+
+        if (!sameNetworkAttachment(findAttachmentByNetworkClusterId(findCurrentDefaultRouteNetworkForCluster()),
+                previousDefaultRouteAttachment)) {
+            if (hasIpv6StaticBootProto(previousDefaultRouteAttachment)) {
+                previousDefaultRouteAttachment.getIpConfiguration().getIpv6PrimaryAddress().setGateway(null);
+                auditLog(auditEventRemoveIpv6Gateway(previousDefaultRouteAttachment),
+                        AuditLogType.NETWORK_REMOVING_IPV6_GATEWAY_FROM_OLD_DEFAULT_ROUTE_ROLE_ATTACHMENT);
+            }
         }
     }
 
