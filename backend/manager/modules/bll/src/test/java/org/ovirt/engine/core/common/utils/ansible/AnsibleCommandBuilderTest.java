@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigExtension;
 
@@ -180,6 +182,16 @@ public class AnsibleCommandBuilderTest {
         );
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "1.2.3.4, 22, 1.2.3.4:22",
+            "1::33:44, 22, [1::33:44]:22",
+            "www.ovirt.org, 22, www.ovirt.org:22"
+    })
+    public void testFormatHostPort(String host, int port, String result) {
+        AnsibleCommandBuilder builder = new AnsibleCommandBuilder();
+        assertEquals(result, builder.formatHostPort(host, port));
+    }
 
     private String createCommand(AnsibleCommandBuilder command) {
         return StringUtils.join(command.build(), " ").trim();
