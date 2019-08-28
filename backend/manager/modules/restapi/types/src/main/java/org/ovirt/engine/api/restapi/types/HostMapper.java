@@ -70,7 +70,9 @@ public class HostMapper {
     public static final Long BYTES_IN_MEGABYTE = 1024L * 1024L;
     // REVISIT retrieve from configuration
     private static final int DEFAULT_VDSM_PORT = 54321;
-    private static final String MD5_FILE_SIGNATURE = "md5";
+    // MD5 file signature is not necessary MD5. It actually can be SHA256
+    // The name in the Host class is kept to avoid changing the API
+    private static final String MD5_FILE_SIGNATURE = "checksum";
 
     @Mapping(from = Host.class, to = VdsStatic.class)
     public static VdsStatic map(Host model, VdsStatic template) {
