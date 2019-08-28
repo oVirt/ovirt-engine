@@ -312,7 +312,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
     }
 
-    protected void entityChanging(E oldValue, E newValue) {
+    protected void entityChanging(E newValue, E oldValue) {
     }
 
     /**
