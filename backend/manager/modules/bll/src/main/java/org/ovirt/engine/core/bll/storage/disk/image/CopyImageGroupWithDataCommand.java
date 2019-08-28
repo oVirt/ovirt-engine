@@ -90,8 +90,11 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                         getParameters().getImageGroupID(), getActionType(), getParameters());
         p.setParentParameters(getParameters());
         p.setParentCommand(getActionType());
+        p.setDestImageGroupId(getParameters().getDestImageGroupId());
+        p.setDestImageId(getParameters().getDestinationImageId());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         p.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
+        p.setDestImages(getParameters().getDestImages());
         runInternalAction(ActionType.CloneImageGroupVolumesStructure, p);
     }
 
@@ -165,6 +168,9 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                         getActionType(),
                         getParameters()
                 );
+                p.setDestImageGroupId(getParameters().getDestImageGroupId());
+                p.setDestImageId(getParameters().getDestinationImageId());
+                p.setDestImages(getParameters().getDestImages());
                 p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
                 p.setJobWeight(weight);
                 runInternalAction(ActionType.CopyImageGroupVolumesData, p);

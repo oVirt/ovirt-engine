@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,6 +13,7 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
     private Guid srcDomain;
     private boolean collapse;
     private Guid destImageGroupId;
+    private List<DiskImage> destImages = new ArrayList<>();
     private VolumeFormat destinationFormat;
     private VolumeType destinationVolumeType;
     private CopyStage stage = CopyStage.DEST_CREATION;
@@ -93,6 +98,14 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
 
     public void setStage(CopyStage stage) {
         this.stage = stage;
+    }
+
+    public List<DiskImage> getDestImages() {
+        return destImages;
+    }
+
+    public void setDestImages(List<DiskImage> destImages) {
+        this.destImages = destImages;
     }
 
     public enum CopyStage {

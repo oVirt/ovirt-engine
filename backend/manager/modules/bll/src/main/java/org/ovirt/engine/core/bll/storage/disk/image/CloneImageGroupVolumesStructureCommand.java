@@ -71,8 +71,15 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         }
 
         Double imageWeight = 1d / getParameters().getImageIds().size();
+        List<Guid> imageIds = getParameters().getDestImages().isEmpty() ?
+                getParameters().getImageIds() :
+                getParameters().getDestImages()
+                        .stream()
+                        .map(d -> d.getImageId())
+                        .collect(Collectors.toList());
+
         Map<String, Double> weightDivision =
-                getParameters().getImageIds().stream().collect(Collectors.toMap(Guid::toString, z -> imageWeight));
+                imageIds.stream().collect(Collectors.toMap(Guid::toString, z -> imageWeight));
 
         getParameters()
                 .setOperationsJobWeight(commandsWeightsUtils.adjust(weightDivision, getParameters().getJobWeight()));
@@ -100,13 +107,19 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 getParameters().getImageIds().size(),
                 imageId);
 
-        createImage(diskImageDao.getSnapshotById(imageId));
+        if (!getParameters().getDestImages().isEmpty()) {
+            createImage(getParameters().getDestImages().get(completedChildren));
+        } else {
+            createImage(diskImageDao.getSnapshotById(imageId));
+        }
         return true;
     }
 
     private Guid determineSourceImageGroup(DiskImage image) {
         if (Guid.Empty.equals(image.getParentId())) {
             return Guid.Empty;
+        } else if (!getParameters().getDestImages().isEmpty()) {
+            return getParameters().getDestImageGroupId();
         }
 
         return image.getImageTemplateId().equals(image.getParentId()) ?
@@ -124,7 +137,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 getParameters().getDestDomain(),
                 determineSourceImageGroup(image),
                 image.getParentId(),
-                getParameters().getImageGroupID(),
+                getParameters().getDestImageGroupId(),
                 image.getImageId(),
                 volumeFormat,
                 image.getVolumeType(),

@@ -161,6 +161,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         p.setParentParameters(getParameters());
         p.setParentCommand(getActionType());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        p.setDestImages(getParameters().getDestImages());
         p.setJobWeight(getParameters().getJobWeight());
 
         return p;
@@ -170,18 +171,11 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                 : getDiskImage().getStorageIds().get(0);
         if (isUsingSPDMFlow()) {
-            CopyImageGroupWithDataCommandParameters p = null;
             // if this is executed as part of the Clone VM flow we need to use different disk and image ID's
             // since we are copying to the same storage domain
-            if (getParameters().getParentCommand() == ActionType.CloneVm) {
-                p = createCopyParams(sourceDomainId,
+            CopyImageGroupWithDataCommandParameters p = createCopyParams(sourceDomainId,
                                     getParameters().getDestImageGroupId(),
                                     getParameters().getDestinationImageId());
-            } else {
-                p = createCopyParams(sourceDomainId,
-                                    getParameters().getImageGroupID(),
-                                    getParameters().getImageId());
-            }
 
             runInternalAction(ActionType.CopyImageGroupWithData, p);
             return true;

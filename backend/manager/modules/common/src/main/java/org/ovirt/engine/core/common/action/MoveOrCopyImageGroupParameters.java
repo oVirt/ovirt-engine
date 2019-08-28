@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -21,6 +25,8 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private ImageDbOperationScope revertDbOperationScope;
     private boolean shouldLockImageOnRevert;
     private String newAlias;
+    private List<DiskImage> destImages = new ArrayList<>();
+
 
     public MoveOrCopyImageGroupParameters() {
         operation = ImageOperation.Unassigned;
@@ -179,5 +185,13 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
 
     public void setNewAlias(String newAlias) {
         this.newAlias = newAlias;
+    }
+
+    public List<DiskImage> getDestImages() {
+        return destImages;
+    }
+
+    public void setDestImages(List<DiskImage> destImages) {
+        this.destImages = destImages;
     }
 }

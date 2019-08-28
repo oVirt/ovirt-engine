@@ -9,6 +9,8 @@ public class CloneVmParameters extends AddVmParameters {
 
     private String newName;
 
+    private Guid destStorageDomainId;
+
     public CloneVmParameters() {
 
     }
@@ -32,5 +34,13 @@ public class CloneVmParameters extends AddVmParameters {
 
     public void setNewVmGuid(Guid newVmGuid) {
         this.newVmGuid = newVmGuid;
+    }
+
+    public Guid getDestStorageDomainId() {
+        return destStorageDomainId;
+    }
+
+    public void setDestStorageDomainId(Guid destStorageDomainId) {
+        this.destStorageDomainId = destStorageDomainId;
     }
 }

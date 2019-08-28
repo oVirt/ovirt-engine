@@ -52,8 +52,7 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
 
     @Override
     protected void executeCommand() {
-        List<DiskImage> images = diskImageDao
-                .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         ImagesHandler.sortImageList(images);
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));
 
@@ -94,16 +93,27 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         log.info("Starting child command {} of {}, image '{}'",
                 completedChildren + 1, getParameters().getImageIds().size(), imageId);
 
-        copyVolumeData(imageId);
+        copyVolumeData(imageId, completedChildren);
         return true;
     }
 
-    private void copyVolumeData(Guid image) {
+    private void copyVolumeData(Guid image, int imageIndex) {
+        LocationInfo destLocationInfo;
+
+        if (getParameters().getDestImages().isEmpty()) {
+            destLocationInfo = buildImageLocationInfo(getParameters().getDestDomain(),
+                            getParameters().getImageGroupID(),
+                            image);
+        } else {
+            destLocationInfo = buildImageLocationInfo(getParameters().getDestDomain(),
+                    getParameters().getDestImageGroupId(),
+                    getParameters().getDestImages().get(imageIndex).getImageId());
+        }
+
         CopyDataCommandParameters parameters = new CopyDataCommandParameters(getParameters().getStoragePoolId(),
-                buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(),
-                        image),
-                buildImageLocationInfo(getParameters().getDestDomain(), getParameters().getImageGroupID(),
-                        image), false);
+                buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(), image),
+                destLocationInfo,
+                false);
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());
