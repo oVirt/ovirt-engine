@@ -32,6 +32,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -123,16 +124,22 @@ public class AnsibleCommandBuilder {
 
     public AnsibleCommandBuilder hosts(VdsStatic... hosts) {
         this.hostnames =  Arrays.stream(hosts)
-                .map(h -> String.format("%1$s:%2$s", h.getHostName(), h.getSshPort()))
+                .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
                 .collect(Collectors.toList());
         return this;
     }
 
     public AnsibleCommandBuilder hosts(VDS... hosts) {
         this.hostnames =  Arrays.stream(hosts)
-                .map(h -> String.format("%1$s:%2$s", h.getHostName(), h.getSshPort()))
+                .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
                 .collect(Collectors.toList());
         return this;
+    }
+
+    protected String formatHostPort(String host, int port) {
+        return ValidationUtils.isValidIpv6(host)
+                ? String.format("[%1$s]:%2$s", host, port)
+                : String.format("%1$s:%2$s", host, port);
     }
 
     public AnsibleCommandBuilder variable(String name, Object value) {
