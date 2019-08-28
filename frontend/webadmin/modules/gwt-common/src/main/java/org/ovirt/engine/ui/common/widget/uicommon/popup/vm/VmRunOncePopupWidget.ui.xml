@@ -156,8 +156,8 @@
                             </b:Column>
                         </b:Row>
                         <b:Row>
-                            <b:Column size="SM_12">
-                                <g:Label ui:field="sysprepToEnableLabel" text="{constants.runOnceSysPrepToEnableLabel}" />
+                            <b:Column size="SM_6">
+                                <ge:EntityModelCheckBoxEditor ui:field="attachSysprepEditor" label="{constants.runOncePopupSysprepLabel}" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
                             </b:Column>
                         </b:Row>
                         <vm:RunOnceVmInitWidget ui:field="vmInitWidget" usePatternFly="true" />

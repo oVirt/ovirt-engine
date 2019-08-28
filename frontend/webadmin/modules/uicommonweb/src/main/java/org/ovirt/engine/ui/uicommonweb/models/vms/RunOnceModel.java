@@ -107,6 +107,16 @@ public abstract class RunOnceModel extends Model {
         privateIsoImage = value;
     }
 
+    private EntityModel<Boolean> attachSysprep;
+
+    public EntityModel<Boolean> getAttachSysprep() {
+        return attachSysprep;
+    }
+
+    private void setAttachSysprep(EntityModel<Boolean> value) {
+        attachSysprep = value;
+    }
+
     private ListModel<EntityModel<DisplayType>> privateDisplayProtocol;
 
     public ListModel<EntityModel<DisplayType>> getDisplayProtocol() {
@@ -455,15 +465,18 @@ public abstract class RunOnceModel extends Model {
     }
 
     // The "sysprep" option was moved from a standalone check box to a
-    // pseudo floppy disk image. In order not to change the back-end
+    // pseudo floppy or cdrom disk image. In order not to change the back-end
     // interface, the Reinitialize variable was changed to a read-only
-    // property and its value is based on the selected floppy image.
+    // property and its value is based on the selected floppy or cdrom image.
     // A similar comparison is done for cloud-init iso images, so the
     // variable was changed from a boolean to an Enum.
     public InitializationType getInitializationType() {
         if (getAttachFloppy().getEntity() != null
                 && getAttachFloppy().getEntity()
                 && "[sysprep]".equals(getFloppyImage().getSelectedItem())) { //$NON-NLS-1$
+            return InitializationType.Sysprep;
+        } else if (getAttachSysprep().getEntity() != null
+                && getAttachSysprep().getEntity()) {
             return InitializationType.Sysprep;
         } else if (getIsCloudInitEnabled().getEntity() != null
                 && getIsCloudInitEnabled().getEntity()) {
@@ -513,6 +526,8 @@ public abstract class RunOnceModel extends Model {
         getAttachIso().getEntityChangedEvent().addListener(this);
         setIsoImage(new SortedListModel(new LexoNumericNameableComparator<Nameable>()));
         getIsoImage().getSelectedItemChangedEvent().addListener(this);
+        setAttachSysprep(new EntityModel<Boolean>());
+        getAttachSysprep().getEntityChangedEvent().addListener(this);
         setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
         setBootSequence(new BootSequenceModel());
 
@@ -609,6 +624,7 @@ public abstract class RunOnceModel extends Model {
         setHashName("run_once_virtual_machine"); //$NON-NLS-1$
         setIsoImagePath(vm.getIsoPath()); // needs to be called before iso list is updated
         getAttachFloppy().setEntity(false);
+        getAttachSysprep().setEntity(false);
         getBootMenuEnabled().setEntity(true);
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
@@ -624,6 +640,7 @@ public abstract class RunOnceModel extends Model {
         updateSystemTabLists();
         updateIsoList();
         updateFloppyImages();
+        updateSysprep();
         updateInitialRunFields();
 
         // Boot sequence.
@@ -663,6 +680,8 @@ public abstract class RunOnceModel extends Model {
             if (!isFloppySupported) {
                 getAttachFloppy().setIsAvailable(false);
                 getFloppyImage().setIsAvailable(false);
+            } else {
+                getAttachSysprep().setIsAvailable(false);
             }
 
         }), vm.getOs(), vm.getCompatibilityVersion());
@@ -673,10 +692,12 @@ public abstract class RunOnceModel extends Model {
             getIsCloudInitEnabled().setEntity(false);
             getIsSysprepEnabled().setEntity(false);
             getAttachFloppy().setEntity(false);
+            getAttachSysprep().setEntity(false);
         } else if (!isInitialized) {
             if (getIsWindowsOS()) {
                 getIsSysprepEnabled().setEntity(true);
                 getAttachFloppy().setEntity(true);
+                getAttachSysprep().setEntity(true);
             } else {
                 getIsCloudInitEnabled().setEntity(true);
             }
@@ -772,6 +793,19 @@ public abstract class RunOnceModel extends Model {
                             }
                         }),
                 vm.getStoragePoolId());
+    }
+
+    protected void updateSysprep() {
+        VM selectedVM = vm;
+
+        if (AsyncDataProvider.getInstance().isWindowsOsType(selectedVM.getVmOsId())) {
+            // Add a pseudo CDROM disk image used for Windows' sysprep.
+            if (!selectedVM.isInitialized() && vm.getVmInit() != null) {
+                getAttachSysprep().setEntity(true);
+            }
+        } else {
+            getAttachSysprep().setIsAvailable(false);
+        }
     }
 
     private void setIsBootFromHardDiskAllowedForVm() {
@@ -963,6 +997,8 @@ public abstract class RunOnceModel extends Model {
                 attachFloppy_EntityChanged();
             } else if (sender == getAttachIso()) {
                 attachIso_EntityChanged();
+            } else if (sender == getAttachSysprep()) {
+                    attachSysprep_EntityChanged();
             } else if (sender == getIsVmFirstRun()) {
                 isVmFirstRun_EntityChanged();
             } else if (sender == getUseAlternateCredentials()) {
@@ -1003,6 +1039,10 @@ public abstract class RunOnceModel extends Model {
         updateInitialRunFields();
     }
 
+    private void attachSysprep_EntityChanged() {
+        updateInitialRunFields();
+    }
+
     private void useAlternateCredentials_EntityChanged() {
         boolean useAlternateCredentials = getUseAlternateCredentials().getEntity();
 
@@ -1020,6 +1060,10 @@ public abstract class RunOnceModel extends Model {
     }
 
     private void floppyImage_SelectedItemChanged() {
+        updateInitialRunFields();
+    }
+
+    private void sysprepImage_SelectedItemChanged() {
         updateInitialRunFields();
     }
 

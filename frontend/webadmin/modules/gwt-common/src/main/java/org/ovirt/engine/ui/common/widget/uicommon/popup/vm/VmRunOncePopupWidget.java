@@ -155,6 +155,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     EntityModelCheckBoxEditor attachIsoEditor;
 
     @UiField(provided = true)
+    @Path(value = "attachSysprep.entity")
+    @WithElementId("attachSysprep")
+    EntityModelCheckBoxEditor attachSysprepEditor;
+
+    @UiField(provided = true)
     @Path("bootMenuEnabled.entity")
     @WithElementId("bootMenuEnabled")
     EntityModelCheckBoxEditor bootMenuEnabledEditor;
@@ -172,10 +177,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField(provided = true)
     @WithElementId("sysPrepDomainNameComboBox")
     ComboBox<String> sysPrepDomainNameComboBox;
-
-    @UiField
-    @Ignore
-    Label sysprepToEnableLabel;
 
     @Path(value = "sysPrepDomainName.selectedItem")
     @WithElementId("sysPrepDomainNameListBox")
@@ -347,6 +348,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void initCheckBoxEditors() {
         attachFloppyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         attachIsoEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        attachSysprepEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         bootMenuEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAsStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -501,8 +503,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         vmInitWidget.setSyspepContentVisible(selected && possible);
         runOnceSpecificSysprepOptions.setVisible(selected && possible);
-
-        sysprepToEnableLabel.setVisible(!selected && possible);
     }
 
     private void updateInitialRunTabVisibility(RunOnceModel model) {

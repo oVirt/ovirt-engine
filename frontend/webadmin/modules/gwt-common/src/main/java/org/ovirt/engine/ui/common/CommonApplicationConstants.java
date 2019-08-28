@@ -95,9 +95,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String runOncePopupAttachIsoLabel();
 
-    String runOncePopupInitialRunLabel();
+    String runOncePopupSysprepLabel();
 
-    String runOnceSysPrepToEnableLabel();
+    String runOncePopupInitialRunLabel();
 
     String runOncePopupSysPrepDomainNameLabel();
 
