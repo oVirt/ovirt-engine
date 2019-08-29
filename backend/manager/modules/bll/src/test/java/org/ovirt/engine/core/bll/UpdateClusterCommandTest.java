@@ -33,7 +33,7 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
@@ -146,8 +146,8 @@ public class UpdateClusterCommandTest {
 
     @Spy
     @InjectMocks
-    private UpdateClusterCommand<ManagementNetworkOnClusterOperationParameters> cmd =
-            new UpdateClusterCommand<>(new ManagementNetworkOnClusterOperationParameters(), null);
+    private UpdateClusterCommand<ClusterOperationParameters> cmd =
+            new UpdateClusterCommand<>(new ClusterOperationParameters(), null);
 
     @Test
     public void nameInUse() {

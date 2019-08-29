@@ -21,8 +21,8 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -87,18 +87,16 @@ public class BackendClusterResource<P extends BackendClustersResource>
         @Override
         public ActionParametersBase getParameters(org.ovirt.engine.api.model.Cluster incoming, Cluster entity) {
             final Cluster cluster = map(incoming, entity);
-            final ManagementNetworkOnClusterOperationParameters managementNetworkOnClusterOperationParameters;
+            final ClusterOperationParameters clusterOperationParameters;
             final Guid dcId = getDataCenterId(cluster);
             if (dcId == null) {
-                managementNetworkOnClusterOperationParameters =
-                        new ManagementNetworkOnClusterOperationParameters(cluster);
+                clusterOperationParameters = new ClusterOperationParameters(cluster);
             } else {
                 final Guid managementNetworkId =
                         managementNetworkFinder.getManagementNetworkId(incoming, dcId);
-                managementNetworkOnClusterOperationParameters =
-                        new ManagementNetworkOnClusterOperationParameters(cluster, managementNetworkId);
+                clusterOperationParameters = new ClusterOperationParameters(cluster, managementNetworkId);
             }
-            return managementNetworkOnClusterOperationParameters;
+            return clusterOperationParameters;
         }
     }
 
@@ -140,7 +138,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     public Response resetEmulatedMachine(Action action) {
         QueryReturnValue result = runQuery(QueryType.GetClusterById, new IdQueryParameters(guid));
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
-            ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters(result.getReturnValue());
+            ClusterOperationParameters param = new ClusterOperationParameters(result.getReturnValue());
             param.setForceResetEmulatedMachine(true);
             return doAction(ActionType.UpdateCluster, param, action);
 

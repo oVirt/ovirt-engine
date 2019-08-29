@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -80,7 +80,7 @@ public class BackendClusterResourceTest
         setUpManagementNetworkExpectation();
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateCluster,
-                                           ManagementNetworkOnClusterOperationParameters.class,
+                                           ClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            true,
@@ -117,7 +117,7 @@ public class BackendClusterResourceTest
         setUpGetEntityExpectations(1);
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateCluster,
-                                           ManagementNetworkOnClusterOperationParameters.class,
+                                           ClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            valid,

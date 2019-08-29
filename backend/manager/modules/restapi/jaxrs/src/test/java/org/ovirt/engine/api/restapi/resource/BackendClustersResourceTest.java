@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -52,7 +52,7 @@ public class BackendClustersResourceTest extends
                                    null);
 
         setUpCreationExpectations(ActionType.AddCluster,
-                                  ManagementNetworkOnClusterOperationParameters.class,
+                                  ClusterOperationParameters.class,
                                   new String[] { "Cluster.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 2) },
                                   true,
@@ -89,7 +89,7 @@ public class BackendClustersResourceTest extends
                                    null);
 
         setUpCreationExpectations(ActionType.AddCluster,
-                                  ManagementNetworkOnClusterOperationParameters.class,
+                                  ClusterOperationParameters.class,
                                   new String[] { "Cluster.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 3) },
                                   true,
@@ -131,7 +131,7 @@ public class BackendClustersResourceTest extends
                                    setUpStoragePool(-1));
 
         setUriInfo(setUpActionExpectations(ActionType.AddCluster,
-                                           ManagementNetworkOnClusterOperationParameters.class,
+                                           ClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            valid,
@@ -159,7 +159,7 @@ public class BackendClustersResourceTest extends
                 null);
 
         setUpCreationExpectations(ActionType.AddCluster,
-                                  ManagementNetworkOnClusterOperationParameters.class,
+                                  ClusterOperationParameters.class,
                                   new String[] {},
                                   new Object[] {},
                                   true,
@@ -198,7 +198,7 @@ public class BackendClustersResourceTest extends
                 setUpStoragePool(1));
 
         setUriInfo(setUpActionExpectations(ActionType.AddCluster,
-                                           ManagementNetworkOnClusterOperationParameters.class,
+                                           ClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            valid,

@@ -12,7 +12,7 @@ import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -86,7 +86,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
         return getStoragePool(cluster.getDataCenter(), this);
     }
 
-    private ManagementNetworkOnClusterOperationParameters createAddCommandParams(org.ovirt.engine.api.model.Cluster cluster, StoragePool dataCenter) {
+    private ClusterOperationParameters createAddCommandParams(org.ovirt.engine.api.model.Cluster cluster, StoragePool dataCenter) {
         Cluster clusterEntity = map(cluster, map(dataCenter));
 
         if (!(cluster.isSetErrorHandling() && cluster.getErrorHandling().isSetOnError())) {
@@ -95,7 +95,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
 
         final Guid managementNetworkId = managementNetworkFinder.getManagementNetworkId(cluster, dataCenter.getId());
 
-        return new ManagementNetworkOnClusterOperationParameters(clusterEntity, managementNetworkId);
+        return new ClusterOperationParameters(clusterEntity, managementNetworkId);
     }
 
     protected Clusters mapCollection(List<Cluster> entities) {

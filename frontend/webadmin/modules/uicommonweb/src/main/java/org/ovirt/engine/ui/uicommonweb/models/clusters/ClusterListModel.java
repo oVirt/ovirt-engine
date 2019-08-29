@@ -9,8 +9,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -557,7 +557,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (Cluster cluster : getSelectedItems()) {
-            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters(cluster);
+            ClusterOperationParameters currentParam = new ClusterOperationParameters(cluster);
             currentParam.setForceResetEmulatedMachine(true);
             prms.add(currentParam);
         }
@@ -815,8 +815,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         model.startProgress();
 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
-        final ManagementNetworkOnClusterOperationParameters clusterOperationParameters =
-                new ManagementNetworkOnClusterOperationParameters(cluster, managementNetwork.getId());
+        final ClusterOperationParameters clusterOperationParameters =
+                new ClusterOperationParameters(cluster, managementNetwork.getId());
         final ActionType actionType = model.getIsNew() ? ActionType.AddCluster : ActionType.UpdateCluster;
         Frontend.getInstance().runAction(
                 actionType,

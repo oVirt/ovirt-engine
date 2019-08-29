@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.ClusterFeature;
 import org.ovirt.engine.api.resource.ClusterEnabledFeatureResource;
 import org.ovirt.engine.api.restapi.types.ClusterFeaturesMapper;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,8 +39,7 @@ public class BackendClusterEnabledFeatureResource extends AbstractBackendSubReso
     @Override
     public Response remove() {
         Cluster cluster = BackendClusterFeatureHelper.getClusterWithFeatureDisabled(this, clusterId, guid);
-        ManagementNetworkOnClusterOperationParameters param =
-                new ManagementNetworkOnClusterOperationParameters(cluster);
+        ClusterOperationParameters param = new ClusterOperationParameters(cluster);
         return performAction(ActionType.UpdateCluster, param);
     }
 

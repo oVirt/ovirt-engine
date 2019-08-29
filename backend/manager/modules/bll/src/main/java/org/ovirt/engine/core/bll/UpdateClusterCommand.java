@@ -31,9 +31,9 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.HasRngDevice;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -80,7 +80,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
+public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
 
     @Inject
@@ -595,7 +595,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getParameters().getIsInternalCommand()) {
+        if (getParameters().isInternalCommand()) {
             return getSucceeded() ? AuditLogType.SYSTEM_UPDATE_CLUSTER
                     : AuditLogType.SYSTEM_UPDATE_CLUSTER_FAILED;
         }

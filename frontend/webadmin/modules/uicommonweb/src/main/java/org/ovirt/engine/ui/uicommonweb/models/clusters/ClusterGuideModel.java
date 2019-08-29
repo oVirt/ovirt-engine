@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -512,7 +512,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
             cluster.setStoragePoolId(dataCenter.getEntity().getId());
             dataCentersModel.startProgress();
 
-            Frontend.getInstance().runAction(ActionType.UpdateCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
+            Frontend.getInstance().runAction(ActionType.UpdateCluster, new ClusterOperationParameters(cluster),
                     result -> {
 
                         if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {

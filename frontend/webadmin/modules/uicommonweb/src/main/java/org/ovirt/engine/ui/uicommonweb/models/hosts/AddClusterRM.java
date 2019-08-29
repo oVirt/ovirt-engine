@@ -5,7 +5,6 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -95,7 +94,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setTransparentHugepages(true);
                 cluster.setCompatibilityVersion(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
-                ClusterOperationParameters parameters = new ManagementNetworkOnClusterOperationParameters(cluster);
+                ClusterOperationParameters parameters = new ClusterOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());
                 Frontend.getInstance().runAction(ActionType.AddCluster, parameters,
                         result -> {

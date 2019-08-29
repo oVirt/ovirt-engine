@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
@@ -35,7 +35,7 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
-public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationParameters>
+public class AddClusterCommand<T extends ClusterOperationParameters>
         extends ClusterOperationCommandBase<T> {
 
     public static final String DefaultNetworkDescription = "Default Management Network";

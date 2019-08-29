@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -95,8 +95,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     private void updateClusterCpuInfo(String cpuName, ArchitectureType architecture) {
         // use suppress in order to update group even if action fails
         // (out of the transaction)
-        ManagementNetworkOnClusterOperationParameters params =
-                new ManagementNetworkOnClusterOperationParameters(getCluster());
+        ClusterOperationParameters params = new ClusterOperationParameters(getCluster());
         params.setTransactionScopeOption(TransactionScopeOption.Suppress);
         params.setIsInternalCommand(true);
 

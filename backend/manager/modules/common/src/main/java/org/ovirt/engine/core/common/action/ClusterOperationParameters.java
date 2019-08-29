@@ -3,16 +3,28 @@ package org.ovirt.engine.core.common.action;
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterOperationParameters extends ClusterParametersBase {
-    private static final long serialVersionUID = -2184123302248929010L;
+    private static final long serialVersionUID = -457715512828262834L;
     @Valid
     private Cluster cluster;
+    private boolean internalCommand;
     private boolean forceResetEmulatedMachine = false;
+    private Guid managementNetworkId;
 
     public ClusterOperationParameters(Cluster group) {
         super(group.getId());
         cluster = group;
+    }
+
+    public ClusterOperationParameters(Cluster cluster, Guid managementNetworkId) {
+        super(cluster.getId());
+        this.cluster = cluster;
+        this.managementNetworkId = managementNetworkId;
+    }
+
+    public ClusterOperationParameters() {
     }
 
     public Cluster getCluster() {
@@ -23,17 +35,12 @@ public class ClusterOperationParameters extends ClusterParametersBase {
         this.cluster = cluster;
     }
 
-    private boolean privateIsInternalCommand;
-
-    public boolean getIsInternalCommand() {
-        return privateIsInternalCommand;
+    public boolean isInternalCommand() {
+        return internalCommand;
     }
 
     public void setIsInternalCommand(boolean value) {
-        privateIsInternalCommand = value;
-    }
-
-    public ClusterOperationParameters() {
+        internalCommand = value;
     }
 
     public void setForceResetEmulatedMachine(boolean isResetEmulatedMachine) {
@@ -42,5 +49,13 @@ public class ClusterOperationParameters extends ClusterParametersBase {
 
     public boolean isForceResetEmulatedMachine() {
         return this.forceResetEmulatedMachine;
+    }
+
+    public Guid getManagementNetworkId() {
+        return managementNetworkId;
+    }
+
+    public void setManagementNetworkId(Guid managementNetworkId) {
+        this.managementNetworkId = managementNetworkId;
     }
 }

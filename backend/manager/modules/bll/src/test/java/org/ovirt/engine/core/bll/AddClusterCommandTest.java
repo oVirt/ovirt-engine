@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
@@ -70,11 +70,11 @@ public class AddClusterCommandTest extends BaseCommandTest {
     private ClusterCpuFlagsManager clusterCpuFlagsManager;
 
     private Cluster cluster = createCluster();
-    private ManagementNetworkOnClusterOperationParameters parameters = createParameters(cluster);
+    private ClusterOperationParameters parameters = createParameters(cluster);
     private CommandContext commandContext = CommandContext.createContext(parameters.getSessionId());
 
     @InjectMocks
-    private AddClusterCommand<ManagementNetworkOnClusterOperationParameters> addClusterCommand =
+    private AddClusterCommand<ClusterOperationParameters> addClusterCommand =
             new AddClusterCommand<>(parameters, commandContext);
 
     @Mock
@@ -104,9 +104,8 @@ public class AddClusterCommandTest extends BaseCommandTest {
         return cluster;
     }
 
-    private static ManagementNetworkOnClusterOperationParameters createParameters(Cluster cluster) {
-        ManagementNetworkOnClusterOperationParameters parameters =
-                new ManagementNetworkOnClusterOperationParameters(cluster);
+    private static ClusterOperationParameters createParameters(Cluster cluster) {
+        ClusterOperationParameters parameters = new ClusterOperationParameters(cluster);
         parameters.setCorrelationId(CORRELATION_ID);
         return parameters;
     }

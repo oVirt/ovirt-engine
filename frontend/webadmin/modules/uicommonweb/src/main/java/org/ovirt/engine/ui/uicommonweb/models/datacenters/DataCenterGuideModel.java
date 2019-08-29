@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -1074,7 +1074,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(ActionType.AddCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
+        Frontend.getInstance().runAction(ActionType.AddCluster, new ClusterOperationParameters(cluster),
                 result -> {
 
                     DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();

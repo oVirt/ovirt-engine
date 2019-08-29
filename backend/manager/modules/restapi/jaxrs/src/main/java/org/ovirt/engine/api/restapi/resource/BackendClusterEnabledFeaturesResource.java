@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.ClusterFeatures;
 import org.ovirt.engine.api.resource.ClusterEnabledFeatureResource;
 import org.ovirt.engine.api.resource.ClusterEnabledFeaturesResource;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -62,8 +62,7 @@ public class BackendClusterEnabledFeaturesResource extends AbstractBackendCollec
         supportedFeature.setClusterId(clusterId);
         cluster.getAddtionalFeaturesSupported().add(supportedFeature);
 
-        ManagementNetworkOnClusterOperationParameters param =
-                new ManagementNetworkOnClusterOperationParameters(cluster);
+        ClusterOperationParameters param = new ClusterOperationParameters(cluster);
         return performCreate(ActionType.UpdateCluster, param, new ClusterFeatureIdResolver(clusterId, featureEntity.getId()));
     }
 
