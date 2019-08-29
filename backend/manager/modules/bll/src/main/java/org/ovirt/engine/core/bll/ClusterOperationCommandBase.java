@@ -42,10 +42,8 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
@@ -60,9 +58,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     public static final int GET_CPU_THRESHOLDS_FROM_CONFIGURATION = -1;
 
     @Inject
-    private AuditLogDirector auditLogDirector;
-
-    @Inject
     private NetworkDao networkDao;
     @Inject
     private SchedulingManager schedulingManager;
@@ -70,8 +65,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     private InClusterUpgradeValidator upgradeValidator;
     @Inject
     private VdsDao vdsDao;
-    @Inject
-    private ClusterDao clusterDao;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
@@ -98,11 +91,11 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         return getParameters().getCluster();
     }
 
-    protected Guid getManagementNetworkId() {
+    private Guid getManagementNetworkId() {
         return getParameters().getManagementNetworkId();
     }
 
-    protected Network getManagementNetworkById() {
+    private Network getManagementNetworkById() {
         final Guid managementNetworkId = getManagementNetworkId();
         return networkDao.get(managementNetworkId);
     }
@@ -154,7 +147,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         if (alreadyInUpgradeMode && !newCluster.isInUpgradeMode()) {
             // Check if we can safely stop the cluster upgrade
             final List<VDS> hosts = vdsDao.getAllForCluster(getClusterId());
-            if (!validate(getUpgradeValidator().isUpgradeDone(hosts))) {
+            if (!validate(upgradeValidator.isUpgradeDone(hosts))) {
                 return false;
             }
         } else if (!alreadyInUpgradeMode && newCluster.isInUpgradeMode()) {
@@ -162,13 +155,13 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             final List<VM> vms = vmDao.getAllForCluster(getClusterId());
             populateVMNUMAInfo(vms);
 
-            if (!validate(getUpgradeValidator().isUpgradePossible(hosts, vms))) {
+            if (!validate(upgradeValidator.isUpgradePossible(hosts, vms))) {
                 return false;
             }
         }
 
         Map<String, String> customPropertiesRegexMap =
-                getSchedulingManager().getCustomPropertiesRegexMap(clusterPolicy);
+                schedulingManager.getCustomPropertiesRegexMap(clusterPolicy);
         updateClusterPolicyProperties(getCluster(), clusterPolicy, customPropertiesRegexMap);
         List<ValidationError> validationErrors =
                 SimpleCustomPropertiesUtil.getInstance().validateProperties(customPropertiesRegexMap,
@@ -199,11 +192,11 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             return null;
         }
         if (cluster.getClusterPolicyId() != null) {
-            clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyId());
+            clusterPolicy = schedulingManager.getClusterPolicy(cluster.getClusterPolicyId());
         }
         if (clusterPolicy == null) {
-            clusterPolicy = getSchedulingManager().getClusterPolicy(cluster.getClusterPolicyName())
-                    .orElseGet(() -> getSchedulingManager().getDefaultClusterPolicy());
+            clusterPolicy = schedulingManager.getClusterPolicy(cluster.getClusterPolicyName())
+                    .orElseGet(() -> schedulingManager.getDefaultClusterPolicy());
         }
         return clusterPolicy;
     }
@@ -250,27 +243,14 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         }
     }
 
-    protected boolean isClusterUnique(String clusterName) {
-        List<Cluster> clusters = clusterDao.getByName(clusterName, true);
-        return clusters == null || clusters.isEmpty();
-    }
-
     protected void alertIfFencingDisabled() {
         if (!getCluster().getFencingPolicy().isFencingEnabled()) {
             AuditLogable alb = new AuditLogableImpl();
             alb.setClusterId(getCluster().getId());
             alb.setClusterName(getCluster().getName());
             alb.setRepeatable(true);
-            auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
+            auditLog(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
-    }
-
-    protected SchedulingManager getSchedulingManager() {
-        return schedulingManager;
-    }
-
-    protected InClusterUpgradeValidator getUpgradeValidator() {
-        return upgradeValidator;
     }
 
     protected void setDefaultSwitchTypeIfNeeded() {
@@ -312,7 +292,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         }
     }
 
-    protected boolean findDefaultManagementNetwork() {
+    private boolean findDefaultManagementNetwork() {
         managementNetwork =
                 defaultManagementNetworkFinder.findDefaultManagementNetwork(getCluster().getStoragePoolId());
         if (managementNetwork == null) {
@@ -322,7 +302,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         return true;
     }
 
-    protected boolean findInputManagementNetwork() {
+    private boolean findInputManagementNetwork() {
         managementNetwork = getManagementNetworkById();
 
         if (managementNetwork == null) {
@@ -330,10 +310,6 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             return false;
         }
         return true;
-    }
-
-    protected NetworkDao getNetworkDao() {
-        return networkDao;
     }
 
     private boolean validateInputManagementNetwork() {
@@ -349,7 +325,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
         final NetworkCluster networkCluster = createManagementNetworkCluster();
         return new AddClusterNetworkClusterValidator(
                 interfaceDao,
-                getNetworkDao(),
+                networkDao,
                 vdsDao,
                 networkCluster);
     }
@@ -373,7 +349,7 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     protected abstract boolean validateInputManagementNetwork(NetworkClusterValidatorBase networkClusterValidator);
 
-    boolean validateDefaultNetworkProvider() {
+    protected boolean validateDefaultNetworkProvider() {
         if (!getCluster().isSetDefaultNetworkProviderId()) {
             return true;
         } else {
