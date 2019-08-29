@@ -1501,6 +1501,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         if (!getBiosType().getIsChangable()) {
             getBiosType().setSelectedItem(BiosType.I440FX_SEA_BIOS);
+        } else {
+            if (getEffectiveVersion().greaterOrEquals(Version.v4_4)) {
+                getBiosType().setSelectedItem(BiosType.Q35_SEA_BIOS);
+            }
         }
     }
 
