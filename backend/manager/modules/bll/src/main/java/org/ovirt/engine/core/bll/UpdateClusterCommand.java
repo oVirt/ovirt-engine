@@ -142,14 +142,13 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             templatesLockedForUpdate = filterTemplatesInClusterNeedUpdate();
         }
 
-        // isUpdateCpuFlags can be set to true by client or if the cpuName is changed
-        if (oldCluster == null ||
-              !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName())) {
-            getParameters().setUpdateCpuFlags(true);
-        }
-
-        if (getParameters().isUpdateCpuFlags() && !StringUtils.isEmpty(getCluster().getCpuName())) {
+        if (oldCluster == null
+                || !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName())
+                || !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
             clusterCpuFlagsManager.updateCpuFlags(getCluster());
+        } else {
+            getCluster().setCpuFlags(oldCluster.getCpuFlags());
+            getCluster().setCpuVerb(oldCluster.getCpuVerb());
         }
     }
 

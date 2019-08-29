@@ -779,7 +779,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
         final ManagementNetworkOnClusterOperationParameters clusterOperationParameters =
                 new ManagementNetworkOnClusterOperationParameters(cluster, managementNetwork.getId());
-        clusterOperationParameters.setUpdateCpuFlags(true);
         final ActionType actionType = model.getIsNew() ? ActionType.AddCluster : ActionType.UpdateCluster;
         Frontend.getInstance().runAction(
                 actionType,

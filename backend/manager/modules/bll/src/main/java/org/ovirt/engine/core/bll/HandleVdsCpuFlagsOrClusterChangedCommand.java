@@ -105,11 +105,6 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                         ArchitectureType.undefined.equals(getCluster().getArchitecture()))) {
             getCluster().setCpuName(cpuName);
             getCluster().setArchitecture(architecture);
-            params.setUpdateCpuFlags(true);
-        }
-
-        if (StringUtils.isEmpty(getCluster().getCpuFlags()) && !StringUtils.isEmpty(getClusterName())) {
-            params.setUpdateCpuFlags(true);
         }
 
         updateMigrateOnError(getCluster());
