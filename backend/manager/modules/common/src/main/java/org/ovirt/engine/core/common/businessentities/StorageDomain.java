@@ -198,7 +198,7 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
     }
 
     public Integer getCriticalSpaceActionBlocker() {
-        return staticData.getCriticalSpaceActionBlocker();
+        return staticData == null ? null : staticData.getCriticalSpaceActionBlocker();
     }
 
     public void setCriticalSpaceActionBlocker(Integer criticalSpaceActionBlocker) {

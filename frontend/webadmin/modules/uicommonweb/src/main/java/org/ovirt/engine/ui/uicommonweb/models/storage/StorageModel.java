@@ -712,21 +712,21 @@ public class StorageModel extends Model {
         return behavior;
     }
 
-    private int getWarningLowSpaceIndicatorValue() {
+    private Integer  getWarningLowSpaceIndicatorValue() {
         if (isNewStorage()) {
             return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WarningLowSpaceIndicator);
         }
         return getStorage().getWarningLowSpaceIndicator();
     }
 
-    private int getCriticalSpaceThresholdValue() {
+    private Integer getCriticalSpaceThresholdValue() {
         if (isNewStorage()) {
             return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.CriticalSpaceActionBlocker);
         }
         return getStorage().getCriticalSpaceActionBlocker();
     }
 
-    private int getWarningLowConfirmedSpaceIndicatorValue() {
+    private Integer getWarningLowConfirmedSpaceIndicatorValue() {
         if (isNewStorage()) {
             return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WarningLowSpaceIndicator);
         }
