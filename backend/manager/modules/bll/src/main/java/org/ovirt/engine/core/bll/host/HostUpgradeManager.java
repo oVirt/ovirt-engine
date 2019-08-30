@@ -123,8 +123,9 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         return EnumSet.of(VDSType.VDS, VDSType.oVirtNode);
     }
 
+
     @Override
-    public void update(final VDS host) {
+    public void update(final VDS host, int timeout) {
         Cluster cluster = clusterDao.get(host.getClusterId());
         //The number of days allowed before certificate expiration.
         //(less time left than this requires enrolling for new certificate).
@@ -159,7 +160,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
-        if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+        if (ansibleExecutor.runCommand(command, timeout).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             String error = String.format("Failed to update host '%1$s'.", host.getHostName());
             log.error(error);
             throw new RuntimeException(error);

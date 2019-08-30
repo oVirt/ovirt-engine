@@ -211,6 +211,7 @@ public class HostUpgradeCallback implements CommandCallback {
         upgradeParams.setParentCommand(ActionType.UpgradeHost);
         upgradeParams.setParentParameters(parameters);
         upgradeParams.setReboot(parameters.isReboot());
+        upgradeParams.setTimeout(parameters.getTimeout());
         return upgradeParams;
     }
 

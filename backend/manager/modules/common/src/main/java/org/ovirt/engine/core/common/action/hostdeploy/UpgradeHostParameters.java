@@ -10,6 +10,7 @@ public class UpgradeHostParameters extends VdsActionParameters {
     private VDSStatus initialStatus;
     private String oVirtIsoFile;
     private boolean reboot;
+    private int timeout;
 
     public UpgradeHostParameters(Guid hostId) {
         this(hostId, true);
@@ -18,6 +19,11 @@ public class UpgradeHostParameters extends VdsActionParameters {
     public UpgradeHostParameters(Guid hostId, boolean reboot) {
         super(hostId);
         this.reboot = reboot;
+    }
+
+    public UpgradeHostParameters(Guid hostId, boolean reboot, int timeout) {
+        this(hostId, reboot);
+        this.timeout = timeout;
     }
 
     public UpgradeHostParameters() {
@@ -45,5 +51,13 @@ public class UpgradeHostParameters extends VdsActionParameters {
 
     public void setReboot(boolean reboot) {
         this.reboot = reboot;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }
