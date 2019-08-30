@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,6 +38,10 @@ public class AnsibleExecutor {
 
     private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
     public static final String DEFAULT_LOG_DIRECTORY = "ansible";
+
+    @Inject
+    private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
+
 
     /**
      * Executes ansible-playbook command.
@@ -86,9 +92,9 @@ public class AnsibleExecutor {
             // Build the command:
             log.info("Executing Ansible command: {}", command);
 
-            AnsibleCommand ansibleCommand = command.build();
+            List<String> ansibleCommand = command.build();
             ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
-                .command(ansibleCommand.getCommand())
+                .command(ansibleCommand)
                 .directory(command.playbookDir().toFile())
                 .redirectErrorStream(command.stdoutCallback() == null)
                 .redirectOutput(stdoutFile)
@@ -98,8 +104,11 @@ public class AnsibleExecutor {
             ansibleProcessBuilder.environment()
                 .put("ANSIBLE_CONFIG", Paths.get(command.playbookDir().toString(), "ansible.cfg").toString());
             if (command.enableLogging()) {
+                File logFile = ansibleCommandLogFileFactory.create(command);
+                log.info("Ansible command log file: {}", logFile.getAbsolutePath());
+                returnValue.setLogFile(logFile);
                 ansibleProcessBuilder.environment()
-                        .put("ANSIBLE_LOG_PATH", ansibleCommand.getLogFile().toString());
+                        .put("ANSIBLE_LOG_PATH", logFile.toString());
             }
             if (command.stdoutCallback() != null) {
                 ansibleProcessBuilder.environment()
@@ -115,7 +124,7 @@ public class AnsibleExecutor {
             }
 
             returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
-            returnValue.setLogFile(ansibleCommand.getLogFile());
+
             if (command.stdoutCallback() != null) {
                 returnValue.setStdout(new String(Files.readAllBytes(stdoutFile.toPath())));
                 returnValue.setStderr(new String(Files.readAllBytes(stderrFile.toPath())));

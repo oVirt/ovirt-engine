@@ -16,13 +16,10 @@ limitations under the License.
 
 package org.ovirt.engine.core.common.utils.ansible;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,15 +59,14 @@ public class AnsibleCommandBuilder {
     private boolean checkMode;
 
     // Logging:
-    private File logFile;
     private String logFileDirectory;
     private String logFilePrefix;
     private String logFileSuffix;
     private String logFileName;
     /*
-     * By default Ansible logs to syslog of the host where the playbook is being executed.
-     * If this parameter is set to true the logging will be done to file which you can specify by log* methods.
-     * If this parameters is set to false, the logging wil be done to syslog on hosts.
+     * By default Ansible logs to syslog of the host where the playbook is being executed. If this parameter is set to
+     * true the logging will be done to file which you can specify by log* methods. If this parameters is set to false,
+     * the logging wil be done to syslog on hosts.
      */
     private boolean enableLogging;
 
@@ -125,14 +121,14 @@ public class AnsibleCommandBuilder {
     }
 
     public AnsibleCommandBuilder hosts(VdsStatic... hosts) {
-        this.hostnames =  Arrays.stream(hosts)
+        this.hostnames = Arrays.stream(hosts)
                 .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
                 .collect(Collectors.toList());
         return this;
     }
 
     public AnsibleCommandBuilder hosts(VDS... hosts) {
-        this.hostnames =  Arrays.stream(hosts)
+        this.hostnames = Arrays.stream(hosts)
                 .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
                 .collect(Collectors.toList());
         return this;
@@ -246,14 +242,14 @@ public class AnsibleCommandBuilder {
      * The generated command will look like:
      *
      * /usr/bin/ansible-playbook -${verboseLevel} --private-key=${privateKey} --limit=${limit} \
-     *    --extra-vars=${variables} ${playbook}
+     * --extra-vars=${variables} ${playbook}
      *
      * The logFile is set up to:
      *
-     *  /var/log/ovirt-engine/${logDirectory:ansible}/
-     *  ${logFilePrefix:ansible}-${timestamp}-${logFileName:playbook}[-${logFileSuffix}].log
+     * /var/log/ovirt-engine/${logDirectory:ansible}/
+     * ${logFilePrefix:ansible}-${timestamp}-${logFileName:playbook}[-${logFileSuffix}].log
      */
-    public AnsibleCommand build() {
+    public List<String> build() {
         ansibleCommand = new ArrayList<>();
         ansibleCommand.add(ANSIBLE_COMMAND);
 
@@ -290,24 +286,9 @@ public class AnsibleCommandBuilder {
             ansibleCommand.add(String.format("--extra-vars=@%s", variableFilePath));
         }
 
-        if (logFile == null && enableLogging) {
-            logFile = Paths.get(
-                    config.getLogDir().toString(),
-                    logFileDirectory != null ? logFileDirectory : AnsibleExecutor.DEFAULT_LOG_DIRECTORY,
-                    String.format(
-                            "%1$s-%2$s-%3$s%4$s.log",
-                            logFilePrefix != null ? logFilePrefix : "ansible",
-                            new SimpleDateFormat("yyyyMMddHHmmss").format(
-                                    Calendar.getInstance().getTime()),
-                            logFileName != null ? logFileName
-                                    : playbook.substring(playbook.lastIndexOf('/') + 1).replace('.', '_'),
-                            logFileSuffix != null ? "-" + logFileSuffix : ""))
-                    .toFile();
-        }
-
         ansibleCommand.add(playbook);
 
-        return new AnsibleCommand(new ArrayList<>(ansibleCommand), logFile);
+        return ansibleCommand;
     }
 
     @Override
@@ -326,9 +307,6 @@ public class AnsibleCommandBuilder {
             sb.append(StringUtils.join(ansibleCommand, " "));
             sb.append(" ");
         }
-
-        // Log file
-        sb.append(String.format("[Logfile: %1$s]", logFile));
 
         return sb.toString();
     }
