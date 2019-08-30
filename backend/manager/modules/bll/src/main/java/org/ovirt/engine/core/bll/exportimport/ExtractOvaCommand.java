@@ -119,7 +119,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(command);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
-            log.error("Failed to extract OVA. Please check logs for more details: {}", command.logFile());
+            log.error("Failed to extract OVA. Please check logs for more details: {}", ansibleReturnValue.getLogFile());
             return false;
         }
 

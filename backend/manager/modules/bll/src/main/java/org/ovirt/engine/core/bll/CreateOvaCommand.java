@@ -173,7 +173,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             log.error(
                 "Failed to measure image: {}. Please check logs for more details: {}",
                 ansibleReturnValue.getStderr(),
-                command.logFile()
+                    ansibleReturnValue.getLogFile()
             );
             throw new EngineException(EngineError.GeneralException, "Failed to measure image");
         }
@@ -199,9 +199,10 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
-        boolean succeeded = ansibleExecutor.runCommand(command).getAnsibleReturnCode() == AnsibleReturnCode.OK;
+        AnsibleReturnValue ansibleReturnCode = ansibleExecutor.runCommand(command);
+        boolean succeeded = ansibleReturnCode.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
-            log.error("Failed to create OVA. Please check logs for more details: {}", command.logFile());
+            log.error("Failed to create OVA. Please check logs for more details: {}", ansibleReturnCode.getLogFile());
         }
 
         return succeeded;

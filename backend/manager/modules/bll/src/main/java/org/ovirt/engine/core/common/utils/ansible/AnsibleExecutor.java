@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -87,9 +86,9 @@ public class AnsibleExecutor {
             // Build the command:
             log.info("Executing Ansible command: {}", command);
 
-            List<String> ansibleCommand = command.build();
+            AnsibleCommand ansibleCommand = command.build();
             ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
-                .command(ansibleCommand)
+                .command(ansibleCommand.getCommand())
                 .directory(command.playbookDir().toFile())
                 .redirectErrorStream(command.stdoutCallback() == null)
                 .redirectOutput(stdoutFile)
@@ -100,7 +99,7 @@ public class AnsibleExecutor {
                 .put("ANSIBLE_CONFIG", Paths.get(command.playbookDir().toString(), "ansible.cfg").toString());
             if (command.enableLogging()) {
                 ansibleProcessBuilder.environment()
-                    .put("ANSIBLE_LOG_PATH", command.logFile().toString());
+                        .put("ANSIBLE_LOG_PATH", ansibleCommand.getLogFile().toString());
             }
             if (command.stdoutCallback() != null) {
                 ansibleProcessBuilder.environment()
@@ -116,6 +115,7 @@ public class AnsibleExecutor {
             }
 
             returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
+            returnValue.setLogFile(ansibleCommand.getLogFile());
             if (command.stdoutCallback() != null) {
                 returnValue.setStdout(new String(Files.readAllBytes(stdoutFile.toPath())));
                 returnValue.setStderr(new String(Files.readAllBytes(stderrFile.toPath())));

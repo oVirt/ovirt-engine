@@ -191,11 +191,11 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
          AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             log.error("Failed to execute Ansible create brick role. Please check logs for more details: {}",
-                    command.logFile());
+                    ansibleReturnValue.getLogFile());
             throw new EngineException(EngineError.GeneralException,
                     String.format(
                             "Failed to execute Ansible create brick role. Please check logs for more details: %1$s",
-                            command.logFile()));
+                            ansibleReturnValue.getLogFile()));
         } else {
             // sync the storage devices, so mount point shows up
             for (StorageDevice storageDevice : getParameters().getDisks()) {

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.PKIResources;
@@ -57,11 +58,12 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
                 .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE);
         setVdsStatus(VDSStatus.Maintenance);
         setSucceeded(true);
-        if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             log.error(
                     "Failed to enroll certificate for host '{}': please check log for more details: {}",
                     getVds().getName(),
-                    command.logFile());
+                    ansibleReturnValue.getLogFile());
             setVdsStatus(VDSStatus.InstallFailed);
         }
     }

@@ -250,7 +250,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 VDSStatus.InstallFailed,
                 String.format(
                     "Failed to execute Ansible host-deploy role. Please check logs for more details: %1$s",
-                    command.logFile()
+                        ansibleReturnValue.getLogFile()
                 )
             );
         }

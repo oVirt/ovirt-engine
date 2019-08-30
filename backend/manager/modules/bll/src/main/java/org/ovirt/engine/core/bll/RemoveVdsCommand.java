@@ -136,29 +136,30 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @SuppressWarnings("unchecked")
     private void runAnsibleRemovePlaybook() {
-        AuditLogable logable = new AuditLogableImpl();
-        logable.setVdsName(getVds().getName());
-        logable.setVdsId(getVds().getId());
-        logable.setCorrelationId(getCorrelationId());
+        AuditLogable auditable = new AuditLogableImpl();
+        auditable.setVdsName(getVds().getName());
+        auditable.setVdsId(getVds().getId());
+        auditable.setCorrelationId(getCorrelationId());
 
         try {
             AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hosts(getVds())
                 .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK);
 
-            auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_STARTED);
+            auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_STARTED);
 
             AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
-            logable.addCustomValue("LogFile", command.logFile().getAbsolutePath());
+
+            auditable.addCustomValue("LogFile", ansibleReturnValue.getLogFile().getAbsolutePath());
 
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
-                auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED);
+                auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED);
             } else {
-                auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED);
+                auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED);
             }
         } catch (Exception e) {
-            logable.addCustomValue("Message", e.getMessage());
-            auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_EXECUTION_FAILED);
+            auditable.addCustomValue("Message", e.getMessage());
+            auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_EXECUTION_FAILED);
         }
     }
 

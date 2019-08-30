@@ -194,7 +194,7 @@ public class AnsibleCommandBuilderTest {
     }
 
     private String createCommand(AnsibleCommandBuilder command) {
-        return StringUtils.join(command.build(), " ").trim();
+        return StringUtils.join(command.build().getCommand(), " ").trim();
     }
 
     private String join(String ... params) {

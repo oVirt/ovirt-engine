@@ -80,6 +80,8 @@ public class AnsibleCommandBuilder {
     // ENV variables
     private Map<String, String> envVars;
 
+    private List<String> ansibleCommand;
+
     public AnsibleCommandBuilder() {
         cluster = "unspecified";
         enableLogging = true;
@@ -191,10 +193,6 @@ public class AnsibleCommandBuilder {
         return playbook;
     }
 
-    public File logFile() {
-        return logFile;
-    }
-
     public AnsibleCommandBuilder enableLogging(boolean enableLogging) {
         this.enableLogging = enableLogging;
         return this;
@@ -255,8 +253,8 @@ public class AnsibleCommandBuilder {
      *  /var/log/ovirt-engine/${logDirectory:ansible}/
      *  ${logFilePrefix:ansible}-${timestamp}-${logFileName:playbook}[-${logFileSuffix}].log
      */
-    public List<String> build() {
-        List<String> ansibleCommand = new ArrayList<>();
+    public AnsibleCommand build() {
+        ansibleCommand = new ArrayList<>();
         ansibleCommand.add(ANSIBLE_COMMAND);
 
         // Always ignore system wide SSH configuration:
@@ -309,7 +307,7 @@ public class AnsibleCommandBuilder {
 
         ansibleCommand.add(playbook);
 
-        return ansibleCommand;
+        return new AnsibleCommand(new ArrayList<>(ansibleCommand), logFile);
     }
 
     @Override
@@ -323,12 +321,14 @@ public class AnsibleCommandBuilder {
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
                         .collect(Collectors.joining(" ")));
         // Command:
-        sb.append(" ");
-        sb.append(StringUtils.join(build(), " "));
-        sb.append(" ");
+        if (ansibleCommand != null) {
+            sb.append(" ");
+            sb.append(StringUtils.join(ansibleCommand, " "));
+            sb.append(" ");
+        }
 
         // Log file
-        sb.append(String.format("[Logfile: %1$s]", logFile()));
+        sb.append(String.format("[Logfile: %1$s]", logFile));
 
         return sb.toString();
     }
