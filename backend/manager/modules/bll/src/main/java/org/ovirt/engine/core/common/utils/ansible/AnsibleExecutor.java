@@ -18,6 +18,7 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,29 +45,32 @@ public class AnsibleExecutor {
     @Inject
     private AnsibleCommandInventoryFileFactory ansibleCommandInventoryFileFactory;
 
+    @Inject
+    private AnsibleCommandFactory ansibleCommandFactory;
+
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable
      * in engine.conf.
      *
-     * @param command
-     *            the command to be executed
+     * @param commandConfig
+     *            the config of command to be executed
      * @return return code of ansible-playbook
      */
-    public AnsibleReturnValue runCommand(AnsibleCommandBuilder command) {
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig) {
         int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
-        return runCommand(command, timeout);
+        return runCommand(commandConfig, timeout);
     }
 
     /**
      * Executes ansible-playbook command.
      *
-     * @param command
-     *            the command to be executed
+     * @param commandConfig
+     *            the config of command to be executed
      * @param timeout
      *            timeout in minutes to wait for command to finish
      * @return return code of ansible-playbook
      */
-    public AnsibleReturnValue runCommand(AnsibleCommandBuilder command, int timeout) {
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig, int timeout) {
         if (timeout <= 0) {
             timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         }
@@ -79,41 +83,39 @@ public class AnsibleExecutor {
         File stderrFile = new File("/dev/null");
 
         // Create a temporary inventory file if user didn't specified it:
-        try (AutoRemovableTempFile inventoryFile = ansibleCommandInventoryFileFactory.create(command)) {
-            if (inventoryFile != null) {
-                command.inventoryFile(inventoryFile.getFilePath()); // this will be obsolete in next refactoring patch
-            }
+        try (AutoRemovableTempFile inventoryFile = ansibleCommandInventoryFileFactory.create(commandConfig)) {
 
             // Create file where stdout/stderr will be redirected:
-            if (command.stdoutCallback() != null) {
+            if (commandConfig.stdoutCallback() != null) {
                 stdoutFile = Files.createTempFile("playbook-out", ".tmp").toFile();
                 stderrFile = Files.createTempFile("playbook-err", ".tmp").toFile();
             }
 
             // Build the command:
-            log.info("Executing Ansible command: {}", command);
+            final Path inventoryFilePath = inventoryFile != null ? inventoryFile.getFilePath() : null;
+            List<String> ansibleCommand = ansibleCommandFactory.create(commandConfig, inventoryFilePath);
+            log.info("Executing Ansible command: {}", ansibleCommand);
 
-            List<String> ansibleCommand = command.build();
             ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
                     .command(ansibleCommand)
-                    .directory(command.playbookDir().toFile())
-                    .redirectErrorStream(command.stdoutCallback() == null)
+                    .directory(commandConfig.playbookDir().toFile())
+                    .redirectErrorStream(commandConfig.stdoutCallback() == null)
                     .redirectOutput(stdoutFile)
                     .redirectError(stderrFile);
 
             // Set environment variables:
             ansibleProcessBuilder.environment()
-                    .put("ANSIBLE_CONFIG", Paths.get(command.playbookDir().toString(), "ansible.cfg").toString());
-            if (command.enableLogging()) {
-                File logFile = ansibleCommandLogFileFactory.create(command);
+                    .put("ANSIBLE_CONFIG", Paths.get(commandConfig.playbookDir().toString(), "ansible.cfg").toString());
+            if (commandConfig.enableLogging()) {
+                File logFile = ansibleCommandLogFileFactory.create(commandConfig);
                 log.info("Ansible command log file: {}", logFile.getAbsolutePath());
                 returnValue.setLogFile(logFile);
                 ansibleProcessBuilder.environment()
                         .put("ANSIBLE_LOG_PATH", logFile.toString());
             }
-            if (command.stdoutCallback() != null) {
+            if (commandConfig.stdoutCallback() != null) {
                 ansibleProcessBuilder.environment()
-                        .put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, command.stdoutCallback());
+                        .put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, commandConfig.stdoutCallback());
             }
 
             // Execute the command:
@@ -126,7 +128,7 @@ public class AnsibleExecutor {
 
             returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
 
-            if (command.stdoutCallback() != null) {
+            if (commandConfig.stdoutCallback() != null) {
                 returnValue.setStdout(new String(Files.readAllBytes(stdoutFile.toPath())));
                 returnValue.setStderr(new String(Files.readAllBytes(stderrFile.toPath())));
             }

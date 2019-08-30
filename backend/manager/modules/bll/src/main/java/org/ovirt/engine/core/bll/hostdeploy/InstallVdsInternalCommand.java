@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -222,7 +222,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
         }
 
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
                 .variable("host_deploy_cluster_name", hostCluster.getName())
@@ -259,7 +259,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         logable.setCorrelationId(getCorrelationId());
         auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             throw new VdsInstallException(
                 VDSStatus.InstallFailed,

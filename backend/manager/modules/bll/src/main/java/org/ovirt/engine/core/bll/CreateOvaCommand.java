@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -155,7 +155,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String runAnsibleImageMeasurePlaybook(String path) {
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("image_path", path)
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
@@ -167,7 +167,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .stdoutCallback(AnsibleConstants.IMAGE_MEASURE_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error(
@@ -184,7 +184,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private boolean runAnsiblePackOvaPlaybook(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
         String encodedOvf = genOvfParameter(ovf);
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("entity_type", getParameters().getEntityType().name().toLowerCase())
@@ -199,7 +199,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnCode = ansibleExecutor.runCommand(command);
+        AnsibleReturnValue ansibleReturnCode = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnCode.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to create OVA. Please check logs for more details: {}", ansibleReturnCode.getLogFile());

@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -89,7 +89,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     }
 
     private ValidationResult validateTargetFolder() {
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
@@ -100,7 +100,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
-        boolean succeeded = ansibleExecutor.runCommand(command).getAnsibleReturnCode() == AnsibleReturnCode.OK;
+        boolean succeeded = ansibleExecutor.runCommand(commandConfig).getAnsibleReturnCode() == AnsibleReturnCode.OK;
         return succeeded ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_OVA_DESTINATION_FOLDER,
                         String.format("$vdsName %s", getVdsName()),

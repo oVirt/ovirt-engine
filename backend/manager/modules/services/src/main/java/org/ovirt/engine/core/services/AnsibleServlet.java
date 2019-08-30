@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.queries.GetEngineSessionIdForSsoTokenQueryPa
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
@@ -80,7 +80,7 @@ public class AnsibleServlet extends HttpServlet {
             Path variablesFile = null;
             try {
                 variablesFile = createVariablesFile(request);
-                AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+                AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                         .variable("engine_url", engineUrl)
                         .variable("engine_token", token)
                         .variable("engine_insecure", "true") // TODO: use CA
@@ -88,7 +88,7 @@ public class AnsibleServlet extends HttpServlet {
                         .playbook(request.getParameter("playbook") + ".yml");
 
                 // Verify the ansible-playbook exists
-                Path playbook = Paths.get(command.playbook());
+                Path playbook = Paths.get(commandConfig.playbook());
                 if (!playbook.toFile().exists()) {
                     response.sendError(HttpURLConnection.HTTP_INTERNAL_ERROR, "Ansible playbook was not found.");
                 }
@@ -100,9 +100,9 @@ public class AnsibleServlet extends HttpServlet {
                 AnsibleReturnValue ansibleReturnValue;
                 String timeout = request.getParameter("execution_timeout");
                 if (timeout != null) {
-                    ansibleReturnValue = ansibleExecutor.runCommand(command, Integer.parseInt(timeout));
+                    ansibleReturnValue = ansibleExecutor.runCommand(commandConfig, Integer.parseInt(timeout));
                 } else {
-                    ansibleReturnValue = ansibleExecutor.runCommand(command);
+                    ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
                 }
 
                 // Wait until ansible-playbook command finish:

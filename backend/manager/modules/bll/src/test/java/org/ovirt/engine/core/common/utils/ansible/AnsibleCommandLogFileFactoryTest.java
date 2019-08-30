@@ -43,11 +43,11 @@ public class AnsibleCommandLogFileFactoryTest {
 
     @Test
     public void shouldCreateLogFileWithDefaultConfig() {
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .playbook(ANSIBLE_PLAYBOOK)
                 .enableLogging(true);
 
-        File logFile = factory.create(command);
+        File logFile = factory.create(commandConfig);
 
         String expectedPath =
                 String.format("/var/log/ovirt-engine/ansible/ansible-%s-%s.log",
@@ -58,7 +58,7 @@ public class AnsibleCommandLogFileFactoryTest {
 
     @Test
     public void shouldCreateLogFileWithUserConfig() {
-        AnsibleCommandBuilder command= new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .playbook(ANSIBLE_PLAYBOOK)
                 .logFileDirectory("myDir")
                 .logFileName("myFileName")
@@ -66,7 +66,7 @@ public class AnsibleCommandLogFileFactoryTest {
                 .logFileSuffix("mySuffix")
                 .enableLogging(true);
 
-        File logFile = factory.create(command);
+        File logFile = factory.create(commandConfig);
 
         String expectedPath =
                 String.format("/var/log/ovirt-engine/myDir/myPrefix-%s-myFileName-mySuffix.log",
@@ -76,7 +76,7 @@ public class AnsibleCommandLogFileFactoryTest {
 
     @Test
     public void shouldNotCreateLogFileIfLogginDisabled() {
-        AnsibleCommandBuilder command= new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .playbook(ANSIBLE_PLAYBOOK)
                 .enableLogging(false)
                 .logFileDirectory("myDir")
@@ -84,8 +84,9 @@ public class AnsibleCommandLogFileFactoryTest {
                 .logFilePrefix("myPrefix")
                 .logFileSuffix("mySuffix");
 
-        File logFile = factory.create(command);
+        File logFile = factory.create(commandConfig);
 
         assertThat(logFile).isNull();
     }
+
 }

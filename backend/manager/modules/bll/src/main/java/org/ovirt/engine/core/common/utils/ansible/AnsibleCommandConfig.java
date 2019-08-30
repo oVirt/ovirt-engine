@@ -18,15 +18,12 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -43,7 +40,7 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  * 5) Log file is $PREFIX/var/log/ovirt-engine/ansible/{prefix}-{timestamp}-{playbook-name}[-{suffix}].log
  * 6) Default inventory file is used.
  */
-public class AnsibleCommandBuilder {
+public class AnsibleCommandConfig {
 
     public static final String ANSIBLE_COMMAND = "/usr/bin/ansible-playbook";
 
@@ -76,9 +73,7 @@ public class AnsibleCommandBuilder {
     // ENV variables
     private Map<String, String> envVars;
 
-    private List<String> ansibleCommand;
-
-    public AnsibleCommandBuilder() {
+    public AnsibleCommandConfig() {
         cluster = "unspecified";
         enableLogging = true;
         envVars = new HashMap<>();
@@ -95,92 +90,92 @@ public class AnsibleCommandBuilder {
         }
     }
 
-    public AnsibleCommandBuilder checkMode(boolean checkMode) {
+    public AnsibleCommandConfig checkMode(boolean checkMode) {
         this.checkMode = checkMode;
         return this;
     }
 
-    public AnsibleCommandBuilder verboseLevel(AnsibleVerbosity verboseLevel) {
+    public AnsibleCommandConfig verboseLevel(AnsibleVerbosity verboseLevel) {
         this.verboseLevel = verboseLevel;
         return this;
     }
 
-    public AnsibleCommandBuilder privateKey(Path privateKey) {
+    public AnsibleCommandConfig privateKey(Path privateKey) {
         this.privateKey = privateKey;
         return this;
     }
 
-    public AnsibleCommandBuilder inventoryFile(Path inventoryFile) {
+    public AnsibleCommandConfig inventoryFile(Path inventoryFile) {
         this.inventoryFile = inventoryFile;
         return this;
     }
 
-    public AnsibleCommandBuilder cluster(String cluster) {
+    public AnsibleCommandConfig cluster(String cluster) {
         this.cluster = cluster;
         return this;
     }
 
-    public AnsibleCommandBuilder hosts(VdsStatic... hosts) {
+    public AnsibleCommandConfig hosts(VdsStatic... hosts) {
         this.hostnames = Arrays.stream(hosts)
                 .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
                 .collect(Collectors.toList());
         return this;
     }
 
-    public AnsibleCommandBuilder hosts(VDS... hosts) {
+    public AnsibleCommandConfig hosts(VDS... hosts) {
         this.hostnames = Arrays.stream(hosts)
                 .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
                 .collect(Collectors.toList());
         return this;
     }
 
-    protected String formatHostPort(String host, int port) {
+    protected static String formatHostPort(String host, int port) {
         return ValidationUtils.isValidIpv6(host)
                 ? String.format("[%1$s]:%2$s", host, port)
                 : String.format("%1$s:%2$s", host, port);
     }
 
-    public AnsibleCommandBuilder variable(String name, Object value) {
+    public AnsibleCommandConfig variable(String name, Object value) {
         this.variables.put(name, value);
         return this;
     }
 
-    public AnsibleCommandBuilder limit(String limit) {
+    public AnsibleCommandConfig limit(String limit) {
         this.limit = limit;
         return this;
     }
 
-    public AnsibleCommandBuilder logFileDirectory(String logFileDirectory) {
+    public AnsibleCommandConfig logFileDirectory(String logFileDirectory) {
         this.logFileDirectory = logFileDirectory;
         return this;
     }
 
-    public AnsibleCommandBuilder logFileName(String logFileName) {
+    public AnsibleCommandConfig logFileName(String logFileName) {
         this.logFileName = logFileName;
         return this;
     }
 
-    public AnsibleCommandBuilder logFilePrefix(String logFilePrefix) {
+    public AnsibleCommandConfig logFilePrefix(String logFilePrefix) {
         this.logFilePrefix = logFilePrefix;
         return this;
     }
 
-    public AnsibleCommandBuilder logFileSuffix(String logFileSuffix) {
+    public AnsibleCommandConfig logFileSuffix(String logFileSuffix) {
         this.logFileSuffix = logFileSuffix;
         return this;
     }
 
-    public AnsibleCommandBuilder playbook(String playbook) {
+    public AnsibleCommandConfig playbook(String playbook) {
         this.playbook = Paths.get(playbookDir.toString(), playbook).toString();
         return this;
     }
 
-    public AnsibleCommandBuilder variableFilePath(String variableFilePath) {
+    public AnsibleCommandConfig variableFilePath(String variableFilePath) {
         this.variableFilePath = variableFilePath;
         return this;
     }
 
-    public AnsibleCommandBuilder stdoutCallback(String stdoutCallback) {
+    public AnsibleCommandConfig stdoutCallback(String stdoutCallback) {
         this.envVars.put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, stdoutCallback);
         return this;
     }
@@ -189,7 +184,7 @@ public class AnsibleCommandBuilder {
         return playbook;
     }
 
-    public AnsibleCommandBuilder enableLogging(boolean enableLogging) {
+    public AnsibleCommandConfig enableLogging(boolean enableLogging) {
         this.enableLogging = enableLogging;
         return this;
     }
@@ -238,57 +233,24 @@ public class AnsibleCommandBuilder {
         return enableLogging;
     }
 
-    /**
-     * The generated command will look like:
-     *
-     * /usr/bin/ansible-playbook -${verboseLevel} --private-key=${privateKey} --limit=${limit} \
-     * --extra-vars=${variables} ${playbook}
-     *
-     * The logFile is set up to:
-     *
-     * /var/log/ovirt-engine/${logDirectory:ansible}/
-     * ${logFilePrefix:ansible}-${timestamp}-${logFileName:playbook}[-${logFileSuffix}].log
-     */
-    public List<String> build() {
-        ansibleCommand = new ArrayList<>();
-        ansibleCommand.add(ANSIBLE_COMMAND);
+    public AnsibleVerbosity verboseLevel(){
+        return verboseLevel;
+    }
 
-        // Always ignore system wide SSH configuration:
-        ansibleCommand.add(String.format("--ssh-common-args=-F %1$s/.ssh/config", config.getVarDir()));
+    public boolean isCheckMode(){
+        return checkMode;
+    }
 
-        if (verboseLevel.ordinal() > 0) {
-            ansibleCommand.add(
-                    "-" + IntStream.range(0, verboseLevel.ordinal()).mapToObj(i -> "v").collect(Collectors.joining()));
-        }
+    public Map<String, Object> variables() {
+        return variables;
+    }
 
-        if (checkMode) {
-            ansibleCommand.add("--check");
-        }
+    public String limit() {
+        return limit;
+    }
 
-        if (privateKey != null) {
-            ansibleCommand.add(String.format("--private-key=%1$s", privateKey));
-        }
-
-        if (inventoryFile != null) {
-            ansibleCommand.add(String.format("--inventory=%1$s", inventoryFile));
-        }
-
-        if (limit != null) {
-            ansibleCommand.add(String.format("--limit=%1$s", limit));
-        }
-
-        variables.entrySet()
-                .stream()
-                .map(e -> String.format("--extra-vars=%1$s=\"%2$s\"", e.getKey(), e.getValue()))
-                .forEach(ansibleCommand::add);
-
-        if (variableFilePath != null) {
-            ansibleCommand.add(String.format("--extra-vars=@%s", variableFilePath));
-        }
-
-        ansibleCommand.add(playbook);
-
-        return ansibleCommand;
+    public String variableFilePath() {
+        return variableFilePath;
     }
 
     @Override
@@ -301,12 +263,6 @@ public class AnsibleCommandBuilder {
                         .stream()
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
                         .collect(Collectors.joining(" ")));
-        // Command:
-        if (ansibleCommand != null) {
-            sb.append(" ");
-            sb.append(StringUtils.join(ansibleCommand, " "));
-            sb.append(" ");
-        }
 
         return sb.toString();
     }

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -142,13 +142,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         auditable.setCorrelationId(getCorrelationId());
 
         try {
-            AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+            AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK);
 
             auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_STARTED);
 
-            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
 
             auditable.addCustomValue("LogFile", ansibleReturnValue.getLogFile().getAbsolutePath());
 

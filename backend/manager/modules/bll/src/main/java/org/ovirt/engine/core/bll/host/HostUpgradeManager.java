@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -57,7 +57,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     public HostUpgradeManagerResult checkForUpdates(final VDS host) {
         AnsibleReturnValue ansibleReturnValue = null;
         try {
-            AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+            AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(host)
                 .checkMode(true)
                 .enableLogging(false)
@@ -65,7 +65,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 .stdoutCallback(AnsibleConstants.HOST_UPGRADE_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
 
-            ansibleReturnValue = ansibleExecutor.runCommand(command);
+            ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format(
                     "Failed to run check-update of host '%1$s'. Error: %2$s",
@@ -123,7 +123,6 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         return EnumSet.of(VDSType.VDS, VDSType.oVirtNode);
     }
 
-
     @Override
     public void update(final VDS host, int timeout) {
         Cluster cluster = clusterDao.get(host.getClusterId());
@@ -135,7 +134,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         //variable will contain a seconds-since-1/1/1970 representation 7 days from the current moment.
         long allowedExpirationDateInSeconds = TimeUnit.MILLISECONDS.toSeconds(
                 CertificationValidityChecker.computeFutureExpirationDate(daysAllowedUntilExpiration).getTimeInMillis());
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(host)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
@@ -160,7 +159,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
-        if (ansibleExecutor.runCommand(command, timeout).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+        if (ansibleExecutor.runCommand(commandConfig, timeout).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             String error = String.format("Failed to update host '%1$s'.", host.getHostName());
             log.error(error);
             throw new RuntimeException(error);

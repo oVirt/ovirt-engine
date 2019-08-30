@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -96,7 +96,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
                 .variable("ovirt_import_ova_disks",
@@ -116,7 +116,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .logFileSuffix(getCorrelationId())
                 .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(command);
+        AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to extract OVA. Please check logs for more details: {}", ansibleReturnValue.getLogFile());

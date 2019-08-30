@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
@@ -45,7 +45,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
 
     private String runAnsibleQueryOvaInfoPlaybook() {
         VdsStatic host = vdsStaticDao.get(getParameters().getVdsId());
-        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(host)
                 .variable("ovirt_query_ova_path", getParameters().getPath())
                 .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
@@ -58,7 +58,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
                 .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to query OVA info: {}", ansibleReturnValue.getStderr());
