@@ -164,6 +164,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (action.isSetReboot()) {
             params.setReboot(action.isReboot());
         }
+        if (action.isSetTimeout()) {
+            params.setTimeout(action.getTimeout());
+        }
 
         return doAction(ActionType.UpgradeHost, params, action);
     }

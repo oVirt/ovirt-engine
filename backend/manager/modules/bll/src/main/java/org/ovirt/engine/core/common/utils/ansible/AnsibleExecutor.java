@@ -63,6 +63,10 @@ public class AnsibleExecutor {
      *            code of ansible-playbook
      */
     public AnsibleReturnValue runCommand(AnsibleCommandBuilder command, int timeout) {
+        if (timeout <= 0) {
+            timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        }
+
         log.trace("Enter AnsibleExecutor::runCommand");
         AnsibleReturnValue returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
 

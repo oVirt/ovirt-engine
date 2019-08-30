@@ -66,7 +66,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
         if (vdsType == VDSType.VDS || vdsType == VDSType.oVirtNode) {
             try {
                 setVdsStatus(VDSStatus.Installing);
-                upgradeManager.update(getVds());
+                upgradeManager.update(getVds(), getParameters().getTimeout());
                 if (vdsType == VDSType.oVirtNode || getParameters().isReboot()) {
                     VdsActionParameters params = new VdsActionParameters(getVds().getId());
                     params.setPrevVdsStatus(getParameters().getInitialStatus());
