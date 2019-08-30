@@ -615,6 +615,7 @@ select fn_db_add_config_value('NumOfTriesToRunFailedAutoStartVmInShortIntervals'
 select fn_db_add_config_value('DelayToRunAutoStartVmIntervalInSeconds','10','general');
 --How many times we try to wait for the HA VM NextRun configuration to be applied
 select fn_db_add_config_value('MaxNumOfSkipsBeforeAutoStartVm','3','general');
+select fn_db_add_config_value('MaxTimeAutoStartBlockedOnPriority','600','general');
 --Handling Keyboard Layout configuration for VNC
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
 select fn_db_add_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','general');

@@ -18,6 +18,10 @@ import org.ovirt.engine.core.compat.Guid;
 @Singleton
 public class ColdRebootAutoStartVmsRunner extends AutoStartVmsRunner {
 
+    public ColdRebootAutoStartVmsRunner() {
+        considerPriority = false;
+    }
+
     @Override
     protected Collection<AutoStartVmToRestart> getInitialVmsToStart() {
         return Collections.emptyList();

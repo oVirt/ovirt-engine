@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Singleton;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TimeSpan;
 
 /**
  * This class represent a job which is responsible for running HA VMs
@@ -27,6 +29,10 @@ import org.ovirt.engine.core.compat.Guid;
  */
 @Singleton
 public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
+
+    public HaAutoStartVmsRunner() {
+        considerPriority = true;
+    }
 
     @Override
     protected Collection<AutoStartVmToRestart> getInitialVmsToStart() {
@@ -68,9 +74,15 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
     private static class  HaVmToRestart extends AutoStartVmToRestart {
         private static final int RETRY_TO_RUN_AUTO_START_VM_LONG_INTERVAL =
                 Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmLongIntervalInSeconds);
+        private static final int MAXIMUM_TIME_AUTO_START_BLOCKED_ON_PRIORITY =
+                Config.<Integer> getValue(ConfigValues.MaxTimeAutoStartBlockedOnPriority);
+
+        private long totalBlockedMs;
+        private Date lastBlockedTime;
 
         public HaVmToRestart(Guid vmId) {
             super(vmId);
+            totalBlockedMs = 0;
         }
 
         @Override
@@ -82,6 +94,55 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
 
             timeToRunTheVm = currentTime.addSeconds(delay);
             return true;
+        }
+
+        @Override
+        public boolean isBlockedOnPriority(int priority, DateTime currentTime) {
+            if (lastBlockedTime != null) {
+                totalBlockedMs += currentTime.getTime() - lastBlockedTime.getTime();
+                lastBlockedTime = null;
+            }
+
+            if (totalBlockedMs > MAXIMUM_TIME_AUTO_START_BLOCKED_ON_PRIORITY * TimeSpan.MS_PER_SECOND) {
+                return false;
+            }
+
+            if (getVm().getPriority() >= priority) {
+                return false;
+            }
+
+            lastBlockedTime = currentTime;
+            return true;
+        }
+
+        @Override
+        public boolean shouldWaitForVmUp() {
+            if (!getVm().isAutoStartup()) {
+                // VM is not HA anymore, other VMs should not wait for it
+                return false;
+            }
+
+            switch (getVm().getStatus()) {
+            // VM is powering UP
+            case WaitForLaunch:
+            case PoweringUp:
+
+                // If there is a reason why the VM was paused,
+                // others should wait for it.
+            case Paused:
+
+                // The VM was restarted during startup,
+            case RebootInProgress:
+
+                // User can trigger a migration when the VM is 'PoweringUp'.
+                // Other VMs should wait for migration to finish.
+            case MigratingTo:
+            case MigratingFrom:
+                return true;
+
+            default:
+                return false;
+            }
         }
     }
 }

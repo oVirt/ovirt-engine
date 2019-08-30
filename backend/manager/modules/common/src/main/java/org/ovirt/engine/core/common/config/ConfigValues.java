@@ -1158,6 +1158,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     MaxNumOfSkipsBeforeAutoStartVm,
 
+    @TypeConverterAttribute(Integer.class)
+    MaxTimeAutoStartBlockedOnPriority,
+
     /**
      * Value representing maximum number of milliseconds a VM can be down during live migration.
      * Default value of 0 means this value will not be sent to VDSM at all and the currently configured value on
