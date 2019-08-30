@@ -23,7 +23,7 @@ public class AnsibleCommandInventoryFileFactory {
     /**
      * Create a temporary inventory file if user didn't specify it.
      */
-    public AutoRemovableTempFile create(AnsibleCommandConfig inventoryFileConfig) throws IOException {
+    public AutoRemovableTempFile create(InventoryFileConfig inventoryFileConfig) throws IOException {
         Path inventoryFile = inventoryFileConfig.inventoryFile();
         if (inventoryFile == null) {
 

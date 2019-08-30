@@ -40,7 +40,7 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  * 5) Log file is $PREFIX/var/log/ovirt-engine/ansible/{prefix}-{timestamp}-{playbook-name}[-{suffix}].log
  * 6) Default inventory file is used.
  */
-public class AnsibleCommandConfig {
+public class AnsibleCommandConfig implements PlaybookConfig, InventoryFileConfig, LogFileConfig {
 
     public static final String ANSIBLE_COMMAND = "/usr/bin/ansible-playbook";
 

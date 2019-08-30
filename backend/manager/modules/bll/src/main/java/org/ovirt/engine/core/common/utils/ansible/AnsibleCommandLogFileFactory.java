@@ -28,7 +28,7 @@ public class AnsibleCommandLogFileFactory {
      * /var/log/ovirt-engine/${logDirectory:ansible}/
      * ${logFilePrefix:ansible}-${timestamp}-${logFileName:playbook}[-${logFileSuffix}].log
      */
-    public File create(AnsibleCommandConfig logFileConfig) {
+    public File create(LogFileConfig logFileConfig) {
         File logFile = null;
         String logFileDirectory = logFileConfig.logFileDirectory();
         String logFileName = logFileConfig.logFileName();
