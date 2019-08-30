@@ -16,6 +16,10 @@
              cursor: pointer;
         }
 
+        .footerButtonPanel {
+             width: 100%;
+        }
+
         .iconPosition {
             position: relative;
             left: 5px;
@@ -34,7 +38,7 @@
                 <g:SimplePanel ui:field="contentPanel" addStyleNames="modal-body wizard-pf-body clearfix" />
             </g:ScrollPanel>
             <g:HTMLPanel addStyleNames="modal-footer wizard-pf-footer">
-                <g:FlowPanel ui:field="footerButtonPanel" />
+                <g:FlowPanel ui:field="footerButtonPanel" addStyleNames="{style.footerButtonPanel}"/>
                 <g:FlowPanel ui:field="footerStatusPanel" />
                 <div style="clear: both;" />
             </g:HTMLPanel>

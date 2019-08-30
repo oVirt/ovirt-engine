@@ -5,12 +5,20 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:style>
+        .tabContent {
+             padding-top: 1em;
+             padding-left: 0px;
+             padding-right: 0px;
+         }
+    </ui:style>
+
     <b:TabPanel ui:field="tabPanel" addStyleNames="wizard-pf-row dialog_noMax">
         <g:FlowPanel ui:field="tabContainer" addStyleNames="wizard-pf-sidebar dialog_noOverflow">
             <b:NavTabs ui:field="navTabs" addStyleNames="list-group" />
         </g:FlowPanel>
         <g:SimplePanel ui:field="tabHeaderContainer" />
-        <b:TabContent ui:field="tabContent" addStyleNames="wizard-pf-main" />
+        <b:TabContent ui:field="tabContent" addStyleNames="wizard-pf-main {style.tabContent}" />
         <b:html.ClearFix />
     </b:TabPanel>
 
