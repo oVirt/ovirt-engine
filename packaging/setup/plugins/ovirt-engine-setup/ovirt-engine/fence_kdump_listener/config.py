@@ -55,7 +55,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-            oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         ),
         name=oenginecons.Stages.KDUMP_ALLOW,
@@ -71,7 +70,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-            oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
             oenginecons.Stages.KDUMP_ALLOW,
         ),

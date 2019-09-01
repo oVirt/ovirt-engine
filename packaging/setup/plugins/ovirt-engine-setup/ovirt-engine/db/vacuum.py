@@ -63,7 +63,6 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
         after=(
-            oengcommcons.Stages.DB_CONNECTION_STATUS,
             oengcommcons.Stages.DB_CUST_UPGRADEDBMS_ENGINE,
             oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
         ),
