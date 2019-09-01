@@ -637,7 +637,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{required_python_lib_ovirt_engine_lib}
 Requires:	%{name}-tools-backup = %{version}-%{release}
-Requires:	ovirt-engine-metrics >= 1.1.2
+Requires:	ovirt-engine-metrics >= 1.3.4.1
 Requires:	java-headless
 Requires:	logrotate
 Requires:	%{required_python_lib_dateutil}
