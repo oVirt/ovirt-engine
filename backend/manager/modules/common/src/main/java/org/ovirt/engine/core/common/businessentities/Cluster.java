@@ -190,7 +190,6 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         cpuName = "";
         vncEncryptionEnabled = true;
         hostNamesOutOfSync = "";
-        biosType = BiosType.I440FX_SEA_BIOS;
     }
 
     @Override

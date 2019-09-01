@@ -614,7 +614,12 @@ public class VmBaseMapper {
 
     @Mapping(from = BiosType.class, to = org.ovirt.engine.core.common.businessentities.BiosType.class)
     public static org.ovirt.engine.core.common.businessentities.BiosType map(BiosType biosType, org.ovirt.engine.core.common.businessentities.BiosType template) {
+        if (biosType == null) {
+            return null;
+        }
         switch (biosType) {
+            case CLUSTER_DEFAULT:
+                return org.ovirt.engine.core.common.businessentities.BiosType.CLUSTER_DEFAULT;
             case I440FX_SEA_BIOS:
                 return org.ovirt.engine.core.common.businessentities.BiosType.I440FX_SEA_BIOS;
             case Q35_SEA_BIOS:
@@ -630,7 +635,12 @@ public class VmBaseMapper {
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.BiosType.class, to = BiosType.class)
     public static BiosType map(org.ovirt.engine.core.common.businessentities.BiosType biosType, org.ovirt.engine.api.model.BiosType template) {
+        if (biosType == null) {
+            return null;
+        }
         switch (biosType) {
+            case CLUSTER_DEFAULT:
+                return BiosType.CLUSTER_DEFAULT;
             case I440FX_SEA_BIOS:
                 return BiosType.I440FX_SEA_BIOS;
             case Q35_SEA_BIOS:

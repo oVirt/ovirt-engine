@@ -73,6 +73,9 @@ public class ClusterMapper {
         if (model.isSetVersion() && model.getVersion().getMajor() != null && model.getVersion().getMinor() != null) {
             entity.setCompatibilityVersion(VersionMapper.map(model.getVersion()));
         }
+        if (model.isSetBiosType()) {
+            entity.setBiosType(VmBaseMapper.map(model.getBiosType(), null));
+        }
         if (model.isSetMemoryPolicy()) {
             entity = map(model.getMemoryPolicy(), entity);
         } else if (model.isSetVersion() && model.getVersion().getMajor() != null
@@ -201,6 +204,7 @@ public class ClusterMapper {
 
             model.setCpu(cpu);
         }
+        model.setBiosType(VmBaseMapper.map(entity.getBiosType(), null));
         if (entity.getStoragePoolId() != null) {
             DataCenter dataCenter = new DataCenter();
             dataCenter.setId(entity.getStoragePoolId().toString());

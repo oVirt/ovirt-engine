@@ -36,6 +36,7 @@ import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -705,6 +706,7 @@ public class UpdateClusterCommandTest {
         group.setArchitecture(ArchitectureType.x86_64);
         group.setClusterPolicyId(Guid.newGuid());
         group.setMaxVdsMemoryOverCommit(100);
+        group.setBiosType(BiosType.I440FX_SEA_BIOS);
         return group;
     }
 

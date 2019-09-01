@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -42,6 +43,7 @@ public class EmulatedMachineUtilsTest {
         final VmBase vmBase = new VmBase();
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
+        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         assertEquals("cluster-pc-i440fx-rhel7.3.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
     }
 
@@ -50,6 +52,7 @@ public class EmulatedMachineUtilsTest {
         final VmBase vmBase = new VmBase();
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
+        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         vmBase.setCustomCompatibilityVersion(Version.v4_2);
         assertEquals("pc-i440fx-rhel7.2.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
     }

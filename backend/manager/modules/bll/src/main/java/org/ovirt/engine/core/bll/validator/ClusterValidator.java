@@ -396,16 +396,15 @@ public class ClusterValidator {
     }
 
     protected ArchitectureType getArchitecture() {
-        if (newCluster != null) {
-            if (StringUtils.isNotEmpty(newCluster.getCpuName())) {
-                return cpuFlagsManagerHandler.getArchitectureByCpuName(newCluster.getCpuName(),
-                        newCluster.getCompatibilityVersion());
-            } else if (newCluster.getArchitecture() == null) {
-                return ArchitectureType.undefined;
-            }
+        Cluster eCluster = newCluster != null ? newCluster : cluster;
+        if (StringUtils.isNotEmpty(eCluster.getCpuName())) {
+            return cpuFlagsManagerHandler.getArchitectureByCpuName(eCluster.getCpuName(),
+                    eCluster.getCompatibilityVersion());
+        } else if (eCluster.getArchitecture() == null) {
+            return ArchitectureType.undefined;
         }
 
-        return cluster.getArchitecture();
+        return eCluster.getArchitecture();
     }
 
     public ValidationResult migrationOnError(ArchitectureType architectureType) {
@@ -429,6 +428,7 @@ public class ClusterValidator {
         ArchitectureType architecture = getArchitecture();
         return ValidationResult.failWith(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY)
                 .when(FeatureSupported.isBiosTypeSupported(eCluster.getCompatibilityVersion())
+                    && eCluster.getBiosType() != null
                     && eCluster.getBiosType() != BiosType.CLUSTER_DEFAULT
                     && eCluster.getBiosType() != BiosType.I440FX_SEA_BIOS
                     && architecture != ArchitectureType.undefined

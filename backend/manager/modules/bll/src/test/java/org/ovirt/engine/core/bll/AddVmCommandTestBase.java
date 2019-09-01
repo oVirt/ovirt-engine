@@ -19,6 +19,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -185,6 +186,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         cluster.setCpuName("Intel Conroe Family");
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setStoragePoolId(STORAGE_POOL_ID);
+        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
     }
 
     private void initStoragePool() {
