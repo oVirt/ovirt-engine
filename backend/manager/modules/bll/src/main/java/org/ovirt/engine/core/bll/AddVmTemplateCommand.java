@@ -433,6 +433,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         parameters.setVmTemplateName(getVmTemplateName());
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setTargetDiskIds(targetDiskIds);
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         if (getParameters().isSealTemplate()) {
             parameters.setCopyVolumeType(CopyVolumeType.LeafVol);
         }
