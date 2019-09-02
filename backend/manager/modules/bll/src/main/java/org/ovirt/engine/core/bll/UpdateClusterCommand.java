@@ -263,6 +263,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
             if (scMin != null) {
                 getCluster().setCpuName(scMin.getCpuName());
+                getCluster().setArchitecture(scMin.getArchitecture());
                 clusterCpuFlagsManager.updateCpuFlags(getCluster());
                 addCustomValue("CPU", scMin.getCpuName());
                 addCustomValue("Cluster", getParameters().getCluster().getName());
