@@ -45,7 +45,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
 
     private String runAnsibleQueryOvaInfoPlaybook() {
         VdsStatic host = vdsStaticDao.get(getParameters().getVdsId());
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(host)
                 .variable("ovirt_query_ova_path", getParameters().getPath())
                 .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
@@ -56,7 +56,8 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
                 .logFileName(host.getHostName())
                 .verboseLevel(AnsibleVerbosity.LEVEL0)
                 .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
-                .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
+                .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK)
+                .build();
 
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;

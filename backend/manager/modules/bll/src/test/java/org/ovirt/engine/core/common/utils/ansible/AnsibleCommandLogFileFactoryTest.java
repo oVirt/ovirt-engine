@@ -43,11 +43,12 @@ public class AnsibleCommandLogFileFactoryTest {
 
     @Test
     public void shouldCreateLogFileWithDefaultConfig() {
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig config = AnsibleCommandConfig.builder()
                 .playbook(ANSIBLE_PLAYBOOK)
-                .enableLogging(true);
+                .enableLogging(true)
+                .build();
 
-        File logFile = factory.create(commandConfig);
+        File logFile = factory.create(config);
 
         String expectedPath =
                 String.format("/var/log/ovirt-engine/ansible/ansible-%s-%s.log",
@@ -58,15 +59,16 @@ public class AnsibleCommandLogFileFactoryTest {
 
     @Test
     public void shouldCreateLogFileWithUserConfig() {
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig config = AnsibleCommandConfig.builder()
                 .playbook(ANSIBLE_PLAYBOOK)
                 .logFileDirectory("myDir")
                 .logFileName("myFileName")
                 .logFilePrefix("myPrefix")
                 .logFileSuffix("mySuffix")
-                .enableLogging(true);
+                .enableLogging(true)
+                .build();
 
-        File logFile = factory.create(commandConfig);
+        File logFile = factory.create(config);
 
         String expectedPath =
                 String.format("/var/log/ovirt-engine/myDir/myPrefix-%s-myFileName-mySuffix.log",
@@ -76,15 +78,16 @@ public class AnsibleCommandLogFileFactoryTest {
 
     @Test
     public void shouldNotCreateLogFileIfLogginDisabled() {
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig config = AnsibleCommandConfig.builder()
                 .playbook(ANSIBLE_PLAYBOOK)
                 .enableLogging(false)
                 .logFileDirectory("myDir")
                 .logFileName("myFileName")
                 .logFilePrefix("myPrefix")
-                .logFileSuffix("mySuffix");
+                .logFileSuffix("mySuffix")
+                .build();
 
-        File logFile = factory.create(commandConfig);
+        File logFile = factory.create(config);
 
         assertThat(logFile).isNull();
     }

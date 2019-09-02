@@ -89,7 +89,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     }
 
     private ValidationResult validateTargetFolder() {
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
@@ -98,7 +98,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
                 .logFilePrefix("ovirt-export-ova-validate-ansible")
                 .logFileName(getVds().getHostName())
                 .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
+                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK)
+                .build();
 
         boolean succeeded = ansibleExecutor.runCommand(commandConfig).getAnsibleReturnCode() == AnsibleReturnCode.OK;
         return succeeded ? ValidationResult.VALID

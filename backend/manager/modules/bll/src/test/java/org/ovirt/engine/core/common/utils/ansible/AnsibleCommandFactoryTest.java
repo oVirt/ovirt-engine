@@ -40,7 +40,7 @@ public class AnsibleCommandFactoryTest {
 
     @Test
     public void testAllEmpty() {
-        String command = createCommand(new AnsibleCommandConfig().playbook(ANSIBLE_PLAYBOOK));
+        String command = createCommand(AnsibleCommandConfig.builder().playbook(ANSIBLE_PLAYBOOK).build());
         assertEquals(
                 join(
                         AnsibleCommandConfig.ANSIBLE_COMMAND,
@@ -54,9 +54,10 @@ public class AnsibleCommandFactoryTest {
     @Test
     public void testDisableVerboseMode() {
         String command = createCommand(
-                new AnsibleCommandConfig()
+                AnsibleCommandConfig.builder()
                         .verboseLevel(AnsibleVerbosity.LEVEL0)
-                        .playbook(ANSIBLE_PLAYBOOK));
+                        .playbook(ANSIBLE_PLAYBOOK)
+                        .build());
 
         assertEquals(
                 join(AnsibleCommandConfig.ANSIBLE_COMMAND, IGNORE_SSH_CONFIG, PRIVATE_KEY, ANSIBLE_PLAYBOOK_FULL_PATH),
@@ -67,8 +68,9 @@ public class AnsibleCommandFactoryTest {
     public void testInventoryFile() {
         Path inventoryFile = Paths.get("myfile");
         String command = createCommand(
-                new AnsibleCommandConfig()
-                        .playbook(ANSIBLE_PLAYBOOK),
+                AnsibleCommandConfig.builder()
+                        .playbook(ANSIBLE_PLAYBOOK)
+                        .build(),
                 inventoryFile);
         assertEquals(
                 join(
@@ -84,9 +86,10 @@ public class AnsibleCommandFactoryTest {
     @Test
     public void testDifferentVerbosity() {
         String command = createCommand(
-                new AnsibleCommandConfig()
+                AnsibleCommandConfig.builder()
                         .verboseLevel(AnsibleVerbosity.LEVEL2)
-                        .playbook(ANSIBLE_PLAYBOOK));
+                        .playbook(ANSIBLE_PLAYBOOK)
+                        .build());
         assertEquals(
                 join(
                         AnsibleCommandConfig.ANSIBLE_COMMAND,
@@ -100,9 +103,10 @@ public class AnsibleCommandFactoryTest {
     @Test
     public void testVerbosityLevelZero() {
         String command = createCommand(
-                new AnsibleCommandConfig()
+                AnsibleCommandConfig.builder()
                         .verboseLevel(AnsibleVerbosity.LEVEL0)
-                        .playbook(ANSIBLE_PLAYBOOK));
+                        .playbook(ANSIBLE_PLAYBOOK)
+                        .build());
         assertEquals(
                 join(AnsibleCommandConfig.ANSIBLE_COMMAND, IGNORE_SSH_CONFIG, PRIVATE_KEY, ANSIBLE_PLAYBOOK_FULL_PATH),
                 command);
@@ -111,11 +115,12 @@ public class AnsibleCommandFactoryTest {
     @Test
     public void testExtraVariables() {
         String command = createCommand(
-                new AnsibleCommandConfig()
+                AnsibleCommandConfig.builder()
                         .variable("a", "1")
                         .variable("b", "2")
                         .variable("c", "3")
-                        .playbook(ANSIBLE_PLAYBOOK));
+                        .playbook(ANSIBLE_PLAYBOOK)
+                        .build());
         assertEquals(
                 join(
                         AnsibleCommandConfig.ANSIBLE_COMMAND,
@@ -132,14 +137,15 @@ public class AnsibleCommandFactoryTest {
     @Test
     public void testComplexCommand() {
         String command = createCommand(
-                new AnsibleCommandConfig()
+                AnsibleCommandConfig.builder()
                         .privateKey(Paths.get("/mykey"))
                         .inventoryFile(Paths.get("/myinventory"))
                         .limit("mylimit")
                         .verboseLevel(AnsibleVerbosity.LEVEL3)
                         .variable("a", "1")
                         .variable("b", "2")
-                        .playbook(ANSIBLE_PLAYBOOK),
+                        .playbook(ANSIBLE_PLAYBOOK)
+                        .build(),
                 Paths.get("/myinventory"));
         assertEquals(
                 join(
@@ -155,12 +161,12 @@ public class AnsibleCommandFactoryTest {
                 command);
     }
 
-    private String createCommand(AnsibleCommandConfig commandConfig) {
-        return createCommand(commandConfig, null);
+    private String createCommand(AnsibleCommandConfig command) {
+        return createCommand(command, null);
     }
 
-    private String createCommand(AnsibleCommandConfig commandConfig, Path inventoryFile) {
-        return StringUtils.join(commandFactory.create(commandConfig, inventoryFile), " ").trim();
+    private String createCommand(AnsibleCommandConfig command, Path inventoryFile) {
+        return StringUtils.join(commandFactory.create(command, inventoryFile), " ").trim();
     }
 
     private String join(String... params) {

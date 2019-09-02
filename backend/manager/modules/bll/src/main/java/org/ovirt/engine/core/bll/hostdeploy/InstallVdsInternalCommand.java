@@ -222,7 +222,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
         }
 
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(getVds())
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
                 .variable("host_deploy_cluster_name", hostCluster.getName())
@@ -251,7 +251,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .logFilePrefix("ovirt-host-deploy-ansible")
                 .logFileName(getVds().getHostName())
                 .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
+                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
+                .build();
 
         AuditLogable logable = new AuditLogableImpl();
         logable.setVdsName(getVds().getName());

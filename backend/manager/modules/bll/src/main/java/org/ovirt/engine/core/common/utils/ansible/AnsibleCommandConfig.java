@@ -18,6 +18,7 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
- * AnsibleCommandBuilder creates a ansible-playbook command.
+ * AnsibleCommandConfig stores full configuration that allows to create ansible-playbook command.
  *
  * By default:
  * 1) We don't use any cluster.
@@ -44,149 +45,76 @@ public class AnsibleCommandConfig implements PlaybookConfig, InventoryFileConfig
 
     public static final String ANSIBLE_COMMAND = "/usr/bin/ansible-playbook";
 
-    private AnsibleVerbosity verboseLevel;
-    private Path privateKey;
-    private String cluster;
-    private List<String> hostnames;
-    private Map<String, Object> variables;
-    private String variableFilePath;
-    private String limit;
-    private Path inventoryFile;
-    private String playbook;
-    private boolean checkMode;
+    private final AnsibleVerbosity verboseLevel;
+    private final Path privateKey;
+    private final String cluster;
+    private final List<String> hostnames;
+    private final Map<String, Object> variables;
+    private final String variableFilePath;
+    private final String limit;
+    private final Path inventoryFile;
+    private final String playbook;
+    private final boolean checkMode;
 
     // Logging:
-    private String logFileDirectory;
-    private String logFilePrefix;
-    private String logFileSuffix;
-    private String logFileName;
+    private final String logFileDirectory;
+    private final String logFilePrefix;
+    private final String logFileSuffix;
+    private final String logFileName;
     /*
      * By default Ansible logs to syslog of the host where the playbook is being executed. If this parameter is set to
      * true the logging will be done to file which you can specify by log* methods. If this parameters is set to false,
      * the logging wil be done to syslog on hosts.
      */
-    private boolean enableLogging;
+    private final boolean enableLogging;
 
-    private EngineLocalConfig config;
     private Path playbookDir;
 
     // ENV variables
     private Map<String, String> envVars;
 
-    public AnsibleCommandConfig() {
-        cluster = "unspecified";
-        enableLogging = true;
-        envVars = new HashMap<>();
-        config = EngineLocalConfig.getInstance();
-        playbookDir = Paths.get(config.getUsrDir().getPath(), "playbooks");
-        privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
-        variables = new HashMap<>();
-
-        try {
-            verboseLevel = AnsibleVerbosity.valueOf(
-                    "LEVEL" + EngineLocalConfig.getInstance().getProperty("ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL"));
-        } catch (IllegalArgumentException | NullPointerException e) {
-            verboseLevel = AnsibleVerbosity.LEVEL1;
-        }
-    }
-
-    public AnsibleCommandConfig checkMode(boolean checkMode) {
-        this.checkMode = checkMode;
-        return this;
-    }
-
-    public AnsibleCommandConfig verboseLevel(AnsibleVerbosity verboseLevel) {
+    public AnsibleCommandConfig(AnsibleVerbosity verboseLevel,
+            Path privateKey,
+            String cluster,
+            List<String> hostnames,
+            Map<String, Object> variables,
+            String variableFilePath,
+            String limit,
+            Path inventoryFile,
+            String playbook,
+            boolean checkMode,
+            String logFileDirectory,
+            String logFilePrefix,
+            String logFileSuffix,
+            String logFileName,
+            boolean enableLogging,
+            Path playbookDir,
+            Map<String, String> envVars) {
         this.verboseLevel = verboseLevel;
-        return this;
-    }
-
-    public AnsibleCommandConfig privateKey(Path privateKey) {
         this.privateKey = privateKey;
-        return this;
-    }
-
-    public AnsibleCommandConfig inventoryFile(Path inventoryFile) {
-        this.inventoryFile = inventoryFile;
-        return this;
-    }
-
-    public AnsibleCommandConfig cluster(String cluster) {
         this.cluster = cluster;
-        return this;
-    }
-
-    public AnsibleCommandConfig hosts(VdsStatic... hosts) {
-        this.hostnames = Arrays.stream(hosts)
-                .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
-                .collect(Collectors.toList());
-        return this;
-    }
-
-    public AnsibleCommandConfig hosts(VDS... hosts) {
-        this.hostnames = Arrays.stream(hosts)
-                .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
-                .collect(Collectors.toList());
-        return this;
-    }
-
-    protected static String formatHostPort(String host, int port) {
-        return ValidationUtils.isValidIpv6(host)
-                ? String.format("[%1$s]:%2$s", host, port)
-                : String.format("%1$s:%2$s", host, port);
-    }
-
-    public AnsibleCommandConfig variable(String name, Object value) {
-        this.variables.put(name, value);
-        return this;
-    }
-
-    public AnsibleCommandConfig limit(String limit) {
-        this.limit = limit;
-        return this;
-    }
-
-    public AnsibleCommandConfig logFileDirectory(String logFileDirectory) {
-        this.logFileDirectory = logFileDirectory;
-        return this;
-    }
-
-    public AnsibleCommandConfig logFileName(String logFileName) {
-        this.logFileName = logFileName;
-        return this;
-    }
-
-    public AnsibleCommandConfig logFilePrefix(String logFilePrefix) {
-        this.logFilePrefix = logFilePrefix;
-        return this;
-    }
-
-    public AnsibleCommandConfig logFileSuffix(String logFileSuffix) {
-        this.logFileSuffix = logFileSuffix;
-        return this;
-    }
-
-    public AnsibleCommandConfig playbook(String playbook) {
-        this.playbook = Paths.get(playbookDir.toString(), playbook).toString();
-        return this;
-    }
-
-    public AnsibleCommandConfig variableFilePath(String variableFilePath) {
+        this.hostnames = hostnames;
+        this.variables = variables;
         this.variableFilePath = variableFilePath;
-        return this;
+        this.limit = limit;
+        this.inventoryFile = inventoryFile;
+        this.playbook = playbook;
+        this.checkMode = checkMode;
+        this.logFileDirectory = logFileDirectory;
+        this.logFilePrefix = logFilePrefix;
+        this.logFileSuffix = logFileSuffix;
+        this.logFileName = logFileName;
+        this.enableLogging = enableLogging;
+        this.playbookDir = playbookDir;
+        this.envVars = envVars;
     }
 
-    public AnsibleCommandConfig stdoutCallback(String stdoutCallback) {
-        this.envVars.put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, stdoutCallback);
-        return this;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String playbook() {
         return playbook;
-    }
-
-    public AnsibleCommandConfig enableLogging(boolean enableLogging) {
-        this.enableLogging = enableLogging;
-        return this;
     }
 
     public Path inventoryFile() {
@@ -198,7 +126,7 @@ public class AnsibleCommandConfig implements PlaybookConfig, InventoryFileConfig
     }
 
     public List<String> hostnames() {
-        return hostnames;
+        return shallowCopy(hostnames);
     }
 
     public String cluster() {
@@ -233,37 +161,219 @@ public class AnsibleCommandConfig implements PlaybookConfig, InventoryFileConfig
         return enableLogging;
     }
 
-    public AnsibleVerbosity verboseLevel(){
+    public AnsibleVerbosity verboseLevel() {
         return verboseLevel;
     }
 
-    public boolean isCheckMode(){
+    public boolean isCheckMode() {
         return checkMode;
-    }
-
-    public Map<String, Object> variables() {
-        return variables;
     }
 
     public String limit() {
         return limit;
     }
 
+    public Map<String, Object> variables() {
+        return shallowCopy(variables);
+    }
+
     public String variableFilePath() {
         return variableFilePath;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    /**
+     * @param originalList
+     *            nullable allowed
+     * @param <T>
+     *            list item type
+     * @return shallow copy of List
+     */
+    private <T> List<T> shallowCopy(List<T> originalList) {
+        if (originalList == null) {
+            return null;
+        }
+        final List<T> copy = new ArrayList<>(originalList.size());
+        copy.addAll(originalList);
+        return copy;
 
-        // Env vars:
-        sb.append(
-                envVars.entrySet()
-                        .stream()
-                        .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(" ")));
+    }
 
-        return sb.toString();
+    /**
+     * @param originalMap
+     *            nullable allowed
+     * @param <K>
+     *            map's key type
+     * @param <V>
+     *            map's value type
+     * @return shallow copy of List
+     */
+    private <K, V> Map<K, V> shallowCopy(Map<K, V> originalMap) {
+        if (originalMap == null) {
+            return null;
+        }
+        return new HashMap<K, V>(originalMap);
+    }
+
+    public static class Builder {
+        private AnsibleVerbosity verboseLevel;
+        private Path privateKey;
+        private String cluster;
+        private List<String> hostnames;
+        private Map<String, Object> variables;
+        private String variableFilePath;
+        private String limit;
+        private Path inventoryFile;
+        private String playbook;
+        private boolean checkMode;
+
+        // Logging:
+        private String logFileDirectory;
+        private String logFilePrefix;
+        private String logFileSuffix;
+        private String logFileName;
+        /*
+         * By default Ansible logs to syslog of the host where the playbook is being executed. If this parameter is set
+         * to true the logging will be done to file which you can specify by log* methods. If this parameters is set to
+         * false, the logging wil be done to syslog on hosts.
+         */
+        private boolean enableLogging;
+
+        private EngineLocalConfig config;
+        private Path playbookDir;
+
+        // ENV variables
+        private Map<String, String> envVars;
+
+        private Builder() {
+            cluster = "unspecified";
+            enableLogging = true;
+            envVars = new HashMap<>();
+            config = EngineLocalConfig.getInstance();
+            playbookDir = Paths.get(config.getUsrDir().getPath(), "playbooks");
+            privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
+            variables = new HashMap<>();
+
+            try {
+                verboseLevel = AnsibleVerbosity.valueOf(
+                        "LEVEL" + EngineLocalConfig.getInstance().getProperty("ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL"));
+            } catch (IllegalArgumentException | NullPointerException e) {
+                verboseLevel = AnsibleVerbosity.LEVEL1;
+            }
+        }
+
+        public Builder checkMode(boolean checkMode) {
+            this.checkMode = checkMode;
+            return this;
+        }
+
+        public Builder verboseLevel(AnsibleVerbosity verboseLevel) {
+            this.verboseLevel = verboseLevel;
+            return this;
+        }
+
+        public Builder privateKey(Path privateKey) {
+            this.privateKey = privateKey;
+            return this;
+        }
+
+        public Builder inventoryFile(Path inventoryFile) {
+            this.inventoryFile = inventoryFile;
+            return this;
+        }
+
+        public Builder cluster(String cluster) {
+            this.cluster = cluster;
+            return this;
+        }
+
+        public Builder hosts(VdsStatic... hosts) {
+            this.hostnames = Arrays.stream(hosts)
+                    .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        public Builder hosts(VDS... hosts) {
+            this.hostnames = Arrays.stream(hosts)
+                    .map(h -> formatHostPort(h.getHostName(), h.getSshPort()))
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        protected static String formatHostPort(String host, int port) {
+            return ValidationUtils.isValidIpv6(host)
+                    ? String.format("[%1$s]:%2$s", host, port)
+                    : String.format("%1$s:%2$s", host, port);
+        }
+
+        public Builder variable(String name, Object value) {
+            this.variables.put(name, value);
+            return this;
+        }
+
+        public Builder limit(String limit) {
+            this.limit = limit;
+            return this;
+        }
+
+        public Builder logFileDirectory(String logFileDirectory) {
+            this.logFileDirectory = logFileDirectory;
+            return this;
+        }
+
+        public Builder logFileName(String logFileName) {
+            this.logFileName = logFileName;
+            return this;
+        }
+
+        public Builder logFilePrefix(String logFilePrefix) {
+            this.logFilePrefix = logFilePrefix;
+            return this;
+        }
+
+        public Builder logFileSuffix(String logFileSuffix) {
+            this.logFileSuffix = logFileSuffix;
+            return this;
+        }
+
+        public Builder playbook(String playbook) {
+            this.playbook = Paths.get(playbookDir.toString(), playbook).toString();
+            return this;
+        }
+
+        public Builder variableFilePath(String variableFilePath) {
+            this.variableFilePath = variableFilePath;
+            return this;
+        }
+
+        public Builder stdoutCallback(String stdoutCallback) {
+            this.envVars.put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, stdoutCallback);
+            return this;
+        }
+
+        public Builder enableLogging(boolean enableLogging) {
+            this.enableLogging = enableLogging;
+            return this;
+        }
+
+        public AnsibleCommandConfig build() {
+            return new AnsibleCommandConfig(verboseLevel,
+                    privateKey,
+                    cluster,
+                    hostnames,
+                    variables,
+                    variableFilePath,
+                    limit,
+                    inventoryFile,
+                    playbook,
+                    checkMode,
+                    logFileDirectory,
+                    logFilePrefix,
+                    logFileSuffix,
+                    logFileName,
+                    enableLogging,
+                    playbookDir,
+                    envVars);
+        }
     }
 }

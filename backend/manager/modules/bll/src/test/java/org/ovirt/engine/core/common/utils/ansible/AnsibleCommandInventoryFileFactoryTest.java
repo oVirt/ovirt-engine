@@ -36,9 +36,10 @@ public class AnsibleCommandInventoryFileFactoryTest {
     @Test
     public void shouldUseUserProvidedInventoryFile() throws IOException {
         Path expectedInventoryFile = Paths.get("myfile");
-        AnsibleCommandConfig config = new AnsibleCommandConfig()
+        AnsibleCommandConfig config = AnsibleCommandConfig.builder()
                 .playbook(ANSIBLE_PLAYBOOK)
-                .inventoryFile(expectedInventoryFile);
+                .inventoryFile(expectedInventoryFile)
+                .build();
 
         AutoRemovableTempFile createdInventoryFile = factory.create(config);
 

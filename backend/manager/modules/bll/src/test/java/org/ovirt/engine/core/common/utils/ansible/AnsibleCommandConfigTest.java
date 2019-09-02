@@ -14,6 +14,6 @@ class AnsibleCommandConfigTest {
             "www.ovirt.org, 22, www.ovirt.org:22"
     })
     public void testFormatHostPort(String host, int port, String result) {
-        assertEquals(result, AnsibleCommandConfig.formatHostPort(host, port));
+        assertEquals(result, AnsibleCommandConfig.Builder.formatHostPort(host, port));
     }
 }

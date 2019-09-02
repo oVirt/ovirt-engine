@@ -96,7 +96,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
                 .variable("ovirt_import_ova_disks",
@@ -114,7 +114,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .logFilePrefix("ovirt-import-ova-ansible")
                 .logFileName(getVds().getHostName())
                 .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK);
+                .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK)
+                .build();
 
         AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
@@ -171,4 +172,3 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
 }
-

@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 public class FileRemover {
     private static final Logger log = LoggerFactory.getLogger(FileRemover.class);
 
+    /**
+     * @param path points to file that is going to be removed. Skipped when null
+     */
     public void removeFile(Path path) {
         if (path != null && !path.equals(Paths.get("/dev/null"))) {
             try {

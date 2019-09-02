@@ -33,20 +33,17 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class AnsibleExecutor {
 
-    public static final String DEFAULT_LOG_DIRECTORY = "ansible";
-    private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
-
     @Inject
     private FileRemover fileRemover;
-
     @Inject
-    private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
-
+    private AnsibleCommandLogFileFactory  ansibleCommandLogFileFactory;
+    @Inject
+    private AnsibleCommandFactory ansibleCommandFactory;
     @Inject
     private AnsibleCommandInventoryFileFactory ansibleCommandInventoryFileFactory;
 
-    @Inject
-    private AnsibleCommandFactory ansibleCommandFactory;
+    private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
+    public static final String DEFAULT_LOG_DIRECTORY = "ansible";
 
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable

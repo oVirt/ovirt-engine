@@ -35,7 +35,7 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
     @Override
     protected void executeCommand() {
         setVdsStatus(VDSStatus.Installing);
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(getVds())
                 // /var/log/ovirt-engine/host-deploy/ovirt-enroll-certs-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
@@ -55,7 +55,8 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
                         PKIResources.getCaCertificate()
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
-                .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE);
+                .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE)
+                .build();
         setVdsStatus(VDSStatus.Maintenance);
         setSucceeded(true);
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);

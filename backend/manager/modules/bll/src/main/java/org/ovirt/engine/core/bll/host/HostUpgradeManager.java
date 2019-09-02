@@ -57,15 +57,16 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     public HostUpgradeManagerResult checkForUpdates(final VDS host) {
         AnsibleReturnValue ansibleReturnValue = null;
         try {
-            AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+            AnsibleCommandConfig command = AnsibleCommandConfig.builder()
                 .hosts(host)
                 .checkMode(true)
                 .enableLogging(false)
                 .verboseLevel(AnsibleVerbosity.LEVEL0)
                 .stdoutCallback(AnsibleConstants.HOST_UPGRADE_CALLBACK_PLUGIN)
-                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
+                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
+                .build();
 
-            ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
+            ansibleReturnValue = ansibleExecutor.runCommand(command);
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format(
                     "Failed to run check-update of host '%1$s'. Error: %2$s",
@@ -134,7 +135,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         //variable will contain a seconds-since-1/1/1970 representation 7 days from the current moment.
         long allowedExpirationDateInSeconds = TimeUnit.MILLISECONDS.toSeconds(
                 CertificationValidityChecker.computeFutureExpirationDate(daysAllowedUntilExpiration).getTimeInMillis());
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(host)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
@@ -158,7 +159,8 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                         PKIResources.getCaCertificate()
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
-                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
+                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
+                .build();
         if (ansibleExecutor.runCommand(commandConfig, timeout).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             String error = String.format("Failed to update host '%1$s'.", host.getHostName());
             log.error(error);

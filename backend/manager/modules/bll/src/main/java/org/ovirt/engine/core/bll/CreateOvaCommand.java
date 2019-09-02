@@ -155,7 +155,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String runAnsibleImageMeasurePlaybook(String path) {
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(getVds())
                 .variable("image_path", path)
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
@@ -165,7 +165,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .logFileSuffix(getCorrelationId())
                 .verboseLevel(AnsibleVerbosity.LEVEL0)
                 .stdoutCallback(AnsibleConstants.IMAGE_MEASURE_CALLBACK_PLUGIN)
-                .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
+                .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK)
+                .build();
 
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
@@ -184,7 +185,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private boolean runAnsiblePackOvaPlaybook(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
         String encodedOvf = genOvfParameter(ovf);
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("entity_type", getParameters().getEntityType().name().toLowerCase())
@@ -197,7 +198,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .logFilePrefix("ovirt-export-ova-ansible")
                 .logFileName(getVds().getHostName())
                 .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
+                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK)
+                .build();
 
         AnsibleReturnValue ansibleReturnCode = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnCode.getAnsibleReturnCode() == AnsibleReturnCode.OK;
