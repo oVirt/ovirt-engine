@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -86,6 +87,9 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     private VmDao vmDao;
+
+    @Mock
+    private DiskImageDao diskImageDao;
 
     @Mock
     private SnapshotDao snapshotDAO;

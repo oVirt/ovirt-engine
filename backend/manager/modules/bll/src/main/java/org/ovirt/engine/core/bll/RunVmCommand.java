@@ -90,6 +90,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -150,6 +151,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private DiskDao diskDao;
+    @Inject
+    private DiskImageDao diskImageDao;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
@@ -927,13 +930,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     private String guestToolsVersionTreatment() {
         boolean attachCd = false;
-        String selectedToolsVersion = "";
-        String selectedToolsClusterVersion = "";
+        String selectedCd = "";
+        List<RepoImage> repoFilesData = diskImageDao.getIsoDisksForStoragePoolAsRepoImages(getVm().getStoragePoolId());
         Guid isoDomainId = getActiveIsoDomainId();
-        if (osRepository.isWindows(getVm().getVmOsId()) && null != isoDomainId) {
+        if (osRepository.isWindows(getVm().getVmOsId())) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;
+            Version guestTools = null;
             if (getVm().getHasAgent()) {
                 Version clusterVer = getVm().getPartialVersion();
                 if (new Version("4.4").equals(clusterVer)) {
@@ -941,17 +945,24 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 } else {
                     vmToolsClusterVersion = clusterVer;
                 }
+            } else {
+                guestTools = new Version(vmHandler.currentOvirtGuestAgentVersion(getVm()));
+                if (!guestTools.isNotValid()) {
+                    vmToolsClusterVersion = new Version(guestTools.getMajor(), guestTools.getMinor());
+                }
             }
 
             // Fetch cached Iso files from active Iso domain.
-            List<RepoImage> repoFilesMap =
+            List<RepoImage> repoFiles =
                     getIsoDomainListSynchronizer().getCachedIsoListByDomainId(isoDomainId, ImageFileType.ISO);
+            repoFiles.addAll(repoFilesData);
             Version bestClusterVer = null;
             int bestToolVer = 0;
-            for (RepoImage map : repoFilesMap) {
-                String fileName = StringUtils.defaultString(map.getRepoImageId(), "");
+            for (RepoImage repo : repoFiles) {
+                String fileName = repo.getRepoImageName() == null ?
+                        StringUtils.defaultString(repo.getRepoImageId(), "") : repo.getRepoImageName();
                 Matcher matchToolPattern =
-                        Pattern.compile(isoDomainListSynchronizer.getRegexToolPattern()).matcher(fileName);
+                        Pattern.compile(isoDomainListSynchronizer.getRegexToolPattern()).matcher(fileName.toLowerCase());
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL));
@@ -959,39 +970,43 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
                     if (clusterVer.compareTo(getVm().getCompatibilityVersion()) <= 0) {
                         if ((bestClusterVer == null)
-                                || (clusterVer.compareTo(bestClusterVer) > 0)) {
+                                || (clusterVer.compareTo(bestClusterVer) > 0)
+                                || (clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer)) {
                             bestToolVer = toolVersion;
                             bestClusterVer = clusterVer;
-                        } else if (clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer) {
-                            bestToolVer = toolVersion;
-                            bestClusterVer = clusterVer;
+                            selectedCd = fileName;
                         }
                     }
                 }
             }
 
             if (bestClusterVer != null
-                    && (vmToolsClusterVersion == null
-                            || vmToolsClusterVersion.compareTo(bestClusterVer) < 0 || (vmToolsClusterVersion.equals(bestClusterVer)
-                            && getVm().getHasAgent() &&
-                    getVm().getGuestAgentVersion().getBuild() < bestToolVer))) {
+                && (vmToolsClusterVersion == null
+                    || vmToolsClusterVersion.compareTo(bestClusterVer) < 0
+                    || (vmToolsClusterVersion.equals(bestClusterVer) && getVm().getHasAgent()
+                        && getVm().getGuestAgentVersion().getBuild() < bestToolVer)
+                    || (guestTools != null
+                        && vmToolsClusterVersion.equals(bestClusterVer) && guestTools.getBuild() < bestToolVer))) {
                 // Vm has no tools or there are new tools
-                selectedToolsVersion = Integer.toString(bestToolVer);
-                selectedToolsClusterVersion = bestClusterVer.toString();
                 attachCd = true;
             }
         }
 
         if (attachCd) {
-            String rhevToolsPath =
-                    String.format("%1$s%2$s_%3$s.iso", isoDomainListSynchronizer.getGuestToolsSetupIsoPrefix(),
-                            selectedToolsClusterVersion, selectedToolsVersion);
-
+            String toolsName = selectedCd;
+            // See if the disk comes from a data domain
+            RepoImage dataDisk = repoFilesData.stream()
+                    .filter(m -> m.getRepoImageName().equals(toolsName))
+                    .findFirst()
+                    .orElse(null);
+            if (dataDisk != null){
+                return dataDisk.getRepoImageId();
+            }
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,
                     new IrsBaseVDSCommandParameters(getVm().getStoragePoolId())).getReturnValue();
-            rhevToolsPath = isoDir + File.separator + rhevToolsPath;
+            selectedCd = isoDir + File.separator + selectedCd;
 
-            return rhevToolsPath;
+            return selectedCd;
         }
         return null;
     }

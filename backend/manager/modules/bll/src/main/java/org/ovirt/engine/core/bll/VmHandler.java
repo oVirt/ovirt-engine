@@ -1017,7 +1017,8 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
-    private static final Pattern TOOLS_PATTERN = Pattern.compile(".*rhev-tools\\s+([\\d\\.]+).*");
+    private static final Pattern TOOLS_PATTERN_1 = Pattern.compile("rhev-tools\\s+([\\d\\.]+)");
+    private static final Pattern TOOLS_PATTERN_2 = Pattern.compile("ovirt guest tools\\s+([\\d\\.-]+)");
     private static final Pattern QEMU_GA_PATTERN = Pattern.compile("(?i:qemu-guest-agent-|QEMU guest agent)");
     // FIXME: currently oVirt-ToolsSetup is not present in app_list when it does
     // ISO_VERSION_PATTERN should address this pattern as well as the TOOLS_PATTERN
@@ -1061,19 +1062,37 @@ public class VmHandler implements BackendService {
     }
 
     private void maybeUpdateOvirtGuestAgentStatus(String latestVersion, VM vm) {
-        if (vm.getAppList() != null && vm.getAppList().toLowerCase().contains("rhev-tools")) {
-            Matcher m = TOOLS_PATTERN.matcher(vm.getAppList().toLowerCase());
-            if (m.matches() && m.groupCount() > 0) {
-                String toolsVersion = m.group(1);
-                if (toolsVersion.compareTo(latestVersion) < 0) {
-                    updateOvirtGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
-                } else {
-                    updateOvirtGuestAgentStatus(vm, GuestAgentStatus.Exists);
-                }
+        String toolsVersion = currentOvirtGuestAgentVersion(vm);
+        if (toolsVersion != null) {
+            if (toolsVersion.compareTo(latestVersion) < 0) {
+                updateOvirtGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
+            } else {
+                updateOvirtGuestAgentStatus(vm, GuestAgentStatus.Exists);
             }
         } else {
             updateOvirtGuestAgentStatus(vm, GuestAgentStatus.DoesntExist);
         }
+    }
+
+    public String currentOvirtGuestAgentVersion(VM vm) {
+        if (vm.getAppList() != null){
+            if (vm.getAppList().toLowerCase().contains("rhev-tools")) {
+                Matcher m = TOOLS_PATTERN_1.matcher(vm.getAppList().toLowerCase());
+                if (m.find() && m.groupCount() > 0) {
+                    return m.group(1);
+                }
+            } else if (vm.getAppList().toLowerCase().contains("ovirt guest tools")) {
+                Matcher m = TOOLS_PATTERN_2.matcher(vm.getAppList().toLowerCase());
+                if (m.find() && m.groupCount() > 0) {
+                    return String.join(".",
+                            Arrays.asList(m.group(1)
+                                    .replace("-", ".")
+                                    .split("\\."))
+                                    .subList(0, 3));
+                }
+            }
+        }
+        return null;
     }
 
 
