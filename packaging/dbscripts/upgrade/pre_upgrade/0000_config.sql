@@ -173,7 +173,7 @@ select fn_db_add_config_value_for_versions_up_to('ResetBrickSupported', 'true', 
 
 -- OpenStack related
 
-select fn_db_add_config_value('GuestToolsSetupIsoPrefix','ovirt-guest-tools-','general');
+select fn_db_add_config_value('GuestToolsSetupIsoPrefix','ovirt-toolssetup[-_]','general');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
@@ -1136,7 +1136,7 @@ select fn_db_update_default_config_value('AsyncTaskZombieTaskLifeInMinutes','300
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','1000', '100','general',false);
-select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_', 'ovirt-guest-tools-','general', false);
+select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','ovirt-guest-tools-', 'ovirt-toolssetup[-_]','general', false);
 
 -- Reduce the host connection timeout from 180 seconds to 2 seconds and
 -- disable retries for more predictable HA timing:
