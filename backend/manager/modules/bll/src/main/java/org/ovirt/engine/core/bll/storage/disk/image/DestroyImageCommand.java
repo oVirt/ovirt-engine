@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
-import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -29,7 +28,6 @@ import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.slf4j.Logger;
@@ -46,8 +44,8 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     private StorageDomainDao storageDomainDao;
 
     @Inject
-    @Typed(SerialChildCommandsExecutionCallback.class)
-    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
+    @Typed(DestroyImageCommandCallback.class)
+    private Instance<DestroyImageCommandCallback> callbackProvider;
 
     private static final Logger log = LoggerFactory.getLogger(DestroyImageCommand.class);
 
@@ -91,7 +89,6 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
         }
 
         setSucceeded(true);
-        setCommandStatus(CommandStatus.SUCCEEDED);
     }
 
     private boolean isMerge(ActionType actionType) {
@@ -126,5 +123,10 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     @Override
     public CommandCallback getCallback() {
         return isMerge(getParentParameters().getParentCommand()) ? callbackProvider.get() : null;
+    }
+
+    @Override
+    protected void setSucceeded(boolean value) {
+        super.setSucceeded(value);
     }
 }

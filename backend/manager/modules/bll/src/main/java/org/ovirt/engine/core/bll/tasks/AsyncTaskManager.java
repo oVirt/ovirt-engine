@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -619,25 +621,36 @@ public final class AsyncTaskManager implements BackendService {
 
         if (vdsmTaskIdList != null && vdsmTaskIdList.size() > 0) {
             for (Guid vdsmTaskId : vdsmTaskIdList) {
-                if (tasks.containsKey(vdsmTaskId)) {
-                    // task is still running or is still in the cache:
-                    tasks.get(vdsmTaskId).setLastStatusAccessTime();
-                    returnValue.add(tasks.get(vdsmTaskId).getLastTaskStatus());
-                } else { // task doesn't exist in the manager (shouldn't happen) ->
-                    // assume it has been ended successfully.
-                    log.warn(
-                            "Polling tasks. Task ID '{}' doesn't exist in the manager -> assuming 'finished'.",
-                            vdsmTaskId);
-
-                    AsyncTaskStatus tempVar = new AsyncTaskStatus();
-                    tempVar.setStatus(AsyncTaskStatusEnum.finished);
-                    tempVar.setResult(AsyncTaskResultEnum.success);
-                    returnValue.add(tempVar);
-                }
+                returnValue.add(getTaskStatus(vdsmTaskId));
             }
         }
 
         return returnValue;
+    }
+
+    // similar to previous function but returns a map
+    public Map<Guid, AsyncTaskStatus> pollTasksWithStatus(Set<Guid> taskIds) {
+        if (taskIds == null) {
+            return Collections.emptyMap();
+        }
+        return taskIds.stream().collect(Collectors.toMap(Function.identity(), this::getTaskStatus));
+    }
+
+    private AsyncTaskStatus getTaskStatus(Guid vdsmTaskId) {
+        SPMTask spmTask = tasks.get(vdsmTaskId);
+        if (spmTask != null) {
+            // task is still running or is still in the cache:
+            spmTask.setLastStatusAccessTime();
+            return spmTask.getLastTaskStatus();
+        } else {
+            // task doesn't exist in the manager (shouldn't happen) ->
+            // assume it has been ended successfully.
+            log.warn("Polling tasks. Task ID '{}' doesn't exist in the manager -> assuming 'finished'.", vdsmTaskId);
+            AsyncTaskStatus result = new AsyncTaskStatus();
+            result.setStatus(AsyncTaskStatusEnum.finished);
+            result.setResult(AsyncTaskResultEnum.success);
+            return result;
+        }
     }
 
     /**
