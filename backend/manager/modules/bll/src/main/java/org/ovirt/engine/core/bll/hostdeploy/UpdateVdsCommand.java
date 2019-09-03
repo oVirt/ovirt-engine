@@ -370,7 +370,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
         // TODO - check permissions to modify labels
         List<Label> affinityLabels = getParameters().getAffinityLabels();
-        if (affinityGroups != null) {
+        if (affinityLabels != null) {
             List<Guid> labelIds = affinityLabels.stream()
                     .map(Label::getId)
                     .collect(Collectors.toList());

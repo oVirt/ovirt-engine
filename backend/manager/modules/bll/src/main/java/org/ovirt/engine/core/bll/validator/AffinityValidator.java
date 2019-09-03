@@ -134,12 +134,14 @@ public class AffinityValidator {
             Set<Guid> elementsWithEntity,
             Function<T, Collection<Guid>> entityIdsExtractor) {
 
+        boolean collectionChanged = false;
+        boolean allElementsFound = true;
+
         if (elementsWithEntity == null) {
-            return new Pair<>(true, true);
+            return new Pair<>(collectionChanged, allElementsFound);
         }
 
         int elementsFound = 0;
-        boolean collectionChanged = false;
         for (T element : elements) {
             Collection<Guid> entityIds = entityIdsExtractor.apply(element);
 
@@ -157,7 +159,8 @@ public class AffinityValidator {
             }
         }
 
-        return new Pair<>(collectionChanged, elementsFound == elementsWithEntity.size());
+        allElementsFound = elementsFound == elementsWithEntity.size();
+        return new Pair<>(collectionChanged, allElementsFound);
     }
 
     public static void unpackAffinityGroupLabels(AffinityGroup group, Map<Guid, Label> labels) {
