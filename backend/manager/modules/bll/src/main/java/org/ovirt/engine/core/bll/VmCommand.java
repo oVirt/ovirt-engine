@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -514,6 +515,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId);
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
+        if (getParameters().getEntityInfo() == null) {
+            getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmId));
+        }
         ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.RemoveVmLease, params);
         if (returnValue.getSucceeded()) {
             getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
@@ -542,6 +546,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
+        if (getParameters().getEntityInfo() == null) {
+            getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmId));
+        }
         ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.AddVmLease, params);
         if (returnValue.getSucceeded()) {
             getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
