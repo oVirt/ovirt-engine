@@ -87,6 +87,8 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
                     setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
             persistCommand(getParameters().getParentCommand());
         }
+
+        setSucceeded(true);
     }
 
     private boolean isMerge(ActionType actionType) {
