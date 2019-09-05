@@ -78,6 +78,7 @@ public interface OvfProperties {
     String COMMENT = "Comment";
     String IS_AUTO_CONVERGE = "IsAutoConverge";
     String IS_MIGRATE_COMPRESSED = "IsMigrateCompressed";
+    String IS_MIGRATE_ENCRYPTED = "IsMigrateEncrypted";
     String MIGRATION_POLICY_ID = "MigrationPolicyId";
     String CUSTOM_EMULATED_MACHINE = "CustomEmulatedMachine";
     String BIOS_TYPE = "BiosType";

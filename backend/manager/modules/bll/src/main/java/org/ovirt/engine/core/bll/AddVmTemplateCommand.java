@@ -943,6 +943,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getNumaTuneMode(),
                         getParameters().getMasterVm().getAutoConverge(),
                         getParameters().getMasterVm().getMigrateCompressed(),
+                        getParameters().getMasterVm().getMigrateEncrypted(),
                         getParameters().getMasterVm().getUserDefinedProperties(),
                         getParameters().getMasterVm().getPredefinedProperties(),
                         getParameters().getMasterVm().getCustomProperties(),

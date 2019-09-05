@@ -620,6 +620,9 @@ public abstract class OvfReader implements IOvfBuilder {
                 IS_MIGRATE_COMPRESSED,
                 val -> vmBase.setMigrateCompressed(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
+                IS_MIGRATE_ENCRYPTED,
+                val -> vmBase.setMigrateEncrypted(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
                 MIGRATION_POLICY_ID,
                 val -> vmBase.setMigrationPolicyId(Guid.createGuidFromString(val)));
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));

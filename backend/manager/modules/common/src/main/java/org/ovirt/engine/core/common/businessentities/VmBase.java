@@ -531,6 +531,10 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @CopyOnNewVersion
     @EditableVmField
+    private Boolean migrateEncrypted;
+
+    @CopyOnNewVersion
+    @EditableVmField
     private Guid migrationPolicyId;
 
     public VmBase(VmBase vmBase) {
@@ -586,6 +590,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getNumaTuneMode(),
                 vmBase.getAutoConverge(),
                 vmBase.getMigrateCompressed(),
+                vmBase.getMigrateEncrypted(),
                 vmBase.getUserDefinedProperties(),
                 vmBase.getPredefinedProperties(),
                 vmBase.getCustomProperties(),
@@ -657,6 +662,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             NumaTuneMode numaTuneMode,
             Boolean autoConverge,
             Boolean migrateCompressed,
+            Boolean migrateEncrypted,
             String userDefinedProperties,
             String predefinedProperties,
             String customProperties,
@@ -726,6 +732,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.cpuProfileId = cpuProfileId;
         this.autoConverge = autoConverge;
         this.migrateCompressed = migrateCompressed;
+        this.migrateEncrypted = migrateEncrypted;
         this.userDefinedProperties = userDefinedProperties;
         this.predefinedProperties = predefinedProperties;
         this.customProperties = customProperties;
@@ -1145,6 +1152,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vNumaNodeList,
                 autoConverge,
                 migrateCompressed,
+                migrateEncrypted,
                 predefinedProperties,
                 userDefinedProperties,
                 customEmulatedMachine,
@@ -1215,6 +1223,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(vNumaNodeList, other.vNumaNodeList)
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)
+                && Objects.equals(migrateEncrypted, other.migrateEncrypted)
                 && Objects.equals(predefinedProperties, other.predefinedProperties)
                 && Objects.equals(userDefinedProperties, other.userDefinedProperties)
                 && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
@@ -1473,6 +1482,16 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setMigrateCompressed(Boolean migrateCompressed) {
         this.migrateCompressed = migrateCompressed;
+    }
+
+    @Override
+    public Boolean getMigrateEncrypted() {
+        return migrateEncrypted;
+    }
+
+    @Override
+    public void setMigrateEncrypted(Boolean value) {
+        this.migrateEncrypted = value;
     }
 
     public String getCustomProperties() {

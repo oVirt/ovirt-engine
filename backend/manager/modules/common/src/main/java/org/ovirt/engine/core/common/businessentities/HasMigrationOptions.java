@@ -11,4 +11,7 @@ public interface HasMigrationOptions {
 
     Guid getMigrationPolicyId();
     void setMigrationPolicyId(Guid value);
+
+    Boolean getMigrateEncrypted();
+    void setMigrateEncrypted(Boolean value);
 }

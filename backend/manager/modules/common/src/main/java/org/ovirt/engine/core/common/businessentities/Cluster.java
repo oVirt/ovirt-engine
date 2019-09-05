@@ -141,6 +141,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private Boolean migrateCompressed;
 
+    private Boolean migrateEncrypted;
+
     private String glusterTunedProfile;
 
     private boolean ksmMergeAcrossNumaNodes;
@@ -559,6 +561,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.migrateCompressed = migrateCompressed;
     }
 
+    public Boolean getMigrateEncrypted() {
+        return migrateEncrypted;
+    }
+
+    public void setMigrateEncrypted(Boolean migrateEncrypted) {
+        this.migrateEncrypted = migrateEncrypted;
+    }
+
     public ClusterHostsAndVMs getClusterHostsAndVms() {
         return clusterHostsAndVms;
     }
@@ -742,6 +752,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 fencingPolicy,
                 autoConverge,
                 migrateCompressed,
+                migrateEncrypted,
                 glusterTunedProfile,
                 addtionalFeaturesSupported,
                 ksmMergeAcrossNumaNodes,
@@ -807,6 +818,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(fencingPolicy, other.fencingPolicy)
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)
+                && Objects.equals(migrateEncrypted, other.migrateEncrypted)
                 && Objects.equals(glusterTunedProfile, other.glusterTunedProfile)
                 && Objects.equals(addtionalFeaturesSupported, other.addtionalFeaturesSupported)
                 && ksmMergeAcrossNumaNodes == other.ksmMergeAcrossNumaNodes

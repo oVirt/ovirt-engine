@@ -274,6 +274,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("fencing_enabled", cluster.getFencingPolicy().isFencingEnabled())
                 .addValue("is_auto_converge", cluster.getAutoConverge())
                 .addValue("is_migrate_compressed", cluster.getMigrateCompressed())
+                .addValue("is_migrate_encrypted", cluster.getMigrateEncrypted())
                 .addValue("gluster_tuned_profile", cluster.getGlusterTunedProfile())
                 .addValue("ksm_merge_across_nodes", cluster.isKsmMergeAcrossNumaNodes())
                 .addValue("migration_bandwidth_limit_type", cluster.getMigrationBandwidthLimitType().name())
@@ -345,6 +346,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.getFencingPolicy().setFencingEnabled(rs.getBoolean("fencing_enabled"));
         entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
         entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
+        entity.setMigrateEncrypted((Boolean) rs.getObject("is_migrate_encrypted"));
         entity.setGlusterTunedProfile(rs.getString("gluster_tuned_profile"));
         entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
         entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));

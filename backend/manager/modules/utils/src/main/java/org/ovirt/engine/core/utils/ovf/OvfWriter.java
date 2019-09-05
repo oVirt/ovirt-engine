@@ -292,6 +292,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeElement(IS_MIGRATE_COMPRESSED, String.valueOf(vmBase.getMigrateCompressed()));
         }
 
+        if (vmBase.getMigrateEncrypted() != null) {
+            _writer.writeElement(IS_MIGRATE_ENCRYPTED, String.valueOf(vmBase.getMigrateEncrypted()));
+        }
+
         if (vmBase.getMigrationPolicyId() != null) {
             _writer.writeElement(MIGRATION_POLICY_ID, String.valueOf(vmBase.getMigrationPolicyId()));
         }
