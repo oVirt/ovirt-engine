@@ -60,6 +60,15 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if the migrate encrypted is supported for the given version
+     * @param version Compatibility version to check for.
+     * @return
+     */
+    public static boolean isMigrateEncryptedSupported(Version version) {
+        return version.greaterOrEquals(Version.v4_4);
+    }
+
+    /**
      * Checks if High Performance VM type is supported by cluster version
      *
      * @param version
@@ -281,5 +290,4 @@ public class FeatureSupported {
     public static boolean isVgpuPlacementSupported(Version version) {
         return supportedInConfig(ConfigValues.VgpuPlacementSupported, version);
     }
-
 }

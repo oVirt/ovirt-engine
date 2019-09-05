@@ -416,6 +416,7 @@ public final class VdsProperties {
     public static final String MIGRATION_DOWNTIME = "downtime";
     public static final String AUTO_CONVERGE = "autoConverge";
     public static final String MIGRATE_COMPRESSED = "compressed";
+    public static final String MIGRATE_ENCRYPTED = "encrypted";
     public static final String ADDITIONAL_FEATURES = "additionalFeatures";
     public static final String CONSOLE_ADDRESS = "consoleAddress";
     public static final String MIGRATION_CONVERGENCE_SCHEDULE = "convergenceSchedule";

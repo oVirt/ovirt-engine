@@ -18,6 +18,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Integer migrationDowntime;
     private Boolean autoConverge;
     private Boolean migrateCompressed;
+    private Boolean migrateEncrypted;
     private String consoleAddress;
     private Integer maxBandwidth;
     private Boolean enableGuestEvents;
@@ -29,7 +30,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId,
                                        String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
                                        String dstQemu, Version clusterVersion, int migrationDowntime,
-                                       Boolean autoConverge, Boolean migrateCompressed, String consoleAddress,
+                                       Boolean autoConverge, Boolean migrateCompressed, Boolean migrateEncrypted, String consoleAddress,
                                        Integer maxBandwidth, Map<String, Object> convergenceSchedule, Boolean enableGuestEvents,
                                        Integer maxIncomingMigrations, Integer maxOutgoingMigrations) {
         super(vdsId, vmId);
@@ -43,6 +44,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.migrationDowntime = migrationDowntime;
         this.autoConverge = autoConverge;
         this.migrateCompressed = migrateCompressed;
+        this.migrateEncrypted = migrateEncrypted;
         this.consoleAddress = consoleAddress;
         this.maxBandwidth = maxBandwidth;
         this.convergenceSchedule = convergenceSchedule;
@@ -85,6 +87,14 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setMigrateCompressed(Boolean migrateCompressed) {
         this.migrateCompressed = migrateCompressed;
+    }
+
+    public Boolean getMigrateEncrypted() {
+        return migrateEncrypted;
+    }
+
+    public void setMigrateEncrypted(Boolean migrateEncrypted) {
+        this.migrateEncrypted = migrateEncrypted;
     }
 
     public Boolean getAutoConverge() {
@@ -166,6 +176,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("migrationDowntime", getMigrationDowntime())
                 .append("autoConverge", getAutoConverge())
                 .append("migrateCompressed", getMigrateCompressed())
+                .append("migrateEncrypted", getMigrateEncrypted())
                 .append("consoleAddress", getConsoleAddress())
                 .append("maxBandwidth", getMaxBandwidth())
                 .append("enableGuestEvents", isEnableGuestEvents())
