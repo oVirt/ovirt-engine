@@ -883,7 +883,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
-            self._provider_installed
+            self._provider_installed and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ]
         ),
     )
     def _upgrade(self):
