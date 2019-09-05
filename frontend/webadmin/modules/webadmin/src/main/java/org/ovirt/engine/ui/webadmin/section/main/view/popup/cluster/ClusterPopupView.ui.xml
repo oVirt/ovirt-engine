@@ -407,6 +407,9 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="migrateEncryptedEditor" label="{constants.migrateEncryptedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>

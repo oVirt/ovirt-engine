@@ -101,6 +101,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumaTuneMode().getSelectedItem()).thenReturn(NumaTuneMode.INTERLEAVE);
         when(model.getAutoConverge().getSelectedItem()).thenReturn(true);
         when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
+        when(model.getMigrateEncrypted().getSelectedItem()).thenReturn(true);
         when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(
                 LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID, ValidationResult.ok()));
         when(model.getNumOfIoThreads().getEntity()).thenReturn(Integer.toString(NUM_OF_IO_THREADS));

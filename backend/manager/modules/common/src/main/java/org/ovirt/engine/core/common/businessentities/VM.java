@@ -1684,6 +1684,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatic.setMigrateCompressed(migrateCompressed);
     }
 
+    public void setMigrateEncrypted(Boolean migrateEncrypted) {
+        vmStatic.setMigrateEncrypted(migrateEncrypted);
+    }
+
+    public Boolean getMigrateEncrypted() {
+        return vmStatic.getMigrateEncrypted();
+    }
+
     public LockInfo getLockInfo() {
         return lockInfo;
     }

@@ -397,6 +397,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         clusterModel.getSerialNumberPolicy().getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
         clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
         clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
+        clusterModel.getMigrateEncrypted().setSelectedItem(cluster.getMigrateEncrypted());
         clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
         clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getClusterHostsAndVms().getHosts() == 0);
         clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
@@ -752,6 +753,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         cluster.setAutoConverge(model.getAutoConverge().getSelectedItem());
         cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
+        cluster.setMigrateEncrypted(model.getMigrateEncrypted().getSelectedItem());
         if (model.getEnableGlusterService().getEntity()) {
             cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
         }

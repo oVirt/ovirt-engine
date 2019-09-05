@@ -2872,6 +2872,11 @@ public class AsyncDataProvider {
         return maxVmNameLengthSysprep;
     }
 
+    public boolean getMigrateEncrypted() {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.DefaultMigrationEncryption,
+                getDefaultConfigurationVersion());
+    }
+
     public int getOptimizeSchedulerForSpeedPendingRequests() {
         return (Integer) getConfigValuePreConverted(ConfigValues.SpeedOptimizationSchedulingThreshold,
                 getDefaultConfigurationVersion());

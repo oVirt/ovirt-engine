@@ -46,6 +46,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setSpiceCopyPasteEnabled(Boolean.TRUE.equals(model.getSpiceCopyPasteEnabled().getEntity()));
         vm.setAutoConverge(model.getAutoConverge().getSelectedItem());
         vm.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
+        vm.setMigrateEncrypted(model.getMigrateEncrypted().getSelectedItem());
         vm.setCustomProperties(model.getCustomPropertySheet().serialize());
         vm.setConsoleDisconnectAction(model.getConsoleDisconnectAction().getSelectedItem());
         VmResumeBehavior selectedResumeBehavior = model.getResumeBehavior().getSelectedItem();

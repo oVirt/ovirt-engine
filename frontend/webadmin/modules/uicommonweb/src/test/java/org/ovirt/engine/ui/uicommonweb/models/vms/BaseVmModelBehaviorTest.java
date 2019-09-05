@@ -47,6 +47,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setSingleQxlPci(true);
         vm.setAutoConverge(true);
         vm.setMigrateCompressed(true);
+        vm.setMigrateEncrypted(true);
         vm.setLargeIconId(LARGE_ICON_ID);
         vm.setSmallIconId(SMALL_ICON_ID);
         vm.setNumOfIoThreads(NUM_OF_IO_THREADS);
@@ -133,6 +134,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertTrue(model.getSpiceCopyPasteEnabled().getEntity());
         assertTrue(model.getAutoConverge().getSelectedItem());
         assertTrue(model.getMigrateCompressed().getSelectedItem());
+        assertTrue(model.getMigrateEncrypted().getSelectedItem());
         assertEquals(LARGE_ICON_DATA, model.getIcon().getEntity().getIcon());
         assertEquals(LARGE_OS_DEFAULT_ICON_DATA, model.getIcon().getEntity().getOsDefaultIcon());
         assertEquals(ConsoleDisconnectAction.LOCK_SCREEN, model.getConsoleDisconnectAction().getSelectedItem());

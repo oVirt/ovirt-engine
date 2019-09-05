@@ -439,6 +439,9 @@
                   </b:Column>
                 </b:Row>
                 <b:Row>
+                  <e:ListModelListBoxEditor ui:field="migrateEncryptedEditor" label="{constants.migrateEncryptedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
                   <b:Column size="SM_5">
                     <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationDowntimeLabel}" />
                     <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.infoIcon}"/>

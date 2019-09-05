@@ -193,5 +193,9 @@ public interface CommonApplicationMessages extends Messages {
     String ovaPathInfo();
 
     String vmGuestCpuTypeWarning(String cpuType);
+
+    String clusterDefaultOption(String defaultvalue);
+
+    String systemDefaultOption(String defaultvalue);
 }
 

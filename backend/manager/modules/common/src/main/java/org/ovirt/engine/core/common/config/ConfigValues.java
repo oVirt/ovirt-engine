@@ -1379,6 +1379,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     DefaultMigrationCompression,
 
+    @TypeConverterAttribute(Boolean.class)
+    DefaultMigrationEncryption,
+
     @TypeConverterAttribute(Long.class)
     BackupCheckPeriodInHours,
 

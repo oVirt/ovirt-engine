@@ -88,6 +88,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
+import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -691,6 +692,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "migrateCompressed.selectedItem")
     @WithElementId("migrateCompressed")
     public ListModelListBoxEditor<Boolean> migrateCompressedEditor;
+
+    @UiField(provided = true)
+    @Path(value = "migrateEncrypted.selectedItem")
+    @WithElementId("migrateEncrypted")
+    public ListModelListBoxEditor<Boolean> migrateEncryptedEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -1479,6 +1485,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromCluster()),
                 new ModeSwitchingVisibilityRenderer());
 
+        migrateEncryptedEditor = new ListModelListBoxEditor<>(
+                new MigrateEncryptedRenderer(),
+                new ModeSwitchingVisibilityRenderer());
+
         // Resource Allocation
         provisioningThinEditor =
                 new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
@@ -1959,6 +1969,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationDowntimeEditor.setTabIndex(nextTabIndex++);
         autoConvergeEditor.setTabIndex(nextTabIndex++);
         migrateCompressedEditor.setTabIndex(nextTabIndex++);
+        migrateEncryptedEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
 
@@ -2273,5 +2284,31 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     public HasClickHandlers getAddAffinityLabelButton() {
         return affinityLabelSelectionWidget.getSelectionWidget().getAddSelectedItemButton();
+    }
+
+    private class MigrateEncryptedRenderer extends BooleanRenderer {
+        @Override
+        public String render(Boolean vmMigrateEncrypted) {
+            if (vmMigrateEncrypted == null) {
+                if (getModel() == null || getModel().getSelectedCluster() == null) {
+                    return constants.clusterDefaultOption();
+                }
+
+                Cluster cluster = getModel().getSelectedCluster();
+                boolean clusterMigrateEncrypted;
+                if (cluster.getMigrateEncrypted() == null) {
+                    clusterMigrateEncrypted = AsyncDataProvider.getInstance().getMigrateEncrypted();
+                } else {
+                    clusterMigrateEncrypted = cluster.getMigrateEncrypted();
+                }
+
+                String clusterMigrateEncryptedLabel = clusterMigrateEncrypted ? constants.encrypt() : constants.dontEncrypt();
+                return messages.clusterDefaultOption(clusterMigrateEncryptedLabel);
+            } else if (vmMigrateEncrypted) {
+                return constants.encrypt();
+            } else {
+                return constants.dontEncrypt();
+            }
+        }
     }
 }

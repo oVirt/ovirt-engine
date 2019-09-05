@@ -191,6 +191,7 @@ public final class Cloner {
         vm.setCpuProfileId(instance.getCpuProfileId());
         vm.setAutoConverge(instance.getAutoConverge());
         vm.setMigrateCompressed(instance.getMigrateCompressed());
+        vm.setMigrateEncrypted(instance.getMigrateEncrypted());
         vm.setPredefinedProperties(instance.getPredefinedProperties());
         vm.setUserDefinedProperties(instance.getUserDefinedProperties());
         vm.setCustomProperties(instance.getCustomProperties());
@@ -324,7 +325,7 @@ public final class Cloner {
         obj.setFencingPolicy(new FencingPolicy(instance.getFencingPolicy()));
         obj.setAutoConverge(instance.getAutoConverge());
         obj.setMigrateCompressed(instance.getMigrateCompressed());
-
+        obj.setMigrateEncrypted(instance.getMigrateEncrypted());
         return obj;
     }
 

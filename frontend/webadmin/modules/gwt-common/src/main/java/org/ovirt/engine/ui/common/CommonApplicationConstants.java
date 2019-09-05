@@ -1561,6 +1561,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String migrateCompressedLabel();
 
+    String migrateEncryptedLabel();
+
     String autoConverge();
 
     String dontAutoConverge();
@@ -1568,6 +1570,10 @@ public interface CommonApplicationConstants extends Constants {
     String compress();
 
     String dontCompress();
+
+    String encrypt();
+
+    String dontEncrypt();
 
     String inheritFromCluster();
 

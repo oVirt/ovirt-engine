@@ -42,11 +42,13 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
@@ -416,6 +418,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     SerialNumberPolicyWidget serialNumberPolicyEditor;
 
     @UiField(provided = true)
+    @Path(value = "migrateEncrypted.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Boolean> migrateEncryptedEditor;
+
+    @UiField(provided = true)
     @Path("autoConverge.selectedItem")
     @WithElementId("autoConverge")
     ListModelListBoxEditor<Boolean> autoConvergeEditor;
@@ -680,6 +687,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                 return renderer.render(object.doubleValue() / 100);
             }
         });
+
+        migrateEncryptedEditor = new ListModelListBoxEditor<>(new MigrateEncryptedRenderer());
 
         autoConvergeEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromGlobal()));
@@ -968,5 +977,23 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Override
     public HasEnabledWithHints getCustomMigrationBandwidthLimitEditor() {
         return customMigrationBandwidthLimitEditor;
+    }
+
+    private class MigrateEncryptedRenderer extends BooleanRenderer {
+        @Override
+        public String render(Boolean migrateEncrypted) {
+            if (migrateEncrypted == null) {
+                boolean defaultMigrateEncrypted = AsyncDataProvider.getInstance().getMigrateEncrypted();
+                if (defaultMigrateEncrypted) {
+                    return messages.systemDefaultOption(constants.encrypt());
+                } else {
+                    return messages.systemDefaultOption(constants.dontEncrypt());
+                }
+            } else if (migrateEncrypted) {
+                return constants.encrypt();
+            } else {
+                return constants.dontEncrypt();
+            }
+        }
     }
 }

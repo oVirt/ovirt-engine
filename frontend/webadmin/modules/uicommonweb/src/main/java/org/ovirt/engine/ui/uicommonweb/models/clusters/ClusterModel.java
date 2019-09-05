@@ -887,6 +887,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.migrateCompressed = migrateCompressed;
     }
 
+    private ListModel<Boolean> migrateEncrypted;
+
+    public ListModel<Boolean> getMigrateEncrypted() {
+        return migrateEncrypted;
+    }
+
+    public void setMigrateEncrypted(ListModel<Boolean> migrateCompressed) {
+        this.migrateEncrypted = migrateCompressed;
+    }
+
     private EntityModel<Integer> customMigrationNetworkBandwidth;
 
     public EntityModel<Integer> getCustomMigrationNetworkBandwidth() {
@@ -1062,7 +1072,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getAutoConverge().setItems(Arrays.asList(null, true, false));
         setMigrateCompressed(new ListModel<>());
         getMigrateCompressed().setItems(Arrays.asList(null, true, false));
-
+        setMigrateEncrypted(new ListModel<>());
+        getMigrateEncrypted().setItems(Arrays.asList(null, true, false));
         getEnableOvirtService().getEntityChangedEvent().addListener((ev, sender, args) -> {
             refreshAdditionalClusterFeaturesList();
             if (!getAllowClusterWithVirtGlusterEnabled() && getEnableOvirtService().getEntity()) {
@@ -1848,6 +1859,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         refreshMigrationPolicies();
 
+        updateMigrateEncrypted(version);
+
         refreshAdditionalClusterFeaturesList();
 
         if (getEnableGlusterService().getEntity()) {
@@ -1934,6 +1947,15 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getMigrateOnErrorOption_HA_ONLY().setIsAvailable(false);
 
             setMigrateOnErrorOption(MigrateOnErrorOptions.NO);
+        }
+    }
+
+    private void updateMigrateEncrypted(Version version) {
+        if (version.greaterOrEquals(Version.v4_4)) {
+            getMigrateEncrypted().setIsChangeable(true);
+        } else {
+            getMigrateEncrypted().setIsChangeable(false);
+            getMigrateEncrypted().setSelectedItem(null);
         }
     }
 
