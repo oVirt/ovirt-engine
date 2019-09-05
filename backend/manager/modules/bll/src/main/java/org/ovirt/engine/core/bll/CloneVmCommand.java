@@ -217,7 +217,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         attachDetachDisks(ActionType.DetachDiskFromVm);
     }
 
-    private void attachDisks() {
+    protected void attachDisks() {
         attachDetachDisks(ActionType.AttachDiskToVm);
     }
 

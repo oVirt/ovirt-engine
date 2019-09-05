@@ -505,12 +505,17 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private MoveOrCopyImageGroupParameters prepareChildParameters() {
         MoveOrCopyImageGroupParameters parameters = new MoveOrCopyImageGroupParameters(getParameters());
         if (parameters.getOperation() == ImageOperation.Copy) {
-            parameters.setUseCopyCollapse(true);
-            parameters.setAddImageDomainMapping(true);
+            parameters.setUseCopyCollapse(getParameters().getUseCopyCollapse());
+            parameters.setAddImageDomainMapping(getParameters().getAddImageDomainMapping());
             parameters.setShouldLockImageOnRevert(false);
+            parameters.setDestImages(getParameters().getDestImages());
+            parameters.setDestImageGroupId(getParameters().getDestImageGroupId());
 
             if (!isTemplate()) {
-                prepareCopyNotTemplate(parameters);
+                if (parameters.getUseCopyCollapse()) {
+                    prepareCopyNotTemplate(parameters);
+                }
+
                 parameters.setShouldLockImageOnRevert(true);
                 parameters.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
             }

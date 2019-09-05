@@ -110,7 +110,11 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 diskImage.getImageId(), parentCommandType);
         parameters.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
         ActionReturnValue result = executeChildCopyingCommand(parameters);
-        handleCopyResult(diskImage, newDiskImage, result);
+        if (parameters.getDestImages().isEmpty()) {
+            parameters.getDestImages().add(newDiskImage);
+        }
+
+        handleCopyResult(diskImage, parameters.getDestImages(), result);
     }
 
     @Override
@@ -220,19 +224,19 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * Handle the result of copying the image
      * @param srcDiskImage
      *            disk image that represents the source image
-     * @param copiedDiskImage
-     *            disk image that represents the copied image
+     * @param copiedDiskImages
+     *            list of disk images that represents the copied images
      * @param result
      *            result of execution of child command
      */
-    private void handleCopyResult(DiskImage srcDiskImage, DiskImage copiedDiskImage, ActionReturnValue result) {
+    private void handleCopyResult(DiskImage srcDiskImage, List<DiskImage> copiedDiskImages, ActionReturnValue result) {
         // If a copy cannot be made, abort
         if (!result.getSucceeded()) {
             throw new EngineException(EngineError.VolumeCreationError);
         } else {
-            imagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
+            copiedDiskImages.forEach(diskImage -> imagesHandler.addDiskImageWithNoVmDevice(diskImage));
             getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-            getSrcDiskIdToTargetDiskIdMapping().put(srcDiskImage.getId(), copiedDiskImage.getId());
+            getSrcDiskIdToTargetDiskIdMapping().put(srcDiskImage.getId(), copiedDiskImages.get(0).getId());
         }
     }
 

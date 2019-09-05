@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureComman
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,16 +102,18 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
             return false;
         }
 
-        Guid imageId = getParameters().getImageIds().get(completedChildren);
+        Guid imageId = getParameters().getDestImages().isEmpty() ?
+                getParameters().getImageIds().get(completedChildren) :
+                getParameters().getDestImages().get(completedChildren).getImageId();
         log.info("Starting child command {} of {}, image '{}'",
                 completedChildren + 1,
                 getParameters().getImageIds().size(),
                 imageId);
 
         if (!getParameters().getDestImages().isEmpty()) {
-            createImage(getParameters().getDestImages().get(completedChildren));
+            createImage(getParameters().getDestImages().get(completedChildren), completedChildren);
         } else {
-            createImage(diskImageDao.getSnapshotById(imageId));
+            createImage(diskImageDao.getSnapshotById(imageId), completedChildren);
         }
         return true;
     }
@@ -128,10 +131,25 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
 
     }
 
-    private void createImage(DiskImage image) {
+    private void createImage(DiskImage image, int imageIndex) {
         VolumeFormat volumeFormat = determineVolumeFormat(getParameters().getDestDomain(),
                 image.getVolumeFormat(),
                 image.getVolumeType());
+
+        Image innerImage = image.getImage();
+        if (!getParameters().getDestImages().isEmpty()) {
+            innerImage = diskImageDao.getSnapshotById(getParameters().getImageIds()
+                    .get(imageIndex))
+                    .getImage();
+        }
+
+        Long initialSize = imagesHandler.determineImageInitialSize(innerImage,
+                volumeFormat,
+                getParameters().getStoragePoolId(),
+                getParameters().getSrcDomain(),
+                getParameters().getDestDomain(),
+                getParameters().getImageGroupID());
+
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getDestDomain(),
@@ -143,12 +161,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 image.getVolumeType(),
                 getParameters().getDescription(),
                 image.getSize(),
-                imagesHandler.determineImageInitialSize(image.getImage(),
-                        volumeFormat,
-                        getParameters().getStoragePoolId(),
-                        getParameters().getSrcDomain(),
-                        getParameters().getDestDomain(),
-                        getParameters().getImageGroupID()));
+                initialSize);
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());

@@ -1,12 +1,17 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CopyDataCommandParameters extends StorageJobCommandParameters {
     private LocationInfo srcInfo;
     private LocationInfo dstInfo;
     private boolean collapse;
+    private List<DiskImage> destImages = new ArrayList<>();
 
     public CopyDataCommandParameters() {
     }
@@ -40,5 +45,13 @@ public class CopyDataCommandParameters extends StorageJobCommandParameters {
 
     public void setCollapse(boolean collapse) {
         this.collapse = collapse;
+    }
+
+    public List<DiskImage> getDestImages() {
+        return destImages;
+    }
+
+    public void setDestImages(List<DiskImage> destImages) {
+        this.destImages = destImages;
     }
 }

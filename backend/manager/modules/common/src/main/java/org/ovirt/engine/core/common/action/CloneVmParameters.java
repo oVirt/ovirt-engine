@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CloneVmParameters extends AddVmParameters {
@@ -8,8 +12,9 @@ public class CloneVmParameters extends AddVmParameters {
     private Guid newVmGuid;
 
     private String newName;
-
+    private Map<Guid, Map<Guid, DiskImage>> srcToDstChainMap = new HashMap<>();
     private Guid destStorageDomainId;
+    private CloneVmStage stage = CloneVmStage.COPY_DISKS;
 
     public CloneVmParameters() {
 
@@ -42,5 +47,26 @@ public class CloneVmParameters extends AddVmParameters {
 
     public void setDestStorageDomainId(Guid destStorageDomainId) {
         this.destStorageDomainId = destStorageDomainId;
+    }
+
+    public Map<Guid, Map<Guid, DiskImage>> getSrcToDstChainMap() {
+        return srcToDstChainMap;
+    }
+
+    public void setSrcToDstChainMap(Map<Guid, Map<Guid, DiskImage>>  srcToDstChainMap) {
+        this.srcToDstChainMap = srcToDstChainMap;
+    }
+
+    public CloneVmStage getStage() {
+        return stage;
+    }
+
+    public void setStage(CloneVmStage stage) {
+        this.stage = stage;
+    }
+
+    public enum CloneVmStage {
+        COPY_DISKS,
+        CREATE_SNAPSHOTS
     }
 }

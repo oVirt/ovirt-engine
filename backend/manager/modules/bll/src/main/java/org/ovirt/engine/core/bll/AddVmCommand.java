@@ -998,7 +998,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void executeVmCommand() {
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
-        if (!canAddVm(destStorages.values())) {
+        if (getActionType() != ActionType.CloneVmNoCollapse && !canAddVm(destStorages.values())) {
             log.error("Failed to add VM. The reasons are: {}",
                     String.join(",", getReturnValue().getValidationMessages()));
             return;
@@ -1309,7 +1309,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 } else {
                     getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
                     DiskImage newImage = result.getActionReturnValue();
-                    srcDiskIdToTargetDiskIdMapping.put(image.getId(), newImage.getId());
+                    getParameters().getSrcDiskIdToTargetDiskIdMapping().put(image.getId(), newImage.getId());
                 }
             }
 
@@ -1648,13 +1648,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void addActiveSnapshot() {
-        _vmSnapshotId = Guid.newGuid();
-        getSnapshotsManager().addActiveSnapshot(_vmSnapshotId,
-                getVm(),
-                Snapshot.SnapshotStatus.OK,
-                null,
-                null,
-                getCompensationContext());
+        // We already have an active snapshot if we are cloning with snapshots
+        if (getActionType() != ActionType.CloneVmNoCollapse) {
+            _vmSnapshotId = Guid.newGuid();
+            getSnapshotsManager().addActiveSnapshot(_vmSnapshotId,
+                    getVm(),
+                    Snapshot.SnapshotStatus.OK,
+                    null,
+                    null,
+                    getCompensationContext());
+        }
     }
 
     @Override
@@ -1703,13 +1706,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     public Map<Guid, Guid> getSrcDiskIdToTargetDiskIdMapping() {
-        return srcDiskIdToTargetDiskIdMapping;
+        return getParameters().getSrcDiskIdToTargetDiskIdMapping();
     }
 
     public Map<Guid, Guid> getSrcDeviceIdToTargetDeviceIdMapping() {
         Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = new HashMap<>();
         srcDeviceIdToTargetDeviceIdMapping.putAll(srcVmNicIdToTargetVmNicIdMapping);
-        srcDeviceIdToTargetDeviceIdMapping.putAll(srcDiskIdToTargetDiskIdMapping);
+        srcDeviceIdToTargetDeviceIdMapping.putAll(getParameters().getSrcDiskIdToTargetDiskIdMapping());
         return srcDeviceIdToTargetDeviceIdMapping;
     }
 

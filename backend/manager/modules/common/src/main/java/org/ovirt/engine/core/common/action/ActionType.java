@@ -59,6 +59,7 @@ public enum ActionType {
     ActivateDeactivateVmNic(42, QuotaDependency.NONE),
     AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     CloneVm(53, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
+    CloneVmNoCollapse(56, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     ImportVmFromConfiguration(43, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     UpdateVmVersion(44, QuotaDependency.NONE),
     ImportVmTemplateFromConfiguration(45, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),

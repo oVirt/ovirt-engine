@@ -1061,4 +1061,24 @@ public class ImagesHandler {
                 true)
                 .getReturnValue();
     }
+
+    public Map<DiskImage, DiskImage> mapChainToNewIDs(Guid sourceImageGroupID, Guid newImageGroupID, Guid targetStorageDomainID) {
+        List<DiskImage> oldChain = diskImageDao.getAllSnapshotsForImageGroup(sourceImageGroupID);
+        Map<DiskImage, DiskImage> oldToNewChain = new HashMap<>(oldChain.size());
+        Guid nextParentId = Guid.Empty;
+        sortImageList(oldChain);
+
+        for (DiskImage diskImage : oldChain) {
+            DiskImage newImage = DiskImage.copyOf(diskImage);
+            newImage.setParentId(nextParentId);
+            newImage.setId(newImageGroupID);
+            newImage.setStorageIds(List.of(targetStorageDomainID));
+            nextParentId = Guid.newGuid();
+            newImage.setImageId(nextParentId);
+            newImage.setVmSnapshotId(null);
+            oldToNewChain.put(diskImage, newImage);
+        }
+
+        return oldToNewChain;
+    }
 }

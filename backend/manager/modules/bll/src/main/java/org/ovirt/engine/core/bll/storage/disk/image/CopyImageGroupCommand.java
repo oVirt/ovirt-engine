@@ -140,10 +140,11 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private boolean isUsingSPDMFlow() {
-        return isDataOperationsByHSM() && (!getParameters().getUseCopyCollapse()
-                && getParameters().getParentCommand() == ActionType.MoveOrCopyDisk
-                && getParameters().getOperation() == ImageOperation.Move) ||
-                getParameters().getParentCommand() == ActionType.CloneVm;
+        return isDataOperationsByHSM() &&
+                ((getParameters().getParentCommand() == ActionType.MoveOrCopyDisk &&
+                        getParameters().getOperation() == ImageOperation.Move) ||
+                        getParameters().getParentCommand() == ActionType.CloneVm ||
+                        getParameters().getParentCommand() == ActionType.CloneVmNoCollapse);
     }
 
     private CopyImageGroupWithDataCommandParameters createCopyParams(Guid sourceDomainId, Guid destImageGroupId, Guid destImageId) {
