@@ -19,6 +19,7 @@
 """ovirt-provider-ovn plugin."""
 
 import base64
+import errno
 import gettext
 import os
 import random
@@ -881,33 +882,47 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self._provider_installed,
+        condition=lambda self: (
+            self._provider_installed
+        ),
     )
     def _upgrade(self):
         self._sanitize_config_file_permissions()
 
     def _sanitize_config_file_permissions(self):
-        current_premissions = stat.S_IMODE(
-            os.lstat(
-                oenginecons.OvnFileLocations.
-                OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
-            ).st_mode
-        )
-        permissions_to_remove = stat.S_IRWXO | stat.S_IRWXG
-        desired_permissions = current_premissions & ~permissions_to_remove
-        if desired_permissions != current_premissions:
-            self.logger.info(_(
-                'Removing unnecessary permissions on {file}.'
-            ).format(
-                file=oenginecons.OvnFileLocations.
-                OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
-            ))
-            # This is not reverted on rollback.
-            os.chmod(
-                oenginecons.OvnFileLocations.
-                OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE,
-                desired_permissions
+        try:
+            current_premissions = stat.S_IMODE(
+                os.lstat(
+                    oenginecons.OvnFileLocations.
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+                ).st_mode
             )
+            permissions_to_remove = stat.S_IRWXO | stat.S_IRWXG
+            desired_permissions = current_premissions & ~permissions_to_remove
+            if desired_permissions != current_premissions:
+                self.logger.info(_(
+                    'Removing unnecessary permissions on {file}.'
+                ).format(
+                    file=oenginecons.OvnFileLocations.
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+                ))
+                # This is not reverted on rollback.
+                os.chmod(
+                    oenginecons.OvnFileLocations.
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE,
+                    desired_permissions
+                )
+        except OSError as error:
+            if error.errno == errno.ENOENT:
+                self.logger.warning(_(
+                    'Unable to ensure permissions on {file}'
+                ).format(
+                    file=oenginecons.OvnFileLocations.
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+                    )
+                )
+            else:
+                raise
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
