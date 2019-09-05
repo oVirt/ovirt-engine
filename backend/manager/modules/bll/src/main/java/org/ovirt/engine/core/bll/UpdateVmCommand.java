@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -85,6 +86,8 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -114,6 +117,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -151,6 +155,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private ResourceManager resourceManager;
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
+    @Inject
+    private DiskImageDao diskImageDao;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
@@ -1420,7 +1428,22 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (!isIsoPathExists(vmFromParams.getStaticData(), getVm().getStoragePoolId())){
+            return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+        }
+
         return true;
+    }
+
+    private boolean isIsoPathExists(VmStatic newVm, Guid storagePoolId) {
+        if (StringUtils.isEmpty(newVm.getIsoPath())) {
+            return true;
+        }
+        Guid isoDomainId = isoDomainListSynchronizer.findActiveISODomain(storagePoolId);
+        List<RepoImage> repoFilesMap =
+                isoDomainListSynchronizer.getCachedIsoListByDomainId(isoDomainId, ImageFileType.ISO);
+        repoFilesMap.addAll(diskImageDao.getIsoDisksForStoragePoolAsRepoImages(storagePoolId));
+        return repoFilesMap.stream().anyMatch(r -> r.getRepoImageId().equals(newVm.getIsoPath()));
     }
 
     @Override
