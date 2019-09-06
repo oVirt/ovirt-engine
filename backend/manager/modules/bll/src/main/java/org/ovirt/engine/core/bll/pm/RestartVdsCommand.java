@@ -48,7 +48,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * In order to make this flow distinct the child commands, Start, FenceManually and Stop are under the same lock as the
  * parent, preventing other Restart, Start, Stop,FenceVdsManually to interleave.
  *
- * @see FenceVdsBaseCommand#restartVdsVms() The critical section restaring the VMs
  */
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
@@ -62,7 +61,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     @Inject
     private VdsDynamicDaoImpl vdsDynamicDao;
-
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -123,7 +121,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
         // execute StopVds action
         returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StopVds);
-        if (getParameters().getParentCommand() == ActionType.VdsNotRespondingTreatment) {
+        if (isVdsNotResponding()) {
             updateHostInFenceFlow(vdsId, true);
         }
 
@@ -183,10 +181,24 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         params.setSessionId(sessionId);
         params.setFencingPolicy(getParameters().getFencingPolicy());
         // If Host was in Maintenance, and was restarted manually , it should preserve its status after reboot
-        if (getParameters().getParentCommand() != ActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
+        // If change host to maintenance was requested by user on reboot then move it maintenance
+        if (!isVdsNotResponding()
+                && (isGoToMaintenanceRequested() || wasPreviouslyInMaintenance())) {
             params.setChangeHostToMaintenanceOnStart(true);
         }
         return runInternalAction(action, params, cloneContext().withoutExecutionContext());
+    }
+
+    private boolean wasPreviouslyInMaintenance() {
+        return getVds().getStatus() == VDSStatus.Maintenance;
+    }
+
+    private boolean isGoToMaintenanceRequested() {
+        return getParameters().isChangeHostToMaintenanceOnStart();
+    }
+
+    private boolean isVdsNotResponding() {
+        return getParameters().getParentCommand() == ActionType.VdsNotRespondingTreatment;
     }
 
     @Override
