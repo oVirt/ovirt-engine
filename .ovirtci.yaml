@@ -1,0 +1,7 @@
+distributions:
+  - el7
+  - fc29
+
+release_branches:
+  master:
+    - ovirt-master
