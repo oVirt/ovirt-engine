@@ -559,6 +559,52 @@ class Plugin(plugin.PluginBase):
                         raise RuntimeError('Aborted by user')
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            not os.path.exists(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
+        ),
+    )
+    def _check_existing_pki(self):
+        pki_files_to_check = (
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE,
+        )
+        if True in [os.path.exists(f) for f in pki_files_to_check]:
+            ans = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_PKI_VERIFY_MISSING_CA_PEM',
+                note=_(
+                    'Found existing PKI files, but {capem} is missing. If '
+                    'you continue, Setup will overwrite existing PKI files '
+                    'with new ones, including {capem}. After Setup completes '
+                    'you must reinstall or re-enroll certificates for all '
+                    'your hosts.\n\n'
+                    'If {capem} was accidentally deleted, stop Setup, restore '
+                    '{capem} from backup ({certs}/ca.der), and then run '
+                    'Setup again.\n\n'
+                    'Continue with Setup and overwrite existing PKI files? '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ).format(
+                    capem=(
+                        oenginecons.FileLocations.
+                        OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                    ),
+                    certs=(
+                        oenginecons.FileLocations.
+                        OVIRT_ENGINE_PKICERTSDIR
+                    ),
+                ),
+                prompt=True,
+                default=False,
+            )
+            if not ans:
+                raise RuntimeError('Aborted by user')
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
             oenginecons.Stages.CA_AVAILABLE,
