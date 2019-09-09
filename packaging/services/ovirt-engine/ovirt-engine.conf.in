@@ -135,6 +135,7 @@ ENGINE_PROPERTIES=""
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} java.awt.headless=true"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} sun.rmi.dgc.client.gcInterval=3600000 sun.rmi.dgc.server.gcInterval=3600000"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
+ENGINE_PROPERTIES="${ENGINE_PROPERTIES} resteasy.preferJacksonOverJsonB=true"
 
 #
 # Extra Java arguments to be added to command-line.
