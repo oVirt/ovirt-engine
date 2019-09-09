@@ -82,7 +82,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
             Boolean nmstateEnabled = Config.getValue(ConfigValues.VdsmUseNmstate);
-            if (Version.v4_4.greaterOrEquals(clusterVersion) && nmstateEnabled) {
+            if (Version.v4_4.lessOrEquals(clusterVersion) && nmstateEnabled) {
                 _deploy.getParser().cliEnvironmentSet(
                         String.format(
                                 "%svars/net_nmstate_enabled",
