@@ -1417,7 +1417,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void restart(String uiCommand) {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final UIMessages messages = ConstantsManager.getInstance().getMessages();
-        ConfirmationModel model = new ConfirmationModel();
+        HostRestartConfirmationModel model = new HostRestartConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(constants.restartHostsTitle());
         model.setHelpTag(HelpTag.restart_host);
@@ -1499,7 +1499,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void onRestart() {
-        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+        HostRestartConfirmationModel model = (HostRestartConfirmationModel) getConfirmWindow();
 
         if (model.getProgress() != null) {
             return;
@@ -1508,14 +1508,15 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId()));
+            FenceVdsActionParameters parameters = new FenceVdsActionParameters(vds.getId());
+            parameters.setChangeHostToMaintenanceOnStart(model.getForceToMaintenance().getEntity());
+            list.add(parameters);
         }
 
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RestartVds, list,
                 result -> {
-
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
                     cancelConfirm();

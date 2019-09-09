@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.HostRestartConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostUpgradePopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
@@ -95,7 +96,8 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
             final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider,
             final Provider<HostListModel<Void>> modelProvider,
-            final Provider<HostUpgradePopupPresenterWidget> hostUpgradePopupPresenterWidgetProvider) {
+            final Provider<HostUpgradePopupPresenterWidget> hostUpgradePopupPresenterWidgetProvider,
+            final Provider<HostRestartConfirmationPopupPresenterWidget> hostRestartPopupPresenterWidgetProvider) {
         MainViewModelProvider<VDS, HostListModel<Void>> result =
                 new MainViewModelProvider<VDS, HostListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
                     @Override
@@ -130,6 +132,8 @@ public class HostModule extends AbstractGinModule {
                             return manualFenceConfirmPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getUpgradeCommand()) {
                             return hostUpgradePopupPresenterWidgetProvider.get();
+                        } else if (lastExecutedCommand == getModel().getRestartCommand()) {
+                            return hostRestartPopupPresenterWidgetProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }

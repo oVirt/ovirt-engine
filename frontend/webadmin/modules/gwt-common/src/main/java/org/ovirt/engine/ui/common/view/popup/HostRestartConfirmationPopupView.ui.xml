@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+<ui:style>
+    .items {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        height: 60%;
+        overflow: auto;
+    }
+
+    .panelPadding {
+       padding: 10px;
+    }
+</ui:style>
+<d:SimpleDialogPanel width="500px" height="500px">
+    <d:content>
+        <g:FlowPanel addStyleNames="{style.panelPadding}">
+            <w:AlertWithIcon alertType="WARNING" ui:field="messagePanel" />
+            <g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
+            <ge:EntityModelCheckBoxEditor ui:field="forceToMaintenance" />
+        </g:FlowPanel>
+    </d:content>
+</d:SimpleDialogPanel>
+</ui:UiBinder>
