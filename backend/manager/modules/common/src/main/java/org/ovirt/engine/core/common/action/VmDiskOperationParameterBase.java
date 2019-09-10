@@ -28,6 +28,10 @@ public class VmDiskOperationParameterBase extends VmOperationParameterBase {
         setDiskInfo(diskInfo);
     }
 
+    public VmDiskOperationParameterBase(Disk diskInfo) {
+        setDiskInfo(diskInfo);
+    }
+
     public Disk getDiskInfo() {
         return diskInfo;
     }

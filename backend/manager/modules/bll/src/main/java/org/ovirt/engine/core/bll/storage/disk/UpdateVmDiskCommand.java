@@ -690,7 +690,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private ActionParametersBase buildExtendManagedBlockDiskParameters(ManagedBlockStorageDisk newManagedBlockDisk) {
         ExtendManagedBlockStorageDiskSizeParameters parameters = new ExtendManagedBlockStorageDiskSizeParameters(
-                DiskVmElement.copyOf(getOldDiskVmElement()), newManagedBlockDisk);
+                newManagedBlockDisk);
         parameters.setStorageDomainId(newManagedBlockDisk.getStorageIds().get(0));
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
@@ -698,8 +698,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     private ActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
-        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
-                DiskVmElement.copyOf(getOldDiskVmElement()), newCinderDisk);
+        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;

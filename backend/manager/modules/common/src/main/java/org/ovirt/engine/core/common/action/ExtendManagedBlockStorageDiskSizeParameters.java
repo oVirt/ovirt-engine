@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendManagedBlockStorageDiskSizeParameters extends VmDiskOperationParameterBase {
@@ -13,8 +12,8 @@ public class ExtendManagedBlockStorageDiskSizeParameters extends VmDiskOperation
     public ExtendManagedBlockStorageDiskSizeParameters() {
     }
 
-    public ExtendManagedBlockStorageDiskSizeParameters(DiskVmElement diskVmElement, Disk diskInfo) {
-        super(diskVmElement, diskInfo);
+    public ExtendManagedBlockStorageDiskSizeParameters(Disk diskInfo) {
+        super(diskInfo);
     }
 
     public Guid getStorageDomainId() {
