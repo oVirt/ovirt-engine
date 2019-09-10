@@ -235,7 +235,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return nbdServerVDSParameters;
     }
 
-    protected void tearDownImage(Guid vdsId, Guid imageTicketId, Guid backupId) {
+    protected void tearDownImage(Guid vdsId, Guid backupId) {
         if (backupId != null) {
             // shouldn't teardown as prepare wasn't invoked
             return;
@@ -822,7 +822,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             }
 
             // Finished using the image, tear it down.
-            tearDownImage(context.entity.getVdsId(), context.entity.getImagedTicketId(), context.entity.getBackupId());
+            tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
 
             // Moves Image status to OK or ILLEGAL
             setImageStatus(nextImageStatus);
@@ -876,7 +876,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         Guid vdsId = context.entity.getVdsId() != null ? context.entity.getVdsId() : getVdsId();
         // Teardown is required for all scenarios as we call prepareImage when
         // starting a new session.
-        tearDownImage(vdsId, context.entity.getImagedTicketId(), context.entity.getBackupId());
+        tearDownImage(vdsId, context.entity.getBackupId());
         if (failure) {
             updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
             setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
