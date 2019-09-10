@@ -9,8 +9,6 @@
     <ui:style>
         .container {
             width: 100%;
-            padding-left: 5px;
-            padding-right: 5px;
         }
     </ui:style>
 
