@@ -170,12 +170,63 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailedUpdateReadOnly() {
-        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-        command.getParameters().getDiskVmElement().setReadOnly(true);
+    public void validateFailedUpdateShareableForRunningVm() {
+        updateShareable();
         initializeCommand(createVm(VMStatus.Up));
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void validateUpdateShareableFloatingDisk() {
+        updateShareable();
+
+        initializeCommand();
+        command.getParameters().setDiskVmElement(null);
+        mockNullVm();
+
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    private void updateShareable() {
+        DiskImage disk = createShareableDisk(VolumeFormat.COW);
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        command.getParameters().getDiskInfo().setShareable(false);
+    }
+
+    @Test
+    public void validateFailedUpdateReadOnly() {
+        updateReadOnly(false);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void validateFailedUpdateReadOnlyForFloatingDisk() {
+        updateReadOnly(true);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+    }
+
+    private void updateReadOnly(boolean isFloating) {
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        command.getParameters().getDiskVmElement().setReadOnly(true);
+
+        if (isFloating) {
+            initializeCommand();
+            mockNullVm();
+        } else {
+            initializeCommand(createVm(VMStatus.Up));
+        }
+    }
+
+    @Test
+    public void validateFailedUpdatePassDiscardForFloatingDisk() {
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        command.getParameters().getDiskVmElement().setPassDiscard(true);
+
+        initializeCommand();
+        mockNullVm();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
@@ -229,7 +280,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
     }
 
-
     @Test
     public void nullifiedSnapshotOnUpdateDiskToShareable() {
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);
@@ -277,41 +327,66 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void validateFailedUpdateBootableForFloatingDisk() {
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        command.getParameters().getDiskVmElement().setBoot(true);
+
+        initializeCommand();
+        mockNullVm();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+    }
+
+    @Test
     public void validateUpdateWipeAfterDeleteVmDown() {
-        validateUpdateWipeAfterDelete(VMStatus.Down);
+        validateUpdateWipeAfterDelete(VMStatus.Down, false);
     }
 
     @Test
     public void validateUpdateWipeAfterDeleteVmUp() {
-        validateUpdateWipeAfterDelete(VMStatus.Up);
+        validateUpdateWipeAfterDelete(VMStatus.Up, false);
     }
 
-    private void validateUpdateWipeAfterDelete(VMStatus status) {
+    @Test
+    public void validateUpdateWipeAfterDeleteForFloatingDisk() {
+        validateUpdateWipeAfterDelete(null, true);
+    }
+
+    private void validateUpdateWipeAfterDelete(VMStatus status, boolean isFloating) {
         DiskImage disk = createDiskImage();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         command.getParameters().getDiskInfo().setWipeAfterDelete(true);
-        initializeCommand(createVm(status));
+
+        initCommandForDisk(status, isFloating);
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
     public void validateUpdateDescriptionVmDown() {
-        validateUpdateDescription(VMStatus.Down);
+        validateUpdateDescription(VMStatus.Down, false);
     }
 
     @Test
     public void validateUpdateDescriptionVmUp() {
-        validateUpdateDescription(VMStatus.Up);
+        validateUpdateDescription(VMStatus.Up, false);
     }
 
-    private void validateUpdateDescription(VMStatus status) {
+    @Test
+    public void validateUpdateDescriptionForFloatingDisk() {
+        validateUpdateDescription(null, true);
+    }
+
+    private void validateUpdateDescription(VMStatus status, boolean isFloating) {
         DiskImage disk = createDiskImage();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
-        disk.setDescription(RandomUtils.instance().nextString(10));
-        initializeCommand(createVm(status));
+        String desc = "new-description";
+        disk.setDescription(desc);
+
+        initCommandForDisk(status, isFloating);
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+        assertEquals(desc, disk.getDescription());
     }
 
     @Test
@@ -407,14 +482,35 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testResize() {
+    public void validateFailedUpdateInterfaceForFloatingDisk() {
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        command.getParameters().getDiskVmElement().setDiskInterface(DiskInterface.VirtIO_SCSI);
+
+        initializeCommand();
+        mockNullVm();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+    }
+
+    @Test
+    public void testSucceedResizeDisk() {
+        resizeDisk(false);
+    }
+
+    @Test
+    public void testSucceedResizeFloatingDisk() {
+        resizeDisk(true);
+    }
+
+    private void resizeDisk(boolean isFloating) {
         DiskImage oldDisk = createDiskImage();
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
-
         ((DiskImage) command.getParameters().getDiskInfo()).setSize(oldDisk.getSize() * 2L);
-        initializeCommand();
+
+        initCommandForDisk(VMStatus.Down, isFloating);
 
         assertTrue(command.validateCanResizeDisk());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -482,31 +578,42 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testAmendNotRunningWithExtend() {
+        amendNotRunningWithExtend(false);
+    }
+
+    @Test
+    public void testAmendNotRunningWithExtendForFloatingDisk() {
+        amendNotRunningWithExtend(true);
+    }
+
+    private void amendNotRunningWithExtend(boolean isFloating) {
         Guid quotaId = Guid.newGuid();
+        DiskImage oldDiskImage = setFormatAndSizeForDisk(quotaId, 3L, QcowCompat.QCOW2_V2);
+        DiskImage newDiskImage = setFormatAndSizeForDisk(quotaId, 5L, QcowCompat.QCOW2_V3);
 
-        DiskImage oldDiskImage = createDiskImage();
-        oldDiskImage.setQuotaId(quotaId);
-        oldDiskImage.setSize(SizeConverter.convert(3L, SizeConverter.SizeUnit.GiB,
-                SizeConverter.SizeUnit.BYTES).longValue());
-        oldDiskImage.setVolumeFormat(VolumeFormat.COW);
-        oldDiskImage.setQcowCompat(QcowCompat.QCOW2_V2);
-
-
-        DiskImage newDiskImage = createDiskImage();
-        newDiskImage.setQuotaId(quotaId);
-        newDiskImage.setSize(SizeConverter.convert(5L, SizeConverter.SizeUnit.GiB,
-                SizeConverter.SizeUnit.BYTES).longValue());
-        newDiskImage.setVolumeFormat(VolumeFormat.COW);
-        newDiskImage.setQcowCompat(QcowCompat.QCOW2_V3);
-
-        command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
         command.getParameters().setDiskInfo(newDiskImage);
-
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
         mockGetAllSnapshotsForDisk(Collections.singletonList(oldDiskImage));
-        initializeCommand();
+
+        initCommandForDisk(VMStatus.Down, isFloating);
+
+        if (!isFloating) {
+            command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
+        }
+
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
+    }
+
+    private DiskImage setFormatAndSizeForDisk(Guid quotaId, long lsize, QcowCompat qcowFormat) {
+        DiskImage diskImage = createDiskImage();
+        diskImage.setQuotaId(quotaId);
+        diskImage.setSize(SizeConverter.convert(lsize, SizeConverter.SizeUnit.GiB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+        diskImage.setVolumeFormat(VolumeFormat.COW);
+        diskImage.setQcowCompat(qcowFormat);
+
+        return diskImage;
     }
 
     @Test
@@ -603,16 +710,31 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testUpdateLockedDisk() {
+        updateLockedDisk(false);
+    }
+
+    @Test
+    public void testUpdateLockedFloatingDisk() {
+        updateLockedDisk(true);
+    }
+
+    private void updateLockedDisk(boolean isFloating) {
         DiskImage disk = createDiskImage();
         disk.setImageStatus(ImageStatus.LOCKED);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
 
-        initializeCommand();
+        if (isFloating) {
+            initializeCommand();
+            mockNullVm();
+        } else {
+            initializeCommand();
+        }
+
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test
-    public void testDiskAliasAdnDescriptionMetaDataShouldBeUpdated() {
+    public void testDiskAliasAndDescriptionMetaDataShouldBeUpdated() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
         command.getParameters().getDiskInfo().setDiskAlias("New Disk Alias");
@@ -729,6 +851,15 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testInvalidDiskExtend() {
+        invalidDiskExtend(false);
+    }
+
+    @Test
+    public void testInvalidFloatingDiskExtend() {
+        invalidDiskExtend(true);
+    }
+
+    private void invalidDiskExtend(boolean isFloating) {
         DiskImage oldDiskImage = createDiskImage();
         oldDiskImage.setSize(SizeConverter.convert(8L, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
@@ -737,11 +868,15 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         newDiskImage.setSize(SizeConverter.convert(10L, SizeConverter.SizeUnit.GiB,
                 SizeConverter.SizeUnit.BYTES).longValue());
 
-        command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
         command.getParameters().setDiskInfo(newDiskImage);
-
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
-        initializeCommand();
+
+        initCommandForDisk(VMStatus.Down, isFloating);
+
+        if (!isFloating) {
+            command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
+        }
+
         StorageDomain sd = new StorageDomain();
         sd.setId(Guid.newGuid());
         sd.setStorageType(StorageType.ISCSI);
@@ -862,5 +997,15 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         VmDevice vmDevice = createVmDevice(diskId, vmId);
         doReturn(vmDevice).when(command).getVmDeviceForVm();
         return vmDevice;
+    }
+
+    private void initCommandForDisk(VMStatus status, boolean isFloating) {
+        if (isFloating) {
+            initializeCommand();
+            command.getParameters().setDiskVmElement(null);
+            mockNullVm();
+        } else {
+            initializeCommand(createVm(status));
+        }
     }
 }
