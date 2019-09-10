@@ -9,9 +9,17 @@
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
+    <ui:style>
+        .panelPadding {
+            padding: 15px;
+        }
+    </ui:style>
+
     <d:SimpleDialogPanel header="{constants.errorPopupCaption}" width="500px" height="400px">
         <d:content>
-            <g:HTML ui:field="messageLabel" />
+            <g:FlowPanel addStyleNames="{style.panelPadding}">
+                <g:HTML ui:field="messageLabel" />
+            </g:FlowPanel>
         </d:content>
 
         <d:footerButton>
