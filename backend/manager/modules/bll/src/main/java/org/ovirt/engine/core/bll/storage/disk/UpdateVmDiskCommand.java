@@ -228,9 +228,13 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     @Override
     protected boolean validate() {
-        if (!validate(new VmValidator(getVm()).isVmExists()) || !isDiskExistAndAttachedToVm(getOldDisk()) ||
-                !validateDiskVmData()) {
+        DiskValidator oldDiskValidator = getDiskValidator(getOldDisk());
+        if (getVm() != null && !validateVmDisk(oldDiskValidator)) {
             return false;
+        }
+
+        if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && updateDiskParametersRequiringVmDownRequested()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
 
         boolean isDiskImageOrCinder = DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() ||
@@ -243,7 +247,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             }
         }
 
-        DiskValidator oldDiskValidator = getDiskValidator(getOldDisk());
         ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
         if (!isHostedEngineDisk.isValid()) {
             return validate(isHostedEngineDisk);
@@ -253,6 +256,29 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             return false;
         }
 
+        // Can't edit diskVmElements attributes for floating disks
+        if (getVm() == null && getDiskVmElement() != null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (isDiskImageOrCinder && !validateCanResizeDisk()) {
+            return false;
+        }
+
+        if (resizeDiskImageRequested() && amendDiskRequested()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
+        }
+        if (isQcowCompatChangedOnRawDisk()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
+        }
+        return validateCanUpdateShareable() && validateQuota() && setAndValidateDiskProfiles();
+    }
+
+    private boolean validateVmDisk(DiskValidator oldDiskValidator) {
+        if (!validate(new VmValidator(getVm()).isVmExists()) || !isDiskExistAndAttachedToVm(getOldDisk()) ||
+                !validateDiskVmData()) {
+            return false;
+        }
         if (!canRunActionOnNonManagedVm()) {
             return false;
         }
@@ -274,23 +300,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 return false;
             }
         }
-        if (isDiskImageOrCinder && !validateCanResizeDisk()) {
-            return false;
-        }
-
-        if (resizeDiskImageRequested() && amendDiskRequested()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
-        }
-        if (isQcowCompatChangedOnRawDisk()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
-        }
-
         DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
-        return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
-                validateVmPoolProperties() && validateQuota() &&
+        return validateCanUpdateReadOnly() &&
+                validateVmPoolProperties() &&
                 validate(diskVmElementValidator.isVirtIoScsiValid(getVm())) &&
                 (!isDiskInterfaceUpdated || validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) &&
-                setAndValidateDiskProfiles() &&
                 validatePassDiscardSupported(diskVmElementValidator);
     }
 
@@ -388,11 +402,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         DiskImage oldDiskImage = (DiskImage) getOldDisk();
 
         if (newDiskImage.getSize() != oldDiskImage.getSize()) {
-            if (Boolean.TRUE.equals(getVmDeviceForVm().getReadOnly())) {
+            if (getVmDeviceForVm() != null && Boolean.TRUE.equals(getVmDeviceForVm().getReadOnly())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
             }
 
-            if (vmDeviceForVm.getSnapshotId() != null) {
+            if (getVmDeviceForVm() != null && getVmDeviceForVm().getSnapshotId() != null) {
                 DiskImage snapshotDisk = diskImageDao.getDiskSnapshotForVmSnapshot(getParameters().getDiskInfo().getId(), vmDeviceForVm.getSnapshotId());
                 if (snapshotDisk.getSize() != newDiskImage.getSize()) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
@@ -463,17 +477,20 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             updateMetaDataDescription((DiskImage) getNewDisk());
         }
         final Disk diskForUpdate = diskDao.get(getParameters().getDiskInfo().getId());
-        final DiskVmElement diskVmElementForUpdate = diskVmElementDao.get(new VmDeviceId(getOldDisk().getId(), getVmId()));
-
-        applyUserChanges(diskForUpdate, diskVmElementForUpdate);
-
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
-                vmStaticDao.incrementDbGeneration(getVm().getId());
-                updateDeviceProperties();
+                DiskVmElement diskVmElementForUpdate;
+                if (getVm() != null) {
+                    vmStaticDao.incrementDbGeneration(getVmId());
+                    updateDeviceProperties();
+                    diskVmElementForUpdate = diskVmElementDao.get(new VmDeviceId(getOldDisk().getId(), getVmId()));
+                    applyUserChanges(diskForUpdate, diskVmElementForUpdate);
+                    diskVmElementDao.update(diskVmElementForUpdate);
+                } else {
+                    applyUserChanges(diskForUpdate, null);
+                }
                 baseDiskDao.update(diskForUpdate);
-                diskVmElementDao.update(diskVmElementForUpdate);
                 switch (diskForUpdate.getDiskStorageType()) {
                     case IMAGE:
                     case MANAGED_BLOCK_STORAGE:
@@ -534,7 +551,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private void updateMetaDataDescription(DiskImage diskImage) {
         StorageDomain storageDomain =
-                storageDomainDao.getForStoragePool(diskImage.getStorageIds().get(0), getVm().getStoragePoolId());
+                storageDomainDao.getForStoragePool(diskImage.getStorageIds().get(0), getStoragePoolId());
         if (!getStorageDomainValidator((DiskImage) getNewDisk()).isDomainExistAndActive().isValid()) {
             auditLogForNoMetadataDescriptionUpdate(AuditLogType.UPDATE_DESCRIPTION_FOR_DISK_SKIPPED_SINCE_STORAGE_DOMAIN_NOT_ACTIVE,
                     storageDomain,
@@ -547,7 +564,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     protected void setVolumeDescription(DiskImage diskImage, StorageDomain storageDomain) {
         try {
             SetVolumeDescriptionVDSCommandParameters vdsCommandParameters =
-                    new SetVolumeDescriptionVDSCommandParameters(getVm().getStoragePoolId(),
+                    new SetVolumeDescriptionVDSCommandParameters(getStoragePoolId(),
                             diskImage.getStorageIds().get(0),
                             diskImage.getId(),
                             diskImage.getImageId(),
@@ -615,14 +632,18 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         diskToUpdate.setSgio(getNewDisk().getSgio());
         diskToUpdate.setBackup(getNewDisk().getBackup());
 
-        dveToUpdate.setBoot(getDiskVmElement().isBoot());
-        dveToUpdate.setDiskInterface(getDiskVmElement().getDiskInterface());
-        dveToUpdate.setPassDiscard(getDiskVmElement().isPassDiscard());
-        dveToUpdate.setUsingScsiReservation(getDiskVmElement().isUsingScsiReservation());
+        if (dveToUpdate != null) {
+            dveToUpdate.setBoot(getDiskVmElement().isBoot());
+            dveToUpdate.setDiskInterface(getDiskVmElement().getDiskInterface());
+            dveToUpdate.setPassDiscard(getDiskVmElement().isPassDiscard());
+            dveToUpdate.setUsingScsiReservation(getDiskVmElement().isUsingScsiReservation());
+        }
     }
 
     protected void reloadDisks() {
-        vmHandler.updateDisksFromDb(getVm());
+        if (getVm() != null) {
+            vmHandler.updateDisksFromDb(getVm());
+        }
     }
 
     private void extendDiskImageSize() {
@@ -743,11 +764,15 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return isCinderDisk() && resizeDiskImageRequested() ?
-                    AuditLogType.USER_EXTENDED_DISK_SIZE : AuditLogType.USER_UPDATE_VM_DISK;
-        } else {
-            return AuditLogType.USER_FAILED_UPDATE_VM_DISK;
+            if (isCinderDisk() && resizeDiskImageRequested()) {
+                return AuditLogType.USER_EXTENDED_DISK_SIZE;
+            } else {
+                return getVm() != null ?
+                        AuditLogType.USER_UPDATE_VM_DISK : AuditLogType.USER_UPDATE_DISK;
+            }
         }
+        return getVm() != null ?
+                AuditLogType.USER_FAILED_UPDATE_VM_DISK : AuditLogType.USER_FAILED_UPDATE_DISK;
     }
 
     @Override
@@ -863,11 +888,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private boolean resizeDiskImageRequested() {
         boolean sizeChanged = getNewDisk().getSize() != getOldDisk().getSize();
         switch (getNewDisk().getDiskStorageType()) {
-            case IMAGE:
-                return sizeChanged && vmDeviceForVm.getSnapshotId() == null;
-            case MANAGED_BLOCK_STORAGE:
-            case CINDER:
-                return sizeChanged;
+        case IMAGE:
+            return sizeChanged && (getVmDeviceForVm() == null || getVmDeviceForVm().getSnapshotId() == null);
+        case MANAGED_BLOCK_STORAGE:
+        case CINDER:
+            return sizeChanged;
         }
         return false;
     }
@@ -895,13 +920,17 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     private boolean updateParametersRequiringVmDownRequested() {
-        return updateDiskParametersRequiringVmDownRequested() || updateImageParametersRequiringVmDownRequested();
+        return updateDiskParametersRequiringVmDownRequested() || updateImageParametersRequiringVmDownRequested() ||
+                updateDiskVmElementParametersRequiringVmDownRequested();
+    }
+
+    private boolean updateDiskVmElementParametersRequiringVmDownRequested() {
+        return getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot() ||
+                getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface();
     }
 
     private boolean updateDiskParametersRequiringVmDownRequested() {
-        return getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot() ||
-                getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface() ||
-                getOldDisk().getPropagateErrors() != getNewDisk().getPropagateErrors() ||
+        return getOldDisk().getPropagateErrors() != getNewDisk().getPropagateErrors() ||
                 getOldDisk().isShareable() != getNewDisk().isShareable() ||
                 getOldDisk().getSgio() != getNewDisk().getSgio();
     }
@@ -954,10 +983,12 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     private void updateSnapshotIdOnShareableChange(Disk oldDisk, Disk newDisk) {
         if (oldDisk.isShareable() != newDisk.isShareable() && oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage oldDiskImage = (DiskImage) oldDisk;
-            Guid vmSnapshotId = isUpdatedToShareable(oldDisk, newDisk) ? null :
-                    snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
-            oldDiskImage.setVmSnapshotId(vmSnapshotId);
+            if (getVm() != null) {
+                DiskImage oldDiskImage = (DiskImage) oldDisk;
+                Guid vmSnapshotId = isUpdatedToShareable(oldDisk, newDisk) ? null :
+                        snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
+                oldDiskImage.setVmSnapshotId(vmSnapshotId);
+            }
         }
     }
 
@@ -1051,5 +1082,15 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         getReturnValue().getValidationMessages().clear();
         getReturnValue().getValidationMessages().addAll(internalReturnValue.getValidationMessages());
         getReturnValue().setValid(internalReturnValue.isValid());
+    }
+
+    @Override
+    public Guid getStoragePoolId() {
+        if (getVm() != null) {
+            return super.getStoragePoolId();
+        } else if (isInternalManagedDisk()) {
+            return ((DiskImage) getNewDisk()).getStoragePoolId();
+        }
+        return null;
     }
 }

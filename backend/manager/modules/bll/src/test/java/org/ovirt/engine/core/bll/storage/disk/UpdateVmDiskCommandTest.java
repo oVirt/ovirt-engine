@@ -147,13 +147,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
             new UpdateVmDiskCommand<>(createParameters(), CommandContext.createContext(""));
 
     @Test
-    public void validateFailedVMNotFound() {
-        initializeCommand();
-        mockNullVm();
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-    }
-
-    @Test
     public void validateFailedVMHasNotDisk() {
         initializeCommand();
         createNullDisk();

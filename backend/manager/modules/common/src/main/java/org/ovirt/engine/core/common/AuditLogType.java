@@ -246,6 +246,8 @@ public enum AuditLogType {
     USER_REMOVE_DISK_FROM_VM(80),
     @Deprecated
     USER_FAILED_REMOVE_DISK_FROM_VM(81, AuditLogSeverity.ERROR),
+    USER_UPDATE_DISK(86),
+    USER_FAILED_UPDATE_DISK(87, AuditLogSeverity.ERROR),
     USER_UPDATE_VM_DISK(88),
     USER_FAILED_UPDATE_VM_DISK(89, AuditLogSeverity.ERROR),
     USER_HOTPLUG_DISK(2000),

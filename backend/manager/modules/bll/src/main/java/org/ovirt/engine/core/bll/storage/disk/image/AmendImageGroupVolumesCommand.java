@@ -83,6 +83,9 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
+        if (getDiskImage().getVmEntityType() == null) {
+            return false;
+        }
         if (getDiskImage().getVmEntityType().isTemplateType()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_TEMPLATE_DISK);
         }
@@ -201,7 +204,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
             return null;
         }
 
-        if (getDiskImage().getVmEntityType().isVmType()) {
+        if (getDiskImage().getVmEntityType() != null && getDiskImage().getVmEntityType().isVmType()) {
             return getSharedLocksForVmDisk();
         }
 
