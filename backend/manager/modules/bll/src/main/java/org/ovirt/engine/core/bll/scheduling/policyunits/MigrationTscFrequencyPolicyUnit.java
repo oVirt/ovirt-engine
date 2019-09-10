@@ -47,7 +47,7 @@ public class MigrationTscFrequencyPolicyUnit extends PolicyUnitImpl {
             }
 
             return hosts.stream()
-                    .filter(vds -> vdsMatchesTscFrequency(messages, vmVds, vds))
+                    .filter(vds -> vds.isTscScalingEnabled() || vdsMatchesTscFrequency(messages, vmVds, vds))
                     .collect(Collectors.toList());
         }
 

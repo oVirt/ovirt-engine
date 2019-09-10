@@ -382,6 +382,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setSupportedBlockSize(ObjectUtils.mapNullable(
                 rs.getString("supported_block_size"), JsonHelper::jsonToMapUnchecked));
         entity.setTscFrequency(rs.getString("tsc_frequency"));
+        entity.setTscScalingEnabled(rs.getBoolean("tsc_scaling"));
         return entity;
     };
 }

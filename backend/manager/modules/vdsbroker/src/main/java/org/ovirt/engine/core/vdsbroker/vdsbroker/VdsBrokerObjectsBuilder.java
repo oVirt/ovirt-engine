@@ -1012,6 +1012,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setSupportedBlockSize((Map<String, Object>) struct.get(VdsProperties.supported_block_size));
         vds.setTscFrequency(assignStringValue(struct, VdsProperties.TSC_FREQUENCY));
         vds.setKernelCmdlineFips(assignBoolValue(struct, VdsProperties.FIPS_MODE));
+        vds.setTscScalingEnabled(assignBoolValue(struct, VdsProperties.TSC_SCALING));
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

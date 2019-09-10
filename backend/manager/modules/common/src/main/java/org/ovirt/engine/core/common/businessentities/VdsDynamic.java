@@ -221,6 +221,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String tscFrequency;
 
+    private boolean tscScalingEnabled;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -926,6 +928,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.tscFrequency = tscFrequency;
     }
 
+    public boolean isTscScalingEnabled() {
+        return tscScalingEnabled;
+    }
+
+    public void setTscScalingEnabled(boolean tscScalingEnabled) {
+        this.tscScalingEnabled = tscScalingEnabled;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1000,7 +1010,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 connectorInfo,
                 backupEnabled,
                 supportedDomainVersions,
-                supportedBlockSize
+                supportedBlockSize,
+                tscFrequency,
+                tscScalingEnabled
         );
     }
 
@@ -1086,6 +1098,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(connectorInfo, other.connectorInfo)
                 && backupEnabled == other.backupEnabled
                 && Objects.equals(supportedDomainVersions, other.supportedDomainVersions)
-                && Objects.equals(supportedBlockSize, other.supportedBlockSize);
+                && Objects.equals(supportedBlockSize, other.supportedBlockSize)
+                && Objects.equals(tscFrequency, other.tscFrequency)
+                && tscScalingEnabled == other.tscScalingEnabled;
     }
 }

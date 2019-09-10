@@ -131,6 +131,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setSupportedBlockSize(ObjectUtils.mapNullable(
                 rs.getString("supported_block_size"), JsonHelper::jsonToMapUnchecked));
         entity.setTscFrequency(rs.getString("tsc_frequency"));
+        entity.setTscScalingEnabled(rs.getBoolean("tsc_scaling"));
 
         return entity;
     };
@@ -331,7 +332,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("supported_domain_versions", vds.getSupportedDomainVersionsAsString())
                 .addValue("supported_block_size",
                         ObjectUtils.mapNullable(vds.getSupportedBlockSize(), JsonHelper::mapToJsonUnchecked))
-                .addValue("tsc_frequency", vds.getTscFrequency());
+                .addValue("tsc_frequency", vds.getTscFrequency())
+                .addValue("tsc_scaling", vds.isTscScalingEnabled());
     }
 
     @Override

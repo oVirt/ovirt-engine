@@ -273,7 +273,8 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_backup_enabled BOOLEAN,
     v_supported_domain_versions VARCHAR(256),
     v_supported_block_size JSONB,
-    v_tsc_frequency VARCHAR(10)
+    v_tsc_frequency VARCHAR(10),
+    v_tsc_scaling BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -347,7 +348,8 @@ BEGIN
             backup_enabled,
             supported_domain_versions,
             supported_block_size,
-            tsc_frequency
+            tsc_frequency,
+            tsc_scaling
             )
         VALUES (
             v_cpu_cores,
@@ -418,7 +420,8 @@ BEGIN
             v_backup_enabled,
             v_supported_domain_versions,
             v_supported_block_size,
-            v_tsc_frequency
+            v_tsc_frequency,
+            v_tsc_scaling
             );
     END;
 
@@ -513,7 +516,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_backup_enabled BOOLEAN,
     v_supported_domain_versions VARCHAR(256),
     v_supported_block_size JSONB,
-    v_tsc_frequency VARCHAR(10)
+    v_tsc_frequency VARCHAR(10),
+    v_tsc_scaling BOOLEAN
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -591,7 +595,8 @@ BEGIN
             backup_enabled = v_backup_enabled,
             supported_domain_versions = v_supported_domain_versions,
             supported_block_size = v_supported_block_size,
-            tsc_frequency = v_tsc_frequency
+            tsc_frequency = v_tsc_frequency,
+            tsc_scaling = v_tsc_scaling
         WHERE vds_id = v_vds_id;
     END;
 

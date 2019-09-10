@@ -346,7 +346,11 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         numberOfSockets.setValue(model.getNumberOfSockets());
         coresPerSocket.setValue(model.getCoresPerSocket());
         threadsPerCore.setValue(model.getThreadsPerCore());
-        tscFrequency.setValue(model.getTscFrequency());
+        String tscLabel = model.getTscFrequency() +
+                " (" +                                                                                 // $NON-NLS-1$
+                (model.isTscScalingEnabled() ? constants.tscScalingOn() : constants.tscScalingOff()) +
+                ") ";                                                                                  // $NON-NLS-1$
+        tscFrequency.setValue(tscLabel);
     }
 
     @Override

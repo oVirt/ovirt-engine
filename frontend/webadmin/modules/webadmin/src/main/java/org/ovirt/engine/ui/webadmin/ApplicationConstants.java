@@ -3533,6 +3533,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String tscFrequency();
 
+    String tscScalingOn();
+
+    String tscScalingOff();
+
     String clusterHasHostWithMissingCpuFlagsWarning();
 
     String vmCpuTypeDoesNotMatchClusterCpuType();

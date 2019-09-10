@@ -260,6 +260,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setIsDefaultRouteRoleNetworkAttached(isDefaultRouteRoleNetworkAttached());
         vds.setClusterSmtDisabled(isClusterSmtDisabled());
         vds.setTscFrequency(getTscFrequency());
+        vds.setTscScalingEnabled(isTscScalingEnabled());
         vds.setCpuFlagsMissing(getCpuFlagsMissing());
         vds.setSupportedCpus(getSupportedCpus());
         return vds;
@@ -1826,5 +1827,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         } else {
             this.supportedCpus = supportedCpus;
         }
+    }
+
+    public boolean isTscScalingEnabled() {
+        return vdsDynamic.isTscScalingEnabled();
+    }
+
+    public void setTscScalingEnabled(boolean tscScalingEnabled) {
+        vdsDynamic.setTscScalingEnabled(tscScalingEnabled);
     }
 }
