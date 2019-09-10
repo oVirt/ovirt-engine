@@ -825,6 +825,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                                 .getMessages()
                                                 .createOperationFailedDcGuideMsg(storageName));
                             } else {
+                                saveCommonStorageProperties(model);
                                 saveNewSanStorage();
                             }
 
@@ -832,6 +833,19 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                         }),
                 null,
                 path);
+    }
+
+    private void saveCommonStorageProperties(StorageModel model) {
+        saveDefaultedStorageProperties(model, storageDomain);
+    }
+
+    private void saveDefaultedStorageProperties(StorageModel model, StorageDomainStatic storageDomainStatic) {
+        storageDomainStatic.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
+        storageDomainStatic.setDiscardAfterDelete(model.getDiscardAfterDelete().getEntity());
+        storageDomainStatic.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator().getEntity());
+        storageDomainStatic.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker().getEntity());
+        storageDomainStatic.setWarningLowConfirmedSpaceIndicator(model.getWarningLowConfirmedSpaceIndicator().getEntity());
+        storageDomainStatic.setBackup(model.getBackup().getEntity());
     }
 
     public void saveNewSanStorage() {
