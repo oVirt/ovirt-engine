@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -13,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.DiskExtendSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -54,6 +57,7 @@ public class EditDiskModel extends AbstractDiskModel {
                 getStorageType().setIsAvailable(false);
                 getSize().setEntity(lunDisk.getLun().getDeviceSize());
                 getSizeExtend().setIsAvailable(false);
+                getHost().setIsAvailable(false);
                 break;
             case CINDER:
                 CinderDisk cinderDisk = (CinderDisk) getDisk();
@@ -126,7 +130,19 @@ public class EditDiskModel extends AbstractDiskModel {
 
     @Override
     public void store(IFrontendActionAsyncCallback callback) {
-        // TODO: Implement for floating disks (disks without VM and DiskVmElement)
+        if (getProgress() != null || !validate()) {
+            return;
+        }
+
+        startProgress();
+
+        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(getDisk());
+        IFrontendActionAsyncCallback onFinished = callback != null ? callback : result -> {
+            EditDiskModel diskModel = (EditDiskModel) result.getState();
+            diskModel.stopProgress();
+            diskModel.cancel();
+        };
+        Frontend.getInstance().runAction(ActionType.UpdateVmDisk, parameters, onFinished, this);
     }
 
     @Override
@@ -155,7 +171,6 @@ public class EditDiskModel extends AbstractDiskModel {
         getVolumeType().setIsChangeable(false);
         getSize().setIsChangeable(false);
         getCinderVolumeType().setIsChangeable(false);
-        getDiskStorageType().setIsChangeable(false);
 
         if (!isEditEnabled()) {
             getIsShareable().setIsChangeable(false);

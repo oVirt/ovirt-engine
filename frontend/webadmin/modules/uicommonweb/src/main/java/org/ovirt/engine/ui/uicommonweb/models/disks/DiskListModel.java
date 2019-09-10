@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -334,7 +335,24 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private void edit() {
+        final Disk disk = getSelectedItem();
 
+        if (getWindow() != null) {
+            return;
+        }
+
+        EditDiskModel model = new EditDiskModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
+        model.setHelpTag(HelpTag.edit_virtual_disk);
+        model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
+        model.setDisk(disk);
+        setWindow(model);
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.setCancelCommand(cancelCommand);
+
+        model.setSourceModel(this);
+        model.initialize();
     }
 
     private void export() {
@@ -502,7 +520,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
         boolean shouldAllowEdit = true;
         if (disk != null) {
-            shouldAllowEdit = !disk.isOvfStore() && !isDiskLocked(disk);
+            shouldAllowEdit = !disk.isOvfStore() && !isDiskLocked(disk) && !isTemplateDisk(disk);
         }
 
         getNewCommand().setIsExecutionAllowed(true);

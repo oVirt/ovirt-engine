@@ -332,7 +332,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         radioButtonPanel.addRadioButton(constants.imageDisk(),
                 disk.getDisk() == null || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
-                disk.getIsNew(),
+                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 event -> {
                     if (disk.getIsNew()) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
@@ -342,7 +342,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         radioButtonPanel.addRadioButton(constants.directLunDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
-                disk.getIsNew(),
+                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 event -> {
                     if (disk.getIsNew()) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
@@ -353,7 +353,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         radioButtonPanel.addRadioButton(constants.cinderDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
-                disk.getIsNew(),
+                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
                 event -> {
                     if (disk.getIsNew()) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
@@ -363,7 +363,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         radioButtonPanel.addRadioButton(constants.managedBlockDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE,
-                disk.getIsNew(),
+                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE,
                 event -> {
                     if (disk.getIsNew()) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.MANAGED_BLOCK_STORAGE);

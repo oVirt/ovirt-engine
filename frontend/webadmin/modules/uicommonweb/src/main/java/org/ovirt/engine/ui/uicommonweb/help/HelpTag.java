@@ -190,7 +190,9 @@ public enum HelpTag {
 
     edit_instance_type("edit_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Edit Instance Type' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_virtual_disk("edit_virtual_disk", HelpTagType.WEBADMIN, "VMs Tab > Virtual Disks Sub-Tab > Edit Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_virtual_vm_disk("edit_virtual_vm_disk", HelpTagType.WEBADMIN, "VMs Tab > Virtual Disks Sub-Tab > Edit Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    edit_virtual_disk("edit_virtual_disk", HelpTagType.WEBADMIN, "Disks Tab > Edit Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_vm("edit_vm", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 

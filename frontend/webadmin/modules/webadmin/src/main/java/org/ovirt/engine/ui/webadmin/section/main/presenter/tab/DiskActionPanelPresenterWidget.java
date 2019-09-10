@@ -41,6 +41,13 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
         };
         addActionButton(newButtonDefinition);
 
+        addActionButton(new WebAdminButtonDefinition<Disk>(constants.editDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getEditCommand();
+            }
+        });
+
         addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {

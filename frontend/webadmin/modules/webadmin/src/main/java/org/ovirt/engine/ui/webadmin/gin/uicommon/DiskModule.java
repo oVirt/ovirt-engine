@@ -60,7 +60,8 @@ public class DiskModule extends AbstractGinModule {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
-                        if (lastExecutedCommand == getModel().getNewCommand()) {
+                        if (lastExecutedCommand == getModel().getNewCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
                             return newPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getMoveCommand()
                                 || lastExecutedCommand == getModel().getCopyCommand()) {
