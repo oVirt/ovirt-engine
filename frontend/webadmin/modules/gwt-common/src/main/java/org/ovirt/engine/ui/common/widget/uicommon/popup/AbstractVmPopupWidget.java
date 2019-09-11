@@ -661,15 +661,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     public EntityModelDetachableWidget overrideMigrationDowntimeEditorWithDetachable;
 
-    @Path(value = "overrideMigrationPolicy.entity")
-    @WithElementId("overrideMigrationPolicy")
-    @UiField(provided = true)
-    public EntityModelCheckBoxEditor overrideMigrationPolicyEditor;
-
     @UiField(provided = true)
     @Path(value = "migrationPolicies.selectedItem")
     @WithElementId("migrationPolicy")
     public ListModelListBoxOnlyEditor<MigrationPolicy> migrationPolicyEditor;
+
+    private ClusterDefaultRenderer<MigrationPolicy> migrationPolicyRenderer;
 
     @UiField(provided = true)
     public EntityModelDetachableWidget overrideMigrationPolicyEditorWithDetachable;
@@ -1158,7 +1155,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.IGNORE);
         overrideMigrationDowntimeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
-        overrideMigrationPolicyEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationPolicyEditor, Align.IGNORE);
+        overrideMigrationPolicyEditorWithDetachable = new EntityModelDetachableWidget(migrationPolicyEditor, Align.IGNORE);
         overrideMigrationPolicyEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
         migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.IGNORE);
@@ -1481,8 +1478,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         overrideMigrationDowntimeEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
 
-        overrideMigrationPolicyEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<MigrationPolicy>(), new ModeSwitchingVisibilityRenderer());
+        migrationPolicyRenderer = new ClusterDefaultRenderer<>(new NameRenderer<MigrationPolicy>());
+        migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(migrationPolicyRenderer, new ModeSwitchingVisibilityRenderer());
 
         autoConvergeEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromCluster()),
@@ -1579,7 +1576,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hideAlwaysHiddenFields();
         decorateDetachableFields();
         enableNumaSupport(model);
-
         // Hiding IO threads panel here if needed.
         // When editing an existing VM, the UnitVmModel.IoThreadsEnabled entity
         // is set to a value before this method is called and so the callback
@@ -1751,6 +1747,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         initClusterDefaultValueListener(migrateEncryptedRenderer, getModel().getMigrateEncrypted());
+        initClusterDefaultValueListener(migrationPolicyRenderer, getModel().getMigrationPolicies());
     }
 
     private void updateUrandomLabel(UnitVmModel model) {
@@ -1994,7 +1991,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         specificHost.setTabIndex(nextTabIndex++);
         defaultHostEditor.setTabIndex(nextTabIndex++);
         migrationModeEditor.setTabIndex(nextTabIndex++);
-        overrideMigrationPolicyEditor.setTabIndex(nextTabIndex++);
         migrationPolicyEditor.setTabIndex(nextTabIndex++);
         overrideMigrationDowntimeEditor.setTabIndex(nextTabIndex++);
         migrationDowntimeEditor.setTabIndex(nextTabIndex++);

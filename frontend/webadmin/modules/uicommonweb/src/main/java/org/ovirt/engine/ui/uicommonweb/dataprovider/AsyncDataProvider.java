@@ -743,7 +743,7 @@ public class AsyncDataProvider {
 
     public List<MigrationPolicy> getMigrationPolicies(Version compatibilityVersion) {
         List<MigrationPolicy> migrationPolicies = migrationPoliciesByVersion.get(compatibilityVersion);
-        return migrationPolicies != null ? migrationPolicies
+        return migrationPolicies != null ? new ArrayList<MigrationPolicy>(migrationPolicies)
                 : Collections.singletonList((MigrationPolicy) new NoMigrationPolicy());
     }
 

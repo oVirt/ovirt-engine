@@ -428,7 +428,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationPolicyEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationPolicyLabel}" />
+                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.vmMigrationPolicyLabel}" />
                     <d:InfoIcon ui:field="migrationPolicyInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                   <b:Column size="SM_1">

@@ -1455,8 +1455,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String overrideMigrationDowntimeLabel();
 
-    String overrideMigrationPolicyLabel();
-
     String migrationMode();
 
     String migrationDowntimeLabel();
@@ -1858,4 +1856,6 @@ public interface CommonApplicationConstants extends Constants {
     String forceToMaintenance();
 
     String systemDefaultOption();
+
+    String vmMigrationPolicyLabel();
 }

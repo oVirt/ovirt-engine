@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -141,8 +142,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getLease().setSelectedItem(null);
             }
         });
-        getModel().getMigrationPolicies()
-                .setItems(AsyncDataProvider.getInstance().getMigrationPolicies(Version.getLast()));
+        List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(Version.getLast());
+        policies.add(0, null);
+        getModel().getMigrationPolicies().setItems(policies);
     }
 
     protected Guid findDefaultStorageDomainForVmLease(Collection<Disk> disks) {
