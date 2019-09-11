@@ -458,8 +458,12 @@ public class BackendHostResourceTest
 
     @Test
     public void testRestartFence() {
-        doTestFence(FenceType.RESTART,
-                    ActionType.RestartVds);
+        Action action = new Action();
+        action.setFenceType(FenceType.RESTART.value());
+        action.setMaintenanceAfterRestart(true);
+
+        doTestFence(ActionType.RestartVds,
+                    action);
     }
 
     @Test
@@ -476,13 +480,19 @@ public class BackendHostResourceTest
 
     public void doTestFence(FenceType fenceType,
                             ActionType actionType) {
-        setUriInfo(setUpActionExpectations(actionType,
-                                           FenceVdsActionParameters.class,
-                                           new String[] { "VdsId" },
-                                           new Object[] { GUIDS[0] }));
-
         Action action = new Action();
         action.setFenceType(fenceType.value());
+        action.setMaintenanceAfterRestart(true);
+
+        doTestFence(actionType, action);
+    }
+
+    public void doTestFence(ActionType actionType,
+                            Action action) {
+        setUriInfo(setUpActionExpectations(actionType,
+                                           FenceVdsActionParameters.class,
+                                           new String[] { "VdsId"},
+                                           new Object[] { GUIDS[0]}));
 
         verifyActionResponse(resource.fence(action));
     }

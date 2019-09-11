@@ -599,7 +599,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         case MANUAL:
             return fenceManually(action);
         case RESTART:
-            return fence(action, ActionType.RestartVds);
+            return fenceRestart(action);
         case START:
             return fence(action, ActionType.StartVds);
         case STOP:
@@ -645,6 +645,14 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         action.setFault(new Fault());
         action.getFault().setReason(message);
         return Response.ok().entity(action).build();
+    }
+
+    private Response fenceRestart(Action action) {
+        FenceVdsActionParameters params = new FenceVdsActionParameters(guid);
+        if (action.isSetMaintenanceAfterRestart()) {
+            params.setChangeHostToMaintenanceOnStart(action.isMaintenanceAfterRestart());
+        }
+        return doAction(ActionType.RestartVds, params, action);
     }
 
     private Response fence(Action action, ActionType vdcAction) {
