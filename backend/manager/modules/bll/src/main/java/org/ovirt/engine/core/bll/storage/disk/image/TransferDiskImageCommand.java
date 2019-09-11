@@ -242,6 +242,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         DiskImage image = getDiskImage();
+        if (image.isDiskSnapshot() && !isDiskSnapshotPluggedToDownVmsOnly(image)) {
+            // shouldn't teardown snapshot disk that attached to a running VM
+            return;
+        }
+
         boolean tearDownFailed = false;
 
         if (getTransferBackend() == ImageTransferBackend.FILE) {
@@ -283,6 +288,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
         return true;
+    }
+
+    protected boolean isDiskSnapshotPluggedToDownVmsOnly(DiskImage diskImage) {
+        return validate(getDiskValidator(diskImage).isDiskPluggedToAnyNonDownVm(false));
     }
 
     private AddDiskParameters getAddDiskParameters() {
