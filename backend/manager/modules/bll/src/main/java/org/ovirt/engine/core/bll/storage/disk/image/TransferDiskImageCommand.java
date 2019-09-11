@@ -242,6 +242,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         DiskImage image = getDiskImage();
+        if (image.isDiskSnapshot() && !isDiskSnapshotPluggedToDownVmsOnly(image)) {
+            // shouldn't teardown snapshot disk that attached to a running VM
+            return;
+        }
+
         boolean tearDownFailed = false;
 
         if (getTransferBackend() == ImageTransferBackend.FILE) {
@@ -267,7 +272,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (tearDownFailed) {
             // Invoke log method directly rather than relying on infra, because teardown
             // failure may occur during command execution, e.g. if the upload is paused.
-            addCustomValue("DiskAlias", image != null ? image.getDiskAlias() : "(unknown)");
+            addCustomValue("DiskAlias", image.getDiskAlias());
             auditLogDirector.log(this, AuditLogType.TRANSFER_IMAGE_TEARDOWN_FAILED);
         }
     }
@@ -283,6 +288,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
         return true;
+    }
+
+    protected boolean isDiskSnapshotPluggedToDownVmsOnly(DiskImage diskImage) {
+        return validate(getDiskValidator(diskImage).isDiskPluggedToAnyNonDownVm(false));
     }
 
     private AddDiskParameters getAddDiskParameters() {
