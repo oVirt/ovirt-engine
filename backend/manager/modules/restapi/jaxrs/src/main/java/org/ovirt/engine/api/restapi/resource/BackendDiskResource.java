@@ -22,13 +22,10 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
-import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
@@ -36,8 +33,8 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -82,25 +79,17 @@ public class BackendDiskResource
 
     @Override
     public Disk update(Disk incoming) {
-        // If the QCOW version is specified, then perform the update:
-        if (incoming.isSetQcowVersion()) {
-            return performUpdate(
-                    incoming,
-                    new QueryIdResolver<>(QueryType.GetDiskByDiskId, IdQueryParameters.class),
-                    ActionType.AmendImageGroupVolumes,
-                    new UpdateParametersProvider());
-        }
-
-        // If the QCOW version isn't specified, then return 409
-        throw new WebFaultException(null, localize(Messages.DISK_UPDATE_NOT_PERMITTED), Response.Status.CONFLICT);
+        return performUpdate(incoming,
+                new QueryIdResolver<>(QueryType.GetDiskByDiskId, IdQueryParameters.class),
+                ActionType.UpdateVmDisk,
+                new BackendDiskResource.UpdateParametersProvider());
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
         public ActionParametersBase getParameters(
                 Disk incoming,
                 org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-            QcowCompat qcowCompat = DiskMapper.mapQcowVersion(incoming.getQcowVersion());
-            return new AmendImageGroupVolumesCommandParameters(guid, qcowCompat);
+            return new VmDiskOperationParameterBase(map(incoming, entity));
         }
     }
 
