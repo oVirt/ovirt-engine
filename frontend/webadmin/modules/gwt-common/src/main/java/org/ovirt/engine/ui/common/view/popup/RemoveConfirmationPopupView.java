@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
@@ -58,6 +59,10 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     @UiField
     protected AlertWithIcon notePanel;
 
+    @UiField
+    @Path(value = "reason.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor reasonEditor;
 
     @Inject
     public RemoveConfirmationPopupView(EventBus eventBus) {

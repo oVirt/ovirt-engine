@@ -333,8 +333,9 @@ public class BackendVmResource
     public Response shutdown(Action action) {
         // REVISIT add waitBeforeShutdown Action paramater
         // to api schema before next sub-milestone
+        String reason = action.getReason();
         return doAction(ActionType.ShutdownVm,
-                        new ShutdownVmParameters(guid, true),
+                        new ShutdownVmParameters(guid, true, reason),
                         action);
     }
 
@@ -498,8 +499,9 @@ public class BackendVmResource
 
     @Override
     public Response stop(Action action) {
+        String reason = action.getReason();
         return doAction(ActionType.StopVm,
-                        new StopVmParameters(guid, StopVmTypeEnum.NORMAL),
+                        new StopVmParameters(guid, StopVmTypeEnum.NORMAL, reason),
                         action);
     }
 

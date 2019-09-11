@@ -46,6 +46,10 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                 getVDSReturnValue().setExceptionObject(vdsReturnValue.getExceptionObject());
                 getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
             }
+        } else {
+            VmDynamic vm = vmDynamicDao.get(getParameters().getVmId());
+            vm.setStopReason(getParameters().getReason());
+            resourceManager.getVmManager(getParameters().getVmId()).update(vm);
         }
     }
 

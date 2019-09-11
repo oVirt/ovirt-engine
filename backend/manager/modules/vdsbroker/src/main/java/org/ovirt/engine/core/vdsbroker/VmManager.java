@@ -301,4 +301,8 @@ public class VmManager {
         return result;
     }
 
+    public String getStopReason(Guid vmId) {
+        return vmDynamicDao.get(vmId).getStopReason();
+    }
+
 }

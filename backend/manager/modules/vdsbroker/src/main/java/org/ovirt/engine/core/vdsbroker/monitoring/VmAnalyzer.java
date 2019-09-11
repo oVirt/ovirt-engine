@@ -409,6 +409,7 @@ public class VmAnalyzer {
                         alreadyDown ? dbVm.getExitStatus() : exitStatus,
                         alreadyDown ? dbVm.getExitMessage() : exitMessage,
                         alreadyDown ? dbVm.getExitReason() : vmExitReason);
+                dbVm.setStopReason(getVmManager().getStopReason(getVmId()));
             }
             saveDynamic(dbVm);
             resetVmStatistics();
