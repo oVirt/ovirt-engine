@@ -1720,6 +1720,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 multiQueuesInfo.setVisible(object.getMultiQueues().getIsAvailable());
             }
         });
+
+        object.getMigrationDowntime().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                migrationDowntimeInfoIcon.setVisible(object.getMigrationDowntime().getIsAvailable());
+                overrideMigrationDowntimeEditorWithDetachable.setVisible(object.getMigrationDowntime().getIsAvailable());
+            }
+        });
     }
 
     private void updateUrandomLabel(UnitVmModel model) {

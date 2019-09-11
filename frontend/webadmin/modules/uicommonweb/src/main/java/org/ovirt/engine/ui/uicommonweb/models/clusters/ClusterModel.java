@@ -1794,9 +1794,17 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         boolean hasMigrationPolicy = getMigrationPolicies().getSelectedItem() != null
                 && !NoMigrationPolicy.ID.equals(getMigrationPolicies().getSelectedItem().getId());
 
-        UIConstants constants = ConstantsManager.getInstance().getConstants();
-        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
-        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+        if (getEffectiveVersion() != null && getEffectiveVersion().greaterOrEquals(Version.v4_4)) {
+            getAutoConverge().setIsAvailable(false);
+            getMigrateCompressed().setIsAvailable(false);
+        } else {
+            getAutoConverge().setIsAvailable(true);
+            getMigrateCompressed().setIsAvailable(true);
+
+            UIConstants constants = ConstantsManager.getInstance().getConstants();
+            getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+            getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+        }
     }
 
     private void architectureSelectedItemChanged() {

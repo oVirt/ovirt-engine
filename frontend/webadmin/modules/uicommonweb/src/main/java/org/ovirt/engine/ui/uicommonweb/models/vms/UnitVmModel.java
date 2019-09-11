@@ -3495,11 +3495,24 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         }
 
-        getOverrideMigrationDowntime().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
-        boolean overrideDowntime = Boolean.TRUE.equals(getOverrideMigrationDowntime().getEntity());
-        getMigrationDowntime().setIsChangeable(!hasMigrationPolicy && overrideDowntime, constants.availableOnlyWithLegacyPolicy());
-        getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
-        getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+        Version version = getCompatibilityVersion();
+        if (version == null || version.greaterOrEquals(Version.v4_4)) {
+            getOverrideMigrationDowntime().setIsAvailable(false);
+            getMigrationDowntime().setIsAvailable(false);
+            getAutoConverge().setIsAvailable(false);
+            getMigrateCompressed().setIsAvailable(false);
+        } else {
+            getOverrideMigrationDowntime().setIsAvailable(true);
+            getMigrationDowntime().setIsAvailable(true);
+            getAutoConverge().setIsAvailable(true);
+            getMigrateCompressed().setIsAvailable(true);
+
+            getOverrideMigrationDowntime().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+            boolean overrideDowntime = Boolean.TRUE.equals(getOverrideMigrationDowntime().getEntity());
+            getMigrationDowntime().setIsChangeable(!hasMigrationPolicy && overrideDowntime, constants.availableOnlyWithLegacyPolicy());
+            getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+            getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+        }
     }
 
     private void updateBiosType() {
