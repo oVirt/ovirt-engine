@@ -6,13 +6,10 @@ import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.SPEC_PARAM_
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -24,9 +21,7 @@ import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -157,15 +152,12 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
-                    .findFirst()
-                    .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev != null) {
-                dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-                dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            if (dbDev.isPresent()) {
+                dbDevices.remove(dbDev.get());
+                dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+                dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
             }
@@ -201,28 +193,12 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
-                .filter(d -> {
-                    if (d.getSpecParams().isEmpty()) {
-                        return true;
-                    }
-                    if (ioThreadId != null && Objects.equals(d.getSpecParams().get(IO_THREAD_ID), ioThreadId)) {
-                        return true;
-                    }
-                    if (Objects.equals(d.getSpecParams().get(INDEX), index) &&
-                            Objects.equals(d.getSpecParams().get(MODEL), model)) {
-                        return true;
-                    }
-                    return false;
-                })
-                .findFirst()
-                .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev != null) {
-                dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-                dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            if (dbDev.isPresent()) {
+                dbDevices.remove(dbDev.get());
+                dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+                dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
                 Map<String, Object> specParams = new HashMap<>();
@@ -259,25 +235,17 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            String devNode = target.selectSingleNode(NODE).innerText;
-            String devSize = kiloBytesToMegaBytes(target.selectSingleNode(SIZE).innerText);
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .sorted(Comparator.comparing(VmDevice::isManaged).reversed()) // try to match managed devices first
-                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
-                    .filter(d -> Objects.equals(d.getSpecParams().get(SPEC_PARAM_NODE).toString(), devNode))
-                    .filter(d -> Objects.equals(d.getSpecParams().get(SPEC_PARAM_SIZE).toString(), devSize))
-                    .findFirst()
-                    .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev != null) {
-                dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-                dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            if (dbDev.isPresent()) {
+                dbDevices.remove(dbDev.get());
+                dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+                dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
                 Map<String, Object> specParams = new HashMap<>();
-                specParams.put(SPEC_PARAM_NODE, devNode);
-                specParams.put(SPEC_PARAM_SIZE, devSize);
+                specParams.put(SPEC_PARAM_NODE, target.selectSingleNode(NODE).innerText);
+                specParams.put(SPEC_PARAM_SIZE, kiloBytesToMegaBytes(target.selectSingleNode(SIZE).innerText));
                 dev.put(VdsProperties.SpecParams, specParams);
             }
 
@@ -315,12 +283,9 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Device, deviceType);
             dev.put(VdsProperties.SpecParams, hostAddress);
 
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(deviceType) && Objects.equals(d.getSpecParams(), hostAddress))
-                    .findFirst()
-                    .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            dev.put(VdsProperties.DeviceId, dbDev != null ? dbDev.getDeviceId().toString() : Guid.newGuid().toString());
+            dev.put(VdsProperties.DeviceId, dbDev.isPresent() ? dbDev.get().getDeviceId().toString() : Guid.newGuid().toString());
             result.add(dev);
         }
         return result;
@@ -358,19 +323,16 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
             dev.put(VdsProperties.Device, hostDevice.getDeviceName());
 
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(hostDevice.getDeviceName()))
-                    .findFirst()
-                    .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev == null) {
+            if (!dbDev.isPresent()) {
                 log.warn("VM host device '{}' does not exist in the database, thus ignored",
                         hostDevice.getDeviceName());
                 continue;
             }
 
-            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-            dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
 
             result.add(dev);
         }
@@ -388,15 +350,12 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
-                    .findFirst()
-                    .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev != null) {
-                dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-                dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            if (dbDev.isPresent()) {
+                dbDevices.remove(dbDev.get());
+                dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+                dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
             }
@@ -408,10 +367,6 @@ public class VmDevicesConverter {
 
     private List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.DISK);
-        MemoizingSupplier<Map<Guid, String>> diskToLunSupplier = new MemoizingSupplier<>(
-                () -> diskLunMapDao.getAll().stream().collect(Collectors.toMap(
-                        DiskLunMap::getDiskId,
-                        DiskLunMap::getLunId)));
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.DISK)) {
@@ -423,19 +378,18 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             String path = DomainXmlUtils.parseDiskPath(node);
-            VmDevice dbDev = correlate(dev, dbDevices,
-                    device -> findDiskDeviceInDbByPath(dbDevices, diskType, path, diskToLunSupplier));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev == null) {
+            if (!dbDev.isPresent()) {
                 log.warn("unmanaged disk with path '{}' is ignored", path);
                 continue;
             }
 
-            dbDevices.remove(dbDev);
+            dbDevices.remove(dbDev.get());
 
             dev.put(VdsProperties.ImageId, parseImageIdFromPath(path));
-            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-            dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
 
             List<Map<String, Object>> volumeChain = parseVolumeChain(node);
             if (!volumeChain.isEmpty()) {
@@ -485,11 +439,7 @@ public class VmDevicesConverter {
     private List<Map<String, Object>> parseInterfaces(XmlDocument document, List<VmDevice> devices, Guid vmId,
             MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.INTERFACE);
-        Map<Guid, VmDevice> devIdToDbDev = dbDevices.stream().collect(Collectors.toMap(
-                device -> device.getDeviceId(),
-                device -> device));
 
-        List<VmNetworkInterface> dbInterfaces = vmNetworkInterfaceDao.getAllForVm(vmId);
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.INTERFACE)) {
             String type = DomainXmlUtils.parseAttribute(node, TYPE);
@@ -504,23 +454,16 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            String macAddress = DomainXmlUtils.parseMacAddress(node);
-            // MAC address is a unique identifier of network interface devices
-            VmDevice dbDev = correlate(dev, dbDevices, device -> {
-                VmNetworkInterface dbInterface = dbInterfaces.stream()
-                        .filter(iface -> iface.getMacAddress().equalsIgnoreCase(macAddress))
-                        .findFirst()
-                        .orElse(null);
-                return dbInterface != null ? devIdToDbDev.get(dbInterface.getId()) : null;
-            });
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev == null) {
+            if (!dbDev.isPresent()) {
+                String macAddress = DomainXmlUtils.parseMacAddress(node);
                 log.warn("unmanaged network interface with mac address '{}' is ignored", macAddress);
                 continue;
             }
 
-            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-            dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
 
             result.add(dev);
         }
@@ -552,19 +495,16 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             // There is supposed to be one video device of each type (spice/vnc/..)
-            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> isNoneVideoDeviceValid(device, devices))
-                    .findFirst()
-                    .orElse(null));
+            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
 
-            if (dbDev == null) {
+            if (!dbDev.isPresent()) {
                 log.warn("unmanaged video device with address '{}' is ignored", dev.get(VdsProperties.Address));
                 continue;
             }
 
-            dbDevices.remove(dbDev);
-            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
-            dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+            dbDevices.remove(dbDev.get());
+            dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
             result.add(dev);
         }
 
@@ -720,34 +660,17 @@ public class VmDevicesConverter {
         return devices.stream().filter(d -> d.getType() == devType).findFirst().orElse(null);
     }
 
-    private VmDevice correlate(Map<String, Object> device,
-            List<VmDevice> dbDevices,
-            Function<Map<String, Object>, VmDevice> func) {
+    private Optional<VmDevice> correlate(Map<String, Object> device,
+            List<VmDevice> dbDevices) {
         String alias = (String) device.get(VdsProperties.Alias);
-        // first try by user alias
-        if (alias.startsWith(DomainXmlUtils.USER_ALIAS_PREFIX)) {
-            try {
-                Guid deviceId = Guid.createGuidFromString(alias.substring(DomainXmlUtils.USER_ALIAS_PREFIX.length()));
-                Optional<VmDevice> result = dbDevices.stream()
-                        .filter(dev -> deviceId.equals(dev.getDeviceId()))
-                        .findFirst();
-                if (result.isPresent()) {
-                    return result.get();
-                }
-            } catch(Exception e) {
-                log.warn("Received unexpected user-alias: {}", alias);
-            }
+        try {
+            Guid deviceId = Guid.createGuidFromString(alias.substring(DomainXmlUtils.USER_ALIAS_PREFIX.length()));
+            return dbDevices.stream()
+                    .filter(dev -> deviceId.equals(dev.getDeviceId()))
+                    .findFirst();
+        } catch(Exception e) {
+            log.warn("Received unexpected user-alias: {}", alias);
+            return Optional.empty();
         }
-
-        // the following logic that tries using non-user aliases (for VMs that were already started without
-        // using user-aliases) can replace the function's logic only once we require libvirt > 3.9
-        /*Optional<VmDevice> result = dbDevices.stream()
-                .filter(dev -> alias.equals(dev.getAlias()))
-                .findFirst();
-        if (result.isPresent()) {
-            return result.get();
-        }*/
-
-        return func.apply(device);
     }
 }
