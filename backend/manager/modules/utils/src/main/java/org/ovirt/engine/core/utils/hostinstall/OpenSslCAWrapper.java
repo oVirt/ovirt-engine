@@ -36,7 +36,8 @@ public class OpenSslCAWrapper {
     public static String signCertificateRequest(
         String request,
         String name,
-        String hostname
+        String hostname,
+        String san
     ) throws IOException {
         EngineLocalConfig config = EngineLocalConfig.getInstance();
 
@@ -55,7 +56,8 @@ public class OpenSslCAWrapper {
             !new OpenSslCAWrapper().signCertificateRequest(
                 new File(new File(config.getUsrDir(), "bin"), "pki-enroll-request.sh"),
                 name,
-                hostname
+                hostname,
+                san
             )
         ) {
             throw new RuntimeException("Certificate enrollment failed");
@@ -92,7 +94,8 @@ public class OpenSslCAWrapper {
     public final boolean signCertificateRequest(
         File executable,
         String name,
-        String hostname
+        String hostname,
+        String san
     ) {
         log.debug("Entered signCertificateRequest");
         boolean returnValue;
@@ -105,6 +108,7 @@ public class OpenSslCAWrapper {
                     executable.getAbsolutePath(),
                     String.format("--name=%s", name),
                     String.format("--subject=/O=%s/CN=%s", escapeSubjectComponent(organization), escapeSubjectComponent(hostname)),
+                    String.format("--san=%s", san),
                     String.format("--days=%s", days),
                     String.format("--timeout=%s", signatureTimeout / 2)
                 },

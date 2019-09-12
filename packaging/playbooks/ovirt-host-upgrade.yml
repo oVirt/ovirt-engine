@@ -10,7 +10,7 @@
   pre_tasks:
     - block:
       # Check if certificates need re-enrollment:
-      - name: Check host certificate
+      - name: Check host certificate validity
         command: |
           '/usr/bin/openssl'
           'verify'
@@ -28,9 +28,17 @@
             'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_cert_file }}"
         register: iscorrect
 
+      - name: Check if host certificate contains subject alternative name
+        openssl_certificate:
+          provider: assertonly
+          path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
+          subject_alt_name: "{{ ovirt_vds_hostname }}"
+        ignore_errors: yes
+        register: contains_san
+
       - name: Set enrollment variable
         set_fact:
-          do_host_cert_enrollment: "{{ 'error' in iscorrect.results | map(attribute='stdout') | join(' ') }}"
+          do_host_cert_enrollment: "{{ ('error' in iscorrect.results | map(attribute='stdout') | join(' '))  or contains_san.failed }}"
       when: not ansible_check_mode
 
   roles:
