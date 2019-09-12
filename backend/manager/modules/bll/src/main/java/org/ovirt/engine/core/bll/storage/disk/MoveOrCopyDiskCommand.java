@@ -512,10 +512,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             parameters.setDestImageGroupId(getParameters().getDestImageGroupId());
 
             if (!isTemplate()) {
-                if (parameters.getUseCopyCollapse()) {
-                    prepareCopyNotTemplate(parameters);
-                }
-
+                prepareCopyNotTemplate(parameters);
                 parameters.setShouldLockImageOnRevert(true);
                 parameters.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
             }
@@ -568,6 +565,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         parameters.setDestinationImageId(newImageId);
         parameters.setDestImageGroupId(newId);
+
+        // we call copy directly via UI/REST
+        if (getParameters().getParentCommand() == ActionType.Unknown) {
+            parameters.setDestImages(List.of(image));
+        }
     }
 
     private boolean isTemplate() {

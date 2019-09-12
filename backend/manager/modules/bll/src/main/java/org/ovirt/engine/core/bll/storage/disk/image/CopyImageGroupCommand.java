@@ -141,8 +141,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean isUsingSPDMFlow() {
         return isDataOperationsByHSM() &&
-                ((getParameters().getParentCommand() == ActionType.MoveOrCopyDisk &&
-                        getParameters().getOperation() == ImageOperation.Move) ||
+                (getParameters().getParentCommand() == ActionType.MoveOrCopyDisk ||
                         getParameters().getParentCommand() == ActionType.CloneVm ||
                         getParameters().getParentCommand() == ActionType.CloneVmNoCollapse);
     }
@@ -164,6 +163,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         p.setDestImages(getParameters().getDestImages());
         p.setJobWeight(getParameters().getJobWeight());
+        p.setDestDomain(getParameters().getStorageDomainId());
 
         return p;
     }
