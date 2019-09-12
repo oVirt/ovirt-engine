@@ -69,6 +69,7 @@
          "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
          "--name={{ ovirt_vds_hostname }}"
          "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
+         "--san={{ ovirt_san }}"
          "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
          "--timeout={{ ovirt_signcerttimeoutinseconds }}"
       register: certrequest

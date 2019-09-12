@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.utils.CertificateUtils;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.otopi.dialog.Event;
@@ -70,7 +71,8 @@ public class VdsDeployPKIUnit implements VdsDeployUnit {
                 _certificate = OpenSslCAWrapper.signCertificateRequest(
                     StringUtils.join(event.value, "\n"),
                     _deploy.getVds().getHostName(),
-                    _deploy.getVds().getHostName()
+                    _deploy.getVds().getHostName(),
+                    CertificateUtils.getSan(_deploy.getVds().getHostName())
                 );
                 unknown = false;
             }

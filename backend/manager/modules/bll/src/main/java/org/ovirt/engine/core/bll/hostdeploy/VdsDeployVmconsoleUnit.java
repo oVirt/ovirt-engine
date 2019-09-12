@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.utils.CertificateUtils;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.otopi.dialog.Event;
@@ -114,7 +115,8 @@ public class VdsDeployVmconsoleUnit implements VdsDeployUnit {
                 OpenSslCAWrapper.signCertificateRequest(
                     StringUtils.join(event.value, "\n"),
                     name,
-                    _deploy.getVds().getHostName()
+                    _deploy.getVds().getHostName(),
+                    CertificateUtils.getSan(_deploy.getVds().getHostName())
                 );
                 _sercon_certificate = OpenSslCAWrapper.signOpenSSHCertificate(
                     name,
