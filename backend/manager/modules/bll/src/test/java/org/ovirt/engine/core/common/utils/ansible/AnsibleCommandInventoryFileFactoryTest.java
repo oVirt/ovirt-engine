@@ -7,17 +7,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigExtension;
 
-@ExtendWith(MockEngineLocalConfigExtension.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class, MockEngineLocalConfigExtension.class})
 public class AnsibleCommandInventoryFileFactoryTest {
     private static final String ANSIBLE_PLAYBOOK = "myplaybook.yml";
-
-    private AnsibleCommandInventoryFileFactory factory;
 
     @SuppressWarnings("unused") // used via reflection by MockEngineLocalConfigExtension
     public static Stream<Pair<String, String>> mockEngineLocalConfiguration() {
@@ -28,10 +29,11 @@ public class AnsibleCommandInventoryFileFactoryTest {
                 new Pair<>("ENGINE_LOG", "/var/log/ovirt-engine/"));
     }
 
-    @BeforeEach
-    public void setup() {
-        factory = new AnsibleCommandInventoryFileFactory();
-    }
+    @Mock
+    private FileRemover fileRemover;
+
+    @InjectMocks
+    private AnsibleCommandInventoryFileFactory factory;
 
     @Test
     public void shouldUseUserProvidedInventoryFile() throws IOException {
@@ -41,8 +43,12 @@ public class AnsibleCommandInventoryFileFactoryTest {
                 .inventoryFile(expectedInventoryFile)
                 .build();
 
-        AutoRemovableTempFile createdInventoryFile = factory.create(config);
-
-        assertThat(createdInventoryFile.getFilePath()).isSameAs(expectedInventoryFile);
+        try (AutoRemovableTempFile createdInventoryFile = factory.create(config)) {
+            assertThat(createdInventoryFile)
+                    .isNotNull();
+            assertThat(createdInventoryFile.getFilePath())
+                    .isNotNull()
+                    .isSameAs(expectedInventoryFile);
+        }
     }
 }
