@@ -81,6 +81,7 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends VmCommand<T> {
@@ -117,6 +118,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
     @Inject
     private CloudInitHandler cloudInitHandler;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -594,6 +597,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                 // in case the original template name has been changed in the meantime
                 getVm().setOriginalTemplateName(originalTemplate.getName());
             }
+        }
+
+        if (StringUtils.isEmpty(getVm().getTimeZone())) {
+            getVm().setTimeZone(vmInfoBuildUtils.getTimeZoneForVm(getVm()));
         }
 
         if (getParameters().getCopyCollapse()) {
