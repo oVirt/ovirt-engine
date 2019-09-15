@@ -758,7 +758,7 @@ public class VmInfoBuildUtils {
         return null;
     }
 
-    private String getTimeZoneForVm(VM vm) {
+    public String getTimeZoneForVm(VM vm) {
         if (!StringUtils.isEmpty(vm.getTimeZone())) {
             return vm.getTimeZone();
         }

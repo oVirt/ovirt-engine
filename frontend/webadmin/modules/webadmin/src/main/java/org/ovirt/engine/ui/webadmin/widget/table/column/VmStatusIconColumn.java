@@ -118,7 +118,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
     }
 
     public static boolean hasGuestAgent(VM vm) {
-        return vm.getTimeZone() != null && vm.getGuestOsType() != null && vm.getGuestOsType() != OsType.Other;
+        return vm.getGuestOsTimezoneName() != null && vm.getGuestOsType() != null && vm.getGuestOsType() != OsType.Other;
     }
 
     public static boolean needsAlert(VM vm) {
