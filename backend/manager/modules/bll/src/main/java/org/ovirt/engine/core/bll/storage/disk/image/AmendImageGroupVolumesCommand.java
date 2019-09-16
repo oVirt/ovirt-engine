@@ -84,7 +84,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
             return false;
         }
         if (getDiskImage().getVmEntityType() == null) {
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_UPDATE_FLOATING_DISK_QCOW);
         }
         if (getDiskImage().getVmEntityType().isTemplateType()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_TEMPLATE_DISK);
