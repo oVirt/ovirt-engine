@@ -107,8 +107,9 @@ public class SystemPermissionListModel extends SearchableListModel {
             return;
         }
 
-        if (model.getSelectedItems() == null) {
-            cancel();
+        if (model.getSelectedItems() == null){
+            model.setIsValid(false);
+            model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
             return;
         }
 
@@ -145,16 +146,17 @@ public class SystemPermissionListModel extends SearchableListModel {
             }
         }
 
-        model.startProgress();
+        if(!list.isEmpty()){
+            model.startProgress();
+            Frontend.getInstance().runMultipleAction(ActionType.AddSystemPermission, list,
+                    result -> {
 
-        Frontend.getInstance().runMultipleAction(ActionType.AddSystemPermission, list,
-                result -> {
+                        AdElementListModel localModel = (AdElementListModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
 
-                    AdElementListModel localModel = (AdElementListModel) result.getState();
-                    localModel.stopProgress();
-                    cancel();
-
-                }, model);
+                    }, model);
+        }
     }
 
     private void onSave() {

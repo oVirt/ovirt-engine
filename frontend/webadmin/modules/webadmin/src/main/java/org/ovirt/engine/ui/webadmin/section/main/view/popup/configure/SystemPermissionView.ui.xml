@@ -7,7 +7,7 @@
 
     <ui:style>
         .height {
-            height: 470px;
+            height: 600px;
         }
     </ui:style>
 
