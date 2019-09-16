@@ -205,7 +205,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setActivateHost(getParameters().getActivateHost());
             installVdsParameters.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
-            installVdsParameters.setEnableSerialConsole(getParameters().getEnableSerialConsole());
             if (getParameters().getHostedEngineDeployConfiguration() != null) {
                 Map<String, String> vdsDeployParams = hostedEngineHelper.createVdsDeployParams(
                         getVdsId(),

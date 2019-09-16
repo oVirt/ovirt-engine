@@ -1,0 +1,15 @@
+ovirt_enrollment_type: inline
+
+# Certificate path:
+ovirt_vmconsole_store: '/etc/pki/ovirt-vmconsole'
+
+# Certificate files (relative to certificate path):
+ovirt_vmconsole_cert_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa-cert.pub'
+
+# Certificate keys (relative to certificate path):
+ovirt_vmconsole_key_pending_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa.pending'
+ovirt_vmconsole_key_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa'
+
+# vm-console private key variables:
+ovirt_vmconsole_key_size: 2048
+ovirt_vmconsole_key_type: rsa

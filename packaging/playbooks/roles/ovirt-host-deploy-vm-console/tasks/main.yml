@@ -1,0 +1,21 @@
+---
+- name: Install latest ovirt-vmconsole-host package
+  yum:
+    name: ovirt-vmconsole-host
+    state: latest
+
+- name: Run vm-console-certificates role
+  include_role:
+    name: ovirt-host-deploy-vm-console-certificates
+    public: yes
+
+- name: Populate service facts
+  service_facts:
+
+- name: Start ovirt-vmconsole-host-sshd
+  service:
+    name: ovirt-vmconsole-host-sshd
+    state: restarted
+    enabled: yes
+  when: "'ovirt-vmconsole-host-sshd.service' in ansible_facts.services"
+

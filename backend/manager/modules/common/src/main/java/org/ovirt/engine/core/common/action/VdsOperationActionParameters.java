@@ -135,14 +135,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         return activateHost;
     }
 
-    public void setEnableSerialConsole(boolean enableSerialConsole) {
-        this.enableSerialConsole = enableSerialConsole;
-    }
-
-    public boolean getEnableSerialConsole() {
-        return enableSerialConsole;
-    }
-
     public HostedEngineDeployConfiguration getHostedEngineDeployConfiguration() {
         return hostedEngineDeployConfiguration;
     }
