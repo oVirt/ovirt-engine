@@ -9,6 +9,12 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
+    <ui:style>
+        .errorLabel {
+            color: #CD2127;
+        }
+    </ui:style>
+
     <d:SimpleDialogPanel width="350px" height="200px" noScroll="true">
         <d:content>
             <b:Container fluid="true">
@@ -16,6 +22,7 @@
                     <b:Column size="SM_12">
                         <g:FlowPanel ui:field="roleSelectionPanel">
                             <e:ListModelMultipleSelectListBoxEditor ui:field="roleSelection" label="{constants.roleToAssignPermissionsPopup}" usePatternFly="true" />
+                            <g:Label ui:field="errorMessage" addStyleNames="{style.errorLabel}" />
                         </g:FlowPanel>
                     </b:Column>
                 </b:Row>

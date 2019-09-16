@@ -16,6 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 
 public class UserRolesPopupView extends AbstractModelBoundPopupView<AdElementListModel>
     implements UserRolesPopupPresenterWidget.ViewDef {
@@ -32,6 +33,10 @@ public class UserRolesPopupView extends AbstractModelBoundPopupView<AdElementLis
     @UiField(provided = true)
     @Path("role.selectedItems")
     public ListModelMultipleSelectListBoxEditor<Role> roleSelection;
+
+    @UiField
+    @Ignore
+    Label errorMessage;
 
     @Inject
     public UserRolesPopupView(EventBus eventBus) {
@@ -57,4 +62,9 @@ public class UserRolesPopupView extends AbstractModelBoundPopupView<AdElementLis
         driver.cleanup();
     }
 
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        errorMessage.setText(message);
+    }
 }

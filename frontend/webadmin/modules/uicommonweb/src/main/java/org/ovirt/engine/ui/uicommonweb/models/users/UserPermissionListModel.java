@@ -191,6 +191,13 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
             return;
         }
 
+        if (model.getSelectedItems() == null) {
+            model.setIsValid(false);
+            model.setMessage(
+                    ConstantsManager.getInstance().getConstants().selectRoleToAssign());
+            return;
+        }
+
         List<Role> roles = model.getRole().getSelectedItems();
         // adGroup/user
 
