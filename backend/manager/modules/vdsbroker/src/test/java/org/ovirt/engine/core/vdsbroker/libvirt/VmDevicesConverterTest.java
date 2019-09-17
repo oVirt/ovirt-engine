@@ -2,10 +2,15 @@ package org.ovirt.engine.core.vdsbroker.libvirt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
@@ -44,6 +49,27 @@ public class VmDevicesConverterTest {
         assertEquals("", converter.parseImageIdFromPath("not a path"));
     }
 
+    @Test
+    void parseHostevDisk() throws Exception {
+        XmlDocument xmlDevices = new XmlDocument(DEVICES_XML);
+        VmDevice disk = new VmDevice();
+        disk.setAlias("ua-24f658ce-619b-47e1-a7d9-f19ed024c3fc");
+        disk.setType(VmDeviceGeneralType.DISK);
+        disk.setId(new VmDeviceId(new Guid("24f658ce-619b-47e1-a7d9-f19ed024c3fc"), null));
+
+        VmDevice hostdev = new VmDevice();
+        hostdev.setAlias("ua-c0a9d379-6798-4859-ab3b-7c04006dd82e");
+        hostdev.setType(VmDeviceGeneralType.HOSTDEV);
+        hostdev.setId(new VmDeviceId(new Guid("c0a9d379-6798-4859-ab3b-7c04006dd82e"), null));
+
+        List<VmDevice> devices = Arrays.asList(disk, hostdev);
+
+        List<Map<String, Object>> res = converter.parseDisks(xmlDevices, devices);
+        assertEquals(2, res.size());
+        assertEquals("24f658ce-619b-47e1-a7d9-f19ed024c3fc", res.get(0).get(VdsProperties.DeviceId));
+        assertEquals("c0a9d379-6798-4859-ab3b-7c04006dd82e", res.get(1).get(VdsProperties.DeviceId));
+    }
+
     private static String DEVICES_XML = "  <devices>\n" +
             "    <emulator>/usr/libexec/qemu-kvm</emulator>\n" +
             "    <disk type='file' device='cdrom'>\n" +
@@ -70,13 +96,21 @@ public class VmDevicesConverterTest {
             "      <target dev='sda' bus='scsi'/>\n" +
             "      <serial>b75eef2b-c96c-4ac9-a720-90d3f8235249</serial>\n" +
             "      <boot order='1'/>\n" +
-            "      <alias name='scsi0-0-0-0'/>\n" +
+            "      <alias name='ua-24f658ce-619b-47e1-a7d9-f19ed024c3fc'/>\n" +
             "      <address type='drive' controller='0' bus='0' target='0' unit='0'/>\n" +
             "    </disk>\n" +
             "    <controller type='scsi' index='0' model='virtio-scsi'>\n" +
             "      <alias name='scsi0'/>\n" +
             "      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>\n" +
             "    </controller>\n" +
+            "    <disk type='block' device='lun' rawio='yes'>\n" +
+            "      <driver name='qemu' type='raw' cache='none' io='native'/>\n" +
+            "      <source dev='/dev/sdd'/>\n" +
+            "      <backingStore/>\n" +
+            "      <target dev='sdaaa' bus='scsi'/>\n" +
+            "      <alias name='ua-c0a9d379-6798-4859-ab3b-7c04006dd82e'/>\n" +
+            "      <address type='drive' controller='100' bus='0' target='0' unit='2'/>\n" +
+            "    </disk>\n" +
             "</devices>";
 
 }

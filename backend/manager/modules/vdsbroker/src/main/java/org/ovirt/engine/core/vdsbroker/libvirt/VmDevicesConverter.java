@@ -365,8 +365,9 @@ public class VmDevicesConverter {
         return result;
     }
 
-    private List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices) {
-        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.DISK);
+    List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices) {
+        List<VmDevice> dbDevices = filterDevices(devices,
+                VmDeviceGeneralType.DISK, VmDeviceGeneralType.HOSTDEV);
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.DISK)) {
@@ -652,8 +653,9 @@ public class VmDevicesConverter {
         return document.selectSingleNode("//*/" + devType.getValue());
     }
 
-    private List<VmDevice> filterDevices(List<VmDevice> devices, VmDeviceGeneralType devType) {
-        return devices.stream().filter(d -> d.getType() == devType).collect(Collectors.toList());
+    private List<VmDevice> filterDevices(List<VmDevice> devices, VmDeviceGeneralType... devType) {
+        final List<VmDeviceGeneralType> devTypes = Arrays.asList(devType);
+        return devices.stream().filter(d -> devTypes.contains(d.getType())).collect(Collectors.toList());
     }
 
     private VmDevice filterDevice(List<VmDevice> devices, VmDeviceGeneralType devType) {
