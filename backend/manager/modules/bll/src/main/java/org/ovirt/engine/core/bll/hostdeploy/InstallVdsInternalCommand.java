@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
@@ -137,23 +136,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new VdsDeployPKIUnit()
             );
 
-            FirewallType hostFirewallType = hostCluster.getFirewallType();
-            if (parameters.getOverrideFirewall()) {
-                switch (getVds().getVdsType()) {
-                    case VDS:
-                    case oVirtNode:
-                        deploy.addUnit(new VdsDeployIptablesUnit(hostFirewallType.equals(FirewallType.IPTABLES)));
-                    break;
-                    default:
-                        throw new IllegalArgumentException(
-                            String.format(
-                                "Not handled VDS type: %1$s",
-                                getVds().getVdsType()
-                            )
-                        );
-                }
-            }
-
             if (MapUtils.isNotEmpty(parameters.getHostedEngineConfiguration())) {
                 deploy.addUnit(new VdsDeployHostedEngineUnit(parameters.getHostedEngineConfiguration()));
             }
@@ -258,6 +240,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                                 .replace("\n", ""))
                 .variable("ovirt_engine_usr", config.getUsrDir())
                 .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
+                .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
@@ -285,6 +268,26 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
 
         auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_FINISHED);
+    }
+
+    private String getIptablesRules(VDS host, Cluster cluster) {
+        String ipTablesConfig = Config.getValue(ConfigValues.IPTablesConfig);
+
+        String serviceIPTablesConfig = "";
+        if (cluster.supportsVirtService()) {
+            serviceIPTablesConfig += Config.getValue(ConfigValues.IPTablesConfigForVirt);
+        }
+        if (cluster.supportsGlusterService()) {
+            serviceIPTablesConfig += Config.getValue(ConfigValues.IPTablesConfigForGluster);
+        }
+        serviceIPTablesConfig += Config.getValue(ConfigValues.IPTablesConfigSiteCustom);
+
+        ipTablesConfig = ipTablesConfig
+                .replace("@CUSTOM_RULES@", serviceIPTablesConfig)
+                .replace("@VDSM_PORT@", Integer.toString(host.getSshPort()))
+                .replace("@SSH_PORT@", Integer.toString(host.getPort()));
+
+        return ipTablesConfig;
     }
 
     private void markCurrentCmdlineAsStored() {

@@ -1,0 +1,45 @@
+---
+- block:
+    - name: Fail host deploy if firewall type is iptables for hosts other than CentOS 7/ RHEL 7
+      fail:
+      when: >
+        not (
+        (ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat') and
+        ansible_distribution_major_version|int == 7)
+
+    - name: Get latest iptables-services package
+      yum:
+        name: iptables-services
+        state: latest
+
+    - name: Store iptables
+      copy:
+        content: "{{ host_deploy_iptables_rules }}"
+        dest: "{{ redhat_iptables }}"
+        owner: 'root'
+        mode: 0600
+        remote_src: yes
+
+    - name: Populate service facts
+      service_facts:
+
+    - block:
+        # Disabling firewalld to avoid conflict
+        - name: Stop and disable firewalld
+          service:
+            name: firewalld
+            enabled: false
+            state: stopped
+
+        - name: Mask firewalld
+          shell: systemctl mask firewalld
+      when: "'firewalld.service' in ansible_facts.services"
+
+    - name: Restart and enable iptables
+      service:
+        name: iptables
+        enabled: true
+        state: restarted
+  when:
+  - "host_deploy_override_firewall"
+  - "host_deploy_firewall_type == 'IPTABLES'"
