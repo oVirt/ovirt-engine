@@ -24,8 +24,8 @@ ENGINE_SETUP_BIN_DIR="$(dirname "${script}")"
 
 [ -z "${OUTPUT}" ] && OUTPUT=ovirt-engine-health-check.run
 
-PYTHON_LIB_DIR="$(python -c "from distutils.sysconfig import get_python_lib as f;print(f())")"
-PYTHON_PLAT_LIB_DIR="$(python -c "from distutils.sysconfig import get_python_lib as f;print(f(True))")"
+PYTHON_LIB_DIR="$(python@PY_VERSION@ -c "from distutils.sysconfig import get_python_lib as f;print(f())")"
+PYTHON_PLAT_LIB_DIR="$(python@PY_VERSION@ -c "from distutils.sysconfig import get_python_lib as f;print(f(True))")"
 [ -z "${ENGINE_PYTHON_LIB}" ] && ENGINE_PYTHON_LIB="${PYTHON_LIB_DIR}/ovirt_engine"
 [ -z "${OVIRT_SETUP_LIB}" ] && OVIRT_SETUP_LIB="${PYTHON_LIB_DIR}/ovirt_setup_lib"
 

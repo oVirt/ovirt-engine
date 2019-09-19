@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python@PY_VERSION@
 """
 Check source code for potential problems with help tags.
 """

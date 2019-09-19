@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/python@PY_VERSION@ -u
 
 #
 # engine-host-update - oVirt engine host update utility

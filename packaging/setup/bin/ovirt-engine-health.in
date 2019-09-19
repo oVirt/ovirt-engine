@@ -86,7 +86,7 @@ done
 
 [ -n "${OFFLINE}" ] && environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
 
-if ! python -c 'import psycopg2' > /dev/null 2>&1; then
+if ! python@PY_VERSION@ -c 'import psycopg2' > /dev/null 2>&1; then
 	echo "Missing library psycopg2. This is probably not an oVirt engine machine."
 	exit 1
 fi

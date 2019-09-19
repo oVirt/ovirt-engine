@@ -13,7 +13,8 @@ EXTRA_ARGS=""
 "${VALIDATION_SHELL}" --version 2>&1 | grep -q bash && EXTRA_ARGS="${EXTRA_ARGS} --posix"
 
 ret="$(
-	find packaging build -type f \( -executable -or -name '*.sh' -or -name '*.bash' \) -and -not -name '*.py' | while read f; do
+	find packaging build -type f \( -executable -or -name '*.sh' -or -name '*.bash' \) -and -not -name '*.py' \
+        -and -not -name '*.in' | while read f; do
 		read l < "${f}"
 		shell="/bin/sh"
 		candidate="${l#\#!}"
@@ -24,7 +25,7 @@ ret="$(
 		case "${shell}" in
 			/bin/sh) shell="${VALIDATION_SHELL} ${EXTRA_ARGS}" ;;
 			/bin/bash) ;;
-			/usr/bin/python) skip=1 ;;
+			/usr/bin/python@PY_VERSION@) skip=1 ;;
 			*)
 				echo "ERROR: Unknown shell '${shell}' for '${f}'"
 				ret=1

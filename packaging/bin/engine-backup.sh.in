@@ -69,7 +69,7 @@ my_load_config() {
 }
 
 get_java_props() {
-	python -c "
+	python@PY_VERSION@ -c "
 
 # Copied from otopi:src/otopi/__init__.py
 import sys
@@ -983,7 +983,7 @@ dobackup() {
 }
 
 getOSVersion() {
-	python -c 'import platform; d = platform.linux_distribution(full_distribution_name=0); print("%s%s" % (d[0], d[1].split(".")[0]))'
+	python@PY_VERSION@ -c 'import platform; d = platform.linux_distribution(full_distribution_name=0); print("%s%s" % (d[0], d[1].split(".")[0]))'
 }
 
 createtar() {

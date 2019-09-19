@@ -163,9 +163,11 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global with_python3 1
 %define required_python_lib(l:r:) python%{python3_pkgversion}-%{*}, python2-%{*}
+%define py_version 3
 %else
 %global with_python3 0
 %define required_python_lib(l:r:) %{-l*}%{*}%{-r*}
+%define py_version 2
 %endif
 
 %global required_python_lib_ovirt_engine_lib %{required_python_lib -l python2- %{name}-lib >= %{version}-%{release}}
@@ -224,6 +226,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PYTHON_DIR=%{python2_sitelib} \\\
 	%{?with_python3: PYTHON3=%{__python3}} \\\
 	%{?with_python3: PYTHON3_DIR=%{python3_sitelib}} \\\
+	PY_VERSION=%{py_version} \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
 	PKG_SYSCONF_DIR=%{engine_etc} \\\

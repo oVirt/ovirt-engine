@@ -12,6 +12,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+#  SPDX-License-Identifier: Apache-2.0
 # ====================================================================
 
 #
@@ -43,6 +44,7 @@ MVN=mvn
 PYTHON=python
 PYTHON3=$(shell which python3 2> /dev/null)
 PYFLAKES=$(shell which pyflakes 2> /dev/null)
+PY_VERSION=$(if $(PYTHON3),3,2)
 PEP8=pep8
 ISORT=isort
 PREFIX=/usr/local
@@ -212,6 +214,7 @@ export ENVFILEC
 	-e "s|@DEVMODE@|$(BUILD_DEV)|g" \
 	-e "s|@VMCONSOLE_SYSCONF_DIR@|$(VMCONSOLE_SYSCONF_DIR)|g" \
 	-e "s|@VMCONSOLE_PKI_DIR@|$(VMCONSOLE_PKI_DIR)|g" \
+	-e "s|@PY_VERSION@|$(PY_VERSION)|g" \
 	-e "s|@VMCONSOLE_PROXY_HELPER_PATH@|$(LIBEXEC_DIR)/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py|g" \
 	-e "s|@VMCONSOLE_PROXY_HELPER_VARS@|$(PKG_SYSCONF_DIR)/ovirt-vmconsole-proxy-helper.conf|g" \
 	-e "s|@VMCONSOLE_PROXY_HELPER_DEFAULTS@|$(DATA_DIR)/conf/ovirt-vmconsole-proxy-helper.conf|g" \
@@ -221,11 +224,18 @@ export ENVFILEC
 
 # List of files that will be generated from templates:
 GENERATED = \
-	build/python-check.sh \
 	ovirt-engine.spec \
+	build/helptag.py \
+	build/helptag_checker.py \
+	build/helptag-oneline-check.py \
+	build/python-check.sh \
+	build/shell-check.sh \
 	packaging/bin/engine-backup.sh \
+	packaging/bin/engine-host-update.py \
+	packaging/bin/engine-migrate-he.py \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/pki-common.sh \
+	packaging/bin/vdsm_to_network_name_map \
 	packaging/conf/notifier-logging.properties \
 	packaging/conf/ovirt-vmconsole-proxy-helper.conf \
 	packaging/conf/ovirt-vmconsole-proxy.conf \
@@ -235,24 +245,36 @@ GENERATED = \
 	packaging/etc/ovirt-vmconsole-proxy-helper.conf.d/README \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \
 	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py \
+	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py \
+	packaging/playbooks/roles/ovirt-ova-query/files/query_ova.py \
+	packaging/playbooks/roles/ovirt-ova-pack/files/pack_ova.py \
+	packaging/playbooks/roles/ovirt-ova-extract/files/extract_ova.py \
+	packaging/playbooks/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
+	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.systemd \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv \
 	packaging/services/ovirt-engine/config.py \
 	packaging/services/ovirt-engine/ovirt-engine.conf \
+	packaging/services/ovirt-engine/ovirt-engine.py \
 	packaging/services/ovirt-engine/ovirt-engine.systemd \
 	packaging/services/ovirt-engine/ovirt-engine.sysv \
 	packaging/services/ovirt-fence-kdump-listener/config.py \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.conf \
+	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.py \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.systemd \
 	packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv \
 	packaging/services/ovirt-websocket-proxy/config.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
+	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv \
+	packaging/setup/bin/bundle-ovirt-engine-health \
+	packaging/setup/bin/ovirt-engine-health \
 	packaging/setup/bin/ovirt-engine-setup.env \
+	packaging/setup/bin/ovirt-engine-upgrade-check \
 	packaging/setup/ovirt_engine_setup/config.py \
 	packaging/setup/ovirt_engine_setup/engine/config.py \
 	packaging/setup/ovirt_engine_setup/engine_common/config.py \
@@ -262,6 +284,7 @@ GENERATED = \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
 	packaging/cinderlib/config.py \
+	packaging/cinderlib/cinderlib-client.py \
 	$(NULL)
 
 all: \
@@ -271,12 +294,31 @@ all: \
 	$(NULL)
 
 generated-files:	$(GENERATED)
+	chmod a+x build/helptag.py
+	chmod a+x build/helptag_checker.py
+	chmod a+x build/helptag-oneline-check.py
 	chmod a+x build/python-check.sh
+	chmod a+x build/shell-check.sh
 	chmod a+x packaging/bin/engine-backup.sh
+	chmod a+x packaging/bin/engine-host-update.py
+	chmod a+x packaging/bin/engine-migrate-he.py
+	chmod a+x packaging/bin/vdsm_to_network_name_map
+	chmod a+x packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py
+	chmod a+x packaging/playbooks/roles/ovirt-ova-query/files/query_ova.py
+	chmod a+x packaging/playbooks/roles/ovirt-ova-pack/files/pack_ova.py
+	chmod a+x packaging/playbooks/roles/ovirt-ova-extract/files/extract_ova.py
+	chmod a+x packaging/playbooks/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py
 	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
+	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.py
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
+	chmod a+x packaging/services/ovirt-engine/ovirt-engine.py
+	chmod a+x packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.py
 	chmod a+x packaging/services/ovirt-fence-kdump-listener/ovirt-fence-kdump-listener.sysv
+	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py
 	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv
+	chmod a+x packaging/cinderlib/cinderlib-client.py
+	chmod a+x packaging/setup/bin/ovirt-engine-health
+	chmod a+x packaging/setup/bin/ovirt-engine-upgrade-check
 	chmod a+x packaging/cinderlib/cinderlib-client.py
 
 # support force run of maven

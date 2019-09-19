@@ -213,4 +213,4 @@ fi
 
 # Rename junit surefire reports to match jenkins report plugin
 # Error code 4 means nothing changed, ignore it
-rename .xml .junit.xml exported-artifacts/tests/* ||  [[ $? -eq 4 ]]
+rename .xml .junit.xml exported-artifacts/tests/* || true
