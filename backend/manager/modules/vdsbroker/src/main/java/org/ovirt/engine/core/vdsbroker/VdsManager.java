@@ -572,7 +572,7 @@ public class VdsManager {
     public void refreshHostSync(VDS vds) {
         VDSReturnValue caps = resourceManager.runVdsCommand(VDSCommandType.GetCapabilities,
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
-        handleRefreshCapabilitiesResponse(vds, caps, true);
+        handleRefreshCapabilitiesResponse(vds, caps);
     }
 
     private void logRefreshCapabilitiesFailure(Throwable t) {
@@ -580,15 +580,13 @@ public class VdsManager {
         log.debug("Exception", t);
     }
 
-    private void handleRefreshCapabilitiesResponse(VDS vds, VDSReturnValue caps, boolean throwException) {
+    private void handleRefreshCapabilitiesResponse(VDS vds, VDSReturnValue caps) {
         try {
             invokeGetHardwareInfo(vds, caps);
             processRefreshCapabilitiesResponse(new AtomicBoolean(), vds, vds.clone(), caps);
         } catch (Throwable t) {
             logRefreshCapabilitiesFailure(t);
-            if (throwException) {
-                throw t;
-            }
+            throw t;
         } finally {
             if (vds != null) {
                 updateDynamicData(vds.getDynamicData());
@@ -691,18 +689,18 @@ public class VdsManager {
             case NonResponsive:
             case Down:
             case Maintenance:
-                vds.setCpuSys(Double.valueOf(0));
-                vds.setCpuUser(Double.valueOf(0));
-                vds.setCpuIdle(Double.valueOf(0));
-                vds.setCpuLoad(Double.valueOf(0));
+                vds.setCpuSys(0.0);
+                vds.setCpuUser(0.0);
+                vds.setCpuIdle(0.0);
+                vds.setCpuLoad(0.0);
                 vds.setUsageCpuPercent(0);
                 vds.setUsageMemPercent(0);
                 vds.setUsageNetworkPercent(0);
                 if (this.cachedVds != null) {
-                    this.cachedVds.setCpuSys(Double.valueOf(0));
-                    this.cachedVds.setCpuUser(Double.valueOf(0));
-                    this.cachedVds.setCpuIdle(Double.valueOf(0));
-                    this.cachedVds.setCpuLoad(Double.valueOf(0));
+                    this.cachedVds.setCpuSys(0.0);
+                    this.cachedVds.setCpuUser(0.0);
+                    this.cachedVds.setCpuIdle(0.0);
+                    this.cachedVds.setCpuLoad(0.0);
                     this.cachedVds.setUsageCpuPercent(0);
                     this.cachedVds.setUsageMemPercent(0);
                     this.cachedVds.setUsageNetworkPercent(0);

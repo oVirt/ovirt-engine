@@ -17,10 +17,10 @@ public final class GlusterVolumeOptionsInfoReturn extends StatusReturn {
     @SuppressWarnings("unchecked")
     public GlusterVolumeOptionsInfoReturn(Map<String, Object> innerMap) {
         super(innerMap);
-        Object[] temp = (Object[]) innerMap.get(VOLUME_OPTIONS_DEFAULT);
-        if (temp != null) {
-            for (int i = 0; i < temp.length; i++) {
-                optionsHelpSet.add(prepareOptionHelpEntity((Map<String, Object>) temp[i]));
+        Object[] options = (Object[]) innerMap.get(VOLUME_OPTIONS_DEFAULT);
+        if (options != null) {
+            for (Object option : options) {
+                optionsHelpSet.add(prepareOptionHelpEntity((Map<String, Object>) option));
             }
         }
     }

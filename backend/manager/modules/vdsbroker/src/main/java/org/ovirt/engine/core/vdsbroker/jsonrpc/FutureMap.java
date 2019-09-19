@@ -215,7 +215,7 @@ public class FutureMap implements Map<String, Object> {
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends Object> map) {
+    public void putAll(Map<? extends String, ?> map) {
         lazyEval();
         this.responseMap.putAll(map);
     }

@@ -251,7 +251,6 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         return "";
     }
 
-    @SuppressWarnings("unchecked")
     protected void printReturnValue() {
         if (getReturnValueFromBroker() != null && getIsPrintReturnValue()) {
             StringBuilder builder = new StringBuilder();

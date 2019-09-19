@@ -163,9 +163,9 @@ public final class GlusterVolumeProfileInfoReturn extends StatusReturn {
         for (Object blockStatsObj : blockStatsObjects) {
             BlockStats blockStats = new BlockStats();
             Map<String, Object> blockStatsMap = (Map<String, Object>) blockStatsObj;
-            blockStats.setSize(Double.valueOf((String) blockStatsMap.get(SIZE)));
-            blockStats.setBlockRead(Double.valueOf((String) blockStatsMap.get(READ)));
-            blockStats.setBlockWrite(Double.valueOf((String) blockStatsMap.get(WRITE)));
+            blockStats.setSize(Double.parseDouble((String) blockStatsMap.get(SIZE)));
+            blockStats.setBlockRead(Double.parseDouble((String) blockStatsMap.get(READ)));
+            blockStats.setBlockWrite(Double.parseDouble((String) blockStatsMap.get(WRITE)));
             blockStatsList.add(blockStats);
         }
         return blockStatsList;

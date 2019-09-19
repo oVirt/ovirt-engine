@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -980,9 +981,7 @@ public class VmInfoBuildUtils {
     private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
         return clusterFeatureDao.getAllByClusterId(clusterId).stream()
         .filter(SupportedAdditionalClusterFeature::isEnabled)
-        .filter(f -> f.getFeature().getName().equals(featureName))
-        .findAny()
-        .isPresent();
+        .anyMatch(f -> f.getFeature().getName().equals(featureName));
     }
 
     /**
@@ -1008,7 +1007,7 @@ public class VmInfoBuildUtils {
             String msgReason1 = MapUtils.isEmpty(cpuPinning) ? "CPU Pinning topology is not set": null;
             String msgReason2 = vm.getNumOfIoThreads() == 0 ? "IO Threads is not enabled": null;
             String msgReason3 = !pinnedVmNumaNode.isPresent() ? "vm's virtual NUMA nodes are not pinned to host's NUMA nodes": null;
-            String finalMsgReason = Arrays.asList(msgReason1, msgReason2, msgReason3).stream()
+            String finalMsgReason = Stream.of(msgReason1, msgReason2, msgReason3)
                     .filter(Objects::nonNull).collect(Collectors.joining(", ")) + ".";
 
             log.warn("No IO thread(s) pinning and Emulator thread(s) pinning for High Performance VM {} {} due to wrong configuration: {}",

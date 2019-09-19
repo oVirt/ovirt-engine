@@ -32,7 +32,6 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
     private final ResourceManager resourceManager;
     private final PollVmStatsRefresher allVmStatsOnlyRefresher;
 
-    @SuppressWarnings("deprecation")
     public EventVmStatsRefresher(VdsManager manager, ResourceManager resourceManager) {
         super(manager);
         // we still want to fetch GetAllVmStats as we did before

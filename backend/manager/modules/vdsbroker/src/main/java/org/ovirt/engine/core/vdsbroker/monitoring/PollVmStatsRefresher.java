@@ -120,7 +120,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     private void logNumOfVmsIfChanged(int numOfReportedVms) {
         Guid vdsId = vdsManager.getVdsId();
         Integer prevNumOfVms = vdsIdToNumOfVms.put(vdsId, numOfReportedVms);
-        if (prevNumOfVms == null || prevNumOfVms.intValue() != numOfReportedVms) {
+        if (prevNumOfVms == null || prevNumOfVms != numOfReportedVms) {
             log.info("Fetched {} VMs from VDS '{}'", numOfReportedVms, vdsId);
         }
     }

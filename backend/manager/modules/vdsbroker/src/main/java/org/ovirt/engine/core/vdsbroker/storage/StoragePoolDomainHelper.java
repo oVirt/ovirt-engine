@@ -58,10 +58,8 @@ public class StoragePoolDomainHelper {
     /**
      * Refreshes the given vds pool metadata, if the host isn't connected to the pool it'll be connected.
      *
-     * @return boolean indicating whether the host pool metadata was "refreshed" succesfully (either by refresh or
-     *         connect)
      */
-    public boolean refreshHostPoolMetadata(VDS vds, StoragePool storagePool, Guid masterDomainId, List<StoragePoolIsoMap> storagePoolIsoMaps) {
+    public void refreshHostPoolMetadata(VDS vds, StoragePool storagePool, Guid masterDomainId, List<StoragePoolIsoMap> storagePoolIsoMaps) {
         try {
             resourceManager.runVdsCommand(
                     VDSCommandType.ConnectStoragePool,
@@ -75,7 +73,7 @@ public class StoragePoolDomainHelper {
                         vds.getName(),
                         storagePool.getId(), error.getCode(), error.getMessage());
                 log.debug("Exception", ex);
-                return false;
+                return;
             }
 
             error = null;
@@ -97,11 +95,9 @@ public class StoragePoolDomainHelper {
                 log.info("Failed to connect host '{}' to pool '{}' with error '{}': {}",
                         vds.getName(),
                         storagePool.getId(), error.getCode(), error.getMessage());
-                return false;
             }
         }
 
-        return true;
     }
 
     public void updateApplicablePoolDomainsStatuses(Guid storagePoolId,

@@ -18,7 +18,6 @@ public class UnregisterLibvirtSecretsVDSCommand<P extends UnregisterLibvirtSecre
         proceedProxyReturnValue();
     }
 
-    @SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
     protected String[] buildStructFromLibvirtSecretsList() {
         List<String> libvirtSecretsUuids = new ArrayList<>();
         for (Guid libvirtSecretUuid : getParameters().getLibvirtSecretsUuids()) {

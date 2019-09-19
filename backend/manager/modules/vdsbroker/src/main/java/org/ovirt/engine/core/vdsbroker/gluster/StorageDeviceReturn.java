@@ -26,7 +26,7 @@ public abstract class StorageDeviceReturn extends StatusReturn {
     protected StorageDevice getStorageDevice(Map<String, Object> map) {
         StorageDevice storageDevice = new StorageDevice();
         storageDevice.setName(map.get(NAME).toString());
-        storageDevice.setSize((long) (map.containsKey(SIZE) ? Double.valueOf(map.get(SIZE).toString()) : 0));
+        storageDevice.setSize((long) (map.containsKey(SIZE) ? Double.parseDouble(map.get(SIZE).toString()) : 0));
         storageDevice.setDevPath(map.containsKey(DEV_PATH) ? map.get(DEV_PATH).toString() : null);
         storageDevice.setCanCreateBrick(map.containsKey(CREATE_BRICK) ? Boolean.valueOf(map.get(CREATE_BRICK)
                 .toString()) : Boolean.FALSE);

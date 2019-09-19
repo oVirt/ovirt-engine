@@ -137,7 +137,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
      * of failure e.g. if the brick representation contains an ip address which is mapped to more than servers in the
      * database.
      */
-    private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList, boolean withUuid) throws Exception {
+    private List<GlusterBrickEntity> getBricks(Guid volumeId, Object[] brickList, boolean withUuid) {
         List<GlusterBrickEntity> bricks = new ArrayList<>();
         GlusterBrickEntity fetchedBrick;
         int brickOrder = 0;

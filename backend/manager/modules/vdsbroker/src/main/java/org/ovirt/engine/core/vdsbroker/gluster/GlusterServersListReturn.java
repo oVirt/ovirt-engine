@@ -36,8 +36,8 @@ public final class GlusterServersListReturn extends StatusReturn {
         Object[] serversArr = (Object[]) innerMap.get(GLUSTER_HOSTS);
 
         if (serversArr != null) {
-            for (int i = 0; i < serversArr.length; i++) {
-                this.servers.add(prepareServerInfo((Map<String, Object>) serversArr[i]));
+            for (Object server : serversArr) {
+                this.servers.add(prepareServerInfo((Map<String, Object>) server));
             }
         }
     }
