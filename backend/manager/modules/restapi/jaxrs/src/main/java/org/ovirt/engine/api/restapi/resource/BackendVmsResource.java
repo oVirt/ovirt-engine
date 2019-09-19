@@ -103,6 +103,8 @@ public class BackendVmsResource extends
 
     public static final String CLONE = "clone";
     public static final String CLONE_PERMISSIONS = "clone_permissions";
+    private static final String LEGAL_CLUSTER_COMPATIBILITY_VERSIONS =
+            Version.ALL.stream().map(Version::toString).collect(Collectors.joining(", "));
 
     public BackendVmsResource() {
         super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
@@ -168,6 +170,8 @@ public class BackendVmsResource extends
     public Response add(Vm vm) {
         validateParameters(vm, "cluster.id|name");
         validateIconParameters(vm);
+        // validate that the provided cluster-compatibility-version is legal
+        validateClusterCompatibilityVersion(vm);
         Response response = null;
         if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
             validateParameters(vm, "initialization.configuration.type", "initialization.configuration.data");
@@ -248,6 +252,25 @@ public class BackendVmsResource extends
         }
 
         return response;
+    }
+
+    void validateClusterCompatibilityVersion(Vm vm) {
+        if (vm.isSetCustomCompatibilityVersion()
+                && vm.getCustomCompatibilityVersion().isSetMajor()
+                && vm.getCustomCompatibilityVersion().isSetMinor()) {
+            int major = vm.getCustomCompatibilityVersion().getMajor();
+            int minor = vm.getCustomCompatibilityVersion().getMinor();
+            if (!isLegalClusterCompatibilityVersion(major, minor)) {
+                throw new WebFaultException(null,
+                        localize(Messages.INVALID_VERSION_REASON),
+                        localize(Messages.INVALID_VERSION_DETAIL, LEGAL_CLUSTER_COMPATIBILITY_VERSIONS),
+                        Response.Status.BAD_REQUEST);
+            }
+        }
+    }
+
+    private boolean isLegalClusterCompatibilityVersion(int major, int minor) {
+        return Version.ALL.contains(new Version(major, minor));
     }
 
     private void updateMaxMemoryIfUnspecified(Vm vm, VmStatic vmStatic) {

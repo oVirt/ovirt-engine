@@ -99,16 +99,12 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 
 public class BackendVmResource
         extends AbstractBackendActionableResource<Vm, org.ovirt.engine.core.common.businessentities.VM>
         implements VmResource {
 
     private BackendVmsResource parent;
-
-    private static final String LEGAL_CLUSTER_COMPATIBILITY_VERSIONS =
-            Version.ALL.stream().map(Version::toString).collect(Collectors.joining(", "));
 
     public static final String DETACH_ONLY = "detach_only";
     public static final String FORCE = "force";
@@ -215,22 +211,7 @@ public class BackendVmResource
                     Response.Status.BAD_REQUEST);
         }
         // validate that the provided cluster-compatibility-version is legal
-        if (incoming.isSetCustomCompatibilityVersion()
-                && incoming.getCustomCompatibilityVersion().isSetMajor()
-                && incoming.getCustomCompatibilityVersion().isSetMinor()){
-            int major = incoming.getCustomCompatibilityVersion().getMajor();
-            int minor = incoming.getCustomCompatibilityVersion().getMinor();
-            if (!isLegalClusterCompatibilityVersion(major, minor)) {
-                throw new WebFaultException(null,
-                        localize(Messages.INVALID_VERSION_REASON),
-                        localize(Messages.INVALID_VERSION_DETAIL, LEGAL_CLUSTER_COMPATIBILITY_VERSIONS),
-                        Response.Status.BAD_REQUEST);
-            }
-        }
-    }
-
-    private boolean isLegalClusterCompatibilityVersion(int major, int minor) {
-        return Version.ALL.contains(new Version(major, minor));
+        parent.validateClusterCompatibilityVersion(incoming);
     }
 
     protected Guid lookupClusterId(Vm vm) {
