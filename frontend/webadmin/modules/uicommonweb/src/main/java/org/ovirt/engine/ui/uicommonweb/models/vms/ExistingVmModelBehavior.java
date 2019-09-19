@@ -285,7 +285,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private void updateInstanceImages() {
         AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(disks -> {
             List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
-            boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateVmDisk);
+            boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateDisk);
 
             Collections.sort(disks, new DiskByDiskAliasComparator());
             for (Disk disk : disks) {

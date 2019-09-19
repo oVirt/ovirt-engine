@@ -199,7 +199,7 @@ public class BackendVmDiskResource
 
     @Override
     public Disk update(Disk disk) {
-        return performUpdate(disk, new DiskResolver(), ActionType.UpdateVmDisk, new UpdateParametersProvider());
+        return performUpdate(disk, new DiskResolver(), ActionType.UpdateDisk, new UpdateParametersProvider());
     }
 
     @Override

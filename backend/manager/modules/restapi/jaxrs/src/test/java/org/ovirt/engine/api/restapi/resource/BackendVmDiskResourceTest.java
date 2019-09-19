@@ -142,7 +142,7 @@ public class BackendVmDiskResourceTest
 
         setUriInfo(
             setUpActionExpectations(
-                ActionType.UpdateVmDisk,
+                ActionType.UpdateDisk,
                 VmDiskOperationParameterBase.class,
                 new String[] { "VmId", "DiskInfo.WipeAfterDelete" },
                 new Object[] { VM_ID, Boolean.FALSE },
@@ -160,7 +160,7 @@ public class BackendVmDiskResourceTest
         setUpDiskVmElementExpectations();
         setUriInfo(
             setUpActionExpectations(
-                ActionType.UpdateVmDisk,
+                ActionType.UpdateDisk,
                 VmDiskOperationParameterBase.class,
                 new String[] { "VmId", "DiskVmElement.ReadOnly" },
                 new Object[] { VM_ID, Boolean.TRUE },

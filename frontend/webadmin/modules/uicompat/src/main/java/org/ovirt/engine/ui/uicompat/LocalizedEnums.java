@@ -749,7 +749,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionType___RemoveDisk();
 
-    String ActionType___UpdateVmDisk();
+    String ActionType___UpdateDisk();
 
     String ActionType___AttachDiskToVm();
 

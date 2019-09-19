@@ -90,7 +90,7 @@ public class BackendDiskAttachmentResource
                 }
             }
         }
-        DiskAttachment diskAttachment = performUpdate(attachment, new AddDiskResolver(), ActionType.UpdateVmDisk, new UpdateParametersProvider());
+        DiskAttachment diskAttachment = performUpdate(attachment, new AddDiskResolver(), ActionType.UpdateDisk, new UpdateParametersProvider());
         /*
          * Href of the diskattachment must be fixed manually due to a bug (https://bugzilla.redhat.com/1647018).
          * The bug is the result of an exceptional case where the same entity (disk-attachment)

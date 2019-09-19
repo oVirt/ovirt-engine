@@ -81,7 +81,7 @@ public class BackendDiskResource
     public Disk update(Disk incoming) {
         return performUpdate(incoming,
                 new QueryIdResolver<>(QueryType.GetDiskByDiskId, IdQueryParameters.class),
-                ActionType.UpdateVmDisk,
+                ActionType.UpdateDisk,
                 new BackendDiskResource.UpdateParametersProvider());
     }
 

@@ -142,7 +142,7 @@ public class EditDiskModel extends AbstractDiskModel {
             diskModel.stopProgress();
             diskModel.cancel();
         };
-        Frontend.getInstance().runAction(ActionType.UpdateVmDisk, parameters, onFinished, this);
+        Frontend.getInstance().runAction(ActionType.UpdateDisk, parameters, onFinished, this);
     }
 
     @Override

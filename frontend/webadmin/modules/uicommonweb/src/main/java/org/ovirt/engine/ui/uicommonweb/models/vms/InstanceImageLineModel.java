@@ -99,7 +99,7 @@ public class InstanceImageLineModel extends EntityModel {
     }
 
     private void toggleActive() {
-        if (vm != null && !VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateVmDisk)) {
+        if (vm != null && !VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateDisk)) {
             active = false;
         }
     }

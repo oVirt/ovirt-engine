@@ -54,7 +54,7 @@ public class MetadataDiskDescriptionHandler {
      * Since there's not always enough space for both alias and description, they are added according to the priority
      * noted by DESCRIPTION_FIELDS_PRIORITY.
      * The disk alias and description are preserved in the disk meta data. If the meta data will be added with more
-     * fields, UpdateVmDiskCommand should be changed accordingly.
+     * fields, UpdateDiskCommand should be changed accordingly.
      */
     public String generateJsonDiskDescription(Disk disk) throws IOException {
         Map<String, Object> description = new TreeMap<>();

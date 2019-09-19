@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.UpdateVmDiskCommand;
+import org.ovirt.engine.core.bll.storage.disk.UpdateDiskCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendManagedBlockStorageDiskSizeParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlockStorageDiskSizeParameters> extends UpdateVmDiskCommand<T> {
+public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlockStorageDiskSizeParameters> extends UpdateDiskCommand<T> {
     @Inject
     private CinderStorageDao cinderStorageDao;
 

@@ -91,7 +91,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T>
+public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
 
     /* Multiplier used to convert GB to bytes or vice versa. */
@@ -147,7 +147,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
-    public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
+    public UpdateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
@@ -161,7 +161,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
      * This constructor is mandatory for activation of the compensation process
      * after the server restart.
      */
-    public UpdateVmDiskCommand(Guid commandId) {
+    public UpdateDiskCommand(Guid commandId) {
         super(commandId);
     }
 
@@ -1070,7 +1070,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         params.setStoragePoolId(diskImage.getStoragePoolId());
         params.setStorageDomainId(diskImage.getStorageIds().get(0));
         params.setImageGroupID(diskImage.getId());
-        params.setParentCommand(ActionType.UpdateVmDisk);
+        params.setParentCommand(ActionType.UpdateDisk);
         params.setParentParameters(getParameters());
         return params;
     }

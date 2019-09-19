@@ -86,7 +86,7 @@ import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
 @ExtendWith({MockConfigExtension.class, RandomUtilsSeedingExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class UpdateVmDiskCommandTest extends BaseCommandTest {
+public class UpdateDiskCommandTest extends BaseCommandTest {
 
     private Guid diskImageGuid = Guid.newGuid();
     private Guid vmId = Guid.newGuid();
@@ -143,8 +143,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
      */
     @Spy
     @InjectMocks
-    private UpdateVmDiskCommand<VmDiskOperationParameterBase> command =
-            new UpdateVmDiskCommand<>(createParameters(), CommandContext.createContext(""));
+    private UpdateDiskCommand<VmDiskOperationParameterBase> command =
+            new UpdateDiskCommand<>(createParameters(), CommandContext.createContext(""));
 
     @Test
     public void validateFailedVMHasNotDisk() {
@@ -696,7 +696,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ret.setSucceeded(true);
         when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(), any())).thenReturn(ret);
         command.init();
-        doReturn(ActionType.UpdateVmDisk).when(command).getActionType();
+        doReturn(ActionType.UpdateDisk).when(command).getActionType();
     }
 
     @Test

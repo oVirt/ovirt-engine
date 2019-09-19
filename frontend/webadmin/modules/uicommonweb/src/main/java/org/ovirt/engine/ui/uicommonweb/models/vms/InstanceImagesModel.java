@@ -121,7 +121,7 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
     }
 
     private boolean isDiskUpdateAllowed(VM vm) {
-        return VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateVmDisk);
+        return VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateDisk);
     }
 
     private void disableLineModels() {
