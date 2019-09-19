@@ -132,7 +132,6 @@ public class VdsManager {
 
     @Inject
     private Instance<IrsProxyManager> irsProxyManager;
-    private final AtomicInteger failedToRunVmAttempts;
     private final AtomicInteger unrespondedAttempts;
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
@@ -171,7 +170,6 @@ public class VdsManager {
         cachedVds = vds;
         vdsId = vds.getId();
         unrespondedAttempts = new AtomicInteger();
-        failedToRunVmAttempts = new AtomicInteger();
         autoStartVmsWithLeasesLock = new ReentrantLock();
     }
 
@@ -571,34 +569,10 @@ public class VdsManager {
                 });
     }
 
-    public void refreshHost(VDS vds) {
-        refreshCapabilities(vds, new RefreshCapabilitiesCallback(vds));
-    }
-
     public void refreshHostSync(VDS vds) {
         VDSReturnValue caps = resourceManager.runVdsCommand(VDSCommandType.GetCapabilities,
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
         handleRefreshCapabilitiesResponse(vds, caps, true);
-    }
-
-    class RefreshCapabilitiesCallback implements BrokerCommandCallback {
-
-        private VDS vds;
-
-        RefreshCapabilitiesCallback(VDS vds) {
-            this.vds = vds;
-        }
-
-        @Override
-        public void onResponse(Map<String, Object> response) {
-            VDSReturnValue caps = (VDSReturnValue) response.get("result");
-            handleRefreshCapabilitiesResponse(vds, caps, false);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            logRefreshCapabilitiesFailure(t);
-        }
     }
 
     private void logRefreshCapabilitiesFailure(Throwable t) {
@@ -674,10 +648,6 @@ public class VdsManager {
             log.error("Unable to GetHardwareInfo: {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
         }
-    }
-
-    public void refreshHost() {
-        refreshHost(cachedVds);
     }
 
     public void setStatus(VDSStatus status, VDS vds) {
@@ -758,26 +728,6 @@ public class VdsManager {
         return status == VDSStatus.NonResponsive
                     && this.cachedVds != null
                     && this.cachedVds.getStatus() == VDSStatus.Maintenance;
-    }
-
-    /**
-     * This scheduled method allows this cachedVds to recover from
-     * Error status.
-     */
-    public void recoverFromError() {
-        VDS vds = vdsDao.get(getVdsId());
-
-        /**
-         * Move cachedVds to Up status from error
-         */
-        if (vds != null && vds.getStatus() == VDSStatus.Error) {
-            setStatus(VDSStatus.Up, vds);
-            vdsDynamicDao.updateStatus(getVdsId(), VDSStatus.Up);
-            log.info("Settings host '{}' to up after {} failed attempts to run a VM",
-                    vds.getName(),
-                    failedToRunVmAttempts);
-            failedToRunVmAttempts.set(0);
-        }
     }
 
     /**
