@@ -1,0 +1,4 @@
+ovirt-snapshot,http://resources.ovirt.org/pub/ovirt-master-snapshot/rpm/$distro
+ovirt-snapshot-static,http://resources.ovirt.org/pub/ovirt-master-snapshot-static/rpm/$distro
+ci-tools,http://resources.ovirt.org/repos/ci-tools/$distro
+centos-sclo-rh-release,http://mirror.centos.org/centos/7/sclo/x86_64/rh/
