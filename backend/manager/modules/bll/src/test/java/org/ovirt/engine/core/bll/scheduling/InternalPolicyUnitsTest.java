@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -58,6 +62,38 @@ public class InternalPolicyUnitsTest {
     public void instantiateProper() throws Exception {
         for (Class<? extends PolicyUnitImpl> unit: InternalPolicyUnits.getList()) {
             InternalPolicyUnits.instantiate(unit, null);
+        }
+
+        for (Class<? extends PolicyUnitImpl> unit: InternalPolicyUnits.getMandatoryUnits()) {
+            InternalPolicyUnits.instantiate(unit, null);
+        }
+    }
+
+    @Test
+    public void optionalAndMandatoryUnitsAreDisjoint() {
+        assertTrue(CollectionUtils.intersection(
+                InternalPolicyUnits.getList(),
+                InternalPolicyUnits.getMandatoryUnits()
+        ).isEmpty());
+    }
+
+    @Test
+    public void mandatoryPoliciesAreFilters() {
+        for (Class<? extends PolicyUnitImpl> unitClass : InternalPolicyUnits.getMandatoryUnits()) {
+            SchedulingUnit annotation = unitClass.getAnnotation(SchedulingUnit.class);
+            assertSame(PolicyUnitType.FILTER, annotation.type(),
+                    String.format("Mandatory policy unit %s is not a filter.", unitClass.getName()));
+        }
+    }
+
+    @Test
+    public void mandatoryUnitsWithoutParameters() {
+        // Mandatory policy units currently does not support parameters.
+        // If they are needed, implement it.
+        for (Class<? extends PolicyUnitImpl> unitClass : InternalPolicyUnits.getMandatoryUnits()) {
+            SchedulingUnit annotation = unitClass.getAnnotation(SchedulingUnit.class);
+            assertEquals(0, annotation.parameters().length,
+                    String.format("Mandatory policy unit %s has parameters.", unitClass.getName()));
         }
     }
 }

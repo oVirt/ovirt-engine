@@ -151,6 +151,8 @@ public class SchedulingManager implements BackendService {
      */
     private volatile ConcurrentHashMap<Guid, PolicyUnitImpl> policyUnits;
 
+    private List<PolicyUnitImpl> mandatoryFilters;
+
     private final Object policyUnitsLock = new Object();
 
     private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<>();
@@ -169,6 +171,7 @@ public class SchedulingManager implements BackendService {
     protected SchedulingManager() {
         policyMap = new ConcurrentHashMap<>();
         policyUnits = new ConcurrentHashMap<>();
+        mandatoryFilters = new ArrayList<>();
     }
 
     @PostConstruct
@@ -210,6 +213,7 @@ public class SchedulingManager implements BackendService {
     private void reloadPolicyUnits() {
         synchronized (policyUnitsLock) {
             policyUnits = new ConcurrentHashMap<>();
+            mandatoryFilters = new ArrayList<>();
             loadPolicyUnits();
         }
     }
@@ -279,6 +283,15 @@ public class SchedulingManager implements BackendService {
                 policyUnits.put(unit.getGuid(), Injector.injectMembers(unit));
             } catch (Exception e){
                 log.error("Could not instantiate a policy unit {}.", unitType.getName(), e);
+            }
+        }
+
+        for (Class<? extends PolicyUnitImpl> mandatoryUnitType : InternalPolicyUnits.getMandatoryUnits()) {
+            try {
+                PolicyUnitImpl unit = InternalPolicyUnits.instantiate(mandatoryUnitType, getPendingResourceManager());
+                mandatoryFilters.add(Injector.injectMembers(unit));
+            } catch (Exception e){
+                log.error("Could not instantiate a policy unit {}.", mandatoryUnitType.getName(), e);
             }
         }
 
@@ -886,6 +899,8 @@ public class SchedulingManager implements BackendService {
     }
 
     private void splitFilters(List<Guid> filters, Map<Guid, Integer> filterPositionMap, SchedulingContext context) {
+        context.getInternalFilters().addAll(mandatoryFilters);
+
         // Create a local copy so we can manipulate it
         filters = new ArrayList<>(filters);
 
@@ -1131,6 +1146,9 @@ public class SchedulingManager implements BackendService {
         Map<String, String> map = new LinkedHashMap<>();
         for (Guid policyUnitId : usedPolicyUnits) {
             map.putAll(policyUnits.get(policyUnitId).getPolicyUnit().getParameterRegExMap());
+        }
+        for (PolicyUnitImpl mandatoryFilter : mandatoryFilters) {
+            map.putAll(mandatoryFilter.getPolicyUnit().getParameterRegExMap());
         }
         return map;
     }

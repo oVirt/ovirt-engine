@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -63,9 +63,9 @@ public class InternalClusterPoliciesTest {
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "5")
                 .set(PolicyUnitParameter.SPM_VM_GRACE, "1")
                 .setBalancer(EvenDistributionBalancePolicyUnit.class)
-                .addFilters(CpuLevelFilterPolicyUnit.class)
+                .addFilters(CPUPolicyUnit.class)
                 .addFilters(MemoryPolicyUnit.class)
-                .addFilters(PinToHostPolicyUnit.class)
+                .addFilters(VmAffinityFilterPolicyUnit.class)
                 .addFunction(1, HaReservationWeightPolicyUnit.class)
                 .addFunction(2, VmAffinityWeightPolicyUnit.class)
                 .getPolicy();
@@ -78,9 +78,9 @@ public class InternalClusterPoliciesTest {
         assertTrue(policy.isLocked());
 
         assertNotNull(policy.getFilterPositionMap());
-        assertEquals(-1L, (long) policy.getFilterPositionMap().get(getUnitId(CpuLevelFilterPolicyUnit.class)));
+        assertEquals(-1L, (long) policy.getFilterPositionMap().get(getUnitId(CPUPolicyUnit.class)));
         assertEquals(0, (long) policy.getFilterPositionMap().get(getUnitId(MemoryPolicyUnit.class)));
-        assertEquals(1L, (long) policy.getFilterPositionMap().get(getUnitId(PinToHostPolicyUnit.class)));
+        assertEquals(1L, (long) policy.getFilterPositionMap().get(getUnitId(VmAffinityFilterPolicyUnit.class)));
 
         assertNotNull(policy.getParameterMap());
         assertEquals(2, policy.getParameterMap().size());
