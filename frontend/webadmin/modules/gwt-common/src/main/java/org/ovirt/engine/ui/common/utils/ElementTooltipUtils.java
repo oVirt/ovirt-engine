@@ -116,7 +116,8 @@ public final class ElementTooltipUtils {
             createTooltipImpl(e, tooltipHtmlString,
                     placement,
                     config.getTooltipTemplate(),
-                    config.isForceShow());
+                    config.isForceShow(),
+                    config.isSanitizeContent());
 
             // Update reaper lists.
             if (config.isForCellWidgetElement()) {
@@ -171,7 +172,7 @@ public final class ElementTooltipUtils {
         return $wnd.jQuery(e).attr('rel') === 'tooltip';
     }-*/;
 
-    private static native void createTooltipImpl(Element e, String html, String placement, String template, boolean forceShow) /*-{
+    private static native void createTooltipImpl(Element e, String html, String placement, String template, boolean forceShow, boolean sanitize) /*-{
         var $e = $wnd.jQuery(e);
 
         // `rel=tooltip` identifies a tooltipped element.
@@ -191,7 +192,8 @@ public final class ElementTooltipUtils {
             title: html,
             html: true,
             placement: placement,
-            template: template
+            template: template,
+            sanitize: sanitize
         });
 
         if (forceShow) {

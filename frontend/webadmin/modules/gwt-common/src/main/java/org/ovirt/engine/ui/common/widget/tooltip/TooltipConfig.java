@@ -33,6 +33,7 @@ public class TooltipConfig {
     private Set<String> extraTooltipClassNames = new LinkedHashSet<>();
     private boolean forceShow = false;
     private boolean forCellWidgetElement = false;
+    private boolean sanitizeContent = true;
 
     public TooltipConfig setPlacement(List<Placement> placementList) {
         if (placementList != null) {
@@ -85,4 +86,11 @@ public class TooltipConfig {
         return forCellWidgetElement;
     }
 
+    public boolean isSanitizeContent() {
+        return sanitizeContent;
+    }
+
+    public void setSanitizeContent(boolean sanitizeContent) {
+        this.sanitizeContent = sanitizeContent;
+    }
 }

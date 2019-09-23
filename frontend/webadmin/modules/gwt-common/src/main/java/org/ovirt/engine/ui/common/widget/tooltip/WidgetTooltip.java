@@ -96,6 +96,10 @@ public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
         tooltipConfig.addTooltipClassName(width.getClassName());
     }
 
+    public void setSanitizeContent(boolean sanitize) {
+        tooltipConfig.setSanitizeContent(sanitize);
+    }
+
     public void hide() {
         if (getWidget() != null) {
             ElementTooltipUtils.hideTooltip(getWidget().getElement());
