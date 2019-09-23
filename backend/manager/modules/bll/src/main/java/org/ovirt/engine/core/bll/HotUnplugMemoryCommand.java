@@ -102,8 +102,7 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
         if (snapshot == null) {
             return null;
         }
-        final VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+        final VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
         return vm.getStaticData();
     }
 

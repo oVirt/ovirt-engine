@@ -35,8 +35,7 @@ public class GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQuery<P extends I
         SnapshotVmConfigurationHelper snapshotVmConfigurationHelper = getSnapshotVmConfigurationHelper();
         List<Snapshot> snapshots = snapshotDao.getAllWithConfiguration(getParameters().getId());
         for (Snapshot snapshot : snapshots) {
-            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                    snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
             if (vm != null) {
                 snapshot.setDiskImages(vm.getImages());
                 snapshotLeaseDomainIdMap.put(snapshot, vm.getLeaseStorageDomainId());

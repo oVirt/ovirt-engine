@@ -50,24 +50,25 @@ public class SnapshotVmConfigurationHelper {
      * If configuration is not specified, creates a VM according to the snapshotId
      * (required for backwards compatibility - @see getVmWithoutConfiguration method).
      *
-     * @param configuration The OVF String
-     * @param vmId The VM ID
-     * @param snapshotId The snapshot ID
+     * @param snapshot the snapshot for which the configuration is created.
      * @return a VM object based on the specified parameters.
      */
-    public VM getVmFromConfiguration(String configuration, Guid vmId, Guid snapshotId) {
+    public VM getVmFromConfiguration(Snapshot snapshot) {
+        if (snapshot == null) {
+            return null;
+        }
+
         VM vm;
-        if (configuration != null) {
-            vm = getVmWithConfiguration(configuration, vmId);
-            Snapshot snapshot = snapshotDao.get(snapshotId);
-            if (snapshot != null && snapshot.getType() != Snapshot.SnapshotType.PREVIEW) {
+        if (snapshot.getVmConfiguration() != null) {
+            vm = getVmWithConfiguration(snapshot.getVmConfiguration(), snapshot.getVmId());
+            if (snapshot.getType() != Snapshot.SnapshotType.PREVIEW) {
                 // No need to mark disks of 'PREVIEW' snapshot as illegal
                 // as it represents previous 'Active VM' state and no operations
                 // on disks can be done while previewing a snapshot.
-                markImagesIllegalIfNotInDb(vm, snapshotId);
+                markImagesIllegalIfNotInDb(vm, snapshot.getId());
             }
         } else {
-            vm = getVmWithoutConfiguration(vmId, snapshotId);
+            vm = getVmWithoutConfiguration(snapshot.getVmId(), snapshot.getId());
         }
 
         vmHandler.updateDisksForVm(vm, vm.getImages());
@@ -75,7 +76,7 @@ public class SnapshotVmConfigurationHelper {
         return vm;
     }
 
-    protected VM getVmWithConfiguration(String configuration, Guid vmId) {
+    private VM getVmWithConfiguration(String configuration, Guid vmId) {
         VM result = vmDao.get(vmId);
         snapshotsManager.updateVmFromConfiguration(result, configuration);
         return result;
@@ -89,7 +90,7 @@ public class SnapshotVmConfigurationHelper {
      *
      * @return a VM
      */
-    protected VM getVmWithoutConfiguration(Guid vmId, Guid snapshotId) {
+    private VM getVmWithoutConfiguration(Guid vmId, Guid snapshotId) {
         VM vm = vmDao.get(vmId);
         List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
         vm.setInterfaces(interfaces);

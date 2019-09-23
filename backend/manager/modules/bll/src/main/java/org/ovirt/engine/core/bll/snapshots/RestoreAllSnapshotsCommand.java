@@ -530,8 +530,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         Snapshot previewedSnapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
         if (previewedSnapshot != null) {
-            VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                    previewedSnapshot.getVmConfiguration(), previewedSnapshot.getVmId(), previewedSnapshot.getId());
+            VM vmFromConf = snapshotVmConfigurationHelper.getVmFromConfiguration(previewedSnapshot);
             List<DiskImage> previewedImagesFromDB = diskImageDao.getAllSnapshotsForVmSnapshot(previewedSnapshot.getId());
             imagesFromPreviewSnapshot.addAll(ImagesHandler.imagesIntersection(vmFromConf.getImages(), previewedImagesFromDB));
         }
@@ -699,8 +698,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         Set<Guid> snapshotsToRemove = new HashSet<>();
 
         newerSnapshots.forEach(snapshot -> {
-            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                    snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
             if (vm != null) {
                 boolean shouldRemove = vm.getImages().isEmpty() || vm.getImages().stream().allMatch(
                         diskImage -> diskImage.getImageStatus() == ImageStatus.ILLEGAL);

@@ -78,7 +78,7 @@ public class GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQueryTest extends
         vm.setId(vmId);
         vm.setImages(new ArrayList<>(Arrays.asList(disk1, disk2)));
 
-        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(any(), any(), any());
+        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(any());
         getQuery().executeQueryCommand();
         Map<Snapshot, Guid> snapshots = getQuery().getQueryReturnValue().getReturnValue();
 

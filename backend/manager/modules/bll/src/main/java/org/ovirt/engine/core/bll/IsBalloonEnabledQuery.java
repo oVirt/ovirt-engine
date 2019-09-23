@@ -33,8 +33,7 @@ public class IsBalloonEnabledQuery <P extends IdQueryParameters> extends Queries
                 getParameters().getId(), Snapshot.SnapshotType.NEXT_RUN, getUserID(), getParameters().isFiltered());
 
         if (snapshot != null) {
-            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                    snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+            VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
             getQueryReturnValue().setReturnValue(
                     VmDeviceCommonUtils.isVmDeviceExists(vm.getManagedVmDeviceMap(), VmDeviceType.MEMBALLOON));
         } else {

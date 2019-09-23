@@ -633,8 +633,7 @@ public class VmHandler implements BackendService {
         if (snapshot == null) {
             return null;
         }
-        VM nextVM = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                snapshot.getVmConfiguration(), snapshot.getVmId(), snapshot.getId());
+        VM nextVM = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
         if (nextVM == null) {
             return null;
         }

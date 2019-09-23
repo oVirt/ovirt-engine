@@ -1258,9 +1258,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             snapshot.setMemoryDiskId(null);
             return null;
         }
-        VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
-                snapshot.getVmConfiguration(),
-                snapshot.getVmId(), snapshot.getId());
+        VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
         DiskImage memoryDisk = MemoryUtils.createSnapshotMemoryDisk(
                 vm,
                 sd.getStorageType(),
