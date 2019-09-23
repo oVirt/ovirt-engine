@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -155,7 +157,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testIsBlockSizeAutoDetectionSupportedSucceed() {
-        VDS vds = new VDS();
+        VDS vds = getRunningVds();
         vds.setSupportedBlockSize(Collections.singletonMap(
                 StorageType.NFS.name(), Arrays.asList(0, 512, 4096)));
         when(vdsDao.getAllForStoragePool(storagePool.getId())).
@@ -165,7 +167,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testIsBlockSizeAutoDetectionSupportedFailureVdsWithoutAutoDetectSupport() {
-        VDS vds = new VDS();
+        VDS vds = getRunningVds();
         vds.setSupportedBlockSize(Collections.singletonMap(
                 StorageType.NFS.name(), Collections.singletonList(512)));
         when(vdsDao.getAllForStoragePool(storagePool.getId())).
@@ -176,7 +178,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testIsBlockSizeAutoDetectionSupportedFailureVdsWithoutSupportedBlockSizeMap() {
-        VDS vds = new VDS();
+        VDS vds = getRunningVds();
         vds.setSupportedBlockSize(null);
         when(vdsDao.getAllForStoragePool(storagePool.getId())).
                 thenReturn(Collections.singletonList(vds));
@@ -186,7 +188,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testIsBlockSizeAutoDetectionSupportedFailureNoSpecifiedSizesForStorageType() {
-        VDS vds = new VDS();
+        VDS vds = getRunningVds();
         vds.setSupportedBlockSize(Collections.singletonMap(
                 StorageType.ISCSI.name(), Collections.singletonList(512)));
         storageDomain.setStorageType(StorageType.NFS);
@@ -194,5 +196,21 @@ public class StorageDomainToPoolRelationValidatorTest {
                 thenReturn(Collections.singletonList(vds));
         assertThat(validator.isBlockSizeAutoDetectionSupported(),
                 failsWith(EngineMessage.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_4K_UNSUPPORTED));
+    }
+
+    @Test
+    public void testIsBlockSizeAutoDetectionSupportedSucceedWithNonRunningVds() {
+        VDS runningVds = getRunningVds();
+        runningVds.setSupportedBlockSize(Collections.singletonMap(
+                StorageType.NFS.name(), Arrays.asList(0, 512, 4096)));
+        when(vdsDao.getAllForStoragePool(storagePool.getId())).
+                thenReturn(new ArrayList<>(Arrays.asList(runningVds, new VDS())));
+        assertThat(validator.isBlockSizeAutoDetectionSupported(), isValid());
+    }
+
+    private VDS getRunningVds() {
+        VDS vds = new VDS();
+        vds.setStatus(VDSStatus.Up);
+        return vds;
     }
 }
