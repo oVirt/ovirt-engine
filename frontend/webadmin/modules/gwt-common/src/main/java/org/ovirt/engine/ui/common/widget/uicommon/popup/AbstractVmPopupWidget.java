@@ -90,6 +90,7 @@ import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
+import org.ovirt.engine.ui.common.widget.renderer.ClusterDefaultRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -697,6 +698,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "migrateEncrypted.selectedItem")
     @WithElementId("migrateEncrypted")
     public ListModelListBoxEditor<Boolean> migrateEncryptedEditor;
+
+    private ClusterDefaultRenderer<Boolean> migrateEncryptedRenderer;
 
     @UiField(provided = true)
     @Ignore
@@ -1485,8 +1488,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromCluster()),
                 new ModeSwitchingVisibilityRenderer());
 
+        migrateEncryptedRenderer = new ClusterDefaultRenderer<>(new MigrateEncryptedRenderer());
         migrateEncryptedEditor = new ListModelListBoxEditor<>(
-                new MigrateEncryptedRenderer(),
+                migrateEncryptedRenderer,
                 new ModeSwitchingVisibilityRenderer());
 
         // Resource Allocation
@@ -1577,6 +1581,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // is set to a value before this method is called and so the callback
         // that would hide the IO threads panel was not yet created.
         ioThreadsPanel.setVisible(model.getIoThreadsEnabled().getEntity());
+
+        migrateEncryptedRenderer.setDefaultValue(getModel().getClusterMigrateEncrypted().getEntity());
+        getModel().getClusterMigrateEncrypted().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            migrateEncryptedRenderer.setDefaultValue(getModel().getClusterMigrateEncrypted().getEntity());
+        });
     }
 
     private void enableNumaSupport(final UnitVmModel model) {
@@ -2296,22 +2305,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private class MigrateEncryptedRenderer extends BooleanRenderer {
         @Override
         public String render(Boolean vmMigrateEncrypted) {
-            if (vmMigrateEncrypted == null) {
-                if (getModel() == null || getModel().getSelectedCluster() == null) {
-                    return constants.clusterDefaultOption();
-                }
-
-                Cluster cluster = getModel().getSelectedCluster();
-                boolean clusterMigrateEncrypted;
-                if (cluster.getMigrateEncrypted() == null) {
-                    clusterMigrateEncrypted = AsyncDataProvider.getInstance().getMigrateEncrypted();
-                } else {
-                    clusterMigrateEncrypted = cluster.getMigrateEncrypted();
-                }
-
-                String clusterMigrateEncryptedLabel = clusterMigrateEncrypted ? constants.encrypt() : constants.dontEncrypt();
-                return messages.clusterDefaultOption(clusterMigrateEncryptedLabel);
-            } else if (vmMigrateEncrypted) {
+            if (vmMigrateEncrypted) {
                 return constants.encrypt();
             } else {
                 return constants.dontEncrypt();

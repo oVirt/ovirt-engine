@@ -47,6 +47,7 @@ import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.SystemDefaultRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -688,7 +689,10 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        migrateEncryptedEditor = new ListModelListBoxEditor<>(new MigrateEncryptedRenderer());
+        migrateEncryptedEditor = new ListModelListBoxEditor<>(
+                new SystemDefaultRenderer<Boolean>(
+                        new MigrateEncryptedRenderer(),
+                        AsyncDataProvider.getInstance().getMigrateEncrypted()));
 
         autoConvergeEditor = new ListModelListBoxEditor<>(
                 new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromGlobal()));
@@ -982,14 +986,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     private class MigrateEncryptedRenderer extends BooleanRenderer {
         @Override
         public String render(Boolean migrateEncrypted) {
-            if (migrateEncrypted == null) {
-                boolean defaultMigrateEncrypted = AsyncDataProvider.getInstance().getMigrateEncrypted();
-                if (defaultMigrateEncrypted) {
-                    return messages.systemDefaultOption(constants.encrypt());
-                } else {
-                    return messages.systemDefaultOption(constants.dontEncrypt());
-                }
-            } else if (migrateEncrypted) {
+            if (migrateEncrypted) {
                 return constants.encrypt();
             } else {
                 return constants.dontEncrypt();

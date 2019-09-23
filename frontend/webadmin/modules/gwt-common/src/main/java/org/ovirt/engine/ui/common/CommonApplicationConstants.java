@@ -1856,4 +1856,6 @@ public interface CommonApplicationConstants extends Constants {
     String storageDomainStatus();
 
     String forceToMaintenance();
+
+    String systemDefaultOption();
 }

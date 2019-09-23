@@ -1507,6 +1507,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.migrateEncrypted = migrateEncrypted;
     }
 
+    private EntityModel<Boolean> clusterMigrateEncrypted;
+
+    public EntityModel<Boolean> getClusterMigrateEncrypted() {
+        return clusterMigrateEncrypted;
+    }
+
+    public void setClusterMigrateEncrypted(EntityModel<Boolean> clusterMigrateEncrypted) {
+        this.clusterMigrateEncrypted = clusterMigrateEncrypted;
+    }
+
     private ListModel<Label> labelList;
 
     public void setLabelList(ListModel<Label> labelList) {
@@ -1834,6 +1844,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMigrateCompressed().setItems(Arrays.asList(null, true, false));
         setMigrateEncrypted(new NotChangableForVmInPoolListModel<Boolean>());
         getMigrateEncrypted().setItems(Arrays.asList(null, true, false));
+        setClusterMigrateEncrypted(new EntityModel<>());
         updateMigrateEncrypted();
         setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
 
@@ -2362,7 +2373,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         behavior.dataCenterWithClusterSelectedItemChanged();
         refreshMigrationPolicies();
         updateMigrationRelatedFields();
-
+        updateClusterMigrationRelatedFields();
         DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
         if (dataCenterWithCluster != null && dataCenterWithCluster.getDataCenter() != null) {
             getDisksAllocationModel().setQuotaEnforcementType(dataCenterWithCluster.getDataCenter()
@@ -3513,6 +3524,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
             getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
         }
+    }
+
+    private void updateClusterMigrationRelatedFields() {
+        Cluster cluster = getSelectedCluster();
+        Boolean value = cluster == null ? null : cluster.getMigrateEncrypted();
+        if (value == null) {
+            value = AsyncDataProvider.getInstance().getMigrateEncrypted();
+        }
+        getClusterMigrateEncrypted().setEntity(value);
     }
 
     private void updateBiosType() {
