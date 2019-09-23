@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -530,8 +531,16 @@ public class SnapshotsManager {
             if (!vmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData()).isValid()) {
                 vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
             }
-            vmHandler.updateMaxMemorySize(vm.getStaticData(), vm.getCompatibilityVersion());
-            vmHandler.autoSelectResumeBehavior(vm.getStaticData(), vm.getCompatibilityVersion());
+            // The snapshot may have unsupported compatibility version.
+            // In that case, using the lowest supported version,
+            // otherwise the line below would try to access non-existing
+            // config value and throw an exception.
+            Version supportedVersion = Version.getLowest().greater(vm.getCompatibilityVersion()) ?
+                    Version.getLowest() :
+                    vm.getCompatibilityVersion();
+
+            vmHandler.updateMaxMemorySize(vm.getStaticData(), supportedVersion);
+
             validateQuota(vm);
             return true;
         } catch (OvfReaderException e) {
