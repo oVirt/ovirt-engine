@@ -146,6 +146,7 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
 
     protected void initTooltip() {
         tooltip = new WidgetTooltip(getContents());
+        tooltip.setSanitizeContent(false);
         tooltip.setPlacementList(Arrays.asList(Placement.AUTO, Placement.BOTTOM));
         SafeHtml tooltipContent = infoPopup.getTooltipContent(item);
         setTooltipContent(tooltipContent);
