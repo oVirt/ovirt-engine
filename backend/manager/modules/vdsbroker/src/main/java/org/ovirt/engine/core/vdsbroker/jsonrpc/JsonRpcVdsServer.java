@@ -2225,15 +2225,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GetDisksListReturn startVmBackup(String vmId, String backupId, Map<String, String>[] disks,
-                                            String fromCheckpointId, String toCheckpointId) {
+    public GetDisksListReturn startVmBackup(String vmId, Map<String, Object> backupConfig) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.start_backup")
                         .withParameter("vmID", vmId)
-                        .withParameter("backup_id", backupId)
-                        .withParameter("disks", disks)
-                        .withParameter("from_checkpoint_id", fromCheckpointId)
-                        .withParameter("to_checkpoint_id", toCheckpointId)
+                        .withParameter("config", backupConfig)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GetDisksListReturn(response);

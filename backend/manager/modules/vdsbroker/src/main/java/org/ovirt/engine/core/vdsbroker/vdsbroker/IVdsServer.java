@@ -524,8 +524,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn thaw(String vmId);
 
-    GetDisksListReturn startVmBackup(String vmId, String backupId, Map<String, String>[] disks,
-                                     String fromCheckpointId, String toCheckpointId);
+    GetDisksListReturn startVmBackup(String vmId, Map<String, Object> backupConfig);
 
     StatusOnlyReturn stopVmBackup(String vmId, String backupId);
 

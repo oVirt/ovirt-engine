@@ -20,12 +20,8 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
         Guid fromCheckpointId = getParameters().getVmBackup().getFromCheckpointId();
         Guid toCheckpointId = getParameters().getVmBackup().getToCheckpointId();
 
-        disksListReturn = getBroker().startVmBackup(
-                getParameters().getVmBackup().getVmId().toString(),
-                getParameters().getVmBackup().getId().toString(),
-                createDisksMap(),
-                fromCheckpointId != null ? fromCheckpointId.toString() : null,
-                toCheckpointId != null ? toCheckpointId.toString() : null);
+        Map<String, Object> backupConfig = createBackupConfig(fromCheckpointId, toCheckpointId);
+        disksListReturn = getBroker().startVmBackup(getParameters().getVmBackup().getVmId().toString(), backupConfig);
         proceedProxyReturnValue();
         setReturnValue(disksListReturn.getDisks());
     }
@@ -49,5 +45,15 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
             imageParams.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
             return imageParams;
         }).toArray(HashMap[]::new);
+    }
+
+    private Map<String, Object> createBackupConfig(Guid fromCheckpointId, Guid toCheckpointId) {
+        Map<String, Object> backupConfig = new HashMap<>();
+        backupConfig.put("backup_id", getParameters().getVmBackup().getId().toString());
+        backupConfig.put("disks", createDisksMap());
+        backupConfig.put("from_checkpoint_id", fromCheckpointId != null ? fromCheckpointId.toString() : null);
+        backupConfig.put("to_checkpoint_id", toCheckpointId != null ? toCheckpointId.toString() : null);
+
+        return backupConfig;
     }
 }
