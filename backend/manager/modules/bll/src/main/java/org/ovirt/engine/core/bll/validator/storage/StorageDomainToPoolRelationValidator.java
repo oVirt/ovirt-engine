@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
@@ -138,6 +139,11 @@ public class StorageDomainToPoolRelationValidator {
         List<String> withoutSupportVDSes = getVdsDao().getAllForStoragePool(storagePool.getId())
                 .stream()
                 .filter(vds -> {
+                    if (vds.getStatus() != VDSStatus.Up) {
+                        // Filter out non-running hosts (we don't know if the host supports block
+                        // size auto-detection before querying host capabilities).
+                        return false;
+                    }
                     if (vds.getSupportedBlockSize() == null) {
                         // Old VDSM without 'supported_block_size'
                         return true;
