@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel.ListModelWithClusterDefault.CLUSTER_VALUE_EVENT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,14 +104,17 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel.ListModelWithClusterDefault;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -1581,10 +1585,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // is set to a value before this method is called and so the callback
         // that would hide the IO threads panel was not yet created.
         ioThreadsPanel.setVisible(model.getIoThreadsEnabled().getEntity());
+    }
 
-        migrateEncryptedRenderer.setDefaultValue(getModel().getClusterMigrateEncrypted().getEntity());
-        getModel().getClusterMigrateEncrypted().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            migrateEncryptedRenderer.setDefaultValue(getModel().getClusterMigrateEncrypted().getEntity());
+    private <T> void initClusterDefaultValueListener(ClusterDefaultRenderer<T> renderer, ListModel<T> model) {
+        if (! (model instanceof ListModelWithClusterDefault)) {
+            return;
+        }
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (CLUSTER_VALUE_EVENT.equals(((PropertyChangedEventArgs) args).propertyName)) {
+                renderer.setDefaultValue(((ListModelWithClusterDefault<T>) model).getClusterValue());
+                // if the cluster default value has changed we need to redraw the items, thus firing
+                // the "Items" change event.
+                ((ListModelWithClusterDefault<T>) model).fireItemsChangedEvent();
+            }
         });
     }
 
@@ -1736,6 +1749,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 overrideMigrationDowntimeEditorWithDetachable.setVisible(object.getMigrationDowntime().getIsAvailable());
             }
         });
+
+        initClusterDefaultValueListener(migrateEncryptedRenderer, getModel().getMigrateEncrypted());
     }
 
     private void updateUrandomLabel(UnitVmModel model) {

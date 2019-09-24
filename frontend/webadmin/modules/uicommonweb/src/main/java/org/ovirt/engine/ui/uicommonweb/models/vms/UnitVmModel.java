@@ -1497,24 +1497,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.migrateCompressed = migrateCompressed;
     }
 
-    private ListModel<Boolean> migrateEncrypted;
+    private ListModelWithClusterDefault<Boolean> migrateEncrypted;
 
+    // the return value has to be ListModel otherwise the GWT compilation won't work
     public ListModel<Boolean> getMigrateEncrypted() {
         return migrateEncrypted;
     }
 
-    public void setMigrateEncrypted(ListModel<Boolean> migrateEncrypted) {
+    public void setMigrateEncrypted(ListModelWithClusterDefault<Boolean> migrateEncrypted) {
         this.migrateEncrypted = migrateEncrypted;
-    }
-
-    private EntityModel<Boolean> clusterMigrateEncrypted;
-
-    public EntityModel<Boolean> getClusterMigrateEncrypted() {
-        return clusterMigrateEncrypted;
-    }
-
-    public void setClusterMigrateEncrypted(EntityModel<Boolean> clusterMigrateEncrypted) {
-        this.clusterMigrateEncrypted = clusterMigrateEncrypted;
     }
 
     private ListModel<Label> labelList;
@@ -1842,10 +1833,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getAutoConverge().setItems(Arrays.asList(null, true, false));
         setMigrateCompressed(new NotChangableForVmInPoolListModel<Boolean>());
         getMigrateCompressed().setItems(Arrays.asList(null, true, false));
-        setMigrateEncrypted(new NotChangableForVmInPoolListModel<Boolean>());
-        getMigrateEncrypted().setItems(Arrays.asList(null, true, false));
-        setClusterMigrateEncrypted(new EntityModel<>());
-        updateMigrateEncrypted();
+        setMigrateEncrypted(new ListModelWithClusterDefault<Boolean>());
+        getMigrateEncrypted().setItems(Arrays.asList(true, false));
         setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
 
         setIoThreadsEnabled(new NotChangableForVmInPoolEntityModel<>(false));
@@ -3267,6 +3256,41 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
+    public class ListModelWithClusterDefault<T> extends NotChangableForVmInPoolListModel<T> {
+
+        public static final String CLUSTER_VALUE_EVENT = "ClusterValue";//$NON-NLS-1$
+
+        private T clusterValue;
+
+        @Override
+        public void setItems(Collection<T> value) {
+            this.setItems(value, null);
+        }
+
+        @Override
+        public void setItems(Collection<T> value, T selectedItem) {
+            List<T> items = value == null ? new ArrayList<>() : new ArrayList<>(value);
+            if (items.isEmpty() || items.get(0) != null) {
+                items.add(0, null);
+            }
+            super.setItems(items, selectedItem);
+        }
+
+        public void fireItemsChangedEvent() {
+            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+        }
+
+        public void setClusterValue(T clusterValue) {
+            this.clusterValue = clusterValue;
+            onPropertyChanged(new PropertyChangedEventArgs(CLUSTER_VALUE_EVENT));
+        }
+
+        public T getClusterValue() {
+            return clusterValue;
+        }
+    }
+
     private class NotChangableForVmInPoolSortedListModel<T> extends SortedListModel<T> {
         public NotChangableForVmInPoolSortedListModel(Comparator<? super T> comparator) {
             super(comparator);
@@ -3528,11 +3552,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateClusterMigrationRelatedFields() {
         Cluster cluster = getSelectedCluster();
-        Boolean value = cluster == null ? null : cluster.getMigrateEncrypted();
-        if (value == null) {
-            value = AsyncDataProvider.getInstance().getMigrateEncrypted();
+        Boolean encrypt = cluster == null ? null : cluster.getMigrateEncrypted();
+        if (encrypt == null) {
+            encrypt = AsyncDataProvider.getInstance().getMigrateEncrypted();
         }
-        getClusterMigrateEncrypted().setEntity(value);
+        migrateEncrypted.setClusterValue(encrypt);
     }
 
     private void updateBiosType() {
@@ -3552,10 +3576,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void updateMigrateEncrypted() {
-        // necessary for updating the labels in combo box
-        Boolean selectedItem = getMigrateEncrypted().getSelectedItem();
-        getMigrateEncrypted().setItems(Arrays.asList(null, true, false));
-        getMigrateEncrypted().setSelectedItem(selectedItem);
         Version version = getCompatibilityVersion();
         if (version == null || version.greaterOrEquals(Version.v4_4)) {
             getMigrateEncrypted().setIsChangeable(true);
