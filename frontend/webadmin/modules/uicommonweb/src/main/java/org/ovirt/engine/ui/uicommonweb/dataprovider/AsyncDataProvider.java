@@ -2872,6 +2872,16 @@ public class AsyncDataProvider {
         return maxVmNameLengthSysprep;
     }
 
+    public boolean getAutoConverge() {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.DefaultAutoConvergence,
+                getDefaultConfigurationVersion());
+    }
+
+    public boolean getMigrateCompressed() {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.DefaultMigrationCompression,
+                getDefaultConfigurationVersion());
+    }
+
     public boolean getMigrateEncrypted() {
         return (Boolean) getConfigValuePreConverted(ConfigValues.DefaultMigrationEncryption,
                 getDefaultConfigurationVersion());

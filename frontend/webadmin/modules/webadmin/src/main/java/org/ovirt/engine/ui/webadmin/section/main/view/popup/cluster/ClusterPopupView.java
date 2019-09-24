@@ -43,7 +43,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -691,14 +690,18 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         migrateEncryptedEditor = new ListModelListBoxEditor<>(
                 new SystemDefaultRenderer<Boolean>(
-                        new MigrateEncryptedRenderer(),
+                        new BooleanRenderer(constants.encrypt(), constants.dontEncrypt()),
                         AsyncDataProvider.getInstance().getMigrateEncrypted()));
 
         autoConvergeEditor = new ListModelListBoxEditor<>(
-                new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromGlobal()));
+                new SystemDefaultRenderer<Boolean>(
+                        new BooleanRenderer(constants.autoConverge(), constants.dontAutoConverge()),
+                        AsyncDataProvider.getInstance().getAutoConverge()));
 
         migrateCompressedEditor = new ListModelListBoxEditor<>(
-                new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
+                new SystemDefaultRenderer<Boolean>(
+                        new BooleanRenderer(constants.compress(), constants.dontCompress()),
+                        AsyncDataProvider.getInstance().getMigrateCompressed()));
 
         migrationBandwidthLimitTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationBandwidthLimitTypeEditor.hideLabel();
@@ -981,16 +984,5 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Override
     public HasEnabledWithHints getCustomMigrationBandwidthLimitEditor() {
         return customMigrationBandwidthLimitEditor;
-    }
-
-    private class MigrateEncryptedRenderer extends BooleanRenderer {
-        @Override
-        public String render(Boolean migrateEncrypted) {
-            if (migrateEncrypted) {
-                return constants.encrypt();
-            } else {
-                return constants.dontEncrypt();
-            }
-        }
     }
 }

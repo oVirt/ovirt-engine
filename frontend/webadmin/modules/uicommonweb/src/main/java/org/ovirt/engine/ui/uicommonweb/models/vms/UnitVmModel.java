@@ -1466,23 +1466,23 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private boolean numaChanged = false;
 
-    private ListModel<Boolean> autoConverge;
+    private ListModelWithClusterDefault<Boolean> autoConverge;
 
     public ListModel<Boolean> getAutoConverge() {
         return autoConverge;
     }
 
-    public void setAutoConverge(NotChangableForVmInPoolListModel<Boolean> autoConverge) {
+    public void setAutoConverge(ListModelWithClusterDefault<Boolean> autoConverge) {
         this.autoConverge = autoConverge;
     }
 
-    private ListModel<Boolean> migrateCompressed;
+    private ListModelWithClusterDefault<Boolean> migrateCompressed;
 
     public ListModel<Boolean> getMigrateCompressed() {
         return migrateCompressed;
     }
 
-    public void setMigrateCompressed(NotChangableForVmInPoolListModel<Boolean> migrateCompressed) {
+    public void setMigrateCompressed(ListModelWithClusterDefault<Boolean> migrateCompressed) {
         this.migrateCompressed = migrateCompressed;
     }
 
@@ -1814,12 +1814,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     }
                 }));
 
-        setAutoConverge(new NotChangableForVmInPoolListModel<Boolean>());
-        getAutoConverge().setItems(Arrays.asList(null, true, false));
-        setMigrateCompressed(new NotChangableForVmInPoolListModel<Boolean>());
-        getMigrateCompressed().setItems(Arrays.asList(null, true, false));
+        setAutoConverge(new ListModelWithClusterDefault<Boolean>());
+        getAutoConverge().setItems(Arrays.asList(true, false));
+
+        setMigrateCompressed(new ListModelWithClusterDefault<Boolean>());
+        getMigrateCompressed().setItems(Arrays.asList(true, false));
+
         setMigrateEncrypted(new ListModelWithClusterDefault<Boolean>());
         getMigrateEncrypted().setItems(Arrays.asList(true, false));
+
         setIcon(new NotChangableForVmInPoolEntityModel<IconWithOsDefault>());
 
         setIoThreadsEnabled(new NotChangableForVmInPoolEntityModel<>(false));
@@ -3523,6 +3526,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateClusterMigrationRelatedFields() {
         Cluster cluster = getSelectedCluster();
+
+        Boolean useAutoConverge = cluster == null ? null : cluster.getAutoConverge();
+        if (useAutoConverge == null) {
+            useAutoConverge = AsyncDataProvider.getInstance().getAutoConverge();
+        }
+        autoConverge.setClusterValue(useAutoConverge);
+
+        Boolean compressed = cluster == null ? null : cluster.getMigrateCompressed();
+        if (compressed == null) {
+            compressed = AsyncDataProvider.getInstance().getMigrateCompressed();
+        }
+        migrateCompressed.setClusterValue(compressed);
+
         Boolean encrypt = cluster == null ? null : cluster.getMigrateEncrypted();
         if (encrypt == null) {
             encrypt = AsyncDataProvider.getInstance().getMigrateEncrypted();

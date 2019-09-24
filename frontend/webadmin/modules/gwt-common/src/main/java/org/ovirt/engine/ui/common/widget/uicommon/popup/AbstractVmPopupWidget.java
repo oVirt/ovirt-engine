@@ -90,7 +90,6 @@ import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.ClusterDefaultRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -690,10 +689,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("autoConverge")
     public ListModelListBoxEditor<Boolean> autoConvergeEditor;
 
+    private ClusterDefaultRenderer<Boolean> autoConvergeRenderer;
+
     @UiField(provided = true)
     @Path(value = "migrateCompressed.selectedItem")
     @WithElementId("migrateCompressed")
     public ListModelListBoxEditor<Boolean> migrateCompressedEditor;
+
+    private ClusterDefaultRenderer<Boolean> migrateCompressedRenderer;
 
     @UiField(provided = true)
     @Path(value = "migrateEncrypted.selectedItem")
@@ -1481,12 +1484,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationPolicyRenderer = new ClusterDefaultRenderer<>(new NameRenderer<MigrationPolicy>());
         migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(migrationPolicyRenderer, new ModeSwitchingVisibilityRenderer());
 
+        autoConvergeRenderer = new ClusterDefaultRenderer<>(new BooleanRenderer(constants.autoConverge(), constants.dontAutoConverge()));
         autoConvergeEditor = new ListModelListBoxEditor<>(
-                new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromCluster()),
+                autoConvergeRenderer,
                 new ModeSwitchingVisibilityRenderer());
 
+        migrateCompressedRenderer = new ClusterDefaultRenderer<>(new BooleanRenderer(constants.compress(), constants.dontCompress()));
         migrateCompressedEditor = new ListModelListBoxEditor<>(
-                new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromCluster()),
+                migrateCompressedRenderer,
                 new ModeSwitchingVisibilityRenderer());
 
         migrateEncryptedRenderer = new ClusterDefaultRenderer<>(new MigrateEncryptedRenderer());
@@ -1747,6 +1752,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         initClusterDefaultValueListener(migrateEncryptedRenderer, getModel().getMigrateEncrypted());
+        initClusterDefaultValueListener(autoConvergeRenderer, getModel().getAutoConverge());
+        initClusterDefaultValueListener(migrateCompressedRenderer, getModel().getMigrateCompressed());
         initClusterDefaultValueListener(migrationPolicyRenderer, getModel().getMigrationPolicies());
     }
 
