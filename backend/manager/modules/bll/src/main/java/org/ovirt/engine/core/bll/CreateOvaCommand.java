@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -27,10 +29,12 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleVerbosity;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -45,6 +49,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private OvfManager ovfManager;
     @Inject
     private AnsibleExecutor ansibleExecutor;
+    @Inject
+    private AnsibleRunnerHTTPClient runnerClient;
     @Inject
     protected AuditLogDirector auditLogDirector;
     @Inject
@@ -155,36 +161,53 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String runAnsibleImageMeasurePlaybook(String path) {
-        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
-                .hosts(getVds())
-                .variable("image_path", path)
-                // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-image-measure-ansible")
-                .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
-                .verboseLevel(AnsibleVerbosity.LEVEL0)
-                .stdoutCallback(AnsibleConstants.IMAGE_MEASURE_CALLBACK_PLUGIN)
-                .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK)
-                .build();
+        AnsibleCommandConfig command = new AnsibleCommandConfig()
+            .hosts(getVds())
+            .variable("image_path", path)
+            .playAction("Image measure.")
+            .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
+        StringBuilder stdout = new StringBuilder();
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+            command,
+            (String taskName, String eventUrl) -> {
+                AuditLogable logable = AuditLogableImpl.createHostEvent(
+                        command.hosts().get(0),
+                        command.correlationId(),
+                        new HashMap<String, String>() {
+                            {
+                                put("Message", taskName);
+                                put("PlayAction", command.playAction());
+                            }
+                        }
+                );
+                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+
+                try {
+                    stdout.append(runnerClient.getCommandStdout(eventUrl));
+                } catch (Exception ex) {
+                    log.error("Error: {}", ex.getMessage());
+                    log.debug("Exception: ", ex);
+                }
+            }
+        );
+
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error(
                 "Failed to measure image: {}. Please check logs for more details: {}",
                 ansibleReturnValue.getStderr(),
-                    ansibleReturnValue.getLogFile()
+                ansibleReturnValue.getLogFile()
             );
             throw new EngineException(EngineError.GeneralException, "Failed to measure image");
         }
 
-        return ansibleReturnValue.getStdout();
+        return stdout.toString();
     }
 
     private boolean runAnsiblePackOvaPlaybook(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
         String encodedOvf = genOvfParameter(ovf);
-        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("entity_type", getParameters().getEntityType().name().toLowerCase())
@@ -192,13 +215,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .variable("ova_name", getParameters().getName())
                 .variable("ovirt_ova_pack_ovf", encodedOvf)
                 .variable("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))
-                // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-export-ova-ansible")
-                .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK)
-                .build();
+                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
         AnsibleReturnValue ansibleReturnCode = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnCode.getAnsibleReturnCode() == AnsibleReturnCode.OK;

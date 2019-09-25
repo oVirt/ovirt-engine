@@ -40,6 +40,8 @@ public class AnsibleReturnValue {
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode, String stdout) {
         this.ansibleReturnCode = ansibleReturnCode;
         this.stdout = stdout;
+        // FIXME:
+        this.logFile = new File("/tmp/FIXME");
     }
 
     public AnsibleReturnCode getAnsibleReturnCode() {

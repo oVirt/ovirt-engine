@@ -5,16 +5,17 @@
 
 package org.ovirt.engine.core.common.utils.ansible;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,17 +23,11 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class AnsibleExecutor {
 
-    @Inject
-    private FileRemover fileRemover;
-    @Inject
-    private AnsibleCommandLogFileFactory  ansibleCommandLogFileFactory;
-    @Inject
-    private AnsibleCommandFactory ansibleCommandFactory;
-    @Inject
-    private AnsibleCommandInventoryFileFactory ansibleCommandInventoryFileFactory;
-
     private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
-    public static final String DEFAULT_LOG_DIRECTORY = "ansible";
+    private static final int POLL_INTERVAL = 3000;
+
+    @Inject
+    private AnsibleRunnerHTTPClient runnerClient;
 
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable
@@ -47,92 +42,92 @@ public class AnsibleExecutor {
         return runCommand(commandConfig, timeout);
     }
 
-    /**
-     * Executes ansible-playbook command.
-     *
-     * @param commandConfig
-     *            the config of command to be executed
-     * @param timeout
-     *            timeout in minutes to wait for command to finish
-     * @return return code of ansible-playbook
-     */
-    public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig, int timeout) {
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout) {
+        return runCommand(
+            command,
+            timeout,
+            (String taskName, String eventUrl) -> {
+                AuditLogable logable = AuditLogableImpl.createHostEvent(
+                    command.hosts().get(0),
+                    command.correlationId(),
+                    new HashMap<String, String>() {
+                        {
+                            put("Message", taskName);
+                            put("PlayAction", command.playAction());
+                        }
+                    }
+                );
+                Injector.get(AuditLogDirector.class).log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+            }
+        );
+    }
+
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, BiConsumer<String, String> fn) {
+        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        return runCommand(command, timeout, fn);
+    }
+
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout, BiConsumer<String, String> fn) {
         if (timeout <= 0) {
             timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         }
 
         log.trace("Enter AnsibleExecutor::runCommand");
-        AnsibleReturnValue returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
 
-        Process ansibleProcess = null;
-        File stdoutFile = new File("/dev/null");
-        File stderrFile = new File("/dev/null");
+        AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
 
-        // Create a temporary inventory file if user didn't specified it:
-        try (AutoRemovableTempFile inventoryFile = ansibleCommandInventoryFileFactory.create(commandConfig)) {
+        try {
+            // Run the playbook:
+            String playUuid = runnerClient.runPlaybook(command);
 
-            // Create file where stdout/stderr will be redirected:
-            if (commandConfig.stdoutCallback() != null) {
-                stdoutFile = Files.createTempFile("playbook-out", ".tmp").toFile();
-                stderrFile = Files.createTempFile("playbook-err", ".tmp").toFile();
+            // Process the events of the playbook:
+            int totalEvents;
+            int lastEventId = 0;
+            int iteration = 0;
+
+            while (iteration < timeout * 60) {
+                Thread.sleep(POLL_INTERVAL);
+
+                // Get the current status of the playbook:
+                AnsibleRunnerHTTPClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
+                String status = playbookStatus.getStatus();
+                String msg = playbookStatus.getMsg();
+
+                // Process the events if the playbook is running:
+                totalEvents = runnerClient.getTotalEvents(playUuid);
+
+                log.debug("Current status[{}]: {}/{}", status, lastEventId, totalEvents);
+
+                if (
+                    msg.equalsIgnoreCase("running")
+                    || (msg.equalsIgnoreCase("successful") && lastEventId < totalEvents)
+                ) {
+                    lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn);
+                    iteration += POLL_INTERVAL / 1000;
+                } else if (msg.equalsIgnoreCase("successful")) {
+                    // Exit the processing if playbook finished:
+                    ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
+                    return ret;
+                } else if (status.equalsIgnoreCase("unknown")) {
+                    // ignore and continue?
+                } else {
+                    // Playbook failed:
+                    ret.setAnsibleReturnCode(AnsibleReturnCode.ERROR);
+                    // TODO: fetch runner_on_failed
+                    return ret;
+                }
             }
 
-            // Build the command:
-            final Path inventoryFilePath = inventoryFile != null ? inventoryFile.getFilePath() : null;
-            List<String> ansibleCommand = ansibleCommandFactory.create(commandConfig, inventoryFilePath);
-            log.info("Executing Ansible command: {}", ansibleCommand);
-
-            ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
-                    .command(ansibleCommand)
-                    .directory(commandConfig.playbookDir().toFile())
-                    .redirectErrorStream(commandConfig.stdoutCallback() == null)
-                    .redirectOutput(stdoutFile)
-                    .redirectError(stderrFile);
-
-            // Set environment variables:
-            ansibleProcessBuilder.environment()
-                    .put("ANSIBLE_CONFIG", Paths.get(commandConfig.playbookDir().toString(), "ansible.cfg").toString());
-            if (commandConfig.enableLogging()) {
-                File logFile = ansibleCommandLogFileFactory.create(commandConfig);
-                log.info("Ansible command log file: {}", logFile.getAbsolutePath());
-                returnValue.setLogFile(logFile);
-                ansibleProcessBuilder.environment()
-                        .put("ANSIBLE_LOG_PATH", logFile.toString());
-            }
-            if (commandConfig.stdoutCallback() != null) {
-                ansibleProcessBuilder.environment()
-                        .put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, commandConfig.stdoutCallback());
-            }
-
-            // Execute the command:
-            ansibleProcess = ansibleProcessBuilder.start();
-
-            // Wait for process to finish:
-            if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
-                throw new Exception("Timeout occurred while executing Ansible playbook.");
-            }
-
-            returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
-
-            if (commandConfig.stdoutCallback() != null) {
-                returnValue.setStdout(new String(Files.readAllBytes(stdoutFile.toPath())));
-                returnValue.setStderr(new String(Files.readAllBytes(stderrFile.toPath())));
-            }
-        } catch (Throwable t) {
-            log.error("Ansible playbook execution failed: {}",
-                    t.getMessage() != null ? t.getMessage() : t.getClass().getName());
-            log.debug("Exception:", t);
-        } finally {
-            if (ansibleProcess != null) {
-                ansibleProcess.destroy();
-            }
-            log.info("Ansible playbook command has exited with value: {}", returnValue.getAnsibleReturnCode());
-            fileRemover.removeFile(stdoutFile.toPath());
-            fileRemover.removeFile(stderrFile.toPath());
+            // Cancel playbook, and raise exception in case timeout occur:
+            runnerClient.cancelPlaybook(playUuid);
+            throw new PlaybookExecutionException(
+                "Timeout exceed while waiting for playbook. ", command.playbook()
+            );
+        } catch (Exception ex) {
+            log.error("Exception: {}", ex.getMessage());
+            log.debug("Exception: ", ex);
         }
 
-        log.trace("Exit AnsibleExecutor::runCommand");
-        return returnValue;
+        return ret;
     }
-
 }

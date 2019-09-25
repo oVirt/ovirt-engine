@@ -69,13 +69,12 @@ public class AnsibleServlet extends HttpServlet {
             Path variablesFile = null;
             try {
                 variablesFile = createVariablesFile(request);
-                AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
+                AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                         .variable("engine_url", engineUrl)
                         .variable("engine_token", token)
                         .variable("engine_insecure", "true") // TODO: use CA
                         .variableFilePath(variablesFile.toString())
-                        .playbook(request.getParameter("playbook") + ".yml")
-                        .build();
+                        .playbook(request.getParameter("playbook") + ".yml");
 
                 // Verify the ansible-playbook exists
                 Path playbook = Paths.get(commandConfig.playbook());

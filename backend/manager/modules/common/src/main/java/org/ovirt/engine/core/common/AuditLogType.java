@@ -70,6 +70,9 @@ public enum AuditLogType {
     VDS_PACKAGES_IN_PROGRESS_WARNING(551, AuditLogSeverity.WARNING),
     VDS_PACKAGES_IN_PROGRESS_ERROR(552, AuditLogSeverity.ERROR),
 
+    // Ansible runner notification
+    ANSIBLE_RUNNER_EVENT_NOTIFICATION(559),
+
     // Ansible host execution
     VDS_ANSIBLE_INSTALL_STARTED(560),
     VDS_ANSIBLE_INSTALL_FINISHED(561),

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -452,5 +453,17 @@ public class AuditLogableImpl implements AuditLogable {
                 .append("external", isExternal())
                 .append("callStack", getCallStack())
                 .build();
+    }
+
+    public static AuditLogable createHostEvent(VDS host, String correlationId, Map<String, String> customValues) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(host.getId());
+        logable.setVdsName(host.getName());
+        logable.setClusterId(host.getClusterId());
+        logable.setClusterName(host.getClusterName());
+        logable.setCorrelationId(correlationId);
+        customValues.entrySet().stream()
+            .forEach(v -> logable.addCustomValue(v.getKey(), v.getValue()));
+        return logable;
     }
 }

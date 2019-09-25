@@ -204,7 +204,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
         }
         VDS vds = getVds();
-        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(vds)
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
                 .variable("host_deploy_cluster_name", hostCluster.getName())
@@ -220,14 +220,14 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(vds))
                 .variable("host_deploy_ovn_central", getOvnCentral())
                 .variable("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
-                .variable("host_deploy_kdump_integration", getVds().isPmEnabled() && getVds().isPmKdumpDetection())
+                .variable("host_deploy_kdump_integration", vds.isPmEnabled() && vds.isPmKdumpDetection())
                 .variable("host_deploy_kdump_destination_address", kdumpDestinationAddress)
                 .variable("host_deploy_kdump_destination_port",
                         Config.getValue(ConfigValues.FenceKdumpDestinationPort))
                 .variable("host_deploy_kdump_message_interval",
                         Config.getValue(ConfigValues.FenceKdumpMessageInterval))
-                .variable("host_deploy_kernel_cmdline_new", getVds().getCurrentKernelCmdline())
-                .variable("host_deploy_kernel_cmdline_old", getVds().getLastStoredKernelCmdline())
+                .variable("host_deploy_kernel_cmdline_new", vds.getCurrentKernelCmdline())
+                .variable("host_deploy_kernel_cmdline_old", vds.getLastStoredKernelCmdline())
                 .variable("ovirt_pki_dir", config.getPKIDir())
                 .variable("ovirt_vds_hostname", vds.getHostName())
                 .variable("ovirt_vdscertificatevalidityinyears",
@@ -243,12 +243,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-host-deploy-ansible")
-                .logFileName(vds.getHostName())
-                .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
-                .build();
+                //.logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                //.logFilePrefix("ovirt-host-deploy-ansible")
+                //.logFileName(vds.getHostName())
+                //.logFileSuffix(getCorrelationId())
+                .correlationId(getCorrelationId())
+                .playAction(String.format("Installing Host %s", vds.getName()))
+                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
 
         AuditLogable logable = new AuditLogableImpl();
         logable.setVdsName(vds.getName());
@@ -262,7 +263,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 VDSStatus.InstallFailed,
                 String.format(
                     "Failed to execute Ansible host-deploy role. Please check logs for more details: %1$s",
-                        ansibleReturnValue.getLogFile()
+                    ansibleReturnValue.getLogFile()
                 )
             );
         }

@@ -40,11 +40,6 @@ public class AnsibleConstants {
     public static final String HOST_ENROLL_CERTIFICATE = "ovirt-host-enroll-certificate.yml";
 
     /**
-     * This is name of callback plugin which is used to run update in check mode.
-     */
-    public static final String HOST_UPGRADE_CALLBACK_PLUGIN = "hostupgradeplugin";
-
-    /**
      * This is name of file which executes the host-remove via Ansible.
      */
     public static final String HOST_REMOVE_PLAYBOOK = "ovirt-host-remove.yml";
@@ -68,16 +63,6 @@ public class AnsibleConstants {
      * This is name of file which executes the ova-import via Ansible.
      */
     public static final String IMPORT_OVA_PLAYBOOK = "ovirt-ova-import.yml";
-
-    /**
-     * This is name of callback plugin which is used to get OVF from an OVA.
-     */
-    public static final String OVA_QUERY_CALLBACK_PLUGIN = "ovaqueryplugin";
-
-    /**
-     * This is name of callback plugin which is used to get the measured size of an image.
-     */
-    public static final String IMAGE_MEASURE_CALLBACK_PLUGIN = "imagemeasureplugin";
 
     /**
      * This is name of file which executes the lvmcache via Ansible.

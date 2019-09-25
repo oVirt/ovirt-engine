@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.CreateOvaCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.HostValidator;
@@ -89,17 +88,11 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     }
 
     private ValidationResult validateTargetFolder() {
-        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
-                // /var/log/ovirt-engine/ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(CreateOvaCommand.CREATE_OVA_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-export-ova-validate-ansible")
-                .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK)
-                .build();
+                .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
         boolean succeeded = ansibleExecutor.runCommand(commandConfig).getAnsibleReturnCode() == AnsibleReturnCode.OK;
         return succeeded ? ValidationResult.VALID

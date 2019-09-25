@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.exportimport.ExtractOvaCommand;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -20,7 +20,9 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleVerbosity;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 
 public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters> extends QueriesCommandBase<P> {
@@ -29,6 +31,8 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     private VdsStaticDao vdsStaticDao;
     @Inject
     private AnsibleExecutor ansibleExecutor;
+    @Inject
+    private AnsibleRunnerHTTPClient runnerClient;
 
     public GetFromOvaQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -45,28 +49,44 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
 
     private String runAnsibleQueryOvaInfoPlaybook() {
         VdsStatic host = vdsStaticDao.get(getParameters().getVdsId());
-        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
-                .hosts(host)
-                .variable("ovirt_query_ova_path", getParameters().getPath())
-                .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
-                .variable("entity_type", getEntityType().name().toLowerCase())
-                // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
-                .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-query-ova-ansible")
-                .logFileName(host.getHostName())
-                .verboseLevel(AnsibleVerbosity.LEVEL0)
-                .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
-                .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK)
-                .build();
+        AnsibleCommandConfig command = new AnsibleCommandConfig()
+            .hosts(host)
+            .variable("ovirt_query_ova_path", getParameters().getPath())
+            .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
+            .variable("entity_type", getEntityType().name().toLowerCase())
+            .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
+        StringBuilder stdout = new StringBuilder();
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+            command,
+            (String taskName, String eventUrl) -> {
+                AuditLogable logable = AuditLogableImpl.createHostEvent(
+                        command.hosts().get(0),
+                        command.correlationId(),
+                        new HashMap<String, String>() {
+                            {
+                                put("Message", taskName);
+                                put("PlayAction", command.playAction());
+                            }
+                        }
+                );
+                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+
+                try {
+                    stdout.append(runnerClient.getCommandStdout(eventUrl));
+                } catch (Exception ex) {
+                    log.error("Error: {}", ex.getMessage());
+                    log.debug("Exception: ", ex);
+                }
+            }
+        );
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to query OVA info: {}", ansibleReturnValue.getStderr());
             throw new EngineException(EngineError.GeneralException, "Failed to query OVA info");
         }
 
-        return ansibleReturnValue.getStdout();
+        return stdout.toString();
     }
 
     private Map<String, T> parseOvfs(String stdout) {

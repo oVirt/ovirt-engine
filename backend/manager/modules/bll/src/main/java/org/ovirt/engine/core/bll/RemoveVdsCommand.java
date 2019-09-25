@@ -143,10 +143,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         auditable.setCorrelationId(getCorrelationId());
 
         try {
-            AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
-                    .hosts(vds)
-                    .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK)
-                    .build();
+            AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+                .hosts(vds)
+                .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK);
 
             auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_STARTED);
 

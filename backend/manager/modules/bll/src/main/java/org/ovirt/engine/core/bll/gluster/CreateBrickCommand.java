@@ -164,7 +164,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         int diskCount = getParameters().getNoOfPhysicalDisksInRaidVolume() == null ? 1
                 : getParameters().getNoOfPhysicalDisksInRaidVolume();
 
-        AnsibleCommandConfig commandConfig = AnsibleCommandConfig.builder()
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("ssd", ssdDevice)
                 .variable("disks", JsonHelper.objectToJson(disks, false))
@@ -181,13 +181,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                 .variable("cachemode", getParameters().getCacheMode())
                 .variable("fstype", GlusterConstants.FS_TYPE_XFS)
                 .variable("mntpath", getParameters().getMountPoint())
-                // /var/log/ovirt-engine/brick-setup/ovirt-gluster-brick-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-gluster-brick-ansible")
-                .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
-                .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK)
-                .build();
+                .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
 
          AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
