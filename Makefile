@@ -230,6 +230,10 @@ GENERATED = \
 	build/helptag-oneline-check.py \
 	build/python-check.sh \
 	build/shell-check.sh \
+	packaging/ansible-runner-service-project/project/roles/ovirt-ova-query/files/query_ova.py \
+	packaging/ansible-runner-service-project/project/roles/ovirt-ova-pack/files/pack_ova.py \
+	packaging/ansible-runner-service-project/project/roles/ovirt-ova-extract/files/extract_ova.py \
+	packaging/ansible-runner-service-project/project/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py \
 	packaging/bin/engine-backup.sh \
 	packaging/bin/engine-host-update.py \
 	packaging/bin/engine-migrate-he.py \
@@ -246,10 +250,6 @@ GENERATED = \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \
 	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt_vmconsole_conf.py \
 	packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py \
-	packaging/playbooks/roles/ovirt-ova-query/files/query_ova.py \
-	packaging/playbooks/roles/ovirt-ova-pack/files/pack_ova.py \
-	packaging/playbooks/roles/ovirt-ova-extract/files/extract_ova.py \
-	packaging/playbooks/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py \
 	packaging/pythonlib/ovirt_engine/config.py \
 	packaging/services/ovirt-engine-notifier/config.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
@@ -304,10 +304,10 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/bin/engine-migrate-he.py
 	chmod a+x packaging/bin/vdsm_to_network_name_map
 	chmod a+x packaging/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py
-	chmod a+x packaging/playbooks/roles/ovirt-ova-query/files/query_ova.py
-	chmod a+x packaging/playbooks/roles/ovirt-ova-pack/files/pack_ova.py
-	chmod a+x packaging/playbooks/roles/ovirt-ova-extract/files/extract_ova.py
-	chmod a+x packaging/playbooks/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py
+	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-ova-query/files/query_ova.py
+	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-ova-pack/files/pack_ova.py
+	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-ova-extract/files/extract_ova.py
+	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py
 	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.py
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
@@ -485,8 +485,8 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/sys-etc TARGETDIR="$(DESTDIR)$(SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/etc TARGETDIR="$(DESTDIR)$(PKG_SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pki TARGETDIR="$(DESTDIR)$(PKG_PKI_DIR)" EXCLUDE_GEN="$(GENERATED)"
-	for d in bin conf files firewalld services playbooks cinderlib; do \
-		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)"; \
+	for d in bin conf files firewalld services playbooks cinderlib ansible-runner-service-project; do \
+		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)" EXCLUDE="packaging/ansible-runner-service-project/env/.gitkeep"; \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/doc TARGETDIR="$(DESTDIR)$(PKG_DOC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/man TARGETDIR="$(DESTDIR)$(MAN_DIR)" EXCLUDE_GEN="$(GENERATED)"

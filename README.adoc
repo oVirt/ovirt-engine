@@ -26,6 +26,7 @@ Install the following system components:
 - ovirt-setup-lib
 - maven-3 >= 3.5
 - ansible >= 2.7.2
+- ansible-runner-service-dev >= 1.0.1
 - ovirt-ansible-roles >= 1.1.6
 - ovirt-engine-metrics
 - python-ovirt-engine-sdk4
@@ -129,6 +130,7 @@ Install additional packages for Fedora:
 
   $ sudo yum install -y \
         ansible \
+        ansible-runner-service-dev \
         bind-utils \
         libxml2-python \
         m2crypto \
@@ -251,6 +253,25 @@ Enable uuid-ossp extension for the database:
   # su - postgres -c "scl enable rh-postgresql10 -- psql -d engine" # if on el7 with rh-postgresql10
   engine=# CREATE EXTENSION "uuid-ossp";
   engine=# \q
+
+=== Ansible Runner Service configration
+
+Since oVirt 4.4 the engine is integrated with Ansible Runner Service. To properly integrate the development
+environment with the Ansible Runner Service, you need to edit `/etc/ansible-runner-service/config.yaml` file
+as follows:
+
+  ---
+  playbooks_root_dir: '$PREFIX/share/ovirt-engine/ansible-runner-service-project'
+  ssh_private_key: '$PREFIX/etc/pki/ovirt-engine/keys/engine_id_rsa'
+  port: 50001
+  target_user: root
+
+Where `$PREFIX` is the prefix of your development environment, which you've specified during the compilation of the engine.
+
+After edditing the file, make sure you've restarted the Ansible Runner Service service:
+
+  # systemctl restart ansible-runner-service
+  # systemctl enable ansible-runner-service
 
 == Development
 

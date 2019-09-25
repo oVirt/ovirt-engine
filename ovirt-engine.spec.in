@@ -308,6 +308,7 @@ Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-ui-extensions >= 1.0.4
 Requires:	ansible >= 2.7.2
+Requires:	ansible-runner-service >= 1.0.1
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
@@ -318,6 +319,7 @@ Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.1.0
+Requires:	python-mod_wsgi >= 4.6.4
 Requires:	rxjava
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
@@ -1100,6 +1102,7 @@ fi
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
 %dir %{engine_data}/playbooks
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
 %dir %{engine_etc}/branding
@@ -1358,6 +1361,21 @@ fi
 %{_bindir}/ovirt-register-sso-client-tool
 %{_bindir}/engine-vacuum
 %{_mandir}/man8/engine-config.*
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/env
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/inventory
+%attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/inventory/hosts
+%{engine_data}/ansible-runner-service-project/project/ansible.cfg
+%{engine_data}/ansible-runner-service-project/project/create-brick.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-host-deploy.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-host-enroll-certificate.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-host-remove.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-host-upgrade.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-ova-export.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-ova-import.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-ova-query.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-image-measure.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-vnc-sasl.yml
+%{engine_data}/ansible-runner-service-project/project/roles/
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-prolog.sh
 %{engine_data}/bin/engine-vacuum.sh
@@ -1372,22 +1390,10 @@ fi
 %{engine_data}/conf/jaas.conf
 %{engine_data}/conf/notifier-logging.properties
 %{engine_data}/conf/tools-logging.properties
-%{engine_data}/playbooks/ansible.cfg
-%{engine_data}/playbooks/create-brick.yml
 %{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
 %{engine_data}/playbooks/install-skydive.inventory.sample/01_hosts
 %{engine_data}/playbooks/install-skydive.yml
-%{engine_data}/playbooks/ovirt-host-deploy.yml
-%{engine_data}/playbooks/ovirt-host-enroll-certificate.yml
-%{engine_data}/playbooks/ovirt-host-remove.yml
-%{engine_data}/playbooks/ovirt-host-upgrade.yml
-%{engine_data}/playbooks/ovirt-ova-export.yml
-%{engine_data}/playbooks/ovirt-ova-import.yml
-%{engine_data}/playbooks/ovirt-ova-query.yml
-%{engine_data}/playbooks/ovirt-image-measure.yml
 %{engine_data}/playbooks/ovirt-provider-ovn-driver.yml
-%{engine_data}/playbooks/ovirt-vnc-sasl.yml
-%{engine_data}/playbooks/roles/
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/
 %{engine_etc}/ansible/ovirt-host-deploy-post-tasks.yml.example
