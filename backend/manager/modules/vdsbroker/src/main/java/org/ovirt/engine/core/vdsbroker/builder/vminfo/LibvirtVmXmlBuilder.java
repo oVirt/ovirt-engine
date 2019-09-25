@@ -2563,9 +2563,13 @@ public class LibvirtVmXmlBuilder {
     private void writeAlias(VmDevice device) {
         if (device.isManaged()) {
             writer.writeStartElement("alias");
-            writer.writeAttributeString("name", String.format("ua-%s", device.getId().getDeviceId()));
+            writer.writeAttributeString("name", generateUserAliasForDevice(device));
             writer.writeEndElement();
         }
+    }
+
+    public static String generateUserAliasForDevice(VmDevice device) {
+        return String.format("ua-%s", device.getId().getDeviceId());
     }
 
     private void writeAddress(Map<String, String> addressMap) {
