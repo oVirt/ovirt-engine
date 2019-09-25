@@ -229,9 +229,37 @@ class FileLocations(object):
         'iso',
     )
 
+    ANSIBLE_RUNNER_SERVICE_CONF = os.path.join(
+        SYSCONFDIR,
+        'ansible-runner-service',
+        'config.yaml',
+    )
+
+    ANSIBLE_RUNNER_SERVICE_PROJECT = os.path.join(
+        OVIRT_ENGINE_DATADIR,
+        'ansible-runner-service-project',
+    )
+
     DIR_HTTPD = os.path.join(
-        osetupcons.FileLocations.SYSCONFDIR,
+        SYSCONFDIR,
         'httpd',
+    )
+
+    DIR_WWW = os.path.join(
+        LOCALSTATEDIR,
+        'www',
+    )
+
+    HTTPD_RUNNER_WSGI_SCRIPT = os.path.join(
+        DIR_WWW,
+        'runnner',
+        'runner.wsgi',
+    )
+
+    HTTPD_CONF_ANSIBLE_RUNNER_SERVICE = os.path.join(
+        DIR_HTTPD,
+        'conf.d',
+        'zz-ansible-runner-service.conf',
     )
 
     HTTPD_CONF_OVIRT_ENGINE = os.path.join(
@@ -330,6 +358,8 @@ class Defaults(object):
     DEFAULT_ISO_DOMAIN_NAME = 'ISO_DOMAIN'
 
     DEFAULT_CLEAR_TASKS_WAIT_PERIOD = 20
+
+    DEFAULT_ANSIBLE_RUNNER_SERVICE_PORT = '50001'
 
     DEFAULT_DB_HOST = 'localhost'
     DEFAULT_DB_PORT = 5432
