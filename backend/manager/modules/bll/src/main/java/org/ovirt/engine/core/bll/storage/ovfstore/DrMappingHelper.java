@@ -280,12 +280,12 @@ public class DrMappingHelper {
                 String destRoleName = roleMap.get(roleName);
                 log.info("Attempting to map role '{}' to '{}'", roleName, destRoleName);
                 if (destRoleName == null) {
-                    log.info("Mapping for role '{}' was not found, will try to use OVF role");
-                    rolesToAdd.add(destRoleName);
+                    log.info("Mapping for role '{}' was not found, will try to use OVF role", roleName);
+                    rolesToAdd.add(roleName);
                 } else {
                     Role destRole = roleDao.getByName(destRoleName);
                     String roleToAdd = Optional.ofNullable(destRole).map(Role::getName).orElse(roleName);
-                    log.info("Will try to add role '{}' for user '{}'", roleToAdd);
+                    log.info("Will try to add role '{}' for user '{}'", roleToAdd, user);
                     rolesToAdd.add(roleToAdd);
                 }
             });
