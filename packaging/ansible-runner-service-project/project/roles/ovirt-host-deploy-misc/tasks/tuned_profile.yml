@@ -1,0 +1,26 @@
+---
+- name: Set profile
+  set_fact:
+    profile: >
+            "{{ 'virtual-host' if (host_deploy_tuned_profile == 'null' and host_deploy_virt_enabled|bool)
+            else host_deploy_tuned_profile }}"
+
+- name: Get lastest tune package
+  yum:
+    name: tuned
+    state: latest
+
+- name: Start tune service
+  service:
+    name: tuned
+    state: started
+
+- name: Set tune profile
+  shell: "tuned-adm profile {{ profile }}"
+  register: tune_profile_set
+
+- name: Enable tune service
+  service:
+    name: tuned
+    enabled: yes
+  when: tune_profile_set.rc == 0

@@ -131,7 +131,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             Cluster hostCluster = clusterDao.get(getClusterId());
 
             deploy.addUnit(
-                new VdsDeployMiscUnit(),
                 new VdsDeployVdsmUnit(hostCluster.getCompatibilityVersion()),
                 new VdsDeployPKIUnit()
             );
@@ -204,6 +203,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
         }
         VDS vds = getVds();
+        boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
+        String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(vds)
                 .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
@@ -241,6 +242,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("ovirt_engine_usr", config.getUsrDir())
                 .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
                 .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
+                .variable("host_deploy_gluster_supported", isGlusterServiceSupported)
+                .variable("host_deploy_tuned_profile", tunedProfile)
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)

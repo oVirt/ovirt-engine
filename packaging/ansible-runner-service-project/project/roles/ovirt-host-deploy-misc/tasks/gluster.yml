@@ -1,0 +1,23 @@
+---
+- name: Fetch packages information
+  package_facts:
+    manager: auto
+
+- block:
+    - name: Update vdsm-gluster package
+      yum:
+        name: vdsm-gluster
+        state: latest
+
+    - name: Restart gluster
+      service:
+        name: glusterd
+        state: started
+        enabled: yes
+
+    - name: Restart glustereventsd
+      service:
+        name: glustereventsd
+        state: started
+        enabled: yes
+  when: "'vdsm-gluster' in ansible_facts.packages"
