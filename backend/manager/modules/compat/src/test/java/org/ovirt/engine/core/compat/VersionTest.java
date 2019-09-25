@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 
 public class VersionTest {
@@ -57,5 +60,15 @@ public class VersionTest {
         assertTrue(Version.v4_3.lessOrEquals(new Version("4.3")));
         assertTrue(Version.v4_2.lessOrEquals(Version.v4_3));
         assertFalse(Version.v4_3.lessOrEquals(Version.v4_2));
+    }
+    @Test
+    public void lessOrEqualsCollection() {
+        assertFalse(Version.v4_3.lessOrEquals(Collections.singletonList(Version.v4_2)));
+        assertFalse(Version.v4_4.lessOrEquals(Collections.singletonList(Version.v4_2)));
+        assertTrue(Version.v4_3.lessOrEquals(Collections.singletonList(Version.v4_3)));
+        assertTrue(Version.v4_3.lessOrEquals(Arrays.asList(Version.v4_2, Version.v4_3)));
+        assertTrue(Version.v4_3.lessOrEquals(Arrays.asList(Version.v4_2, Version.v4_3, Version.v4_4)));
+        assertTrue(Version.v4_3.lessOrEquals(Arrays.asList(Version.v4_3, Version.v4_4)));
+        assertTrue(Version.v4_4.lessOrEquals(Version.ALL));
     }
 }

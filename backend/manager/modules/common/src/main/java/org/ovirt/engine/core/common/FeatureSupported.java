@@ -199,4 +199,15 @@ public class FeatureSupported {
     public static boolean isVgpuPlacementSupported(Version version) {
         return supportedInConfig(ConfigValues.VgpuPlacementSupported, version);
     }
+    /**
+     * Skip commit network changes is supported for
+     * - host supporting commitOnSuccess (>= 4.3)
+     * - engine has at least version 4.4
+     *
+     * @param vds the host
+     * @return true if skipping the commit is allowed
+     */
+    public static boolean isSkipCommitNetworkChangesSupported(VDS vds) {
+        return vds != null && Version.v4_3.lessOrEquals(vds.getSupportedClusterVersionsSet());
+    }
 }

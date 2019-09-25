@@ -2,6 +2,7 @@ package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -119,6 +120,13 @@ public class Version implements Comparable<Version>, Serializable {
      */
     public boolean lessOrEquals(Version candidate) {
         return this.compareTo(candidate) <= 0;
+    }
+
+    /**
+     * @return true if this version is within the range of the candidate versions or below it
+     */
+    public boolean lessOrEquals(Collection<Version> candidates) {
+        return candidates.stream().anyMatch(this::lessOrEquals);
     }
 
     public String toString(int i) {
