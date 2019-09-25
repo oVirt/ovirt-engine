@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -105,6 +106,16 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
 
     private ListModel<Version> privateVersion;
 
+    private boolean isEdit;
+
+    public void setIsEdit(boolean value) {
+        this.isEdit = value;
+    }
+
+    public boolean getIsEdit() {
+        return this.isEdit;
+    }
+
     public ListModel<Version> getVersion() {
         return privateVersion;
     }
@@ -182,7 +193,15 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                 }
             }
 
-            getVersion().setItems(versions);
+            if (getIsEdit() && getEntity() != null) {
+                Version compatibilityVersion = getEntity().getCompatibilityVersion();
+                List<Version> filteredVersions = versions.stream()
+                        .filter(version -> version.compareTo(compatibilityVersion) >= 0)
+                        .collect(Collectors.toList());
+                getVersion().setItems(filteredVersions);
+            } else {
+                getVersion().setItems(versions);
+            }
 
             if (selectedVersion == null) {
                 getVersion().setSelectedItem(versions.stream().max(Comparator.naturalOrder()).orElse(null));

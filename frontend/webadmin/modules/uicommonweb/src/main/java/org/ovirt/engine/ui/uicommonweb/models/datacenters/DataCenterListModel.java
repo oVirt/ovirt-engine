@@ -291,6 +291,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.setHelpTag(HelpTag.edit_data_center);
         model.setHashName("edit_data_center"); //$NON-NLS-1$
         model.getName().setEntity(dataCenter.getName());
+        model.setIsEdit(true);
 
         model.getDescription().setEntity(dataCenter.getdescription());
         model.getComment().setEntity(dataCenter.getComment());
