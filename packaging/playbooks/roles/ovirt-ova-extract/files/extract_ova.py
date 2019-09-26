@@ -3,6 +3,7 @@
 import io
 import mmap
 import os
+import pwd
 import sys
 
 
@@ -24,9 +25,15 @@ def extract_disk(ova_path, offset, image_path):
     output = check_output(['losetup', '--find', '--show', '-o', str(offset),
                            ova_path])
     loop = output.splitlines()[0]
+    loop_stat = os.stat(loop)
+    vdsm_user = pwd.getpwnam('vdsm')
+    os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)
     try:
-        call(['qemu-img', 'convert', '-O', 'qcow2', loop, image_path])
+        qemu_cmd = ("qemu-img convert -O qcow2 '%s' '%s'"
+                    % (loop, image_path))
+        call(['su', '-p', '-c', qemu_cmd, 'vdsm'])
     finally:
+        os.chown(loop, loop_stat.st_uid, loop_stat.st_gid)
         call(['losetup', '-d', loop])
 
 
