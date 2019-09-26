@@ -51,7 +51,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/watchdog/models").put("value", WATCH_DOG_MODELS);
         preferences.node("/os/rhel7/devices/maxPciDevices").put("value", MAX_PCI_DEVICES);
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "2048");
-        preferences.node("/os/rhel7/resources/minimum/ram").put("value.4.1", "1024");
+        preferences.node("/os/rhel7/resources/minimum/ram").put("value.4.2", "1024");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/vga,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
@@ -78,7 +78,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci,q35/qemu-xhci");
         preferences.node("/os/rhel6/id").put("value", "999");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
-        preferences.node("/os/rhel6/devices/usb/controller").put("value.4.1", "none");
+        preferences.node("/os/rhel6/devices/usb/controller").put("value.4.2", "none");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -264,12 +264,12 @@ public class OsRepositoryImplTest {
     @Test
     public void testVersionedValue() {
         assertEquals(2048, OsRepositoryImpl.INSTANCE.getMinimumRam(777, null));
-        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, Version.v4_1));
+        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(777, Version.v4_2));
     }
 
     @Test
     public void testDerivedVersionedValue() {
-        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v4_1));
+        assertEquals(1024, OsRepositoryImpl.INSTANCE.getMinimumRam(888, Version.v4_2));
     }
 
     @Test
@@ -287,14 +287,14 @@ public class OsRepositoryImplTest {
     public void testHyperVLinux() {
         assertFalse(OsRepositoryImpl.INSTANCE.isHypervEnabled(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"),
-                Version.v4_1));
+                Version.v4_2));
     }
 
     @Test
     public void testHyperVWindows() {
         assertTrue(OsRepositoryImpl.INSTANCE.isHypervEnabled(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_7"),
-                Version.v4_1));
+                Version.v4_2));
     }
 
     @Test
@@ -352,7 +352,7 @@ public class OsRepositoryImplTest {
     public void testExistingUsbControllerModelWithVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
-                Version.v4_1,
+                Version.v4_2,
                 ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NONE, model);
     }
@@ -361,7 +361,7 @@ public class OsRepositoryImplTest {
     public void testExistingUsbControllerModelWithNonExistingVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
-                Version.v4_2,
+                Version.v4_3,
                 ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NEC_XHCI, model);
     }
