@@ -884,7 +884,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         initializeCommand(Guid.newGuid());
         mockVm();
         StoragePool storagePool = new StoragePool();
-        storagePool.setCompatibilityVersion(Version.v4_1);
+        storagePool.setCompatibilityVersion(Version.v4_2);
         command.setStoragePool(storagePool);
         command.getParameters().getDiskVmElement().setPassDiscard(true);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
