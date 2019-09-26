@@ -167,10 +167,10 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
             advancedDetails.getBrickDetails().forEach(b -> {
                 BrickProperties properties = glusterBrickDao.getById(b.getBrickProperties().getBrickId()).getBrickProperties();
                 if (properties != null) {
-                    Double confirmedFreeSize = properties.getConfirmedFreeSize() == null ? properties.getFreeSize() : properties.getConfirmedFreeSize();
+                    double confirmedFreeSize = properties.getConfirmedFreeSize() == null ? properties.getFreeSize() : properties.getConfirmedFreeSize();
                     b.getBrickProperties().setConfirmedFreeSize(confirmedFreeSize);
 
-                    Integer vdoSavings = properties.getVdoSavings() == null ? 0 : properties.getVdoSavings();
+                    int vdoSavings = properties.getVdoSavings() == null ? 0 : properties.getVdoSavings();
                     b.getBrickProperties().setVdoSavings(vdoSavings);
                 } else {
                     b.getBrickProperties().setConfirmedFreeSize(b.getBrickProperties().getFreeSize());
