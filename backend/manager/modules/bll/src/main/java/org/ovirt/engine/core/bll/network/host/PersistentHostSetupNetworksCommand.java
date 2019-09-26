@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.ovirt.engine.core.common.FeatureSupported.isSkipCommitNetworkChangesSupported;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 @NonTransactiveCommandAttribute
@@ -25,6 +28,9 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private VdsDao vdsDao;
 
     public PersistentHostSetupNetworksCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -59,7 +65,8 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
         ActionReturnValue returnValue =
                 runInternalAction(ActionType.HostSetupNetworks, params, cloneContextAndDetachFromParent());
 
-        if (returnValue.getSucceeded()) {
+        boolean skipCommit = params.isCommitOnSuccess() && isSkipCommitNetworkChangesSupported(vdsDao.get(getVdsId()));
+        if (returnValue.getSucceeded() && !skipCommit) {
             boolean changesDetected = checkForChanges();
             if (changesDetected) {
                 VdsActionParameters parameters = new VdsActionParameters(getParameters().getVdsId());
