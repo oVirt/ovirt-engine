@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
+import org.ovirt.engine.ui.common.widget.editor.IntegerListModelTypeAheadListBox;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBoxEditor;
@@ -652,11 +653,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     public EntityModelDetachableWidget migrationModeEditorWithDetachable;
 
-    @Path(value = "overrideMigrationDowntime.entity")
-    @WithElementId("overrideMigrationDowntime")
-    @UiField(provided = true)
-    public EntityModelCheckBoxEditor overrideMigrationDowntimeEditor;
-
     @UiField(provided = true)
     public EntityModelDetachableWidget overrideMigrationDowntimeEditorWithDetachable;
 
@@ -679,10 +675,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     public InfoIcon migrationSelectInfoIcon;
 
+    @UiField
+    @Ignore
+    public EnableableFormLabel migrationDowntimeLabel;
+
     @UiField(provided = true)
-    @Path(value = "migrationDowntime.entity")
+    @Path(value = "migrationDowntime.selectedItem")
     @WithElementId("migrationDowntime")
-    public IntegerEntityModelTextBoxOnlyEditor migrationDowntimeEditor;
+    public ListModelTypeAheadListBoxEditor<Integer> migrationDowntimeEditor;
 
     @UiField(provided = true)
     @Path(value = "autoConverge.selectedItem")
@@ -1155,7 +1155,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         minAllocatedMemoryEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         detachableMinAllocatedMemoryEditor = new EntityModelDetachableWidgetWithInfo(physMemGuarLabel, minAllocatedMemoryEditor);
 
-        overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.IGNORE);
+        overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(migrationDowntimeEditor, Align.IGNORE);
         overrideMigrationDowntimeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
         overrideMigrationPolicyEditorWithDetachable = new EntityModelDetachableWidget(migrationPolicyEditor, Align.IGNORE);
@@ -1478,8 +1478,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ListModelListBoxEditor<>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());
         migrationModeEditor.hideLabel();
 
-        overrideMigrationDowntimeEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        migrationDowntimeEditor = new ListModelTypeAheadListBoxEditor<>(
+                new IntegerListModelTypeAheadListBox(getNullMigrationDowntimeString()), new ModeSwitchingVisibilityRenderer());
+        migrationDowntimeEditor.hideLabel();
 
         migrationPolicyRenderer = new ClusterDefaultRenderer<>(new NameRenderer<MigrationPolicy>());
         migrationPolicyEditor = new ListModelListBoxOnlyEditor<>(migrationPolicyRenderer, new ModeSwitchingVisibilityRenderer());
@@ -1746,8 +1747,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         object.getMigrationDowntime().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                migrationDowntimeLabel.setVisible(object.getMigrationDowntime().getIsAvailable());
                 migrationDowntimeInfoIcon.setVisible(object.getMigrationDowntime().getIsAvailable());
                 overrideMigrationDowntimeEditorWithDetachable.setVisible(object.getMigrationDowntime().getIsAvailable());
+            }
+
+            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
+                migrationDowntimeLabel.setEnabled(object.getMigrationDowntime().getIsChangable());
             }
         });
 
@@ -1999,7 +2005,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         defaultHostEditor.setTabIndex(nextTabIndex++);
         migrationModeEditor.setTabIndex(nextTabIndex++);
         migrationPolicyEditor.setTabIndex(nextTabIndex++);
-        overrideMigrationDowntimeEditor.setTabIndex(nextTabIndex++);
         migrationDowntimeEditor.setTabIndex(nextTabIndex++);
         autoConvergeEditor.setTabIndex(nextTabIndex++);
         migrateCompressedEditor.setTabIndex(nextTabIndex++);
@@ -2329,5 +2334,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 return constants.dontEncrypt();
             }
         }
+    }
+
+    private String getNullMigrationDowntimeString() {
+        return constants.systemDefaultOption() + " (" + AsyncDataProvider.getInstance().getMigrationDowntime() + ")";//$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -2887,6 +2887,11 @@ public class AsyncDataProvider {
                 getDefaultConfigurationVersion());
     }
 
+    public Integer getMigrationDowntime() {
+        return (Integer) getConfigValuePreConverted(ConfigValues.DefaultMaximumMigrationDowntime,
+                getDefaultConfigurationVersion());
+    }
+
     public int getOptimizeSchedulerForSpeedPendingRequests() {
         return (Integer) getConfigValuePreConverted(ConfigValues.SpeedOptimizationSchedulingThreshold,
                 getDefaultConfigurationVersion());

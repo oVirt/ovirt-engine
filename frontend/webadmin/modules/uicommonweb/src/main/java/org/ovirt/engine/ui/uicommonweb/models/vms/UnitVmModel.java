@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1224,16 +1225,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         migrationMode = value;
     }
 
-    private NotChangableForVmInPoolEntityModel<Boolean> overrideMigrationDowntime;
-
-    public EntityModel<Boolean> getOverrideMigrationDowntime() {
-        return overrideMigrationDowntime;
-    }
-
-    private void setOverrideMigrationDowntime(NotChangableForVmInPoolEntityModel<Boolean> value) {
-        overrideMigrationDowntime = value;
-    }
-
     private ListModelWithClusterDefault<MigrationPolicy> migrationPolicies;
 
     public ListModel<MigrationPolicy> getMigrationPolicies() {
@@ -1244,13 +1235,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.migrationPolicies = migrationPolicies;
     }
 
-    private NotChangableForVmInPoolEntityModel<Integer> migrationDowntime;
+    private NotChangableForVmInPoolListModel<Integer> migrationDowntime;
 
-    public EntityModel<Integer> getMigrationDowntime() {
+    public ListModel<Integer> getMigrationDowntime() {
         return migrationDowntime;
     }
 
-    private void setMigrationDowntime(NotChangableForVmInPoolEntityModel<Integer> value) {
+    private void setMigrationDowntime(NotChangableForVmInPoolListModel<Integer> value) {
         migrationDowntime = value;
     }
 
@@ -1692,11 +1683,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setMigrationMode(new NotChangableForVmInPoolListModel<MigrationSupport>());
         getMigrationMode().getSelectedItemChangedEvent().addListener(this);
 
-        setOverrideMigrationDowntime(new NotChangableForVmInPoolEntityModel<Boolean>());
-        getOverrideMigrationDowntime().getEntityChangedEvent().addListener(this);
-
-        setMigrationDowntime(new NotChangableForVmInPoolEntityModel<Integer>());
-        getMigrationDowntime().getEntityChangedEvent().addListener(this);
+        setMigrationDowntime(new NotChangableForVmInPoolListModel<Integer>());
+        getMigrationDowntime().setItems(new ArrayList<Integer>(Collections.singletonList(null)));
+        getMigrationDowntime().getSelectedItemChangedEvent().addListener(this);
 
         setMigrationPolicies(new ListModelWithClusterDefault<MigrationPolicy>());
         getMigrationPolicies().getSelectedItemChangedEvent().addListener(this);
@@ -2078,8 +2067,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getIsHighlyAvailable()) {
                 behavior.updateMigrationAvailability();
                 updateResumeBehavior();
-            } else if (sender == getOverrideMigrationDowntime()) {
-                overrideMigrationDowntimeChanged();
             } else if (sender == getIsSubTemplate()) {
                 behavior.isSubTemplateEntityChanged();
             } else if (sender == getHostCpu()) {
@@ -2251,10 +2238,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));
         }
-
-        autoConverge.setIsChangeable(true);
-        migrateCompressed.setIsChangeable(true);
-        migrateEncrypted.setIsChangeable(true);
     }
 
     private void initGraphicsAndDisplayListeners() {
@@ -2541,11 +2524,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void provisioning_SelectedItemChanged(Object sender, EventArgs args) {
         behavior.provisioning_SelectedItemChanged();
-    }
-
-    private void overrideMigrationDowntimeChanged() {
-        Boolean entity = getOverrideMigrationDowntime().getEntity();
-        getMigrationDowntime().setIsChangeable(Boolean.TRUE.equals(entity));
     }
 
     private void updateSoundCard() {
@@ -2936,8 +2914,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public boolean validateHwPart() {
-        getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
-
         getTotalCPUCores().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(1, behavior.maxCpus),
@@ -3365,11 +3341,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public Integer getSelectedMigrationDowntime() {
-        if (Boolean.TRUE.equals(getOverrideMigrationDowntime().getEntity())) {
-            return getMigrationDowntime().getEntity();
-        } else {
-            return null;
-        }
+        return getMigrationDowntime().getSelectedItem();
     }
 
     public Guid getSelectedMigrationPolicy() {
@@ -3380,8 +3352,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void setSelectedMigrationDowntime(Integer value) {
-        getOverrideMigrationDowntime().setEntity(value != null);
-        getMigrationDowntime().setEntity(value);
+        getMigrationDowntime().setSelectedItem(value);
     }
 
     public boolean isCreateInstanceOnly() {
@@ -3502,23 +3473,21 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 // explicitly selected the empty
                 hasMigrationPolicy = false;
             }
+        } else if (NoMigrationPolicy.ID.equals(getMigrationPolicies().getSelectedItem().getId())){
+            hasMigrationPolicy = false;
         }
 
         Version version = getCompatibilityVersion();
         if (version == null || version.greaterOrEquals(Version.v4_4)) {
-            getOverrideMigrationDowntime().setIsAvailable(false);
             getMigrationDowntime().setIsAvailable(false);
             getAutoConverge().setIsAvailable(false);
             getMigrateCompressed().setIsAvailable(false);
         } else {
-            getOverrideMigrationDowntime().setIsAvailable(true);
             getMigrationDowntime().setIsAvailable(true);
             getAutoConverge().setIsAvailable(true);
             getMigrateCompressed().setIsAvailable(true);
 
-            getOverrideMigrationDowntime().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
-            boolean overrideDowntime = Boolean.TRUE.equals(getOverrideMigrationDowntime().getEntity());
-            getMigrationDowntime().setIsChangeable(!hasMigrationPolicy && overrideDowntime, constants.availableOnlyWithLegacyPolicy());
+            getMigrationDowntime().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
             getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
             getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
         }

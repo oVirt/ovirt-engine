@@ -150,7 +150,6 @@ public class InstanceTypeAttachDetachManager implements IEventListener<EventArgs
                 model.getThreadsPerCore(),
                 model.getIsHighlyAvailable(),
                 model.getMigrationMode(),
-                model.getOverrideMigrationDowntime(),
                 model.getMigrationDowntime(),
                 model.getMigrationPolicies(),
                 model.getPriority(),

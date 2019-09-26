@@ -50,6 +50,12 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 
+    public ListModelTypeAheadListBoxEditor(ListModelTypeAheadListBox<T> listBox,
+            VisibilityRenderer visibilityRenderer) {
+        super(listBox, visibilityRenderer);
+        this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
+    }
+
     @Override
     public WidgetWithLabelEditor<T, ListModelTypeAheadListBoxEditor<T>> asEditor() {
         return editor;

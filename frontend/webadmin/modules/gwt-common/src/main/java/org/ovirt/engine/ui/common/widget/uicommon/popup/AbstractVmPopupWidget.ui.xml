@@ -443,14 +443,14 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="overrideMigrationDowntimeEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" label="{constants.overrideMigrationDowntimeLabel}" />
+                    <l:EnableableFormLabel ui:field="migrationDowntimeLabel" addStyleNames="{style.floatLeft} " text="{constants.migrationDowntime}" />
                     <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                   <b:Column size="SM_1">
                     <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" usePatternFly="true" />
                   </b:Column>
                   <b:Column size="SM_6">
-                    <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" usePatternFly="true" />
+                    <e:ListModelTypeAheadListBoxEditor ui:field="migrationDowntimeEditor" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
