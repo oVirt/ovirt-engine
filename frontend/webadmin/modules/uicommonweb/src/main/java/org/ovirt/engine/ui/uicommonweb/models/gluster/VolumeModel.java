@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -284,9 +283,7 @@ public class VolumeModel extends Model {
     }
 
     private void updateArbiterAvailability() {
-        getArbiterVolume().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType()
-                && getCluster().getSelectedItem() != null
-                && Version.v4_1.compareTo(getCluster().getSelectedItem().getCompatibilityVersion()) <= 0);
+        getArbiterVolume().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType());
     }
 
     private void updateDefaults() {
