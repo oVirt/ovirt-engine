@@ -74,7 +74,7 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
     private static class  HaVmToRestart extends AutoStartVmToRestart {
         private static final int RETRY_TO_RUN_AUTO_START_VM_LONG_INTERVAL =
                 Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmLongIntervalInSeconds);
-        private static final int MAXIMUM_TIME_AUTO_START_BLOCKED_ON_PRIORITY =
+        private static final long MAXIMUM_TIME_AUTO_START_BLOCKED_ON_PRIORITY =
                 Config.<Integer> getValue(ConfigValues.MaxTimeAutoStartBlockedOnPriority);
 
         private long totalBlockedMs;

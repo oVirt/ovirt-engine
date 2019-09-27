@@ -187,13 +187,14 @@ public abstract class AutoStartVmsRunner implements BackendService {
     }
 
     private void processVmsToAdd() {
-        Set<Guid> vms = vmsToAdd;
+        Set<Guid> vms;
         synchronized (vmsToAddLock) {
-            vmsToAdd = null;
-        }
+            if (vmsToAdd == null) {
+                return;
+            }
 
-        if (vms == null) {
-            return;
+            vms = vmsToAdd;
+            vmsToAdd = null;
         }
 
         // The VMs are added even if they are already there, this resets the counters
