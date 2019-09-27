@@ -166,8 +166,8 @@ public class VmInfoBuildUtilsTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_1, false),
-                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_2, true)
+                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_2, false),
+                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_3, true)
         );
     }
 
@@ -329,7 +329,7 @@ public class VmInfoBuildUtilsTest {
         vm.setId(VM_ID);
         vm.setDiskMap(mockUnsortedDisksMap(lunDiskVmDevice, diskImageVmDevice));
         vm.setClusterArch(ArchitectureType.x86_64);
-        vm.setClusterCompatibilityVersion(Version.v4_1);
+        vm.setClusterCompatibilityVersion(Version.v4_2);
 
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap =
                 underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false, false);
@@ -353,34 +353,35 @@ public class VmInfoBuildUtilsTest {
 
     private Set<SupportedAdditionalClusterFeature> getSupportedAdditionalClusterFeatures(Boolean enabled) {
         SupportedAdditionalClusterFeature clusterFeature = new SupportedAdditionalClusterFeature();
-        AdditionalFeature feature = new AdditionalFeature(Guid.newGuid(), VmInfoBuildUtils.VDSM_LIBGF_CAP_NAME, Version.v4_1, null, null);
+        AdditionalFeature feature =
+                new AdditionalFeature(Guid.newGuid(), VmInfoBuildUtils.VDSM_LIBGF_CAP_NAME, Version.v4_2, null, null);
         clusterFeature.setFeature(feature);
         clusterFeature.setEnabled(enabled);
         return Collections.singleton(clusterFeature);
     }
 
     @Test
-    public void testGetNetworkDiskTypeForV41ClusterEnabled() {
+    public void testGetNetworkDiskTypeForV42ClusterEnabled() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v4_1);
+        vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setClusterId(CLUSTER_ID);
         doReturn(getSupportedAdditionalClusterFeatures(true)).when(clusterFeatureDao).getAllByClusterId(CLUSTER_ID);
         assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).get());
     }
 
     @Test
-    public void testGetNetworkDiskTypeForV41() {
+    public void testGetNetworkDiskTypeForV42() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v4_1);
+        vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setClusterId(CLUSTER_ID);
         doReturn(getSupportedAdditionalClusterFeatures(false)).when(clusterFeatureDao).getAllByClusterId(CLUSTER_ID);
         assertFalse(underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).isPresent());
     }
 
     @Test
-    public void testGetNetworkDiskTypeForV42() {
+    public void testGetNetworkDiskTypeForV43() {
         VM vm = new VM();
-        vm.setClusterCompatibilityVersion(Version.v4_2);
+        vm.setClusterCompatibilityVersion(Version.v4_3);
         vm.setClusterId(CLUSTER_ID);
         assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).get());
     }
