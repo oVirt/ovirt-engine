@@ -436,5 +436,7 @@ public interface UIMessages extends Messages {
     String hostName(String hostName);
 
     String labelName(String labelName);
+
+    String availableInVersionOrHigher(String version);
 }
 

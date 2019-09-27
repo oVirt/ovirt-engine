@@ -94,13 +94,15 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public static final int VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
 
-    final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private boolean privateIsNew;
 
@@ -3536,7 +3538,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (version == null || version.greaterOrEquals(Version.v4_4)) {
             getMigrateEncrypted().setIsChangeable(true);
         } else {
-            getMigrateEncrypted().setIsChangeable(false);
+            getMigrateEncrypted().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_4.toString()));
             getMigrateEncrypted().setSelectedItem(null);
         }
     }

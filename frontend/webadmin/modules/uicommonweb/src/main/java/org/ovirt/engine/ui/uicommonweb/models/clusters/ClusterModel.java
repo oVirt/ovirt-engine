@@ -75,8 +75,10 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTabs {
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
     private Map<Guid, PolicyUnit> policyUnitMap;
     private ListModel<ClusterPolicy> clusterPolicy;
     private Map<Guid, Network> defaultManagementNetworkCache = new HashMap<>();
@@ -1962,7 +1964,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         if (version.greaterOrEquals(Version.v4_4)) {
             getMigrateEncrypted().setIsChangeable(true);
         } else {
-            getMigrateEncrypted().setIsChangeable(false);
+            getMigrateEncrypted().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_4.toString()));
             getMigrateEncrypted().setSelectedItem(null);
         }
     }
