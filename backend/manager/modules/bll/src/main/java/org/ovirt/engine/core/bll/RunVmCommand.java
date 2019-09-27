@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -624,12 +623,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (shouldRestoreMemory()) {
             DiskImage memoryDump = (DiskImage) diskDao.get(getActiveSnapshot().getMemoryDiskId());
             DiskImage memoryConf = (DiskImage) diskDao.get(getActiveSnapshot().getMetadataDiskId());
-            if (FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getVm().getCompatibilityVersion())) {
-                parameters.setMemoryDumpImage(memoryDump);
-                parameters.setMemoryConfImage(memoryConf);
-            } else {
-                parameters.setHibernationVolHandle(MemoryUtils.createHibernationVolumeString(memoryDump, memoryConf));
-            }
+            parameters.setMemoryDumpImage(memoryDump);
+            parameters.setMemoryConfImage(memoryConf);
 
             parameters.setDownSince(getVm().getStatus() == VMStatus.Suspended ?
                     getVm().getLastStopTime()

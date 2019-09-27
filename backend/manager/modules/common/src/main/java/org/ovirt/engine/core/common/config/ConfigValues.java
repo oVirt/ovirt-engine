@@ -1560,9 +1560,6 @@ public enum ConfigValues {
     ExternalNetworkProviderSynchronizationRate,
 
     @TypeConverterAttribute(Boolean.class)
-    MemoryDisksOnDifferentDomainsSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     ResetBrickSupported,
 
     @Reloadable

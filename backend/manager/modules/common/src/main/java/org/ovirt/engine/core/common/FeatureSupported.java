@@ -246,15 +246,6 @@ public class FeatureSupported {
     }
 
     /**
-     * Checks if memory disks on different domains supported
-     *
-     * @param version Compatibility version to check for.
-     */
-    public static boolean isMemoryDisksOnDifferentDomainsSupported(Version version) {
-        return supportedInConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, version);
-    }
-
-    /**
      * Checks if BIOS Type configuration supported
      *
      * @param version Compatibility version to check for.

@@ -204,8 +204,6 @@ select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('ResumeBehaviorSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('ResumeBehaviorSupported', 'true', '4.4');
-select fn_db_add_config_value_for_versions_up_to('MemoryDisksOnDifferentDomainsSupported', 'false', '4.1');
-select fn_db_add_config_value_for_versions_up_to('MemoryDisksOnDifferentDomainsSupported', 'true', '4.4');
 
 -- migration support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86": "true", "ppc" : "true", "s390x" : "true"}','4.4');

@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +49,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,7 +57,6 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith(MockConfigExtension.class)
@@ -70,13 +67,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private final Guid destStorageId = Guid.newGuid();
     private final Guid srcStorageId = Guid.newGuid();
     private final VmDevice vmDevice = new VmDevice();
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-            MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_1, false),
-            MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_2, true)
-        );
-    }
 
     @Mock
     private DiskDao diskDao;
@@ -230,16 +220,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateDiskIsOvfStore() {
         testMoveOrCopyForContentTypeFails(DiskContentType.OVF_STORE);
-    }
-
-    @Test
-    public void testMoveMemoryVolumesFailsOnUnsupportedVersion() {
-        initializeCommand(new DiskImage(), VmEntityType.VM);
-        command.getImage().setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
-        StoragePool storagePool = new StoragePool();
-        storagePool.setCompatibilityVersion(Version.v4_1);
-        doReturn(storagePool).when(command).getStoragePool();
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
     }
 
     @Test

@@ -33,7 +33,6 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidato
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -203,13 +202,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean checkOperationAllowedOnDiskContentType() {
-        if (getImage().getContentType() == DiskContentType.MEMORY_DUMP_VOLUME ||
-                getImage().getContentType() == DiskContentType.MEMORY_METADATA_VOLUME) {
-            if (!FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getStoragePool().getCompatibilityVersion())) {
-                return  failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION,
-                        String.format("$diskContentType %s", getImage().getContentType()));
-            }
-        }
         return validate(new DiskOperationsValidator(getImage()).isOperationAllowedOnDisk(getActionType()));
     }
 
