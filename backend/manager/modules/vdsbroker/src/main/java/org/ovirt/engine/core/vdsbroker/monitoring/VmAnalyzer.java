@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -894,9 +893,7 @@ public class VmAnalyzer {
     private void updateVmStatistics() {
         statistics = getVmManager().getStatistics();
         Integer reportedMigrationProgress = vdsmVm.getVmStatistics().getMigrationProgressPercent();
-        boolean updateMigrationProgress = reportedMigrationProgress == null ||
-                // since 4.1 we rely on getting migration progress via events, see VmMigrationProgressMonitoring
-                getVmManager().getClusterCompatibilityVersion().less(Version.v4_1);
+        boolean updateMigrationProgress = reportedMigrationProgress == null;
         statistics.updateRuntimeData(
                 vdsmVm.getVmStatistics(),
                 getVmManager().getNumOfCpus(),
