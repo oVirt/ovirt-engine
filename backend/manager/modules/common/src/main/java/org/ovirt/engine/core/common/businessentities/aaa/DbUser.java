@@ -3,7 +3,9 @@ package org.ovirt.engine.core.common.businessentities.aaa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -57,6 +59,8 @@ public class DbUser implements Queryable, Nameable {
     @Size(max = BusinessEntitiesDefinitions.USER_NOTE_SIZE)
     private String note;
 
+    private Map<String, String> userOptions;
+
     /**
      * GUI flag only. Do not use for internal logic. The sole purpose of
      * calculating this field is for the GUI user to understand who is admin in
@@ -89,6 +93,7 @@ public class DbUser implements Queryable, Nameable {
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
         }
+        userOptions = Collections.emptyMap();
     }
 
     public DbUser(DbUser dbUser) {
@@ -100,6 +105,7 @@ public class DbUser implements Queryable, Nameable {
             groupNames = Collections.emptyList();
             groupIds = Collections.emptyList();
             note = "";
+            userOptions = Collections.emptyMap();
         } else {
             id = dbUser.getId();
             externalId = dbUser.getExternalId();
@@ -114,6 +120,7 @@ public class DbUser implements Queryable, Nameable {
             groupIds = new ArrayList<>(dbUser.getGroupIds());
             groupNames = new ArrayList<>(dbUser.getGroupNames());
             isAdmin = dbUser.isAdmin();
+            userOptions = new HashMap<>(dbUser.getUserOptions());
         }
     }
 
@@ -224,6 +231,17 @@ public class DbUser implements Queryable, Nameable {
 
     public void setGroupIds(Collection<Guid> groupIds) {
         this.groupIds = new HashSet<>(groupIds);
+    }
+
+    public Map<String, String> getUserOptions() {
+        if (userOptions == null) {
+            userOptions = Collections.emptyMap();
+        }
+        return userOptions;
+    }
+
+    public void setUserOptions(Map<String, String> userOptions) {
+        this.userOptions = userOptions;
     }
 
     public Collection<Guid> getGroupIds() {

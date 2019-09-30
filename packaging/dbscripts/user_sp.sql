@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION InsertUser (
     v_user_id UUID,
     v_username VARCHAR(255),
     v_external_id TEXT,
-    v_namespace VARCHAR(2048)
+    v_namespace VARCHAR(2048),
+    v_options TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -28,7 +29,8 @@ BEGIN
         user_id,
         username,
         external_id,
-        namespace
+        namespace,
+        options
         )
     VALUES (
         v_department,
@@ -40,7 +42,8 @@ BEGIN
         v_user_id,
         v_username,
         v_external_id,
-        v_namespace
+        v_namespace,
+        v_options
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -55,7 +58,8 @@ CREATE OR REPLACE FUNCTION UpdateUserImpl (
     v_user_id UUID,
     v_username VARCHAR(255),
     v_external_id TEXT,
-    v_namespace VARCHAR(2048)
+    v_namespace VARCHAR(2048),
+    v_options TEXT
     )
 RETURNS INT
     --The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -73,6 +77,7 @@ BEGIN
         username = v_username,
         external_id = v_external_id,
         namespace = v_namespace,
+        options = v_options,
         _update_date = CURRENT_TIMESTAMP
     WHERE external_id = v_external_id
         AND domain = v_domain;
@@ -94,7 +99,8 @@ CREATE OR REPLACE FUNCTION UpdateUser (
     v_username VARCHAR(255),
     v_last_admin_check_status BOOLEAN,
     v_external_id TEXT,
-    v_namespace VARCHAR(2048)
+    v_namespace VARCHAR(2048),
+    v_options TEXT
     )
 RETURNS VOID
     --The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -110,7 +116,8 @@ BEGIN
         v_user_id,
         v_username,
         v_external_id,
-        v_namespace);
+        v_namespace,
+        v_options);
 
     UPDATE users
     SET last_admin_check_status = v_last_admin_check_status
@@ -129,7 +136,8 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateUser (
     v_user_id UUID,
     v_username VARCHAR(255),
     v_external_id TEXT,
-    v_namespace VARCHAR(2048)
+    v_namespace VARCHAR(2048),
+    v_options TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 DECLARE updated_rows INT;
@@ -145,7 +153,8 @@ BEGIN
         v_user_id,
         v_username,
         v_external_id,
-        v_namespace)
+        v_namespace,
+        v_options)
     INTO updated_rows;
 
     IF (updated_rows = 0) THEN
@@ -159,7 +168,8 @@ BEGIN
             v_user_id,
             v_username,
             v_external_id,
-            v_namespace);
+            v_namespace,
+            v_options);
     END IF;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

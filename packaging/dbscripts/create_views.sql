@@ -2024,7 +2024,8 @@ SELECT 'user' AS user_group,
     0 AS vm_admin,
     users_1.last_admin_check_status AS last_admin_check_status,
     users_1.external_id AS external_id,
-    users_1.namespace AS namespace
+    users_1.namespace AS namespace,
+    users_1.options AS options
 FROM users AS users_1
 
 UNION
@@ -2041,7 +2042,8 @@ SELECT 'group' AS user_group,
     1 AS vm_admin,
     NULL AS last_admin_check_status,
     ad_groups.external_id AS external_id,
-    ad_groups.namespace AS namespace
+    ad_groups.namespace AS namespace,
+    '{}' AS options
 FROM ad_groups;
 
 -- create the new vdc_users_with_tags view with no use of the tag_permission_map
@@ -2062,7 +2064,8 @@ SELECT users_1.user_group AS user_group,
     tags_user_map_view_1.tag_name AS tag_name,
     tags_user_map_view_1.tag_id AS tag_id,
     users_1.last_admin_check_status AS last_admin_check_status,
-    pools.vm_pool_name AS vm_pool_name
+    pools.vm_pool_name AS vm_pool_name,
+    users_1.options AS options
 FROM vdc_users AS users_1
 LEFT JOIN users_and_groups_to_vm_pool_map_view AS pools
     ON users_1.user_id = pools.user_id
@@ -2093,7 +2096,8 @@ SELECT users_2.user_group AS user_group,
     tags_user_group_map_view.tag_name AS tag_name,
     tags_user_group_map_view.tag_id AS tag_id,
     users_2.last_admin_check_status AS last_admin_check_status,
-    pools1.vm_pool_name AS vm_pool_name
+    pools1.vm_pool_name AS vm_pool_name,
+    users_2.options AS options
 FROM vdc_users AS users_2
 LEFT JOIN users_and_groups_to_vm_pool_map_view AS pools1
     ON users_2.user_id = pools1.user_id

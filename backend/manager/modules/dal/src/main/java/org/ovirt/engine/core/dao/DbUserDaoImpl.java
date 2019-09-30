@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Named;
@@ -8,6 +9,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -31,6 +33,8 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
         entity.setAdmin(rs.getBoolean("last_admin_check_status"));
         entity.setExternalId(rs.getString("external_id"));
         entity.setNamespace(rs.getString("namespace"));
+        entity.setUserOptions(SerializationFactory.getDeserializer()
+                .deserializeOrCreateNew(rs.getString("options"), HashMap.class));
         return entity;
     };
 
@@ -46,7 +50,8 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
                 .addValue("username", user.getLoginName())
                 .addValue("last_admin_check_status", user.isAdmin())
                 .addValue("external_id", user.getExternalId())
-                .addValue("namespace", user.getNamespace());
+                .addValue("namespace", user.getNamespace())
+                .addValue("options", SerializationFactory.getSerializer().serialize(user.getUserOptions()));
     }
 
     @Override
