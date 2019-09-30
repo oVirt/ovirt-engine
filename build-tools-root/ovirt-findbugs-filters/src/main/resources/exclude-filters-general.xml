@@ -57,4 +57,9 @@
     <Match>
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
     </Match>
+
+    <!-- false positive in Java 11, see https://github.com/spotbugs/spotbugs/issues/811 -->
+    <Match>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD" />
+    </Match>
 </FindBugsFilter>
