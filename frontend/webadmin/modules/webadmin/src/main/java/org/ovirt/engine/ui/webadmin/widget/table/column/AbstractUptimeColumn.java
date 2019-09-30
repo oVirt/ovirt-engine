@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.renderer.UptimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn;
-import org.ovirt.engine.ui.webadmin.widget.renderer.UptimeRenderer;
 
 /**
  * Column for displaying uptime values.

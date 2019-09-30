@@ -81,6 +81,19 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private Double uptime;
+
+    public Double getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(Double value) {
+        if (!Objects.equals(uptime, value)) {
+            uptime = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Uptime")); //$NON-NLS-1$
+        }
+    }
+
     private String description;
 
     public String getDescription() {
@@ -581,6 +594,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
         setName(vm.getName());
         setStatus(vm.getStatus());
+        setUptime(vm.getElapsedTime());
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null

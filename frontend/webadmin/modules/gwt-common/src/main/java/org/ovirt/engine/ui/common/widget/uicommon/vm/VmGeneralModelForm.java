@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.renderer.UptimeRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralModel> {
@@ -30,8 +32,9 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     }
 
     StringValueLabel name = new StringValueLabel();
-    EnumLabel<VMStatus> status = new EnumLabel<>();
     StringValueLabel description = new StringValueLabel();
+    EnumLabel<VMStatus> status = new EnumLabel<>();
+    ValueLabel<Double> uptime = new ValueLabel<>(new UptimeRenderer());
     StringValueLabel quotaName = new StringValueLabel();
     StringValueLabel template = new StringValueLabel();
     StringValueLabel definedMemory = new StringValueLabel();
@@ -70,7 +73,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider) {
-        super(modelProvider, 3, 10);
+        super(modelProvider, 3, 11);
     }
 
     /**
@@ -84,15 +87,16 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         driver.initialize(this);
 
         formBuilder.addFormItem(new FormItem(constants.nameVm(), name, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.statusVm(), status, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.descriptionVm(), description, 2, 0));
-        formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosType, 5, 0));
-        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 6, 0));
-        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 7, 0));
-        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 8, 0));
-        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 9, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionVm(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.statusVm(), status, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.uptimeVm(), uptime, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosType, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 7, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 8, 0));
+        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 9, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 10, 0));
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(), guestFreeCachedBufferedMemInfo, 2, 1)
