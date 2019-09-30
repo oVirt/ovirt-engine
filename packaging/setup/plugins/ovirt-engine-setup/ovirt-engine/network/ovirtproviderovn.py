@@ -64,7 +64,9 @@ OvnDbConfig = namedtuple(
         'protocol',
         'command',
         'key_file',
-        'cert_file'
+        'cert_file',
+        'ssl_protocol',
+        'ciphers'
     ]
 )
 
@@ -75,6 +77,9 @@ class Plugin(plugin.PluginBase):
 
     CONNECTION_TCP = 'tcp'
     CONNECTION_SSL = 'ssl'
+    SSL_PROTOCOLS = 'TLSv1.2'
+    ALLOWED_CIPHERS = 'kRSA:-aDSS:-3DES:!DES:!RC4:!RC2:!IDEA:-SEED:!eNULL:' \
+                      '!aNULL:!MD5:-SHA384:-CAMELLIA:-ARIA:-AESCCM8'
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
 
@@ -85,6 +90,8 @@ class Plugin(plugin.PluginBase):
         'ovn-nbctl',
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_KEY,
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_CERT,
+        None,
+        None
     )
 
     OVN_SOUTH_DB_CONFIG = OvnDbConfig(
@@ -94,6 +101,8 @@ class Plugin(plugin.PluginBase):
         'ovn-sbctl',
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_KEY,
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_CERT,
+        SSL_PROTOCOLS,
+        ALLOWED_CIPHERS,
     )
 
     def __init__(self, context):
@@ -530,8 +539,8 @@ class Plugin(plugin.PluginBase):
                     ovn_db_config.key_file,
                     ovn_db_config.cert_file,
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                    'TLSv1.2',
-                    'HIGH',
+                    ovn_db_config.ssl_protocol or 'TLSv1.2',
+                    ovn_db_config.ciphers or 'HIGH',
                 ),
                 _(
                     'Failed to configure {name} with SSL'
@@ -759,8 +768,6 @@ class Plugin(plugin.PluginBase):
         if self.environment.get(
             OvnEnv.OVIRT_PROVIDER_ID
         ):
-            self.logger.info(_(
-                'ovirt-provider-ovn already installed, skipping.'))
             return True
         return False
 
@@ -775,6 +782,9 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         self._provider_installed = self._is_provider_installed()
+        if self._provider_installed:
+            self.logger.info(_(
+                'ovirt-provider-ovn already installed, skipping.'))
         if (
             self.environment[OvnEnv.OVIRT_PROVIDER_OVN] is None and
             not self._provider_installed
@@ -857,9 +867,10 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.CA_AVAILABLE,
             oenginecons.Stages.OVN_SERVICES_RESTART,
         ),
-        condition=lambda self: self._enabled,
+        condition=lambda self: self._enabled or self._provider_installed,
     )
     def _misc_configure_ovn_pki(self):
+        self.logger.info(_('Updating OVN SSL configuration'))
         self._configure_ovndb_north_connection()
         self._configure_ovndb_south_connection()
 
