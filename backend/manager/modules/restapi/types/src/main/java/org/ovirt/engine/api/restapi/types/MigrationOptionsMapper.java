@@ -15,6 +15,7 @@ public class MigrationOptionsMapper {
         }
         template.setAutoConverge(mapToInheritableBoolean(entity.getAutoConverge()));
         template.setCompressed(mapToInheritableBoolean(entity.getMigrateCompressed()));
+        template.setEncrypted(mapToInheritableBoolean(entity.getMigrateEncrypted()));
 
         if (entity.getMigrationPolicyId() != null) {
             MigrationPolicy policy = template.getPolicy();
@@ -35,6 +36,10 @@ public class MigrationOptionsMapper {
 
         if (model.isSetCompressed()) {
             entity.setMigrateCompressed(mapFromInheritableBoolean(model.getCompressed()));
+        }
+
+        if (model.isSetEncrypted()) {
+            entity.setMigrateEncrypted(mapFromInheritableBoolean(model.getEncrypted()));
         }
 
         if (model.isSetPolicy()) {
