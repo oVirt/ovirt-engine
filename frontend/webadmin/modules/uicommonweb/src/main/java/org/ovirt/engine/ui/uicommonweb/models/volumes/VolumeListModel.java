@@ -716,6 +716,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             prepareForStartVolume(false);
         } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
             onCreateSession();
+        } else if (command.getName().equalsIgnoreCase("closeWindow")) {//$NON-NLS-1$
+            setWindow(null);
         }
     }
 
