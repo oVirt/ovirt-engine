@@ -118,9 +118,6 @@ public class RsdlManager {
 
     private static MetaData loadMetaData() throws IOException {
         try (InputStream in = RsdlManager.class.getResourceAsStream(METADATA_FILE_NAME)) {
-            if (in == null) {
-                throw new IOException("Can't find metadata from resource \"" + METADATA_FILE_NAME + "\"");
-            }
             return loadMetaData(in);
         }
     }
