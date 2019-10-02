@@ -35,7 +35,11 @@ public class VmRngDevice extends VmDevice implements Serializable {
         /** /dev/hwrng device (usually specialized HW generator) is used as a backend. */
         HWRNG;
 
-        public static final Version FIRST_URANDOM_VERSION = Version.v4_1;
+        /**
+         * We cannot remove 4.1 checks, because custom compatibility version of VM could still be set to version lower
+         * than supported cluster level version.
+         */
+        public static final Version FIRST_URANDOM_VERSION = new Version(4, 1);
 
         public static Source getUrandomOrRandomFor(Version version) {
             if (version.greaterOrEquals(FIRST_URANDOM_VERSION)) {
