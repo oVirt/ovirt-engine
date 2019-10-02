@@ -24,7 +24,7 @@ Install the following system components:
 - otopi >= 1.1.0
 - ovirt-host-deploy >= 1.1.0
 - ovirt-setup-lib
-- maven-3
+- maven-3 >= 3.5
 - ansible >= 2.7.2
 - ovirt-ansible-roles >= 1.1.6
 - ovirt-engine-metrics
@@ -34,15 +34,17 @@ Install the following system components:
 - python-docker-py (optional)
 - python2-isort (optional)
 
-# Note on Java versions
+=== Note on Java versions
+
 The project is built and run using java 11. 4.3 branches and earlier are excluded.
 The only exception is GWT code, which still needs to be compiled using jdk-8,
 and that it because the gwt version doesn't support the language syntax, and solid
 support for it is not imminent. That's why jdk-8 is needed only for build-time
 , and only for GWT, specifically the javac command.
 
-Prepare your dev envrionment for java 11:
-Use `alternatives` command to configure `java` and `javac` to version 11:
+=== Prepare your dev envrionment for java 11
+
+- Use `alternatives` command to configure `java` and `javac` to version 11:
 ```console
 $ sudo alternatives --config java
 
@@ -69,8 +71,30 @@ There are 2 programs which provide 'javac'.
 Enter to keep the current selection[+], or type selection number: 2
 
 ```
-Maven > 3.5 is required, download and extract if not installed using
+- Maven >= 3.5 is required, download and extract if not installed using
 distribution package management, and add to PATH.
+
+Fedora 30
+```console
+$ sudo dnf module install maven
+```
+Centos 7 - follow this https://www.softwarecollections.org/en/scls/rhscl/rh-maven35/
+
+- verify your `mvn` version:
+```console
+$ mvn -v | head -1
+Apache Maven 3.5.4 (Red Hat 3.5.4-5)
+
+```
+
+- export `JAVA_HOME` if `mvn` is not executing using java-11:
+```console
+#put this in your ~/.bashrc
+$ export JAVA_HOME=/lib/jvm/java-11
+
+$ mvn -v | grep "Java version: "
+Java version: 11.0.4, vendor: Oracle Corporation, runtime: /usr/lib/jvm/java-11-openjdk-11.0.4.11-0.fc30.x86_64
+```
 
 WildFly 15 is required along with ovirt-engine-wildfly-overlay. Preferred way
 is to install following packages:
