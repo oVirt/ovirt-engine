@@ -7,10 +7,12 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -160,6 +162,9 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             storage.setStorageDomainType(StorageDomainType.Data);
             storage.setStorageName(configureModel.getFormattedStorageName().getEntity());
             storage.setStorage((String) returnValue.getActionReturnValue());
+            StorageFormatType storageFormatType =
+                    VersionStorageFormatUtil.getForVersion(context.host.getClusterCompatibilityVersion());
+            storage.setStorageFormat(storageFormatType);
 
             StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(storage);
             parameters.setVdsId(context.host.getId());

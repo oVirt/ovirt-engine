@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -49,6 +50,11 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
         if (getStorageDomain().getStorageType() == StorageType.LOCALFS && !storagePool.isLocal()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
+        }
+
+        if (VersionStorageFormatUtil.getForVersion(storagePool.getCompatibilityVersion())
+                .compareTo(getStorageDomain().getStorageFormat()) < 0) {
+            return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITH_DIFFERENT_STORAGE_FORMAT);
         }
 
         if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
