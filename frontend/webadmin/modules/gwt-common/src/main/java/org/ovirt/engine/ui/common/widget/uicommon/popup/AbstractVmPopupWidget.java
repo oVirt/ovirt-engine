@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -99,7 +100,6 @@ import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -341,10 +341,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("copyTemplatePermissions")
     public EntityModelCheckBoxEditor copyTemplatePermissionsEditor;
 
+    private ClusterDefaultRenderer<SerialNumberPolicy> serialNumberPolicyRenderer;
+
+    @UiField(provided = true)
+    @Path(value = "serialNumberPolicy.selectedItem")
+    @WithElementId
+    public ListModelListBoxEditor<SerialNumberPolicy> serialNumberPolicyEditor;
+
     @UiField
-    @Ignore
-    @WithElementId("serialNumberPolicy")
-    public SerialNumberPolicyWidget serialNumberPolicyEditor;
+    @Path("customSerialNumber.entity")
+    public StringEntityModelTextBoxEditor customSerialNumberEditor;
 
     // == Pools ==
     @UiField
@@ -1107,8 +1113,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        serialNumberPolicyEditor.setRenderer(new ModeSwitchingVisibilityRenderer());
-
         expander.initWithContent(expanderContent.getElement());
         vcpusAdvancedParameterExpander.initWithContent(vcpusAdvancedParameterExpanderContent.getElement());
 
@@ -1466,6 +1470,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer(), new ModeSwitchingVisibilityRenderer());
 
+        serialNumberPolicyRenderer = new ClusterDefaultRenderer<>(new EnumRenderer<SerialNumberPolicy>());
+        serialNumberPolicyEditor = new ListModelListBoxEditor<>(
+                serialNumberPolicyRenderer,
+                new ModeSwitchingVisibilityRenderer());
+
         // Host Tab
         specificHost = new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         isAutoAssignEditor =
@@ -1573,7 +1582,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         instanceImagesEditor.edit(model.getInstanceImages());
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
         vmInitEditor.edit(model.getVmInitModel());
-        serialNumberPolicyEditor.edit(model.getSerialNumberPolicy());
         affinityGroupSelectionWidget.init(model.getAffinityGroupList());
         affinityLabelSelectionWidget.init(model.getLabelList());
         quotaEditor.setEnabled(!model.isHostedEngine());
@@ -1709,8 +1717,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener((ev, sender, args) -> changeApplicationLevelVisibility(serialNumberPolicyEditor, true));
-
         object.getIsRngEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> rngPanel.setVisible(object.getIsRngEnabled().getEntity()));
 
         object.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
@@ -1757,6 +1763,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
+        initClusterDefaultValueListener(serialNumberPolicyRenderer, getModel().getSerialNumberPolicy());
         initClusterDefaultValueListener(migrateEncryptedRenderer, getModel().getMigrateEncrypted());
         initClusterDefaultValueListener(autoConvergeRenderer, getModel().getAutoConverge());
         initClusterDefaultValueListener(migrateCompressedRenderer, getModel().getMigrateCompressed());
@@ -1898,7 +1905,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public UnitVmModel flush() {
         profilesInstanceTypeEditor.flush();
         vmInitEditor.flush();
-        serialNumberPolicyEditor.flush();
         return driver.flush();
     }
 
@@ -1966,7 +1972,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         biosTypeEditor.setTabIndex(nextTabIndex++);
         emulatedMachine.setTabIndex(nextTabIndex++);
         customCpu.setTabIndex(nextTabIndex++);
-        nextTabIndex = serialNumberPolicyEditor.setTabIndexes(nextTabIndex);
+        serialNumberPolicyEditor.setTabIndex(nextTabIndex++);
+        customSerialNumberEditor.setTabIndex(nextTabIndex++);
 
         // == Pools ==
         nextTabIndex = poolTab.setTabIndexes(nextTabIndex);
@@ -2176,6 +2183,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 totalvCPUsEditorWithInfoIcon,
                 vcpusAdvancedParameterExpander,
                 serialNumberPolicyEditor,
+                customSerialNumberEditor,
 
                 // console tab
                 usbSupportEditor,

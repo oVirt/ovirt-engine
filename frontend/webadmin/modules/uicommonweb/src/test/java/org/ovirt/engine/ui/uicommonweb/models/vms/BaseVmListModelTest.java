@@ -63,8 +63,11 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumOfSockets().getSelectedItem()).thenReturn(NUM_OF_SOCKETS);
         when(model.getCoresPerSocket().getSelectedItem()).thenReturn(CORES_PER_SOCKET);
         when(model.getThreadsPerCore().getSelectedItem()).thenReturn(THREADS_PER_CORE);
-        SerialNumberPolicyModel serialNumberPolicyModel = mockSerialNumberPolicyModel();
-        when(model.getSerialNumberPolicy()).thenReturn(serialNumberPolicyModel);
+
+        final EntityModel<String> customSerialNumber = mockEntityModel(CUSTOM_SERIAL_NUMBER);
+        when(model.getSerialNumberPolicy().getSelectedItem()).thenReturn(SERIAL_NUMBER_POLICY);
+        when(model.getCustomSerialNumber()).thenReturn(customSerialNumber);
+
         when(model.getAllowConsoleReconnect().getEntity()).thenReturn(true);
         when(model.isSingleQxlEnabled()).thenReturn(true);
         when(model.getTotalCPUCores().getEntity()).thenReturn(Integer.toString(TOTAL_CPU));
@@ -247,15 +250,6 @@ public class BaseVmListModelTest extends BaseVmTest {
         quota.setId(QUOTA_ID);
         final ListModel<Quota> model = mockListModel(quota);
         when(model.getIsAvailable()).thenReturn(true);
-
-        return model;
-    }
-
-    protected SerialNumberPolicyModel mockSerialNumberPolicyModel() {
-        final SerialNumberPolicyModel model = mock(SerialNumberPolicyModel.class);
-        final EntityModel<String> customSerialNumber = mockEntityModel(CUSTOM_SERIAL_NUMBER);
-        when(model.getSelectedSerialNumberPolicy()).thenReturn(SERIAL_NUMBER_POLICY);
-        when(model.getCustomSerialNumber()).thenReturn(customSerialNumber);
 
         return model;
     }

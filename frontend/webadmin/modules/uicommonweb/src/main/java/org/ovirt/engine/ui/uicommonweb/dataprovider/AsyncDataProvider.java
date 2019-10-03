@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -2870,6 +2871,16 @@ public class AsyncDataProvider {
             return 64;
         }
         return maxVmNameLengthSysprep;
+    }
+
+    public SerialNumberPolicy getSerialNumberPolicy() {
+        return (SerialNumberPolicy) getConfigValuePreConverted(ConfigValues.DefaultSerialNumberPolicy,
+                getDefaultConfigurationVersion());
+    }
+
+    public String getCustomSerialNumber() {
+        return (String) getConfigValuePreConverted(ConfigValues.DefaultCustomSerialNumber,
+                getDefaultConfigurationVersion());
     }
 
     public boolean getAutoConverge() {

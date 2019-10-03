@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdTy
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -26,7 +27,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -47,7 +47,6 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SystemDefaultRenderer;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -412,10 +411,14 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     EntityModelRadioButtonEditor allowOverbookingEditor;
 
+    @UiField(provided = true)
+    @Path(value = "serialNumberPolicy.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<SerialNumberPolicy> serialNumberPolicyEditor;
+
     @UiField
-    @Ignore
-    @WithElementId("serialNumberPolicy")
-    SerialNumberPolicyWidget serialNumberPolicyEditor;
+    @Path("customSerialNumber.entity")
+    public StringEntityModelTextBoxEditor customSerialNumberEditor;
 
     @UiField(provided = true)
     @Path(value = "migrateEncrypted.selectedItem")
@@ -555,7 +558,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initAdditionalFeaturesExpander();
 
-        serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
         customMigrationBandwidthLimitEditor.hideLabel();
         logMaxMemoryUsedThresholdTypeEditor.hideLabel();
         logMaxMemoryUsedThresholdEditor.hideLabel();
@@ -688,6 +690,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
+        serialNumberPolicyEditor = new ListModelListBoxEditor<>(
+                new SystemDefaultRenderer<SerialNumberPolicy>(
+                        new EnumRenderer<SerialNumberPolicy>(),
+                        AsyncDataProvider.getInstance().getSerialNumberPolicy()));
+
         migrateEncryptedEditor = new ListModelListBoxEditor<>(
                 new SystemDefaultRenderer<Boolean>(
                         new BooleanRenderer(constants.encrypt(), constants.dontEncrypt()),
@@ -814,8 +821,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableOvirtServiceOptionEditor.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
         enableGlusterServiceOptionEditor.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
 
-        serialNumberPolicyEditor.edit(object.getSerialNumberPolicy());
-
         optimizationForServerFormatter(object);
         optimizationForDesktopFormatter(object);
         optimizationCustomFormatter(object);
@@ -938,7 +943,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     @Override
     public ClusterModel flush() {
-        serialNumberPolicyEditor.flush();
         return driver.flush();
     }
 

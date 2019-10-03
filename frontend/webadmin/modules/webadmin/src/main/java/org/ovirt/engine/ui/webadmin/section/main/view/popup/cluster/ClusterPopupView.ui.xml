@@ -424,7 +424,7 @@
                         <t:content>
                             <b:Container fluid="true">
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="clusterPolicyEditor" label="{constants.clusterPolicySelectPolicyLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <e:ListModelListBoxEditor ui:field="clusterPolicyEditor" label="{constants.clusterPolicySelectPolicyLabel}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
@@ -453,14 +453,20 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.groupTitle}" text="{constants.clusterPolicyAdditionalPropsPanelTitle}" />
-                                        <ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" removeFormGroup="true" usePatternFly="true" label="{constants.clusterPolicyEnableTrustedServiceLabel}" />
-                                        <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" removeFormGroup="true" usePatternFly="true" label="{constants.clusterPolicyEnableHaReservationLabel}" />
+                                        <g:Label addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.clusterSerialNumberPolicyPanelLabel}" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="serialNumberPolicyEditor" label="{constants.clusterSerialNumberPolicy}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="customSerialNumberEditor" label="{constants.clusterCustomSerialNumber}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" />
+                                </b:Row>
+                                <b:Row>
                                     <b:Column size="SM_12">
-                                        <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" usePatternFly="true" />
+                                        <g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.groupTitle}" text="{constants.clusterPolicyAdditionalPropsPanelTitle}" />
+                                        <ge:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" removeFormGroup="true" usePatternFly="true" label="{constants.clusterPolicyEnableTrustedServiceLabel}" />
+                                        <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" removeFormGroup="true" usePatternFly="true" label="{constants.clusterPolicyEnableHaReservationLabel}" />
                                     </b:Column>
                                 </b:Row>
                             </b:Container>

@@ -3540,4 +3540,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String supportedCpusInfo();
 
     String noSupportedCpusInfo();
+
+    String clusterSerialNumberPolicyPanelLabel();
+
+    String clusterSerialNumberPolicy();
+
+    String clusterCustomSerialNumber();
 }

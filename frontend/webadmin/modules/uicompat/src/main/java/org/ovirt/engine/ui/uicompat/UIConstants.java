@@ -2166,4 +2166,10 @@ public interface UIConstants extends Constants {
     String selectUserOrGroup();
 
     String selectRoleToAssign();
+
+    String customSerialNumberDisabledReason();
+
+    String systemDefaultCustomSerialNumberDisabledReason();
+
+    String clusterDefaultCustomSerialNumberDisabledReason();
 }

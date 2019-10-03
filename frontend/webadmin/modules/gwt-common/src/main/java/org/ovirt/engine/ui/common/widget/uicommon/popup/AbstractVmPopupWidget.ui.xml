@@ -244,9 +244,10 @@
                       <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                    </b:Row>
                     <b:Row>
-                      <b:Column size="SM_12">
-                        <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" usePatternFly="true" />
-                      </b:Column>
+                        <e:ListModelListBoxEditor ui:field="serialNumberPolicyEditor" label="{constants.vmSerialNumberPolicy}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Row>
+                    <b:Row>
+                        <ge:StringEntityModelTextBoxEditor ui:field="customSerialNumberEditor" label="{constants.vmCustomSerialNumber}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                   </b:Container>
                 </t:content>

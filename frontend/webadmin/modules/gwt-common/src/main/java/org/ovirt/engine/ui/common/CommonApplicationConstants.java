@@ -1858,4 +1858,8 @@ public interface CommonApplicationConstants extends Constants {
     String vmMigrationPolicyLabel();
 
     String migrationDowntime();
+
+    String vmSerialNumberPolicy();
+
+    String vmCustomSerialNumber();
 }

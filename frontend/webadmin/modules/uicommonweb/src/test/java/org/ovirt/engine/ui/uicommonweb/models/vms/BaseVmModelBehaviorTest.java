@@ -143,8 +143,8 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder} */
     protected void verifyBuiltSerialNumber(UnitVmModel model) {
-        assertEquals(SERIAL_NUMBER_POLICY, model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
-        assertEquals(CUSTOM_SERIAL_NUMBER, model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
+        assertEquals(SERIAL_NUMBER_POLICY, model.getSerialNumberPolicy().getSelectedItem());
+        assertEquals(CUSTOM_SERIAL_NUMBER, model.getCustomSerialNumber().getEntity());
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyVmBaseToUnitBuilder} */

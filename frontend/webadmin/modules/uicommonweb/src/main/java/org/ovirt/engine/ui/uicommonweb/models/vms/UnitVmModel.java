@@ -1363,14 +1363,24 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
-    private SerialNumberPolicyModel serialNumberPolicy;
+    private ListModelWithClusterDefault<SerialNumberPolicy> serialNumberPolicy;
 
-    public SerialNumberPolicyModel getSerialNumberPolicy() {
+    public ListModel<SerialNumberPolicy> getSerialNumberPolicy() {
         return serialNumberPolicy;
     }
 
-    public void setSerialNumberPolicy(SerialNumberPolicyModel value) {
+    public void setSerialNumberPolicy(ListModelWithClusterDefault<SerialNumberPolicy> value) {
         this.serialNumberPolicy = value;
+    }
+
+    private EntityModel<String> customSerialNumber;
+
+    public EntityModel<String> getCustomSerialNumber() {
+        return customSerialNumber;
+    }
+
+    public void setCustomSerialNumber(EntityModel<String> customSerialNumberPolicy) {
+        this.customSerialNumber = customSerialNumberPolicy;
     }
 
     private EntityModel<Boolean> bootMenuEnabled;
@@ -1680,7 +1690,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setThreadsPerCore(new NotChangableForVmInPoolListModel<Integer>());
         getThreadsPerCore().getSelectedItemChangedEvent().addListener(this);
 
-        setSerialNumberPolicy(new SerialNumberPolicyModel());
+        setSerialNumberPolicy(new ListModelWithClusterDefault<>());
+        getSerialNumberPolicy().setItems(new ArrayList<SerialNumberPolicy>(Arrays.asList(SerialNumberPolicy.values())));
+
+        setCustomSerialNumber(new EntityModel<>());
+        updateCustomSerialNumber();
+        getSerialNumberPolicy().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            updateCustomSerialNumber();
+        });
 
         setMigrationMode(new NotChangableForVmInPoolListModel<MigrationSupport>());
         getMigrationMode().getSelectedItemChangedEvent().addListener(this);
@@ -2090,6 +2107,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initUsbPolicy();
         updateMultiQueues();
         updateMigrateEncrypted();
+        updateSerialNumberPolicy();
     }
 
     private void updateMultiQueues() {
@@ -2935,10 +2953,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setValidTab(TabName.CUSTOM_PROPERTIES_TAB, isValidTab(TabName.CUSTOM_PROPERTIES_TAB) &&
                 getCustomPropertySheet().validate());
 
-        if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
-            getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        if (getSerialNumberPolicy().getSelectedItem() == SerialNumberPolicy.CUSTOM) {
+            getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
         } else {
-            getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
+            getCustomSerialNumber().setIsValid(true);
         }
 
         getEmulatedMachine().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(
@@ -2977,7 +2995,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 getMaxMemorySize().getIsValid() &&
                 getMinAllocatedMemory().getIsValid() &&
                 getTotalCPUCores().getIsValid() &&
-                getSerialNumberPolicy().getCustomSerialNumber().getIsValid() &&
+                getCustomSerialNumber().getIsValid() &&
                 getEmulatedMachine().getIsValid() &&
                 getCustomCpu().getIsValid());
 
@@ -3540,6 +3558,39 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else {
             getMigrateEncrypted().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_4.toString()));
             getMigrateEncrypted().setSelectedItem(null);
+        }
+    }
+
+    private void updateSerialNumberPolicy() {
+        Cluster cluster = getSelectedCluster();
+
+        SerialNumberPolicy policy = cluster == null ? null : cluster.getSerialNumberPolicy();
+
+        if (policy == null) {
+            policy = AsyncDataProvider.getInstance().getSerialNumberPolicy();
+        }
+
+        serialNumberPolicy.setClusterValue(policy);
+        updateCustomSerialNumber();
+    }
+
+    private void updateCustomSerialNumber() {
+        if (SerialNumberPolicy.CUSTOM.equals(serialNumberPolicy.getSelectedItem())) {
+            getCustomSerialNumber().setIsChangeable(true);
+        } else if (serialNumberPolicy.getSelectedItem() == null
+                && SerialNumberPolicy.CUSTOM.equals(serialNumberPolicy.getClusterValue())) {
+            Cluster cluster = getSelectedCluster();
+            String customNumber = cluster == null ? null : cluster.getCustomSerialNumber();
+
+            if (customNumber == null) {
+                customNumber = AsyncDataProvider.getInstance().getCustomSerialNumber();
+            }
+
+            getCustomSerialNumber().setEntity(customNumber);
+            getCustomSerialNumber().setIsChangeable(false, constants.clusterDefaultCustomSerialNumberDisabledReason());
+        } else {
+            getCustomSerialNumber().setEntity(null);
+            getCustomSerialNumber().setIsChangeable(false, constants.customSerialNumberDisabledReason());
         }
     }
 }

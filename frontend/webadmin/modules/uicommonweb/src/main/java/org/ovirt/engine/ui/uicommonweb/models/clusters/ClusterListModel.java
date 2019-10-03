@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
+import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -393,8 +394,10 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
         clusterModel.getBiosType().setSelectedItem(cluster.getBiosType());
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
-        clusterModel.getSerialNumberPolicy().setSelectedSerialNumberPolicy(cluster.getSerialNumberPolicy());
-        clusterModel.getSerialNumberPolicy().getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
+        clusterModel.getSerialNumberPolicy().setSelectedItem(cluster.getSerialNumberPolicy());
+        if (SerialNumberPolicy.CUSTOM.equals(cluster.getSerialNumberPolicy())) {
+            clusterModel.getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
+        }
         clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
         clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
         clusterModel.getMigrateEncrypted().setSelectedItem(cluster.getMigrateEncrypted());
@@ -748,8 +751,12 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.getFencingPolicy().setSkipFencingIfGlusterBricksUp(model.getSkipFencingIfGlusterBricksUp().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfGlusterQuorumNotMet(model.getSkipFencingIfGlusterQuorumNotMet().getEntity());
 
-        cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
-        cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
+        cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedItem());
+        if (SerialNumberPolicy.CUSTOM.equals(model.getSerialNumberPolicy().getSelectedItem())) {
+            cluster.setCustomSerialNumber(model.getCustomSerialNumber().getEntity());
+        } else {
+            cluster.setCustomSerialNumber(null);
+        }
 
         cluster.setAutoConverge(model.getAutoConverge().getSelectedItem());
         cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());

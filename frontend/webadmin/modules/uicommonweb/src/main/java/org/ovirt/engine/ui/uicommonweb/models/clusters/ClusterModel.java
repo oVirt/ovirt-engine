@@ -62,7 +62,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
@@ -79,6 +78,7 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTabs {
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private Map<Guid, PolicyUnit> policyUnitMap;
     private ListModel<ClusterPolicy> clusterPolicy;
     private Map<Guid, Network> defaultManagementNetworkCache = new HashMap<>();
@@ -628,14 +628,24 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.allowOverbooking = allowOverbooking;
     }
 
-    private SerialNumberPolicyModel serialNumberPolicy;
+    private ListModel<SerialNumberPolicy> serialNumberPolicy;
 
-    public SerialNumberPolicyModel getSerialNumberPolicy() {
+    public ListModel<SerialNumberPolicy> getSerialNumberPolicy() {
         return serialNumberPolicy;
     }
 
-    public void setSerialNumberPolicy(SerialNumberPolicyModel serialNumberPolicy) {
+    public void setSerialNumberPolicy(ListModel<SerialNumberPolicy> serialNumberPolicy) {
         this.serialNumberPolicy = serialNumberPolicy;
+    }
+
+    private EntityModel<String> customSerialNumber;
+
+    public EntityModel<String> getCustomSerialNumber() {
+        return customSerialNumber;
+    }
+
+    public void setCustomSerialNumber(EntityModel<String> customSerialNumberPolicy) {
+        this.customSerialNumber = customSerialNumberPolicy;
     }
 
     private EntityModel<String> spiceProxy;
@@ -1068,7 +1078,14 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setEnableOvirtService(new EntityModel<>());
         setEnableGlusterService(new EntityModel<>());
 
-        setSerialNumberPolicy(new SerialNumberPolicyModel());
+        setSerialNumberPolicy(new ListModel<>());
+        getSerialNumberPolicy().setItems(getSerialNumberPoliciesWithNull());
+
+        setCustomSerialNumber(new EntityModel<>());
+        updateCustomSerialNumber();
+        getSerialNumberPolicy().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            updateCustomSerialNumber();
+        });
 
         setAutoConverge(new ListModel<>());
         getAutoConverge().setItems(Arrays.asList(null, true, false));
@@ -1381,6 +1398,25 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }));
         setCustomMigrationNetworkBandwidth(new EntityModel<>());
         setMigrationBandwidthLimitType(new ListModel<>());
+    }
+
+    private List<SerialNumberPolicy> getSerialNumberPoliciesWithNull() {
+        List<SerialNumberPolicy> policies = new ArrayList<>(Arrays.asList(SerialNumberPolicy.values()));
+        policies.add(0, null);
+        return policies;
+    }
+
+    private void updateCustomSerialNumber() {
+        if (getSerialNumberPolicy().getSelectedItem() == null
+                && SerialNumberPolicy.CUSTOM.equals(AsyncDataProvider.getInstance().getSerialNumberPolicy())) {
+            getCustomSerialNumber().setIsChangeable(false, constants.systemDefaultCustomSerialNumberDisabledReason());
+            getCustomSerialNumber().setEntity(AsyncDataProvider.getInstance().getCustomSerialNumber());
+        } else if (SerialNumberPolicy.CUSTOM.equals(getSerialNumberPolicy().getSelectedItem())) {
+            getCustomSerialNumber().setIsChangeable(true);
+        } else {
+            getCustomSerialNumber().setIsChangeable(false, constants.customSerialNumberDisabledReason());
+            getCustomSerialNumber().setEntity(null);
+        }
     }
 
     private void updateGlusterFencingPolicyAvailability() {
@@ -2233,10 +2269,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         setValidTab(TabName.CONSOLE_TAB, getSpiceProxy().getIsValid());
 
-        if (getSerialNumberPolicy().getSelectedSerialNumberPolicy() == SerialNumberPolicy.CUSTOM) {
-            getSerialNumberPolicy().getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        if (SerialNumberPolicy.CUSTOM.equals(getSerialNumberPolicy().getSelectedItem())) {
+            getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
         } else {
-            getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
+            getCustomSerialNumber().setIsValid(true);
         }
 
         getMacPoolModel().validate();
@@ -2248,7 +2284,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 && getGlusterHostPassword().getIsValid()
                 && (!getIsImportGlusterConfiguration().getEntity() || (getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && getSerialNumberPolicy().getCustomSerialNumber().getIsValid()
+                && getCustomSerialNumber().getIsValid()
                 && isFingerprintVerified()));
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
 
