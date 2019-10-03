@@ -358,6 +358,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         DiskImage dest = diskImageDao.getAllSnapshotsForParent(imageId).get(0);
         RemoveSnapshotSingleDiskParameters parameters =
                 new RemoveSnapshotSingleDiskParameters(imageId, getVmId());
+        parameters.setStorageDomainId(dest.getStorageIds().get(0));
         parameters.setDestinationImageId(dest.getImageId());
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
@@ -373,6 +374,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         RemoveSnapshotSingleDiskParameters parameters = new RemoveSnapshotSingleDiskParameters(
                 imageId, getVmId());
         DiskImage dest = diskImageDao.getAllSnapshotsForParent(imageId).get(0);
+        parameters.setStorageDomainId(dest.getStorageIds().get(0));
         parameters.setDestinationImageId(dest.getImageId());
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
