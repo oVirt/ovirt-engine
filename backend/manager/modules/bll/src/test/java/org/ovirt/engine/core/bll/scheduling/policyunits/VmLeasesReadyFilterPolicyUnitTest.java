@@ -102,6 +102,20 @@ class VmLeasesReadyFilterPolicyUnitTest {
     }
 
     @Test
+    public void testVmWithLeaseAndHostsNoData() {
+        Guid leaseStorageDomainId = Guid.newGuid();
+        vm.setLeaseStorageDomainId(leaseStorageDomainId);
+
+        host1.setDomains(null);
+        host2.setDomains(null);
+
+        setUpMocks();
+
+        assertThat(unit.filter(context, hosts, vm, new PerHostMessages()))
+                .doesNotContainAnyElementsOf(hosts);
+    }
+
+    @Test
     public void testVmWithLeaseAndHostsInitializedManyDomains() {
         Guid leaseStorageDomainId = Guid.newGuid();
         vm.setLeaseStorageDomainId(leaseStorageDomainId);

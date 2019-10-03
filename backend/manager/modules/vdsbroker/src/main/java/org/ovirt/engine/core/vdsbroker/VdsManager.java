@@ -709,6 +709,10 @@ public class VdsManager {
                 this.cachedVds.setStatus(status);
             }
 
+            if (vds.getPreviousStatus() == VDSStatus.Up && status != VDSStatus.Up) {
+                // Don't use the now stale data collected while the host was up
+                invalidateVdsCachedData();
+            }
             switch (status) {
             case NonOperational:
                 if (this.cachedVds != null) {
@@ -743,6 +747,13 @@ public class VdsManager {
             default:
                 break;
             }
+        }
+    }
+
+    private void invalidateVdsCachedData() {
+        if (getDomains() != null) {
+            log.info("Clearing domains data for host {}", cachedVds.getName());
+            setDomains(null);
         }
     }
 
@@ -1204,6 +1215,9 @@ public class VdsManager {
     }
 
     public void setDomains(ArrayList<VDSDomainsData> domains) {
+        if (domains != null && this.domains == null) {
+            log.info("Received first domain report for host {}", cachedVds.getName());
+        }
         this.domains = domains;
     }
 
