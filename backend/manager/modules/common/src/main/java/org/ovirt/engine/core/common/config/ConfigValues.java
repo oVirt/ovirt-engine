@@ -1500,9 +1500,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     ExternalNetworkProviderConnectionTimeout,
 
-    @TypeConverterAttribute(Boolean.class)
-    DestroyOnRebootSupported(ClientAccessLevel.User),
-
     @TypeConverterAttribute(Version.class)
     MultiFirewallSupportSince,
 

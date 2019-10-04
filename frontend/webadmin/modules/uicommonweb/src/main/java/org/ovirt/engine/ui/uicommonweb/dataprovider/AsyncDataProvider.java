@@ -2285,11 +2285,6 @@ public class AsyncDataProvider {
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
     }
 
-    public boolean isDestroyRebootSupported(Version compatibilityVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigValues.DestroyOnRebootSupported,
-                compatibilityVersion.getValue());
-    }
-
     public Version multiFirewallSupportSince() {
         return (Version) getConfigValuePreConverted(ConfigValues.MultiFirewallSupportSince);
     }

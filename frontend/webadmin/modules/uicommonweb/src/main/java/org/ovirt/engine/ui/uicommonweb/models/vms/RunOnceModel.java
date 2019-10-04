@@ -606,7 +606,7 @@ public abstract class RunOnceModel extends Model {
         setIsWindowsOS(false);
 
         setVolatileRun(new EntityModel<>(false));
-        getVolatileRun().setIsChangeable(AsyncDataProvider.getInstance().isDestroyRebootSupported(vm.getCompatibilityVersion()));
+        getVolatileRun().setIsChangeable(true);
         if (!getVolatileRun().getIsChangable()) {
             getVolatileRun().setChangeProhibitionReason(
                     ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(vm.getCompatibilityVersion().toString()));
