@@ -747,8 +747,6 @@ select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'true', '4.4');
 
-select fn_db_add_config_value_for_versions_up_to('DefaultRouteReportedByVdsm', 'false', '4.1');
-select fn_db_add_config_value_for_versions_up_to('DefaultRouteReportedByVdsm', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('Ping2SupportedByVdsm', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('Ping2SupportedByVdsm', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('ConfirmConnectivitySupportedByVdsm', 'false', '4.1');

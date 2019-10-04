@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -1091,11 +1090,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         // Check the network alert presense.
         setHasNICsAlert(getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty());
 
-        if ((Boolean) AsyncDataProvider.getInstance()
-            .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
-            getEntity().getClusterCompatibilityVersion().getValue())) {
-                setHasDefaultRouteAlert(!getEntity().isDefaultRouteRoleNetworkAttached());
-        }
+        setHasDefaultRouteAlert(!getEntity().isDefaultRouteRoleNetworkAttached());
 
         // Check manual fence alert presense.
         if (getEntity().getStatus() == VDSStatus.NonResponsive

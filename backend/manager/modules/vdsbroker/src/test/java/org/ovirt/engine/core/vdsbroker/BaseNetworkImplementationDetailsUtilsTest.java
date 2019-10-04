@@ -42,11 +42,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false),
-                MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500)
-        );
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500));
     }
 
 

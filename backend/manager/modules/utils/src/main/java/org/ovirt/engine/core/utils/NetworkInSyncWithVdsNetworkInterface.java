@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -91,12 +90,11 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private void addReportedDefaultRouteConfiguration(ReportedConfigurations result) {
-        boolean defaultRouteReportedByVdsm = FeatureSupported.isDefaultRouteReportedByVdsm(cluster.getCompatibilityVersion());
         boolean isDefaultRouteInterface = isDefaultRouteOnInterfacePredicate().test(iface);
         result.add(DEFAULT_ROUTE,
                 isDefaultRouteInterface,
                 isDefaultRouteNetwork,
-                !defaultRouteReportedByVdsm || Objects.equals(isDefaultRouteInterface, isDefaultRouteNetwork));
+                Objects.equals(isDefaultRouteInterface, isDefaultRouteNetwork));
     }
 
     private boolean isNetworkMtuInSync() {

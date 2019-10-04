@@ -189,10 +189,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.IsoOnDataDomain, version);
     }
 
-    public static boolean isDefaultRouteReportedByVdsm(Version version) {
-        return supportedInConfig(ConfigValues.DefaultRouteReportedByVdsm, version);
-    }
-
     /**
      * The use of libvirt's domain XML on the engine side.
      * Important: this is determined by the compatibility level of the cluster!

@@ -1536,9 +1536,6 @@ public enum ConfigValues {
     ResumeBehaviorSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    DefaultRouteReportedByVdsm(),
-
-    @TypeConverterAttribute(Boolean.class)
     GlusterEventingSupported,
 
     @TypeConverterAttribute(Boolean.class)

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -14,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -474,25 +472,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
-            boolean defaultRouteReportedByVdsm = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                    ConfigValues.DefaultRouteReportedByVdsm, clusterNetworkModel.getCluster().getCompatibilityVersion().getValue());
-            return defaultRouteReportedByVdsm
-                    && clusterNetworkModel.isAttached()
+            return clusterNetworkModel.isAttached()
                     && !clusterNetworkModel.isExternal()
                     && (!isMultipleSelectionAllowed()
                     || !clusterNetworkModel.isManagement()
                     || !clusterNetworkModel.getOriginalNetworkCluster().isDefaultRoute());
-        }
-
-        @Override
-        protected String getDisabledMessage(ClusterNetworkModel clusterNetworkModel) {
-            String version = clusterNetworkModel.getCluster().getCompatibilityVersion().getValue();
-            boolean defaultRouteReportedByVdsm = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                    ConfigValues.DefaultRouteReportedByVdsm, version);
-            if (!defaultRouteReportedByVdsm) {
-                return messages.clusterDefaultRouteCompatibility(version);
-            }
-            return super.getDisabledMessage(clusterNetworkModel);
         }
     }
 

@@ -118,8 +118,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String testImageIOProxyConnectionFailure(String location);
 
-    String clusterDefaultRouteCompatibility(String version);
-
     String vmStartedWithDifferentName(String runtimeName);
 
     String cpuDeprecationWarning(String cpuType);

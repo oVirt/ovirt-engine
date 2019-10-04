@@ -81,11 +81,7 @@ public class ReportedConfigurationsFillerTest {
     private Cluster cluster;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
-                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
-        );
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500));
     }
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -124,7 +120,7 @@ public class ReportedConfigurationsFillerTest {
         when(vdsDynamicDao.get(hostId)).thenReturn(vdsDynamic);
 
         cluster = new Cluster();
-        cluster.setCompatibilityVersion(Version.v4_1);
+        cluster.setCompatibilityVersion(Version.v4_2);
         when(clusterDao.get(any())).thenReturn(cluster);
     }
 

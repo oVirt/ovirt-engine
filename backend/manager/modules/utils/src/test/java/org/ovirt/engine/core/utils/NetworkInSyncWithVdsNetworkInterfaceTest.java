@@ -72,11 +72,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     private DnsResolverConfiguration sampleDnsResolverConfigurationWithReversedNameServers;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
-                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
-        );
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500));
     }
 
     @BeforeEach
@@ -900,13 +896,6 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     public void testDefaultRouteWhenOutOfSync() {
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
         assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(false));
-    }
-
-    @Test
-    public void testDefaultRouteWhenOutOfSyncOnOlderCluster() {
-        cluster.setCompatibilityVersion(Version.v4_1);
-        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
-        assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
     }
 
     /**

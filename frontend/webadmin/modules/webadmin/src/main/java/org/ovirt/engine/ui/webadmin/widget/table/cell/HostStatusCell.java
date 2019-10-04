@@ -3,10 +3,8 @@ package org.ovirt.engine.ui.webadmin.widget.table.cell;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -220,10 +218,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
     }
 
     private boolean hasDefaultRouteAlert(VDS vds) {
-        return (Boolean) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
-                        vds.getClusterCompatibilityVersion().getValue())
-                && !vds.isDefaultRouteRoleNetworkAttached();
+        return !vds.isDefaultRouteRoleNetworkAttached();
     }
 
     private boolean cpuFlagsMissing(VDS vds) {
