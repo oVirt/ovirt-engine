@@ -30,8 +30,7 @@ public class NetworkFilterDaoTest extends BaseDaoTestCase<NetworkFilterDao> {
 
     @Test
     public void testGetAllSupportedNetworkFiltersByVersion() {
-        final Version version = new Version("4.3");
-        final List<NetworkFilter> allNetworkFilter = dao.getAllSupportedNetworkFiltersByVersion(version);
+        final List<NetworkFilter> allNetworkFilter = dao.getAllSupportedNetworkFiltersByVersion(Version.v4_3);
         assertNotNull(allNetworkFilter);
         assertEquals(3, allNetworkFilter.size());
         NetworkFilter expectedNetworkFilter = initOvirtNoFilter();
@@ -42,14 +41,12 @@ public class NetworkFilterDaoTest extends BaseDaoTestCase<NetworkFilterDao> {
 
     @Test
     public void testGetAllSupportedNetworkFiltersByVersionMediumVersion() {
-        final Version version = new Version("4.2");
-        assertFirstVersionOnly(version);
+        assertFirstVersionOnly(Version.v4_2);
     }
 
     @Test
     public void testGetAllSupportedNetworkFiltersByVersionFirstVersion() {
-        final Version version = new Version("4.1");
-        assertFirstVersionOnly(version);
+        assertFirstVersionOnly(Version.v4_1);
     }
 
     @Test
