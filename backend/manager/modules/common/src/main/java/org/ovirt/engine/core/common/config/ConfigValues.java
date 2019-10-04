@@ -1532,9 +1532,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     ExternalNetworkProviderSynchronizationRate,
 
-    @TypeConverterAttribute(Boolean.class)
-    ResetBrickSupported,
-
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     EnableKASLRDump,

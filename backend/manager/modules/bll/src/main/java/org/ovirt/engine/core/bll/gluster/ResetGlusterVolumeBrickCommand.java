@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.ovirt.engine.core.common.FeatureSupported.supportedInConfig;
-
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -13,7 +11,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeResetBrickAction
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -45,11 +42,6 @@ public class ResetGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<Glu
     @Override
     protected boolean validate() {
         if (!super.validate()) {
-            return false;
-        }
-
-        // Check whether reset brick supported or not.
-        if (!supportedInConfig(ConfigValues.ResetBrickSupported, getCluster().getCompatibilityVersion())) {
             return false;
         }
 
