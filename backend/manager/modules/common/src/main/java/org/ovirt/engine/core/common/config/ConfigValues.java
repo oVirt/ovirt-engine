@@ -1509,9 +1509,6 @@ public enum ConfigValues {
     AlwaysFilterResultsForWebUi(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
-    ContentType,
-
-    @TypeConverterAttribute(Boolean.class)
     IsoOnDataDomain,
 
     @TypeConverterAttribute(Boolean.class)

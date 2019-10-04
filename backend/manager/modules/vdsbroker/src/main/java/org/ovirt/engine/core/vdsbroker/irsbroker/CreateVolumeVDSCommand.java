@@ -2,10 +2,8 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
@@ -30,20 +28,18 @@ public class CreateVolumeVDSCommand<P extends CreateVolumeVDSCommandParameters> 
             imageInitSize = String.valueOf(getParameters().getImageInitialSizeInBytes());
         }
 
-        String diskType = FeatureSupported.isContentTypeSupported(getParameters().getPoolCompatibilityVersion()) ?
-                getParameters().getDiskContentType().getStorageValue() : DiskContentType.LEGACY_DISK_TYPE;
         uuidReturn = getIrsProxy().createVolume(getParameters().getStorageDomainId().toString(),
-                                                getParameters().getStoragePoolId().toString(),
-                                                getParameters().getImageGroupId().toString(),
-                                                Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
-                                                getParameters().getVolumeFormat().getValue(),
-                                                getParameters().getImageType().getValue(),
-                                                diskType,
-                                                getParameters().getNewImageID().toString(),
-                                                getParameters().getNewImageDescription(),
-                                                getParameters().getSourceImageGroupId().toString(),
-                                                getParameters().getImageId().toString(),
-                                                imageInitSize);
+                getParameters().getStoragePoolId().toString(),
+                getParameters().getImageGroupId().toString(),
+                Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
+                getParameters().getVolumeFormat().getValue(),
+                getParameters().getImageType().getValue(),
+                getParameters().getDiskContentType().getStorageValue(),
+                getParameters().getNewImageID().toString(),
+                getParameters().getNewImageDescription(),
+                getParameters().getSourceImageGroupId().toString(),
+                getParameters().getImageId().toString(),
+                imageInitSize);
 
         proceedProxyReturnValue();
         Guid taskID = new Guid(uuidReturn.uuid);

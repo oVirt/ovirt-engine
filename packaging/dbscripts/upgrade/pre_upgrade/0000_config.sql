@@ -179,7 +179,6 @@ select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"
 select fn_db_add_config_value_for_versions_up_to('ReduceVolumeSupported', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('CopyPreallocatedFileBasedDiskSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('CopyPreallocatedFileBasedDiskSupported', 'true', '4.4');
-select fn_db_add_config_value_for_versions_up_to('ContentType', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsoOnDataDomain', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ManagedBlockDomainSupported', 'false', '4.4');

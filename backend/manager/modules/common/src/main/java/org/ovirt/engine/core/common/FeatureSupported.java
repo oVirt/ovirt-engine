@@ -147,10 +147,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ReduceVolumeSupported, version);
     }
 
-    public static boolean isContentTypeSupported(Version version) {
-        return supportedInConfig(ConfigValues.ContentType, version);
-    }
-
     public static boolean isIsoOnDataDomainSupported(Version version) {
         return supportedInConfig(ConfigValues.IsoOnDataDomain, version);
     }
