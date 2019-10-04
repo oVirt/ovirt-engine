@@ -1530,9 +1530,6 @@ public enum ConfigValues {
     ResumeBehaviorSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    GlusterEventingSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     CustomBondNameSupported,
 
     @TypeConverterAttribute(Boolean.class)

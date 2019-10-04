@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.ovirt.engine.core.common.FeatureSupported.supportedInConfig;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -11,7 +9,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -43,11 +40,6 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
     protected boolean validate() {
         //not calling super.validate here, as we do not want to fail if no other server's up.
         // want to add the webhook for first server being added.
-
-        if (!supportedInConfig(ConfigValues.GlusterEventingSupported, getCluster().getCompatibilityVersion())) {
-            //if eventing is not supported, we do not want to process further
-            return false;
-        }
         return true;
     }
 

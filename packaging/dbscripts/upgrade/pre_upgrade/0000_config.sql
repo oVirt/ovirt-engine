@@ -165,9 +165,6 @@ select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgnore','/,/
 select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgnore','swap','general');
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
--- Gluster Eventing--
-select fn_db_add_config_value_for_versions_up_to('GlusterEventingSupported', 'true', '4.4');
-
 -- Gluster Reset Brick--
 select fn_db_add_config_value_for_versions_up_to('ResetBrickSupported', 'true', '4.4');
 
