@@ -543,6 +543,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String runOnVmPopup();
 
+    String hostCpuVmPopup();
+
     String runMigrationOptionsVmPopup();
 
     String priorForRunMigrationQueueVmPopup();
