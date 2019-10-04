@@ -222,14 +222,6 @@ public class FeatureSupported {
     }
 
     /**
-     * @param version Compatibility version to check for.
-     * @return {@code true} if verb Host.confirmConnectivity is supported for this version.
-     */
-    public static boolean isConfirmConnectivitySupportedByVdsm(Version version) {
-        return supportedInConfig(ConfigValues.ConfirmConnectivitySupportedByVdsm, version);
-    }
-
-    /**
      * Checks if BIOS Type configuration supported
      *
      * @param version Compatibility version to check for.

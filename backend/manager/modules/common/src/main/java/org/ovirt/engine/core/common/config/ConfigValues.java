@@ -1541,9 +1541,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     Ping2SupportedByVdsm,
 
-    @TypeConverterAttribute(Boolean.class)
-    ConfirmConnectivitySupportedByVdsm,
-
     /**
      * The rate (in seconds) to synchronize networks of external network providers in the background.
      */
