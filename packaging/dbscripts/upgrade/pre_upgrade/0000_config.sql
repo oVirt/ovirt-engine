@@ -701,7 +701,6 @@ select fn_db_add_config_value('UploadImageXhrRetryIntervalInSeconds','3','genera
 select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 select fn_db_add_config_value_for_versions_up_to('GetImageTicketSupported', 'true', '4.4');
 
-select fn_db_add_config_value_for_versions_up_to('Ping2SupportedByVdsm', 'true', '4.4');
 select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','general');
 select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'true', '4.4');

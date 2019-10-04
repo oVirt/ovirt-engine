@@ -1526,9 +1526,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     CustomBondNameSupported,
 
-    @TypeConverterAttribute(Boolean.class)
-    Ping2SupportedByVdsm,
-
     /**
      * The rate (in seconds) to synchronize networks of external network providers in the background.
      */
