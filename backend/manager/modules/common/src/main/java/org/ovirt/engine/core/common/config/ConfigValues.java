@@ -1483,9 +1483,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     DomainXML,
 
-    @TypeConverterAttribute(Boolean.class)
-    AgentChannelNamingSupported,
-
     /**
      * Timeout in seconds for the completion of calls to external network providers.
      */

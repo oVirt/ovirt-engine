@@ -147,10 +147,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.IsDeferringFileVolumePreallocationSupported, version);
     }
 
-    public static boolean isAgentChannelNamingSupported(Version version) {
-        return supportedInConfig(ConfigValues.AgentChannelNamingSupported, version);
-    }
-
     /**
      * @param version Compatibility version to check for.
      * @return {@code true} if VDSM trapping of guest reboot is supported.
