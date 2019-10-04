@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
@@ -30,28 +29,10 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
     }
 
     protected Map<String, Object> createParametersStruct() {
-        if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
-            Map<String, Object> updateInfo = new HashMap<>();
-            updateInfo.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
-            updateInfo.put(VdsProperties.engineXml, generateDomainXml());
-            return updateInfo;
-        } else {
-            return initDeviceStructure();
-        }
-    }
-
-    protected Map<String, Object> initDeviceStructure() {
-        Map<String, Object> deviceStruct = new HashMap<>();
-        deviceStruct.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
-        deviceStruct.put(VdsProperties.Alias, getParameters().getVmDevice().getAlias());
-
-        VmNic nic = getParameters().getNic();
-        deviceStruct.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
-        VmDevice vmDevice = getParameters().getVmDevice();
-
-        vmInfoBuildUtils.addProfileDataToNic(deviceStruct, getParameters().getVm(), vmDevice, nic);
-
-        return deviceStruct;
+        Map<String, Object> updateInfo = new HashMap<>();
+        updateInfo.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
+        updateInfo.put(VdsProperties.engineXml, generateDomainXml());
+        return updateInfo;
     }
 
     private String generateDomainXml() {

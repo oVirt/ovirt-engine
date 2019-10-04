@@ -144,18 +144,6 @@ public class FeatureSupported {
     }
 
     /**
-     * The use of libvirt's domain XML on the engine side.
-     * Important: this is determined by the compatibility level of the cluster!
-     * (rather than that of the VM)
-     *
-     * @param version Compatibility version <B>of the cluster</B> to check for.
-     * @return {@code true} if the use of libvirt's domain XML is supported.
-     */
-    public static boolean isDomainXMLSupported(Version version) {
-        return supportedInConfig(ConfigValues.DomainXML, version);
-    }
-
-    /**
      * @param version Compatibility version to check for.
      * @return {@code true} if getting an custom bond name is supported for this version.
      */

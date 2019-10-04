@@ -117,9 +117,6 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     private VmDevice createMemoryDevice() {
         Map<String, Object> specParams = new HashMap<>();
         Guid guid = Guid.newGuid();
-        String alias = FeatureSupported.isDomainXMLSupported(getVm().getClusterCompatibilityVersion()) ?
-                String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, guid) :
-                "";
         specParams.put(DEVICE_SIZE_FIELD_KEY, String.valueOf(getParameters().getMemoryDeviceSizeMb()));
         specParams.put(DEVICE_NODE_FIELD_KEY, String.valueOf(getParameters().getNumaNode()));
         return new VmDevice(new VmDeviceId(guid, getVmId()),
@@ -130,7 +127,7 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 true,
                 true,
                 false,
-                alias,
+                String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, guid),
                 null,
                 null,
                 null);

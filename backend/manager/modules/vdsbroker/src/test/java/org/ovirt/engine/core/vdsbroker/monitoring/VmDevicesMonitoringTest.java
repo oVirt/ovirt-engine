@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.transaction.TransactionManager;
 
@@ -32,7 +31,6 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,17 +39,12 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.InjectorExtension;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class VmDevicesMonitoringTest {
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.DomainXML, Version.getLast(), true));
-    }
-
     @InjectedMock
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     public TransactionManager transactionManager;

@@ -2142,10 +2142,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        Boolean isMultiQueuesSupported =
-                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.DomainXML,
-                        compatibilityVersion.getValue());
-        getMultiQueues().setIsAvailable(isMultiQueuesSupported);
+        getMultiQueues().setIsAvailable(true);
     }
 
     private void vmInitEnabledChanged() {

@@ -305,7 +305,6 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 
 select fn_db_add_config_value_for_versions_up_to('ipv6IscsiSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ipv6IscsiSupported', 'true', '4.4');
-select fn_db_add_config_value_for_versions_up_to('DomainXML', 'true', '4.4');
 select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');

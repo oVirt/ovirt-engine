@@ -1471,9 +1471,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     IsDeferringFileVolumePreallocationSupported,
 
-    @TypeConverterAttribute(Boolean.class)
-    DomainXML,
-
     /**
      * Timeout in seconds for the completion of calls to external network providers.
      */

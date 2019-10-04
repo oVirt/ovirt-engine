@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -62,11 +61,13 @@ public class OvfManager {
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuVerb = cluster.getCpuVerb();
-            String engineXml = null;
-            if (FeatureSupported.isDomainXMLSupported(cluster.getCompatibilityVersion())) {
-                engineXml = generateEngineXml(vm, cpuVerb, cluster.getEmulatedMachine());
-            }
-            vmWriter = new HostedEngineOvfWriter(vm, fullEntityOvfData, version, cluster.getEmulatedMachine(), cpuVerb, osRepository, engineXml);
+            vmWriter = new HostedEngineOvfWriter(vm,
+                    fullEntityOvfData,
+                    version,
+                    cluster.getEmulatedMachine(),
+                    cpuVerb,
+                    osRepository,
+                    generateEngineXml(vm, cpuVerb, cluster.getEmulatedMachine()));
         } else {
             vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository, getMemoryDiskForSnapshots(vm));
         }

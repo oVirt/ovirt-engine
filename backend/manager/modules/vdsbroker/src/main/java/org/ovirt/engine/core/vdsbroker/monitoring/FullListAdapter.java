@@ -7,8 +7,6 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -36,11 +34,7 @@ public class FullListAdapter {
 
 
     public VDSReturnValue getVmFullList(Guid vdsId, List<Guid> vmIds, boolean managedVms) {
-        return isDomainXmlEnabledForVds(vdsId) ? dumpXmls(vdsId, vmIds, managedVms) : fullList(vdsId, vmIds);
-    }
-
-    private VDSReturnValue fullList(Guid vdsId, List<Guid> vmIds) {
-        return runVdsCommand(VDSCommandType.FullList, new FullListVDSCommandParameters(vdsId, vmIds));
+        return dumpXmls(vdsId, vmIds, managedVms);
     }
 
     @SuppressWarnings("unchecked")
@@ -57,10 +51,6 @@ public class FullListAdapter {
             retVal.setReturnValue(devices);
         }
         return retVal;
-    }
-
-    private boolean isDomainXmlEnabledForVds(Guid vdsId) {
-        return FeatureSupported.isDomainXMLSupported(getVdsManager(vdsId).getCompatibilityVersion());
     }
 
     private <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {

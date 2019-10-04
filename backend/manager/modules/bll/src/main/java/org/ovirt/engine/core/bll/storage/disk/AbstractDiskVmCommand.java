@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -357,8 +356,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected String getDeviceAliasForDisk(Disk disk) {
-        return FeatureSupported.isDomainXMLSupported(getVm().getClusterCompatibilityVersion()) ?
-                String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, disk.getId())
-                : "";
+        return String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, disk.getId());
     }
 }
