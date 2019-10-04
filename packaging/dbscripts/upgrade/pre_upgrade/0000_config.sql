@@ -793,7 +793,6 @@ select fn_db_add_config_value_for_versions_up_to('VdsFenceOptionMapping',
 select fn_db_add_config_value_for_versions_up_to('VdsFenceType',
                                                  'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti',
                                                  '4.4');
-select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'true', '4.4');
 select fn_db_add_config_value_for_versions_up_to('ScsiReservationSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ScsiReservationSupported', 'true', '4.4');
 select fn_db_add_config_value('AlwaysFilterResultsForWebUi', 'false', 'general');

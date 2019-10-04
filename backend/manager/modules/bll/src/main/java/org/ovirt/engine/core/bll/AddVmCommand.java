@@ -95,7 +95,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -592,12 +591,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             chooseDisksSourceDomains();
         } else {
             return false;
-        }
-
-        if (getParameters().getVmStaticData().getVmType() == VmType.HighPerformance
-                && !FeatureSupported.isHighPerformanceTypeSupported(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HIGH_PERFORMANCE_IS_NOT_SUPPORTED,
-                    String.format("$Version %s", getEffectiveCompatibilityVersion()));
         }
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),

@@ -16,14 +16,12 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -58,12 +56,6 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
 
         if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getParameters().getVmStaticData().getVmtGuid())) {
             return failValidation(EngineMessage.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
-        }
-
-        if (getParameters().getVmStaticData().getVmType() == VmType.HighPerformance
-                && !FeatureSupported.isHighPerformanceTypeSupported(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HIGH_PERFORMANCE_IS_NOT_SUPPORTED,
-                    String.format("$Version %s", getEffectiveCompatibilityVersion()));
         }
 
         if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(

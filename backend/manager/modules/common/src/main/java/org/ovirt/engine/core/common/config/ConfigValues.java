@@ -1185,9 +1185,6 @@ public enum ConfigValues {
     IsMigrationSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    IsHighPerformanceTypeSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     ScsiReservationSupported,
 
     @TypeConverterAttribute(Map.class)

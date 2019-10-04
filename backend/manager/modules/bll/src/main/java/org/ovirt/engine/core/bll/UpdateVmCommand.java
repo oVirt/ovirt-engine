@@ -1126,12 +1126,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     String.format("$Ccv %s", customCompatibilityVersionFromParams));
         }
 
-        if (vmFromParams.getVmType() == VmType.HighPerformance
-                && !FeatureSupported.isHighPerformanceTypeSupported(getEffectiveCompatibilityVersion())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HIGH_PERFORMANCE_IS_NOT_SUPPORTED,
-                    String.format("$Version %s", getEffectiveCompatibilityVersion()));
-        }
-
         if (!validateCustomProperties(vmFromParams.getStaticData())) {
             return false;
         }
