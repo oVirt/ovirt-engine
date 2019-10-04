@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -89,10 +88,6 @@ public class ReduceImageCommand<T extends ImagesActionsParametersBase> extends B
         }
         if (getStorageDomain().getStorageType().isFileDomain()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_REDUCE_IMAGE_NOT_SUPPORTED_FOR_FILE_DOMAINS);
-        }
-        if (!isReduceVolumeSupported()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_REDUCE_IMAGE_NOT_SUPPORTED_BY_DC_VERSION,
-                    String.format("$dataCenterVersion %s", getStoragePool().getCompatibilityVersion()));
         }
         if (getVm() != null && getVm().isRunning() && !isInternalMerge()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_REDUCE_IMAGE_NOT_SUPPORTED_FOR_ACTIVE_IMAGE_LIVE_MERGE);
@@ -193,10 +188,6 @@ public class ReduceImageCommand<T extends ImagesActionsParametersBase> extends B
     @Override
     protected AsyncTaskType getTaskType() {
         return AsyncTaskType.reduceImage;
-    }
-
-    private boolean isReduceVolumeSupported() {
-        return FeatureSupported.isReduceVolumeSupported(getStoragePool().getCompatibilityVersion());
     }
 
     private boolean isInternalMerge() {

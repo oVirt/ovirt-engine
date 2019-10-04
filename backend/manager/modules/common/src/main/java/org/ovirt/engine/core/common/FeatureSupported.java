@@ -143,10 +143,6 @@ public class FeatureSupported {
         return vds.getSupportedClusterVersionsSet().contains(Version.v4_2);
     }
 
-    public static boolean isReduceVolumeSupported(Version version) {
-        return supportedInConfig(ConfigValues.ReduceVolumeSupported, version);
-    }
-
     /**
      * The use of libvirt's domain XML on the engine side.
      * Important: this is determined by the compatibility level of the cluster!

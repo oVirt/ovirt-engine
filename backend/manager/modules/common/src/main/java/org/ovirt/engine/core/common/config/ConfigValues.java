@@ -1494,9 +1494,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Version.class)
     MultiFirewallSupportSince,
 
-    @TypeConverterAttribute(Boolean.class)
-    ReduceVolumeSupported,
-
     /**
      * Value of 'Filter' header Web-ui is supposed to send for admin users
      *
