@@ -215,14 +215,6 @@ public class FeatureSupported {
 
     /**
      * @param version Compatibility version to check for.
-     * @return {@code true} if getting an LLDP information from vdsm is supported for this version.
-     */
-    public static boolean isLlldpInformationSupported(Version version) {
-        return supportedInConfig(ConfigValues.LldpInformationSupported, version);
-    }
-
-    /**
-     * @param version Compatibility version to check for.
      * @return {@code true} if getting an custom bond name is supported for this version.
      */
     public static boolean isCustomBondNameSupported(Version version) {

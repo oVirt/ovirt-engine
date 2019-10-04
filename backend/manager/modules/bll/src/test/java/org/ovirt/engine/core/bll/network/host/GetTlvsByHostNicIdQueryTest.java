@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.Tlv;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -36,7 +34,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParameters,
@@ -59,20 +56,14 @@ public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParame
         NIC_ID_NETWORK_INTERFACE,
         NIC_ID_NIC,
         LLDP_ENABLED,
-        SUCCESS,
-        NOT_SUPPORTED
+        SUCCESS
     }
 
     public void setup(ExpectedError expectedError) {
         Guid validVdsGuid = Guid.newGuid();
         VDS validVds = new VDS();
         validVds.setId(validVdsGuid);
-
-        if (expectedError == ExpectedError.NOT_SUPPORTED) {
-            validVds.setClusterCompatibilityVersion(Version.v4_1);
-        } else {
-            validVds.setClusterCompatibilityVersion(Version.v4_2);
-        }
+        validVds.setClusterCompatibilityVersion(Version.v4_2);
 
         final Guid NIC_ID = Guid.Empty;
         when(getQueryParameters().getId()).thenReturn(expectedError == ExpectedError.NIC_ID_NOT_NULL ? null : NIC_ID);
@@ -151,20 +142,5 @@ public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParame
         List returnValue = getQuery().getQueryReturnValue().getReturnValue();
         assertNotNull(returnValue);
         assertTrue(returnValue.get(0) instanceof Tlv);
-    }
-
-    @Test
-    public void testExecuteQueryNotSupported() {
-        setup(ExpectedError.NOT_SUPPORTED);
-        getQuery().executeQueryCommand();
-        Map<String, LldpInfo> returnValue = getQuery().getQueryReturnValue().getReturnValue();
-        assertNull(returnValue);
-    }
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.concat(AbstractQueryTest.mockConfiguration(),
-                Stream.of(MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_1, false),
-                        MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_2, true))
-        );
     }
 }

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,7 +20,6 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
 import org.ovirt.engine.core.common.businessentities.network.Tlv;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -30,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParameters,
@@ -46,8 +42,7 @@ public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParame
 
     private enum ExpectedError {
         LLDP_ENABLE,
-        SUCCESS,
-        NOT_SUPPORTED
+        SUCCESS
     }
 
     private void setup(ExpectedError expectedError) {
@@ -55,12 +50,7 @@ public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParame
         VDS validVds = new VDS();
         validVds.setId(validGuid);
 
-        if (expectedError == ExpectedError.NOT_SUPPORTED) {
-            validVds.setClusterCompatibilityVersion(Version.v4_1);
-        } else {
-            validVds.setClusterCompatibilityVersion(Version.v4_2);
-        }
-
+        validVds.setClusterCompatibilityVersion(Version.v4_2);
 
         when(getQueryParameters().getId()).thenReturn(validGuid);
 
@@ -100,21 +90,5 @@ public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParame
         getQuery().executeQueryCommand();
         Map<String, LldpInfo> returnValue = getQuery().getQueryReturnValue().getReturnValue();
         assertTrue(returnValue.values().stream().allMatch(Objects::nonNull));
-    }
-
-    @Test
-    public void testExecuteQueryNotSupported() {
-        setup(ExpectedError.NOT_SUPPORTED);
-        getQuery().executeQueryCommand();
-        Map<String, LldpInfo> returnValue = getQuery().getQueryReturnValue().getReturnValue();
-        assertNull(returnValue);
-    }
-
-    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.concat(AbstractQueryTest.mockConfiguration(),
-                Stream.of(MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_1, false),
-                        MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_2, true)
-                )
-        );
     }
 }

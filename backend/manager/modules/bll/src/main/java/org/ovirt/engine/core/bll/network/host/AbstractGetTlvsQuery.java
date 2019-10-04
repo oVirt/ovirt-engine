@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.vdscommands.GetLldpVDSCommandParameters;
@@ -34,10 +33,8 @@ public abstract class AbstractGetTlvsQuery<P extends QueryParametersBase> extend
 
     @Override
     protected void executeQueryCommand() {
-        if (FeatureSupported.isLlldpInformationSupported(getHost().getClusterCompatibilityVersion())) {
-            VDSReturnValue command = runVdsCommand(VDSCommandType.GetLldp, lldpVDSCommandParameters);
-            getQueryReturnValue().setReturnValue(command.getReturnValue());
-        }
+        VDSReturnValue command = runVdsCommand(VDSCommandType.GetLldp, lldpVDSCommandParameters);
+        getQueryReturnValue().setReturnValue(command.getReturnValue());
     }
 
     public void setLldpVDSCommandParameters(GetLldpVDSCommandParameters lldpVDSCommandParameters) {

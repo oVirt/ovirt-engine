@@ -1542,9 +1542,6 @@ public enum ConfigValues {
     GlusterEventingSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    LldpInformationSupported,
-
-    @TypeConverterAttribute(Boolean.class)
     CustomBondNameSupported,
 
     @TypeConverterAttribute(Boolean.class)
