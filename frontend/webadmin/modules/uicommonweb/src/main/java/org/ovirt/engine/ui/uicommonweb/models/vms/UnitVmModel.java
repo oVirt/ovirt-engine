@@ -2203,7 +2203,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        getResumeBehavior().updateChangeability(ConfigValues.ResumeBehaviorSupported, getCompatibilityVersion());
+        getResumeBehavior().setIsChangeable(true);
 
         if (!getResumeBehavior().getIsChangable()) {
             getResumeBehavior().setSelectedItem(null);

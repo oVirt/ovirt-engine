@@ -61,8 +61,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
                 MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
-                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.getLast(), true),
-                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_2, false),
                 MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
                         new HashSet<>(Collections.singletonList(new Version(3, 0)))),
                 MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),

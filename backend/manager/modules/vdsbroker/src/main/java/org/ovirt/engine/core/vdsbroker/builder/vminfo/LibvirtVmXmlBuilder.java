@@ -894,9 +894,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeResumeBehaviorMetadata() {
-        if (FeatureSupported.isResumeBehaviorSupported(vm.getCompatibilityVersion())) {
-            writer.writeElement(OVIRT_VM_URI, "resumeBehavior", String.valueOf(vm.getResumeBehavior()).toLowerCase());
-        }
+        writer.writeElement(OVIRT_VM_URI, "resumeBehavior", String.valueOf(vm.getResumeBehavior()).toLowerCase());
     }
 
     private void writeRunAndPauseMetadata() {

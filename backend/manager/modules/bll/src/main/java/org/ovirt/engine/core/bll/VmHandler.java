@@ -35,7 +35,6 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -1182,14 +1181,9 @@ public class VmHandler implements BackendService {
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase, Version clusterVersion) {
-        Version version = CompatibilityVersionUtils.getEffective(vmBase.getCustomCompatibilityVersion(),
-                () -> clusterVersion);
-
-        if (FeatureSupported.isResumeBehaviorSupported(version)) {
-            if (vmBase.isAutoStartup() && vmBase.getLeaseStorageDomainId() != null) {
-                // since 4.2 the only supported resume behavior for HA vms with lease is kill
-                vmBase.setResumeBehavior(VmResumeBehavior.KILL);
-            }
+        if (vmBase.isAutoStartup() && vmBase.getLeaseStorageDomainId() != null) {
+            // since 4.2 the only supported resume behavior for HA vms with lease is kill
+            vmBase.setResumeBehavior(VmResumeBehavior.KILL);
         }
     }
 
