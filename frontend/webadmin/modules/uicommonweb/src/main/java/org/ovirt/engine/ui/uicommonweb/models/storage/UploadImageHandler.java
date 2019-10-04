@@ -8,12 +8,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryReturnValue;
-import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -86,7 +82,6 @@ public class UploadImageHandler {
     private Guid vdsId;
     private Guid diskId;
     private Element fileUploadElement;
-    private Boolean getImageTicketSupported;
 
     private Event<EventArgs> uploadFinishedEvent =
             new Event<>("UploadFinished", UploadImageHandler.class); //$NON-NLS-1$
@@ -188,22 +183,6 @@ public class UploadImageHandler {
         this.fileUploadElement = fileUploadElement;
     }
 
-    public Boolean getGetImageTicketSupported() {
-        if (getImageTicketSupported == null) {
-            Frontend.getInstance().runQuery(QueryType.GetVdsByVdsId, new IdQueryParameters(getVdsId()),
-                    new AsyncQuery<QueryReturnValue>(returnValue -> {
-                        VDS vds = returnValue.getReturnValue();
-                        setGetImageTicketSupported(AsyncDataProvider.getInstance().isGetImageTicketSupported(
-                                vds.getClusterCompatibilityVersion()));
-                    }));
-        }
-        return getImageTicketSupported;
-    }
-
-    public void setGetImageTicketSupported(boolean getImageTicketSupported) {
-        this.getImageTicketSupported = getImageTicketSupported;
-    }
-
     public void setDiskId(Guid diskId) {
         this.diskId = diskId;
     }
@@ -281,7 +260,6 @@ public class UploadImageHandler {
             TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId());
 
             ImageTransfer updates = new ImageTransfer();
-            updateBytesSent(updates);
             updates.setMessage(getProgressStr());
             statusParameters.setUpdates(updates);
 
@@ -289,13 +267,6 @@ public class UploadImageHandler {
                     this::respondToPollStatus);
             return isContinuePolling();
         }, POLLING_DELAY_MS);
-    }
-
-    private void updateBytesSent(ImageTransfer updates) {
-        if (getVdsId() != null && getImageTicketId() != null && Boolean.FALSE.equals(getGetImageTicketSupported())) {
-            // Old engines update the bytesSent here, new engines update it in TransferImageCommand.
-            updates.setBytesSent(getBytesSent());
-        }
     }
 
     private void respondToPollStatus(FrontendActionAsyncResult result) {

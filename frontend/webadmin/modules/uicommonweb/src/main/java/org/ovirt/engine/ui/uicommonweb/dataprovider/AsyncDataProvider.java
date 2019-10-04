@@ -3362,10 +3362,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetFenceAgentsByVdsId, new IdQueryParameters(hostId), aQuery);
     }
 
-    public boolean isGetImageTicketSupported(Version clusterVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigValues.GetImageTicketSupported, clusterVersion.getValue());
-    }
-
     public ArrayList<BiosType> getBiosTypeList() {
         return new ArrayList<>(Arrays.asList(BiosType.values()));
     }

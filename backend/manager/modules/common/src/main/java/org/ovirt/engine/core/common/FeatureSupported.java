@@ -165,14 +165,6 @@ public class FeatureSupported {
 
     /**
      * @param version Compatibility version to check for.
-     * @return {@code true} if getting an image ticket from vdsm is supported for this version.
-     */
-    public static boolean getImageTicketSupported(Version version) {
-        return supportedInConfig(ConfigValues.GetImageTicketSupported, version);
-    }
-
-    /**
-     * @param version Compatibility version to check for.
      * @return {@code true} if getting an custom bond name is supported for this version.
      */
     public static boolean isCustomBondNameSupported(Version version) {

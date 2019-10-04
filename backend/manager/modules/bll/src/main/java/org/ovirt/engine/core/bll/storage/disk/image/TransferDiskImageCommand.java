@@ -30,7 +30,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -700,9 +699,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private void pollTransferStatus(final StateContext context) {
-        if (context.entity.getVdsId() == null || context.entity.getImagedTicketId() == null ||
-                !FeatureSupported.getImageTicketSupported(
-                        vdsDao.get(context.entity.getVdsId()).getClusterCompatibilityVersion())) {
+        if (context.entity.getVdsId() == null || context.entity.getImagedTicketId() == null) {
             // Old engines update the transfer status in UploadImageHandler::updateBytesSent.
             return;
         }
