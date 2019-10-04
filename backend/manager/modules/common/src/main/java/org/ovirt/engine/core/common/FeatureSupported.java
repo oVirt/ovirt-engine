@@ -125,10 +125,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.LibgfApiSupported, version);
     }
 
-    public static boolean isIpv6MigrationProperlyHandled(Version version) {
-        return supportedInConfig(ConfigValues.Ipv6MigrationProperlyHandled, version);
-    }
-
     /**
      * @param version Compatibility version to check for.
      * @return {@code true} if Managed block domain storage domain is supported for this version.

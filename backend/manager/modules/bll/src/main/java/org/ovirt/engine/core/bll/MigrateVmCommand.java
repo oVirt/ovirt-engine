@@ -662,21 +662,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             if (migrationDestinationIpv4Address != null) {
                 return migrationDestinationIpv4Address;
             }
-            final String migrationDestinationIpv6Address =
-                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv6Address, "v6");
-            if (migrationDestinationIpv6Address != null) {
-                return formatIpv6AddressForUri(migrationDestinationIpv6Address);
-            }
+            return findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv6Address, "v6");
         }
         return null;
-    }
-
-    private String formatIpv6AddressForUri(String migrationDestinationIpv6Address) {
-        if (FeatureSupported.isIpv6MigrationProperlyHandled(getCluster().getCompatibilityVersion())) {
-            return migrationDestinationIpv6Address;
-        } else {
-            return String.format("[%s]", migrationDestinationIpv6Address);
-        }
     }
 
     private String findValidMigrationIpAddress(Network migrationNetwork,

@@ -1466,9 +1466,6 @@ public enum ConfigValues {
     ipv6IscsiSupported,
 
     @TypeConverterAttribute(Boolean.class)
-    Ipv6MigrationProperlyHandled,
-
-    @TypeConverterAttribute(Boolean.class)
     CopyPreallocatedFileBasedDiskSupported,
 
     @TypeConverterAttribute(Boolean.class)
