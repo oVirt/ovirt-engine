@@ -147,10 +147,6 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ReduceVolumeSupported, version);
     }
 
-    public static boolean isIsoOnDataDomainSupported(Version version) {
-        return supportedInConfig(ConfigValues.IsoOnDataDomain, version);
-    }
-
     /**
      * The use of libvirt's domain XML on the engine side.
      * Important: this is determined by the compatibility level of the cluster!
