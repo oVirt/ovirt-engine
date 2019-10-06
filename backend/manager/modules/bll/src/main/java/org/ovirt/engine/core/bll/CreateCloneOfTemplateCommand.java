@@ -68,8 +68,10 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         persistCommandIfNeeded();
         newDiskImage = cloneDiskImage(getDestinationImageId());
         newDiskImage.setId(Guid.newGuid());
+        getParameters().setImageGroupID(newDiskImage.getId());
         Guid storagePoolID = newDiskImage.getStoragePoolId() != null ? newDiskImage
                 .getStoragePoolId() : Guid.Empty;
+        getParameters().setStoragePoolId(storagePoolID);
 
         if (isDataOperationsByHSM()) {
             CopyImageGroupWithDataCommandParameters p = new CopyImageGroupWithDataCommandParameters(
