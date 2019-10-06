@@ -447,16 +447,16 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks) {
+    @Override public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String jobUUID) {
         return null;
     }
 
-    @Override public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory) {
+    @Override public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, String jobUUID) {
         return null;
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID) {
         return null;
     }
 

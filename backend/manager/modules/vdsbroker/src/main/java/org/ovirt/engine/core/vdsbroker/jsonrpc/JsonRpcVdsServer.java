@@ -1036,22 +1036,23 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks) {
-        return snapshot(vmId, disks, null, false);
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String jobUUID) {
+        return snapshot(vmId, disks, null, false, jobUUID);
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory) {
-        return snapshot(vmId, disks, memory, false);
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, String jobUUID) {
+        return snapshot(vmId, disks, memory, false, jobUUID);
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen) {
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.snapshot").withParameter("vmID", vmId)
                         .withParameter("snapDrives", new ArrayList<>(Arrays.asList(disks)))
                         .withOptionalParameter("snapMemory", memory)
                         .withParameter("frozen", frozen)
+                        .withParameter("jobUUID", jobUUID)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);

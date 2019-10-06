@@ -10,12 +10,13 @@ import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateSnapshotForVmParameters extends VmOperationParameterBase implements Serializable {
+public class CreateSnapshotForVmParameters extends VmOperationParameterBase implements HostJobCommandParameters, Serializable {
     private static final long serialVersionUID = 847791941815264795L;
 
     @NotEmpty(groups = { CreateEntity.class },
@@ -47,6 +48,11 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
     private boolean liveSnapshotSucceeded;
 
     private CreateSnapshotStage createSnapshotStage = CreateSnapshotStage.CREATE_VOLUME_STARTED;
+
+    private Guid hostJobId;
+
+    private Snapshot snapshot;
+
 
     public CreateSnapshotForVmParameters() {
         needsLocking = true;
@@ -159,6 +165,23 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     public void setLiveSnapshotSucceeded(boolean liveSnapshotSucceeded) {
         this.liveSnapshotSucceeded = liveSnapshotSucceeded;
+    }
+
+    public void setSnapshot(Snapshot snapshot) {
+        this.snapshot = snapshot;
+    }
+
+    public Snapshot getSnapshot() {
+        return snapshot;
+    }
+
+    @Override
+    public Guid getHostJobId() {
+        return hostJobId;
+    }
+
+    public void setHostJobId(Guid hostJobId) {
+        this.hostJobId = hostJobId;
     }
 
     public enum CreateSnapshotStage {

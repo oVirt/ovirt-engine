@@ -69,11 +69,9 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -370,16 +368,29 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     }
 
     private boolean performLiveSnapshot(final Snapshot snapshot) {
-        try {
-            TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () -> {
-                runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(snapshot));
-                return null;
-            });
-        } catch (EngineException e) {
-            handleVdsLiveSnapshotFailure(e);
+        ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateLiveSnapshotForVm,
+                createLiveSnapshotParameters(snapshot),
+                getContext());
+        if (actionReturnValue.getSucceeded()) {
+            setSucceeded(true);
+            return true;
+        } else {
+            log.error("Failed to start live snapshot on VDS");
+            setSucceeded(false);
             return false;
         }
-        return true;
+    }
+
+    private CreateSnapshotForVmParameters createLiveSnapshotParameters(final Snapshot snapshot) {
+        CreateSnapshotForVmParameters params =  new CreateSnapshotForVmParameters();
+        params.setVmId(getParameters().getVmId());
+        params.setSnapshot(snapshot);
+        params.setVdsRunningOn(getVds().getId());
+        params.setCreatedSnapshotId(getParameters().getCreatedSnapshotId());
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        params.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        return params;
     }
 
     @Override
@@ -530,13 +541,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         return getParameters().isSaveMemory() && snapshot.containsMemory();
     }
 
-    private void handleVdsLiveSnapshotFailure(EngineException e) {
-        setCommandStatus(CommandStatus.FAILED);
-        handleVmFailure(e, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE,
-                "Could not perform live snapshot due to error, VM will still be configured to the new created"
-                        + " snapshot: {}");
-    }
-
     private ActionReturnValue createSnapshotsForDisks() {
         CreateSnapshotDiskParameters parameters = new CreateSnapshotDiskParameters();
         parameters.setDiskIdsToIgnoreInChecks(getParameters().getDiskIdsToIgnoreInChecks());
@@ -553,31 +557,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         return runInternalAction(ActionType.CreateSnapshotDisk,
                 parameters,
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
-    }
-
-    private SnapshotVDSCommandParameters buildLiveSnapshotParameters(Snapshot snapshot) {
-        List<Disk> pluggedDisksForVm = diskDao.getAllForVm(getVm().getId(), true);
-        List<DiskImage> filteredPluggedDisksForVm = DisksFilter.filterImageDisks(pluggedDisksForVm,
-                ONLY_SNAPABLE, ONLY_ACTIVE);
-
-        // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
-        List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getDisksList());
-
-        SnapshotVDSCommandParameters parameters = new SnapshotVDSCommandParameters(
-                getVm().getRunOnVds(), getVm().getId(), filteredPluggedDisks);
-
-        if (isMemorySnapshotSupported() && snapshot.containsMemory()) {
-            parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
-            parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
-        }
-
-        // In case the snapshot is auto-generated for live storage migration,
-        // we do not want to issue an FS freeze thus setting vmFrozen to true
-        // so a freeze will not be issued by Vdsm
-        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
-                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
-
-        return parameters;
     }
 
     private void fastForwardDisksToActiveSnapshot() {

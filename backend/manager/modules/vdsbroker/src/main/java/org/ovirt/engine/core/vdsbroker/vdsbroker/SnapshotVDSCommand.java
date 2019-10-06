@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Switch the currently active images that the VM is running on, to the new images which are supplied in the parameters.
@@ -21,19 +22,24 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
 
     @Override
     protected void executeVdsBrokerCommand() {
-        status = executeSnapshotVerb();
+        Guid taskId = Guid.newGuid();
+        status = executeSnapshotVerb(taskId);
         proceedProxyReturnValue();
+
+        if (getVDSReturnValue().getSucceeded()) {
+            setReturnValue(taskId);
+        }
     }
 
-    private StatusOnlyReturn executeSnapshotVerb() {
+    private StatusOnlyReturn executeSnapshotVerb(Guid taskId) {
         String vmId = getParameters().getVmId().toString();
         String memoryVolume = getParameters().isMemoryVolumeExists() ? createMemoryStringFromDisks() : "";
         if (getParameters().isVmFrozen()) {
-            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, getParameters().isVmFrozen());
+            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, getParameters().isVmFrozen(), taskId.toString());
         } else if (getParameters().isMemoryVolumeExists()) {
-            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume);
+            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, taskId.toString());
         } else {
-            return getBroker().snapshot(vmId, createDisksMap());
+            return getBroker().snapshot(vmId, createDisksMap(), taskId.toString());
         }
     }
 
