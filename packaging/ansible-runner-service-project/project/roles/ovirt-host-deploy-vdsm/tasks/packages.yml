@@ -1,0 +1,32 @@
+---
+- name: Install latest ovirt-host package
+  yum:
+    name: ovirt-host
+    state: latest
+
+- name: get packages
+  package_facts:
+    manager: auto
+
+- name: Verify minimum vdsm version exists
+  fail:
+    msg: "Minimum version required for vdsm is {{ host_deploy_vdsm_min_version }}"
+  when: host_deploy_vdsm_min_version|float < ansible_facts.packages['vdsm'][0].version|float
+
+- name: Verify distribution version is supported
+  fail:
+    msg: "Supported distributions are CentOS and RHEL version >= 7.5 and Fedora version >= 24"
+  when: >
+    not (
+    ((ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat') and
+    ansible_distribution_version|float >= 7.5) or
+    (ansible_distribution == 'Fedora' and ansible_distribution_version|float >= 24))
+
+- name: Update existing hooks packages
+  yum:
+    name: vdsm-hook-*
+    state: latest
+    update_only: yes
+
+- name: Reconfigure vdsm tool
+  shell: vdsm-tool configure --force

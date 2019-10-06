@@ -1,0 +1,27 @@
+---
+- name: populate service facts
+  service_facts:
+
+- name: Stop services
+  service:
+    name: "{{ item }}"
+    state: stopped
+  loop:
+  - vdsmd.service
+  - supervdsmd.service
+  - libvirtd.service
+  - virt-imageio-daemon.service
+  when: "item in ansible_facts.services"
+
+- name: Start and enable services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+  - cgconfig.service
+  - messagebus.service
+  - libvirtd.service
+  - virt-imageio-daemon.service
+  - vdsmd.service
+  when: "item in ansible_facts.services"

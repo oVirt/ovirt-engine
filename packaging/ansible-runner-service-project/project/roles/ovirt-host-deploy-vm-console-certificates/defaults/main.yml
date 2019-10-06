@@ -3,6 +3,9 @@ ovirt_enrollment_type: inline
 # Certificate path:
 ovirt_vmconsole_store: '/etc/pki/ovirt-vmconsole'
 
+# CA file (relative to certificate paths):
+ovirt_vmconsole_ca_file: "{{ ovirt_vmconsole_store }}/ca.pub"
+
 # Certificate files (relative to certificate path):
 ovirt_vmconsole_cert_file: '{{ ovirt_vmconsole_store }}/host-ssh_host_rsa-cert.pub'
 

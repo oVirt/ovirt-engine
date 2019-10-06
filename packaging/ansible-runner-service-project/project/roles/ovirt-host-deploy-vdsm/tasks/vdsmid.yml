@@ -1,0 +1,92 @@
+---
+- name: Check if vdsm id exists
+  stat:
+    path: "{{ vdsm_id_file }}"
+  ignore_errors: true
+  register: vdsm_id_stat
+
+- block:
+  - name: Get vdsm id
+    shell: cat "{{ vdsm_id_file }}"
+    register: vdsm_id_file_content
+
+  - name: Set vdsm id
+    set_fact:
+      vdsm_id: "{{ vdsm_id_file_content.stdout }}"
+  when: vdsm_id_stat.stat.exists
+
+- block:
+  - name: Get latest dmidecode package
+    yum:
+      name: dmidecode
+      state: latest
+
+  - name: Detect vdsm id for x86_64 or i686
+    shell: dmidecode -s system-uuid
+    register: vdsm_id_res
+
+  - name: Set vdsm id for x86_64 or i686
+    set_fact:
+      vdsm_id: "{{ vdsm_id_res.stdout }}"
+    when:
+      - vdsm_id_res.rc == 0
+      - vdsm_id_res.stdout_lines|length == 1
+      - not vdsm_id_res.stdout_lines[0]|regex_search(not_regexp)
+  when:
+    - not vdsm_id_stat.stat.exists
+    - vdsm_id == ''
+    - (ansible_facts.architecture == 'x86_64' or ansible_facts.architecture == 'i686')
+
+- block:
+  - name: Verify ppc system id path exists
+    stat:
+      path: "{{ ppc_system_id }}"
+    register: stat_results
+
+  - name: Detect vdsm id for ppc or ppc64
+    shell: cat "{{ ppc_system_id }}"
+    register: vdsm_id_res
+    when: stat_results.stat.exists
+
+  - name: Set vdsm id for ppc or ppc64
+    set_fact:
+      vdsm_id: "{{ vdsm_id_res.stdout|replace(',', '') }}"
+    when: stat_results.stat.exists
+  when:
+    - vdsm_id == ''
+    - (ansible_facts.architecture == 'ppc' or ansible_facts.architecture == 'ppc64')
+
+- name: Set vdsm id if it wasn't found
+  set_fact:
+    vdsm_id: "{{ 9999999999999999999999|random|to_uuid }}"
+  when: vdsm_id == ''
+
+- name: Store vdsm id
+  copy:
+    content: "{{ vdsm_id }}"
+    dest: "{{ vdsm_id_file }}"
+    owner: root
+
+- name: Create vdsm.conf content
+  set_fact:
+    vdsm_config_prefix: "[vars]\nssl= {{ host_deploy_vdsm_encrypt_host_communication }} \n"
+
+- name: Add content to vdsm.conf for version 4.4
+  set_fact:
+    vdsm_config_prefix: "{{ vdsm_config_prefix }}net_nmstate_enabled= {{ host_deploy_vdsm_nmstate_enabled }} \n"
+  when: host_deploy_cluster_version|float >= 4.4 and host_deploy_vdsm_nmstate_enabled == true
+
+- name: Add content to vdsm.conf for version 4.2
+  set_fact:
+    vdsm_config_prefix: "{{ vdsm_config_prefix }}ssl_ciphers= {{ host_deploy_vdsm_ssl_ciphers }} \n"
+  when: host_deploy_cluster_version|float >= 4.2
+
+- name: Add adresses to vdsm.conf
+  set_fact:
+    vdsm_config_prefix: "{{ vdsm_config_prefix }} \n[addresses]\nmanagement_port= {{ host_deploy_vdsm_port }} \n"
+
+- name: Copy vdsm config prefix to vdsm.conf
+  copy:
+    content: "{{ vdsm_config_prefix }}"
+    dest: "{{ vdsm_config_file }}"
+    owner: root

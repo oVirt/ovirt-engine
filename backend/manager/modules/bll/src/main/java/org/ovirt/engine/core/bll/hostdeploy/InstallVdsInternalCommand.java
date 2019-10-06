@@ -7,14 +7,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
-import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -30,6 +28,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.CertificateUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
@@ -37,6 +36,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -45,7 +45,6 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.PKIResources;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +55,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private static Logger log = LoggerFactory.getLogger(InstallVdsInternalCommand.class);
     private VDSStatus vdsInitialStatus;
 
-    @Inject
-    private ManagementNetworkUtil managementNetworkUtil;
-
-    @Inject
-    private ResourceManager resourceManager;
     @Inject
     private ProviderDao providerDao;
     @Inject
@@ -120,32 +114,21 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private void installHost() {
         try (final VdsDeploy deploy = new VdsDeploy("ovirt-host-deploy", getVds(), true)) {
             log.info(
-                "Before Installation host {}, {}",
-                getVds().getId(),
-                getVds().getName()
+                    "Before Installation host {}, {}",
+                    getVds().getId(),
+                    getVds().getName()
             );
 
             T parameters = getParameters();
             deploy.setCorrelationId(getCorrelationId());
 
-            Cluster hostCluster = clusterDao.get(getClusterId());
-
-            deploy.addUnit(
-                new VdsDeployVdsmUnit(hostCluster.getCompatibilityVersion()),
-                new VdsDeployPKIUnit()
-            );
-
-            if (MapUtils.isNotEmpty(parameters.getHostedEngineConfiguration())) {
-                deploy.addUnit(new VdsDeployHostedEngineUnit(parameters.getHostedEngineConfiguration()));
-            }
-
             switch (getParameters().getAuthMethod()) {
                 case Password:
                     deploy.setPassword(parameters.getPassword());
-                break;
+                    break;
                 case PublicKey:
                     deploy.useDefaultKeyPair();
-                break;
+                    break;
                 default:
                     throw new Exception("Invalid authentication method value was sent to InstallVdsInternalCommand");
             }
@@ -164,7 +147,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     markVdsReinstalled();
                     setVdsStatus(VDSStatus.Reboot);
                     runSleepOnReboot(getStatusOnReboot());
-                break;
+                    break;
                 case Complete:
                     markCurrentCmdlineAsStored();
                     markVdsReinstalled();
@@ -172,7 +155,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     // TODO: When more logic goes to ovirt-host-deploy role,
                     // this code should be moved to appropriate place, currently
                     // we run this playbook only after successful run of otopi host-deploy
-                    runAnsibleHostDeployPlaybook(hostCluster);
+                    runAnsibleHostDeployPlaybook();
 
                     configureManagementNetwork();
                     if (!getParameters().getActivateHost()) {
@@ -180,13 +163,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     } else {
                         setVdsStatus(VDSStatus.Initializing);
                     }
-                break;
+                    break;
             }
 
             log.info(
-                "After Installation host {}, {}",
-                getVds().getName(),
-                getVds().getVdsType().name()
+                    "After Installation host {}, {}",
+                    getVds().getName(),
+                    getVds().getVdsType().name()
             );
             setSucceeded(true);
         } catch (VdsInstallException e) {
@@ -196,18 +179,20 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
     }
 
-    private void runAnsibleHostDeployPlaybook(Cluster hostCluster) {
+    private void runAnsibleHostDeployPlaybook() {
         String kdumpDestinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);
         if (StringUtils.isBlank(kdumpDestinationAddress)) {
             // destination address not entered, use engine FQDN
             kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
         }
+        Cluster hostCluster = clusterDao.get(getClusterId());
         VDS vds = getVds();
         boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
         String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
+        Version clusterVersion = hostCluster.getCompatibilityVersion();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(vds)
-                .variable("host_deploy_cluster_version", hostCluster.getCompatibilityVersion())
+                .variable("host_deploy_cluster_version", clusterVersion)
                 .variable("host_deploy_cluster_name", hostCluster.getName())
                 .variable("host_deploy_cluster_switch_type",
                         hostCluster.getRequiredSwitchTypeForCluster().getOptionValue())
@@ -231,6 +216,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("host_deploy_kernel_cmdline_old", vds.getLastStoredKernelCmdline())
                 .variable("ovirt_pki_dir", config.getPKIDir())
                 .variable("ovirt_vds_hostname", vds.getHostName())
+                .variable("ovirt_san", CertificateUtils.getSan(vds.getHostName()))
                 .variable("ovirt_vdscertificatevalidityinyears",
                         Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
                 .variable("ovirt_signcerttimeoutinseconds",
@@ -239,11 +225,17 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                         PKIResources.getCaCertificate()
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
+                .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
                 .variable("ovirt_engine_usr", config.getUsrDir())
                 .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
                 .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
                 .variable("host_deploy_gluster_supported", isGlusterServiceSupported)
                 .variable("host_deploy_tuned_profile", tunedProfile)
+                .variable("host_deploy_vdsm_encrypt_host_communication",
+                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString())
+                .variable("host_deploy_vdsm_nmstate_enabled", Config.getValue(ConfigValues.VdsmUseNmstate))
+                .variable("host_deploy_vdsm_ssl_ciphers", Config.<String> getValue(ConfigValues.VdsmSSLCiphers))
+                .variable("host_deploy_vdsm_min_version", Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion))
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)

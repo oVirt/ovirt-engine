@@ -62,7 +62,7 @@
     - name: Add vmconsole cacert files
       copy:
         content: "{{ ovirt_ca_key }}"
-        dest: "vmconsole"
+        dest: "{{ ovirt_vmconsole_ca_file }}"
 
     - name: Add cert files
       copy:

@@ -1,0 +1,14 @@
+---
+vdsm_id: ''
+vendor_id: ''
+vdsm_id_file: /etc/vdsm/vdsm.id
+not_regexp: ^Not\s
+ppc_system_id: /proc/device-tree/system-id
+vdsm_config_file: /etc/vdsm/vdsm.conf
+cpu_info: /proc/cpuinfo
+supported_cpus: ['GenuineIntel', 'AuthenticAMD', 'IBM/S390']
+vendor_id_regexp: vendor_id\t+:\s\w*
+cpu_regexp: cpu\t+:\s\w*
+flags_regexp: flags\t+:\s.*\n
+features_regexp: features\t+:\s.*\n
+platform_regexp: platform\t+:\s.*\n
