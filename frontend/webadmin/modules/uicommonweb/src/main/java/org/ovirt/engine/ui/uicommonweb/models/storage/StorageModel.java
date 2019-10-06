@@ -560,7 +560,8 @@ public class StorageModel extends Model {
 
                 formats.add(StorageFormatType.V3);
                 formats.add(StorageFormatType.V4);
-                selectItem = StorageFormatType.V4;
+                formats.add(StorageFormatType.V5);
+                selectItem = StorageFormatType.V5;
             }
         }
 
