@@ -172,8 +172,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global required_python_lib_jinja2 %{required_python_lib -l python- jinja2}
 %global required_python_lib_ovirt_setup_lib %{required_python_lib ovirt-setup-lib >= 1.1.1}
 %global required_python_lib_libxml2 %{required_python_lib -r -python libxml2}
-%global required_python_lib_otopi %{required_python_lib -l python2- otopi >= 1.7.8}
-%global required_python_lib_otopi_devtools %{required_python_lib -l python2- otopi-devtools >= 1.7.8}
+%global required_python_lib_otopi %{required_python_lib -l python2- otopi >= 1.9.0}
+%global required_python_lib_otopi_devtools %{required_python_lib -l python2- otopi-devtools >= 1.9.0}
 %global required_python_lib_paramiko %{required_python_lib -l python- paramiko}
 %global required_python_lib_libselinux %{required_python_lib -r -python libselinux}
 %global required_python_lib_psycopg2 %{required_python_lib -l python- psycopg2}
