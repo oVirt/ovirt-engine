@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.ovirt.engine.core.common.FeatureSupported.isSkipCommitNetworkChangesSupported;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,6 +145,7 @@ public class NetworkConfigurator {
         ipConfiguration.setIpV6Addresses(Collections.singletonList(new NicToIpv6AddressFunction().apply(nic)));
         managementAttachment.setIpConfiguration(ipConfiguration);
         parameters.getNetworkAttachments().add(managementAttachment);
+        parameters.setCommitOnSuccess(true);
         return parameters;
     }
 
@@ -226,7 +229,8 @@ public class NetworkConfigurator {
                 getBackend().runInternalAction(ActionType.HostSetupNetworks,
                         parameters,
                         cloneContextAndDetachFromParent());
-        if (retVal.getSucceeded()) {
+        boolean skipCommit = parameters.isCommitOnSuccess() && isSkipCommitNetworkChangesSupported(host);
+        if (retVal.getSucceeded() && !skipCommit) {
             retVal =
                     getBackend().runInternalAction(ActionType.CommitNetworkChanges,
                             new VdsActionParameters(parameters.getVdsId()), cloneContextAndDetachFromParent());
@@ -234,7 +238,9 @@ public class NetworkConfigurator {
                 auditLogDirector.log(createEvent(), AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK);
                 throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
             }
-        } else {
+        }
+
+        if (!retVal.getSucceeded()) {
             auditLogDirector.log(createEvent(), AuditLogType.SETUP_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK_CONFIGURATION);
             throw new NetworkConfiguratorException(MANAGEMENT_NETWORK_CONFIG_ERR);
         }
