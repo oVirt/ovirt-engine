@@ -5,7 +5,7 @@
 
 package org.ovirt.engine.core.common.utils.ansible;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * A class returned by AnsibleExecutor::runCommand. It stores the return code of the ansible-playbook execution
@@ -31,7 +31,7 @@ public class AnsibleReturnValue {
     /**
      * Log file of playbook execution. It is only set if user enabled logging
      */
-    private File logFile;
+    private Path logFile;
 
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode) {
         this(ansibleReturnCode, null);
@@ -40,8 +40,6 @@ public class AnsibleReturnValue {
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode, String stdout) {
         this.ansibleReturnCode = ansibleReturnCode;
         this.stdout = stdout;
-        // FIXME:
-        this.logFile = new File("/tmp/FIXME");
     }
 
     public AnsibleReturnCode getAnsibleReturnCode() {
@@ -56,7 +54,7 @@ public class AnsibleReturnValue {
         return stderr;
     }
 
-    public File getLogFile() {
+    public Path getLogFile() {
         return logFile;
     }
 
@@ -72,7 +70,7 @@ public class AnsibleReturnValue {
         this.stderr = stderr;
     }
 
-    public void setLogFile(File logFile) {
+    public void setLogFile(Path logFile) {
         this.logFile = logFile;
     }
 }

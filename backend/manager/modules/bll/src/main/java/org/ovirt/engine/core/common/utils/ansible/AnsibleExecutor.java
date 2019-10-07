@@ -23,11 +23,16 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class AnsibleExecutor {
 
+    public static final String DEFAULT_LOG_DIRECTORY = "ansible";
+
     private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
     private static final int POLL_INTERVAL = 3000;
 
     @Inject
     private AnsibleRunnerHTTPClient runnerClient;
+
+    @Inject
+    private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
 
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable
@@ -42,6 +47,15 @@ public class AnsibleExecutor {
         return runCommand(commandConfig, timeout);
     }
 
+    /**
+     * Executes ansible-playbook command.
+     *
+     * @param command
+     *            the config of command to be executed
+     * @param timeout
+     *            timeout in minutes to wait for command to finish
+     * @return return code of ansible-playbook
+     */
     public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout) {
         return runCommand(
             command,
@@ -50,7 +64,7 @@ public class AnsibleExecutor {
                 AuditLogable logable = AuditLogableImpl.createHostEvent(
                     command.hosts().get(0),
                     command.correlationId(),
-                    new HashMap<String, String>() {
+                    new HashMap<>() {
                         {
                             put("Message", taskName);
                             put("PlayAction", command.playAction());
@@ -78,6 +92,8 @@ public class AnsibleExecutor {
 
         try {
             // Run the playbook:
+            AnsibleRunnerLogger runnerLogger = ansibleCommandLogFileFactory.create(command);
+            runnerClient.setLogger(runnerLogger);
             String playUuid = runnerClient.runPlaybook(command);
 
             // Process the events of the playbook:
@@ -96,8 +112,6 @@ public class AnsibleExecutor {
                 // Process the events if the playbook is running:
                 totalEvents = runnerClient.getTotalEvents(playUuid);
 
-                log.debug("Current status[{}]: {}/{}", status, lastEventId, totalEvents);
-
                 if (
                     msg.equalsIgnoreCase("running")
                     || (msg.equalsIgnoreCase("successful") && lastEventId < totalEvents)
@@ -107,13 +121,15 @@ public class AnsibleExecutor {
                 } else if (msg.equalsIgnoreCase("successful")) {
                     // Exit the processing if playbook finished:
                     ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
+                    ret.setLogFile(runnerLogger.getLogFile());
                     return ret;
                 } else if (status.equalsIgnoreCase("unknown")) {
-                    // ignore and continue?
+                    // ignore and continue:
                 } else {
                     // Playbook failed:
                     ret.setAnsibleReturnCode(AnsibleReturnCode.ERROR);
-                    // TODO: fetch runner_on_failed
+                    ret.setLogFile(runnerLogger.getLogFile());
+                    // TODO: fetch runner_on_failed and set to stderr
                     return ret;
                 }
             }
@@ -126,6 +142,7 @@ public class AnsibleExecutor {
         } catch (Exception ex) {
             log.error("Exception: {}", ex.getMessage());
             log.debug("Exception: ", ex);
+            ret.setStderr(ex.getMessage());
         }
 
         return ret;

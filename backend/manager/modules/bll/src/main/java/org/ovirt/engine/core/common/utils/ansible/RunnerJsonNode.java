@@ -113,6 +113,35 @@ public final class RunnerJsonNode {
         return node.get("event").getTextValue().equals("runner_on_ok");
     }
 
+    /**
+     * Return true if the event is 'playbook_on_task_start', which means it's event of started.
+     */
+    public static boolean isEventStart(JsonNode node) {
+        return node.get("event").getTextValue().equals("playbook_on_task_start");
+    }
+
+
+    /**
+     * Return true if the event is 'error', which means it's event unexpectedly failed.
+     */
+    public static boolean isEventError(JsonNode node) {
+        return node.get("event").getTextValue().equals("error");
+    }
+
+    /**
+     * Return true if the event is 'runner_on_failed', which means it's event failed.
+     */
+    public static boolean isEventFailed(JsonNode node) {
+        return node.get("event").getTextValue().equals("runner_on_failed");
+    }
+
+    /**
+     * Return true if the event is 'playbook_on_stats', which contains playbook statistics.
+     */
+    public static boolean playbookStats(JsonNode node) {
+        return node.get("event").getTextValue().equals("playbook_on_stats");
+    }
+
     // Yum parsing, parse the output of the 'taskNode()' method.
     /**
      * Example of yum runner_on_ok event:
@@ -203,5 +232,12 @@ public final class RunnerJsonNode {
      */
     public static String getStdout(JsonNode node) {
         return node.get("stdout").getTextValue();
+    }
+
+    /**
+     * Return stderr value of the command task.
+     */
+    public static String getStderr(JsonNode node) {
+        return node.get("stderr").getTextValue();
     }
 }

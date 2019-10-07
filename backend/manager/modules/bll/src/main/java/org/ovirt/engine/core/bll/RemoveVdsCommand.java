@@ -151,7 +151,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
             AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
 
-            auditable.addCustomValue("LogFile", ansibleReturnValue.getLogFile().getAbsolutePath());
+            auditable.addCustomValue("LogFile", ansibleReturnValue.getLogFile().toString());
 
             AnsibleReturnCode ansibleReturnCode = ansibleReturnValue.getAnsibleReturnCode();
             if (ansibleReturnCode == AnsibleReturnCode.OK

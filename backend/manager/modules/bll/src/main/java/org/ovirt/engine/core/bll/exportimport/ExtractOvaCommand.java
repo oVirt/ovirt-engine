@@ -109,8 +109,13 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                                 .map(e -> String
                                         .format("\"%s\": \"%s\"", e.getValue().toString(), e.getKey().toString()))
                                 .collect(Collectors.joining(", ", "{", "}")))
-                .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK)
-                .playAction("Import OVA.");
+                // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-import-ova-ansible")
+                .logFileName(getVds().getHostName())
+                .logFileSuffix(getCorrelationId())
+                .playAction("Import OVA")
+                .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK);
 
         AnsibleReturnValue ansibleReturnValue  = ansibleExecutor.runCommand(commandConfig);
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;

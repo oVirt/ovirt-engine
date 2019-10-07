@@ -181,6 +181,12 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                 .variable("cachemode", getParameters().getCacheMode())
                 .variable("fstype", GlusterConstants.FS_TYPE_XFS)
                 .variable("mntpath", getParameters().getMountPoint())
+                // /var/log/ovirt-engine/brick-setup/ovirt-gluster-brick-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-gluster-brick-ansible")
+                .logFileName(getVds().getHostName())
+                .logFileSuffix(getCorrelationId())
+                .playAction("Create Brick")
                 .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
 
          AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);

@@ -164,7 +164,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         AnsibleCommandConfig command = new AnsibleCommandConfig()
             .hosts(getVds())
             .variable("image_path", path)
-            .playAction("Image measure.")
+            .playAction("Image measure")
+            // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
+            .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
+            .logFilePrefix("ovirt-image-measure-ansible")
+            .logFileName(getVds().getHostName())
+            .logFileSuffix(getCorrelationId())
             .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();
@@ -215,6 +220,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .variable("ova_name", getParameters().getName())
                 .variable("ovirt_ova_pack_ovf", encodedOvf)
                 .variable("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))
+                // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-export-ova-ansible")
+                .logFileName(getVds().getHostName())
+                .logFileSuffix(getCorrelationId())
+                .playAction("Pack OVA")
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 
         AnsibleReturnValue ansibleReturnCode = ansibleExecutor.runCommand(commandConfig);

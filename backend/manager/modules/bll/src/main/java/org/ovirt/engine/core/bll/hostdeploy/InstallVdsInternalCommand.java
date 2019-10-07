@@ -243,10 +243,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
-                //.logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
-                //.logFilePrefix("ovirt-host-deploy-ansible")
-                //.logFileName(vds.getHostName())
-                //.logFileSuffix(getCorrelationId())
+                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-deploy-ansible")
+                .logFileName(vds.getHostName())
+                .logFileSuffix(getCorrelationId())
                 .correlationId(getCorrelationId())
                 .playAction(String.format("Installing Host %s", vds.getName()))
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
@@ -262,7 +262,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             throw new VdsInstallException(
                 VDSStatus.InstallFailed,
                 String.format(
-                    "Failed to execute Ansible host-deploy role. Please check logs for more details: %1$s",
+                    "Failed to execute Ansible host-deploy role: %1$s. Please check logs for more details: %2$s",
+                    ansibleReturnValue.getStderr(),
                     ansibleReturnValue.getLogFile()
                 )
             );

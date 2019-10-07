@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.exportimport.ExtractOvaCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -54,6 +55,11 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
             .variable("ovirt_query_ova_path", getParameters().getPath())
             .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
             .variable("entity_type", getEntityType().name().toLowerCase())
+            // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
+            .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
+            .logFilePrefix("ovirt-query-ova-ansible")
+            .logFileName(host.getHostName())
+            .playAction("Query OVA info")
             .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();

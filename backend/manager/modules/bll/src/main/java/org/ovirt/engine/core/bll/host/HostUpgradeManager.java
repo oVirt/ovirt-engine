@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CertificationValidityChecker;
+import org.ovirt.engine.core.bll.hostdeploy.VdsDeployBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.slf4j.Logger;
@@ -62,6 +64,11 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             AnsibleCommandConfig command = new AnsibleCommandConfig()
                 .hosts(host)
                 .checkMode(true)
+                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-check-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-mgmt-ansible-check")
+                .logFileName(host.getHostName())
+                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
                 .playAction(String.format("Check for update of host %1$s", host.getName()));
 
@@ -174,6 +181,11 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                         PKIResources.getCaCertificate()
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
+                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-mgmt-ansible")
+                .logFileName(host.getHostName())
+                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
                 .playAction(String.format("Update of host %1$s", host.getName()));
 

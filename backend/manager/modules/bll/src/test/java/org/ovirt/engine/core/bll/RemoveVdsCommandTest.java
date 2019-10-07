@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -332,6 +333,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
         AnsibleReturnValue ansibleReturnValue = new AnsibleReturnValue(ansibleReturnCode);
+        ansibleReturnValue.setLogFile(Paths.get("ansible_unit_test.log"));
         when(ansibleExecutor.runCommand(any(AnsibleCommandConfig.class))).thenReturn(ansibleReturnValue);
 
         command.executeCommand();

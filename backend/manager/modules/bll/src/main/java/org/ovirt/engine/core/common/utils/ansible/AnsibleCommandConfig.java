@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 
-public class AnsibleCommandConfig implements PlaybookConfig {
+public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     private String cluster;
     private List<String> hostnames;
@@ -27,10 +27,35 @@ public class AnsibleCommandConfig implements PlaybookConfig {
     private boolean checkMode;
     private String correlationId;
     private String playAction;
+    // Logging
+    private String logFileDirectory;
+    private String logFileName;
+    private String logFilePrefix;
+    private String logFileSuffix;
 
     public AnsibleCommandConfig() {
         this.playAction = "Ansible Runner.";
         this.variables = new HashMap<>();
+    }
+
+    @Override
+    public String logFileDirectory() {
+        return logFileDirectory;
+    }
+
+    @Override
+    public String logFileName() {
+        return logFileName;
+    }
+
+    @Override
+    public String logFilePrefix() {
+        return logFilePrefix;
+    }
+
+    @Override
+    public String logFileSuffix() {
+        return logFileSuffix;
     }
 
     public String playbook() {
@@ -158,6 +183,26 @@ public class AnsibleCommandConfig implements PlaybookConfig {
 
     public AnsibleCommandConfig playAction(String playAction) {
         this.playAction = playAction;
+        return this;
+    }
+
+    public AnsibleCommandConfig logFileDirectory(String logFileDirectory) {
+        this.logFileDirectory = logFileDirectory;
+        return this;
+    }
+
+    public AnsibleCommandConfig logFileName(String logFilename) {
+        this.logFileName = logFilename;
+        return this;
+    }
+
+    public AnsibleCommandConfig logFilePrefix(String logFilePrefix) {
+        this.logFilePrefix = logFilePrefix;
+        return this;
+    }
+
+    public AnsibleCommandConfig logFileSuffix(String logFileSuffix) {
+        this.logFileSuffix = logFileSuffix;
         return this;
     }
 }
