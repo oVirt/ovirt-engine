@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -73,11 +72,11 @@ public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Quer
     }
 
     public Set<Guid> getVms() {
-        return Collections.unmodifiableSet(vms);
+        return vms;
     }
 
     public Set<Guid> getHosts() {
-        return Collections.unmodifiableSet(hosts);
+        return hosts;
     }
 
     public boolean addVm(VM entity) {
