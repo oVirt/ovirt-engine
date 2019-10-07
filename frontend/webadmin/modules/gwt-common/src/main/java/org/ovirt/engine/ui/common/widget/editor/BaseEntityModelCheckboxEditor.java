@@ -76,6 +76,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
             getCheckboxWidgetLabel().getStyle().setPaddingLeft(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPaddingRight(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPosition(Position.RELATIVE);
+            getCheckboxWidgetLabel().getStyle().setDisplay(Display.INLINE);
             noPaddingNoFixes();
         }
     }
