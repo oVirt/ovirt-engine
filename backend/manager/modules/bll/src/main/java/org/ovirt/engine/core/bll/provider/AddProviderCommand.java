@@ -69,7 +69,8 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         ProviderValidator<?> validator = getProviderProxy().getProviderValidator();
         return validate(validator.nameAvailable())
                 && validate(validator.validateAuthUrl())
-                && validate(validator.validateAddProvider());
+                && validate(validator.validateAddProvider())
+                && validate(validator.validateOpenStackImageConstraints());
     }
 
     @Override

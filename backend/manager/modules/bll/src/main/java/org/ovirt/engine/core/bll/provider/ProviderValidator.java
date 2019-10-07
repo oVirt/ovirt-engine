@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.bll.provider;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.provider.network.openstack.OpenStackTokenProviderFactory;
+import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -26,6 +30,49 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
     public ValidationResult nameAvailable() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED)
                 .when(Injector.get(ProviderDao.class).getByName(provider.getName()) != null);
+    }
+
+    public ValidationResult validateOpenStackImageConstraints() {
+        if (ProviderType.OPENSTACK_IMAGE != provider.getType()) {
+            return ValidationResult.VALID;
+        }
+        List<Provider<?>> existingProviders = Injector.get(ProviderDao.class).getAllByTypes(ProviderType.OPENSTACK_IMAGE);
+        return OpenStackTokenProviderFactory.isApiV3(provider) ?
+                openStackImageV3UrlAndNameExists(existingProviders) :
+                openStackImageV2UrlAndTenantExists(existingProviders);
+    }
+
+    private ValidationResult openStackImageV3UrlAndNameExists(List<Provider<?>> existingProviders) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_URL_PROJECT_NAME_AND_DOMAIN_NAME_COMBINATION_NOT_UNIQUE)
+                .when(existingProviders.stream().anyMatch(this::matchesProviderUrlNameDomainNameCombination));
+    }
+
+    private boolean matchesProviderUrlNameDomainNameCombination(Provider provider) {
+        return Objects.equals(provider.getUrl(), this.provider.getUrl()) &&
+                Objects.equals(getProjectName(provider), getProjectName(this.provider)) &&
+                Objects.equals(getProjectDomainName(provider), getProjectDomainName(this.provider));
+    }
+
+    private static String getProjectName(Provider provider) {
+        return ((OpenStackImageProviderProperties) provider.getAdditionalProperties()).getProjectName();
+    }
+
+    private static String getProjectDomainName(Provider provider) {
+        return ((OpenStackImageProviderProperties) provider.getAdditionalProperties()).getProjectDomainName();
+    }
+
+    private ValidationResult openStackImageV2UrlAndTenantExists(List<Provider<?>> existingProviders) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_URL_TENANT_COMBINATION_NOT_UNIQUE)
+                .when(existingProviders.stream().anyMatch(this::matchesProviderUrlTenantCombination));
+    }
+
+    private boolean matchesProviderUrlTenantCombination(Provider provider) {
+        return Objects.equals(provider.getUrl(), this.provider.getUrl()) &&
+                Objects.equals(getTenantName(provider), getTenantName(this.provider));
+    }
+
+    private static String getTenantName(Provider provider) {
+        return ((OpenStackImageProviderProperties) provider.getAdditionalProperties()).getTenantName();
     }
 
     public ValidationResult providerIsSet() {

@@ -6,12 +6,15 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
@@ -29,6 +32,7 @@ public class ProviderValidatorTest {
     private final String INVALID_AUTH_URL = "http://invalid-auth.com";
     private final String VALID_AUTH_URL_IPV4 = "http://192.168.123.137:35357/v3";
     private final String VALID_AUTH_URL_IPV6 = "http://[2001:DB8::1]:35357/v3";
+    private final String AUTH_URL_LOCALHOST = "http://localhost:35357/v2.0/";
 
     protected Provider<AdditionalProperties> provider = createProvider("provider");
 
@@ -88,6 +92,18 @@ public class ProviderValidatorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void openStackImageV2ConstraintsInvalid() {
+        String url = "http://localhost:9292";
+        String tenant = "admin";
+        Provider<OpenStackImageProviderProperties> existingProvider = createOpenStackV2Provider("existing", url, tenant);
+        Provider<OpenStackImageProviderProperties> newProvider = createOpenStackV2Provider("new", url, tenant);
+        when(providerDao.getAllByTypes(ProviderType.OPENSTACK_IMAGE)).thenReturn(Collections.singletonList(existingProvider));
+        ProviderValidator validator = new ProviderValidator(newProvider);
+        assertThat(validator.validateOpenStackImageConstraints(), failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_URL_TENANT_COMBINATION_NOT_UNIQUE));
+    }
+
+    @Test
     public void testValidateReadOnlyActions() {
 
         String providerName = "providerName";
@@ -114,5 +130,18 @@ public class ProviderValidatorTest {
         Provider<AdditionalProperties> p = mock(Provider.class);
         when(p.getName()).thenReturn(name);
         return p;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Provider<OpenStackImageProviderProperties> createOpenStackV2Provider(String name, String url, String tenant) {
+        Provider<OpenStackImageProviderProperties> result = mock(Provider.class);
+        when(result.getName()).thenReturn(name);
+        when(result.getType()).thenReturn(ProviderType.OPENSTACK_IMAGE);
+        when(result.getAuthUrl()).thenReturn(AUTH_URL_LOCALHOST);
+        OpenStackImageProviderProperties props = mock(OpenStackImageProviderProperties.class);
+        when(props.getTenantName()).thenReturn(tenant);
+        when(result.getAdditionalProperties()).thenReturn(props);
+        when(result.getUrl()).thenReturn(url);
+        return result;
     }
 }
