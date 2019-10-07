@@ -53,16 +53,19 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
                     logWaitingForChildCommand(child, command);
                     return;
                 }
+                logChildCommandFailed(cmdId, childCmdId, CommandStatus.EXECUTION_FAILED);
                 anyFailed = true;
                 break;
             case FAILED:
                 if (shouldWaitForEndMethodsCompletion(child, command)) {
                     return;
                 }
+                logChildCommandFailed(cmdId, childCmdId, CommandStatus.FAILED);
                 anyFailed = true;
                 break;
             case ENDED_WITH_FAILURE:
             case UNKNOWN:
+                logChildCommandFailed(cmdId, childCmdId, CommandStatus.UNKNOWN);
                 anyFailed = true;
                 break;
             case SUCCEEDED:
@@ -75,6 +78,10 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
         }
 
         childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
+    }
+
+    private void logChildCommandFailed(Guid cmdId, Guid childCmdId, CommandStatus status){
+        log.debug("Child command id: '{}' of command id: '{}' status is {}, set as failed.", childCmdId, cmdId, status);
     }
 
     private boolean shouldCommandEndOnAsyncOpEnd(CommandBase<?> cmd) {
@@ -103,6 +110,10 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
 
     protected void setCommandEndStatus(CommandBase<?> command, boolean childCommandFailed,
                                        CommandExecutionStatus status, List<Guid> childCmdIds) {
+        log.debug("Command '{}' id: '{}' marked as execution status '{}',",
+                command.getActionType(),
+                command.getCommandId(),
+                status);
         command.getParameters().setTaskGroupSuccess(!childCommandFailed && status == CommandExecutionStatus.EXECUTED);
         CommandStatus newStatus = command.getParameters().getTaskGroupSuccess() ? CommandStatus.SUCCEEDED
                 : CommandStatus.FAILED;
