@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ColdRebootAutoStartVmsRunner extends AutoStartVmsRunner {
 
     public ColdRebootAutoStartVmsRunner() {
-        considerPriority = false;
+        super(false);
     }
 
     @Override
@@ -28,9 +28,14 @@ public class ColdRebootAutoStartVmsRunner extends AutoStartVmsRunner {
     }
 
     @Override
-    protected boolean isVmNeedsToBeAutoStarted(VM vm) {
+    protected boolean vmNeedsToBeAutoStarted(VM vm) {
         return vm.getStatus() == VMStatus.Down &&
                 vm.getExitStatus() == VmExitStatus.Normal;
+    }
+
+    @Override
+    protected boolean shouldWaitForVmToStart(VM vm) {
+        return false;
     }
 
     @Override

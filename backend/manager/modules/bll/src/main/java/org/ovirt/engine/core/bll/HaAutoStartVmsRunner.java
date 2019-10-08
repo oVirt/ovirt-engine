@@ -31,7 +31,7 @@ import org.ovirt.engine.core.compat.TimeSpan;
 public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
 
     public HaAutoStartVmsRunner() {
-        considerPriority = true;
+        super(true);
     }
 
     @Override
@@ -50,10 +50,15 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
     }
 
     @Override
-    protected boolean isVmNeedsToBeAutoStarted(VM vm) {
+    protected boolean vmNeedsToBeAutoStarted(VM vm) {
         return vm.isAutoStartup() &&
                 vm.getStatus() == VMStatus.Down &&
                 vm.getExitStatus() == VmExitStatus.Error;
+    }
+
+    @Override
+    protected boolean shouldWaitForVmToStart(VM vm) {
+        return vm.isAutoStartup();
     }
 
     @Override
@@ -113,36 +118,6 @@ public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
 
             lastBlockedTime = currentTime;
             return true;
-        }
-
-        @Override
-        public boolean shouldWaitForVmUp() {
-            if (!getVm().isAutoStartup()) {
-                // VM is not HA anymore, other VMs should not wait for it
-                return false;
-            }
-
-            switch (getVm().getStatus()) {
-            // VM is powering UP
-            case WaitForLaunch:
-            case PoweringUp:
-
-                // If there is a reason why the VM was paused,
-                // others should wait for it.
-            case Paused:
-
-                // The VM was restarted during startup,
-            case RebootInProgress:
-
-                // User can trigger a migration when the VM is 'PoweringUp'.
-                // Other VMs should wait for migration to finish.
-            case MigratingTo:
-            case MigratingFrom:
-                return true;
-
-            default:
-                return false;
-            }
         }
     }
 }

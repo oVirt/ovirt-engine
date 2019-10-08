@@ -194,6 +194,35 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
+     * This method is used to check if HA VM is powering UP and
+     * if other HA VMs should wait for it.
+     */
+    public boolean isPoweringUpOrMigrating() {
+        switch (this) {
+        // VM is powering UP
+        case WaitForLaunch:
+        case PoweringUp:
+
+        // If there is a reason why the VM was paused,
+        // others should wait for it.
+        case Paused:
+
+        // The VM was restarted during startup,
+        case RebootInProgress:
+
+        // User can trigger a migration when the VM is 'PoweringUp'.
+        // Other VMs should wait for migration to finish.
+        case MigratingTo:
+        case MigratingFrom:
+        case RestoringState:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
      * Sole purpose of this enum is allow to pass multiple VMStatus items to {@link EditableVmField} annotation
      * without the need of enumerating them.
      */

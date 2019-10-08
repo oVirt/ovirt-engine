@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -92,6 +93,10 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     protected boolean considerPriority;
 
+    public AutoStartVmsRunner(boolean considerPriority) {
+        this.considerPriority = considerPriority;
+    }
+
     @PostConstruct
     private void init() {
         autoStartVmsToRestart = getInitialVmsToStart().stream()
@@ -160,26 +165,20 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
         int neededPriority = Integer.MIN_VALUE;
         for (AutoStartVmToRestart autoStartVmToRestart : vmsToRestart) {
-            if (!autoStartVmToRestart.isWaitingForUp()) {
-                if (processDownVm(autoStartVmToRestart, neededPriority, iterationStartTime)) {
-                    autoStartVmToRestart.setWaitingForUp(true);
-                }
+            if (autoStartVmToRestart.getState() == AutoStartVmToRestart.State.VM_DOWN) {
+                autoStartVmToRestart.setState(
+                        processVmDown(autoStartVmToRestart, neededPriority, iterationStartTime));
             }
 
-            // Using 'if' with inverted condition, instead of 'else', because the condition may have changed
-            // inside the above branch, so both branches may by executed.
-            if (autoStartVmToRestart.isWaitingForUp()) {
-                // If true: Increase the needed priority, so that other VMs wait until this VM starts
-                // If false: VM has started. It can be removed.
-                //
-                // If the VM crashes during starting, this code branch
-                // is not reached, because the corresponding AutoStartVmToRestart
-                // instance is removed by processVmsToAdd() method.
-                boolean shouldWaitForVm = considerPriority && autoStartVmToRestart.shouldWaitForVmUp();
-                if (!shouldWaitForVm) {
-                    autoStartVmsToRestart.remove(autoStartVmToRestart.getVmId());
-                    continue;
-                }
+            if (autoStartVmToRestart.getState() == AutoStartVmToRestart.State.VM_STARTING) {
+                autoStartVmToRestart.setState(
+                        processVmStarting(autoStartVmToRestart, iterationStartTime));
+            }
+
+            if (autoStartVmToRestart.getState() == AutoStartVmToRestart.State.AUTOSTART_FINISHED) {
+                autoStartVmsToRestart.remove(autoStartVmToRestart.getVmId());
+                // The VM is running or failed to auto-start. It will not block VMs with lower priority
+                continue;
             }
 
             neededPriority = Math.max(neededPriority, autoStartVmToRestart.getVm().getPriority());
@@ -197,32 +196,33 @@ public abstract class AutoStartVmsRunner implements BackendService {
             vmsToAdd = null;
         }
 
-        // The VMs are added even if they are already there, this resets the counters
+        // The VMs are added even if they are already there, this resets the counters.
+        // It is OK, because the VM has to crash from Up state, otherwise this method is not called.
         vms.forEach(vmId -> autoStartVmsToRestart.put(vmId, createAutoStartVmToRestart(vmId)));
     }
 
-    /**
-     * Returns True if the VM has been started and should be moved to 'waitingForUp' state.
-     */
-    private boolean processDownVm(AutoStartVmToRestart autoStartVmToRestart, int neededPriority, DateTime iterationStartTime) {
+    private AutoStartVmToRestart.State processVmDown(AutoStartVmToRestart autoStartVmToRestart,
+            int neededPriority,
+            DateTime iterationStartTime) {
+
         Guid vmId = autoStartVmToRestart.getVmId();
         VM vm = autoStartVmToRestart.getVm();
 
-        if (!isVmNeedsToBeAutoStarted(vm)) {
+        if (!vmNeedsToBeAutoStarted(vm)) {
             // This condition handles the case if the VM is started
             // manually in the middle of waiting interval
-            return true;
+            return AutoStartVmToRestart.State.VM_STARTING;
         }
 
         // if it is not the time to try to run the VM yet, skip it for now
         // (we'll try again in the next iteration)
         if (!autoStartVmToRestart.isTimeToRun(iterationStartTime)) {
-            return false;
+            return AutoStartVmToRestart.State.VM_DOWN;
         }
 
         if (considerPriority && autoStartVmToRestart.isBlockedOnPriority(neededPriority, iterationStartTime)) {
             log.debug("VM has lower priority than other VMs. The start will be delayed.");
-            return false;
+            return AutoStartVmToRestart.State.VM_DOWN;
         }
 
         if (isNextRunConfiguration(vmId)) {
@@ -231,7 +231,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
             if (autoStartVmToRestart.delayNextTimeToRun(iterationStartTime)) {
                 // Skip attempt to run the VM for now.
                 // The priority is to run the VM even if the NextRun fails to be applied
-                return false;
+                return AutoStartVmToRestart.State.VM_DOWN;
             }
             // Waiting for NextRun config is over, let's run the VM even with the non-applied Next-Run
             log.warn("Failed to wait for the NextRun config to be applied on vm '{}', trying to run the VM anyway", vm.getName());
@@ -243,32 +243,61 @@ public abstract class AutoStartVmsRunner implements BackendService {
         // acquired, skip for now  and we'll try again in the next iteration
         if (!acquireLock(runVmLock)) {
             log.debug("Could not acquire lock for auto starting VM '{}'", vm.getName());
-            return false;
+            return AutoStartVmToRestart.State.VM_DOWN;
         }
 
         // Test again, after acquiring the lock
-        if (!isVmNeedsToBeAutoStarted(vm)) {
+        if (!vmNeedsToBeAutoStarted(vm)) {
             // if the VM doesn't need to be auto started anymore, release the lock and
             // remove the VM from the collection of VMs that should be auto started
             releaseLock(runVmLock);
-            return true;
+            return AutoStartVmToRestart.State.VM_STARTING;
         }
 
-        if (runVm(vm.getId(), runVmLock)) {
-            // the VM reached WaitForLunch, so from now on this job is not responsible
-            // to auto start it, future failures will be detected by the monitoring
-            return true;
+        if (runVmAndUpdateStatus(vm, runVmLock)) {
+            // The VM reached WaitForLunch. The STARTING state will monitor it's startup.
+            return AutoStartVmToRestart.State.VM_STARTING;
         }
 
+        return scheduleNextTimeToStart(autoStartVmToRestart, iterationStartTime, vm);
+    }
+
+    private AutoStartVmToRestart.State processVmStarting(AutoStartVmToRestart vmToRestart, DateTime iterationStartTime) {
+        if (!considerPriority) {
+            // This state does nothing if priority is disabled
+            return AutoStartVmToRestart.State.AUTOSTART_FINISHED;
+        }
+
+        VM vm = vmToRestart.getVm();
+        if (!shouldWaitForVmToStart(vm)) {
+            // VM is not HA anymore, other VMs should not wait for it
+            return AutoStartVmToRestart.State.AUTOSTART_FINISHED;
+        }
+
+        if (vm.getStatus().isPoweringUpOrMigrating()) {
+            return AutoStartVmToRestart.State.VM_STARTING;
+        }
+
+        if (!vmNeedsToBeAutoStarted(vm)) {
+            return AutoStartVmToRestart.State.AUTOSTART_FINISHED;
+        }
+
+        // The VM has crashed while powering up. Will try to start it in the next iteration.
+        return scheduleNextTimeToStart(vmToRestart, iterationStartTime, vm);
+    }
+
+    private AutoStartVmToRestart.State scheduleNextTimeToStart(AutoStartVmToRestart vmToRestart,
+            DateTime iterationStartTime,
+            VM vm) {
         logFailedAttemptToRestartVm(vm);
-        if (autoStartVmToRestart.scheduleNextTimeToRun(iterationStartTime)) {
-            return false;
+        if (vmToRestart.scheduleNextTimeToRun(iterationStartTime)) {
+            return AutoStartVmToRestart.State.VM_DOWN;
         }
 
         // if we could not schedule the next time to run the VM, it means
-        // that we reached the maximum number of tried so don't try anymore
+        // that we reached the maximum number of tries so don't try anymore
         logFailureToRestartVm(vm);
-        return true;
+        return AutoStartVmToRestart.State.AUTOSTART_FINISHED;
     }
 
     /**
@@ -288,15 +317,17 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     protected abstract AutoStartVmToRestart createAutoStartVmToRestart(Guid vmId);
 
-    protected abstract boolean isVmNeedsToBeAutoStarted(VM vm);
+    protected abstract boolean vmNeedsToBeAutoStarted(VM vm);
 
-    private void logFailedAttemptToRestartVm(VM vm) {
+    protected abstract boolean shouldWaitForVmToStart(VM vm);
+
+    protected void logFailedAttemptToRestartVm(VM vm) {
         logVmEvent(vm, getRestartFailedAuditLogType());
     }
 
     protected abstract AuditLogType getRestartFailedAuditLogType();
 
-    private void logFailureToRestartVm(VM vm) {
+    protected void logFailureToRestartVm(VM vm) {
         logVmEvent(vm, getExceededMaxNumOfRestartsAuditLogType());
     }
 
@@ -324,11 +355,17 @@ public abstract class AutoStartVmsRunner implements BackendService {
         return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 
-    private boolean runVm(Guid vmId, EngineLock lock) {
-        return backend.runInternalAction(
+    private boolean runVmAndUpdateStatus(VM vm, EngineLock lock) {
+        ActionReturnValue result = backend.runInternalAction(
                 ActionType.RunVm,
-                new RunVmParams(vmId),
-                ExecutionHandler.createInternalJobContext(lock)).getSucceeded();
+                new RunVmParams(vm.getId()),
+                ExecutionHandler.createInternalJobContext(lock));
+
+        // The status of the cached VM has to be updated, otherwise
+        // the processVmStarting() method would incorrectly
+        // see that the VM has crashed
+        vm.setStatus(result.getActionReturnValue());
+        return result.getSucceeded();
     }
 
     protected static class AutoStartVmToRestart {
@@ -346,6 +383,12 @@ public abstract class AutoStartVmsRunner implements BackendService {
         private static final int DELAY_TO_RUN_AUTO_START_VM_INTERVAL =
                 Config.<Integer> getValue(ConfigValues.DelayToRunAutoStartVmIntervalInSeconds);
 
+        public enum State {
+            VM_DOWN,
+            VM_STARTING,
+            AUTOSTART_FINISHED
+        }
+
         /** The next time we should try to run the VM */
         protected Date timeToRunTheVm;
         /** Number of tries that were made so far to run the VM */
@@ -355,13 +398,13 @@ public abstract class AutoStartVmsRunner implements BackendService {
         /** The ID of the VM */
         private Guid vmId;
 
-        private boolean waitingForUp;
+        private State state;
         private VM vm;
 
         AutoStartVmToRestart(Guid vmId) {
             this.vmId = vmId;
             timeToRunTheVm = MIN_DATE;
-            waitingForUp = false;
+            state = State.VM_DOWN;
         }
 
         /**
@@ -389,10 +432,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
             return false;
         }
 
-        public boolean shouldWaitForVmUp() {
-            return false;
-        }
-
         boolean isTimeToRun(Date time) {
             return timeToRunTheVm == MIN_DATE || time.compareTo(timeToRunTheVm) >= 0;
         }
@@ -401,12 +440,12 @@ public abstract class AutoStartVmsRunner implements BackendService {
             return vmId;
         }
 
-        public boolean isWaitingForUp() {
-            return waitingForUp;
+        public State getState() {
+            return state;
         }
 
-        public void setWaitingForUp(boolean waitingForUp) {
-            this.waitingForUp = waitingForUp;
+        public void setState(State state) {
+            this.state = state;
         }
 
         public VM getVm() {
