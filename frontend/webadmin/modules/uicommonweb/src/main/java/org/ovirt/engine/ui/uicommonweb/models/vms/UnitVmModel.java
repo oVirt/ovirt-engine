@@ -3451,6 +3451,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void refreshMigrationPolicies() {
         Version version = getCompatibilityVersion();
+        Cluster selectedCluster = getSelectedCluster();
+
+        if (version == null || selectedCluster == null) {
+            return;
+        }
 
         Guid selectedPolicyId = null;
         if (getMigrationPolicies() != null && getMigrationPolicies().getSelectedItem() != null) {
@@ -3459,7 +3464,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(version);
 
-        Guid clusterMigrationPolicyID = getSelectedCluster().getMigrationPolicyId();
+        Guid clusterMigrationPolicyID = selectedCluster.getMigrationPolicyId();
         for (MigrationPolicy policy : policies) {
             if (policy != null && policy.getId().equals(clusterMigrationPolicyID)) {
                 migrationPolicies.setClusterValue(policy);
