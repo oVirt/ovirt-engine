@@ -588,6 +588,7 @@ public enum ActionType {
     PersistentHostSetupNetworks(5204, QuotaDependency.NONE),
     SyncAllHostNetworks(5205, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     SyncAllClusterNetworks(5206, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    CopyHostNetworks(5207, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
 
     // Hosted Engine
     ImportHostedEngineStorageDomain(6000, false, QuotaDependency.NONE),
