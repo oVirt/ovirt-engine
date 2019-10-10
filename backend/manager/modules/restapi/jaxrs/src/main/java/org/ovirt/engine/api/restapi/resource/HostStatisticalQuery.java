@@ -15,13 +15,14 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
     private static final Statistic MEM_TOTAL   = create("memory.total",       "Total memory",    GAUGE, BYTES,   INTEGER);
     private static final Statistic MEM_USED    = create("memory.used",        "Used memory",           GAUGE, BYTES,   INTEGER);
     private static final Statistic MEM_FREE    = create("memory.free",        "Free memory",           GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_SHARED  = create("memory.shared",      "Shared memory",         GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_BUFFERS = create("memory.buffers",     "IO buffers",            GAUGE, BYTES,   INTEGER);
-    private static final Statistic MEM_CACHED  = create("memory.cached",      "OS caches",     GAUGE, BYTES,   INTEGER);
+    private static final Statistic MEM_SHARED = create("memory.shared",
+            "The amount of memory, in bytes, shared among Virtual-Machines on this Host by Kernel Same-page Merging (KSM)",
+            GAUGE,
+            BYTES,
+            INTEGER);
     private static final Statistic SWAP_TOTAL  = create("swap.total",         "Total swap",            GAUGE, BYTES,   INTEGER);
     private static final Statistic SWAP_FREE   = create("swap.free",          "Free swap",             GAUGE, BYTES,   INTEGER);
     private static final Statistic SWAP_USED   = create("swap.used",          "Used swap",             GAUGE, BYTES,   INTEGER);
-    private static final Statistic SWAP_CACHED = create("swap.cached",        "Swap also in memory",   GAUGE, BYTES,   INTEGER);
     private static final Statistic CPU_KSM     = create("ksm.cpu.current",    "KSM CPU usage",         GAUGE, PERCENT, DECIMAL);
     private static final Statistic CPU_USER    = create("cpu.current.user",   "User CPU usage",    GAUGE, PERCENT, DECIMAL);
     private static final Statistic CPU_SYS     = create("cpu.current.system", "System CPU usage",      GAUGE, PERCENT, DECIMAL);
@@ -46,12 +47,9 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
                       setDatum(clone(MEM_USED),    memUsed),
                       setDatum(clone(MEM_FREE),    memTotal-memUsed),
                       setDatum(clone(MEM_SHARED),  (s==null || s.getMemShared()==null) ? 0 : s.getMemShared()*Mb),
-                      setDatum(clone(MEM_BUFFERS), 0),
-                      setDatum(clone(MEM_CACHED),  0),
                       setDatum(clone(SWAP_TOTAL),  (s==null || s.getSwapTotal()==null) ? 0 : s.getSwapTotal()*Mb),
                       setDatum(clone(SWAP_FREE),   (s==null || s.getSwapFree()==null) ? 0 : s.getSwapFree()*Mb),
                       setDatum(clone(SWAP_USED),   getSwapUsed(s)*Mb),
-                      setDatum(clone(SWAP_CACHED), 0),
                       setDatum(clone(CPU_KSM),     (s==null || s.getKsmCpuPercent()==null) ? 0 : s.getKsmCpuPercent()),
                       setDatum(clone(CPU_USER),    (s==null || s.getCpuUser()==null) ? 0 : s.getCpuUser()),
                       setDatum(clone(CPU_SYS),     (s==null || s.getCpuSys()==null) ? 0 : s.getCpuSys()),
