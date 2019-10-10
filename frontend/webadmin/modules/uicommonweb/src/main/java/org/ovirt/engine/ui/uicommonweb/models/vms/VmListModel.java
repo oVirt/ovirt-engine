@@ -1944,7 +1944,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         getExportCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ExportVm));
         getExportOvaCommand().setIsExecutionAllowed(vmsSelected
-                && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CreateSnapshotForVm));
+                && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ExportVmToOva));
         getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
                 && !getSelectedItem().isStateless() && !getSelectedItem().isPreviewSnapshot()
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CreateSnapshotForVm));
