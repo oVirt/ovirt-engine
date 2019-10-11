@@ -38,10 +38,10 @@ public class SubTabVirtualMachineHostDevicePresenter
     @Inject
     public SubTabVirtualMachineHostDevicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
-            SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> modelProvider) {
-        // View has no action panel, passing null.
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
-                VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
-    }
+            SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> modelProvider,
+            VmHostDeviceActionPanelPresenterWidget actionPanel) {
 
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+                actionPanel, VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
+    }
 }

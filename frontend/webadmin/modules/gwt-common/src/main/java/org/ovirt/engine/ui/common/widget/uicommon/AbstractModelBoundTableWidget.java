@@ -19,6 +19,7 @@ import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
@@ -37,6 +38,8 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     private final EventBus eventBus;
     private final boolean useMainTableResources;
 
+    // an empty container that can be bound in the view to the ActionPanel
+    private final SimplePanel actionPanelContainer = new SimplePanel();
     private final SimpleActionTable<T> table;
     private final FlowPanel wrappedWidget;
     private HandlerRegistration registration;
@@ -53,6 +56,8 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
         if (actionPanel != null) {
             wrappedWidget.add(actionPanel);
             table.setActionMenus(actionPanel.getActionButtons());
+        } else {
+            wrappedWidget.add(actionPanelContainer);
         }
         wrappedWidget.add(table);
         initWidget(getWrappedWidget());
@@ -146,4 +151,8 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     public abstract void initTable();
 
     public void addModelListeners() { }
+
+    public SimplePanel getActionPanelContainer() {
+        return actionPanelContainer;
+    }
 }
