@@ -223,7 +223,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             updateCpuProfile(getModel().getSelectedCluster().getId(), vm.getCpuProfileId());
 
             if (isInStateWithMemoryVolume(getVm()) && !isRestoreMemoryVolumeSupported()) {
-                getModel().getEditingEnabled().setMessage(getModel().constants.suspendedVMsWhenClusterChange());
+                getModel().getEditingEnabled().setMessage(constants.suspendedVMsWhenClusterChange());
             }
         }
     }
@@ -515,7 +515,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (getVm() != null && getVm().isHostedEngine()) {
             getModel().getIsHighlyAvailable().setEntity(false);
             getModel().getIsHighlyAvailable().setIsChangeable(false);
-            getModel().getIsHighlyAvailable().setChangeProhibitionReason(getModel().constants.noHaWhenHostedEngineUsed());
+            getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.noHaWhenHostedEngineUsed());
         }
     }
 

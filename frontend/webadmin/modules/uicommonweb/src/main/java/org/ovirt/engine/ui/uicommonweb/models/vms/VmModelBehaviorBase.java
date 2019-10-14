@@ -86,7 +86,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     // no need to have this configurable
     public static final int DEFAULT_NUM_OF_IOTHREADS = 1;
 
-    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    protected final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private TModel privateModel;
