@@ -540,7 +540,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
-    private Boolean useTscFrequency;
+    private boolean useTscFrequency;
 
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
@@ -1606,11 +1606,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.resumeBehavior = resumeBehavior;
     }
 
-    public Boolean getUseTscFrequency() {
+    public boolean getUseTscFrequency() {
         return useTscFrequency;
     }
 
-    public void setUseTscFrequency(Boolean useTscFrequency) {
+    public void setUseTscFrequency(boolean useTscFrequency) {
         this.useTscFrequency = useTscFrequency;
     }
 }
