@@ -7,7 +7,7 @@
 Install the following system components:
 
 - java-11-openjdk-devel
-- jdk-8 / openjdk-8-jdk / icedtea-8
+- java-1.8.0-openjdk-headless
 - mime-types or mailcap
 - unzip
 - openssl

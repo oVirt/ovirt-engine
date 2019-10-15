@@ -218,7 +218,7 @@
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>gwt-maven-plugin</artifactId>
               <configuration>
-                <jvm>/lib/jvm/java-1.8.0-openjdk/bin/java</jvm>
+                <jvm>/lib/jvm/jre-1.8.0-openjdk/bin/java</jvm>
                 <style>DETAILED</style>
                 <draftCompile>true</draftCompile>
                 <!--
