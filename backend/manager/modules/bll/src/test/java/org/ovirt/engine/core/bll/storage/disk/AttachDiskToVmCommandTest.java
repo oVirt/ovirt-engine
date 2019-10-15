@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -132,6 +134,15 @@ public class AttachDiskToVmCommandTest {
         disk.setContentType(DiskContentType.OVF_STORE);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
+    }
+
+    @Test
+    public void testValidateFailsWhenDiskIsOnBackupStorageDomain() {
+        StorageDomain sd = mock(StorageDomain.class);
+        when(sd.isBackup()).thenReturn(true);
+        when(command.getStorageDomainValidator(any())).thenReturn(new StorageDomainValidator(sd));
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
     }
 
     private AttachDetachVmDiskParameters createParameters() {
