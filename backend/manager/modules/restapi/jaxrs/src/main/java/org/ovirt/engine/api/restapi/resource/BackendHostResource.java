@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.CopyHostNetworksParameters;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
@@ -224,6 +225,15 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return doAction(ActionType.SyncAllHostNetworks,
                 new PersistentHostSetupNetworksParameters(guid),
                 action);
+    }
+
+    @Override
+    public Response copyHostNetworks(Action action) {
+        var parameters = new CopyHostNetworksParameters();
+        Host sourceHost = action.getSourceHost();
+        parameters.setSourceHostId(Guid.createGuidFromString(sourceHost.getId()));
+        parameters.setVdsId(guid);
+        return doAction(ActionType.CopyHostNetworks, parameters, action);
     }
 
     @Override
