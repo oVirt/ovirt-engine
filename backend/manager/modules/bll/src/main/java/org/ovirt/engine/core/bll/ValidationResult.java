@@ -194,10 +194,12 @@ public final class ValidationResult {
      */
     public static class ValidationResultBuilder {
 
-        private ValidationResult expectedValidation;
+        private EngineMessage expectedError;
+        private String[] replacements;
 
         private ValidationResultBuilder(EngineMessage expectedError, String... replacements) {
-            expectedValidation = new ValidationResult(expectedError, replacements);
+            this.expectedError = expectedError;
+            this.replacements = replacements;
         }
 
         /**
@@ -216,7 +218,7 @@ public final class ValidationResult {
          * @return The erroneous validation result if the condition occurs, or a valid result of it doesn't.
          */
         public ValidationResult when(boolean conditionOccurs) {
-            return conditionOccurs ? expectedValidation : VALID;
+            return conditionOccurs ? new ValidationResult(expectedError, replacements) : VALID;
         }
 
         /**
