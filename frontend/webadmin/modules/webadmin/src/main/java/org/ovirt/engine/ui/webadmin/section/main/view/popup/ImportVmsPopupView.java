@@ -352,7 +352,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         externalVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
-                if (externalVmModel instanceof OvaVmModel) {
+                if (externalVmModel instanceof OvaVmModel && ((OvaVmModel) externalVmModel).getOvaFileName() != null) {
                     return externalVmModel.getEntity().getName() + " (" + ((OvaVmModel) externalVmModel).getOvaFileName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return externalVmModel.getEntity().getName();
@@ -362,7 +362,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         importedVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> importedVmModel) {
-                if (importedVmModel instanceof OvaVmModel) {
+                if (importedVmModel instanceof OvaVmModel && ((OvaVmModel) importedVmModel).getOvaFileName() != null) {
                     return importedVmModel.getEntity().getName() + " (" + ((OvaVmModel) importedVmModel).getOvaFileName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 return importedVmModel.getEntity().getName();

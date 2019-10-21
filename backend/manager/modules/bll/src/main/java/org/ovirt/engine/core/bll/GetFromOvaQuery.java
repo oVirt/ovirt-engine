@@ -78,9 +78,8 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
                     .filter(arr -> arr[0] != null)
                     .collect(Collectors.toMap(arr -> (String) arr[1], arr -> (T) arr[0]));
         } else {
-            String[] splitted = splitToFileNameAndOvf(stdout);
-            T vm = parseOvf(splitted[1]);
-            return new HashMap<>(Collections.singletonMap(splitted[0], vm));
+            T vm = parseOvf(stdout);
+            return new HashMap<>(Collections.singletonMap(null, vm));
         }
     }
 
