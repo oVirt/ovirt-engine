@@ -1175,6 +1175,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___HOST_CERTIFICATION_HAS_EXPIRED();
 
+    String AuditLogType___HOST_CERTIFICATE_HAS_INVALID_SAN();
+
     String AuditLogType___HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE();
 
     String AuditLogType___ENGINE_CERTIFICATION_HAS_EXPIRED();

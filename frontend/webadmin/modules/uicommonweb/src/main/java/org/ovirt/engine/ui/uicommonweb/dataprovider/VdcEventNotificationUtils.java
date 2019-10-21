@@ -57,6 +57,7 @@ public final class VdcEventNotificationUtils {
                 AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE);
         addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED);
+        addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.HOST_CERTIFICATE_HAS_INVALID_SAN);
         addEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN);
         addEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM);
         addEventNotificationEntry(EventNotificationEntity.VirtHost, AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN);
