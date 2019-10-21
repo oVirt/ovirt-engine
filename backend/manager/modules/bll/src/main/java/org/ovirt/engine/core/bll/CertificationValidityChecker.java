@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.security.cert.Certificate;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -98,11 +100,13 @@ public class CertificationValidityChecker implements BackendService {
         if (peerCertificates == null || peerCertificates.isEmpty()) {
             log.error("Failed to retrieve peer certifications for host '{}'", host.getName());
         } else {
-            checkCertificate((X509Certificate) peerCertificates.get(0),
+            X509Certificate hostCertificate = (X509Certificate) peerCertificates.get(0);
+            checkCertificate(hostCertificate,
                     AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED,
                     AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
                     host);
+            checkCertificateSan(hostCertificate, host.getHostName());
         }
     }
 
@@ -138,6 +142,30 @@ public class CertificationValidityChecker implements BackendService {
         }
 
         return true;
+    }
+
+    private boolean checkCertificateSan(X509Certificate cert, String hostName) {
+        boolean valid = false;
+        Collection<List<?>> sanRecords;
+        try {
+            sanRecords = cert.getSubjectAlternativeNames();
+        } catch (CertificateParsingException ex) {
+            log.error("Error parsing certificate of host '{}': {}", hostName, ex.getMessage());
+            log.debug("Exception", ex);
+            sanRecords = null;
+        }
+        if (sanRecords != null) {
+            valid = sanRecords.stream()
+                    // check only records of type DNS (2) or IP address (7)
+                    .filter(record -> ((Integer) record.get(0)) == 2 || ((Integer) record.get(0)) == 7)
+                    .anyMatch(record -> hostName.equals((String) record.get(1)));
+        }
+        if (!valid) {
+            AuditLogable event = new AuditLogableImpl();
+            event.setVdsName(hostName);
+            auditLogDirector.log(event, AuditLogType.HOST_CERTIFICATE_HAS_INVALID_SAN);
+        }
+        return valid;
     }
 
     private Date getExpirationDate(Date expirationDate, ConfigValues daysBeforeExpiration) {

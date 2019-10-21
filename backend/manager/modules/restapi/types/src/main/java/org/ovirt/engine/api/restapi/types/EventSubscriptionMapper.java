@@ -170,6 +170,8 @@ public class EventSubscriptionMapper {
             return AuditLogType.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE;
         case HOST_CERTIFICATION_HAS_EXPIRED:
             return AuditLogType.HOST_CERTIFICATION_HAS_EXPIRED;
+        case HOST_CERTIFICATE_HAS_INVALID_SAN:
+            return AuditLogType.HOST_CERTIFICATE_HAS_INVALID_SAN;
         case HOST_SET_NONOPERATIONAL_DOMAIN:
             return AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN;
         case SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM:
@@ -490,6 +492,8 @@ public class EventSubscriptionMapper {
             return NotifiableEvent.HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE;
         case HOST_CERTIFICATION_HAS_EXPIRED:
             return NotifiableEvent.HOST_CERTIFICATION_HAS_EXPIRED;
+        case HOST_CERTIFICATE_HAS_INVALID_SAN:
+            return NotifiableEvent.HOST_CERTIFICATE_HAS_INVALID_SAN;
         case VDS_SET_NONOPERATIONAL_DOMAIN:
             return NotifiableEvent.HOST_SET_NONOPERATIONAL_DOMAIN;
         case SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM:
