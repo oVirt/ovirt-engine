@@ -26,7 +26,7 @@ public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<C
     @Inject
     public SubTabClusterPermissionView(SearchableDetailModelProvider<Permission, ClusterListModel<Void>,
             PermissionListModel<Cluster>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<ClusterListModel<Void>, PermissionListModel<Cluster>> actionPanel,
+            PermissionActionPanelPresenterWidget<Cluster, ClusterListModel<Void>, PermissionListModel<Cluster>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

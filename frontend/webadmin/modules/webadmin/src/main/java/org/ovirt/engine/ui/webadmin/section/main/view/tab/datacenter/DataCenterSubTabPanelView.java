@@ -49,7 +49,7 @@ public class DataCenterSubTabPanelView extends AbstractSubTabPanelView implement
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

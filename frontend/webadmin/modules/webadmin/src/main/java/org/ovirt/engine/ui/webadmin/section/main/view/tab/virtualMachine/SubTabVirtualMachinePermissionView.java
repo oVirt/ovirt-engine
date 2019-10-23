@@ -25,7 +25,7 @@ public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermission
     @Inject
     public SubTabVirtualMachinePermissionView(SearchableDetailModelProvider<Permission, VmListModel<Void>,
             PermissionListModel<VM>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<VmListModel<Void>, PermissionListModel<VM>> actionPanel,
+            PermissionActionPanelPresenterWidget<VM, VmListModel<Void>, PermissionListModel<VM>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

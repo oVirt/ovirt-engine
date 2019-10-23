@@ -14,20 +14,20 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class SharedMacPoolActionPanelPresenterWidget
-    extends ActionPanelPresenterWidget<MacPool, SharedMacPoolListModel> {
+    extends ActionPanelPresenterWidget<Void, MacPool, SharedMacPoolListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SharedMacPoolActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<MacPool> view,
+            ActionPanelPresenterWidget.ViewDef<Void, MacPool> view,
             SharedMacPoolModelProvider dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolAddButton()) {
+        addActionButton(new WebAdminButtonDefinition<Void, MacPool>(constants.configureMacPoolAddButton()) {
 
             @Override
             protected UICommand resolveCommand() {
@@ -35,14 +35,14 @@ public class SharedMacPoolActionPanelPresenterWidget
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolEditButton()) {
+        addActionButton(new WebAdminButtonDefinition<Void, MacPool>(constants.configureMacPoolEditButton()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolRemoveButton()) {
+        addActionButton(new WebAdminButtonDefinition<Void, MacPool>(constants.configureMacPoolRemoveButton()) {
 
             @Override
             protected UICommand resolveCommand() {

@@ -13,61 +13,61 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidget<StorageDomain, StorageListModel> {
+public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, StorageDomain, StorageListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<StorageDomain> newButtonDefinition;
-    private WebAdminButtonDefinition<StorageDomain> importButtonDefinition;
+    private WebAdminButtonDefinition<Void, StorageDomain> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, StorageDomain> importButtonDefinition;
 
     @Inject
     public StorageActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<StorageDomain> view,
+            ActionPanelPresenterWidget.ViewDef<Void, StorageDomain> view,
             MainModelProvider<StorageDomain, StorageListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, StorageDomain>(constants.newDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewDomainCommand();
             }
         };
         addActionButton(newButtonDefinition);
-        importButtonDefinition = new WebAdminButtonDefinition<StorageDomain>(constants.importDomainStorage()) {
+        importButtonDefinition = new WebAdminButtonDefinition<Void, StorageDomain>(constants.importDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getImportDomainCommand();
             }
         };
         addActionButton(importButtonDefinition);
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.editStorage()) {
+        addActionButton(new WebAdminButtonDefinition<Void, StorageDomain>(constants.editStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.removeStorage()) {
+        addActionButton(new WebAdminButtonDefinition<Void, StorageDomain>(constants.removeStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<StorageDomain>(constants.updateOvfsForStorage()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, StorageDomain>(constants.updateOvfsForStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getUpdateOvfsCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<StorageDomain>(constants.destroyStorage()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, StorageDomain>(constants.destroyStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getDestroyCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<StorageDomain>(constants.scanDisksStorage()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, StorageDomain>(constants.scanDisksStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getScanDisksCommand();
@@ -75,11 +75,11 @@ public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidge
         });
     }
 
-    public WebAdminButtonDefinition<StorageDomain> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, StorageDomain> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 
-    public WebAdminButtonDefinition<StorageDomain> getImportButtonDefinition() {
+    public WebAdminButtonDefinition<Void, StorageDomain> getImportButtonDefinition() {
         return importButtonDefinition;
     }
 }

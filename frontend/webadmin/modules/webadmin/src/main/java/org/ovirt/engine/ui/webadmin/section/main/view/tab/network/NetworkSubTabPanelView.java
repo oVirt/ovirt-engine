@@ -48,7 +48,7 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

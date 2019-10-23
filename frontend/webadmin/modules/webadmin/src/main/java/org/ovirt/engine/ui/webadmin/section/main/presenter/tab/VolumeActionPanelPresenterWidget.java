@@ -18,74 +18,74 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget<GlusterVolumeEntity, VolumeListModel> {
+public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, GlusterVolumeEntity, VolumeListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<GlusterVolumeEntity> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, GlusterVolumeEntity> newButtonDefinition;
 
     @Inject
     public VolumeActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<GlusterVolumeEntity> view,
+            ActionPanelPresenterWidget.ViewDef<Void, GlusterVolumeEntity> view,
             MainModelProvider<GlusterVolumeEntity, VolumeListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.newVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewVolumeCommand();
             }
         };
         addActionButton(newButtonDefinition);
-        addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.removeVolume()) {
+        addActionButton(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.removeVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveVolumeCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolume()) {
+        addActionButton(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.startVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStartCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolume()) {
+        addActionButton(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.stopVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStopCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.rebalanceVolume()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.rebalanceVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStartRebalanceCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.optimizeForVirtStore()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.optimizeForVirtStore()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getOptimizeForVirtStoreCommand();
             }
         });
 
-        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeProfilingActions = new ArrayList<>();
+        List<ActionButtonDefinition<Void, GlusterVolumeEntity>> volumeProfilingActions = new ArrayList<>();
 
-        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolumeProfiling()) {
+        volumeProfilingActions.add(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.startVolumeProfiling()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStartVolumeProfilingCommand();
             }
         });
-        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.volumeProfileDetails()) {
+        volumeProfilingActions.add(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.volumeProfileDetails()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getShowVolumeProfileDetailsCommand();
             }
         });
-        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolumeProfiling()) {
+        volumeProfilingActions.add(new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.stopVolumeProfiling()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStopVolumeProfilingCommand();
@@ -94,19 +94,19 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
         addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeProfilingAction(),
                 volumeProfilingActions), volumeProfilingActions);
 
-        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeSnapshotActions = getVolumeSnapshotMenu();
+        List<ActionButtonDefinition<Void, GlusterVolumeEntity>> volumeSnapshotActions = getVolumeSnapshotMenu();
         addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainViewTitle(),
                 volumeSnapshotActions), volumeSnapshotActions);
 
-        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeGeoRepActions = getGeoRepCreateMenu(constants);
+        List<ActionButtonDefinition<Void, GlusterVolumeEntity>> volumeGeoRepActions = getGeoRepCreateMenu(constants);
         addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainViewTitle(),
                 volumeGeoRepActions), volumeGeoRepActions);
     }
 
-    private List<ActionButtonDefinition<GlusterVolumeEntity>> getGeoRepCreateMenu(ApplicationConstants constants) {
-        List<ActionButtonDefinition<GlusterVolumeEntity>> geoRepMenu = new ArrayList<>();
-        WebAdminButtonDefinition<GlusterVolumeEntity> geoRepButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newGeoRepSession()) {
+    private List<ActionButtonDefinition<Void, GlusterVolumeEntity>> getGeoRepCreateMenu(ApplicationConstants constants) {
+        List<ActionButtonDefinition<Void, GlusterVolumeEntity>> geoRepMenu = new ArrayList<>();
+        WebAdminButtonDefinition<Void, GlusterVolumeEntity> geoRepButton =
+                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.newGeoRepSession()) {
                     @Override
                     protected UICommand resolveCommand() {
                         return getModel().getNewGeoRepSessionCommand();
@@ -116,19 +116,19 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
         return geoRepMenu;
     }
 
-    private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu() {
-        List<ActionButtonDefinition<GlusterVolumeEntity>> snapshotMenu = new ArrayList<>();
+    private List<ActionButtonDefinition<Void, GlusterVolumeEntity>> getVolumeSnapshotMenu() {
+        List<ActionButtonDefinition<Void, GlusterVolumeEntity>> snapshotMenu = new ArrayList<>();
 
-        WebAdminButtonDefinition<GlusterVolumeEntity> newSnapshotButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolumeSnapshot()) {
+        WebAdminButtonDefinition<Void, GlusterVolumeEntity> newSnapshotButton =
+                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.newVolumeSnapshot()) {
                     @Override
                     protected UICommand resolveCommand() {
                         return getModel().getCreateSnapshotCommand();
                     }
                 };
         snapshotMenu.add(newSnapshotButton);
-        WebAdminButtonDefinition<GlusterVolumeEntity> editSnapshotScheduleButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.editVolumeSnapshotSchedule()) {
+        WebAdminButtonDefinition<Void, GlusterVolumeEntity> editSnapshotScheduleButton =
+                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.editVolumeSnapshotSchedule()) {
                     @Override
                     protected UICommand resolveCommand() {
                         return getModel().getEditSnapshotScheduleCommand();
@@ -136,15 +136,15 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 };
         snapshotMenu.add(editSnapshotScheduleButton);
 
-        WebAdminButtonDefinition<GlusterVolumeEntity> configureClusterSnapshotOptionsButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
+        WebAdminButtonDefinition<Void, GlusterVolumeEntity> configureClusterSnapshotOptionsButton =
+                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getConfigureClusterSnapshotOptionsCommand();
             }
         };
-        WebAdminButtonDefinition<GlusterVolumeEntity> configureVolumeSnapshotOptionsButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureVolumeSnapshotOptions()) {
+        WebAdminButtonDefinition<Void, GlusterVolumeEntity> configureVolumeSnapshotOptionsButton =
+                new WebAdminButtonDefinition<Void, GlusterVolumeEntity>(constants.configureVolumeSnapshotOptions()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getConfigureVolumeSnapshotOptionsCommand();
@@ -157,7 +157,7 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
         return snapshotMenu;
     }
 
-    public WebAdminButtonDefinition<GlusterVolumeEntity> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, GlusterVolumeEntity> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 }

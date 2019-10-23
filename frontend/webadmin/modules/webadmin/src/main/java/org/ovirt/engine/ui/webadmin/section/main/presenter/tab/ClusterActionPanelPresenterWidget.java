@@ -15,49 +15,49 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidget<Cluster, ClusterListModel<Void>> {
+public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, Cluster, ClusterListModel<Void>> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<Cluster> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, Cluster> newButtonDefinition;
 
     @Inject
     public ClusterActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Cluster> view,
+            ActionPanelPresenterWidget.ViewDef<Void, Cluster> view,
             MainModelProvider<Cluster, ClusterListModel<Void>> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<Cluster>(constants.newCluster()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, Cluster>(constants.newCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         };
         addActionButton(newButtonDefinition);
-        addActionButton(new WebAdminButtonDefinition<Cluster>(constants.editCluster()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Cluster>(constants.editCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<Cluster>(constants.removeCluster()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Cluster>(constants.removeCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
 
-        addMenuListItem(new WebAdminImageButtonDefinition<Cluster>(constants.guideMeCluster(), IconType.SUPPORT, true) {
+        addMenuListItem(new WebAdminImageButtonDefinition<Void, Cluster>(constants.guideMeCluster(), IconType.SUPPORT, true) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getGuideCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<Cluster>(constants.resetClusterEmulatedMachine()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, Cluster>(constants.resetClusterEmulatedMachine()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getResetEmulatedMachineCommand();
@@ -65,7 +65,7 @@ public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidge
         });
     }
 
-    public WebAdminButtonDefinition<Cluster> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, Cluster> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 }

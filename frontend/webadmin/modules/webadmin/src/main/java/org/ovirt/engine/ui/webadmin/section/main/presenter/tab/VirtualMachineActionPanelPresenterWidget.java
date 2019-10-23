@@ -20,22 +20,22 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresenterWidget<VM, VmListModel<Void>> {
+public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, VM, VmListModel<Void>> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<VM> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, VM> newButtonDefinition;
 
     @Inject
     public VirtualMachineActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VM> view,
+            ActionPanelPresenterWidget.ViewDef<Void, VM> view,
             MainModelProvider<VM, VmListModel<Void>> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<VM>(constants.newVm()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, VM>(constants.newVm()) {
 
             @Override
             protected UICommand resolveCommand() {
@@ -43,59 +43,59 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         };
         addActionButton(newButtonDefinition);
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getImportVmCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.editVm()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VM>(constants.editVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VM>(constants.removeVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cloneVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.cloneVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCloneVmCommand();
             }
         });
 
-        List<ActionButtonDefinition<VM>> runSubActions = new LinkedList<>();
-        runSubActions.add(new UiCommandButtonDefinition<VM>(getSharedEventBus(), constants.runOnceVm()) {
+        List<ActionButtonDefinition<Void, VM>> runSubActions = new LinkedList<>();
+        runSubActions.add(new UiCommandButtonDefinition<Void, VM>(getSharedEventBus(), constants.runOnceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRunOnceCommand();
             }
         });
-        addComboActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(), IconType.PLAY) {
+        addComboActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.runVm(), IconType.PLAY) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRunCommand();
             }
         }, runSubActions);
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(), IconType.MOON_O) {
+        addActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.suspendVm(), IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getPauseCommand();
             }
         });
 
-        List<ActionButtonDefinition<VM>> shutdownSubActions = new LinkedList<>();
-        shutdownSubActions.add(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(), IconType.POWER_OFF) {
+        List<ActionButtonDefinition<Void, VM>> shutdownSubActions = new LinkedList<>();
+        shutdownSubActions.add(new WebAdminImageButtonDefinition<Void, VM>(constants.powerOffVm(), IconType.POWER_OFF) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStopCommand();
             }
         });
-        addComboActionButtonWithContexts(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(), IconType.STOP
+        addComboActionButtonWithContexts(new WebAdminImageButtonDefinition<Void, VM>(constants.shutDownVm(), IconType.STOP
                 ) {
             @Override
             protected UICommand resolveCommand() {
@@ -103,15 +103,15 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         }, shutdownSubActions);
 
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.rebootVm(), IconType.REPEAT) {
+        addActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.rebootVm(), IconType.REPEAT) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRebootCommand();
             }
         });
 
-        List<ActionButtonDefinition<VM>> consoleOptionsSubActions = new LinkedList<>();
-        consoleOptionsSubActions.add(new UiCommandButtonDefinition<VM>(getSharedEventBus(),
+        List<ActionButtonDefinition<Void, VM>> consoleOptionsSubActions = new LinkedList<>();
+        consoleOptionsSubActions.add(new UiCommandButtonDefinition<Void, VM>(getSharedEventBus(),
                 constants.consoleOptions()) {
             @Override
             protected UICommand resolveCommand() {
@@ -119,14 +119,14 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         });
 
-        addComboActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(), IconType.DESKTOP) {
+        addComboActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.consoleVm(), IconType.DESKTOP) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getConsoleConnectCommand();
             }
         }, consoleOptionsSubActions);
 
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.createSnapshotVM()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VM>(constants.createSnapshotVM()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCreateSnapshotCommand();
@@ -134,7 +134,7 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         });
 
         addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.changeCdVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.changeCdVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getChangeCdCommand();
@@ -142,20 +142,20 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         });
         addDividerToKebab();
 
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCancelMigrateCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cancelConvertVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.cancelConvertVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCancelConvertCommand();
             }
         });
         addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.makeTemplateVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.makeTemplateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewTemplateCommand();
@@ -163,27 +163,27 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         });
         addDividerToKebab();
         // Management operations drop down
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportToExportDomain()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.exportToExportDomain()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportToOva()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.exportToOva()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportOvaCommand();
             }
         });
         addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.assignTagsVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.assignTagsVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAssignTagsCommand();
             }
         });
 
-        addMenuListItem(new WebAdminImageButtonDefinition<VM>(constants.guideMeVm(), IconType.SUPPORT, true) {
+        addMenuListItem(new WebAdminImageButtonDefinition<Void, VM>(constants.guideMeVm(), IconType.SUPPORT, true) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getGuideCommand();
@@ -191,7 +191,7 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         });
     }
 
-    public WebAdminButtonDefinition<VM> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, VM> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 

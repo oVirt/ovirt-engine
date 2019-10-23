@@ -64,10 +64,10 @@ public class RoleView extends Composite {
     FlowPanel permissionTablePanel;
 
     @WithElementId
-    SimpleActionTable<Role> roleTable;
+    SimpleActionTable<Void, Role> roleTable;
 
     @WithElementId
-    SimpleActionTable<Permission> permissionTable;
+    SimpleActionTable<Role, Permission> permissionTable;
 
     private final RoleModelProvider roleModelProvider;
     private final RolePermissionModelProvider permissionModelProvider;

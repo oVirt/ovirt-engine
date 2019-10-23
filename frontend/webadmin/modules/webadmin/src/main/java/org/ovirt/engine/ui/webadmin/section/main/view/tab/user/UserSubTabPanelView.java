@@ -49,7 +49,7 @@ public class UserSubTabPanelView extends AbstractSubTabPanelView implements User
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

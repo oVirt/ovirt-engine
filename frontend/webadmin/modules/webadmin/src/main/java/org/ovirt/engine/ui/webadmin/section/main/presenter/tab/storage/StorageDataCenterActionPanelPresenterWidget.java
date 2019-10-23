@@ -15,38 +15,38 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class StorageDataCenterActionPanelPresenterWidget extends
-    DetailActionPanelPresenterWidget<StorageDomain, StorageListModel, StorageDataCenterListModel> {
+    DetailActionPanelPresenterWidget<StorageDomain, StorageDomain, StorageListModel, StorageDataCenterListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public StorageDataCenterActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<StorageDomain> view,
+            DetailActionPanelPresenterWidget.ViewDef<StorageDomain, StorageDomain> view,
             SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachStorageDc()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, StorageDomain>(constants.attachStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.detachStorageDc()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, StorageDomain>(constants.detachStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.activateStorageDc()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, StorageDomain>(constants.activateStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.maintenanceStorageDc()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, StorageDomain>(constants.maintenanceStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMaintenanceCommand();

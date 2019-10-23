@@ -39,7 +39,7 @@ public class SubTabClusterAffinityGroupPresenter
     @Inject
     public SubTabClusterAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
-            AffinityGroupActionPanelPresenterWidget<ClusterListModel<Void>, ClusterAffinityGroupListModel> actionPanel,
+            AffinityGroupActionPanelPresenterWidget<Cluster, ClusterListModel<Void>, ClusterAffinityGroupListModel> actionPanel,
             SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>,
             ClusterAffinityGroupListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

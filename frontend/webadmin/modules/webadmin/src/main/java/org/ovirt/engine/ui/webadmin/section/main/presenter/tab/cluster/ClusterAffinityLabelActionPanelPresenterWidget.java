@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -14,11 +15,11 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ClusterAffinityLabelActionPanelPresenterWidget
-    extends AffinityLabelsActionPanelPresenterWidget<ClusterListModel<Void>, ClusterAffinityLabelListModel> {
+    extends AffinityLabelsActionPanelPresenterWidget<Cluster, ClusterListModel<Void>, ClusterAffinityLabelListModel> {
 
     @Inject
     public ClusterAffinityLabelActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<Label> view,
+            DetailActionPanelPresenterWidget.ViewDef<Cluster, Label> view,
             SearchableDetailModelProvider<Label, ClusterListModel<Void>, ClusterAffinityLabelListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
@@ -26,7 +27,7 @@ public class ClusterAffinityLabelActionPanelPresenterWidget
     @Override
     protected void initializeButtons() {
         super.initializeButtons();
-        addActionButton(new WebAdminButtonDefinition<Label>(constants.affinityLabelsSubTabDeleteButton()) {
+        addActionButton(new WebAdminButtonDefinition<Cluster, Label>(constants.affinityLabelsSubTabDeleteButton()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

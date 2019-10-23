@@ -83,15 +83,15 @@ public class MenuCell<T> extends AbstractCell<T> {
         }
     }
 
-    public void addMenuItem(final ActionButtonDefinition<T> buttonDef) {
+    public void addMenuItem(final ActionButtonDefinition<?, T> buttonDef) {
         final MenuItem menuItem = new MenuItem(buttonDef.getText(), () -> {
             menuPanelPopup.asPopupPanel().hide();
-            buttonDef.onClick(null);
+            buttonDef.onClick(null, null);
         });
-        menuItem.setEnabled(buttonDef.isEnabled(null));
+        menuItem.setEnabled(buttonDef.isEnabled(null, null));
 
         // Update button whenever its definition gets re-initialized
-        buttonDef.addInitializeHandler(event -> menuItem.setEnabled(buttonDef.isEnabled(null)));
+        buttonDef.addInitializeHandler(event -> menuItem.setEnabled(buttonDef.isEnabled(null, null)));
         menuPanelPopup.getMenuBar().addItem(menuItem);
     }
 

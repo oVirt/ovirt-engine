@@ -19,12 +19,12 @@ public class QuotaSubTabPanelView extends AbstractSubTabPanelView implements Quo
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final QuotaActionPanelPresenterWidget actionPanel;
+    private final QuotaActionPanelPresenterWidget<Void> actionPanel;
     private final SimpleTabPanel tabPanel;
 
     @Inject
     public QuotaSubTabPanelView(QuotaBreadCrumbsPresenterWidget breadCrumbs,
-            QuotaActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
+            QuotaActionPanelPresenterWidget<Void> actionPanel, DetailTabLayout detailTabLayout) {
         this.actionPanel = actionPanel;
         this.tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
@@ -47,7 +47,7 @@ public class QuotaSubTabPanelView extends AbstractSubTabPanelView implements Quo
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

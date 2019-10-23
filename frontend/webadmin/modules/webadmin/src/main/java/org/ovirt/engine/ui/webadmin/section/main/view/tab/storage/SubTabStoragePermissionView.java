@@ -25,7 +25,7 @@ public class SubTabStoragePermissionView extends AbstractSubTabPermissionsView<S
     @Inject
     public SubTabStoragePermissionView(SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<StorageListModel, PermissionListModel<StorageDomain>> actionPanel,
+            PermissionActionPanelPresenterWidget<StorageDomain, StorageListModel, PermissionListModel<StorageDomain>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

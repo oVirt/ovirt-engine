@@ -58,7 +58,7 @@ public class SharedMacPoolView extends Composite {
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private SimpleActionTable<MacPool> macPoolTable;
+    private SimpleActionTable<Void, MacPool> macPoolTable;
 
     @Inject
     public SharedMacPoolView(final EventBus eventBus, final ClientStorage clientStorage,
@@ -75,7 +75,7 @@ public class SharedMacPoolView extends Composite {
         macPoolPanel.add(actionPanel);
         macPoolPanel.add(createMacPoolTable());
 
-        final PermissionListModelTable<PermissionListModel<MacPool>> authorizationTable =
+        final PermissionListModelTable<MacPool, PermissionListModel<MacPool>> authorizationTable =
                 new PermissionListModelTable<>(permissionModelProvider, eventBus, null, clientStorage);
         authorizationTable.initTable();
         authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(event ->
@@ -104,7 +104,7 @@ public class SharedMacPoolView extends Composite {
         splitLayoutPanel.add(macPoolPanel);
     }
 
-    private SimpleActionTable<MacPool> createMacPoolTable() {
+    private SimpleActionTable<Void, MacPool> createMacPoolTable() {
         macPoolTable =
                 new SimpleActionTable<>(sharedMacPoolModelProvider,
                         getTableResources(),

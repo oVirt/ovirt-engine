@@ -13,22 +13,22 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidget<Provider, ProviderListModel> {
+public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, Provider, ProviderListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<Provider> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, Provider> newButtonDefinition;
 
     @Inject
     public ProviderActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Provider> view,
+            ActionPanelPresenterWidget.ViewDef<Void, Provider> view,
             MainModelProvider<Provider, ProviderListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<Provider>(constants.addProvider()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, Provider>(constants.addProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
@@ -36,21 +36,21 @@ public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidg
         };
         addActionButton(newButtonDefinition);
 
-        addActionButton(new WebAdminButtonDefinition<Provider>(constants.editProvider()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Provider>(constants.editProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Provider>(constants.removeProvider()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Provider>(constants.removeProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<Provider>(constants.forceRemoveProvider()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, Provider>(constants.forceRemoveProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getForceRemoveCommand();
@@ -58,7 +58,7 @@ public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidg
         });
     }
 
-    public WebAdminButtonDefinition<Provider> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, Provider> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 

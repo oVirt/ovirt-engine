@@ -13,40 +13,40 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class RoleActionPanelPresenterWidget extends ActionPanelPresenterWidget<Role, RoleListModel> {
+public class RoleActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, Role, RoleListModel> {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public RoleActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Role> view,
+            ActionPanelPresenterWidget.ViewDef<Void, Role> view,
             RoleModelProvider dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Role>(constants.newRole()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Role>(constants.newRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Role>(constants.editRole()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Role>(constants.editRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Role>(constants.copyRole()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Role>(constants.copyRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCloneCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Role>(constants.removeRole()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Role>(constants.removeRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

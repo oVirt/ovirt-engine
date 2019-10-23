@@ -50,7 +50,7 @@ public class VirtualMachineSubTabPanelView extends AbstractSubTabPanelView
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

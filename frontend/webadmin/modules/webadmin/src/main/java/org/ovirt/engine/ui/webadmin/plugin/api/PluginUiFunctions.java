@@ -192,7 +192,7 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = entityType.getMainHistoryToken();
 
         if (historyToken != null) {
-            ActionButtonDefinition<?> actionButton = createButtonDefinition(label, actionButtonInterface);
+            ActionButtonDefinition<?, ?> actionButton = createButtonDefinition(label, actionButtonInterface);
             AddActionButtonEvent.fire(this, historyToken, actionButton, actionButtonInterface.isInMoreMenu());
         }
     }
@@ -205,22 +205,22 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = mainTabEntityType.getSubTabHistoryToken(detailPlaceId);
 
         if (historyToken != null) {
-            ActionButtonDefinition<?> actionButton = createButtonDefinition(label, actionButtonInterface);
+            ActionButtonDefinition<?, ?> actionButton = createButtonDefinition(label, actionButtonInterface);
             AddActionButtonEvent.fire(this, historyToken, actionButton, actionButtonInterface.isInMoreMenu());
         }
     }
 
-    <T> ActionButtonDefinition<T> createButtonDefinition(String label, ActionButtonInterface actionButtonInterface) {
-        return new AbstractButtonDefinition<T>(eventBus, label) {
+    <E, T> ActionButtonDefinition<E, T> createButtonDefinition(String label, ActionButtonInterface actionButtonInterface) {
+        return new AbstractButtonDefinition<E, T>(eventBus, label) {
 
             @Override
-            public void onClick(List<T> selectedItems) {
+            public void onClick(E parentEntity, List<T> selectedItems) {
                 actionButtonInterface.onClick().invoke(
                         EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()), null);
             }
 
             @Override
-            public boolean isEnabled(List<T> selectedItems) {
+            public boolean isEnabled(E parentEntity, List<T> selectedItems) {
                 return JsFunctionResultHelper.invokeAndGetResultAsBoolean(
                         actionButtonInterface.isEnabled(),
                         EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),
@@ -228,7 +228,7 @@ public class PluginUiFunctions implements HasHandlers {
             }
 
             @Override
-            public boolean isAccessible(List<T> selectedItems) {
+            public boolean isAccessible(E parentEntity, List<T> selectedItems) {
                 return JsFunctionResultHelper.invokeAndGetResultAsBoolean(
                         actionButtonInterface.isAccessible(),
                         EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),

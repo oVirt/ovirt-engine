@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -13,7 +14,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.CpuQos
 
 import com.google.gwt.event.shared.EventBus;
 
-public class CpuQosListModelTable extends AbstractModelBoundTableWidget<CpuQos, DataCenterCpuQosListModel> {
+public class CpuQosListModelTable extends AbstractModelBoundTableWidget<StoragePool, CpuQos, DataCenterCpuQosListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 

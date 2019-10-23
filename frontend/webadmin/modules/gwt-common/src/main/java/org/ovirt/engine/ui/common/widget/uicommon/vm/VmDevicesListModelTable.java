@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDeviceFeEntity, VmDevicesListModel<VM>> {
+public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VM, VmDeviceFeEntity, VmDevicesListModel<VM>> {
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private HotUnplugColumn hotUnplugColumn;

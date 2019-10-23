@@ -5,10 +5,10 @@ import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 
 import com.google.gwt.core.shared.GWT;
 
-public class DetailActionPanelView<T> extends ActionPanelView<T>
-    implements DetailActionPanelPresenterWidget.ViewDef<T> {
+public class DetailActionPanelView<E, T> extends ActionPanelView<E, T>
+    implements DetailActionPanelPresenterWidget.ViewDef<E, T> {
 
-    interface ViewIdHandler extends ElementIdHandler<DetailActionPanelView<?>> {
+    interface ViewIdHandler extends ElementIdHandler<DetailActionPanelView<?, ?>> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 

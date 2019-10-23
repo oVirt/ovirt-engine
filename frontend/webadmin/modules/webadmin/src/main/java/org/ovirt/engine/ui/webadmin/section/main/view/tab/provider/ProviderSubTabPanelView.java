@@ -49,7 +49,7 @@ public class ProviderSubTabPanelView extends AbstractSubTabPanelView implements 
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

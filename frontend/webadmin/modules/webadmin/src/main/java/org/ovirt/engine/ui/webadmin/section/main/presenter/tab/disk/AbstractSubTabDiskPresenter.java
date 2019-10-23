@@ -25,7 +25,7 @@ public abstract class AbstractSubTabDiskPresenter<D extends HasEntity<?>,
 
     public AbstractSubTabDiskPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<DiskListModel, D> modelProvider, DiskMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, DiskListModel, D> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, DiskListModel, D> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

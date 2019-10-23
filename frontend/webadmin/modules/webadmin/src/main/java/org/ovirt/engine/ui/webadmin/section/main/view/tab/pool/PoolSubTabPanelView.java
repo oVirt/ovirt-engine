@@ -49,7 +49,7 @@ public class PoolSubTabPanelView extends AbstractSubTabPanelView implements Pool
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

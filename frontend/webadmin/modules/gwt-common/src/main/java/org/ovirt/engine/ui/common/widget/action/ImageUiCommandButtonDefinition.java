@@ -10,7 +10,7 @@ import com.google.gwt.event.shared.EventBus;
  * @param <T>
  *            Action panel item type.
  */
-public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition<T> {
+public abstract class ImageUiCommandButtonDefinition<E, T> extends UiCommandButtonDefinition<E, T> {
 
     private HasCssName icon;
 

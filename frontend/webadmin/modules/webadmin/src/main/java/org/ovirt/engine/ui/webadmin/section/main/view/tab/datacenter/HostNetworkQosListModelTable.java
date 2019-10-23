@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -13,7 +14,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.HostNetwo
 
 import com.google.gwt.event.shared.EventBus;
 
-public class HostNetworkQosListModelTable extends AbstractModelBoundTableWidget<HostNetworkQos,
+public class HostNetworkQosListModelTable extends AbstractModelBoundTableWidget<StoragePool, HostNetworkQos,
     DataCenterHostNetworkQosListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();

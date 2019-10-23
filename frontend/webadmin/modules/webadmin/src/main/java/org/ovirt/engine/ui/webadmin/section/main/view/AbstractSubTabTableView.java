@@ -37,7 +37,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     private final SearchableDetailModelProvider<T, M, D> modelProvider;
 
     @WithElementId
-    public final SimpleActionTable<T> table;
+    public final SimpleActionTable<I, T> table;
 
     private final FlowPanel container = new FlowPanel();
     private final SimplePanel actionPanelContainer = new SimplePanel();
@@ -71,8 +71,8 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         }
     }
 
-    protected SimpleActionTable<T> createActionTable() {
-        return new SimpleActionTable<T>(modelProvider, getTableResources(),
+    protected SimpleActionTable<I, T> createActionTable() {
+        return new SimpleActionTable<I, T>(modelProvider, getTableResources(),
                 ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
             {
                 if (useTableWidgetForContent()) {
@@ -99,7 +99,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     }
 
     @Override
-    public SimpleActionTable<T> getTable() {
+    public SimpleActionTable<I, T> getTable() {
         return table;
     }
 

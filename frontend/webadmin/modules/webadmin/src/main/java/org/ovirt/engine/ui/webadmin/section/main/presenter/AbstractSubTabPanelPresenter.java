@@ -40,7 +40,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
 
         void setTabVisible(TabData tabData, boolean visible);
 
-        ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget();
+        ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget();
 
     }
 
@@ -119,10 +119,10 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
         getView().setTabVisible(tabData, model.getIsAvailable());
     }
 
-    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
-        ActionPanelPresenterWidget<?, ?> actionPanel = getView().getActionPanelPresenterWidget();
+    private void addPluginActionButtons(List<ActionButtonDefinition<?, ?>> pluginActionButtonList, boolean isMenuItem) {
+        ActionPanelPresenterWidget<?, ?, ?> actionPanel = getView().getActionPanelPresenterWidget();
         if (actionPanel != null) {
-            for (ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
+            for (ActionButtonDefinition<?, ?> buttonDef: pluginActionButtonList) {
                 if (isMenuItem) {
                     actionPanel.addMenuListItem((ActionButtonDefinition) buttonDef);
                 } else {

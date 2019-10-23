@@ -26,7 +26,7 @@ public class SubTabVolumePermissionView extends AbstractSubTabPermissionsView<Gl
     @Inject
     public SubTabVolumePermissionView(SearchableDetailModelProvider<Permission, VolumeListModel,
             PermissionListModel<GlusterVolumeEntity>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<VolumeListModel, PermissionListModel<GlusterVolumeEntity>> actionPanel,
+            PermissionActionPanelPresenterWidget<GlusterVolumeEntity, VolumeListModel, PermissionListModel<GlusterVolumeEntity>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

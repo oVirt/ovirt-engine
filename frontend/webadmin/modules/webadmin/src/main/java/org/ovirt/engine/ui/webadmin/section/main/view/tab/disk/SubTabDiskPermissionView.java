@@ -25,7 +25,7 @@ public class SubTabDiskPermissionView extends AbstractSubTabPermissionsView<Disk
     @Inject
     public SubTabDiskPermissionView(SearchableDetailModelProvider<Permission, DiskListModel,
             PermissionListModel<Disk>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<DiskListModel, PermissionListModel<Disk>> actionPanel,
+            PermissionActionPanelPresenterWidget<Disk, DiskListModel, PermissionListModel<Disk>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

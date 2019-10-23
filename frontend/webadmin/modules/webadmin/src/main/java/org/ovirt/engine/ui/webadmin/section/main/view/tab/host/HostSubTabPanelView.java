@@ -49,7 +49,7 @@ public class HostSubTabPanelView extends AbstractSubTabPanelView implements Host
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

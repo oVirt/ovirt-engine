@@ -21,7 +21,7 @@ public abstract class AbstractSubTabProviderPresenter<D extends HasEntity<?>,
 
     public AbstractSubTabProviderPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<ProviderListModel, D> modelProvider, ProviderMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, ProviderListModel, ?> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, ProviderListModel, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

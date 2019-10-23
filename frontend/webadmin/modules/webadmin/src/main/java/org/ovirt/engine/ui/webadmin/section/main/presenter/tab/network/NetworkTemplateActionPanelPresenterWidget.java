@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
@@ -17,14 +18,14 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class NetworkTemplateActionPanelPresenterWidget
-    extends DetailActionPanelPresenterWidget<PairQueryable<VmNetworkInterface, VmTemplate>,
+    extends DetailActionPanelPresenterWidget<NetworkView, PairQueryable<VmNetworkInterface, VmTemplate>,
         NetworkListModel, NetworkTemplateListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public NetworkTemplateActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<PairQueryable<VmNetworkInterface, VmTemplate>> view,
+            DetailActionPanelPresenterWidget.ViewDef<NetworkView, PairQueryable<VmNetworkInterface, VmTemplate>> view,
             SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>,
                 NetworkListModel, NetworkTemplateListModel> dataProvider) {
         super(eventBus, view, dataProvider);
@@ -32,7 +33,7 @@ public class NetworkTemplateActionPanelPresenterWidget
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface,
+        addActionButton(new WebAdminButtonDefinition<NetworkView, PairQueryable<VmNetworkInterface,
                 VmTemplate>>(constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {

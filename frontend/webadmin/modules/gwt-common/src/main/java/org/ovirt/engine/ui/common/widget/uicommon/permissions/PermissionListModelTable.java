@@ -17,13 +17,13 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permission, P> {
+public class PermissionListModelTable<E, P extends PermissionListModel<E>> extends AbstractModelBoundTableWidget<E, Permission, P> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PermissionListModelTable(
             SearchableTableModelProvider<Permission, P> modelProvider,
-            EventBus eventBus, PermissionActionPanelPresenterWidget<?, P> actionPanel, ClientStorage clientStorage) {
+            EventBus eventBus, PermissionActionPanelPresenterWidget<?, ?, P> actionPanel, ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }
 

@@ -18,22 +18,22 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<Disk, DiskListModel> {
+public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, Disk, DiskListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<Disk> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, Disk> newButtonDefinition;
 
     @Inject
     public DiskActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Disk> view,
+            ActionPanelPresenterWidget.ViewDef<Void, Disk> view,
             MainModelProvider<Disk, DiskListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<Disk>(constants.newDisk()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, Disk>(constants.newDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
@@ -41,49 +41,49 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
         };
         addActionButton(newButtonDefinition);
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.editDisk()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Disk>(constants.editDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.moveDisk()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Disk>(constants.moveDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getMoveCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.copyDisk()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Disk>(constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCopyCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.exportDisk()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, Disk>(constants.exportDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.assignQuota()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, Disk>(constants.assignQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getChangeQuotaCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.refreshLUN()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, Disk>(constants.refreshLUN()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRefreshLUNCommand();
@@ -91,35 +91,35 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
         });
 
         // Upload operations drop down
-        List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageStart()) {
+        List<ActionButtonDefinition<Void, Disk>> uploadActions = new LinkedList<>();
+        uploadActions.add(new WebAdminButtonDefinition<Void, Disk>(constants.uploadImageStart()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getUploadCommand();
             }
         });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
+        uploadActions.add(new WebAdminButtonDefinition<Void, Disk>(constants.uploadImageCancel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCancelUploadCommand();
             }
         });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
+        uploadActions.add(new WebAdminButtonDefinition<Void, Disk>(constants.uploadImagePause()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getPauseUploadCommand();
             }
         });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
+        uploadActions.add(new WebAdminButtonDefinition<Void, Disk>(constants.uploadImageResume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getResumeUploadCommand();
             }
         });
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.uploadImage(),
+        addActionButton(new WebAdminMenuBarButtonDefinition<Void, Disk>(constants.uploadImage(),
                 uploadActions), uploadActions);
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.downloadImage()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Disk>(constants.downloadImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getDownloadCommand();
@@ -127,7 +127,7 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
         });
     }
 
-    public WebAdminButtonDefinition<Disk> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, Disk> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 }

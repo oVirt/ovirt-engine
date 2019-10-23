@@ -21,7 +21,7 @@ public abstract class AbstractSubTabPoolPresenter<D extends HasEntity<?>,
 
     public AbstractSubTabPoolPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<PoolListModel, D> modelProvider, PoolMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, PoolListModel, ?> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, PoolListModel, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

@@ -27,7 +27,7 @@ public abstract class AbstractSubTabQuotaPresenter<D extends HasEntity<?>,
 
     public AbstractSubTabQuotaPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<QuotaListModel, D> modelProvider, QuotaMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, QuotaListModel, D> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, QuotaListModel, D> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

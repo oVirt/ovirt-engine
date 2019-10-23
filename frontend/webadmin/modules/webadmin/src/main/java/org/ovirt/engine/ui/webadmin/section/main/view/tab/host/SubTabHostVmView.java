@@ -157,7 +157,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         fqdnColumn.makeSortable();
         getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
 
-        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VDS, VM>(
                 getTable(),
                 new ResourceConsumptionComparator() {
 
@@ -172,7 +172,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
         }, constants.memoryVm(), "120px"); //$NON-NLS-1$
 
-        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VDS, VM>(
                 getTable(),
                 new ResourceConsumptionComparator() {
                     @Override
@@ -186,7 +186,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
         }, constants.cpuVm(), "120px"); //$NON-NLS-1$
 
-        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VDS, VM>(
                 getTable(),
                 new ResourceConsumptionComparator() {
                     @Override

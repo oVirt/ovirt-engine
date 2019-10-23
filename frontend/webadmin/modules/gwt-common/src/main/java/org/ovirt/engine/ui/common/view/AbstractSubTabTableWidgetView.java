@@ -30,14 +30,14 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
 
     private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
 
-    private final AbstractModelBoundTableWidget<T, D> modelBoundTableWidget;
+    private final AbstractModelBoundTableWidget<I, T, D> modelBoundTableWidget;
 
     private PlaceTransitionHandler placeTransitionHandler;
 
     @WithElementId
-    public final SimpleActionTable<T> table;
+    public final SimpleActionTable<I, T> table;
 
-    public AbstractSubTabTableWidgetView(AbstractModelBoundTableWidget<T, D> modelBoundTableWidget) {
+    public AbstractSubTabTableWidgetView(AbstractModelBoundTableWidget<I, T, D> modelBoundTableWidget) {
         this.modelBoundTableWidget = modelBoundTableWidget;
         this.table = modelBoundTableWidget.getTable();
     }
@@ -67,12 +67,12 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
         return modelBoundTableWidget;
     }
 
-    protected AbstractModelBoundTableWidget<T, D> getModelBoundTableWidget() {
+    protected AbstractModelBoundTableWidget<I, T, D> getModelBoundTableWidget() {
         return modelBoundTableWidget;
     }
 
     @Override
-    public SimpleActionTable<T> getTable() {
+    public SimpleActionTable<I, T> getTable() {
         return modelBoundTableWidget.getTable();
     }
 

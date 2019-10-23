@@ -24,15 +24,15 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public abstract class AbstractTabPresenter<V extends View, P extends TabContentProxyPlace<?>> extends Presenter<V, P> {
 
     private PluginActionButtonHandler actionButtonPluginHandler;
-    private final ActionPanelPresenterWidget<?, ?> actionPanel;
+    private final ActionPanelPresenterWidget<?, ?, ?> actionPanel;
 
-    public AbstractTabPresenter(EventBus eventBus, V view, P proxy, ActionPanelPresenterWidget<?, ?> actionPanel,
+    public AbstractTabPresenter(EventBus eventBus, V view, P proxy, ActionPanelPresenterWidget<?, ?, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, slot);
         this.actionPanel = actionPanel;
     }
 
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 
@@ -51,16 +51,16 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
         registerHandler(getEventBus().addHandler(AddActionButtonEvent.getType(),
             event -> {
                 if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
-                    List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
+                    List<ActionButtonDefinition<?, ?>> pluginActionButtonList = new ArrayList<>();
                     pluginActionButtonList.add(event.getButtonDefinition());
                     addPluginActionButtons(pluginActionButtonList, event.isAddToKebabMenu());
                 }
             }));
     }
 
-    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
+    private void addPluginActionButtons(List<ActionButtonDefinition<?, ?>> pluginActionButtonList, boolean isMenuItem) {
         if (hasActionPanelPresenterWidget()) {
-            for (ActionButtonDefinition<?> buttonDef : pluginActionButtonList) {
+            for (ActionButtonDefinition<?, ?> buttonDef : pluginActionButtonList) {
                 if (isMenuItem) {
                     getActionPanelPresenterWidget().addMenuListItem((ActionButtonDefinition) buttonDef);
                 } else {

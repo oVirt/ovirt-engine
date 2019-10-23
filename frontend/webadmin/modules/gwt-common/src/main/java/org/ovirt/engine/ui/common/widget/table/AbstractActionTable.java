@@ -64,7 +64,7 @@ import com.google.gwt.view.client.SelectionModel;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasColumns<T> {
+public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> implements ActionTable<T>, HasColumns<T> {
 
     private static final String ARIA_EXPANDED = "aria-expanded"; //$NON-NLS-1$
     private static final String OPEN = "open";  //$NON-NLS-1$
@@ -104,7 +104,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     @WithElementId("content")
     public final ActionCellTable<T> table;
-    private List<ActionButtonDefinition<T>> actionDefinitions;
+    private List<ActionButtonDefinition<E, T>> actionDefinitions;
 
     private final int[] mousePosition = new int[2];
 
@@ -506,6 +506,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         return selectionModel;
     }
 
+    public E getParentEntity() {
+        return (E) getDataProvider().getModel().getEntity();
+    }
+
     public List<T> getSelectedItems() {
         return selectionModel.asMultiSelectionModel().getSelectedList();
     }
@@ -552,7 +556,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     private boolean anyContextMenuItemsVisible() {
         return actionDefinitions.stream().anyMatch(buttonDef ->
-            buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems()));
+            buttonDef.isAccessible(getParentEntity(), getSelectedItems()) && buttonDef.isVisible(getParentEntity(), getSelectedItems()));
     }
 
     private void styleAndPositionMenuContainer(final int eventX, final int eventY) {
@@ -563,7 +567,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         menuContainer.getElement().getStyle().setLeft(eventX, Unit.PX);
     }
 
-    private DropDownMenu updateContextMenu(DropDownMenu menuBar, List<ActionButtonDefinition<T>> actions) {
+    private DropDownMenu updateContextMenu(DropDownMenu menuBar, List<ActionButtonDefinition<E, T>> actions) {
         return updateContextMenu(menuBar, actions, true);
     }
 
@@ -576,7 +580,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      * @return A {@code MenuBar} containing all the action buttons as menu items.
      */
     private DropDownMenu updateContextMenu(DropDownMenu dropDownMenu,
-            List<ActionButtonDefinition<T>> actions,
+            List<ActionButtonDefinition<E, T>> actions,
             boolean removeOldItems) {
         if (removeOldItems) {
             ElementTooltipUtils.destroyMenuItemTooltips(dropDownMenu);
@@ -585,17 +589,17 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             closeOtherPopups();
         }
 
-        for (final ActionButtonDefinition<T> buttonDef : actions) {
+        for (final ActionButtonDefinition<E, T> buttonDef : actions) {
             if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                UiMenuBarButtonDefinition<T> menuBarDef = (UiMenuBarButtonDefinition<T>) buttonDef;
+                UiMenuBarButtonDefinition<E, T> menuBarDef = (UiMenuBarButtonDefinition<E, T>) buttonDef;
                 DropDownHeader subMenuHeader = new DropDownHeader(buttonDef.getText());
                 dropDownMenu.add(new Divider());
-                subMenuHeader.setVisible(buttonDef.isVisible(getSelectedItems()));
+                subMenuHeader.setVisible(buttonDef.isVisible(getParentEntity(), getSelectedItems()));
                 dropDownMenu.add(subMenuHeader);
                 updateContextMenu(dropDownMenu, menuBarDef.getSubActions(), false);
             } else {
                 AnchorListItem item = new AnchorListItem(buttonDef.getText());
-                item.addClickHandler(e -> buttonDef.onClick(getSelectedItems()));
+                item.addClickHandler(e -> buttonDef.onClick(getParentEntity(), getSelectedItems()));
 
                 updateMenuItem(item, buttonDef);
                 dropDownMenu.add(item);
@@ -612,9 +616,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         $wnd.jQuery(".open").removeClass("open");
     }-*/;
 
-    protected void updateMenuItem(AnchorListItem item, ActionButtonDefinition<T> buttonDef) {
-        item.setVisible(buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems()));
-        item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
+    protected void updateMenuItem(AnchorListItem item, ActionButtonDefinition<E, T> buttonDef) {
+        item.setVisible(buttonDef.isAccessible(getParentEntity(), getSelectedItems()) && buttonDef.isVisible(getParentEntity(), getSelectedItems()));
+        item.setEnabled(buttonDef.isEnabled(getParentEntity(), getSelectedItems()));
 
         if (buttonDef.getMenuItemTooltip() != null) {
             ElementTooltipUtils.setTooltipOnElement(item.getElement(), buttonDef.getMenuItemTooltip());
@@ -622,7 +626,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     public void setActionMenus(List<?> actionDefinitions) {
-        this.actionDefinitions = (List<ActionButtonDefinition<T>>) actionDefinitions;
+        this.actionDefinitions = (List<ActionButtonDefinition<E, T>>) actionDefinitions;
     }
 
     @Override

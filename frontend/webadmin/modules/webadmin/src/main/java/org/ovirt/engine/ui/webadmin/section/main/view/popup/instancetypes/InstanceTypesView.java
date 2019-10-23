@@ -39,7 +39,7 @@ public class InstanceTypesView extends Composite {
     @UiField
     FlowPanel detailsPanel;
 
-    private SimpleActionTable<InstanceType> typeTable;
+    private SimpleActionTable<Void, InstanceType> typeTable;
     private InstanceTypeGeneralModelForm detailsWidget;
 
     private final InstanceTypeModelProvider instanceTypeModelProvider;

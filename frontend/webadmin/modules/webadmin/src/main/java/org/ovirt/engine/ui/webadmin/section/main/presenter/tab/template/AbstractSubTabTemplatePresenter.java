@@ -21,7 +21,7 @@ public abstract class AbstractSubTabTemplatePresenter<D extends HasEntity<?>,
 
     public AbstractSubTabTemplatePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<TemplateListModel, D> modelProvider, TemplateMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, TemplateListModel, ?> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, TemplateListModel, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

@@ -13,20 +13,20 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class SessionActionPanelPresenterWidget extends ActionPanelPresenterWidget<UserSession, SessionListModel> {
+public class SessionActionPanelPresenterWidget extends ActionPanelPresenterWidget<UserSession, UserSession, SessionListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SessionActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<UserSession> view,
+            ActionPanelPresenterWidget.ViewDef<UserSession, UserSession> view,
             MainModelProvider<UserSession, SessionListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
+        addActionButton(new WebAdminButtonDefinition<UserSession, UserSession>(constants.terminateSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getTerminateCommand();

@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class VmAppListModelTable extends AbstractModelBoundTableWidget<String, VmAppListModel<VM>> {
+public class VmAppListModelTable extends AbstractModelBoundTableWidget<VM, String, VmAppListModel<VM>> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 

@@ -27,7 +27,7 @@ public class SubTabDataCenterPermissionView extends AbstractSubTabPermissionsVie
     public SubTabDataCenterPermissionView(SearchableDetailModelProvider<Permission, DataCenterListModel,
             PermissionListModel<StoragePool>> modelProvider,
             EventBus eventBus,
-            PermissionActionPanelPresenterWidget<DataCenterListModel, PermissionListModel<StoragePool>> actionPanel,
+            PermissionActionPanelPresenterWidget<StoragePool, DataCenterListModel, PermissionListModel<StoragePool>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

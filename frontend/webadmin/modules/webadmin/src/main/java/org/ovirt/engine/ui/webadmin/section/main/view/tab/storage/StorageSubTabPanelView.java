@@ -50,7 +50,7 @@ public class StorageSubTabPanelView extends AbstractSubTabPanelView implements S
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

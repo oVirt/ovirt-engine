@@ -45,7 +45,7 @@ public class ErrataSubTabPanelView extends AbstractSubTabPanelView implements Er
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return null;
     }
 

@@ -37,7 +37,7 @@ public class SystemPermissionView extends Composite {
     FlowPanel tablePanel;
 
     @WithElementId
-    SimpleActionTable<Permission> table;
+    SimpleActionTable<Void, Permission> table;
 
     private final SystemPermissionModelProvider modelProvider;
 

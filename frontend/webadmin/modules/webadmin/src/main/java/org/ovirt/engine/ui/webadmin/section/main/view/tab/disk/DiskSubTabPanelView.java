@@ -46,7 +46,7 @@ public class DiskSubTabPanelView extends AbstractSubTabPanelView implements Disk
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

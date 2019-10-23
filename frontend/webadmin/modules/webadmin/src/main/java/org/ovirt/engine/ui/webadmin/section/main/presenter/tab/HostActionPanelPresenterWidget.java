@@ -20,35 +20,35 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<VDS, HostListModel<Void>> {
+public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, VDS, HostListModel<Void>> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<VDS> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, VDS> newButtonDefinition;
 
     @Inject
     public HostActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VDS> view,
+            ActionPanelPresenterWidget.ViewDef<Void, VDS> view,
             MainModelProvider<VDS, HostListModel<Void>> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<VDS>(constants.newHost()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, VDS>(constants.newHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         };
         addActionButton(newButtonDefinition);
-        addActionButton(new WebAdminButtonDefinition<VDS>(constants.editHost()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VDS>(constants.editHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<VDS>(constants.removeHost()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VDS>(constants.removeHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
@@ -56,23 +56,23 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // Management operations drop down
-        List<ActionButtonDefinition<VDS>> managementSubActions = new LinkedList<>();
+        List<ActionButtonDefinition<Void, VDS>> managementSubActions = new LinkedList<>();
         // Maintenance button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.maintenanceHost()) {
+        managementSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.maintenanceHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getMaintenanceCommand();
             }
         });
         // Activate button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.activateHost()) {
+        managementSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.activateHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getActivateCommand();
             }
         });
         // Refresh capabilities button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.refreshHostCapabilities()) {
+        managementSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.refreshHostCapabilities()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRefreshCapabilitiesCommand();
@@ -80,7 +80,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
         // Confirm Host Rebooted button
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost()) {
+            addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.confirmRebootedHost()) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getModel().getManualFenceCommand();
@@ -88,38 +88,38 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
             });
         }
         // Power management drop down
-        List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<>();
+        List<ActionButtonDefinition<Void, VDS>> pmSubActions = new LinkedList<>();
 
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
+        pmSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.restartHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRestartCommand();
             }
         });
 
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.startHost()) {
+        pmSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.startHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStartCommand();
             }
         });
 
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.stopHost()) {
+        pmSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.stopHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStopCommand();
             }
         });
         // Remote management via SSH drop down
-        List<ActionButtonDefinition<VDS>> sshSubActions = new LinkedList<>();
+        List<ActionButtonDefinition<Void, VDS>> sshSubActions = new LinkedList<>();
 
-        sshSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
+        sshSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.restartHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getSshRestartCommand();
             }
         });
-        sshSubActions.add(new WebAdminButtonDefinition<VDS>(constants.stopHost()) {
+        sshSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.stopHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getSshStopCommand();
@@ -128,27 +128,27 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             managementSubActions.add(
-                new WebAdminMenuBarButtonDefinition<>(
+                new WebAdminMenuBarButtonDefinition<Void, VDS>(
                     constants.pmHost(),
                     pmSubActions
                 )
             );
             managementSubActions.add(
-                new WebAdminMenuBarButtonDefinition<>(
+                new WebAdminMenuBarButtonDefinition<Void, VDS>(
                     constants.sshManagement(),
                     sshSubActions
                 )
             );
         }
         // Select as SPM button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.selectHostAsSPM()) {
+        managementSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.selectHostAsSPM()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getSelectAsSpmCommand();
             }
         });
         // Configure local storage button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.configureLocalStorageHost()) {
+        managementSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.configureLocalStorageHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getConfigureLocalStorageCommand();
@@ -156,34 +156,34 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // Add management menu bar
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.management(),
+        addActionButton(new WebAdminMenuBarButtonDefinition<Void, VDS>(constants.management(),
                 managementSubActions), managementSubActions);
 
         // Installation operations drop down
-        List<ActionButtonDefinition<VDS>> moreSubActions = new LinkedList<>();
+        List<ActionButtonDefinition<Void, VDS>> moreSubActions = new LinkedList<>();
         // Reinstall button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.reinstallHost()) {
+        moreSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.reinstallHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getInstallCommand();
             }
         });
         // Enroll certificate button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.enrollCertificate()) {
+        moreSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.enrollCertificate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEnrollCertificateCommand();
             }
         });
         // Check for upgrade button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.checkForHostUpgrade()) {
+        moreSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.checkForHostUpgrade()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCheckForUpgradeCommand();
             }
         });
         // Upgrade button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.upgradeHost()) {
+        moreSubActions.add(new WebAdminButtonDefinition<Void, VDS>(constants.upgradeHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getUpgradeCommand();
@@ -193,7 +193,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
                 moreSubActions);
 
         // Host Console (link to Cockpit)
-        addActionButton(new WebAdminButtonDefinition<VDS>(constants.hostConsole()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VDS>(constants.hostConsole()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getHostConsoleCommand();
@@ -201,7 +201,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // Assign tags
-        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.assignTagsHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAssignTagsCommand();
@@ -210,7 +210,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
         // NUMA support
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
+            addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.numaSupport()) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getModel().getNumaSupportCommand();
@@ -219,7 +219,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         }
 
         // Approve
-        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.approveHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getApproveCommand();
@@ -227,13 +227,13 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // HA global maintenance
-        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.enableGlobalHaMaintenanceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEnableGlobalHaMaintenanceCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, VDS>(constants.disableGlobalHaMaintenanceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getDisableGlobalHaMaintenanceCommand();
@@ -242,7 +242,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
     }
 
-    public WebAdminButtonDefinition<VDS> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, VDS> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 }

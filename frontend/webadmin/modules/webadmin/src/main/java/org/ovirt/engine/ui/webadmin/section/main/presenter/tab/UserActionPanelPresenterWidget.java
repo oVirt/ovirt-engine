@@ -13,35 +13,35 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class UserActionPanelPresenterWidget extends ActionPanelPresenterWidget<DbUser, UserListModel> {
+public class UserActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, DbUser, UserListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<DbUser> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, DbUser> newButtonDefinition;
 
     @Inject
     public UserActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<DbUser> view,
+            ActionPanelPresenterWidget.ViewDef<Void, DbUser> view,
             MainModelProvider<DbUser, UserListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<DbUser>(constants.addUser()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, DbUser>(constants.addUser()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
         };
         addActionButton(newButtonDefinition);
-        addActionButton(new WebAdminButtonDefinition<DbUser>(constants.removeUser()) {
+        addActionButton(new WebAdminButtonDefinition<Void, DbUser>(constants.removeUser()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<DbUser>(constants.assignTagsUser()) {
+        addActionButton(new WebAdminButtonDefinition<Void, DbUser>(constants.assignTagsUser()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAssignTagsCommand();
@@ -49,7 +49,7 @@ public class UserActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
         });
     }
 
-    public WebAdminButtonDefinition<DbUser> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, DbUser> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 

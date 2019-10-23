@@ -17,7 +17,7 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
     @Inject
     public AbstractSubTabPermissionsView(
             SearchableDetailModelProvider<Permission, M, PermissionListModel<I>> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, PermissionActionPanelPresenterWidget<M, PermissionListModel<I>> actionPanel) {
+            EventBus eventBus, ClientStorage clientStorage, PermissionActionPanelPresenterWidget<I, ?, PermissionListModel<I>> actionPanel) {
         super(new PermissionWithInheritedPermissionListModelTable<>(
                 modelProvider, eventBus, actionPanel, clientStorage));
         generateIds();

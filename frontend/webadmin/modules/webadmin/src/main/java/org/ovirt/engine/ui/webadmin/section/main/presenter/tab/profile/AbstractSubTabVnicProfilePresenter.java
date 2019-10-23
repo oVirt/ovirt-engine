@@ -27,7 +27,7 @@ public abstract class AbstractSubTabVnicProfilePresenter<D extends HasEntity<?>,
 
     public AbstractSubTabVnicProfilePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<VnicProfileListModel, D> modelProvider, VnicProfileMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, VnicProfileListModel, D> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, VnicProfileListModel, D> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

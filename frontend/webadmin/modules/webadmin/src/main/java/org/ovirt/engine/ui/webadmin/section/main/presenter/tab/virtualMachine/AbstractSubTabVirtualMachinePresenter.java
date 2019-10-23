@@ -21,7 +21,7 @@ public abstract class AbstractSubTabVirtualMachinePresenter<D extends HasEntity<
 
     public AbstractSubTabVirtualMachinePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<VmListModel<Void>, D> modelProvider, VirtualMachineMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, VmListModel<Void>, D> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, VmListModel<Void>, D> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

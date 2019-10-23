@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -19,20 +20,20 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class HostVmActionPanelPresenterWidget extends
-    DetailActionPanelPresenterWidget<VM, HostListModel<Void>, HostVmListModel> {
+    DetailActionPanelPresenterWidget<VDS, VM, HostListModel<Void>, HostVmListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public HostVmActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<VM> view,
+            DetailActionPanelPresenterWidget.ViewDef<VDS, VM> view,
             SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(),
+        addActionButton(new WebAdminImageButtonDefinition<VDS, VM>(constants.runVm(),
                 IconType.PLAY) {
             @Override
             protected UICommand resolveCommand() {
@@ -45,7 +46,7 @@ public class HostVmActionPanelPresenterWidget extends
             }
         });
 
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
+        addActionButton(new WebAdminImageButtonDefinition<VDS, VM>(constants.suspendVm(),
                 IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
@@ -58,7 +59,7 @@ public class HostVmActionPanelPresenterWidget extends
             }
         });
 
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
+        addActionButton(new WebAdminImageButtonDefinition<VDS, VM>(constants.shutDownVm(),
                 IconType.STOP) {
             @Override
             protected UICommand resolveCommand() {
@@ -71,7 +72,7 @@ public class HostVmActionPanelPresenterWidget extends
             }
         });
 
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(),
+        addActionButton(new WebAdminImageButtonDefinition<VDS, VM>(constants.powerOffVm(),
                 IconType.POWER_OFF) {
             @Override
             protected UICommand resolveCommand() {
@@ -84,7 +85,7 @@ public class HostVmActionPanelPresenterWidget extends
             }
         });
 
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
+        addActionButton(new WebAdminImageButtonDefinition<VDS, VM>(constants.consoleVm(),
                 IconType.DESKTOP) {
             @Override
             protected UICommand resolveCommand() {
@@ -98,7 +99,7 @@ public class HostVmActionPanelPresenterWidget extends
 
         });
 
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
+        addActionButton(new WebAdminButtonDefinition<VDS, VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCancelMigrateCommand();

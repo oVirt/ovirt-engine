@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SimpleActionTable<T> extends AbstractActionTable<T> {
+public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
 
-    interface WidgetUiBinder extends UiBinder<FlowPanel, SimpleActionTable<?>> {
+    interface WidgetUiBinder extends UiBinder<FlowPanel, SimpleActionTable<?, ?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 

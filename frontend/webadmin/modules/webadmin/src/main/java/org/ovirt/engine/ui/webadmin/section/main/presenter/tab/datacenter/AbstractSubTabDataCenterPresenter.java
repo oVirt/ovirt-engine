@@ -21,7 +21,7 @@ public abstract class AbstractSubTabDataCenterPresenter
 
     public AbstractSubTabDataCenterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<DataCenterListModel, D> modelProvider, DataCenterMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, DataCenterListModel, ?> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, DataCenterListModel, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

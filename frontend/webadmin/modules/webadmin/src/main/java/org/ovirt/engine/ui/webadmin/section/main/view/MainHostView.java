@@ -274,7 +274,7 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
     }
 
     @Override
-    public SimpleActionTable<VDS> getTable() {
+    public SimpleActionTable<Void, VDS> getTable() {
         return super.getTable();
     }
 

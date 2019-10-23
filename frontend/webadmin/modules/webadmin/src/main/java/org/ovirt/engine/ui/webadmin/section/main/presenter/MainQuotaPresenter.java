@@ -41,7 +41,7 @@ public class MainQuotaPresenter extends AbstractMainWithDetailsPresenter<Quota, 
             PlaceManager placeManager, MainModelProvider<Quota, QuotaListModel> modelProvider,
             SearchPanelPresenterWidget<Quota, QuotaListModel> searchPanelPresenterWidget,
             QuotaBreadCrumbsPresenterWidget breadCrumbs,
-            QuotaActionPanelPresenterWidget actionPanel) {
+            QuotaActionPanelPresenterWidget<Void> actionPanel) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 

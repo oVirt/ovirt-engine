@@ -55,13 +55,13 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
     private UnorderedList resultList;
 
     private IsWidget searchPanel;
-    private ActionPanelPresenterWidget<T, M> actionPanel;
+    private ActionPanelPresenterWidget<?, ?, M> actionPanel;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public AbstractMainWithDetailsTableView(MainModelProvider<T, M> modelProvider) {
         super(modelProvider);
-        SimpleActionTable<T> table = getTable();
+        SimpleActionTable<Void, T> table = getTable();
         FlowPanel tableContainer = table.getOuterWidget();
         addBreadCrumbs(tableContainer);
         addActionSearchPanel(tableContainer);
@@ -101,7 +101,7 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
         } else if (slot == AbstractMainWithDetailsPresenter.TYPE_SetActionPanel) {
             if (content != null) {
                 actionSearchPanel.add(content);
-                this.actionPanel = (ActionPanelPresenterWidget<T, M>) content;
+                this.actionPanel = (ActionPanelPresenterWidget<?, ?, M>) content;
                 if (searchPanel != null) {
                     actionPanel.addSearchPanel(searchPanel);
                 }
@@ -138,7 +138,7 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
         container.insert(actionSearchPanel, 1);
     }
 
-    private void addResultPanel(ActionPanelPresenterWidget<T, M> actionPanel) {
+    private void addResultPanel(ActionPanelPresenterWidget<?, ?, M> actionPanel) {
         resultRow = new Row();
         resultRow.addStyleName(PatternflyConstants.PF_TOOLBAR_RESULTS);
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -14,20 +15,20 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailPermissionA
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class UserPermissionActionPanelPresenterWidget extends DetailPermissionActionPanelPresenterWidget<UserListModel, UserPermissionListModel> {
+public class UserPermissionActionPanelPresenterWidget extends DetailPermissionActionPanelPresenterWidget<DbUser, UserListModel, UserPermissionListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public UserPermissionActionPanelPresenterWidget(EventBus eventBus,
-            ViewDef<Permission> view,
+            ViewDef<DbUser, Permission> view,
             SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new UiCommandButtonDefinition<Permission>(getSharedEventBus(), constants.addSystemPermission()) {
+        addActionButton(new UiCommandButtonDefinition<DbUser, Permission>(getSharedEventBus(), constants.addSystemPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddRoleToUserCommand();

@@ -15,7 +15,7 @@ import com.google.gwt.event.shared.EventBus;
  * @param <T>
  *            Action panel item type.
  */
-public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinition<T> {
+public abstract class UiCommandButtonDefinition<E, T> extends AbstractButtonDefinition<E, T> {
 
     /**
      * Null object singleton that represents an empty (no-op) command.
@@ -101,22 +101,22 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     }
 
     @Override
-    public boolean isAccessible(List<T> selectedItems) {
+    public boolean isAccessible(E parentEntity, List<T> selectedItems) {
         return command.getIsAvailable();
     }
 
     @Override
-    public boolean isVisible(List<T> selectedItems) {
+    public boolean isVisible(E parentEntity, List<T> selectedItems) {
         return command == null || command.getIsVisible();
     }
 
     @Override
-    public boolean isEnabled(List<T> selectedItems) {
+    public boolean isEnabled(E parentEntity, List<T> selectedItems) {
         return command.getIsExecutionAllowed();
     }
 
     @Override
-    public void onClick(List<T> selectedItems) {
+    public void onClick(E parentEntity, List<T> selectedItems) {
         command.execute();
     }
 

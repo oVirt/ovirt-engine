@@ -18,7 +18,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * @param <T>
  *            Action panel item type.
  */
-public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinition<T> {
+public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefinition<E, T> {
 
     protected final EventBus eventBus;
 
@@ -70,7 +70,7 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     }
 
     @Override
-    public boolean isVisible(List<T> selectedItems) {
+    public boolean isVisible(E parentEntity, List<T> selectedItems) {
         return true;
     }
 

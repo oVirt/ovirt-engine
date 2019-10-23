@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
@@ -25,13 +27,13 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<DiskProfile, DiskProfileListModel> {
+public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<StorageDomain, DiskProfile, DiskProfileListModel> {
 
     interface WidgetUiBinder extends UiBinder<Widget, DiskProfilesListModelTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final PermissionWithInheritedPermissionListModelTable<PermissionListModel<DiskProfile>> permissionListModelTable;
+    private final PermissionWithInheritedPermissionListModelTable<DiskProfile, PermissionListModel<DiskProfile>> permissionListModelTable;
 
     @UiField
     FlowPanel tableContainer;
@@ -43,10 +45,10 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
     public DiskProfilesListModelTable(SearchableTableModelProvider<DiskProfile, DiskProfileListModel> modelProvider,
             DiskProfilePermissionModelProvider diskProfilePermissionModelProvider,
             EventBus eventBus,
-            PermissionActionPanelPresenterWidget<DiskProfileListModel, PermissionListModel<DiskProfile>> permissionActionPanel,
+            PermissionActionPanelPresenterWidget<DiskProfile, DiskProfileListModel, PermissionListModel<DiskProfile>> permissionActionPanel,
             DiskProfileActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, actionPanel, clientStorage, false);
+        super(modelProvider, eventBus, (DetailActionPanelPresenterWidget) permissionActionPanel, clientStorage, false);
         this.diskProfilePermissionModelProvider = diskProfilePermissionModelProvider;
         // Create disk profile table
         tableContainer.add(getContainer());
@@ -124,7 +126,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
 
     @Override
     public void addModelListeners() {
-        final SimpleActionTable<Permission> table = permissionListModelTable.getTable();
+        final SimpleActionTable<DiskProfile, Permission> table = permissionListModelTable.getTable();
         table.getSelectionModel().addSelectionChangeHandler(event -> diskProfilePermissionModelProvider.setSelectedItems(table.getSelectedItems()));
     }
 }

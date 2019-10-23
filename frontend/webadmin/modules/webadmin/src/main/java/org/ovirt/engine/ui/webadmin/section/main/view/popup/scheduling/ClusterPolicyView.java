@@ -40,8 +40,8 @@ public class ClusterPolicyView extends Composite {
     @UiField
     FlowPanel clusterPanel;
 
-    private SimpleActionTable<ClusterPolicy> clusterPolicyTable;
-    private SimpleActionTable<Cluster> clusterTable;
+    private SimpleActionTable<Void, ClusterPolicy> clusterPolicyTable;
+    private SimpleActionTable<ClusterPolicy, Cluster> clusterTable;
 
     private final ClusterPolicyModelProvider clusterPolicyModelProvider;
     private final ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider;

@@ -127,28 +127,28 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return value.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK;
             }
         };
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksStatus()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.removeBricksStatus()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStatusRemoveBricksCommand();
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksStop()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.removeBricksStop()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStopRemoveBricksCommand();
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksCommit()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.removeBricksCommit()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCommitRemoveBricksCommand();
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.retainBricks()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.retainBricks()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRetainBricksCommand();

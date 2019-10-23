@@ -29,11 +29,11 @@ public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V 
 
     protected final ApplicationPlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
-    private final ActionPanelPresenterWidget<?, ?> actionPanel;
+    private final ActionPanelPresenterWidget<?, ?, ?> actionPanel;
 
     public AbstractMainPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
-            ActionPanelPresenterWidget<T, M> actionPanel) {
+            ActionPanelPresenterWidget<?, ?, M> actionPanel) {
         super(eventBus, view, proxy, MainContentPresenter.TYPE_SetContent);
         this.actionPanel = actionPanel;
         this.placeManager = (ApplicationPlaceManager) placeManager;
@@ -82,7 +82,7 @@ public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V 
         return getMainViewRequest().getNameToken().equals(placeName);
     }
 
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

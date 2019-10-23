@@ -13,35 +13,35 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class PoolActionPanelPresenterWidget extends ActionPanelPresenterWidget<VmPool, PoolListModel> {
+public class PoolActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, VmPool, PoolListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<VmPool> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, VmPool> newButtonDefinition;
 
     @Inject
     public PoolActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VmPool> view,
+            ActionPanelPresenterWidget.ViewDef<Void, VmPool> view,
             MainModelProvider<VmPool, PoolListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, VmPool>(constants.newPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         };
         addActionButton(newButtonDefinition);
-        addActionButton(new WebAdminButtonDefinition<VmPool>(constants.editPool()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VmPool>(constants.editPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<VmPool>(constants.removePool()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VmPool>(constants.removePool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
@@ -49,7 +49,7 @@ public class PoolActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
     }
 
-    public WebAdminButtonDefinition<VmPool> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, VmPool> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 }

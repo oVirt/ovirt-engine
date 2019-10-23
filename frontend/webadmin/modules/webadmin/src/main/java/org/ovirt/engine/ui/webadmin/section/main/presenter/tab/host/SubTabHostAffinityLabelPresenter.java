@@ -39,7 +39,7 @@ public class SubTabHostAffinityLabelPresenter
     @Inject
     public SubTabHostAffinityLabelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainSelectedItems selectedItems,
-            AffinityLabelsActionPanelPresenterWidget<HostListModel<Void>, HostAffinityLabelListModel> actionPanel,
+            AffinityLabelsActionPanelPresenterWidget<VDS, HostListModel<Void>, HostAffinityLabelListModel> actionPanel,
             SearchableDetailModelProvider<Label, HostListModel<Void>, HostAffinityLabelListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);

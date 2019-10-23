@@ -21,7 +21,7 @@ public abstract class AbstractSubTabClusterPresenter<D extends HasEntity<?>,
 
     public AbstractSubTabClusterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<ClusterListModel<Void>, D> modelProvider, ClusterMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, ClusterListModel<Void>, D> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, ClusterListModel<Void>, D> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

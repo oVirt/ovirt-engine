@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -15,32 +16,32 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class DiskProfileActionPanelPresenterWidget extends
-    DetailActionPanelPresenterWidget<DiskProfile, StorageListModel, DiskProfileListModel> {
+    DetailActionPanelPresenterWidget<StorageDomain, DiskProfile, StorageListModel, DiskProfileListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public DiskProfileActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<DiskProfile> view,
+            DetailActionPanelPresenterWidget.ViewDef<StorageDomain, DiskProfile> view,
             SearchableDetailModelProvider<DiskProfile, StorageListModel, DiskProfileListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.newProfile()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, DiskProfile>(constants.newProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.editProfile()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, DiskProfile>(constants.editProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.removeProfile()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, DiskProfile>(constants.removeProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

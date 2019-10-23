@@ -39,7 +39,7 @@ public class SubTabQuotaPermissionPresenter
     @Inject
     public SubTabQuotaPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, QuotaMainSelectedItems selectedItems,
-            DetailPermissionActionPanelPresenterWidget<QuotaListModel, QuotaPermissionListModel> actionPanel,
+            DetailPermissionActionPanelPresenterWidget<Quota, QuotaListModel, QuotaPermissionListModel> actionPanel,
             SearchableDetailModelProvider<Permission, QuotaListModel, QuotaPermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);

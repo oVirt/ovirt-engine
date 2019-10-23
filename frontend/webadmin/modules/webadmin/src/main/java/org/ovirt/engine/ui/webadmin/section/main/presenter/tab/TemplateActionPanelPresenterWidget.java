@@ -18,46 +18,46 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidget<VmTemplate, TemplateListModel> {
+public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, VmTemplate, TemplateListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public TemplateActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VmTemplate> view,
+            ActionPanelPresenterWidget.ViewDef<Void, VmTemplate> view,
             MainModelProvider<VmTemplate, TemplateListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VmTemplate>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getImportTemplateCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VmTemplate>(constants.editTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VmTemplate>(constants.removeTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
         // Export operations drop down
-        List<ActionButtonDefinition<VmTemplate>> exportSubActions = new LinkedList<>();
-        exportSubActions.add(new WebAdminButtonDefinition<VmTemplate>(constants.exportToExportDomain()) {
+        List<ActionButtonDefinition<Void, VmTemplate>> exportSubActions = new LinkedList<>();
+        exportSubActions.add(new WebAdminButtonDefinition<Void, VmTemplate>(constants.exportToExportDomain()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportCommand();
             }
         });
-        exportSubActions.add(new WebAdminButtonDefinition<VmTemplate>(constants.exportToOva()) {
+        exportSubActions.add(new WebAdminButtonDefinition<Void, VmTemplate>(constants.exportToOva()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportOvaCommand();
@@ -67,7 +67,7 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
         addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.exportTemplate(),
                 exportSubActions), exportSubActions);
 
-        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.createVmFromTemplate()) {
+        addActionButton(new WebAdminButtonDefinition<Void, VmTemplate>(constants.createVmFromTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCreateVmFromTemplateCommand();

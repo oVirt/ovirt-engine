@@ -25,7 +25,7 @@ public class SubTabVnicProfilePermissionView extends AbstractSubTabPermissionsVi
     @Inject
     public SubTabVnicProfilePermissionView(SearchableDetailModelProvider<Permission, VnicProfileListModel,
             PermissionListModel<VnicProfileView>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<VnicProfileListModel, PermissionListModel<VnicProfileView>> actionPanel,
+            PermissionActionPanelPresenterWidget<VnicProfileView, VnicProfileListModel, PermissionListModel<VnicProfileView>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
         getTable().enableColumnResizing();

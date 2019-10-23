@@ -47,7 +47,7 @@ public class VnicProfileSubTabPanelView extends AbstractSubTabPanelView implemen
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

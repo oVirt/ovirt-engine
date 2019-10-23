@@ -29,7 +29,7 @@ public class SubTabStorageDiskProfileView extends AbstractSubTabTableWidgetView<
     public SubTabStorageDiskProfileView(SearchableDetailModelProvider<DiskProfile, StorageListModel, DiskProfileListModel> modelProvider,
             DiskProfilePermissionModelProvider permissionModelProvider,
             DiskProfileActionPanelPresenterWidget actionPanel,
-            PermissionActionPanelPresenterWidget<DiskProfileListModel, PermissionListModel<DiskProfile>> permissionActionPanel,
+            PermissionActionPanelPresenterWidget<DiskProfile, DiskProfileListModel, PermissionListModel<DiskProfile>> permissionActionPanel,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(new DiskProfilesListModelTable(modelProvider,

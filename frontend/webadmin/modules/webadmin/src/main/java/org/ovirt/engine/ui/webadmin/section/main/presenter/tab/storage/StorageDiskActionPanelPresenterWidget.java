@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -20,13 +21,13 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 import com.google.web.bindery.event.shared.EventBus;
 
 public class StorageDiskActionPanelPresenterWidget extends
-    DetailActionPanelPresenterWidget<Disk, StorageListModel, StorageDiskListModel> {
+    DetailActionPanelPresenterWidget<StorageDomain, Disk, StorageListModel, StorageDiskListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public StorageDiskActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<Disk> view,
+            DetailActionPanelPresenterWidget.ViewDef<StorageDomain, Disk> view,
             SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
@@ -34,21 +35,21 @@ public class StorageDiskActionPanelPresenterWidget extends
     @Override
     protected void initializeButtons() {
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.moveDisk()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.moveDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMoveCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.copyDisk()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCopyCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
@@ -56,26 +57,26 @@ public class StorageDiskActionPanelPresenterWidget extends
         });
 
         // Upload operations drop down
-        List<ActionButtonDefinition<Disk>> uploadActions = new ArrayList<>();
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageStart()) {
+        List<ActionButtonDefinition<StorageDomain, Disk>> uploadActions = new ArrayList<>();
+        uploadActions.add(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.uploadImageStart()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getUploadCommand();
             }
         });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
+        uploadActions.add(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.uploadImageCancel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getCancelUploadCommand();
             }
         });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
+        uploadActions.add(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.uploadImagePause()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseUploadCommand();
             }
         });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
+        uploadActions.add(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.uploadImageResume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getResumeUploadCommand();
@@ -83,7 +84,7 @@ public class StorageDiskActionPanelPresenterWidget extends
         });
         addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.uploadImage(), uploadActions), uploadActions);
 
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.downloadImage()) {
+        addActionButton(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.downloadImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDownloadCommand();

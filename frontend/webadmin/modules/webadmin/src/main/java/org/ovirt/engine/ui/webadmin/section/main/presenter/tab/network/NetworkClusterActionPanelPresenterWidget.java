@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -17,14 +18,14 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class NetworkClusterActionPanelPresenterWidget extends
-    DetailActionPanelPresenterWidget<PairQueryable<Cluster, NetworkCluster>, NetworkListModel,
+    DetailActionPanelPresenterWidget<NetworkView, PairQueryable<Cluster, NetworkCluster>, NetworkListModel,
         NetworkClusterListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public NetworkClusterActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<PairQueryable<Cluster, NetworkCluster>> view,
+            DetailActionPanelPresenterWidget.ViewDef<NetworkView, PairQueryable<Cluster, NetworkCluster>> view,
             SearchableDetailModelProvider<PairQueryable<Cluster, NetworkCluster>, NetworkListModel,
                 NetworkClusterListModel> dataProvider) {
         super(eventBus, view, dataProvider);
@@ -32,7 +33,7 @@ public class NetworkClusterActionPanelPresenterWidget extends
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<PairQueryable<Cluster, NetworkCluster>>(constants.assignUnassignNetwork()) {
+        addActionButton(new WebAdminButtonDefinition<NetworkView, PairQueryable<Cluster, NetworkCluster>>(constants.assignUnassignNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageCommand();

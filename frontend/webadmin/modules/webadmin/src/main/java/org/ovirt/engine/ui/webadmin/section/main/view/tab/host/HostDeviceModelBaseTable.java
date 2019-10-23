@@ -16,13 +16,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.HostDeviceColumnH
 
 import com.google.gwt.event.shared.EventBus;
 
-public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase<?>>
-    extends AbstractModelBoundTableWidget<HostDeviceView, M> {
+public abstract class HostDeviceModelBaseTable<E, M extends HostDeviceListModelBase<E>>
+    extends AbstractModelBoundTableWidget<E, HostDeviceView, M> {
 
     protected static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public HostDeviceModelBaseTable(SearchableTableModelProvider<HostDeviceView, M> modelProvider, EventBus eventBus,
-            DetailActionPanelPresenterWidget<HostDeviceView, ?, M> actionPanel, ClientStorage clientStorage) {
+            DetailActionPanelPresenterWidget<?, HostDeviceView, ?, M> actionPanel, ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }
 

@@ -8,13 +8,13 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class WebAdminMenuBarButtonDefinition<T> extends UiMenuBarButtonDefinition<T> {
+public class WebAdminMenuBarButtonDefinition<E, T> extends UiMenuBarButtonDefinition<E, T> {
 
-    public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions, boolean asTitle) {
+    public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<E, T>> subActions, boolean asTitle) {
         super(getEventBus(), title, subActions, asTitle);
     }
 
-    public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions) {
+    public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<E, T>> subActions) {
         super(getEventBus(), title, subActions);
     }
 

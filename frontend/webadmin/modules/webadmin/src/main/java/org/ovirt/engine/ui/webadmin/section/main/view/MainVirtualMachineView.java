@@ -162,7 +162,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
 
         getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
-        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<Void, VM>(
                 getTable(),
                 VmConditionFieldAutoCompleter.MEM_USAGE) {
             @Override
@@ -171,7 +171,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
             }
         }, constants.memoryVm(), "80px"); //$NON-NLS-1$
 
-        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<Void, VM>(
                 getTable(),
                 VmConditionFieldAutoCompleter.CPU_USAGE) {
             @Override
@@ -180,7 +180,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
             }
         }, constants.cpuVm(), "80px"); //$NON-NLS-1$
 
-        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(
+        getTable().addColumn(new ColumnResizeTableLineChartProgressBar<Void, VM>(
                 getTable(),
                 VmConditionFieldAutoCompleter.NETWORK_USAGE) {
             @Override

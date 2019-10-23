@@ -21,7 +21,7 @@ public abstract class AbstractSubTabStoragePresenter<D extends HasEntity<?>,
 
     public AbstractSubTabStoragePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<StorageListModel, D> modelProvider, StorageMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, StorageListModel, ?> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, StorageListModel, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

@@ -24,15 +24,15 @@ public abstract class AbstractMainTableView<T, M extends SearchableListModel> ex
     private final MainModelProvider<T, M> modelProvider;
 
     @WithElementId
-    public final SimpleActionTable<T> table;
+    public final SimpleActionTable<Void, T> table;
 
     public AbstractMainTableView(MainModelProvider<T, M> modelProvider) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
     }
 
-    protected SimpleActionTable<T> createActionTable() {
-        return new SimpleActionTable<T>(modelProvider, getTableResources(),
+    protected SimpleActionTable<Void, T> createActionTable() {
+        return new SimpleActionTable<Void, T>(modelProvider, getTableResources(),
                 ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
             {
                 showRefreshButton();
@@ -52,7 +52,7 @@ public abstract class AbstractMainTableView<T, M extends SearchableListModel> ex
         return modelProvider.getModel();
     }
 
-    public SimpleActionTable<T> getTable() {
+    public SimpleActionTable<Void, T> getTable() {
         return table;
     }
 

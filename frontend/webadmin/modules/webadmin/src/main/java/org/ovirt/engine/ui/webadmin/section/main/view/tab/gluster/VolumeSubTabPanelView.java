@@ -49,7 +49,7 @@ public class VolumeSubTabPanelView extends AbstractSubTabPanelView implements Vo
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

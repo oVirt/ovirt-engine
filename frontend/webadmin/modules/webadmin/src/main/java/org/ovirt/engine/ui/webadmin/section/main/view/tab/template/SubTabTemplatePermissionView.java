@@ -25,7 +25,7 @@ public class SubTabTemplatePermissionView extends AbstractSubTabPermissionsView<
     @Inject
     public SubTabTemplatePermissionView(SearchableDetailModelProvider<Permission, TemplateListModel,
             PermissionListModel<VmTemplate>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<TemplateListModel, PermissionListModel<VmTemplate>> actionPanel,
+            PermissionActionPanelPresenterWidget<VmTemplate, TemplateListModel, PermissionListModel<VmTemplate>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

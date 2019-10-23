@@ -13,28 +13,28 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class PermissionActionPanelPresenterWidget<M extends ListWithDetailsModel, P extends PermissionListModel<?>>
-    extends DetailActionPanelPresenterWidget<Permission, M, P> {
+public class PermissionActionPanelPresenterWidget<E, M extends ListWithDetailsModel, P extends PermissionListModel<E>>
+    extends DetailActionPanelPresenterWidget<E, Permission, M, P> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public PermissionActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<Permission> view,
+            DetailActionPanelPresenterWidget.ViewDef<E, Permission> view,
             SearchableDetailModelProvider<Permission, M, P> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new UiCommandButtonDefinition<Permission>(getSharedEventBus(), constants.addPermission()) {
+        addActionButton(new UiCommandButtonDefinition<E, Permission>(getSharedEventBus(), constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddCommand();
             }
         });
 
-        addActionButton(new UiCommandButtonDefinition<Permission>(getSharedEventBus(), constants.removePermission()) {
+        addActionButton(new UiCommandButtonDefinition<E, Permission>(getSharedEventBus(), constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

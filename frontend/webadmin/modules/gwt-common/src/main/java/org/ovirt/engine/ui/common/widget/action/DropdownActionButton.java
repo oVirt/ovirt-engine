@@ -21,7 +21,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-public class DropdownActionButton<T> extends ButtonGroup implements ActionButton {
+public class DropdownActionButton<E, T> extends ButtonGroup implements ActionButton {
 
     DropDownMenu menuPopup;
     Button textButton;
@@ -29,25 +29,25 @@ public class DropdownActionButton<T> extends ButtonGroup implements ActionButton
     Button caretButton;
     WidgetTooltip toolTip;
 
-    private List<Pair<AnchorListItem, ActionButtonDefinition<T>>> items = new ArrayList<>();
+    private List<Pair<AnchorListItem, ActionButtonDefinition<E, T>>> items = new ArrayList<>();
 
-    private final SelectedItemsProvider<T> selectedItemsProvider;
+    private final SelectedItemsProvider<E, T> selectedItemsProvider;
 
-    public DropdownActionButton(List<ActionButtonDefinition<T>> actions,
-            SelectedItemsProvider<T> selectedItemsProvider) {
+    public DropdownActionButton(List<ActionButtonDefinition<E, T>> actions,
+            SelectedItemsProvider<E, T> selectedItemsProvider) {
         this(actions, selectedItemsProvider, false, null);
     }
 
-    public DropdownActionButton(List<ActionButtonDefinition<T>> actions,
-            SelectedItemsProvider<T> selectedItemsProvider, IconType icon) {
+    public DropdownActionButton(List<ActionButtonDefinition<E, T>> actions,
+            SelectedItemsProvider<E, T> selectedItemsProvider, IconType icon) {
         this(actions, selectedItemsProvider, false, icon);
     }
 
-    public DropdownActionButton(List<ActionButtonDefinition<T>> actions,
-            SelectedItemsProvider<T> selectedItemsProvider, boolean splitButton, IconType icon) {
+    public DropdownActionButton(List<ActionButtonDefinition<E, T>> actions,
+            SelectedItemsProvider<E, T> selectedItemsProvider, boolean splitButton, IconType icon) {
         this.selectedItemsProvider = selectedItemsProvider;
         initDropdownButton(icon, splitButton);
-        initMenuPopup(actions);
+        initMenuPopup(new ArrayList<ActionButtonDefinition<E, T>>(actions));
     }
 
     private void initDropdownButton(IconType icon, boolean splitButton) {
@@ -72,14 +72,14 @@ public class DropdownActionButton<T> extends ButtonGroup implements ActionButton
         }
     }
 
-    private void initMenuPopup(List<ActionButtonDefinition<T>> actions) {
+    private void initMenuPopup(List<ActionButtonDefinition<E, T>> actions) {
         if (menuPopup == null) {
             menuPopup = new DropDownMenu();
         }
 
-        for (final ActionButtonDefinition<T> buttonDef : actions) {
+        for (final ActionButtonDefinition<E, T> buttonDef : actions) {
             if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                UiMenuBarButtonDefinition<T> menuBarDef = (UiMenuBarButtonDefinition<T>) buttonDef;
+                UiMenuBarButtonDefinition<E, T> menuBarDef = (UiMenuBarButtonDefinition<E, T>) buttonDef;
                 DropDownHeader subMenuHeader = new DropDownHeader(buttonDef.getText());
                 menuPopup.add(new Divider());
                 menuPopup.add(subMenuHeader);
@@ -87,9 +87,9 @@ public class DropdownActionButton<T> extends ButtonGroup implements ActionButton
             } else {
                 AnchorListItem menuItem = new AnchorListItem(buttonDef.getText());
                 menuItem.addClickHandler(e -> {
-                    buttonDef.onClick(selectedItemsProvider.getSelectedItems());
+                    buttonDef.onClick(selectedItemsProvider.getParentEntity(), selectedItemsProvider.getSelectedItems());
                 });
-                updateMenuItem(menuItem, buttonDef, selectedItemsProvider.getSelectedItems());
+                updateMenuItem(menuItem, buttonDef, selectedItemsProvider.getParentEntity(), selectedItemsProvider.getSelectedItems());
                 menuPopup.add(menuItem);
                 items.add(new Pair<>(menuItem, buttonDef));
             }
@@ -100,9 +100,9 @@ public class DropdownActionButton<T> extends ButtonGroup implements ActionButton
     /**
      * Ensures that the specified action button is visible or hidden and enabled or disabled as it should.
      */
-    void updateMenuItem(AnchorListItem item, ActionButtonDefinition<T> buttonDef, List<T> selectedItems) {
-        item.setVisible(buttonDef.isAccessible(selectedItems) && buttonDef.isVisible(selectedItems));
-        item.setEnabled(buttonDef.isEnabled(selectedItems));
+    void updateMenuItem(AnchorListItem item, ActionButtonDefinition<E, T> buttonDef, E parent, List<T> selectedItems) {
+        item.setVisible(buttonDef.isAccessible(parent, selectedItems) && buttonDef.isVisible(parent, selectedItems));
+        item.setEnabled(buttonDef.isEnabled(parent, selectedItems));
 
         if (buttonDef.getTooltip() != null) {
             ElementTooltipUtils.setTooltipOnElement(item.getElement(), buttonDef.getTooltip());
@@ -114,12 +114,13 @@ public class DropdownActionButton<T> extends ButtonGroup implements ActionButton
         button.setEnabled(enabled);
         textButton.setEnabled(enabled);
         caretButton.setEnabled(enabled);
-        for (Pair<AnchorListItem, ActionButtonDefinition<T>> item : items) {
-            updateMenuItem(item.getFirst(), item.getSecond(), selectedItemsProvider.getSelectedItems());
+        for (Pair<AnchorListItem, ActionButtonDefinition<E, T>> item : items) {
+            updateMenuItem(item.getFirst(), item.getSecond(), selectedItemsProvider.getParentEntity(), selectedItemsProvider.getSelectedItems());
         }
     }
 
-    public interface SelectedItemsProvider<T> {
+    public interface SelectedItemsProvider<E, T> {
+        E getParentEntity();
         List<T> getSelectedItems();
     }
 

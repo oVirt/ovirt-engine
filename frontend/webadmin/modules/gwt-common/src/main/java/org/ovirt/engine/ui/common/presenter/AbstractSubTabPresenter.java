@@ -71,7 +71,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
 
-    public static final Slot<ActionPanelPresenterWidget<?, ?>> TYPE_SetActionPanel = new Slot<>();
+    public static final Slot<ActionPanelPresenterWidget<?, ?, ?>> TYPE_SetActionPanel = new Slot<>();
 
     private final ApplicationPlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
@@ -88,7 +88,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
             AbstractMainSelectedItems<T> selectedMainItems,
-            ActionPanelPresenterWidget<?, M> actionPanelPresenterWidget,
+            ActionPanelPresenterWidget<?, ?, M> actionPanelPresenterWidget,
             NestedSlot slot) {
         super(eventBus, view, proxy, actionPanelPresenterWidget, slot);
         this.placeManager = (ApplicationPlaceManager) placeManager;

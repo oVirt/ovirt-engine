@@ -66,7 +66,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     public static final Slot<OvirtBreadCrumbsPresenterWidget<?, ?>> TYPE_SetBreadCrumbs = new Slot<>();
 
-    public static final Slot<ActionPanelPresenterWidget<?, ?>> TYPE_SetActionPanel = new Slot<>();
+    public static final Slot<ActionPanelPresenterWidget<?, ?, ?>> TYPE_SetActionPanel = new Slot<>();
 
     private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
 
@@ -82,7 +82,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
             SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget,
             OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget,
-            ActionPanelPresenterWidget<T, M> actionPanelPresenterWidget) {
+            ActionPanelPresenterWidget<?, ?, M> actionPanelPresenterWidget) {
         super(eventBus, view, proxy, placeManager, modelProvider, actionPanelPresenterWidget);
         this.searchPanelPresenterWidget = searchPanelPresenterWidget;
         this.breadCrumbsPresenterWidget = breadCrumbsPresenterWidget;
@@ -137,7 +137,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         registerHandler(getEventBus().addHandler(AddActionButtonEvent.getType(),
             event -> {
                 if (getProxy().getNameToken().equals(event.getHistoryToken())) {
-                    List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
+                    List<ActionButtonDefinition<?, ?>> pluginActionButtonList = new ArrayList<>();
                     pluginActionButtonList.add(event.getButtonDefinition());
                     addPluginActionButtons(pluginActionButtonList, event.isAddToKebabMenu());
                 }
@@ -277,9 +277,9 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         searchPanelPresenterWidget.setTags(tags);
     }
 
-    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
+    private void addPluginActionButtons(List<ActionButtonDefinition<?, ?>> pluginActionButtonList, boolean isMenuItem) {
         if (hasActionPanelPresenterWidget()) {
-            for (ActionButtonDefinition<?> buttonDef : pluginActionButtonList) {
+            for (ActionButtonDefinition<?, ?> buttonDef : pluginActionButtonList) {
                 if (isMenuItem) {
                     getActionPanelPresenterWidget().addMenuListItem((ActionButtonDefinition) buttonDef);
                 } else {

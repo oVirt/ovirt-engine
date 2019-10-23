@@ -49,7 +49,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
     FlowPanel mainActionPanel;
 
     private final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
-    private final ActionPanelPresenterWidget<?, ?> actionPanel;
+    private final ActionPanelPresenterWidget<?, ?, ?> actionPanel;
     private final DetailTabLayout tabLayout;
 
     private NavTabs navTabs;
@@ -59,7 +59,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
     private final Map<TabData, String> tabHistoryTokens = new HashMap<>();
 
     public SimpleTabPanel(OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs,
-            ActionPanelPresenterWidget<?, ?> actionPanel, DetailTabLayout tabLayout) {
+            ActionPanelPresenterWidget<?, ?, ?> actionPanel, DetailTabLayout tabLayout) {
         navTabs = createPatternFlyNavTabs();
         this.tabLayout = tabLayout;
         this.breadCrumbs = breadCrumbs;

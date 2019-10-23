@@ -15,22 +15,22 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWidget<StoragePool, DataCenterListModel> {
+public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, StoragePool, DataCenterListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<StoragePool> newButtonDefinition;
+    private WebAdminButtonDefinition<Void, StoragePool> newButtonDefinition;
 
     @Inject
     public DataCenterActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<StoragePool> view,
+            ActionPanelPresenterWidget.ViewDef<Void, StoragePool> view,
             MainModelProvider<StoragePool, DataCenterListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Void, StoragePool>(constants.newDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
@@ -38,34 +38,34 @@ public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWi
         };
         addActionButton(newButtonDefinition);
 
-        addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.editDC()) {
+        addActionButton(new WebAdminButtonDefinition<Void, StoragePool>(constants.editDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.removeDC()) {
+        addActionButton(new WebAdminButtonDefinition<Void, StoragePool>(constants.removeDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<StoragePool>(constants.forceRemoveDC()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, StoragePool>(constants.forceRemoveDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getForceRemoveCommand();
             }
         });
 
-        addMenuListItem(new WebAdminImageButtonDefinition<StoragePool>(constants.guideMeDc(), IconType.SUPPORT, true) {
+        addMenuListItem(new WebAdminImageButtonDefinition<Void, StoragePool>(constants.guideMeDc(), IconType.SUPPORT, true) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getGuideCommand();
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<StoragePool>(constants.reinitializeDC()) {
+        addMenuListItem(new WebAdminButtonDefinition<Void, StoragePool>(constants.reinitializeDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRecoveryStorageCommand();
@@ -73,7 +73,7 @@ public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWi
         });
     }
 
-    public WebAdminButtonDefinition<StoragePool> getNewButtonDefinition() {
+    public WebAdminButtonDefinition<Void, StoragePool> getNewButtonDefinition() {
         return newButtonDefinition;
     }
 }

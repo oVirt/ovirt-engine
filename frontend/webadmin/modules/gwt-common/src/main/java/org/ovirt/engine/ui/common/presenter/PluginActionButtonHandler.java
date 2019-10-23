@@ -13,16 +13,16 @@ import com.google.inject.Inject;
 
 public class PluginActionButtonHandler {
 
-    private final Map<String, List<ActionButtonDefinition<?>>> buttonDefinitionMap = new HashMap<>();
-    private final Map<String, List<ActionButtonDefinition<?>>> menuItemDefinitionMap = new HashMap<>();
+    private final Map<String, List<ActionButtonDefinition<?, ?>>> buttonDefinitionMap = new HashMap<>();
+    private final Map<String, List<ActionButtonDefinition<?, ?>>> menuItemDefinitionMap = new HashMap<>();
 
     @Inject
     public PluginActionButtonHandler(EventBus eventBus) {
         eventBus.addHandler(AddActionButtonEvent.getType(),
             event -> {
-                Map<String, List<ActionButtonDefinition<?>>> buttonMap = event.isAddToKebabMenu()
+                Map<String, List<ActionButtonDefinition<?, ?>>> buttonMap = event.isAddToKebabMenu()
                         ? menuItemDefinitionMap : buttonDefinitionMap;
-                List<ActionButtonDefinition<?>> buttonList = buttonMap.get(event.getHistoryToken());
+                List<ActionButtonDefinition<?, ?>> buttonList = buttonMap.get(event.getHistoryToken());
 
                 if (buttonList == null) {
                     buttonList = new ArrayList<>();
@@ -37,8 +37,8 @@ public class PluginActionButtonHandler {
      * @param historyToken The token used to look up the button definitions.
      * @return A list of {@code ActionButtonDefinition}s, or an empty list if not found.
      */
-    public List<ActionButtonDefinition<?>> getButtons(String historyToken) {
-        List<ActionButtonDefinition<?>> result = buttonDefinitionMap.get(historyToken);
+    public List<ActionButtonDefinition<?, ?>> getButtons(String historyToken) {
+        List<ActionButtonDefinition<?, ?>> result = buttonDefinitionMap.get(historyToken);
         if (result == null) {
             result = Collections.emptyList();
         }
@@ -51,8 +51,8 @@ public class PluginActionButtonHandler {
      * @return A list of {@code ActionButtonDefinition}s that are supposed to go into the kebab menu,
      * or an empty list if not found.
      */
-    public List<ActionButtonDefinition<?>> getMenuItems(String historyToken) {
-        List<ActionButtonDefinition<?>> result = menuItemDefinitionMap.get(historyToken);
+    public List<ActionButtonDefinition<?, ?>> getMenuItems(String historyToken) {
+        List<ActionButtonDefinition<?, ?>> result = menuItemDefinitionMap.get(historyToken);
         if (result == null) {
             result = Collections.emptyList();
         }

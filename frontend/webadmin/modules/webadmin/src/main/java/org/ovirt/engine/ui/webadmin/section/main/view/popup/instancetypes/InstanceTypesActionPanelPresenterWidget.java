@@ -13,33 +13,33 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class InstanceTypesActionPanelPresenterWidget extends ActionPanelPresenterWidget<InstanceType, InstanceTypeListModel> {
+public class InstanceTypesActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, InstanceType, InstanceTypeListModel> {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public InstanceTypesActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<InstanceType> view,
+            ActionPanelPresenterWidget.ViewDef<Void, InstanceType> view,
             InstanceTypeModelProvider dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.newInstanceType()) {
+        addActionButton(new WebAdminButtonDefinition<Void, InstanceType>(constants.newInstanceType()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewInstanceTypeCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.editInstanceType()) {
+        addActionButton(new WebAdminButtonDefinition<Void, InstanceType>(constants.editInstanceType()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditInstanceTypeCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.removeInstanceType()) {
+        addActionButton(new WebAdminButtonDefinition<Void, InstanceType>(constants.removeInstanceType()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getDeleteInstanceTypeCommand();

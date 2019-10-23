@@ -26,7 +26,7 @@ public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS,
     @Inject
     public SubTabHostPermissionView(SearchableDetailModelProvider<Permission, HostListModel<Void>,
             PermissionListModel<VDS>> modelProvider, EventBus eventBus,
-            PermissionActionPanelPresenterWidget<HostListModel<Void>, PermissionListModel<VDS>> actionPanel,
+            PermissionActionPanelPresenterWidget<VDS, HostListModel<Void>, PermissionListModel<VDS>> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, actionPanel);
     }

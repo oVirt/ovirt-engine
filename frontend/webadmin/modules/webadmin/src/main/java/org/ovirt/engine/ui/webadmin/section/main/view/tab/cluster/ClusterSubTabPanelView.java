@@ -49,7 +49,7 @@ public class ClusterSubTabPanelView extends AbstractSubTabPanelView implements C
     }
 
     @Override
-    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+    public ActionPanelPresenterWidget<?, ?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }
 

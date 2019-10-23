@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<CpuProfile, CpuProfileListModel> {
+public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cluster, CpuProfile, CpuProfileListModel> {
 
     interface WidgetUiBinder extends UiBinder<Widget, CpuProfilesListModelTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -36,7 +37,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final PermissionWithInheritedPermissionListModelTable<PermissionListModel<CpuProfile>> permissionListModelTable;
+    private final PermissionWithInheritedPermissionListModelTable<CpuProfile, PermissionListModel<CpuProfile>> permissionListModelTable;
 
     @UiField
     FlowPanel tableContainer;
@@ -139,7 +140,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
 
     @Override
     public void addModelListeners() {
-        final SimpleActionTable<Permission> table = permissionListModelTable.getTable();
+        final SimpleActionTable<CpuProfile, Permission> table = permissionListModelTable.getTable();
         table.getSelectionModel().addSelectionChangeHandler(event -> cpuProfilePermissionModelProvider.setSelectedItems(table.getSelectedItems()));
     }
 }

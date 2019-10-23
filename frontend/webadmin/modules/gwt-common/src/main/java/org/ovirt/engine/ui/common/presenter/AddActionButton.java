@@ -15,7 +15,7 @@ public class AddActionButton {
     String historyToken;
 
     @Order(2)
-    ActionButtonDefinition<?> buttonDefinition;
+    ActionButtonDefinition<?, ?> buttonDefinition;
 
     /**
      * If {@code true}, the button will be represented as a menu item within the kebab menu.

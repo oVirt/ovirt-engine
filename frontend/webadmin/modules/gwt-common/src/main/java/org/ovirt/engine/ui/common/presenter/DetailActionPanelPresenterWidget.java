@@ -9,15 +9,15 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public abstract class DetailActionPanelPresenterWidget<T, M extends ListWithDetailsModel, D extends HasEntity>
-    extends ActionPanelPresenterWidget<T, M> {
+public abstract class DetailActionPanelPresenterWidget<E, T, M extends ListWithDetailsModel, D extends HasEntity>
+    extends ActionPanelPresenterWidget<E, T, M> {
 
-    public interface ViewDef<T> extends ActionPanelPresenterWidget.ViewDef<T> {
+    public interface ViewDef<E, T> extends ActionPanelPresenterWidget.ViewDef<E, T> {
     }
 
     @Inject
     public DetailActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<T> view,
+            DetailActionPanelPresenterWidget.ViewDef<E, T> view,
             SearchableDetailModelProvider<T, ?, ?> dataProvider) {
         super(eventBus, view, (SearchableTabModelProvider<T, M>) dataProvider);
     }

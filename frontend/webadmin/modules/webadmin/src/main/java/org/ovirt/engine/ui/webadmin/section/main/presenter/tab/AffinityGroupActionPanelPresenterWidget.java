@@ -14,35 +14,35 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class AffinityGroupActionPanelPresenterWidget<M extends ListWithDetailsModel,
-    D extends AffinityGroupListModel<?>> extends DetailActionPanelPresenterWidget<AffinityGroup, M, D> {
+public class AffinityGroupActionPanelPresenterWidget<E, M extends ListWithDetailsModel,
+    D extends AffinityGroupListModel<?>> extends DetailActionPanelPresenterWidget<E, AffinityGroup, M, D> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public AffinityGroupActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<AffinityGroup> view,
+            DetailActionPanelPresenterWidget.ViewDef<E, AffinityGroup> view,
             SearchableDetailModelProvider<AffinityGroup, M, D> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.newAffinityGroupLabel()) {
+        addActionButton(new WebAdminButtonDefinition<E, AffinityGroup>(constants.newAffinityGroupLabel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.editAffinityGroupLabel()) {
+        addActionButton(new WebAdminButtonDefinition<E, AffinityGroup>(constants.editAffinityGroupLabel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.removeAffinityGroupLabel()) {
+        addActionButton(new WebAdminButtonDefinition<E, AffinityGroup>(constants.removeAffinityGroupLabel()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

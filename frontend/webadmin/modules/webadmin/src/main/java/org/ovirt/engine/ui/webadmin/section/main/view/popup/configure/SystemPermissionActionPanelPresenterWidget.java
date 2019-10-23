@@ -14,27 +14,27 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class SystemPermissionActionPanelPresenterWidget
-    extends ActionPanelPresenterWidget<Permission, SystemPermissionListModel> {
+    extends ActionPanelPresenterWidget<Void, Permission, SystemPermissionListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SystemPermissionActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Permission> view,
+            ActionPanelPresenterWidget.ViewDef<Void, Permission> view,
             SystemPermissionModelProvider dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Permission>(constants.addPermission()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Permission>(constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
+        addActionButton(new WebAdminButtonDefinition<Void, Permission>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

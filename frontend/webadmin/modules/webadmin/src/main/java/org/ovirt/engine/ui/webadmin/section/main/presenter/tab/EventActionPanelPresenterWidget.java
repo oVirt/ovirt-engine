@@ -9,11 +9,11 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class EventActionPanelPresenterWidget extends ActionPanelPresenterWidget<AuditLog, EventListModel<Void>> {
+public class EventActionPanelPresenterWidget extends ActionPanelPresenterWidget<Void, AuditLog, EventListModel<Void>> {
 
     @Inject
     public EventActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<AuditLog> view,
+            ActionPanelPresenterWidget.ViewDef<Void, AuditLog> view,
             MainModelProvider<AuditLog, EventListModel<Void>> dataProvider) {
         super(eventBus, view, dataProvider);
     }

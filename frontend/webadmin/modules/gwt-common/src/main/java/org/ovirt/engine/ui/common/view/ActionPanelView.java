@@ -29,15 +29,15 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ActionPanelView<T> extends AbstractView implements ActionPanelPresenterWidget.ViewDef<T> {
+public class ActionPanelView<E, T> extends AbstractView implements ActionPanelPresenterWidget.ViewDef<E, T> {
 
     private static final String HIDDEN_KEBAB = "hidden-kebab"; // $NON-NLS-1$
 
-    public interface ViewUiBinder extends UiBinder<Widget, ActionPanelView<?>> {
+    public interface ViewUiBinder extends UiBinder<Widget, ActionPanelView<?, ?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface ViewIdHandler extends ElementIdHandler<ActionPanelView<?>> {
+    interface ViewIdHandler extends ElementIdHandler<ActionPanelView<?, ?>> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -62,7 +62,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     private String elementId = DOM.createUniqueId();
 
     // Map of ActionButtonDefinition to AnchorListItems.
-    private final Map<ActionButtonDefinition<T>, ActionButton> actionItemMap = new HashMap<>();
+    private final Map<ActionButtonDefinition<?, T>, ActionButton> actionItemMap = new HashMap<>();
 
     public ActionPanelView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -91,7 +91,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     @Override
-    public ActionButton addMenuListItem(ActionButtonDefinition<T> menuItemDef) {
+    public ActionButton addMenuListItem(ActionButtonDefinition<E, T> menuItemDef) {
         ActionAnchorListItem menuItem = new ActionAnchorListItem(menuItemDef.getText());
         // Set menu item ID for better accessibility
         String menuItemId = menuItemDef.getUniqueId();
@@ -108,24 +108,24 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
      * Adds a new button to the action panel.
      */
     @Override
-    public ActionButton addActionButton(ActionButtonDefinition<T> buttonDef) {
+    public ActionButton addActionButton(ActionButtonDefinition<?, T> buttonDef) {
         SimpleActionButton newActionButton = createNewActionButton(buttonDef);
         initButton(buttonDef, newActionButton);
         return newActionButton;
     }
 
     @Override
-    public ActionButton addDropdownActionButton(ActionButtonDefinition<T> buttonDef,
-            List<ActionButtonDefinition<T>> subActions, SelectedItemsProvider<T> selectedItemsProvider) {
-        DropdownActionButton<T> dropdownActionButton = new DropdownActionButton<>(subActions, selectedItemsProvider);
+    public ActionButton addDropdownActionButton(ActionButtonDefinition<E, T> buttonDef,
+            List<ActionButtonDefinition<E, T>> subActions, SelectedItemsProvider<E, T> selectedItemsProvider) {
+        DropdownActionButton<E, T> dropdownActionButton = new DropdownActionButton<>(subActions, selectedItemsProvider);
         initButton(buttonDef, dropdownActionButton);
         return dropdownActionButton;
     }
 
     @Override
-    public ActionButton addDropdownComboActionButton(ActionButtonDefinition<T> buttonDef,
-            List<ActionButtonDefinition<T>> subActions, SelectedItemsProvider<T> selectedItemsProvider) {
-        DropdownActionButton<T> dropdownActionButton;
+    public ActionButton addDropdownComboActionButton(ActionButtonDefinition<E, T> buttonDef,
+            List<ActionButtonDefinition<E, T>> subActions, SelectedItemsProvider<E, T> selectedItemsProvider) {
+        DropdownActionButton<E, T> dropdownActionButton;
         if (buttonDef.getIcon() instanceof IconType) {
             dropdownActionButton = new DropdownActionButton<>(subActions, selectedItemsProvider,
                 true, (IconType)buttonDef.getIcon());
@@ -137,7 +137,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
         return dropdownActionButton;
     }
 
-    private void initButton(ActionButtonDefinition<T> buttonDef, ActionButton button) {
+    private void initButton(ActionButtonDefinition<?, T> buttonDef, ActionButton button) {
         button.setText(buttonDef.getText());
         // Set button element ID for better accessibility
         String buttonId = buttonDef.getUniqueId();
@@ -170,7 +170,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
         actionItemMap.put(buttonDef, button);
     }
 
-    private SimpleActionButton createNewActionButton(ActionButtonDefinition<T> buttonDef) {
+    private SimpleActionButton createNewActionButton(ActionButtonDefinition<?, T> buttonDef) {
         SimpleActionButton result = new SimpleActionButton();
         if (buttonDef.getIcon() instanceof IconType) {
             result.setIcon((IconType) buttonDef.getIcon());
@@ -179,7 +179,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     @Override
-    public void updateActionButton(boolean isVisible, boolean isEnabled, ActionButtonDefinition<T> buttonDef) {
+    public void updateActionButton(boolean isVisible, boolean isEnabled, ActionButtonDefinition<?, T> buttonDef) {
         ActionButton button = actionItemMap.get(buttonDef);
         if (button != null) {
             button.asWidget().setVisible(isVisible);
@@ -193,7 +193,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     @Override
-    public void updateMenuItem(boolean isVisible, boolean isEnabled, ActionButtonDefinition<T> menuItemDef) {
+    public void updateMenuItem(boolean isVisible, boolean isEnabled, ActionButtonDefinition<?, T> menuItemDef) {
         ActionButton item = actionItemMap.get(menuItemDef);
         if (item != null) {
             item.asWidget().setVisible(isVisible);
@@ -232,7 +232,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     @Override
-    public Map<ActionButtonDefinition<T>, ActionButton> getActionItems() {
+    public Map<ActionButtonDefinition<?, T>, ActionButton> getActionItems() {
         return actionItemMap;
     }
 

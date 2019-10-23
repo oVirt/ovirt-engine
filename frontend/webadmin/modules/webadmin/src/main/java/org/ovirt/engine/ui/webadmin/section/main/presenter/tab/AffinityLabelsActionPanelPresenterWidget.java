@@ -14,28 +14,28 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class AffinityLabelsActionPanelPresenterWidget<M extends ListWithDetailsModel,
-    D extends AffinityLabelListModel<?>> extends DetailActionPanelPresenterWidget<Label, M, D> {
+public class AffinityLabelsActionPanelPresenterWidget<E, M extends ListWithDetailsModel,
+    D extends AffinityLabelListModel<?>> extends DetailActionPanelPresenterWidget<E, Label, M, D> {
 
     protected static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public AffinityLabelsActionPanelPresenterWidget(EventBus eventBus,
-            DetailActionPanelPresenterWidget.ViewDef<Label> view,
+            DetailActionPanelPresenterWidget.ViewDef<E, Label> view,
             SearchableDetailModelProvider<Label, M, D> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Label>(constants.affinityLabelsSubTabNewButton()) {
+        addActionButton(new WebAdminButtonDefinition<E, Label>(constants.affinityLabelsSubTabNewButton()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
 
-        addActionButton(new WebAdminButtonDefinition<Label>(constants.affinityLabelsSubTabEditButton()) {
+        addActionButton(new WebAdminButtonDefinition<E, Label>(constants.affinityLabelsSubTabEditButton()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();

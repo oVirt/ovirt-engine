@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.shared.EventBus;
 
-public abstract class WebAdminImageButtonDefinition<T> extends ImageUiCommandButtonDefinition<T> {
+public abstract class WebAdminImageButtonDefinition<E, T> extends ImageUiCommandButtonDefinition<E, T> {
 
     public WebAdminImageButtonDefinition(String title, HasCssName icon) {
         super(getEventBus(), title, icon);

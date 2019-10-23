@@ -27,7 +27,7 @@ public abstract class AbstractSubTabNetworkPresenter<D extends HasEntity<?>,
 
     public AbstractSubTabNetworkPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<NetworkListModel, D> modelProvider, NetworkMainSelectedItems selectedItems,
-            DetailActionPanelPresenterWidget<?, NetworkListModel, ?> actionPanel,
+            DetailActionPanelPresenterWidget<?, ?, NetworkListModel, ?> actionPanel,
             NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }

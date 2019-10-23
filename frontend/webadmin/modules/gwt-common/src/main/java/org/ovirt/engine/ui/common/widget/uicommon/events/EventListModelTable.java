@@ -22,7 +22,7 @@ import com.google.gwt.event.shared.EventBus;
  * @param <T>
  *            Detail model type.
  */
-public class EventListModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
+public class EventListModelTable<E, T extends EventListModel> extends AbstractModelBoundTableWidget<E, AuditLog, T> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 

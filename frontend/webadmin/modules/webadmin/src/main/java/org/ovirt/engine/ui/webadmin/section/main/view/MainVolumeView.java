@@ -181,14 +181,14 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
             }
         };
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.statusRebalance()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.statusRebalance()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStatusRebalanceCommand();
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.stopRebalance()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.stopRebalance()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopRebalanceCommand();
@@ -206,7 +206,7 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
             }
         };
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksStatus()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.removeBricksStatus()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getBrickListModel()
@@ -214,7 +214,7 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksStop()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.removeBricksStop()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getBrickListModel()
@@ -222,7 +222,7 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.removeBricksCommit()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.removeBricksCommit()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getBrickListModel()
@@ -230,7 +230,7 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
             }
         });
 
-        menuCell.addMenuItem(new WebAdminButtonDefinition<GlusterTaskSupport>(constants.retainBricks()) {
+        menuCell.addMenuItem(new WebAdminButtonDefinition<Void, GlusterTaskSupport>(constants.retainBricks()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getBrickListModel()
