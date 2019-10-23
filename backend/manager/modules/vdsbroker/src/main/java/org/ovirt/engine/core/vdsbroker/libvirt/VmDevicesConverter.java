@@ -366,8 +366,7 @@ public class VmDevicesConverter {
     }
 
     List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices) {
-        List<VmDevice> dbDevices = filterDevices(devices,
-                VmDeviceGeneralType.DISK, VmDeviceGeneralType.HOSTDEV);
+        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.DISK, VmDeviceGeneralType.HOSTDEV);
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.DISK)) {

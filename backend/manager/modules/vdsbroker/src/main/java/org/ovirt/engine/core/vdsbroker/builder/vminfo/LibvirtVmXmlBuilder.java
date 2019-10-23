@@ -108,6 +108,10 @@ public class LibvirtVmXmlBuilder {
     private static final int LIBVIRT_PORT_AUTOSELECT = -1;
     private static final Set<String> SPICE_CHANNEL_NAMES = new HashSet<>(Arrays.asList(
             "main", "display", "inputs", "cursor", "playback", "record", "smartcard", "usbredir"));
+    private static final String SCSI_HD = "scsi_hd";
+    private static final String SCSI_BLOCK = "scsi_block";
+    private static final String SCSI_VIRTIO_BLK_PCI = "virtio_blk_pci";
+    private static final List<String> scsiHostDevDrivers = Arrays.asList(SCSI_HD, SCSI_BLOCK, SCSI_VIRTIO_BLK_PCI);
 
     private VmInfoBuildUtils vmInfoBuildUtils;
 
@@ -146,6 +150,7 @@ public class LibvirtVmXmlBuilder {
     private Disk disk;
     private VmDevice device;
     private boolean mdevDisplayOn;
+    private int sdIndex;
 
     /**
      * This constructor is meant for building a complete XML for runnning
@@ -928,6 +933,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     void writeDevices() {
+        List<Pair<VmDevice, HostDevice>> hostDevDisks = new ArrayList<>();
         List<VmDevice> devices = vmInfoBuildUtils.getVmDevices(vm.getId());
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
@@ -1066,7 +1072,7 @@ public class LibvirtVmXmlBuilder {
                     forceRefreshDevices = true;
                     break;
                 }
-                writeHostDevice(device, hostDevice);
+                writeHostDevice(device, hostDevice, hostDevDisks);
                 break;
             case UNKNOWN:
                 break;
@@ -1105,6 +1111,7 @@ public class LibvirtVmXmlBuilder {
         writeFloppy(floppyDevice);
         // we must write the disk after writing cd-rom and floppy to know reserved indices
         writeDisks(diskDevices);
+        writeHostdevDisks(hostDevDisks);
         writeLeases();
 
         writeVGpu();
@@ -1292,7 +1299,7 @@ public class LibvirtVmXmlBuilder {
         Map<Integer, Map<VmDevice, Integer>> vmDeviceSpaprVscsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(vm);
         Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
         int hdIndex = -1;
-        int sdIndex = -1;
+        sdIndex = -1;
         int vdIndex = -1;
         int pinnedDriveIndex = 0;
 
@@ -1469,7 +1476,7 @@ public class LibvirtVmXmlBuilder {
                 : "";
     }
 
-    private void writeHostDevice(VmDevice device, HostDevice hostDevice) {
+    private void writeHostDevice(VmDevice device, HostDevice hostDevice, List<Pair<VmDevice, HostDevice>> hostDevDisks) {
         switch (hostDevice.getCapability()) {
         case "pci":
             writePciHostDevice(new VmHostDevice(device), hostDevice);
@@ -1479,11 +1486,93 @@ public class LibvirtVmXmlBuilder {
             writeUsbHostDevice(new VmHostDevice(device), hostDevice);
             break;
         case "scsi":
-            writeScsiHostDevice(new VmHostDevice(device), hostDevice);
+            if (scsiHostDevDrivers.contains(vmCustomProperties.get("scsi_hostdev"))) {
+                hostDevDisks.add(new Pair<>(device, hostDevice));
+            } else {
+                writeScsiHostDevice(new VmHostDevice(device), hostDevice);
+            }
             break;
         default:
             log.warn("Skipping host device: {}", device.getDevice());
         }
+    }
+
+    private void writeHostdevDisks(List<Pair<VmDevice, HostDevice>> hostDevDisks) {
+        hostDevDisks.sort(Comparator
+                .comparing((Pair<VmDevice, HostDevice> p) -> Integer.parseInt(p.getSecond().getAddress().get("host")))
+                .thenComparing(p -> Integer.parseInt(p.getSecond().getAddress().get("bus")))
+                .thenComparing(p-> Integer.parseInt(p.getSecond().getAddress().get("target")))
+                .thenComparing(p-> Integer.parseInt(p.getSecond().getAddress().get("lun")))
+        );
+
+        for (Pair<VmDevice, HostDevice> pair : hostDevDisks) {
+            String diskName = vmInfoBuildUtils.makeDiskName("scsi", ++sdIndex);
+
+            writeScsiHostDevAsDisk(new VmHostDevice(pair.getFirst()), pair.getSecond(), diskName);
+        }
+    }
+
+    private void writeScsiHostDevAsDisk(VmHostDevice device, HostDevice hostDevice, String diskName) {
+        String scsiHostdevProperty = vmCustomProperties.get("scsi_hostdev");
+
+        writer.writeStartElement("disk");
+        writer.writeAttributeString("type", "block");
+        if (SCSI_BLOCK.equals(scsiHostdevProperty)) {
+            writer.writeAttributeString("device", "lun");
+            writer.writeAttributeString("rawio", "yes");
+        } else {
+            writer.writeAttributeString("device", "disk");
+        }
+
+        writer.writeStartElement("driver");
+        writer.writeAttributeString("name", "qemu");
+        writer.writeAttributeString("type", "raw");
+        writer.writeEndElement();
+
+        writer.writeStartElement("source");
+        writer.writeAttributeString("dev", "/dev/" + diskName);
+        writer.writeStartElement("seclabel");
+        writer.writeAttributeString("model", "dac");
+        writer.writeAttributeString("type", "none");
+        writer.writeAttributeString("relabel", "yes");
+        writer.writeEndElement();
+        writer.writeEndElement();
+
+        if (SCSI_HD.equals(scsiHostdevProperty)) {
+            writer.writeStartElement("blockio");
+            writer.writeAttributeString("logical_block_size", "512");
+            writer.writeAttributeString("physical_block_size", "4096");
+            writer.writeEndElement();
+        }
+
+        writer.writeStartElement("target");
+
+        if (SCSI_VIRTIO_BLK_PCI.equals(scsiHostdevProperty)) {
+            writer.writeAttributeString("dev", diskName.replaceFirst("s", "v"));
+            writer.writeAttributeString("bus", "virtio");
+        } else {
+            writer.writeAttributeString("dev", diskName);
+            writer.writeAttributeString("bus", "scsi");
+        }
+        writer.writeEndElement();
+
+        writeAlias(device);
+        if (SCSI_VIRTIO_BLK_PCI.equals(scsiHostdevProperty)) {
+            writeAddress(StringMapUtils.string2Map(device.getAddress()));
+        } else {
+            writeAddress(buildDriveAddress(hostDevice.getAddress()));
+        }
+        writer.writeEndElement();
+    }
+
+    private Map<String, String> buildDriveAddress(Map<String, String> address) {
+        Map<String, String> diskAddress = new HashMap<>();
+        diskAddress.put("bus", address.get("bus"));
+        diskAddress.put("target", address.get("target"));
+        diskAddress.put("controller", address.get("host"));
+        diskAddress.put("unit", address.get("lun"));
+        diskAddress.put("type", "drive");
+        return diskAddress;
     }
 
     private void writeScsiHostDevice(VmHostDevice device, HostDevice hostDevice) {
