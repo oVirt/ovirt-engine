@@ -9,6 +9,27 @@ BUILD_UT=0
 RUN_DAO_TESTS=0
 BUILD_GWT=0
 
+# Check for copyright notices in files that do not also include an SPDX tag.
+copyright_notices_files=$( \
+	git show --pretty="format:" --name-only | \
+	xargs grep -il 'Copyright.*Red Hat' | \
+	xargs grep -iL 'SPDX' \
+)
+if [ -n "${copyright_notices_files}" ]; then
+	cat << __EOF__
+[ERROR] : The following file(s) contain copyright/license notices, and do not contain an SPDX tag:
+============================================================
+${copyright_notices_files}
+============================================================
+Please replace the notices with an SPDX tag. How exactly to do this is language/syntax specific. You should include the following two lines in a comment:
+============================================================
+Copyright oVirt Authors
+SPDX-License-Identifier: Apache-2.0
+============================================================
+__EOF__
+	exit 1
+fi
+
 # Check for DB upgrade scripts modifications without the
 # "Allow-db-upgrade-script-changes:Yes" in the patch header
 
