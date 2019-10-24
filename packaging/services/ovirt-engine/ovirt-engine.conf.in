@@ -648,7 +648,7 @@ THREAD_POOL_MONITORING_INTERVAL_IN_SECONDS=600
 # Specify the ansible-playbook command execution timeout in minutes. It's used for any task, which executes
 # AnsibleExecutor class. To change the value permanentaly create a conf file 99-ansible-playbook-timeout.conf in
 # /etc/ovirt-engine/engine.conf.d/
-ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT=30
+ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT=120
 
 # Specify the ansible-playbook command verbose level. It's used for any task, which executes AnsibleExecutor class.
 # To change the value permanentaly create a conf file 99-ansible-playbook-verbose-level.conf in
