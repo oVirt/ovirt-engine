@@ -10,16 +10,28 @@ RUN_DAO_TESTS=0
 BUILD_GWT=0
 
 # Check for copyright notices in files that do not also include an SPDX tag.
-copyright_notices_files=$( \
-	git show --pretty="format:" --name-only | \
-	xargs grep -il 'Copyright.*Red Hat' | \
-	xargs grep -iL 'SPDX' \
+non_removed_files=$( \
+	git show --pretty="format:" --name-status | \
+	awk '/^[^D]/ {print $2}' \
 )
-if [ -n "${copyright_notices_files}" ]; then
+
+copyright_notices_files=
+[ -n "${non_removed_files}" ] && copyright_notices_files=$( \
+	echo "${non_removed_files}" | \
+	xargs grep -il 'Copyright.*Red Hat' \
+) || true
+
+copyright_notices_no_spdx_files=
+[ -n "${copyright_notices_files}" ] && copyright_notices_no_spdx_files=$( \
+	echo "${copyright_notices_files}" | \
+	xargs grep -iL 'SPDX' \
+) || true
+
+if [ -n "${copyright_notices_no_spdx_files}" ]; then
 	cat << __EOF__
 [ERROR] : The following file(s) contain copyright/license notices, and do not contain an SPDX tag:
 ============================================================
-${copyright_notices_files}
+${copyright_notices_no_spdx_files}
 ============================================================
 Please replace the notices with an SPDX tag. How exactly to do this is language/syntax specific. You should include the following two lines in a comment:
 ============================================================
