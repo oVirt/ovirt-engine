@@ -42,6 +42,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
             oenginecons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.QEMU_CA_AVAILABLE,
         ),
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )

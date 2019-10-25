@@ -203,6 +203,10 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getFile("ENGINE_PKI_CA");
     }
 
+    public File getPKIQemuCACert() {
+        return getFile("ENGINE_PKI_QEMU_CA");
+    }
+
     public File getPKIEngineCert() {
         return getFile("ENGINE_PKI_ENGINE_CERT");
     }

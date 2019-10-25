@@ -27,6 +27,7 @@ public class PKIResourceServlet extends HttpServlet {
         if (!resourcesInitialized) {
             resources = new HashMap<>();
             resources.put("ca-certificate", PKIResources.getCaCertificate());
+            resources.put("qemu-ca-certificate", PKIResources.getQemuCaCertificate());
             resources.put("engine-certificate", PKIResources.getEngineCertificate());
             formats = new HashMap<>();
             formats.put("X509-PEM", PKIResources.Format.X509_PEM);

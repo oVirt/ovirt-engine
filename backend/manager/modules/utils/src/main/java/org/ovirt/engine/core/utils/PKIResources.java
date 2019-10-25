@@ -15,6 +15,8 @@ import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 public class PKIResources {
     private static Resource caCertificate;
 
+    private static Resource qemuCaCertificate;
+
     private static Resource engineCertificate;
 
 
@@ -29,6 +31,22 @@ public class PKIResources {
         if (caCertificate == null) {
             caCertificate = new Resource(
                     EngineLocalConfig.getInstance().getPKICACert(),
+                    Format.X509_PEM_CA,
+                    null);
+        }
+    }
+
+    public static Resource getQemuCaCertificate() {
+        if (qemuCaCertificate == null) {
+            initQemuCaCertificate();
+        }
+        return qemuCaCertificate;
+    }
+
+    private static synchronized void initQemuCaCertificate() {
+        if (qemuCaCertificate == null) {
+            qemuCaCertificate = new Resource(
+                    EngineLocalConfig.getInstance().getPKIQemuCACert(),
                     Format.X509_PEM_CA,
                     null);
         }

@@ -164,6 +164,10 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIDIR,
         'ca.pem',
     )
+    OVIRT_ENGINE_PKI_ENGINE_QEMU_CA_CERT = os.path.join(
+        OVIRT_ENGINE_PKIDIR,
+        'qemu-ca.pem',
+    )
     OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_CERT = os.path.join(
         OVIRT_ENGINE_PKICERTSDIR,
         'websocket-proxy.cer',
@@ -191,6 +195,10 @@ class FileLocations(object):
     OVIRT_ENGINE_PKI_ENGINE_CA_KEY = os.path.join(
         OVIRT_ENGINE_PKIPRIVATEDIR,
         'ca.pem',
+    )
+    OVIRT_ENGINE_PKI_ENGINE_QEMU_CA_KEY = os.path.join(
+        OVIRT_ENGINE_PKIPRIVATEDIR,
+        'qemu-ca.pem',
     )
     OVIRT_ENGINE_CRYPTO_TOOL = os.path.join(
         OVIRT_ENGINE_BINDIR,
@@ -407,6 +415,7 @@ class Stages(object):
     MEMORY_CHECK = 'osetup.memory.check'
 
     CA_AVAILABLE = 'osetup.pki.ca.available'
+    QEMU_CA_AVAILABLE = 'osetup.pki.qemu.ca.available'
 
     POSTGRES_PROVISIONING_ALLOWED = 'osetup.engine.provisioning.pgsql.allow'
     NFS_CONFIG_ALLOWED = 'osetup.engine.system.nfs.allow'
@@ -421,6 +430,16 @@ class Stages(object):
     OVN_PROVIDER_OVN_DB = 'osetup.ovn.provider.db'
 
     MAC_POOL_DB = 'osetup.macpool.db'
+
+
+def _pki_ca_uri(uri, resource):
+    return (
+        '%s/services/pki-resource?'
+        'resource=%s&'
+        'format=X509-PEM-CA'
+    ) % (
+        uri, resource,
+    )
 
 
 @util.export
@@ -438,13 +457,8 @@ class Const(object):
     ISO_DOMAIN_IMAGE_UID = '11111111-1111-1111-1111-111111111111'
 
     ENGINE_URI = '/ovirt-engine'
-    ENGINE_PKI_CA_URI = (
-        '%s/services/pki-resource?'
-        'resource=ca-certificate&'
-        'format=X509-PEM-CA'
-    ) % (
-        ENGINE_URI,
-    )
+    ENGINE_PKI_CA_URI = _pki_ca_uri(ENGINE_URI, 'ca-certificate')
+    ENGINE_PKI_QEMU_CA_URI = _pki_ca_uri(ENGINE_URI, 'qemu-ca-certificate')
 
     ENGINE_DB_BACKUP_PREFIX = 'engine'
 
