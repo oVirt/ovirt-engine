@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll.hostdeploy;
 
 import static org.ovirt.engine.core.common.businessentities.ExternalNetworkPluginType.OVIRT_PROVIDER_OVN;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -13,9 +16,11 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
+import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -45,6 +50,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.PKIResources;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +59,6 @@ import org.slf4j.LoggerFactory;
 public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
     private static Logger log = LoggerFactory.getLogger(InstallVdsInternalCommand.class);
-    private VDSStatus vdsInitialStatus;
 
     @Inject
     private ProviderDao providerDao;
@@ -107,70 +112,32 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             return;
         }
 
-        vdsInitialStatus = getVds().getStatus();
-        installHost();
-    }
+        log.info("Before Installation host {}, {}", getVds().getId(), getVds().getName());
 
-    private void installHost() {
-        try (final VdsDeploy deploy = new VdsDeploy("ovirt-host-deploy", getVds(), true)) {
-            log.info(
-                    "Before Installation host {}, {}",
-                    getVds().getId(),
-                    getVds().getName()
-            );
-
-            T parameters = getParameters();
-            deploy.setCorrelationId(getCorrelationId());
-
-            switch (getParameters().getAuthMethod()) {
-                case Password:
-                    deploy.setPassword(parameters.getPassword());
-                    break;
-                case PublicKey:
-                    deploy.useDefaultKeyPair();
-                    break;
-                default:
-                    throw new Exception("Invalid authentication method value was sent to InstallVdsInternalCommand");
-            }
-
+        try {
             setVdsStatus(VDSStatus.Installing);
-            deploy.execute();
 
-            switch (deploy.getDeployStatus()) {
-                case Failed:
-                    throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
-                case Incomplete:
-                    markCurrentCmdlineAsStored();
-                    throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
-                case Reboot:
-                    markCurrentCmdlineAsStored();
-                    markVdsReinstalled();
-                    setVdsStatus(VDSStatus.Reboot);
-                    runSleepOnReboot(getStatusOnReboot());
-                    break;
-                case Complete:
-                    markCurrentCmdlineAsStored();
-                    markVdsReinstalled();
-
-                    // TODO: When more logic goes to ovirt-host-deploy role,
-                    // this code should be moved to appropriate place, currently
-                    // we run this playbook only after successful run of otopi host-deploy
-                    runAnsibleHostDeployPlaybook();
-
-                    configureManagementNetwork();
-                    if (!getParameters().getActivateHost()) {
-                        setVdsStatus(VDSStatus.Maintenance);
-                    } else {
-                        setVdsStatus(VDSStatus.Initializing);
-                    }
-                    break;
+            if (getParameters().getAuthMethod() == AuthenticationMethod.Password) {
+                copyEngineSshId();
             }
 
-            log.info(
-                    "After Installation host {}, {}",
-                    getVds().getName(),
-                    getVds().getVdsType().name()
-            );
+            /*
+             * TODO: do we have a way to pass correlationId to ansible playbook, so it will be logged to audit log when
+             * we start using ansible-runner?
+             */
+            // deploy.setCorrelationId(getCorrelationId());
+
+            runAnsibleHostDeployPlaybook();
+            markCurrentCmdlineAsStored();
+            markVdsReinstalled();
+            configureManagementNetwork();
+            if (!getParameters().getActivateHost()) {
+                setVdsStatus(VDSStatus.Maintenance);
+            } else {
+                setVdsStatus(VDSStatus.Initializing);
+            }
+
+            log.info("After Installation host {}, {}", getVds().getName(), getVds().getVdsType().name());
             setSucceeded(true);
         } catch (VdsInstallException e) {
             handleError(e, e.getStatus());
@@ -366,10 +333,44 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         );
     }
 
-    private VDSStatus getStatusOnReboot() {
-        if (getParameters().getActivateHost()) {
-            return VDSStatus.NonResponsive;
+    private void copyEngineSshId() {
+        VDS host = getVds();
+        String sshCopyIdCommand =
+                "exec sh -c 'cd ;"
+                        + " umask 077 ;"
+                        + " mkdir -p .ssh && "
+                        + "{ [ -z \"'`tail -1c .ssh/authorized_keys 2>/dev/null`'\" ] "
+                        + "|| echo >> .ssh/authorized_keys || exit 1; }"
+                        + " && cat >> .ssh/authorized_keys || exit 1 ; "
+                        + "if type restorecon >/dev/null 2>&1 ; then restorecon -F .ssh .ssh/authorized_keys ; fi'";
+        try (
+                final EngineSSHClient sshClient = new EngineSSHClient();
+                final ByteArrayInputStream cmdIn = new ByteArrayInputStream(
+                        EngineEncryptionUtils.getEngineSSHPublicKey().getBytes());
+                final ByteArrayOutputStream cmdOut = new ByteArrayOutputStream();
+                final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream()) {
+            try {
+                log.info("Opening ssh-copy-id session on host {}", host.getHostName());
+                sshClient.setVds(host);
+                sshClient.setPassword(getParameters().getPassword());
+                sshClient.connect();
+                sshClient.authenticate();
+
+                log.info("Executing ssh-copy-id command on host {}", host.getHostName());
+                sshClient.executeCommand(sshCopyIdCommand, cmdIn, cmdOut, cmdErr);
+            } catch (Exception ex) {
+                log.error("ssh-copy-id command failed on host '{}': {}\nStdout: {}\nStderr: {}",
+                        host.getHostName(),
+                        ex.getMessage(),
+                        cmdOut,
+                        cmdErr);
+                log.debug("Exception", ex);
+            }
+        } catch (IOException e) {
+            log.error("Error opening SSH connection to '{}': {}",
+                    host.getHostName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
-        return VDSStatus.Maintenance.equals(vdsInitialStatus) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 }

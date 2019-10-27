@@ -1,6 +1,11 @@
 ---
+- name: Install yum-utils
+  package:
+    name: yum-utils
+    state: present
+
 - name: Fetch info about VDSM
-  command: "rpm -q vdsm --qf '%{VERSION}'"
+  command: "repoquery --qf '%{VERSION}' vdsm"
   changed_when: false
   register: vdsm_version
   check_mode: no
