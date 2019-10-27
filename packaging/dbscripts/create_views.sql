@@ -1423,7 +1423,8 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.guest_containers AS guest_containers,
     image_details.has_illegal_images,
     vm_static.multi_queues_enabled AS multi_queues_enabled,
-    vm_static.use_tsc_frequency AS use_tsc_frequency
+    vm_static.use_tsc_frequency AS use_tsc_frequency,
+    vm_static.namespace AS namespace
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1634,7 +1635,8 @@ SELECT DISTINCT vms.vm_name,
     vms.guest_containers as guest_containers,
     vms.has_illegal_images,
     vms.multi_queues_enabled,
-    vms.use_tsc_frequency
+    vms.use_tsc_frequency,
+    vms.namespace
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

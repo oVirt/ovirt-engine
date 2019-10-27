@@ -71,6 +71,7 @@
                                 <p:VmwarePropertiesWidget addStyleNames="{style.topElement}" ui:field="vmwarePropertiesWidget" visible="false" />
                                 <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" visible="false" />
                                 <p:XENPropertiesWidget addStyleNames="{style.topElement}" ui:field="xenPropertiesWidget" visible="false" />
+                                <p:KubevirtPropertiesWidget addStyleNames="{style.topElement}" ui:field="kubevirtPropertiesWidget" visible="false" />
                                 <b:Row>
                                     <b:Column size="SM_12">
                                         <pa:AlertPanel ui:field="testResultMessage" visible="false" />

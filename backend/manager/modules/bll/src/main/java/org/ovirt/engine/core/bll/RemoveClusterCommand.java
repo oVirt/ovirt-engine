@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.errors.EngineMessage.VMT_CLUSTER_IS_NOT_VALID;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.kubevirt.ForceClusterResourcesRemover;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -30,6 +33,8 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
     private VmTemplateDao vmTemplateDao;
     @Inject
     private VmPoolDao vmPoolDao;
+    @Inject
+    private ForceClusterResourcesRemover clusterResourcesRemover;
 
     public RemoveClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -37,6 +42,12 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
 
     @Override
     protected void executeCommand() {
+        if (isForceRemovalOfUnmanagedCluster()) {
+            clusterResourcesRemover.forceRemove(getCluster().getId());
+            setSucceeded(true);
+            return;
+        }
+
         clusterDao.remove(getCluster().getId());
         setSucceeded(true);
     }
@@ -46,9 +57,13 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
         List<VmPool> list = null;
         boolean returnValue = true;
         if (getCluster() == null) {
-            addValidationMessage(EngineMessage.VMT_CLUSTER_IS_NOT_VALID);
+            addValidationMessage(VMT_CLUSTER_IS_NOT_VALID);
             returnValue = false;
         } else {
+            if (isForceRemovalOfUnmanagedCluster()) {
+                return true;
+            }
+
             if (getCluster().getId().equals(Config.getValue(ConfigValues.AutoRegistrationDefaultClusterID))) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_DEFAULT_CLUSTER);
                 returnValue = false;
@@ -78,6 +93,10 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
         }
 
         return returnValue;
+    }
+
+    private boolean isForceRemovalOfUnmanagedCluster() {
+        return !getCluster().isManaged() && getParameters().isForce();
     }
 
     @Override

@@ -726,7 +726,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_migration_policy_id UUID,
     v_lease_sd_id UUID,
     v_multi_queues_enabled BOOLEAN,
-    v_use_tsc_frequency BOOLEAN)
+    v_use_tsc_frequency BOOLEAN,
+    v_namespace VARCHAR(253))
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -811,7 +812,8 @@ INSERT INTO vm_static(description,
                       migration_policy_id,
                       lease_sd_id,
                       multi_queues_enabled,
-                      use_tsc_frequency)
+                      use_tsc_frequency,
+                      namespace)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -888,7 +890,8 @@ INSERT INTO vm_static(description,
            v_migration_policy_id,
            v_lease_sd_id,
            v_multi_queues_enabled,
-           v_use_tsc_frequency);
+           v_use_tsc_frequency,
+           v_namespace);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1091,7 +1094,8 @@ v_custom_compatibility_version VARCHAR(40),
 v_migration_policy_id UUID,
 v_lease_sd_id UUID,
 v_multi_queues_enabled BOOLEAN,
-v_use_tsc_frequency BOOLEAN)
+v_use_tsc_frequency BOOLEAN,
+v_namespace VARCHAR(253))
 
 RETURNS VOID
 
@@ -1175,7 +1179,8 @@ BEGIN
      migration_policy_id = v_migration_policy_id,
      lease_sd_id = v_lease_sd_id,
      multi_queues_enabled = v_multi_queues_enabled,
-     use_tsc_frequency = v_use_tsc_frequency
+     use_tsc_frequency = v_use_tsc_frequency,
+     namespace = v_namespace
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 
@@ -1523,7 +1528,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
+Create or replace FUNCTION getByNameAndNamespaceForCluster(v_cluster_id UUID, v_vm_name VARCHAR(255), v_namespace VARCHAR(253)) RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT DISTINCT vms.*
+   FROM vms
+   WHERE vm_name = v_vm_name
+       AND namespace = v_namespace
+       AND cluster_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

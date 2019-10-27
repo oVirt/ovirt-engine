@@ -117,6 +117,10 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
+        if (!dom.isManaged()) {
+            return true;
+        }
+
         VDS vds = getVds();
         boolean localFs = isLocalFs(dom);
 

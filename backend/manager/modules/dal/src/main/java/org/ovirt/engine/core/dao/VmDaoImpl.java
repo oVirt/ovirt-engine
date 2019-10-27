@@ -55,6 +55,18 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
+    public VM getByNameAndNamespaceForCluster(Guid clusterId,
+            String name,
+            String namespace) {
+        return getCallsHandler().executeRead("getByNameAndNamespaceForCluster",
+                vmRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("vm_name", name)
+                        .addValue("namespace", namespace));
+    }
+
+    @Override
     public Map<Boolean, List<VM>> getForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
         List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);
 

@@ -86,6 +86,7 @@ public class CertificationValidityChecker implements BackendService {
             hostDao.getAll()
                     .stream()
                     .filter(host -> host.getStatus() == VDSStatus.Up || host.getStatus() == VDSStatus.NonOperational)
+                    .filter(VDS::isManaged)
                     .forEach(this::checkHostCertificateValidity);
         } catch (Throwable t) {
             log.error("Failed to check certification validity: {}", ExceptionUtils.getRootCauseMessage(t));

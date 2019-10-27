@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -22,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.DefaultGenericDao;
+import org.ovirt.engine.core.dao.provider.crypt.PasswordCryptorFactory;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -70,6 +71,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
             case VMWARE:
             case KVM:
             case XEN:
+            case KUBEVIRT:
                 additionalProperties = entity.getAdditionalProperties();
                 break;
             default:
@@ -97,7 +99,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 .addValue("provider_type", EnumUtils.nameOrNull(entity.getType()))
                 .addValue("auth_required", entity.isRequiringAuthentication())
                 .addValue("auth_username", entity.getUsername())
-                .addValue("auth_password", DbFacadeUtils.encryptPassword(entity.getPassword()))
+                .addValue("auth_password",
+                        PasswordCryptorFactory.create(entity.getType()).encryptPassword(entity.getPassword()))
                 .addValue("custom_properties",
                         SerializationFactory.getSerializer().serialize(entity.getCustomProperties()))
                 .addValue("auth_url", entity.getAuthUrl())
@@ -139,7 +142,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
             entity.setType(ProviderType.valueOf(rs.getString("provider_type")));
             entity.setRequiringAuthentication(rs.getBoolean("auth_required"));
             entity.setUsername(rs.getString("auth_username"));
-            entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("auth_password")));
+            entity.setPassword(PasswordCryptorFactory.create(entity.getType())
+                    .decryptPassword(rs.getString("auth_password")));
             entity.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserialize(rs.getString("custom_properties"), HashMap.class));
             entity.setAdditionalProperties(mapAdditionalProperties(rs, entity));
@@ -173,6 +177,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KVMVmProviderProperties.class);
             case XEN:
                 return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), XENVmProviderProperties.class);
+            case KUBEVIRT:
+                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), KubevirtProviderProperties.class);
             default:
                 return null;
             }

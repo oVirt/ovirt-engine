@@ -69,6 +69,7 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         ProviderValidator<?> validator = getProviderProxy().getProviderValidator();
         return validate(validator.nameAvailable())
                 && validate(validator.validateAuthUrl())
+                && validate(validator.validatePassword())
                 && validate(validator.validateAddProvider())
                 && validate(validator.validateOpenStackImageConstraints());
     }
@@ -76,7 +77,9 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
     @Override
     protected void executeCommand() {
         providerDao.save(getProvider());
-        getProviderProxy().onAddition();
+        ProviderProxy<?> providerProxy = getProviderProxy();
+        providerProxy.setCommandContext(getContext());
+        providerProxy.onAddition();
         setActionReturnValue(getProvider().getId());
         setSucceeded(true);
     }

@@ -12,7 +12,8 @@ public enum StorageDomainType {
     Image(4),
     Volume(5),
     Unknown(6),
-    ManagedBlockStorage(7);
+    ManagedBlockStorage(7),
+    Unmanaged(8);
 
     private static final Map<Integer, StorageDomainType> mappings = new HashMap<>();
 

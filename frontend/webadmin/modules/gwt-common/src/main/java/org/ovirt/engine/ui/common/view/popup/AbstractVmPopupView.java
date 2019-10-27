@@ -54,6 +54,13 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     }
 
     @Override
+    public void switchManaged(boolean managed) {
+        if (getContentWidget() instanceof AbstractVmPopupWidget) {
+            ((AbstractVmPopupWidget) getContentWidget()).switchManaged(managed);
+        }
+    }
+
+    @Override
     public void initToCreateInstanceMode() {
         if (getContentWidget() instanceof AbstractVmPopupWidget) {
             ((AbstractVmPopupWidget) getContentWidget()).initCreateInstanceMode();

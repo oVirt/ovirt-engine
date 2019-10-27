@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
+public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented, Managed {
     private static final long serialVersionUID = 1043048758366348870L;
 
     private Boolean supportsDiscard;
@@ -430,6 +430,11 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
 
     public void setHostedEngineStorage(boolean hostedEngineStorage) {
         this.hostedEngineStorage = hostedEngineStorage;
+    }
+
+    @Override
+    public boolean isManaged() {
+        return getStorageDomainType() != StorageDomainType.Unmanaged;
     }
 
     @Override

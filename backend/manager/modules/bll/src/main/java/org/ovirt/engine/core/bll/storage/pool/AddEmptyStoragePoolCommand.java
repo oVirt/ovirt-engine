@@ -54,9 +54,14 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     protected void addStoragePoolToDb() {
         getStoragePool().setId(Guid.newGuid());
-        getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
+        boolean managedStoragePool = getStoragePool().isManaged();
+        getStoragePool().setStatus(managedStoragePool ? StoragePoolStatus.Uninitialized : StoragePoolStatus.Up);
 
         storagePoolDao.save(getStoragePool());
+        if (getParameters().isCompensationEnabled()) {
+            getContext().getCompensationContext().snapshotNewEntity(getStoragePool());
+            getContext().getCompensationContext().stateChanged();
+        }
     }
 
     @Override

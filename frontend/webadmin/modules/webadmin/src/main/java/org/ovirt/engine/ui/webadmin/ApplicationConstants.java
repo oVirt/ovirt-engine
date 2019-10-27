@@ -3552,4 +3552,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String clusterSerialNumberPolicy();
 
     String clusterCustomSerialNumber();
+
+    String kubevirtToken();
+
+    String kubevirtCertificateAuthority();
+
+    String prometheusUrl();
+
+    String prometheusCertificateAuthority();
 }

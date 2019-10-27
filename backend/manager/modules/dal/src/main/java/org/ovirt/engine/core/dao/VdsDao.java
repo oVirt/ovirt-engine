@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,9 +41,40 @@ public interface VdsDao extends Dao, SearchDao<VDS>, AutoRecoverDao<VDS> {
      *
      * @param name
      *            the name
+     * @param  clusterId
+     *            the cluster id in to which the host belongs
      * @return the found instance or {@code null}
      */
-    VDS getByName(String name);
+    VDS getByName(String name, Guid clusterId);
+
+    /**
+     * Finds the first host with the given name.
+     *
+     * @param name
+     *            the name
+     * @return the first instance or {@code null}
+     */
+    Optional<VDS> getFirstByName(String name);
+
+    /**
+     * Finds all hosts with the given name.
+     *
+     * @param name
+     *            the name
+     * @return the list of hosts
+     */
+    List<VDS> getByName(String name);
+
+    /**
+     * Finds all instances for the given host in a given cluster.
+     *
+     * @param hostname
+     *            the hostname
+     * @param  clusterId
+     *            the cluster id in to which the host belongs
+     * @return the list of instances
+     */
+    List<VDS> getAllForHostname(String hostname, Guid clusterId);
 
     /**
      * Finds all instances for the given host.

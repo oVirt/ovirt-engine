@@ -35,6 +35,7 @@
       <module name="com.netflix.hystrix" export="true" optional="true"/>
       <module name="com.netflix.config" export="true" optional="true"/>
       <module name="com.netflix.hystrix.contrib" export="true" optional="true"/>
+      <module name="org.ovirt.java-client-kubevirt" export="true" optional="true"/>
       <module name="com.fasterxml.jackson.core.jackson-core" export="true" optional="true"/>
 
       <module name="org.ovirt.engine.api.ovirt-engine-extensions-api" export="true" meta-inf="import"/>

@@ -382,4 +382,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     public boolean isBlank() {
         return Guid.Empty.equals(getBaseTemplateId());
     }
+
+    @Override
+    public boolean isManaged() {
+        return getOrigin() != OriginType.KUBEVIRT;
+    }
 }

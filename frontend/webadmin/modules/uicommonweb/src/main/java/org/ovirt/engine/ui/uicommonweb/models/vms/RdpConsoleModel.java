@@ -110,8 +110,12 @@ public class RdpConsoleModel extends ConsoleModel {
 
     @Override
     public boolean canConnect() {
-        return (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
+        return getEntity().isManaged() && statusSupportsConsoleConnection()
                 && AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getVmOsId());
+    }
+
+    private boolean statusSupportsConsoleConnection() {
+        return getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown;
     }
 
     public void raiseErrorEvent(ErrorCodeEventArgs e) {

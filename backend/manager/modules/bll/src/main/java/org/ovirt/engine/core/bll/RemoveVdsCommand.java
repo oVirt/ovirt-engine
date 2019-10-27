@@ -37,6 +37,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -56,17 +57,19 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private VDS upServer;
 
     @Inject
-    private GlusterServerDao glusterServerDao;
-    @Inject
-    private StoragePoolDao storagePoolDao;
-    @Inject
-    private StorageDomainDao storageDomainDao;
-    @Inject
     private VdsStaticDao vdsStaticDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
+    @Inject
+    private TagDao tagDao;
+    @Inject
+    private GlusterServerDao glusterServerDao;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
     @Inject
     private VdsDao vdsDao;
     @Inject
@@ -100,6 +103,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Override
     protected void executeCommand() {
+        if (isForceRemovalOfUnmanagedHost(getVds())) {
+            removeHostFromDB(getVdsId());
+            removeVdsFromCollection();
+            setSucceeded(true);
+            return;
+        }
+
         /**
          * If upserver is null and force action is true, then don't try for gluster host remove, simply remove the host
          * entry from database.
@@ -123,15 +133,24 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         }
 
         TransactionSupport.executeInNewTransaction(() -> {
-            removeVdsStatisticsFromDb();
-            removeVdsDynamicFromDb();
-            removeVdsStaticFromDb();
+            removeHostFromDB(getVdsId());
             return null;
         });
 
         removeVdsFromCollection();
         runAnsibleRemovePlaybook();
         setSucceeded(true);
+    }
+
+    private void removeHostFromDB(Guid hostId) {
+        vdsStatisticsDao.remove(hostId);
+        tagDao.detachVdsFromAllTags(hostId);
+        vdsDynamicDao.remove(hostId);
+        vdsStaticDao.remove(hostId);
+    }
+
+    private boolean isForceRemovalOfUnmanagedHost(VDS vds) {
+        return !vds.isManaged() && isInternalExecution();
     }
 
     @SuppressWarnings("unchecked")
@@ -175,7 +194,18 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Override
     protected boolean validate() {
-        boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getValidationMessages());
+        // check if vds id is valid
+        VDS vds = vdsDao.get(getVdsId());
+        if (vds == null) {
+            addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
+            return false;
+        }
+
+        if (isForceRemovalOfUnmanagedHost(vds)) {
+            return true;
+        }
+
+        boolean returnValue = canRemoveVds(vds, getReturnValue().getValidationMessages());
         StoragePool storagePool = storagePoolDao.getForVds(getParameters().getVdsId());
 
         if (returnValue && storagePool != null && storagePool.isLocal()) {
@@ -230,33 +260,16 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(getVdsId()));
     }
 
-    private void removeVdsStaticFromDb() {
-        vdsStaticDao.remove(getVdsId());
-    }
-
-    private void removeVdsDynamicFromDb() {
-        vdsDynamicDao.remove(getVdsId());
-    }
-
-    private void removeVdsStatisticsFromDb() {
-        vdsStatisticsDao.remove(getVdsId());
-    }
-
-    private boolean canRemoveVds(Guid vdsId, List<String> text) {
+    private boolean canRemoveVds(VDS vds, List<String> text) {
         boolean returnValue = true;
-        // check if vds id is valid
-        VDS vds = vdsDao.get(vdsId);
-        if (vds == null) {
-            text.add(EngineMessage.VDS_INVALID_SERVER_ID.toString());
-            returnValue = false;
-        } else if (!statusLegalForRemove(vds)) {
+        if (!statusLegalForRemove(vds)) {
             text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL.toString());
             returnValue = false;
         } else if (vds.getVmCount() > 0) {
             text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM.toString());
             returnValue = false;
         } else {
-            List<String> vmNamesPinnedToHost = vmStaticDao.getAllNamesPinnedToHost(vdsId);
+            List<String> vmNamesPinnedToHost = vmStaticDao.getAllNamesPinnedToHost(vds.getId());
             if (!vmNamesPinnedToHost.isEmpty()) {
                 text.add(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS.toString());
                 text.add(String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));

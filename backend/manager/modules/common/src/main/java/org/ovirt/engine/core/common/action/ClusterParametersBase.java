@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ClusterParametersBase extends ActionParametersBase {
     private static final long serialVersionUID = -9133528679053901135L;
     private Guid clusterId;
+    private boolean force;
 
     public ClusterParametersBase(Guid clusterId) {
         this.clusterId = clusterId;
@@ -15,5 +16,13 @@ public class ClusterParametersBase extends ActionParametersBase {
     }
 
     public ClusterParametersBase() {
+    }
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 }

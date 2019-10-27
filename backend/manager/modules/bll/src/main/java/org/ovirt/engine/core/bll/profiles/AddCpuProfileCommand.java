@@ -62,10 +62,14 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
     protected void addPermissions() {
         PermissionsOperationsParameters permissionsOperationsParameters = createPermissionParameters(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                                                                                                      PredefinedRoles.CPU_PROFILE_OPERATOR.getId());
-        backend.runAction(ActionType.AddPermission, permissionsOperationsParameters);
+        backend.runInternalAction(ActionType.AddPermission,
+                permissionsOperationsParameters,
+                cloneContext().withoutExecutionContext().withoutLock());
 
         permissionsOperationsParameters = createPermissionParameters(getUserId(), PredefinedRoles.CPU_PROFILE_CREATOR.getId());
-        backend.runAction(ActionType.AddPermission, permissionsOperationsParameters);
+        backend.runInternalAction(ActionType.AddPermission,
+                permissionsOperationsParameters,
+                cloneContext().withoutExecutionContext().withoutLock());
 
     }
 

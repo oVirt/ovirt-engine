@@ -146,6 +146,11 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         if (getCluster() != null && !getCluster().supportsVirtService()) {
             return;
         }
+
+        if (!getVds().isManaged()) {
+            return;
+        }
+
         // Check first if PM is enabled on the cluster level
         if (getVds().isFencingEnabled()) {
             if (!vdsStatic.isPmEnabled()) {

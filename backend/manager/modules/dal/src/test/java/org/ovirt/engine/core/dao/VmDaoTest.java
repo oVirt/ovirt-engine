@@ -110,6 +110,18 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
     }
 
     /**
+     * Ensures that get by name and namespace for cluster works as expected
+     */
+    @Test
+    public void testGetByNameAndNamespaceForCluster() {
+        VM result = dao.getByNameAndNamespaceForCluster(existingVm.getClusterId(),
+                existingVm.getName(),
+                existingVm.getNamespace());
+
+        assertGetResult(result);
+    }
+
+    /**
      * Ensures that get by name works as expected when a filtered for permissions
      * of an unprivileged user.
      */

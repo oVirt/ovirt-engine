@@ -1880,4 +1880,6 @@ public interface CommonApplicationConstants extends Constants {
     String vmSerialNumberPolicy();
 
     String vmCustomSerialNumber();
+
+    String k8s_namespace();
 }

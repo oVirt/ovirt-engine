@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
 import org.ovirt.engine.core.bll.migration.ConvergenceConfigProvider;
 import org.ovirt.engine.core.bll.migration.ConvergenceSchedule;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -107,6 +109,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private HostNetworkQosDao hostNetworkQosDao;
     @Inject
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
+    @Inject
+    private KubevirtMonitoring kubevirt;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -223,6 +227,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void executeVmCommand() {
+        if (getVm().getOrigin() == OriginType.KUBEVIRT) {
+            kubevirt.migrate(getVm());
+            freeLock();
+            setSucceeded(true);
+            return;
+        }
         getVmManager().getStatistics().setMigrationProgressPercent(0);
         setSucceeded(initVdss() && perform());
     }

@@ -5,10 +5,11 @@ import java.util.Map;
 
 public enum VDSType {
     VDS(0),
-    oVirtNode(1);
+    oVirtNode(1),
     /**
      * oVirtVintageNode(2) is deprecated and should not be used
      */
+    KubevirtNode(3);
 
     private int intValue;
     private static final Map<Integer, VDSType> mappings = new HashMap<>();

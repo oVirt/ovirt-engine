@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -21,6 +22,8 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
 
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private KubevirtMonitoring kubevirt;
 
     public RebootVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -39,6 +42,11 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
 
     @Override
     protected void perform() {
+        if (!getVm().isManaged()) {
+            kubevirt.restart(getVm());
+            setSucceeded(true);
+            return;
+        }
         if (isColdReboot()) {
             ActionReturnValue
                     returnValue = runInternalAction(ActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
@@ -58,6 +66,10 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     protected boolean validate() {
         if (getVm() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (!getVm().isManaged()) {
+            return true;
         }
 
         if (isVmDuringBackup()) {

@@ -216,6 +216,11 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
         return null;
     }
 
+    @Override
+    public boolean isManaged() {
+        return getDiskStorageType() != DiskStorageType.KUBERNETES;
+    }
+
     public DiskContentType getContentType() {
         return contentType;
     }

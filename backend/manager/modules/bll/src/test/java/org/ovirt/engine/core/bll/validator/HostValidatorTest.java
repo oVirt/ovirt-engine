@@ -116,7 +116,7 @@ public class HostValidatorTest {
 
     @Test
     public void nameIsUsed() {
-        when(hostDao.getByName(any())).thenReturn(mock(VDS.class));
+        when(hostDao.getByName(any(), any())).thenReturn(mock(VDS.class));
 
         assertThat(validator.nameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
@@ -128,7 +128,7 @@ public class HostValidatorTest {
 
     @Test
     public void hostNameIsUsed() {
-        when(hostDao.getAllForHostname(any())).thenReturn(Collections.singletonList(mock(VDS.class)));
+        when(hostDao.getAllForHostname(any(), any())).thenReturn(Collections.singletonList(mock(VDS.class)));
 
         assertThat(validator.hostNameNotUsed(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST));
     }

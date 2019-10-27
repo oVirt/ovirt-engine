@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.provider;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.host.provider.foreman.ForemanHostProviderProxy;
+import org.ovirt.engine.core.bll.provider.cluster.KubevirtProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.UnmanagedNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.ExternalNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProviderProxy;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.bll.provider.vms.KVMVmProviderProxy;
 import org.ovirt.engine.core.bll.provider.vms.VmwareVmProviderProxy;
 import org.ovirt.engine.core.bll.provider.vms.XENVmProviderProxy;
 import org.ovirt.engine.core.common.businessentities.KVMVmProviderProperties;
+import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -61,6 +63,9 @@ public class ProviderProxyFactory {
 
         case XEN:
             return (P) Injector.injectMembers(new XENVmProviderProxy((Provider<XENVmProviderProperties>) provider));
+
+        case KUBEVIRT:
+            return (P) Injector.injectMembers(new KubevirtProviderProxy((Provider<KubevirtProviderProperties>) provider));
 
         default:
             return null;

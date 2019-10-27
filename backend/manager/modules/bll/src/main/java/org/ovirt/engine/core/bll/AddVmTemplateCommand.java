@@ -254,7 +254,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void separateCustomProperties(VmStatic parameterMasterVm) {
-        if (getCluster() != null) {
+        if (getCluster() != null && parameterMasterVm.isManaged()) {
             // Parses the custom properties field that was filled by frontend to
             // predefined and user defined fields
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
@@ -347,6 +347,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             getCompensationContext().stateChanged();
             return null;
         });
+
+        if (!getParameters().getMasterVm().isManaged()) {
+            endSuccessfullySynchronous();
+            return;
+        }
 
         final Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = addAllTemplateDisks();
         srcDeviceIdToTargetDeviceIdMapping
@@ -557,6 +562,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected boolean validate() {
+        if (isInternalExecution() && !getParameters().getMasterVm().isManaged()) {
+            return setAndValidateCpuProfile();
+        }
+
         boolean isInstanceType = getParameters().getTemplateType() == VmEntityType.INSTANCE_TYPE;
         if (getCluster() == null && !isInstanceType) {
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
@@ -961,6 +970,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getResumeBehavior(),
                         getParameters().getMasterVm().isMultiQueuesEnabled(),
                         getParameters().getMasterVm().getUseTscFrequency()));
+        getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
         updateVmIcons();
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
@@ -1318,7 +1328,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public CommandCallback getCallback() {
-        return callbackProvider.get();
+        return getParameters().getMasterVm().isManaged() ? callbackProvider.get() : null;
     }
 
 }

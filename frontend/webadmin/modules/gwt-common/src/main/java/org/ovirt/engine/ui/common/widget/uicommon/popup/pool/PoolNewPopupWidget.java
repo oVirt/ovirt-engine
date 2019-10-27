@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ToStringEntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -62,7 +63,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly()).
                 update(affinityTab, hiddenField());
 
-        updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
+        updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), PopupWidgetConfig::detachable);
 
         return widgetConfiguration;
     }

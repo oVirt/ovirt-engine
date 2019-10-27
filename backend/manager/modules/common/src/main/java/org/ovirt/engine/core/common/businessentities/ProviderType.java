@@ -16,7 +16,8 @@ public enum ProviderType implements Identifiable {
     VMWARE(4, false, false, false, VdcObjectType.VM),
     EXTERNAL_NETWORK(5, true, true, true, VdcObjectType.Network),
     KVM(6, false, false, false, VdcObjectType.VM),
-    XEN(7, false, false, false, VdcObjectType.VM);
+    XEN(7, false, false, false, VdcObjectType.VM),
+    KUBEVIRT(8, false, false, false, VdcObjectType.Cluster);
 
     private int value;
     private Set<VdcObjectType> providedTypes;

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.snapshots.CreateSnapshotCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
@@ -65,7 +66,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         newDiskImage.setCreationDate(new Date());
         newDiskImage.setLastModified(new Date());
         newDiskImage.setActive(true);
-        newDiskImage.setImageStatus(ImageStatus.LOCKED);
+        ImageStatus status = getParameters().getDiskInfo().isManaged() ? ImageStatus.LOCKED : ImageStatus.OK;
+        newDiskImage.setImageStatus(status);
         newDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         newDiskImage.setQuotaId(getParameters().getQuotaId());
         newDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
@@ -91,6 +93,9 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     protected boolean processImageInIrs() {
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.KUBERNETES) {
+            return true;
+        }
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage,
                 getCreateImageVDSCommandParameters());

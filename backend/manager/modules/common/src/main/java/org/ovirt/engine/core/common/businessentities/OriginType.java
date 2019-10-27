@@ -18,7 +18,8 @@ public enum OriginType {
     MANAGED_HOSTED_ENGINE(6),
     KVM(7),
     PHYSICAL_MACHINE(8),
-    HYPERV(9);
+    HYPERV(9),
+    KUBEVIRT(10);
 
     private int intValue;
     private static Map<Integer, OriginType> mappings =

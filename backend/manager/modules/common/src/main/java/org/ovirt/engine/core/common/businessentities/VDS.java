@@ -1844,4 +1844,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setFipsEnabled(boolean fipsEnabled) {
         vdsDynamic.setFipsEnabled(fipsEnabled);
     }
+
+    public boolean isManaged() {
+        return vdsStatic.isManaged();
+    }
 }

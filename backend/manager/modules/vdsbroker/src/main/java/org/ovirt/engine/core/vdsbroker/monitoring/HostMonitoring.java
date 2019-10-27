@@ -55,7 +55,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HostMonitoring {
+public class HostMonitoring implements HostMonitoringInterface {
     private final VDS vds;
     private final VdsManager vdsManager;
     private VDSStatus firstStatus;

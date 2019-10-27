@@ -58,6 +58,19 @@ public interface VmDao extends Dao {
     VM getByNameForDataCenter(Guid dataCenterId, String name, Guid userID, boolean isFiltered);
 
     /**
+     * Returns the VM with the specified name and namespace for a given cluster
+     *
+     * @param clusterId
+     *            the Cluster ID
+     * @param name
+     *            the name of the VM
+     * @param namespace
+     *            the namespace of the VM
+     * @return the VM
+     */
+    VM getByNameAndNamespaceForCluster(Guid clusterId, String name, String namespace);
+
+    /**
      * Retrieves the VMs with the specified image id.
      *
      *

@@ -34,6 +34,7 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
         entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
         entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
         entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
+        entity.setManaged(rs.getBoolean("managed"));
         return entity;
     };
 
@@ -127,7 +128,8 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                 .addValue("spm_vds_id", pool.getSpmVdsId())
                 .addValue("quota_enforcement_type", pool.getQuotaEnforcementType())
                 .addValue("compatibility_version",
-                        pool.getCompatibilityVersion());
+                        pool.getCompatibilityVersion())
+                .addValue("managed", pool.isManaged());
 
         getCallsHandler().executeModification("Insertstorage_pool",
                 parameterSource);
@@ -149,7 +151,8 @@ public class StoragePoolDaoImpl extends BaseDao implements StoragePoolDao {
                 .addValue("compatibility_version",
                         pool.getCompatibilityVersion())
                 .addValue("quota_enforcement_type",
-                        pool.getQuotaEnforcementType().getValue());
+                        pool.getQuotaEnforcementType().getValue())
+                .addValue("managed", pool.isManaged());
 
         getCallsHandler().executeModification("Updatestorage_pool", parameterSource);
     }

@@ -37,6 +37,8 @@ public class VmStatic extends VmBase {
     @EditableVmField(onHostedEngine = true)
     private Guid providerId;
 
+    private String namespace;
+
     public VmStatic() {
         setNumOfMonitors(1);
         initialized = false;
@@ -57,6 +59,7 @@ public class VmStatic extends VmBase {
         setInitialized(vmStatic.isInitialized());
         setUseLatestVersion(vmStatic.isUseLatestVersion());
         setInstanceTypeId(vmStatic.getInstanceTypeId());
+        namespace = vmStatic.namespace;
     }
 
     public VmStatic(VmBase vmBase) {
@@ -117,7 +120,8 @@ public class VmStatic extends VmBase {
                 originalTemplateGuid,
                 originalTemplateName,
                 useLatestVersion,
-                providerId
+                providerId,
+                namespace
         );
     }
 
@@ -139,7 +143,8 @@ public class VmStatic extends VmBase {
                 && Objects.equals(originalTemplateGuid, other.originalTemplateGuid)
                 && Objects.equals(originalTemplateName, other.originalTemplateName)
                 && useLatestVersion == other.useLatestVersion
-                && Objects.equals(providerId, other.providerId);
+                && Objects.equals(providerId, other.providerId)
+                && Objects.equals(namespace, other.namespace);
     }
 
     @Override
@@ -198,4 +203,16 @@ public class VmStatic extends VmBase {
         this.providerId = providerId;
     }
 
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    @Override
+    public boolean isManaged() {
+        return getOrigin() != OriginType.KUBEVIRT;
+    }
 }

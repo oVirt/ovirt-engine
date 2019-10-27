@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -37,10 +38,13 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportOvaModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.HasDiskWindow;
+import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImagesModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
@@ -402,13 +406,51 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         if (model.getIsClone()) {
             parameters.setVmId(Guid.Empty);
         }
-        Frontend.getInstance().runAction(
-                model.getProvisioning().getEntity() ? ActionType.AddVmFromTemplate : ActionType.AddVm,
-                parameters,
-                createUnitVmModelNetworkAsyncCallback(vm, model),
-                this);
+        addVm(model, parameters, vm);
     }
 
+    private void addVm(UnitVmModel model, AddVmParameters parameters, VM vm) {
+        if (!model.getSelectedCluster().isManaged()) {
+            addVmOnUnmanagedCluster(model, parameters, vm);
+            return;
+        }
+        Frontend.getInstance().runAction(
+                model.getProvisioning().getEntity() ? ActionType.AddVmFromTemplate : ActionType.AddVm,
+                        parameters,
+                        createUnitVmModelNetworkAsyncCallback(vm, model),
+                        this);
+    }
+
+    private void addVmOnUnmanagedCluster(UnitVmModel model, AddVmParameters parameters, VM vm) {
+        InstanceImagesModel instanceImagesModel = model.getInstanceImages();
+        List<DiskVmElement> disksToAttach = new ArrayList<>();
+        instanceImagesModel.getItems().forEach(instanceImageLineModel -> {
+            AbstractDiskModel diskModel = instanceImageLineModel.getDiskModel().getEntity();
+            boolean isAttachDiskModel = diskModel instanceof AttachDiskModel;
+            if (!isAttachDiskModel) {
+                return;
+            }
+            DiskVmElement dve = new DiskVmElement(diskModel.getDisk().getId(), vm.getId());
+            dve.setBoot(diskModel.getIsBootable().getEntity());
+            dve.setDiskInterface(diskModel.getDiskInterface().getSelectedItem());
+            dve.setReadOnly(diskModel.isReadOnly());
+            disksToAttach.add(dve);
+        });
+        parameters.setDisksToAttach(disksToAttach);
+
+        Frontend.getInstance().runAction(
+                model.getProvisioning().getEntity() ? ActionType.AddVmFromTemplate : ActionType.AddVm,
+                        parameters,
+                        result -> {
+                            ActionReturnValue retVal = result.getReturnValue();
+                            VmBaseListModel<?, ?> state = (VmBaseListModel<?, ?>) result.getState();
+                            state.stopProgress();
+                            if (retVal != null && retVal.getSucceeded()) {
+                                cancel();
+                            }
+                        },
+                        this);
+    }
 
     protected void updateVM(UnitVmModel model){
         // no-op by default. Override if needed.

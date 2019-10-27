@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
+@ValidateSupportsTransaction
 public class AddClusterCommand<T extends ClusterOperationParameters>
         extends ClusterOperationCommandBase<T> {
 
@@ -75,6 +76,11 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
         cluster.setDetectEmulatedMachine(true);
         cluster.setMacPoolId(calculateMacPoolIdToUse());
         clusterDao.save(cluster);
+
+        if (getParameters().isCompensationEnabled()) {
+            getContext().getCompensationContext().snapshotNewEntity(cluster);
+            getContext().getCompensationContext().stateChanged();
+        }
 
         alertIfFencingDisabled();
 
@@ -127,8 +133,9 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
         cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
         cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
 
-        ActionReturnValue addCpuProfileReturnValue = backend.runAction(ActionType.AddCpuProfile,
-                cpuProfileAddParameters);
+        ActionReturnValue addCpuProfileReturnValue = backend.runInternalAction(ActionType.AddCpuProfile,
+                cpuProfileAddParameters,
+                cloneContext().withoutExecutionContext().withoutLock());
         cpuProfile.setId(addCpuProfileReturnValue.getActionReturnValue());
     }
 

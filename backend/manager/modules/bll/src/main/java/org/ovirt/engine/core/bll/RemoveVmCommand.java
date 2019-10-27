@@ -19,6 +19,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -47,6 +48,7 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -93,6 +95,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     @Inject
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
 
+    @Inject
+    private KubevirtMonitoring kubevirt;
+
     private List<CinderDisk> cinderDisks;
 
     private List<ManagedBlockStorageDisk> managedBlockDisks;
@@ -123,6 +128,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected void executeVmCommand() {
+        if (getVm().getOrigin() == OriginType.KUBEVIRT && !isInternalExecution()) {
+            kubevirt.delete(getVm());
+            freeLock();
+            setSucceeded(true);
+            return;
+        }
+
         if (getVm().getStatus() != VMStatus.ImageLocked) {
             vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
         }
@@ -211,6 +223,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
         if (!canRunActionOnNonManagedVm()) {
             return false;
+        }
+
+        if (getVm().getOrigin() == OriginType.KUBEVIRT) {
+            return true;
         }
 
         if (getVm().isDeleteProtected()) {

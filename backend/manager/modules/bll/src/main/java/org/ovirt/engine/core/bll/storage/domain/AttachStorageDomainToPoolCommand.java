@@ -93,8 +93,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected void executeCommand() {
-        if (isManagedBlockStorageDomain()) {
-            handleManagedBlockStorageDomain();
+        if (isManagedBlockStorageDomain() || !getStorageDomain().isManaged()) {
+            handleExternallyManagedStorageDomain();
             return;
         }
         if (isCinderStorageDomain()) {
@@ -222,7 +222,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         }
     }
 
-    private void handleManagedBlockStorageDomain() {
+    private void handleExternallyManagedStorageDomain() {
         StorageDomainStatus status = getParameters().getActivate() ? StorageDomainStatus.Active : StorageDomainStatus.Maintenance;
         StoragePoolIsoMap storagePoolIsoMap =
                 new StoragePoolIsoMap(getStorageDomain().getId(),
@@ -281,6 +281,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     @Override
     protected boolean validate() {
         StoragePoolValidator spValidator = createStoragePoolValidator();
+        if (getStorageDomain() != null && !getStorageDomain().isManaged()) {
+            return true;
+        }
+
         if (!validate(spValidator.exists())
                         || !initializeVds()
                         || !checkStorageDomain()) {

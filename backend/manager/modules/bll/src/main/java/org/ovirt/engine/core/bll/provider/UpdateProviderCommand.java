@@ -57,12 +57,17 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected boolean validate() {
-        ProviderValidator validatorOld = new ProviderValidator(getOldProvider());
-        ProviderValidator validatorNew = new ProviderValidator(getProvider());
+        ProviderValidator validatorOld = getProviderProxy(getOldProvider()).getProviderValidator();
+        ProviderValidator validatorNew = getProviderProxy(getProvider()).getProviderValidator();
         return validate(validatorOld.providerIsSet())
                 && (nameKept() || validate(validatorNew.nameAvailable()))
                 && validate(validatorNew.validateAuthUrl())
+                && validate(validatorNew.validatePassword())
                 && validate(providerTypeNotChanged(getOldProvider(), getProvider()));
+    }
+
+    private ProviderProxy<?> getProviderProxy(Provider provider) {
+        return providerProxyFactory.create(getProvider());
     }
 
     private ValidationResult providerTypeNotChanged(Provider<?> oldProvider, Provider<?> newProvider) {

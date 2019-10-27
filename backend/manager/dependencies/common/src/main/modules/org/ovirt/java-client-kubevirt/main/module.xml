@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.1" name="org.ovirt.java-client-kubevirt">
+
+  <resources>
+    <resource-root path="java-client-kubevirt.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="org.slf4j"/>
+    <module name="org.yaml.snakeyaml"/>
+  </dependencies>
+
+</module>

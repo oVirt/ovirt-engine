@@ -330,6 +330,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteAllTagsVdsMapForHost (
+    v_vds_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM tags_vds_map
+    WHERE vds_id = v_vds_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetAllFromtags_vds_map ()
 RETURNS SETOF tags_vds_map STABLE AS $PROCEDURE$
 BEGIN

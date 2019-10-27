@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.EditableVmField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -365,6 +366,10 @@ public class VmHandler implements BackendService {
         params.setDatacenterId(storagePoolId);
         QueryReturnValue result = backend.runInternalQuery(QueryType.IsVmWithSameNameExist, params);
         return (Boolean) result.getReturnValue();
+    }
+
+    public boolean isVmWithSameNameExistStatic(VmStatic vm, Guid storagePoolId) {
+        return getVmNameValidator(vm.getOrigin()).isVmWithSameNameExistStatic(vm, storagePoolId);
     }
 
     /**
@@ -1423,6 +1428,33 @@ public class VmHandler implements BackendService {
         if (vm.isRunning()) {
             vdsBrokerFrontend.runVdsCommand(VDSCommandType.SetDestroyOnReboot,
                     new VdsAndVmIDVDSParametersBase(vm.getRunOnVds(), vm.getId()));
+        }
+    }
+
+    private VmNameValidator getVmNameValidator(OriginType originType) {
+        if (originType == OriginType.KUBEVIRT) {
+            return new KubevirtVmValidator();
+        } else {
+            return new ManagedVmValidator();
+        }
+    }
+
+    private interface VmNameValidator {
+        boolean isVmWithSameNameExistStatic(VmStatic vm, Guid storagePoolId);
+    }
+
+    private class ManagedVmValidator implements VmNameValidator {
+
+        @Override
+        public boolean isVmWithSameNameExistStatic(VmStatic vm, Guid storagePoolId) {
+            return VmHandler.this.isVmWithSameNameExistStatic(vm.getName(), storagePoolId);
+        }
+    }
+
+    private class KubevirtVmValidator implements VmNameValidator {
+
+        @Override public boolean isVmWithSameNameExistStatic(VmStatic vm, Guid storagePoolId) {
+            return vmDao.getByNameAndNamespaceForCluster(vm.getClusterId(), vm.getName(), vm.getNamespace()) != null;
         }
     }
 }

@@ -44,7 +44,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     @Inject
     private ResourceManager resourceManager;
     @Inject
-    private VmDynamicDao vmDynamicDao;
+    protected VmDynamicDao vmDynamicDao;
     private ScheduledFuture vmsMonitoringJob;
 
     public PollVmStatsRefresher(VdsManager vdsManager) {
@@ -61,13 +61,17 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
                 return;
             }
 
-            getVmsMonitoring().perform(fetchedVms, fetchTime, vdsManager, true);
+            getVmsMonitoring().perform(fetchedVms, fetchTime, vdsManager, isStatistics());
             Stream<VdsmVm> vdsmVmsToMonitor = filterVmsToDevicesMonitoring(fetchedVms);
             processDevices(vdsmVmsToMonitor, fetchTime);
         }
     }
 
-    private Stream<VdsmVm> filterVmsToDevicesMonitoring(List<Pair<VmDynamic, VdsmVm>> polledVms) {
+    protected boolean isStatistics() {
+        return true;
+    }
+
+    protected Stream<VdsmVm> filterVmsToDevicesMonitoring(List<Pair<VmDynamic, VdsmVm>> polledVms) {
         return polledVms.stream()
                 // we only want to monitor vm devices of vms that already exist in the db
                 .filter(monitoredVm -> monitoredVm.getFirst() != null && monitoredVm.getSecond() != null)
@@ -78,9 +82,13 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         vmsMonitoringJob =
                 schedulerService.scheduleWithFixedDelay(
                         this::poll,
-                        VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE,
-                        VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE,
+                        getRefreshRate(),
+                        getRefreshRate(),
                         TimeUnit.MILLISECONDS);
+    }
+
+    protected long getRefreshRate() {
+        return VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE;
     }
 
     public void stopMonitoring() {

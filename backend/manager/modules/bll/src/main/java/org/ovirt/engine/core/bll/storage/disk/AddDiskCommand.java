@@ -430,6 +430,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setDiskAlias();
         switch (getParameters().getDiskInfo().getDiskStorageType()) {
             case IMAGE:
+            case KUBERNETES:
                 createDiskBasedOnImage();
                 break;
             case LUN:

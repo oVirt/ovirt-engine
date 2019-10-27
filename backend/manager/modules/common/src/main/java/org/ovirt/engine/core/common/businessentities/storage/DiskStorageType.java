@@ -13,7 +13,8 @@ public enum DiskStorageType implements Identifiable {
     IMAGE(0),
     LUN(1),
     CINDER(2),
-    MANAGED_BLOCK_STORAGE(3);
+    MANAGED_BLOCK_STORAGE(3),
+    KUBERNETES(4);
 
     private int value;
 

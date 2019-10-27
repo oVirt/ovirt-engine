@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
+import org.ovirt.engine.core.common.businessentities.Managed;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -355,6 +356,10 @@ public final class ActionUtils {
     }
 
     private static boolean canExecute(BusinessEntityWithStatus<?, ?> entity, Class type, ActionType action) {
+        if (!KubevirtSupportedActions.isActionSupported(entity, action)) {
+            return false;
+        }
+
         Set<ActionType> disallowedActions = _matrix.get(type).get(entity.getStatus());
         return disallowedActions == null || !disallowedActions.contains(action);
     }
@@ -372,6 +377,22 @@ public final class ActionUtils {
                 if (entity.getClass() == type && !canExecute(entity, type, action)) {
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    public static boolean canExecute(List<? extends Managed> entities,
+            ActionType action,
+            Class type) {
+
+        if (entities == null) {
+            return false;
+        }
+
+        for (Managed entity : entities) {
+            if (entity.getClass() == type && !KubevirtSupportedActions.isActionSupported(entity, action)) {
+                return false;
             }
         }
         return true;

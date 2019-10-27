@@ -35,7 +35,7 @@ public class PopupWidgetConfigMap extends HashMap<Widget, PopupWidgetConfig> {
 
     // will be used as soon as the server supports this flag
     public PopupWidgetConfigMap getVisibleForAdminOnly() {
-        return filter(config -> config.isAdminOnly());
+        return filter(PopupWidgetConfig::isAdminOnly);
     }
 
     public PopupWidgetConfigMap getVisibleInAdvanceMode() {
@@ -43,11 +43,15 @@ public class PopupWidgetConfigMap extends HashMap<Widget, PopupWidgetConfig> {
     }
 
     public PopupWidgetConfigMap getAlwaysHidden() {
-        return filter(config -> config.isAlwaysHidden());
+        return filter(PopupWidgetConfig::isAlwaysHidden);
     }
 
     public PopupWidgetConfigMap getDetachables() {
-        return filter(config -> config.isDetachable());
+        return filter(PopupWidgetConfig::isDetachable);
+    }
+
+    public PopupWidgetConfigMap getManagedOnly() {
+        return filter(PopupWidgetConfig::isManagedOnly);
     }
 
     private PopupWidgetConfigMap filter(Predicate predicate) {

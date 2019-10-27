@@ -14,6 +14,7 @@
         <include name="common/businessentities/BusinessEntity.java" />
         <include name="common/businessentities/HasVdsStatistics.java" />
         <include name="common/businessentities/BusinessEntityWithStatus.java" />
+        <include name="common/businessentities/Managed.java" />
         <include name="common/businessentities/ProgressEntity.java" />
         <include name="common/businessentities/BusinessEntitiesDefinitions.java" />
         <include name="common/businessentities/aaa/AuthzGroup.java" />
@@ -26,6 +27,7 @@
         <include name="common/businessentities/VmwareVmProviderProperties.java" />
         <include name="common/businessentities/KVMVmProviderProperties.java" />
         <include name="common/businessentities/XENVmProviderProperties.java" />
+        <include name="common/businessentities/KubevirtProviderProperties.java" />
         <include name="aaa/AuthType.java" />
         <include name="aaa/DirectoryEntry.java" />
         <include name="aaa/ProfileEntry.java" />
@@ -399,6 +401,7 @@
         <include name="common/interfaces/ITagsHandler.java" />
         <!-- UiCommon -->
         <include name="common/ActionUtils.java" />
+        <include name="common/KubevirtSupportedActions.java" />
 
         <!-- Backend Validation framework -->
         <include name="common/validation/annotation/HostnameOrIp.java" />

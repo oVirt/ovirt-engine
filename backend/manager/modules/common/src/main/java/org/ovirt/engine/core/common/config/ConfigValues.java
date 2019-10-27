@@ -1532,6 +1532,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     SetupNetworksWaitTimeoutSeconds,
 
+    @TypeConverterAttribute(Boolean.class)
+    KubevirtProviderSupportEnabled,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

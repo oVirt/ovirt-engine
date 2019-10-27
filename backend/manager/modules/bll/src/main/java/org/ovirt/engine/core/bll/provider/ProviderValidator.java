@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenStackTokenProviderFactory;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -20,7 +21,7 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
 
     protected Provider<P> provider;
 
-    private static final Pattern pattern = Pattern.compile("^http(s)?://[^/]*:[\\d]+/(v3|v2\\.0)/?$");
+    public static final Pattern URL_PATTERN = Pattern.compile("^http(s)?://[^/]*:[\\d]+/(v3|v2\\.0)/?$");
     static final String VAR_AUTH_URL = "AuthUrl";
 
     public ProviderValidator(Provider<P> provider) {
@@ -83,10 +84,19 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
     public ValidationResult validateAuthUrl() {
         String authUrl = provider.getAuthUrl();
         if (authUrl != null) {
-            Matcher matcher = pattern.matcher(authUrl);
+            Matcher matcher = URL_PATTERN.matcher(authUrl);
             return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_INVALID_AUTH_URL,
                     ReplacementUtils.createSetVariableString(VAR_AUTH_URL, authUrl))
                     .when(!matcher.matches());
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validatePassword() {
+        String password = provider.getPassword();
+        if (password != null) {
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_PASSWORD_TOO_LONG)
+                    .when(password.length() > BusinessEntitiesDefinitions.PROVIDER_PASSWORD_MAX_SIZE);
         }
         return ValidationResult.VALID;
     }

@@ -15,6 +15,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
         HasUiCommandClickHandlers getTestButton();
         void setTestResult(String errorMessage);
         void setCurrentActiveProviderWidget();
+        void updatePasswordTitle();
     }
 
     @Inject
@@ -54,6 +55,14 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
             if (IS_AVAILABLE.equals(args.propertyName)) {
                 getView().setCurrentActiveProviderWidget();
             }
+        });
+        model.getKubevirtPropertiesModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (IS_AVAILABLE.equals(args.propertyName)) {
+                getView().setCurrentActiveProviderWidget();
+            }
+        });
+        model.getType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            getView().updatePasswordTitle();
         });
     }
 

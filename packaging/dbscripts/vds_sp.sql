@@ -1173,6 +1173,38 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVdsByNameAndClusterId (v_vds_name VARCHAR(255), v_cluster_id UUID)
+RETURNS SETOF vds STABLE AS $PROCEDURE$
+BEGIN
+    BEGIN
+        RETURN QUERY
+
+        SELECT DISTINCT vds.*
+        FROM vds
+        WHERE vds_name = v_vds_name
+        AND   cluster_id = v_cluster_id;
+    END;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetVdsByHostNameAndClusterId (v_host_name VARCHAR(255), v_cluster_id UUID)
+RETURNS SETOF vds STABLE AS $PROCEDURE$
+BEGIN
+    BEGIN
+        RETURN QUERY
+
+        SELECT DISTINCT vds.*
+        FROM vds
+        WHERE host_name = v_host_name
+        AND   cluster_id = v_cluster_id;
+    END;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVdsByHostName (v_host_name VARCHAR(255))
 RETURNS SETOF vds STABLE AS $PROCEDURE$
 BEGIN

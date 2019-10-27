@@ -27,6 +27,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UnitVmModel>, TabbedView {
         void switchMode(boolean isAdvanced);
 
+        void switchManaged(boolean managed);
+
         void initToCreateInstanceMode();
 
         void setSpiceProxyOverrideExplanation(String explanation);
@@ -104,6 +106,10 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
             switchAccordingToMode(model);
         });
 
+        model.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            switchAccordingToCluster(model);
+        });
+
         model.getAttachedToInstanceType().getPropertyChangedEvent().addListener((ev, sender, args) -> switchAttachToInstanceType(model));
 
         model.getValid().getPropertyChangedEvent().addListener((ev, sender, args) -> switchToAdvancedIfNeeded(model));
@@ -141,6 +147,10 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
     private void switchAccordingToMode(final UnitVmModel model) {
         getView().switchMode(model.getAdvancedMode().getEntity());
+    }
+
+    private void switchAccordingToCluster(final UnitVmModel model) {
+        getView().switchManaged(model.getDataCenterWithClustersList().getSelectedItem().getCluster().isManaged());
     }
 
     private void storeAdvancedModeToLocalStorage(UnitVmModel model) {

@@ -175,7 +175,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     protected void executeRegisterVdsCommand() {
         synchronized (doubleRegistrationLock) {
-            List<VDS> hostsByHostName = vdsDao.getAllForHostname(getParameters().getVdsName());
+            List<VDS> hostsByHostName = vdsDao.getAllForHostname(getParameters().getVdsName(), getClusterId());
             VDS provisionedVds = hostsByHostName.size() != 0 ? hostsByHostName.get(0) : null;
             if (provisionedVds != null && provisionedVds.getStatus() != VDSStatus.InstallingOS) {
                 // if not in InstallingOS status, this host is not provisioned.
@@ -389,7 +389,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         log.debug("RegisterVdsQuery::handleOldVdssWithSameHostName - Entering");
 
         boolean returnValue = true;
-        List<VDS> vdssByHostName = vdsDao.getAllForHostname(getParameters().getVdsHostName());
+        List<VDS> vdssByHostName = vdsDao.getAllForHostname(getParameters().getVdsHostName(), getClusterId());
         int lastIteratedIndex = 1;
         if (vdssByHostName.size() > 0) {
             log.debug(
@@ -407,7 +407,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     String tryHostName = "";
                     for (int i = lastIteratedIndex; i <= 100; i++, lastIteratedIndex = i) {
                         tryHostName = String.format("hostname-was-%1$s-%2$s", getParameters().getVdsHostName(), i);
-                        if (vdsDao.getAllForHostname(tryHostName).size() == 0) {
+                        if (vdsDao.getAllForHostname(tryHostName, getClusterId()).size() == 0) {
                             unique = true;
                             break;
                         }
@@ -424,7 +424,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         }
 
                         // If host exists in InstallingOs status, remove it from DB and move on
-                        final VDS foundVds = vdsDao.getByName(parameters.getVdsStaticData().getName());
+                        final VDS foundVds = vdsDao.getByName(parameters.getVdsStaticData().getName(), getClusterId());
                         if ((foundVds != null) && (foundVds.getDynamicData().getStatus() == VDSStatus.InstallingOS)) {
                             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
                                 vdsStatisticsDao.remove(foundVds.getId());
@@ -481,7 +481,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private boolean handleOldVdssWithSameName(VDS hostToRegister) {
         log.debug("Entering");
         boolean returnValue = true;
-        VDS storedHost = vdsDao.getByName(getParameters().getVdsName());
+        VDS storedHost = vdsDao.getByName(getParameters().getVdsName(), getClusterId());
         List<String> allHostNames = getAllHostNames(vdsDao.getAll());
         boolean hostExistInDB = hostToRegister != null;
 

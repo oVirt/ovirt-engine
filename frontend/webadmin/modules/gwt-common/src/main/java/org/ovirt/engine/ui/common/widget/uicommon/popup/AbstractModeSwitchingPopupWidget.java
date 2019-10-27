@@ -17,6 +17,8 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
     private PopupWidgetConfigMap widgetConfiguration;
 
     private boolean createInstanceMode = false;
+    private boolean managed = true;
+    private boolean advanced;
 
     private T model;
 
@@ -41,16 +43,34 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
     }
 
     public void switchMode(boolean advanced) {
+        this.advanced = advanced;
         Set<Widget> allConfiguredWidgets = widgetConfiguration.getAll().keySet();
         for (Widget widget : allConfiguredWidgets) {
-            widget.setVisible(widgetConfiguration.get(widget).isCurrentlyVisible(advanced, createInstanceMode));
+            widget.setVisible(widgetConfiguration.get(widget).isCurrentlyVisible(advanced, createInstanceMode, managed));
         }
 
-        TabListItem activeTab = ((DialogTabPanel) getWidget()).getActiveTab();
+        DialogTabPanel dialogTabPanel = (DialogTabPanel) getWidget();
+        TabListItem activeTab = dialogTabPanel.getActiveTab();
 
         // select the first tab if the selected tab has been hidden
         if (!advanced && widgetConfiguration.getVisibleInAdvanceMode().keySet().contains(activeTab)) {
-            ((DialogTabPanel) getWidget()).switchTab(defaultTab);
+            dialogTabPanel.switchTab(defaultTab);
+        }
+    }
+
+    public void switchManaged(boolean managed) {
+        this.managed = managed;
+        Set<Widget> allConfiguredWidgets = widgetConfiguration.getAll().keySet();
+        for (Widget widget : allConfiguredWidgets) {
+            widget.setVisible(widgetConfiguration.get(widget).isCurrentlyVisible(advanced, createInstanceMode, managed));
+        }
+
+        DialogTabPanel dialogTabPanel = (DialogTabPanel) getWidget();
+        TabListItem activeTab = dialogTabPanel.getActiveTab();
+
+        // select the first tab if the selected tab has been hidden
+        if (!managed && !widgetConfiguration.getManagedOnly().keySet().contains(activeTab)) {
+            dialogTabPanel.switchTab(defaultTab);
         }
     }
 
@@ -73,7 +93,7 @@ public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends 
         vmPopupWidgetConfig.setApplicationLevelVisible(desiredVisibility);
         boolean advancedMode = model.getAdvancedMode().getEntity();
 
-        return vmPopupWidgetConfig.isCurrentlyVisible(advancedMode, createInstanceMode);
+        return vmPopupWidgetConfig.isCurrentlyVisible(advancedMode, createInstanceMode, managed);
     }
 
     @Override

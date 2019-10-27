@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.rsdl.ServiceTree;
 import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 import org.ovirt.engine.api.utils.LinkCreator;
@@ -26,8 +27,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -383,11 +384,12 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
     }
 
     protected Guid getHostId(Host host) {
+        Guid clusterId = host.getCluster() != null ? GuidUtils.asGuid(host.getCluster().getId()) : null;
         return host.isSetId()
                 ? asGuid(host.getId())
                : getEntity(VDS.class,
                            QueryType.GetVdsByName,
-                           new NameQueryParameters(host.getName()),
+                           new IdAndNameQueryParameters(clusterId, host.getName()),
                            host.getName()).getId();
     }
 

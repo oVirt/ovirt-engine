@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -129,6 +130,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Inject
     private HostDeviceManager hostDeviceManager;
 
+    @Inject
+    private KubevirtMonitoring kubevirt;
     @Inject
     private HostLocking hostLocking;
     @Inject
@@ -376,10 +379,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void executeVmCommand() {
-        getVmManager().setPowerOffTimeout(System.nanoTime());
-        setActionReturnValue(VMStatus.Down);
-        initVm();
-        perform();
+        switch (getVm().getOrigin()) {
+        case KUBEVIRT:
+            runKubevirtVm();
+            break;
+        default:
+            getVmManager().setPowerOffTimeout(System.nanoTime());
+            setActionReturnValue(VMStatus.Down);
+            initVm();
+            perform();
+        }
+    }
+
+    private void runKubevirtVm() {
+        kubevirt.start(getVm());
+        getVm().setStatus(VMStatus.WaitForLaunch);
+        getVmManager().update(getVm().getDynamicData());
+        setSucceeded(true);
     }
 
     @Override

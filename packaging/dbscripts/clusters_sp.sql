@@ -56,7 +56,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_log_max_memory_used_threshold INT,
     v_log_max_memory_used_threshold_type SMALLINT,
     v_vnc_encryption_enabled BOOLEAN,
-    v_smt_disabled BOOLEAN
+    v_smt_disabled BOOLEAN,
+    v_managed BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -113,7 +114,8 @@ BEGIN
         log_max_memory_used_threshold,
         log_max_memory_used_threshold_type,
         vnc_encryption_enabled,
-        smt_disabled
+        smt_disabled,
+        managed
         )
     VALUES (
         v_cluster_id,
@@ -168,7 +170,8 @@ BEGIN
         v_log_max_memory_used_threshold,
         v_log_max_memory_used_threshold_type,
         v_vnc_encryption_enabled,
-        v_smt_disabled
+        v_smt_disabled,
+        v_managed
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -227,7 +230,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_log_max_memory_used_threshold INT,
     v_log_max_memory_used_threshold_type SMALLINT,
     v_vnc_encryption_enabled BOOLEAN,
-    v_smt_disabled BOOLEAN
+    v_smt_disabled BOOLEAN,
+    v_managed BOOLEAN
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -287,7 +291,8 @@ BEGIN
         log_max_memory_used_threshold = v_log_max_memory_used_threshold,
         log_max_memory_used_threshold_type = v_log_max_memory_used_threshold_type,
         vnc_encryption_enabled = v_vnc_encryption_enabled,
-        smt_disabled = v_smt_disabled
+        smt_disabled = v_smt_disabled,
+        managed = v_managed
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

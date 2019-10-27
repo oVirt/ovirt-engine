@@ -56,7 +56,7 @@ public class HostUpdatesCheckerService implements BackendService {
         try {
             hostDao.getAll()
                     .stream()
-                    .filter(h -> h.getStatus().isEligibleForCheckUpdates())
+                    .filter(h -> h.getStatus().isEligibleForCheckUpdates() && h.isManaged())
                     .forEach(this::submitCheckUpdatesForHost);
         } catch (Throwable t) {
             log.error("Exception in checking for available updates: {}", ExceptionUtils.getRootCauseMessage(t));

@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION Insertstorage_pool (
     v_master_domain_version INT,
     v_spm_vds_id UUID,
     v_compatibility_version VARCHAR(40),
-    v_quota_enforcement_type INT
+    v_quota_enforcement_type INT,
+    v_managed BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -27,7 +28,8 @@ BEGIN
         master_domain_version,
         spm_vds_id,
         compatibility_version,
-        quota_enforcement_type
+        quota_enforcement_type,
+        managed
         )
     VALUES (
         v_description,
@@ -39,7 +41,8 @@ BEGIN
         v_master_domain_version,
         v_spm_vds_id,
         v_compatibility_version,
-        v_quota_enforcement_type
+        v_quota_enforcement_type,
+        v_managed
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -55,7 +58,8 @@ CREATE OR REPLACE FUNCTION Updatestorage_pool (
     v_master_domain_version INT,
     v_spm_vds_id UUID,
     v_compatibility_version VARCHAR(40),
-    v_quota_enforcement_type INT
+    v_quota_enforcement_type INT,
+    v_managed BOOLEAN
     )
 RETURNS VOID
     --The [storage_pool] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -72,7 +76,8 @@ BEGIN
         spm_vds_id = v_spm_vds_id,
         compatibility_version = v_compatibility_version,
         _update_date = LOCALTIMESTAMP,
-        quota_enforcement_type = v_quota_enforcement_type
+        quota_enforcement_type = v_quota_enforcement_type,
+        managed = v_managed
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

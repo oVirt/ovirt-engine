@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StopVmParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -43,6 +45,8 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private KubevirtMonitoring kubevirt;
 
     private boolean suspendedVm;
 
@@ -155,6 +159,11 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Override
     protected void executeVmCommand() {
+        if (getVm().getOrigin() == OriginType.KUBEVIRT) {
+            kubevirt.stop(getVm());
+            setSucceeded(true);
+            return;
+        }
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         suspendedVm = getVm().getStatus() == VMStatus.Suspended;
         if (suspendedVm) {

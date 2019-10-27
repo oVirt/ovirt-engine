@@ -172,6 +172,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     private Guid macPoolId;
     private Guid defaultNetworkProviderId;
     private String hostNamesOutOfSync;
+    private boolean managed;
 
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -190,6 +191,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         cpuName = "";
         vncEncryptionEnabled = true;
         hostNamesOutOfSync = "";
+        managed = true;
     }
 
     @Override
@@ -713,6 +715,15 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     }
 
     @Override
+    public boolean isManaged() {
+        return managed;
+    }
+
+    public void setManaged(boolean managed) {
+        this.managed = managed;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(
                 id,
@@ -764,7 +775,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 logMaxMemoryUsedThreshold,
                 logMaxMemoryUsedThresholdType,
                 vncEncryptionEnabled,
-                hostNamesOutOfSync
+                hostNamesOutOfSync,
+                managed
         );
     }
 
@@ -830,7 +842,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && Objects.equals(logMaxMemoryUsedThreshold, other.logMaxMemoryUsedThreshold)
                 && logMaxMemoryUsedThresholdType == other.logMaxMemoryUsedThresholdType
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
-                && Objects.equals(hostNamesOutOfSync, other.hostNamesOutOfSync);
+                && Objects.equals(hostNamesOutOfSync, other.hostNamesOutOfSync)
+                && managed == other.managed;
     }
 
     @Override

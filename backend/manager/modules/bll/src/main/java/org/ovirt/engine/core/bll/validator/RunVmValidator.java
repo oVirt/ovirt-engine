@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -157,11 +158,17 @@ public class RunVmValidator {
             Cluster cluster,
             boolean runInUnknownStatus) {
 
+        if (vm.getOrigin() == OriginType.KUBEVIRT) {
+            return true;
+        }
+
         if (vm.getStatus() == VMStatus.Paused) {
             // if the VM is paused, we should only check the VDS status
             // as the rest of the checks were already checked before
             return validate(validateVdsStatus(vm), messages);
-        } else if (vm.getStatus() == VMStatus.Suspended) {
+        }
+
+        if (vm.getStatus() == VMStatus.Suspended) {
             return validate(new VmValidator(vm).vmNotLocked(), messages) &&
                    validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
                    validate(validateVmStatusUsingMatrix(vm), messages) &&

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.provider;
 import java.security.cert.Certificate;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 
 public interface ProviderProxy<T extends ProviderValidator> {
 
@@ -47,4 +48,9 @@ public interface ProviderProxy<T extends ProviderValidator> {
      */
     T getProviderValidator();
 
+    /**
+     * Sets a context for the provider proxy backend actions
+     */
+    default void setCommandContext(CommandContext context) {
+    }
 }

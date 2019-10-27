@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.hostdeploy.HostUpdatesCheckerService;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
+import org.ovirt.engine.core.bll.kubevirt.KubevirtService;
 import org.ovirt.engine.core.bll.network.cluster.ExternalNetworkSyncService;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
@@ -75,18 +76,21 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(ResourceManager.class);
             serviceLoader.load(HostDeviceManager.class);
 
-            serviceLoader.load(IrsProxyManager.class);
-            serviceLoader.load(OvfDataUpdater.class);
-            serviceLoader.load(StoragePoolStatusHandler.class);
-            serviceLoader.load(GlusterJobsManager.class);
-
-            resourceManager.get().scheduleJobsForHosts();
             try {
                 log.info("Init VM custom properties utilities");
                 VmPropertiesUtils.getInstance().init();
             } catch (InitializationException e) {
                 log.error("Initialization of vm custom properties failed.", e);
             }
+
+            serviceLoader.load(KubevirtService.class);
+
+            serviceLoader.load(IrsProxyManager.class);
+            serviceLoader.load(OvfDataUpdater.class);
+            serviceLoader.load(StoragePoolStatusHandler.class);
+            serviceLoader.load(GlusterJobsManager.class);
+
+            resourceManager.get().scheduleJobsForHosts();
 
             try {
                 log.info("Init device custom properties utilities");

@@ -477,6 +477,10 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.vgpuPlacement = vgpuPlacement;
     }
 
+    public boolean isManaged() {
+        return vdsType != VDSType.KubevirtNode;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(

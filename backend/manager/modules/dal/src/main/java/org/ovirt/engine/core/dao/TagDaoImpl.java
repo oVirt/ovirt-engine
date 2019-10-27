@@ -305,6 +305,14 @@ public class TagDaoImpl extends BaseDao implements TagDao {
     }
 
     @Override
+    public void detachVdsFromAllTags(Guid vdsId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vds_id", vdsId);
+
+        getCallsHandler()
+                .executeModification("DeleteAllTagsVdsMapForHost", parameterSource);
+    }
+
+    @Override
     public TagsVmMap getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
                 "vm_id", vmId);

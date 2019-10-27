@@ -44,7 +44,8 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
                         USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
-                .addValue("provider_id", vm.getProviderId());
+                .addValue("provider_id", vm.getProviderId())
+                .addValue("namespace", vm.getNamespace());
     }
 
     @Override
@@ -241,6 +242,7 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
             // if template_version_number is null it means use latest version
             entity.setUseLatestVersion(rs.getObject("template_version_number") == USE_LATEST_VERSION_NUMBER_INDICATOR);
             entity.setProviderId(getGuid(rs, "provider_id"));
+            entity.setNamespace(rs.getString("namespace"));
             return entity;
         }
     }

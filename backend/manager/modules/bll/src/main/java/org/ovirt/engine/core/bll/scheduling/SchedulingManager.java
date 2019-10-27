@@ -795,7 +795,12 @@ public class SchedulingManager implements BackendService {
             boolean ignoreHardVmToVmAffinity,
             boolean doNotGroupVms,
             List<String> messages) {
+        Map<Guid, List<VDS>> res = new HashMap<>();
         List<VDS> hosts = fetchHosts(cluster.getId(), vdsBlackList, vdsWhiteList);
+        if (!cluster.isManaged()) {
+            // return all hosts for all VMs, filtering is done externally
+            return vms.stream().collect(Collectors.toMap(VM::getId, vm -> hosts));
+        }
         refreshCachedPendingValues(hosts);
         vms.forEach(vmHandler::updateVmStatistics);
         fetchNumaNodes(vms, hosts);
@@ -806,7 +811,6 @@ public class SchedulingManager implements BackendService {
                 doNotGroupVms);
         splitFilters(policy.getFilters(), policy.getFilterPositionMap(), context);
 
-        Map<Guid, List<VDS>> res = new HashMap<>();
         for (List<VM> vmGroup : groupVms(vms, context)) {
             List<VDS> filteredHosts = runFilters(hosts,
                     vmGroup,

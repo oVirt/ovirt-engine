@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -80,6 +82,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
     }
 
     private Guid getProxyHostId(ExternalVmImport vmImport) {
+        Guid clusterId = vmImport.getCluster() != null ? GuidUtils.asGuid(vmImport.getCluster().getId()) : null;
         if (vmImport.isSetHost()) {
             if (vmImport.getHost().isSetId()) {
                 return asGuid(vmImport.getHost().getId());
@@ -87,7 +90,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
                 String hostName = vmImport.getHost().getName();
                 VDS vds = getEntity(VDS.class,
                         QueryType.GetVdsByName,
-                        new NameQueryParameters(vmImport.getHost().getName()),
+                        new IdAndNameQueryParameters(clusterId, vmImport.getHost().getName()),
                         hostName,
                         true);
                 return vds.getId();

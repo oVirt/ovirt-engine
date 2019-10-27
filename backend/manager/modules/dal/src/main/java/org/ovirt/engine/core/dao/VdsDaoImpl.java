@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,12 +63,40 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
     }
 
     @Override
-    public VDS getByName(String name) {
-        List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByName",
+    public VDS getByName(String name, Guid clusterId) {
+        List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByNameAndClusterId",
+                vdsRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_name", name)
+                        .addValue("cluster_id", clusterId));
+        return vdsList.size() == 0 ? null : vdsList.get(0);
+    }
+
+    @Override
+    public Optional<VDS> getFirstByName(String name) {
+        List<VDS> hosts = getByName(name);
+        if (hosts.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(hosts.get(0));
+    }
+
+    @Override
+    public List<VDS> getByName(String name) {
+        return getCallsHandler().executeReadList("GetVdsByName",
                 vdsRowMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_name", name));
-        return vdsList.size() == 0 ? null : vdsList.get(0);
+    }
+
+    @Override
+    public List<VDS> getAllForHostname(String hostname, Guid clusterId) {
+        return getCallsHandler().executeReadList("GetVdsByHostNameAndClusterId",
+                vdsRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("host_name", hostname)
+                        .addValue("cluster_id", clusterId));
     }
 
     @Override

@@ -1638,6 +1638,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ProviderType___VMWARE();
 
+    String ProviderType___KUBEVIRT();
+
     String ProviderType___OPENSTACK_NETWORK();
 
     String ProviderType___EXTERNAL_NETWORK();

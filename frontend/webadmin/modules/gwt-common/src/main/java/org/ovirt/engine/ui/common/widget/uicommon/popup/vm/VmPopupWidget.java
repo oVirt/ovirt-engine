@@ -39,8 +39,9 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
                 update(templateVersionNameEditor, hiddenField()).
                 update(instanceImagesEditor, simpleField());
 
-        updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
-        updateOrAddToWidgetConfiguration(widgetConfiguration, adminOnlyWidgets(), UpdateToAdminOnly.INSTANCE);
+        updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), PopupWidgetConfig::detachable);
+        updateOrAddToWidgetConfiguration(widgetConfiguration, adminOnlyWidgets(), PopupWidgetConfig::visibleForAdminOnly);
+        updateOrAddToWidgetConfiguration(widgetConfiguration, managedOnlyWidgets(), PopupWidgetConfig::visibleForManagedOnly);
 
         return widgetConfiguration;
     }

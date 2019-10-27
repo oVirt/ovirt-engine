@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -67,12 +69,15 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
+import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoringInterface;
+import org.ovirt.engine.core.vdsbroker.monitoring.KubevirtNodesMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategy;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.monitoring.RefresherFactory;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NullVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.slf4j.Logger;
@@ -108,6 +113,9 @@ public class VdsManager {
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private ProviderDao providerDao;
 
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -146,7 +154,7 @@ public class VdsManager {
     private volatile boolean initialized;
     private IVdsServer vdsProxy;
     private volatile boolean beforeFirstRefresh = true;
-    private volatile HostMonitoring hostMonitoring;
+    private volatile HostMonitoringInterface hostMonitoring;
     private volatile boolean monitoringNeeded;
     private Map<Guid, VMStatus> lastVmsList = Collections.emptyMap();
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
@@ -160,6 +168,7 @@ public class VdsManager {
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
     private volatile boolean inServerRebootTimeout;
+    private KubevirtNodesMonitoring kubevirtNodesRefresher;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -228,13 +237,20 @@ public class VdsManager {
 
     private void initVdsBroker() {
         log.info("Initialize vdsBroker '{}:{}'", cachedVds.getHostName(), cachedVds.getPort());
+        if (cachedVds.isManaged()) {
+            vdsProxy = createVdsServer();
+        } else {
+            vdsProxy = new NullVdsServer();
+        }
+    }
 
+    private IVdsServer createVdsServer() {
         // Get the values of the timeouts:
         int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
         int connectionTimeOut = Config.<Integer> getValue(ConfigValues.vdsConnectionTimeout) * 1000;
         int heartbeat = Config.<Integer> getValue(ConfigValues.vdsHeartbeatInSeconds) * 1000;
         int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
-        vdsProxy = TransportFactory.createVdsServer(
+        return TransportFactory.createVdsServer(
                 cachedVds.getHostName(),
                 cachedVds.getPort(),
                 clientTimeOut,
@@ -263,8 +279,8 @@ public class VdsManager {
                     refreshCachedVds();
                     setMonitoringNeeded();
                     if (cachedVds == null) {
-                        log.error("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for '{}'",
-                                getVdsId());
+                        log.error("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for {}('{}')",
+                                getVdsName(), getVdsId());
                         return;
                     }
 
@@ -273,17 +289,7 @@ public class VdsManager {
                         if (isMonitoringNeeded()) {
                             setStartTime();
                             releaseLock = false;
-                            hostMonitoring =
-                                    new HostMonitoring(this,
-                                            cachedVds,
-                                            monitoringStrategy,
-                                            resourceManager,
-                                            clusterDao,
-                                            vdsDynamicDao,
-                                            interfaceDao,
-                                            vdsNumaNodeDao,
-                                            networkDao,
-                                            auditLogDirector);
+                            hostMonitoring = createHostMonitoring();
                             hostMonitoring.refresh();
                         }
                     } catch (VDSNetworkException e) {
@@ -305,6 +311,24 @@ public class VdsManager {
                     lockManager.releaseLock(monitoringLock);
                 }
             }
+        }
+    }
+
+    private HostMonitoringInterface createHostMonitoring() {
+        switch (cachedVds.getVdsType()) {
+        case KubevirtNode:
+            return new KubevirtNodesMonitoring(this, providerDao);
+        default:
+            return new HostMonitoring(this,
+                    cachedVds,
+                    monitoringStrategy,
+                    resourceManager,
+                    clusterDao,
+                    vdsDynamicDao,
+                    interfaceDao,
+                    vdsNumaNodeDao,
+                    networkDao,
+                    auditLogDirector);
         }
     }
 
@@ -391,6 +415,10 @@ public class VdsManager {
 
     public Guid getClusterId() {
         return cachedVds.getClusterId();
+    }
+
+    public VDSType getVdsType() {
+        return cachedVds.getVdsType();
     }
 
     private void logFailureMessage(RuntimeException ex) {
@@ -979,8 +1007,14 @@ public class VdsManager {
             job.cancel(true);
         }
 
-        vmsRefresher.stopMonitoring();
-        hostRefresher.stop();
+        if (vmsRefresher != null) {
+            vmsRefresher.stopMonitoring();
+        }
+
+        if (hostRefresher != null) {
+            hostRefresher.stop();
+        }
+
         vdsProxy.close();
     }
 

@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Row;
@@ -2217,10 +2218,48 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         );
     }
 
+    protected List<Widget> managedOnlyWidgets() {
+        return Arrays.asList(
+                // global
+                oSTypeEditor,
+                vmTypeEditor,
+                detachableInstanceTypesEditor,
+
+                // general tab
+                vmIdEditor,
+                isStatelessEditor,
+                isRunAndPauseEditor,
+                isDeleteProtectedEditor,
+                copyTemplatePermissionsEditor,
+                logicalNetworksEditorRow,
+
+                // system tab
+                biosTypeEditor,
+                emulatedMachine,
+                generalLabel,
+                customCpu,
+                customCompatibilityVersionEditor,
+                timeZoneEditorWithInfo,
+                serialNumberPolicyEditor,
+                customSerialNumberEditor,
+
+                // whole tabs
+                consoleTab.getTabListItem(),
+                affinityTab.getTabListItem(),
+                foremanTab.getTabListItem(),
+                initialRunTab.getTabListItem(),
+                hostTab.getTabListItem(),
+                highAvailabilityTab.getTabListItem(),
+                resourceAllocationTab.getTabListItem(),
+                bootOptionsTab.getTabListItem(),
+                rngDeviceTab.getTabListItem(),
+                customPropertiesTab.getTabListItem(),
+                iconTab.getTabListItem()
+                );
+    }
+
     protected void disableAllTabs() {
-        for (DialogTab dialogTab : allDialogTabs()) {
-            dialogTab.disableContent();
-        }
+        allDialogTabs().forEach(DialogTab::disableContent);
 
         oSTypeEditor.setEnabled(false);
         quotaEditor.setEnabled(false);
@@ -2252,37 +2291,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         );
     }
 
-    protected void updateOrAddToWidgetConfiguration(PopupWidgetConfigMap configuration, List<Widget> widgets, WidgetConfigurationUpdater updater) {
+    protected void updateOrAddToWidgetConfiguration(PopupWidgetConfigMap configuration, List<Widget> widgets, UnaryOperator<PopupWidgetConfig> updater) {
         for (Widget widget: widgets) {
             if (configuration.containsKey(widget)) {
-                configuration.update(widget, updater.updateConfiguration(configuration.get(widget)));
+                configuration.update(widget, updater.apply(configuration.get(widget)));
             } else {
-                configuration.putOne(widget, updater.updateConfiguration(simpleField()));
+                configuration.putOne(widget, updater.apply(simpleField()));
             }
-        }
-    }
-
-    protected static interface WidgetConfigurationUpdater {
-        PopupWidgetConfig updateConfiguration(PopupWidgetConfig original);
-    }
-
-    protected static class UpdateToDetachable implements WidgetConfigurationUpdater {
-        public static final UpdateToDetachable INSTANCE = new UpdateToDetachable();
-
-
-        @Override
-        public PopupWidgetConfig updateConfiguration(PopupWidgetConfig original) {
-            return original.detachable();
-        }
-    }
-
-    protected static class UpdateToAdminOnly implements WidgetConfigurationUpdater {
-        public static final UpdateToAdminOnly INSTANCE = new UpdateToAdminOnly();
-
-
-        @Override
-        public PopupWidgetConfig updateConfiguration(PopupWidgetConfig original) {
-            return original.visibleForAdminOnly();
         }
     }
 

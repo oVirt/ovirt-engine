@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -50,6 +49,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -63,9 +63,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 public class RemoveVdsCommandTest extends BaseCommandTest {
 
     private static final AnsibleReturnValue ANSIBLE_RETURN_OK = new AnsibleReturnValue(AnsibleReturnCode.OK);
-
-    @Mock
-    private VdsDynamicDao vdsDynamicDao;
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -101,16 +98,22 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
+    public AuditLogDirector auditLogDirector;
+
+    @Mock
+    private AnsibleExecutor ansibleExecutor;
+
+    @Mock
     private VdsStaticDao vdsStaticDao;
+
+    @Mock
+    private VdsDynamicDao vdsDynamicDao;
 
     @Mock
     private VdsStatisticsDao vdsStatisticsDao;
 
     @Mock
-    public AuditLogDirector auditLogDirector;
-
-    @Mock
-    private AnsibleExecutor ansibleExecutor;
+    private TagDao tagDao;
 
     /**
      * The command under test.
@@ -204,7 +207,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @Test
     public void validateSucceeds() {
         mockVdsWithStatus(VDSStatus.Maintenance);
-        mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(false);
@@ -215,7 +217,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsWhenGlusterHostHasVolumes() {
         mockVdsWithStatus(VDSStatus.Maintenance);
-        mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(true);
@@ -241,7 +242,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     public void validateSucceedsWithForceOption() {
         command.getParameters().setForceAction(true);
         mockVdsWithStatus(VDSStatus.Maintenance);
-        mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(true);
@@ -253,7 +253,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @MethodSource("validVDSStatusesForRemoval")
     public void validateHostStatusSucceeds(VDSStatus vdsStatus) {
         mockVdsWithStatus(vdsStatus);
-        mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(false);
@@ -266,7 +265,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @MethodSource("invalidVDSStatusesForRemoval")
     public void validateHostStatusFails(VDSStatus vdsStatus) {
         mockVdsWithStatus(vdsStatus);
-        mockVdsDynamic();
         mockVmsPinnedToHost(Collections.emptyList());
 
         mockIsGlusterEnabled(false);
@@ -280,7 +278,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsWhenVMsPinnedToHost() {
         mockVdsWithStatus(VDSStatus.Maintenance);
-        mockVdsDynamic();
 
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
@@ -302,7 +299,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @Test
     public void removeWhenMultipleHosts() {
         mockVdsWithStatus(VDSStatus.Maintenance);
-        mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(true);
 
@@ -314,7 +310,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @Test
     public void removeLastHost() {
         mockVdsWithStatus(VDSStatus.Maintenance);
-        mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
 
@@ -329,7 +324,6 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
                                                        VDSStatus vdsStatus,
                                                        AuditLogType  expectedAuditLogType) {
         mockVdsWithStatus(vdsStatus);
-        mockVdsDynamic();
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
         AnsibleReturnValue ansibleReturnValue = new AnsibleReturnValue(ansibleReturnCode);
@@ -344,18 +338,13 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     private void assertHostRemoved(boolean multipleHosts) {
         assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
-        verify(vdsDynamicDao).remove(any());
-        verify(vdsStatisticsDao).remove(any());
+        verify(vdsStaticDao).remove(command.getParameters().getVdsId());
+        verify(vdsDynamicDao).remove(command.getParameters().getVdsId());
+        verify(vdsStatisticsDao).remove(command.getParameters().getVdsId());
+        verify(tagDao).detachVdsFromAllTags(command.getParameters().getVdsId());
         VerificationMode multipleHostsRemovedVerificationMode = multipleHosts ? never() : times(1);
         verify(volumeDao, multipleHostsRemovedVerificationMode).removeByClusterId(any());
         verify(hooksDao, multipleHostsRemovedVerificationMode).removeAllInCluster(any());
-    }
-
-    /**
-     * Mocks that a valid {@link VdsDynamic} gets returned.
-     */
-    private void mockVdsDynamic() {
-        when(vdsDynamicDao.get(command.getParameters().getVdsId())).thenReturn(new VdsDynamic());
     }
 
     /**
@@ -378,6 +367,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     private void mockVdsWithStatus(VDSStatus status) {
         VDS vds = new VDS();
         vds.setStatus(status);
+        vds.setId(command.getParameters().getVdsId());
         when(vdsDao.get(command.getParameters().getVdsId())).thenReturn(vds);
     }
 

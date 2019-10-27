@@ -10,6 +10,8 @@ public class PopupWidgetConfig {
 
     private final boolean adminOnly;
 
+    private final boolean managedOnly;
+
     /**
      * The only mutable part - the field can be visible/hidden according to some changing condition in the app
      */
@@ -18,36 +20,42 @@ public class PopupWidgetConfig {
     private PopupWidgetConfig(boolean advancedOnly,
                               boolean alwaysHidden,
                               boolean detachable,
-                              boolean adminOnly) {
+                              boolean adminOnly,
+                              boolean managedOnly) {
         super();
         this.advancedOnly = advancedOnly;
         this.alwaysHidden = alwaysHidden;
         this.detachable = detachable;
         this.adminOnly = adminOnly;
+        this.managedOnly = managedOnly;
     }
 
     public static PopupWidgetConfig simpleField() {
-        return new PopupWidgetConfig(false, false, false, false);
+        return new PopupWidgetConfig(false, false, false, false, false);
     }
 
     public static PopupWidgetConfig hiddenField() {
-        return new PopupWidgetConfig(false, true, false, false);
+        return new PopupWidgetConfig(false, true, false, false, false);
     }
 
     public PopupWidgetConfig detachable() {
-        return new PopupWidgetConfig(advancedOnly, alwaysHidden, true, adminOnly);
+        return new PopupWidgetConfig(advancedOnly, alwaysHidden, true, adminOnly, managedOnly);
     }
 
     public PopupWidgetConfig visibleInAdvancedModeOnly() {
-        return new PopupWidgetConfig(true, alwaysHidden, detachable, adminOnly);
+        return new PopupWidgetConfig(true, alwaysHidden, detachable, adminOnly, managedOnly);
     }
 
     public PopupWidgetConfig visibleForAdminOnly() {
-        return new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, true);
+        return new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, true, managedOnly);
+    }
+
+    public PopupWidgetConfig visibleForManagedOnly() {
+        return new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, adminOnly, true);
     }
 
     public PopupWidgetConfig copy() {
-        PopupWidgetConfig copy = new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, adminOnly);
+        PopupWidgetConfig copy = new PopupWidgetConfig(advancedOnly, alwaysHidden, detachable, adminOnly, managedOnly);
         copy.setApplicationLevelVisible(isApplicationLevelVisible());
         return copy;
     }
@@ -72,11 +80,15 @@ public class PopupWidgetConfig {
         return applicationLevelVisible;
     }
 
+    public boolean isManagedOnly() {
+        return managedOnly;
+    }
+
     public void setApplicationLevelVisible(boolean applicationLevelVisible) {
         this.applicationLevelVisible = applicationLevelVisible;
     }
 
-    public boolean isCurrentlyVisible(boolean advancedMode, boolean createInstanceMode) {
+    public boolean isCurrentlyVisible(boolean advancedMode, boolean createInstanceMode, boolean managed) {
         if (isAlwaysHidden()) {
             return false;
         }
@@ -90,6 +102,10 @@ public class PopupWidgetConfig {
         }
 
         if (createInstanceMode && isAdminOnly()) {
+            return false;
+        }
+
+        if (!managed && isManagedOnly()) {
             return false;
         }
 

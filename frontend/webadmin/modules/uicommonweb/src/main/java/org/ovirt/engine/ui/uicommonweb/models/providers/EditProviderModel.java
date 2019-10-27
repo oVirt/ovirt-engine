@@ -82,6 +82,10 @@ public class EditProviderModel extends ProviderModel {
             getXenPropertiesModel().init(provider);
         }
 
+        if (isTypeKubevirt()) {
+            getKubevirtPropertiesModel().init(provider);
+        }
+
         oldUrl = provider.getUrl();
     }
 

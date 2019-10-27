@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -110,7 +111,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
      */
     @Test
     public void testGetUsingInvalidName() {
-        VDS result = dao.getByName("farkle");
+        VDS result = dao.getByName("farkle", Guid.newGuid());
 
         assertNull(result);
     }
@@ -137,10 +138,26 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
      */
     @Test
     public void testGetWithName() {
-        VDS result = dao.getByName(existingVds.getName());
+        VDS result = dao.getByName(existingVds.getName(), existingVds.getClusterId());
 
         assertNotNull(result);
         assertEquals(existingVds.getName(), result.getName());
+    }
+
+    @Test
+    public void testGetFirstOrNullByName() {
+        Optional<VDS> result = dao.getFirstByName(existingVds.getName());
+
+        assertTrue(result.isPresent());
+        assertEquals(existingVds.getName(), result.get().getName());
+    }
+
+    @Test
+    public void testGetAllByName() {
+        List<VDS> result = dao.getByName(existingVds.getName());
+
+        assertEquals(result.size(), 1);
+        assertEquals(existingVds.getName(), result.get(0).getName());
     }
 
     /**
@@ -148,7 +165,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
      */
     @Test
     public void testGetAllForHostname() {
-        List<VDS> result = dao.getAllForHostname(existingVds.getHostName());
+        List<VDS> result = dao.getAllForHostname(existingVds.getHostName(), existingVds.getClusterId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

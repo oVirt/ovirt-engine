@@ -1874,4 +1874,18 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setUseTscFrequency(boolean value) {
         vmStatic.setUseTscFrequency(value);
     }
+
+    public String getNamespace() {
+        return vmStatic.getNamespace();
+    }
+
+    public void setNamespace(String namespace) {
+        vmStatic.setNamespace(namespace);
+    }
+
+    @Override
+    public boolean isManaged() {
+        // TODO: think of a better way to distinguish that from #isManagedVm
+        return vmStatic.isManaged();
+    }
 }

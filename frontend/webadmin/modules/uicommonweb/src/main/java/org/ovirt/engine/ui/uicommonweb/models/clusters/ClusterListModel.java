@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -1028,12 +1029,21 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 && getSelectedItems().size() == 1);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1)
+                && ActionUtils.canExecute(getSelectedItems(),
+                ActionType.RemoveCluster,
+                Cluster.class));
 
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
+                && ActionUtils.canExecute(getSelectedItems(),
+                ActionType.RemoveCluster,
+                Cluster.class));
 
         getResetEmulatedMachineCommand().setIsExecutionAllowed(
-                getSelectedItems() != null && getSelectedItems().size() > 0);
+                getSelectedItems() != null && getSelectedItems().size() > 0
+                        && ActionUtils.canExecute(getSelectedItems(),
+                        ActionType.RemoveCluster,
+                        Cluster.class));
     }
 
     @Override

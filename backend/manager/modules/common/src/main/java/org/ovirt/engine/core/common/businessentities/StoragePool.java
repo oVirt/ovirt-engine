@@ -53,6 +53,8 @@ public class StoragePool implements Queryable, BusinessEntityWithStatus<Guid, St
 
     private boolean storagePoolCompatibilityLevelUpgradeNeeded;
 
+    private boolean managed;
+
     /**
      * Unique mac pool over whole data center. Data center DOES NOT have mac pool associated, only its clusters have.
      * When updating DC, setting this will set mac pool for all its clusters. When getting DC, this property
@@ -70,6 +72,7 @@ public class StoragePool implements Queryable, BusinessEntityWithStatus<Guid, St
         description = "";
         comment = "";
         masterDomainVersion = 0;
+        managed = true;
     }
 
     public String getdescription() {
@@ -191,6 +194,15 @@ public class StoragePool implements Queryable, BusinessEntityWithStatus<Guid, St
     }
 
     @Override
+    public boolean isManaged() {
+        return managed;
+    }
+
+    public void setManaged(boolean managed) {
+        this.managed = managed;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(
                 id,
@@ -205,7 +217,8 @@ public class StoragePool implements Queryable, BusinessEntityWithStatus<Guid, St
                 status,
                 local,
                 storagePoolFormatType,
-                quotaEnforcementType
+                quotaEnforcementType,
+                managed
         );
     }
 
@@ -230,7 +243,8 @@ public class StoragePool implements Queryable, BusinessEntityWithStatus<Guid, St
                 && status == other.status
                 && local == other.local
                 && Objects.equals(storagePoolFormatType, other.storagePoolFormatType)
-                && quotaEnforcementType == other.quotaEnforcementType;
+                && quotaEnforcementType == other.quotaEnforcementType
+                && managed == other.managed;
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {

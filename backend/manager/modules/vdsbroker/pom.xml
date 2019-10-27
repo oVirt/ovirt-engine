@@ -17,7 +17,11 @@
       <groupId>com.netflix.hystrix</groupId>
       <artifactId>hystrix-core</artifactId>
     </dependency>
-        <dependency>
+    <dependency>
+      <groupId>org.ovirt.java-client-kubevirt</groupId>
+      <artifactId>java-client-kubevirt</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>

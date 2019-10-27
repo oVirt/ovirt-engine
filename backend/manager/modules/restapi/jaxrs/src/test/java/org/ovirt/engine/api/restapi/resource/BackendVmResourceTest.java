@@ -85,6 +85,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -1393,7 +1394,7 @@ public class BackendVmResourceTest
     protected void setUpGetHostByNameExpectations(int idx) {
         VDS host = BackendHostsResourceTest.setUpEntityExpectations(spy(new VDS()), idx);
         setUpGetEntityExpectations(QueryType.GetVdsByName,
-                NameQueryParameters.class,
+                IdAndNameQueryParameters.class,
                 new String[]{"Name"},
                 new Object[]{NAMES[idx]},
                 host);

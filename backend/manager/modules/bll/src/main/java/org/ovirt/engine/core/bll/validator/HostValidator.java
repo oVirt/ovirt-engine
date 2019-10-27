@@ -75,12 +75,12 @@ public class HostValidator {
 
     public ValidationResult nameNotUsed() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED)
-                .when(hostDao.getByName(host.getName()) != null);
+                .when(hostDao.getByName(host.getName(), host.getClusterId()) != null);
     }
 
     public ValidationResult hostNameNotUsed() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST)
-                .unless(hostDao.getAllForHostname(host.getHostName()).isEmpty());
+                .unless(hostDao.getAllForHostname(host.getHostName(), host.getClusterId()).isEmpty());
     }
 
     public ValidationResult portIsValid() {

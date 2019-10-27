@@ -115,7 +115,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
     }
 
     private void mockBackend() {
-        when(backend.runAction(any(), any())).thenReturn(new ActionReturnValue());
+        when(backend.runInternalAction(any(), any(), any())).thenReturn(new ActionReturnValue());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
         addClusterCommand.executeCommand();
 
         verify(clusterDao).save(cluster);
-        verify(backend).runAction(eq(ActionType.AddCpuProfile), any());
+        verify(backend).runInternalAction(eq(ActionType.AddCpuProfile), any(), any());
 
         assertTrue(addClusterCommand.getReturnValue().getSucceeded());
     }

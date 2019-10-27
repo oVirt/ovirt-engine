@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmParameters extends VmManagementParametersBase {
@@ -15,6 +18,8 @@ public class AddVmParameters extends VmManagementParametersBase {
     private boolean useCollapse;
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
+    // Declare which disks should be attached (AttachDiskToVm is called separately)
+    private List<DiskVmElement> disksToAttach = new ArrayList<>();
 
     public AddVmParameters() {
     }
@@ -65,5 +70,13 @@ public class AddVmParameters extends VmManagementParametersBase {
 
     public void setSrcVmNicIdToTargetVmNicIdMapping(Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping) {
         this.srcVmNicIdToTargetVmNicIdMapping = srcVmNicIdToTargetVmNicIdMapping;
+    }
+
+    public List<DiskVmElement> getDisksToAttach() {
+        return disksToAttach;
+    }
+
+    public void setDisksToAttach(List<DiskVmElement> disksToAttach) {
+        this.disksToAttach = disksToAttach;
     }
 }

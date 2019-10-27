@@ -110,4 +110,7 @@ public final class BusinessEntitiesDefinitions {
 
     // SPICE
     public static final int SPICE_PROXY_ADDR_SIZE = 255;
+
+    // Providers
+    public static final int PROVIDER_PASSWORD_MAX_SIZE = 200;
 }

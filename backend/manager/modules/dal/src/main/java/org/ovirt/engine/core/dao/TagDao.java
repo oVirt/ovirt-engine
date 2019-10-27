@@ -160,6 +160,8 @@ public interface TagDao extends Dao {
 
     void detachVdsFromTag(Guid tagId, Guid vdsId);
 
+    void detachVdsFromAllTags(Guid vdsId);
+
     TagsVmMap getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId);
 
     void attachVmToTag(TagsVmMap tagVmMap);

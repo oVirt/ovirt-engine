@@ -203,6 +203,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         }
 
         if (getParameters().isPlugUnPlug()
+                && getVm().isManaged()
                 && getVm().getStatus() != VMStatus.Down) {
             return isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias());
         }
@@ -240,7 +241,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             }
         }
 
-        if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down) {
+        if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down && getVm().isManaged()) {
             performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
         setSucceeded(true);

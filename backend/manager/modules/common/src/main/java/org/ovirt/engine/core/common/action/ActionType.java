@@ -572,6 +572,9 @@ public enum ActionType {
     TryBackToManagedBlockSnapshot(3243, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
     RestoreAllManagedBlockSnapshots(3244, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.NONE),
 
+    // Unmanaged clusters
+    AddUnmanagedStorageDomain(3245, QuotaDependency.NONE),
+
     // Incremental Backup
     StartVmBackup(3300, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     StopVmBackup(3301, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),

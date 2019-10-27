@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -386,7 +386,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             // to match TLS certificate for connection
             String hostName = getCachedVm().getRunOnVdsName();
             QueryReturnValue queryReturnValue = backend.runInternalQuery(QueryType.GetVdsByName,
-                    new NameQueryParameters(hostName));
+                    new IdAndNameQueryParameters(getCachedVm().getClusterId(), hostName));
             VDS vds = queryReturnValue.getReturnValue();
             if (vds != null) {
                 result = vds.getHostName();

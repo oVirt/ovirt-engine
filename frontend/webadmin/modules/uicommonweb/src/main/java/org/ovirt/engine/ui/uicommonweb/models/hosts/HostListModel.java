@@ -1822,7 +1822,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         setIsPowerManagementEnabled(getRestartCommand().getIsExecutionAllowed()
                 || getStartCommand().getIsExecutionAllowed() || getStopCommand().getIsExecutionAllowed());
 
-        getManualFenceCommand().setIsExecutionAllowed(items.size() == 1);
+        getManualFenceCommand().setIsExecutionAllowed(
+                items.size() == 1 && items.get(0) != null && items.get(0).isManaged());
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
 

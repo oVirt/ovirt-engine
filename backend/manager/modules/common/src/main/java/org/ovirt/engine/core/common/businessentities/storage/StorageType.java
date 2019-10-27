@@ -16,9 +16,10 @@ public enum StorageType implements Identifiable {
     GLUSTERFS(7, Subtype.FILE),
     GLANCE(8, Subtype.FILE),
     CINDER(9, Subtype.OPENSTACK),
-    MANAGED_BLOCK_STORAGE(10, Subtype.OPENSTACK);
+    MANAGED_BLOCK_STORAGE(10, Subtype.OPENSTACK),
+    UNMANAGED(11, Subtype.KUBERNETES);
 
-    public enum Subtype { NONE, FILE, BLOCK, OPENSTACK }
+    public enum Subtype { NONE, FILE, BLOCK, OPENSTACK, KUBERNETES }
 
     private int value;
     private Subtype subtype;

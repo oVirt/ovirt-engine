@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @ApplicationScoped
 public class HostDeviceManager implements BackendService {
@@ -43,6 +46,9 @@ public class HostDeviceManager implements BackendService {
     private BackendInternal backend;
 
     @Inject
+    private Instance<ResourceManager> resourceManager;
+
+    @Inject
     private NetworkDeviceHelper networkDeviceHelper;
 
     @PostConstruct
@@ -51,6 +57,7 @@ public class HostDeviceManager implements BackendService {
         // will have their devices refreshed in InitVdsOnUpCommand
         List<ActionParametersBase> parameters = hostDynamicDao.getIdsOfHostsWithStatus(VDSStatus.Up)
                 .stream()
+                .filter(hostId -> resourceManager.get().getVdsManager(hostId).getVdsType() != VDSType.KubevirtNode)
                 .map(hostId -> new VdsActionParameters(hostId))
                 .collect(Collectors.toList());
 

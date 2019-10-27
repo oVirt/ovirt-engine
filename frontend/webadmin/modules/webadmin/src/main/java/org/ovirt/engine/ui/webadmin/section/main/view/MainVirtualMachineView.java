@@ -223,5 +223,15 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
         };
         descriptionColumn.makeSortable(VmConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.description(), "150px"); //$NON-NLS-1$
+
+        AbstractTextColumn<VM> namespaceColumn = new AbstractTextColumn<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getNamespace();
+            }
+        };
+        namespaceColumn.makeSortable(VmConditionFieldAutoCompleter.NAMESPACE);
+        getTable().addColumn(namespaceColumn, constants.k8s_namespace(), "120px"); //$NON-NLS-1$
+        getTable().table.setColumnVisible(namespaceColumn, false);
     }
 }

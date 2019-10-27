@@ -15,6 +15,11 @@ public class RefresherFactory {
     }
 
     private VmStatsRefresher getRefresherForVds(VdsManager vdsManager, ResourceManager resourceManager) {
-        return new EventVmStatsRefresher(vdsManager, resourceManager);
+        switch(vdsManager.getVdsType()) {
+        case KubevirtNode:
+            return new KubevirtVmStatsRefresher(vdsManager);
+        default:
+            return new EventVmStatsRefresher(vdsManager, resourceManager);
+        }
     }
 }

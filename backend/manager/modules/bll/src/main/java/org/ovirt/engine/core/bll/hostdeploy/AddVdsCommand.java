@@ -149,7 +149,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return null;
         });
 
-        if (getParameters().isProvisioned()) {
+        if (getParameters().isProvisioned() && getParameters().getVdsStaticData().isManaged()) {
             HostProviderProxy proxy = providerProxyFactory.create(getHostProvider());
             proxy.provisionHost(
                     getParameters().getvds(),
@@ -166,7 +166,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         // set vds spm id
-        if (getCluster().getStoragePoolId() != null) {
+        if (getCluster().getStoragePoolId() != null && getParameters().getVdsStaticData().isManaged()) {
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
@@ -195,6 +195,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // do not install vds's which added in pending mode or for provisioning (currently power
         // clients). they are installed as part of the approve process or automatically after provision
         if (Config.<Boolean> getValue(ConfigValues.InstallVds) &&
+            getParameters().getVdsStaticData().isManaged() &&
             !getParameters().isPending() &&
             !getParameters().isProvisioned()) {
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
@@ -298,7 +299,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setId(getParameters().getVdsStaticData().getId());
         // TODO: oVirt type - here oVirt behaves like power client?
-        if (getParameters().isPending()) {
+        if (!getParameters().getVdsStaticData().isManaged()) {
+            vdsDynamic.setStatus(VDSStatus.Unassigned);
+        } else if (getParameters().isPending()) {
             vdsDynamic.setStatus(VDSStatus.PendingApproval);
         } else if (getParameters().isProvisioned()) {
             vdsDynamic.setStatus(VDSStatus.InstallingOS);
@@ -326,6 +329,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Override
     protected boolean validate() {
         T params = getParameters();
+        if (!params.getVdsStaticData().isManaged()) {
+            return true;
+        }
         setClusterId(params.getVdsStaticData().getClusterId());
         params.setVdsForUniqueId(null);
         // Check if this is a valid cluster

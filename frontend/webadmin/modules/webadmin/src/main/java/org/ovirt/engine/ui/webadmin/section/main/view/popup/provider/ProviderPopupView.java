@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.KVMPropertiesWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.KubevirtPropertiesWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.VmwarePropertiesWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.XENPropertiesWidget;
 
@@ -185,6 +186,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Ignore
     XENPropertiesWidget xenPropertiesWidget;
 
+    @UiField
+    @Ignore
+    KubevirtPropertiesWidget kubevirtPropertiesWidget;
+
     @UiField(provided = true)
     @Path(value = "readOnly.entity")
     @WithElementId
@@ -227,6 +232,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         vmwarePropertiesWidget.edit(model.getVmwarePropertiesModel());
         kvmPropertiesWidget.edit(model.getKvmPropertiesModel());
         xenPropertiesWidget.edit(model.getXenPropertiesModel());
+        kubevirtPropertiesWidget.edit(model.getKubevirtPropertiesModel());
 
         if (model.isEditProviderMode()) {
             setCurrentActiveProviderWidget();
@@ -238,6 +244,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         vmwarePropertiesWidget.flush();
         kvmPropertiesWidget.flush();
         xenPropertiesWidget.flush();
+        kubevirtPropertiesWidget.flush();
         return driver.flush();
     }
 
@@ -289,7 +296,21 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
             kvmPropertiesWidget.setVisible(providerModel.getKvmPropertiesModel().getIsAvailable());
             vmwarePropertiesWidget.setVisible(providerModel.getVmwarePropertiesModel().getIsAvailable());
             xenPropertiesWidget.setVisible(providerModel.getXenPropertiesModel().getIsAvailable());
+            kubevirtPropertiesWidget.setVisible(providerModel.getKubevirtPropertiesModel().getIsAvailable());
         }
+    }
+
+    @Override public void updatePasswordTitle() {
+        String passwordLabel;
+        switch (providerModel.getType().getSelectedItem()) {
+        case KUBEVIRT:
+            passwordLabel = constants.kubevirtToken();
+            break;
+        default:
+            passwordLabel = constants.passwordProvider();
+            break;
+        }
+        passwordEditor.setLabel(passwordLabel);
     }
 
     @Override

@@ -30,6 +30,7 @@ public class TagDaoTest extends BaseDaoTestCase<TagDao> {
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = FixturesTool.VM_RHEL5_POOL_50;
     private static final Guid FREE_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+    private static final Guid EXISTING_HOST_ID = FixturesTool.VDS_RHEL6_NFS_SPM; // "afce7a39-8e8c-4819-ba9c-796d316592e6"
     private Tags newTag;
     private Tags existingTag;
     private Guid parent;
@@ -527,5 +528,18 @@ public class TagDaoTest extends BaseDaoTestCase<TagDao> {
         for (TagsVmMap mapping : result) {
             assertEquals(EXISTING_VM_ID, mapping.getVmId());
         }
+    }
+
+    @Test
+    public void testDetachVdsFromAllTags() {
+        List<Tags> hostTags = dao.getAllForVds(EXISTING_HOST_ID.toString());
+        assertNotNull(hostTags);
+        assertFalse(hostTags.isEmpty());
+
+        dao.detachVdsFromAllTags(existingVdsTag.getVdsId());
+
+        hostTags = dao.getAllForVds(EXISTING_HOST_ID.toString());
+        assertNotNull(hostTags);
+        assertTrue(hostTags.isEmpty());
     }
 }

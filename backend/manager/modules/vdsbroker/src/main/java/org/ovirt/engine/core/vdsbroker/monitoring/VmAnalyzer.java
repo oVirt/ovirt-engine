@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -704,6 +705,15 @@ public class VmAnalyzer {
 
         if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
             vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
+        }
+
+        if (getVmManager().getOrigin() == OriginType.KUBEVIRT) {
+            if (!Objects.equals(dbVm.getIp(), vdsmVm.getVmDynamic().getIp())) {
+                // TODO: report it as guest agent NICs info instead
+                dbVm.setIp(vdsmVm.getVmDynamic().getIp());
+                // make sure some field is changed
+                vdsmVm.getVmDynamic().setGuestAgentNicsHash(new Random().nextInt());
+            }
         }
 
         // if something relevant changed

@@ -7,7 +7,7 @@ import java.io.Serializable;
  * type.
  * @param <T> The type of the id.
  */
-public interface BusinessEntity<T extends Serializable> extends Serializable {
+public interface BusinessEntity<T extends Serializable> extends Serializable, Managed {
 
     /**
      * Returns the unique ID of the business entity.
