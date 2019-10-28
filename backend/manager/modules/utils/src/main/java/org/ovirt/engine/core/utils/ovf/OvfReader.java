@@ -516,10 +516,8 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     protected void readGeneralData(XmlNode content) {
-        vmBase.setVmInit(new VmInit());
         consumeReadProperty(content, DESCRIPTION, val -> vmBase.setDescription(val));
         consumeReadProperty(content, COMMENT, val -> vmBase.setComment(val));
-        consumeReadProperty(content, DOMAIN, val -> vmBase.getVmInit().setDomain(val));
         consumeReadProperty(content,
                 CREATION_DATE,
                 val -> vmBase.setCreationDate(OvfParser.utcDateStringToLocalDate(val)));
@@ -687,9 +685,11 @@ public abstract class OvfReader implements IOvfBuilder {
 
     private void readVmInit(XmlNode content) {
         XmlNode node = selectSingleNode(content, "VmInit");
-        VmInit vmInit = vmBase.getVmInit();
-        vmInit.setId(vmBase.getId());
         if (node != null) {
+            vmBase.setVmInit(new VmInit());
+            consumeReadProperty(content, DOMAIN, val -> vmBase.getVmInit().setDomain(val));
+            VmInit vmInit = vmBase.getVmInit();
+            vmInit.setId(vmBase.getId());
             if (node.attributes.get("ovf:hostname") != null) {
                 vmInit.setHostname(node.attributes.get("ovf:hostname").getValue());
             }
