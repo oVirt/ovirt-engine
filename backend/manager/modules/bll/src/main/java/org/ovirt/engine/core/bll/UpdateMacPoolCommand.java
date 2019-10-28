@@ -52,6 +52,8 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
         MacPoolValidator validator = new MacPoolValidator(allMacPools, getMacPoolEntity());
         return validate(new MacPoolValidator(allMacPools, oldMacPool).macPoolExists()) &&
                 validate(validator.hasUniqueName()) &&
+                validate(validator.validateOverlappingRanges(getMacPoolEntity())) &&
+                validate(validator.validateOverlapWithAllCurrentPools(getMacPoolEntity())) &&
                 validate(validator.validateDuplicates(macPoolPerCluster)) &&
                 validate(validateDefaultFlagIsNotChanged(oldMacPool, getMacPoolEntity()));
     }
