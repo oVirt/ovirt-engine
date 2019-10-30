@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -147,7 +147,7 @@ public class EditDiskModel extends AbstractDiskModel {
 
         startProgress();
 
-        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(getDisk());
+        UpdateDiskParameters parameters = new UpdateDiskParameters(getDisk());
         IFrontendActionAsyncCallback onFinished = callback != null ? callback : result -> {
             EditDiskModel diskModel = (EditDiskModel) result.getState();
             diskModel.stopProgress();

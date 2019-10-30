@@ -85,7 +85,7 @@ public class ExtendManagedBlockStorageDiskSizeCommand<T extends ExtendManagedBlo
             imageDao.updateImageSize(managedBlockStorageDisk.getImageId(), managedBlockStorageDisk.getSize());
             return null;
         });
-        performDiskUpdate(true);
+        performDiskUpdate();
     }
 
     @Override

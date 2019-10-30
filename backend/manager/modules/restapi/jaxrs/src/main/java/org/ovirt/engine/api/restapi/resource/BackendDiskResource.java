@@ -24,7 +24,6 @@ import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -33,7 +32,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
-import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -86,10 +85,10 @@ public class BackendDiskResource
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
-        public ActionParametersBase getParameters(
+        public UpdateDiskParameters getParameters(
                 Disk incoming,
                 org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-            return new VmDiskOperationParameterBase(map(incoming, entity));
+            return new UpdateDiskParameters(map(incoming, entity));
         }
     }
 

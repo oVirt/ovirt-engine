@@ -11,10 +11,14 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmSlaPolicyUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -25,6 +29,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -33,6 +38,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -45,6 +51,7 @@ import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.ExtendManagedBlockStorageDiskSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -92,8 +99,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T>
-        implements QuotaStorageDependent {
+public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractDiskVmCommand<T>
+        implements QuotaStorageDependent, SerialChildExecutingCommand {
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     private static final long BYTES_IN_GB = 1024 * 1024 * 1024;
@@ -148,6 +155,10 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
+
     public UpdateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -191,40 +202,26 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
-        if (resizeDiskImageRequested()) {
-            exclusiveLock.put(getOldDisk().getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED));
-        }
-
-        return exclusiveLock.isEmpty() ? null : exclusiveLock;
+        exclusiveLock.put(getOldDisk().getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED));
+        return exclusiveLock;
     }
 
     @Override
     protected void executeVmCommand() {
+        lockImageInDb();
+        List<UpdateDiskParameters.Phase> phaseList = new ArrayList<>();
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
-
         if (resizeDiskImageRequested()) {
-            switch (getOldDisk().getDiskStorageType()) {
-                case IMAGE:
-                    extendDiskImageSize();
-                    break;
-                case MANAGED_BLOCK_STORAGE:
-                    extendManagedBlockDiskSize();
-                    break;
-                case CINDER:
-                    extendCinderDiskSize();
-                    break;
-            }
-        } else {
-            try {
-                performDiskUpdate(false);
-                if (Objects.equals(getOldDisk().getDiskStorageType(), DiskStorageType.IMAGE) && amendDiskRequested()) {
-                    amendDiskImage();
-                }
-            } finally {
-                freeLock();
-            }
+            phaseList.add(UpdateDiskParameters.Phase.EXTEND_DISK);
         }
+        if (getOldDisk().getDiskStorageType() == DiskStorageType.IMAGE && amendDiskRequested()) {
+            phaseList.add(UpdateDiskParameters.Phase.AMEND_DISK);
+        }
+        phaseList.add(UpdateDiskParameters.Phase.UPDATE_DISK);
+        getParameters().setDiskUpdatePhases(phaseList);
+        persistCommandIfNeeded();
+        setSucceeded(true);
     }
 
     @Override
@@ -266,8 +263,8 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
             return false;
         }
 
-        if (resizeDiskImageRequested() && amendDiskRequested()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
+        if (amendDiskRequested() && !validateCanAmendDisk()) {
+            return false;
         }
         if (isQcowCompatChangedOnRawDisk()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
@@ -468,6 +465,16 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
         return true;
     }
 
+    private boolean validateCanAmendDisk() {
+        DiskImage disk = (DiskImage) getNewDisk();
+        setStoragePoolId(disk.getStoragePoolId());
+        if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
+            return false;
+        }
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(List.of(disk));
+        return validate(diskImagesValidator.diskImagesNotIllegal());
+    }
+
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (listPermissionSubjects == null) {
@@ -486,7 +493,7 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
         return listPermissionSubjects;
     }
 
-    protected void performDiskUpdate(final boolean unlockImage) {
+    protected void performDiskUpdate() {
         if (shouldPerformMetadataUpdate()) {
             updateMetaDataDescription((DiskImage) getNewDisk());
         }
@@ -510,9 +517,6 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
                     case MANAGED_BLOCK_STORAGE:
                         DiskImage diskImage = (DiskImage) diskForUpdate;
                         diskImage.setQuotaId(getQuotaId());
-                        if (unlockImage && diskImage.getImageStatus() == ImageStatus.LOCKED) {
-                            diskImage.setImageStatus(ImageStatus.OK);
-                        }
                         imageDao.update(diskImage.getImage());
                         updateQuota(diskImage);
                         updateDiskProfile();
@@ -522,9 +526,6 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
                         cinderDisk.setQuotaId(getQuotaId());
                         setStorageDomainId(cinderDisk.getStorageIds().get(0));
                         getCinderBroker().updateDisk(cinderDisk);
-                        if (unlockImage && cinderDisk.getImageStatus() == ImageStatus.LOCKED) {
-                            cinderDisk.setImageStatus(ImageStatus.OK);
-                        }
                         imageDao.update(cinderDisk.getImage());
                         updateQuota(cinderDisk);
                         break;
@@ -661,29 +662,25 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
     }
 
     private void extendDiskImageSize() {
-        lockImageInDb();
+        runInternalActionWithTasksContext(ActionType.ExtendImageSize, createExtendParameters());
+    }
 
-        ActionReturnValue ret = runInternalActionWithTasksContext(
-                ActionType.ExtendImageSize,
-                createExtendImageSizeParameters());
-
-        if (!ret.getSucceeded()) {
-            propagateInternalCommandFailure(ret);
-            getReturnValue().setFault(ret.getFault());
+    private void executeDiskExtend() {
+        switch (getOldDisk().getDiskStorageType()) {
+            case IMAGE:
+                extendDiskImageSize();
+                break;
+            case CINDER:
+                extendCinderDiskSize();
+                break;
+            case MANAGED_BLOCK_STORAGE:
+                extendManagedBlockDiskSize();
+                break;
         }
-        getReturnValue().getVdsmTaskIdList().addAll(ret.getInternalVdsmTaskIdList());
-        setSucceeded(ret.getSucceeded());
     }
 
     protected void amendDiskImage() {
-        ActionReturnValue ret = runInternalActionWithTasksContext(ActionType.AmendImageGroupVolumes,
-                amendImageGroupVolumesCommandParameters());
-
-        if (!ret.getSucceeded()) {
-            propagateInternalCommandFailure(ret);
-            getReturnValue().setFault(ret.getFault());
-        }
-        setSucceeded(ret.getSucceeded());
+        runInternalActionWithTasksContext(ActionType.AmendImageGroupVolumes, createAmendParameters());
     }
 
     private void extendCinderDiskSize() {
@@ -741,38 +738,14 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
 
     @Override
     protected void endSuccessfully() {
-        if (!isDiskImage()) {
-            return;
-        }
-
-        ActionReturnValue ret = backend.endAction(ActionType.ExtendImageSize,
-                createExtendImageSizeParameters(),
-                getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-
-        if (ret.getSucceeded()) {
-            performDiskUpdate(true);
-        } else {
-            unlockImageInDb();
-        }
-
-        getReturnValue().setEndActionTryAgain(false);
-        setSucceeded(ret.getSucceeded());
+        unlockImageInDb();
+        setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        endInternalCommandWithFailure();
         unlockImageInDb();
-        getReturnValue().setEndActionTryAgain(false);
         setSucceeded(true);
-    }
-
-    private void endInternalCommandWithFailure() {
-        ExtendImageSizeParameters params = createExtendImageSizeParameters();
-        params.setTaskGroupSuccess(false);
-        backend.endAction(ActionType.ExtendImageSize,
-                params,
-                getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
     }
 
     @Override
@@ -913,7 +886,7 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
 
     protected boolean amendDiskRequested() {
         // if the updated disk is the base snapshot, no amend operation needed;
-        if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE && !isBaseSnapshotDisk()) {
+        if (getOldDisk().getDiskStorageType() == DiskStorageType.IMAGE && !isBaseSnapshotDisk()) {
             QcowCompat qcowCompat = ((DiskImage) getNewDisk()).getQcowCompat();
             return getDiskImages(getOldDisk().getId()).stream().anyMatch(disk -> disk.isQcowFormat()
                     && disk.getQcowCompat() != qcowCompat);
@@ -1055,7 +1028,7 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
         }
     }
 
-    private void lockImageInDb() {
+    public void lockImageInDb() {
         final DiskImage diskImage = (DiskImage) getOldDisk();
 
          TransactionSupport.executeInNewTransaction(() -> {
@@ -1078,26 +1051,6 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
         return new AmendImageGroupVolumesCommandParameters(diskImage.getId(), diskImage.getQcowCompat());
     }
 
-    private ExtendImageSizeParameters createExtendImageSizeParameters() {
-        DiskImage diskImage = (DiskImage) getNewDisk();
-        ExtendImageSizeParameters params = new ExtendImageSizeParameters(diskImage.getImageId(), diskImage.getSize());
-        params.setStoragePoolId(diskImage.getStoragePoolId());
-        params.setStorageDomainId(diskImage.getStorageIds().get(0));
-        params.setImageGroupID(diskImage.getId());
-        params.setParentCommand(ActionType.UpdateDisk);
-        params.setParentParameters(getParameters());
-        return params;
-    }
-
-    private void propagateInternalCommandFailure(ActionReturnValue internalReturnValue) {
-        getReturnValue().getExecuteFailedMessages().clear();
-        getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
-        getReturnValue().setFault(internalReturnValue.getFault());
-        getReturnValue().getValidationMessages().clear();
-        getReturnValue().getValidationMessages().addAll(internalReturnValue.getValidationMessages());
-        getReturnValue().setValid(internalReturnValue.isValid());
-    }
-
     @Override
     public Guid getStoragePoolId() {
         if (getVm() != null) {
@@ -1106,5 +1059,56 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
             return ((DiskImage) getNewDisk()).getStoragePoolId();
         }
         return null;
+    }
+
+    private AmendImageGroupVolumesCommandParameters createAmendParameters() {
+        DiskImage diskImage = (DiskImage) getNewDisk();
+        AmendImageGroupVolumesCommandParameters parameters =
+                new AmendImageGroupVolumesCommandParameters(diskImage.getId(), diskImage.getQcowCompat());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        return parameters;
+    }
+
+    private ExtendImageSizeParameters createExtendParameters() {
+        DiskImage diskImage = (DiskImage) getNewDisk();
+        ExtendImageSizeParameters params = new ExtendImageSizeParameters(diskImage.getImageId(), diskImage.getSize());
+        params.setStoragePoolId(diskImage.getStoragePoolId());
+        params.setStorageDomainId(diskImage.getStorageIds().get(0));
+        params.setImageGroupID(diskImage.getId());
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        return params;
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        if (completedChildCount == getParameters().getDiskUpdatePhases().size()) {
+            return false;
+        }
+        UpdateDiskParameters.Phase nextPhase = getParameters().getDiskUpdatePhases().get(completedChildCount);
+        switch (nextPhase) {
+            case EXTEND_DISK:
+                log.info("Starting to extend disk id '{}')", getOldDisk().getId());
+                executeDiskExtend();
+                break;
+            case AMEND_DISK:
+                log.info("Starting to amend disk id '{}')", getOldDisk().getId());
+                amendDiskImage();
+                break;
+            case UPDATE_DISK:
+                log.info("Starting to update general fields of disk id '{}')", getOldDisk().getId());
+                performDiskUpdate();
+                // If the only phase is update then return false.
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }

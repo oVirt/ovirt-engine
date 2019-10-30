@@ -10,7 +10,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
@@ -27,19 +27,16 @@ import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.AmendVolumeCommandParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesCommandParameters>
         extends CommandBase<T> implements SerialChildExecutingCommand {
@@ -83,10 +80,8 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
-        if (getDiskImage().getVmEntityType() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_UPDATE_FLOATING_DISK_QCOW);
-        }
-        if (getDiskImage().getVmEntityType().isTemplateType()) {
+        VmEntityType vmEntityType = getDiskImage().getVmEntityType();
+        if (vmEntityType != null && vmEntityType.isTemplateType()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_TEMPLATE_DISK);
         }
         setStorageDomainId(getDiskImage().getStorageIds().get(0));
@@ -95,8 +90,10 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
             return false;
         }
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList(getDiskImage()));
-        return validate(diskImagesValidator.diskImagesNotIllegal()) &&
-                validate(diskImagesValidator.diskImagesNotLocked());
+        if (!isInternalExecution() && !validate(diskImagesValidator.diskImagesNotLocked())) {
+            return false;
+        }
+        return validate(diskImagesValidator.diskImagesNotIllegal());
     }
 
     protected DiskValidator createDiskValidator() {
@@ -105,7 +102,6 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     @Override
     protected void executeCommand() {
-        lockImageInDb();
         List<DiskImage> images = diskImageDao
                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images.stream()
@@ -168,66 +164,6 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
                 new PermissionSubject(diskImage.getId(),
                         VdcObjectType.Disk,
                         getActionType().getActionGroup()));
-    }
-
-    private void lockImageInDb() {
-        final DiskImage diskImage = getDiskImage();
-
-        TransactionSupport.executeInNewTransaction(() -> {
-            getCompensationContext().snapshotEntityStatus(diskImage.getImage());
-            imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
-            getCompensationContext().stateChanged();
-            return null;
-        });
-    }
-
-    private void unlockImageInDb() {
-        DiskImage diskImage = getDiskImage();
-        imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
-    }
-
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(LockProperties.Scope.Execution);
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return getDiskImage() != null ? Collections.singletonMap(getDiskImage().getId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED))
-                : null;
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        if (getDiskImage() == null) {
-            return null;
-        }
-
-        if (getDiskImage().getVmEntityType() != null && getDiskImage().getVmEntityType().isVmType()) {
-            return getSharedLocksForVmDisk();
-        }
-
-        log.warn("No shared locks are taken while amending disk of entity: {}", getDiskImage().getVmEntityType());
-        return null;
-    }
-
-    private Map<String, Pair<String, String>> getSharedLocksForVmDisk() {
-        return vmDao.getVmsWithPlugInfo(getParameters().getImageGroupID()).stream()
-                .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
-                        p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
-    }
-
-    @Override
-    protected void endSuccessfully() {
-        super.endSuccessfully();
-        unlockImageInDb();
-    }
-
-    @Override
-    protected void endWithFailure() {
-        super.endWithFailure();
-        unlockImageInDb();
     }
 
     @Override

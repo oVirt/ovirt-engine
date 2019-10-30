@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -53,7 +53,7 @@ public class EditVmDiskModel extends EditDiskModel {
 
         startProgress();
 
-        VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(getDiskVmElement(), getDisk());
+        UpdateDiskParameters parameters = new UpdateDiskParameters(getDiskVmElement(), getDisk());
         IFrontendActionAsyncCallback onFinished = callback != null ? callback : result -> {
             EditVmDiskModel diskModel = (EditVmDiskModel) result.getState();
             diskModel.stopProgress();

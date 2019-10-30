@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ExtendManagedBlockStorageDiskSizeParameters extends VmDiskOperationParameterBase {
+public class ExtendManagedBlockStorageDiskSizeParameters extends UpdateDiskParameters {
 
     private static final long serialVersionUID = 5002115812827491485L;
 

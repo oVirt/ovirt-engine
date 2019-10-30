@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.UpdateDiskCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
-public class ExtendCinderDiskCommand<T extends VmDiskOperationParameterBase> extends UpdateDiskCommand<T> {
+public class ExtendCinderDiskCommand<T extends UpdateDiskParameters> extends UpdateDiskCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ExtendCinderDiskCommand.class);
 
@@ -46,7 +46,7 @@ public class ExtendCinderDiskCommand<T extends VmDiskOperationParameterBase> ext
     protected void performDiskUpdate() {
         CinderDisk cinderDisk = (CinderDisk) getNewDisk();
         imageDao.updateImageSize(cinderDisk.getImageId(), cinderDisk.getSize());
-        performDiskUpdate(true);
+        super.performDiskUpdate();
     }
 
     @Override

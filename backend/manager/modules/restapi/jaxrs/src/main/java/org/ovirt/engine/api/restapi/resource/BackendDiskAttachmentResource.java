@@ -12,10 +12,10 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.DiskAttachmentResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -106,7 +106,7 @@ public class BackendDiskAttachmentResource
 
     protected class UpdateParametersProvider implements ParametersProvider<DiskAttachment, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement> {
         @Override
-        public ActionParametersBase getParameters(DiskAttachment incoming, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity) {
+        public UpdateDiskParameters getParameters(DiskAttachment incoming, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity) {
             DiskVmElement dve = map(incoming, entity);
             dve.getId().setVmId(vmId);
 
@@ -123,7 +123,7 @@ public class BackendDiskAttachmentResource
                 }
             }
 
-            return new VmDiskOperationParameterBase(dve, disk);
+            return new UpdateDiskParameters(dve, disk);
         }
     }
 }

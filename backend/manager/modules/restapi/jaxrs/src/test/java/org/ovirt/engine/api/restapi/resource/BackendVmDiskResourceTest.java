@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
+import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -132,7 +133,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(
             setUpActionExpectations(
                 ActionType.UpdateDisk,
-                VmDiskOperationParameterBase.class,
+                UpdateDiskParameters.class,
                 new String[] { "VmId", "DiskInfo.WipeAfterDelete" },
                 new Object[] { VM_ID, Boolean.FALSE },
                 true,
@@ -150,7 +151,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(
             setUpActionExpectations(
                 ActionType.UpdateDisk,
-                VmDiskOperationParameterBase.class,
+                UpdateDiskParameters.class,
                 new String[] { "VmId", "DiskVmElement.ReadOnly" },
                 new Object[] { VM_ID, Boolean.TRUE },
                 true,
