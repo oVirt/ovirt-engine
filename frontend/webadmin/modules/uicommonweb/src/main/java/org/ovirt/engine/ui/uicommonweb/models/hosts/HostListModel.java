@@ -1289,20 +1289,21 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void approve() {
-        HostModel hostModel = new EditHostModel();
+        EditHostModel hostModel = new EditHostModel();
         setWindow(hostModel);
+        VDS host = getSelectedItem();
+
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
-            HostModel innerHostModel = (HostModel) getWindow();
-            VDS host = getSelectedItem();
-            innerHostModel.updateModelFromVds(host, dataCenters, false);
-            innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
-            innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
-            innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
+            hostModel.setSelectedCluster(host);
+            hostModel.updateModelFromVds(host, dataCenters, false);
+            hostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
+            hostModel.setHelpTag(HelpTag.edit_and_approve_host);
+            hostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnApprove", HostListModel.this); //$NON-NLS-1$
-            innerHostModel.getCommands().add(tempVar);
+            hostModel.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
-            innerHostModel.getCommands().add(tempVar2);
+            hostModel.getCommands().add(tempVar2);
         }));
     }
 
