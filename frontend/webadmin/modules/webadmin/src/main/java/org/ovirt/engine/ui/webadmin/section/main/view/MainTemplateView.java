@@ -52,7 +52,7 @@ public class MainTemplateView extends AbstractMainWithDetailsTableView<VmTemplat
             @Override
             public void update(int index, VmTemplate template, String value) {
                 Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), template.getName());
+                parameters.put(FragmentParams.ID.getName(), template.getId().toString());
                 //The link was clicked, now fire an event to switch to details.
                 getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.templateGeneralSubTabPlace, parameters);
