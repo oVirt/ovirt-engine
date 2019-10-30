@@ -66,10 +66,10 @@ public class OvfManager {
                     version,
                     cluster.getEmulatedMachine(),
                     cpuVerb,
-                    osRepository,
+                    getOsRepository(),
                     generateEngineXml(vm, cpuVerb, cluster.getEmulatedMachine()));
         } else {
-            vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository, getMemoryDiskForSnapshots(vm));
+            vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, getOsRepository(), getMemoryDiskForSnapshots(vm));
         }
         return vmWriter.build().getStringRepresentation();
     }
@@ -81,15 +81,15 @@ public class OvfManager {
 
     public String exportTemplate(FullEntityOvfData fullEntityOvfData, Version version) {
         updateBootOrderOnDevices(fullEntityOvfData.getVmBase(), true);
-        return new OvfTemplateWriter(fullEntityOvfData, version, osRepository).build().getStringRepresentation();
+        return new OvfTemplateWriter(fullEntityOvfData, version, getOsRepository()).build().getStringRepresentation();
     }
 
     public String exportOva(VM vm, FullEntityOvfData fullEntityOvfData, Version version) {
-        return new OvfOvaVmWriter(vm, fullEntityOvfData, version, osRepository).build().getStringRepresentation();
+        return new OvfOvaVmWriter(vm, fullEntityOvfData, version, getOsRepository()).build().getStringRepresentation();
     }
 
     public String exportOva(VmTemplate template, FullEntityOvfData fullEntityOvfData, Version version) {
-        return new OvfOvaTemplateWriter(template, fullEntityOvfData, version, osRepository).build().getStringRepresentation();
+        return new OvfOvaTemplateWriter(template, fullEntityOvfData, version, getOsRepository()).build().getStringRepresentation();
     }
 
     public void importVm(String ovfstring,
@@ -98,7 +98,7 @@ public class OvfManager {
             throws OvfReaderException {
         OvfReader ovf = null;
         try {
-            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, fullEntityOvfData, osRepository);
+            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, fullEntityOvfData, getOsRepository());
             ovf.build();
             initIcons(vm.getStaticData());
         } catch (Exception ex) {
@@ -116,7 +116,7 @@ public class OvfManager {
             throws OvfReaderException {
         OvfReader ovf = null;
         try {
-            ovf = new OvfOvaVmReader(new XmlDocument(ovfstring), fullEntityOvfData, vm, osRepository);
+            ovf = new OvfOvaVmReader(new XmlDocument(ovfstring), fullEntityOvfData, vm, getOsRepository());
             ovf.build();
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
@@ -131,7 +131,7 @@ public class OvfManager {
             throws OvfReaderException {
         OvfReader ovf = null;
         try {
-            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, osRepository);
+            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, getOsRepository());
             ovf.build();
             initIcons(fullEntityOvfData.getVmBase());
         } catch (Exception ex) {
@@ -145,7 +145,7 @@ public class OvfManager {
             throws OvfReaderException {
         OvfReader ovf = null;
         try {
-            ovf = new OvfOvaTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, osRepository);
+            ovf = new OvfOvaTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, getOsRepository());
             ovf.build();
             initIcons(fullEntityOvfData.getVmBase());
         } catch (Exception ex) {
@@ -174,7 +174,7 @@ public class OvfManager {
     private void initIcons(VmBase vmBase) {
         final int osId = vmBase.getOsId();
         final int fallbackOsId = OsRepository.DEFAULT_X86_OS;
-        final Map<Integer, VmIconIdSizePair> vmIconDefaults = iconDefaultsProvider.getVmIconDefaults();
+        final Map<Integer, VmIconIdSizePair> vmIconDefaults = getIconDefaultsProvider().getVmIconDefaults();
         final VmIconIdSizePair iconPair = vmIconDefaults.containsKey(osId)
                 ? vmIconDefaults.get(osId)
                 : vmIconDefaults.get(fallbackOsId);
@@ -217,5 +217,15 @@ public class OvfManager {
         vm.setCpuName(cpuId);
         vm.setEmulatedMachine(emulatedMachine);
         return new LibvirtVmXmlBuilder(vm, vmInfoBuildUtils).buildCreateVm();
+    }
+
+    // Method exposed for mocking in unit tests
+    public OsRepository getOsRepository() {
+        return osRepository;
+    }
+
+    // Method exposed for mocking in unit tests
+    public OvfVmIconDefaultsProvider getIconDefaultsProvider() {
+        return iconDefaultsProvider;
     }
 }

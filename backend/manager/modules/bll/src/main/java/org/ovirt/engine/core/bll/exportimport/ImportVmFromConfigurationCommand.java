@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -56,6 +57,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
+    private boolean ovfCanBeParsed = true;
 
     private List<String> missingAffinityGroups = new ArrayList<>();
     private List<String> missingAffinityLabels = new ArrayList<>();
@@ -97,6 +99,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Override
     protected boolean validate() {
+        if (!ovfCanBeParsed) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+        }
+
         // We first must filter out all the invalid disks from imageToDestinationDomainMap in case we import using
         // allow_partial, so that when a VM will be imported the disks which do not exist on the storage domain will
         // be ignored.
@@ -240,6 +246,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                         e.getMessage(),
                         ovfEntityData.getOvfData());
                 log.debug("Exception", e);
+                ovfEntityData = null;
+                ovfCanBeParsed = false;
             }
         }
     }

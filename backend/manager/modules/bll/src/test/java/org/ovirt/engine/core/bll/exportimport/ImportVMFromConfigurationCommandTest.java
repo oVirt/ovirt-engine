@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll.exportimport;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -15,9 +17,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -40,23 +45,35 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
+import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
+@ExtendWith(MockConfigExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.DefaultGeneralTimeZone, "Etc/GMT"));
+    }
+
     private Guid vmId = Guid.newGuid();
     private static final Guid storageDomainId = new Guid("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid clusterId = Guid.newGuid();
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
     private String xmlOvfData;
-    @Mock
     private Cluster cluster;
     private StoragePool storagePool;
 
@@ -83,8 +100,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @InjectMocks
     private OvfHelper ovfHelper;
 
-    @Mock
-    private OvfManager ovfManager;
+    // Using @Spy, so the object will be injected into ovfHelper
+    @Spy
+    private OvfManager ovfManager = new OvfManager();
 
     @Mock
     private OsRepository osRepository;
@@ -95,13 +113,43 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Mock
     private CloudInitHandler cloudInitHandler;
 
+    @Mock
+    private AffinityGroupDao affinityGroupDao;
+
+    @Mock
+    private LabelDao labelDao;
+
     @BeforeEach
     public void setUp() throws IOException {
+        int osId = 30;
+
+        when(osRepository.getOsIdByUniqueName(any())).thenReturn(osId);
+        when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
+        when(osRepository.isWindows(anyInt())).thenReturn(false);
+        when(osRepository.isBalloonEnabled(anyInt(), any())).thenReturn(true);
+        when(osRepository.isSoundDeviceEnabled(anyInt(), any())).thenReturn(true);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+
+        doReturn(osRepository).when(ovfManager).getOsRepository();
+
+        var ovfVmIconDefaultsProvider = mock(OvfVmIconDefaultsProvider.class);
+        when(ovfVmIconDefaultsProvider.getVmIconDefaults()).thenReturn(Map.of(
+                osId, new VmIconIdSizePair(Guid.Empty, Guid.Empty)
+        ));
+        doReturn(ovfVmIconDefaultsProvider).when(ovfManager).getIconDefaultsProvider();
+
+        cluster = new Cluster();
+        cluster.setId(clusterId);
+        cluster.setStoragePoolId(storagePoolId);
+        cluster.setArchitecture(ArchitectureType.x86_64);
+
         doReturn(cluster).when(cmd).getCluster();
         doReturn(emptyList()).when(cmd).getImages();
         doReturn(emptyList()).when(cloudInitHandler).validate(any());
 
-        mockCluster();
+        doReturn(null).when(affinityGroupDao).getByName(any());
+        doReturn(null).when(labelDao).getByName(any());
+
         setXmlOvfData();
     }
 
@@ -118,6 +166,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(validator.validateUnregisteredEntity(any())) .thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
                 .thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(validator)
+                .validateStorageExistsForMemoryDisks(anyList(), anyBoolean(), anyMap());
 
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
@@ -172,8 +222,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).validateBeforeCloneVm(any());
         doReturn(true).when(cmd).validateAfterCloneVm(any());
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
-        when(validator.validateUnregisteredEntity(any())).
-                thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
     }
@@ -212,13 +260,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         ovfEntity.setEntityName("Some VM");
         ovfEntity.setOvfData(xmlOvfData);
         return ovfEntity;
-    }
-
-    private void mockCluster() {
-        cluster = mock(Cluster.class);
-        doReturn(clusterId).when(cluster).getId();
-        doReturn(storagePoolId).when(cluster).getStoragePoolId();
-        doReturn(ArchitectureType.x86_64).when(cluster).getArchitecture();
     }
 
     private void mockStoragePool() {
