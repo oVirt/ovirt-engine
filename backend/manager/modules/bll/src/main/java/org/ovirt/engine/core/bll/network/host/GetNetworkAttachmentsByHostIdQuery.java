@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -32,6 +33,9 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
 
     @Inject
     private NetworkDao networkDao;
+
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     @Inject
     private VdsDao hostDao;
@@ -62,7 +66,7 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
         reportedConfigurationsFiller.fillReportedConfigurations(allInterfacesForHost,
                 networkMap,
                 networkAttachments,
-                vds.getDynamicData().getReportedDnsResolverConfiguration(), clusterId);
+                dnsResolverConfigurationDao.get(hostId), clusterId);
 
         completeNicNames(networkAttachments, allInterfacesForHost);
         completeNetworkNames(networkAttachments, networkMap);

@@ -18,7 +18,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.network.cluster.DefaultRouteUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -29,8 +28,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -57,7 +56,7 @@ public class ReportedConfigurationsFillerTest {
     private VdsStaticDao vdsStaticDao;
 
     @Mock
-    private VdsDynamicDao vdsDynamicDao;
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     @Mock
     private EffectiveHostNetworkQos effectiveHostNetworkQos;
@@ -96,10 +95,6 @@ public class ReportedConfigurationsFillerTest {
 
         reportedDnsResolverConfiguration = new DnsResolverConfiguration();
 
-        VdsDynamic vdsDynamic = new VdsDynamic();
-        vdsDynamic.setId(hostId);
-        vdsDynamic.setReportedDnsResolverConfiguration(reportedDnsResolverConfiguration);
-
         baseNic = createNic("eth0");
 
         vlanNic = createNic("eth0.1");
@@ -117,7 +112,7 @@ public class ReportedConfigurationsFillerTest {
         vlanNetworkQos.setId(vlanNetwork.getQosId());
 
         when(vdsStaticDao.get(hostId)).thenReturn(vdsStatic);
-        when(vdsDynamicDao.get(hostId)).thenReturn(vdsDynamic);
+        when(dnsResolverConfigurationDao.get(hostId)).thenReturn(reportedDnsResolverConfiguration);
 
         cluster = new Cluster();
         cluster.setCompatibilityVersion(Version.v4_2);

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -60,6 +61,9 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
 
     @Mock
     private NetworkDao networkDaoMock;
+
+    @Mock
+    private DnsResolverConfigurationDao dnsResolverConfigurationDaoMock;
 
     @Mock
     private VdsDynamicDao vdsDynamicDaoMock;
@@ -110,10 +114,10 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         networkImplementationDetailsUtils = new NetworkImplementationDetailsUtils(effectiveHostNetworkQos,
                 networkAttachmentDaoMock,
                 vdsStaticDaoMock,
-                vdsDynamicDaoMock,
                 clusterDaoMock,
                 interfaceDaoMock,
                 networkDaoMock,
+                dnsResolverConfigurationDaoMock,
                 calculateBaseNic,
                 this.defaultRouteUtil);
     }

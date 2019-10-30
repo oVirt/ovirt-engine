@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -32,29 +32,29 @@ public class NetworkImplementationDetailsUtils {
     private final DefaultRouteUtil defaultRouteUtil;
     private final EffectiveHostNetworkQos effectiveHostNetworkQos;
     private final VdsStaticDao vdsStaticDao;
-    private final VdsDynamicDao vdsDynamicDao;
     private final ClusterDao clusterDao;
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
+    private final DnsResolverConfigurationDao dnsResolverConfigurationDao;
     private final CalculateBaseNic calculateBaseNic;
 
     @Inject
     public NetworkImplementationDetailsUtils(EffectiveHostNetworkQos effectiveHostNetworkQos,
             NetworkAttachmentDao networkAttachmentDao,
             VdsStaticDao vdsStaticDao,
-            VdsDynamicDao vdsDynamicDao,
             ClusterDao clusterDao,
             InterfaceDao interfaceDao,
             NetworkDao networkDao,
+            DnsResolverConfigurationDao dnsResolverConfigurationDao,
             CalculateBaseNic calculateBaseNic,
             DefaultRouteUtil defaultRouteUtil) {
 
         this.effectiveHostNetworkQos = Objects.requireNonNull(effectiveHostNetworkQos);
         this.vdsStaticDao = Objects.requireNonNull(vdsStaticDao);
-        this.vdsDynamicDao = Objects.requireNonNull(vdsDynamicDao);
         this.clusterDao = Objects.requireNonNull(clusterDao);
         this.interfaceDao = Objects.requireNonNull(interfaceDao);
         this.networkDao = Objects.requireNonNull(networkDao);
+        this.dnsResolverConfigurationDao = Objects.requireNonNull(dnsResolverConfigurationDao);
         this.calculateBaseNic = Objects.requireNonNull(calculateBaseNic);
         this.networkAttachmentDao = Objects.requireNonNull(networkAttachmentDao);
         this.defaultRouteUtil = Objects.requireNonNull(defaultRouteUtil);
@@ -115,7 +115,7 @@ public class NetworkImplementationDetailsUtils {
                 network,
                 hostNetworkQos,
                 networkAttachment,
-                vdsDynamicDao.get(vdsId).getReportedDnsResolverConfiguration(),
+                dnsResolverConfigurationDao.get(vdsId),
                 cluster,
                 defaultRouteUtil.isDefaultRouteNetwork(network.getId(), cluster.getId())
         );

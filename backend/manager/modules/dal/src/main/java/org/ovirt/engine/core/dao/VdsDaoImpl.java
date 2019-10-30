@@ -313,7 +313,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setSpmStatus(VdsSpmStatus.forValue(rs.getInt("spm_status")));
         entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
 
-        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(hostId));
 
         entity.setSupportedEngines(rs.getString("supported_engines"));
         entity.setClusterCompatibilityVersion(new VersionRowMapper("cluster_compatibility_version").mapRow(rs, rowNum));

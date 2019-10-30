@@ -111,6 +111,7 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.CollectionUtils;
@@ -143,6 +144,8 @@ public class VdsBrokerObjectsBuilder {
     private AuditLogDirector auditLogDirector;
     @Inject
     private InterfaceDao interfaceDao;
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     public VM buildVmsDataFromExternalProvider(Map<String, Object> struct) {
         VmStatic vmStatic = buildVmStaticDataFromExternalProvider(struct);
@@ -1016,7 +1019,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setFipsEnabled(assignBoolValue(struct, VdsProperties.FIPS_MODE));
     }
 
-    private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
+    private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
         String[] nameServersAddresses = assignStringArrayValue(struct, VdsProperties.name_servers);
         if (nameServersAddresses != null) {
             List<NameServer> nameServers = Stream.of(nameServersAddresses)
@@ -1026,7 +1029,7 @@ public class VdsBrokerObjectsBuilder {
             DnsResolverConfiguration reportedDnsResolverConfiguration = new DnsResolverConfiguration();
             reportedDnsResolverConfiguration.setNameServers(nameServers);
 
-            DnsResolverConfiguration oldDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
+            DnsResolverConfiguration oldDnsResolverConfiguration = dnsResolverConfigurationDao.get(vds.getId());
             if (oldDnsResolverConfiguration != null) {
                 reportedDnsResolverConfiguration.setId(oldDnsResolverConfiguration.getId());
             }

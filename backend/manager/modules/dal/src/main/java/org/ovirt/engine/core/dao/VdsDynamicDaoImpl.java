@@ -119,7 +119,6 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setPrettyName(rs.getString("pretty_name"));
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
 
-        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(hostId));
         entity.setInFenceFlow(rs.getBoolean("in_fence_flow"));
         entity.setKernelFeatures(
                 ObjectUtils.mapNullable(rs.getString("kernel_features"), JsonHelper::jsonToMapUnchecked));

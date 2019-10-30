@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurati
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkInSyncWithVdsNetworkInterface;
@@ -34,7 +34,7 @@ public class ReportedConfigurationsFiller {
     private final InterfaceDao interfaceDao;
     private final NetworkDao networkDao;
     private final VdsStaticDao vdsStaticDao;
-    private final VdsDynamicDao vdsDynamicDao;
+    private final DnsResolverConfigurationDao dnsResolverConfigurationDao;
     private final ClusterDao clusterDao;
     private final EffectiveHostNetworkQos effectiveHostNetworkQos;
     private final DefaultRouteUtil defaultRouteUtil;
@@ -43,7 +43,7 @@ public class ReportedConfigurationsFiller {
     public ReportedConfigurationsFiller(InterfaceDao interfaceDao,
             NetworkDao networkDao,
             VdsStaticDao vdsStaticDao,
-            VdsDynamicDao vdsDynamicDao,
+            DnsResolverConfigurationDao dnsResolverConfigurationDao,
             ClusterDao clusterDao,
             EffectiveHostNetworkQos effectiveHostNetworkQos,
             DefaultRouteUtil defaultRouteUtil) {
@@ -51,7 +51,7 @@ public class ReportedConfigurationsFiller {
         this.interfaceDao = Objects.requireNonNull(interfaceDao);
         this.networkDao = Objects.requireNonNull(networkDao);
         this.vdsStaticDao = Objects.requireNonNull(vdsStaticDao);
-        this.vdsDynamicDao = Objects.requireNonNull(vdsDynamicDao);
+        this.dnsResolverConfigurationDao = Objects.requireNonNull(dnsResolverConfigurationDao);
         this.clusterDao = Objects.requireNonNull(clusterDao);
         this.effectiveHostNetworkQos = Objects.requireNonNull(effectiveHostNetworkQos);
         this.defaultRouteUtil = Objects.requireNonNull(defaultRouteUtil);
@@ -82,7 +82,7 @@ public class ReportedConfigurationsFiller {
         fillReportedConfigurations(allInterfacesForHost,
                 networkMap,
                 networkAttachments,
-                vdsDynamicDao.get(hostId).getReportedDnsResolverConfiguration(),
+                dnsResolverConfigurationDao.get(hostId),
                 clusterId);
     }
 

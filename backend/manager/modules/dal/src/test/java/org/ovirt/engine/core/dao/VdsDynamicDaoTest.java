@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -134,15 +132,5 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
         boolean resultAfterUpdateStatus =
                 dao.checkIfExistsHostWithStatusInCluster(FixturesTool.GLUSTER_CLUSTER_ID, VDSStatus.Connecting);
         assertFalse(resultAfterUpdateStatus);
-    }
-
-    @Test
-    public void testUpdateDnsResolverConfiguration() {
-        VdsDynamic before = dao.get(getExistingEntityId());
-        before.getReportedDnsResolverConfiguration().setNameServers(
-                Collections.singletonList(new NameServer("1.1.1.1")));
-        dao.updateDnsResolverConfiguration(before.getId(), before.getReportedDnsResolverConfiguration());
-        VdsDynamic after = dao.get(getExistingEntityId());
-        assertEquals(before.getReportedDnsResolverConfiguration(), after.getReportedDnsResolverConfiguration());
     }
 }
