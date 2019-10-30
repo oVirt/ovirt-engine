@@ -1013,6 +1013,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setTscFrequency(assignStringValue(struct, VdsProperties.TSC_FREQUENCY));
         vds.setKernelCmdlineFips(assignBoolValue(struct, VdsProperties.FIPS_MODE));
         vds.setTscScalingEnabled(assignBoolValue(struct, VdsProperties.TSC_SCALING));
+        vds.setFipsEnabled(assignBoolValue(struct, VdsProperties.FIPS_MODE));
     }
 
     private static void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

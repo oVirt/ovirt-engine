@@ -223,6 +223,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean tscScalingEnabled;
 
+    private boolean fipsEnabled;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -936,6 +938,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.tscScalingEnabled = tscScalingEnabled;
     }
 
+    public boolean isFipsEnabled() {
+        return fipsEnabled;
+    }
+
+    public void setFipsEnabled(boolean fipsEnabled) {
+        this.fipsEnabled = fipsEnabled;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1012,7 +1022,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 supportedDomainVersions,
                 supportedBlockSize,
                 tscFrequency,
-                tscScalingEnabled
+                tscScalingEnabled,
+                fipsEnabled
         );
     }
 
@@ -1100,6 +1111,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(supportedDomainVersions, other.supportedDomainVersions)
                 && Objects.equals(supportedBlockSize, other.supportedBlockSize)
                 && Objects.equals(tscFrequency, other.tscFrequency)
-                && tscScalingEnabled == other.tscScalingEnabled;
+                && tscScalingEnabled == other.tscScalingEnabled
+                && fipsEnabled == other.fipsEnabled;
     }
 }

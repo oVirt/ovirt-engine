@@ -1048,8 +1048,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setOnlineCores(onlineCores);
 
         setKernelFeatures(formatKernelFeatures(vds.getKernelFeatures()));
-
         setvncEncryptionEnabled(vds.isVncEncryptionEnabled());
+        setFipsEnabled(vds.isFipsEnabled());
     }
 
     private String formatKernelFeatures(Map<String, Object> kernelFeatures) {
@@ -1220,6 +1220,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         if (vncEncryptionEnabled != value) {
             vncEncryptionEnabled = value;
             onPropertyChanged(new PropertyChangedEventArgs("vncEncryptionEnabled")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean fipsEnabled;
+
+    public boolean isFipsEnabled() {
+        return fipsEnabled;
+    }
+
+    public void setFipsEnabled(boolean value) {
+        if (fipsEnabled != value) {
+            fipsEnabled = value;
+            onPropertyChanged(new PropertyChangedEventArgs("fipsEnabled")); //$NON-NLS-1$
         }
     }
 }

@@ -50,8 +50,8 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
         Map<String, String> params = new HashMap<>();
         params.put("userName", getParameters().getUserName());
         params.put("userId", getParameters().getUserId().toString());
-        Boolean fips = getAndSetVdsStatic().isKernelCmdlineFips();
-        params.put("fips", fips.toString());
+        boolean fips = getVds().isFipsEnabled();
+        params.put("fips", Boolean.toString(fips));
         params.put("vncUsername", ConfigureConsoleOptionsParams.VNC_USERNAME_PREFIX + getParameters().getVmId());
         return params;
     }

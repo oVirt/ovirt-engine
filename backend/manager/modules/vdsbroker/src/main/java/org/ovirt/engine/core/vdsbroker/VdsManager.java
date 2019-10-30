@@ -53,7 +53,6 @@ import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -109,9 +108,6 @@ public class VdsManager {
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;
-
-    @Inject
-    private VdsStaticDao vdsStaticDao;
 
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -286,7 +282,6 @@ public class VdsManager {
                                             resourceManager,
                                             clusterDao,
                                             vdsDynamicDao,
-                                            vdsStaticDao,
                                             interfaceDao,
                                             vdsNumaNodeDao,
                                             networkDao,

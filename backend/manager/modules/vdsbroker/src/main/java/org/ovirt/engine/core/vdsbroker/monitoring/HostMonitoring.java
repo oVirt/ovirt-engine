@@ -44,7 +44,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -72,12 +71,10 @@ public class HostMonitoring {
     private final AuditLogDirector auditLogDirector;
     private final ClusterDao clusterDao;
     private final VdsDynamicDao vdsDynamicDao;
-    private final VdsStaticDao vdsStaticDao;
     private final InterfaceDao interfaceDao;
     private final VdsNumaNodeDao vdsNumaNodeDao;
     private final NetworkDao networkDao;
     private static final Logger log = LoggerFactory.getLogger(HostMonitoring.class);
-    private boolean saveFips;
 
     public HostMonitoring(VdsManager vdsManager,
             VDS vds,
@@ -85,7 +82,6 @@ public class HostMonitoring {
             ResourceManager resourceManager,
             ClusterDao clusterDao,
             VdsDynamicDao vdsDynamicDao,
-            VdsStaticDao vdsStaticDao,
             InterfaceDao interfaceDao,
             VdsNumaNodeDao vdsNumaNodeDao,
             NetworkDao networkDao,
@@ -97,7 +93,6 @@ public class HostMonitoring {
         this.resourceManager = resourceManager;
         this.clusterDao = clusterDao;
         this.vdsDynamicDao = vdsDynamicDao;
-        this.vdsStaticDao = vdsStaticDao;
         this.interfaceDao = interfaceDao;
         this.vdsNumaNodeDao = vdsNumaNodeDao;
         this.networkDao = networkDao;
@@ -237,7 +232,6 @@ public class HostMonitoring {
         processHardwareCapsNeeded = processHardwareNeededAtomic.get();
         refreshedCapabilities = true;
         saveVdsDynamic = true;
-        saveFips = true;
     }
 
     private void handleVDSRecoveringException(VDS vds, VDSRecoveringException e) {
@@ -288,10 +282,6 @@ public class HostMonitoring {
                         });
             }
             saveNumaStatisticsDataToDb();
-        }
-
-        if (saveFips) {
-            vdsStaticDao.updateKernelCmdlines(vds.getStaticData().getId(), vds.getStaticData());
         }
     }
 
@@ -867,7 +857,6 @@ public class HostMonitoring {
                 vdsManager.setStatus(VDSStatus.Maintenance, vds);
                 saveVdsDynamic = true;
                 saveVdsStatistics = true;
-                saveFips = true;
                 log.info(
                         "Updated host status from 'Preparing for Maintenance' to 'Maintenance' in database, host '{}'({})",
                         vds.getName(),
