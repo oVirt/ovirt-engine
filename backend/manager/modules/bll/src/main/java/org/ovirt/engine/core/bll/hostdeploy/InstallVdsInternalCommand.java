@@ -180,6 +180,15 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void runAnsibleHostDeployPlaybook() {
+        String hostedEngineAction = "";
+        String hostedEngineContent = "";
+        Map<String, String> hostedEngineConfiguration = getParameters().getHostedEngineConfiguration();
+        if (hostedEngineConfiguration != null && !hostedEngineConfiguration.isEmpty()) {
+            hostedEngineAction = hostedEngineConfiguration.get("HOSTED_ENGINE/action");
+            hostedEngineContent =
+                    String.format("host_id %s\n", hostedEngineConfiguration.get("HOSTED_ENGINE_CONFIG/host_id"));
+        }
+
         String kdumpDestinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);
         if (StringUtils.isBlank(kdumpDestinationAddress)) {
             // destination address not entered, use engine FQDN
@@ -236,6 +245,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("host_deploy_vdsm_nmstate_enabled", Config.getValue(ConfigValues.VdsmUseNmstate))
                 .variable("host_deploy_vdsm_ssl_ciphers", Config.<String> getValue(ConfigValues.VdsmSSLCiphers))
                 .variable("host_deploy_vdsm_min_version", Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion))
+                .variable("hosted_engine_deploy_action", hostedEngineAction)
+                .variable("hosted_engine_deploy_content", hostedEngineContent)
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)

@@ -1,0 +1,41 @@
+---
+- name: Verify platform is suitable for hosted engine
+  fail:
+    msg: "Hosted Engine support requested on unsupported machine: {{ ansible_facts.architecture }}. Disabling"
+  when: ansible_facts.architecture != 'x86_64'
+
+- name: populate service facts
+  service_facts:
+
+- name: Stop services
+  service:
+    name: {{ item }}
+    state: stopped
+  loop:
+  - ovirt-ha-agent.service
+  - ovirt-ha-broker.service
+  when: "item in ansible_facts.services"
+
+- name: Get latest ovirt-hosted-engine-setup version
+  yum:
+    name: ovirt-hosted-engine-setup
+    state: latest
+
+- name: Update hosted engine configuration
+  set_fact:
+    content: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}\n"
+
+- name: Add confix prefix dict to content
+  set_fact:
+    content: "{{ content }}{{ hosted_engine_deploy_content }}"
+
+- name: Copy content to hosted engine conf file
+  copy:
+    dest: "{{ hosted_engine_conf }}"
+    content: "{{ content }}"
+
+- name: Start ovirt-ha-agent service
+  service:
+    name: ovirt-ha-agent
+    enabled: yes
+    state: restarted

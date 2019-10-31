@@ -10,3 +10,4 @@ dependencies:
   - ovirt-host-deploy-kernel
   - ovirt-host-deploy-vm-console
   - ovirt-host-deploy-iptables
+  - ovirt-host-deploy-hosted-engine

@@ -1,0 +1,8 @@
+---
+- name: Include remove hosted engine tasks
+  include_tasks: remove.yml
+  when: hosted_engine_deploy_action == 'remove'
+
+- name: Include deploy hosted engine tasks
+  include_tasks: deploy.yml
+  when: hosted_engine_deploy_action == 'deploy'
