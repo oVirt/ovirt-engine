@@ -1102,6 +1102,7 @@ fi
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
 %dir %{engine_data}/playbooks
+%dir %{engine_data}/selinux
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
@@ -1394,6 +1395,7 @@ fi
 %{engine_data}/playbooks/install-skydive.inventory.sample/01_hosts
 %{engine_data}/playbooks/install-skydive.yml
 %{engine_data}/playbooks/ovirt-provider-ovn-driver.yml
+%{engine_data}/selinux/ansible-runner-service.cil
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/
 %{engine_etc}/ansible/ovirt-host-deploy-post-tasks.yml.example

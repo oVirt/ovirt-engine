@@ -13,10 +13,16 @@ SELinux configuration plugin.
 
 import gettext
 
+
+from os import listdir
+from os.path import isfile
+from os.path import join
+
 from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine import constants as oenginecons
 
 
 def _(m):
@@ -40,6 +46,7 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS] = []
         self.environment[osetupcons.SystemEnv.SELINUX_RESTORE_PATHS] = []
         self.environment[osetupcons.SystemEnv.SELINUX_BOOLEANS] = []
+        self.environment[osetupcons.SystemEnv.SELINUX_PORTS] = []
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -48,6 +55,7 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         self.command.detect('selinuxenabled')
         self.command.detect('semanage')
+        self.command.detect('semodule')
         self.command.detect('restorecon')
 
     @plugin.event(
@@ -76,6 +84,43 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
+        selinux_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_SELINUX
+        for f in listdir(selinux_dir):
+            file_path = join(selinux_dir, f)
+            if isfile(file_path):
+                rc, stdout, stderr = self.execute(
+                    (
+                        self.command.get('semodule'),
+                        '-i', file_path
+                    )
+                )
+                if rc == 1:
+                    self.logger.info(
+                        _('Failed to apply SELINUX file {f}'.format(f=f))
+                    )
+        for entry in self.environment[osetupcons.SystemEnv.SELINUX_PORTS]:
+            rc, stdout, stderr = self.execute(
+                (
+                    self.command.get('semanage'),
+                    'port',
+                    '-a',
+                    '-t', entry['type'],
+                    '-p', entry['protocol'],
+                    entry['port']
+                )
+            )
+            if rc == 1:
+                self.logger.info(
+                    _('SELINUX port already defined for {pattern}').format(
+                        pattern=entry['pattern']
+                    )
+                )
+            elif rc != 0 and rc != 1:
+                self.logger.error(
+                    _('Failed to set SELINUX port for {port}').format(
+                        pattern=entry['port']
+                    )
+                )
         for entry in self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS]:
             rc, stdout, stderr = self.execute(
                 (

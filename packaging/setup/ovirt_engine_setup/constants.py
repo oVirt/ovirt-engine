@@ -376,6 +376,7 @@ class SystemEnv(object):
     SELINUX_CONTEXTS = 'OVESETUP_SYSTEM/selinuxContexts'
     SELINUX_RESTORE_PATHS = 'OVESETUP_SYSTEM/selinuxRestorePaths'
     SELINUX_BOOLEANS = 'OVESETUP_SYSTEM/selinuxBooleans'
+    SELINUX_PORTS = 'OVESETUP_SYSTEM/selinuxPorts'
 
     HOSTILE_SERVICES = 'OVESETUP_SYSTEM/hostileServices'
 
