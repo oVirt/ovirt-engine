@@ -256,6 +256,15 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
         }
     }
 
+    public boolean validateSelectedTemplates() {
+        clearProblem();
+        if (importedTemplatesModels.getIsEmpty() || importedTemplatesModels.getItems() == null) {
+            setError(constants.emptyImagePath());
+            return false;
+        }
+        return true;
+    }
+
     public void validateImportedTemplates() {
         if (importedTemplatesModels == null || importedTemplatesModels.getItems() == null) {
             return;

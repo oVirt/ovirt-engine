@@ -997,7 +997,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
     private void onConfigureTemplatesToImport() {
         final ImportTemplatesModel importTemplatesModel = (ImportTemplatesModel) getWindow();
-        if (importTemplatesModel == null) {
+        if (importTemplatesModel == null || !importTemplatesModel.validateSelectedTemplates()) {
             return;
         }
 
