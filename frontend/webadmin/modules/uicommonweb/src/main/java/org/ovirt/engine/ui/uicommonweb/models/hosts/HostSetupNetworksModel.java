@@ -1042,6 +1042,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
                     queryCustomBondNameSupport();
                     queryTLVInformation();
+                    queryReportedDnsResolverConfiguration();
 
                     initNetworkModels();
                     initNicModels();
@@ -1096,6 +1097,15 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             Map<String, LldpInfo> lldpInfoMap = result.getReturnValue();
                             networkLldpInfoByName = lldpInfoMap == null ? new HashMap<>() : lldpInfoMap;
                             getLldpChangedEvent().raise(this, EventArgs.EMPTY);
+                        }, true));
+    }
+
+    private void queryReportedDnsResolverConfiguration() {
+        Frontend.getInstance()
+                .runQuery(QueryType.GetDnsResolverConfigurationById,
+                        new IdQueryParameters(getEntity().getId()),
+                        new AsyncQuery<QueryReturnValue>(result -> {
+                            getEntity().setReportedDnsResolverConfiguration(result.getReturnValue());
                         }, true));
     }
 
