@@ -8,22 +8,33 @@ over) by other installed brands.
 
 .obrand_topBorder {
     border-top: 4px solid #00659c !important;
+    width: 100%;
+    height: 100%;
+    position: absolute;
 }
 
 .obrand_loginPageLogo {
     background-image: url(images/ovirt_logo.png);
-    width: 80px;
-    height: 30px;
+    background-size: 120px 45px;
+    width: 120px;
+    height: 45px;
     border: 0px;
     display: block;
 }
 
 .obrand_loginPageLogoLink {
     display: block;
-    float: right;
+    float: left;
     margin-right: 64px;
     margin-top: 75px;
     margin-bottom: 70px;
+    position: relative;
+    text-align: center;
+}
+
+.obrand_welcomePageLogoLink {
+    display: block;
+    float: left;
     position: relative;
     text-align: center;
 }
@@ -37,23 +48,10 @@ over) by other installed brands.
     }
 }
 
-.obrand_middleLogoName {
-    background-image: url(images/ovirt_middle_logo.png);
-    width: 440px;
-    height: 35px;
-    border: 0px;
-    display: block;
-    background-size: contain;
-    background-repeat: no-repeat;
-    float: left;
-    clear: left;
-}
-
 .obrand_ssoHeader {
     height: 41px;
-    position: relative;
     top: 4px;
-    background-color: #121212;
+    background-color: #151515;
 }
 
 .obrand_ssoHeader .navbar-nav li a {
@@ -85,9 +83,8 @@ over) by other installed brands.
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    border-top: 4px solid #00659c;
+    width: 789px;
+    height: 969px;
     background-repeat: no-repeat;
 }
 

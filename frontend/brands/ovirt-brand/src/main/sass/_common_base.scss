@@ -3,20 +3,24 @@ oVirt base common css file
 landing page (welcome), login (sso), docs, 404, etc
 ****************************************************/
 
-.login-pf body {
-    background-color: #131822;
+.pf-c-page body {
+    background-color: #151515;
     background-image: none;
 }
 
-.login-pf .ovirt-container {
+.pf-c-page .ovirt-container {
     font-size: 13px;
 }
 
-.login-pf .container {
+.pf-c-page .ovirt-container .pf-c-login{
+    position: absolute
+}
+
+.pf-c-page .container {
     width: 100%;
 }
 
-.login-pf label.nowrap {
+.pf-c-page label.nowrap {
     white-space: nowrap;
 }
 
@@ -58,7 +62,6 @@ landing page (welcome), login (sso), docs, 404, etc
 }
 
 #welcome-section-login {
-    position: absolute;
     top: -50px;
     left: 100px;
 }
@@ -77,9 +80,8 @@ landing page (welcome), login (sso), docs, 404, etc
 
 #welcome-version-text {
     position: relative;
-    top: 8px;
+    top: 20px;
     margin-left: 30px;
-    color: #bbb;
     float: left;
 }
 

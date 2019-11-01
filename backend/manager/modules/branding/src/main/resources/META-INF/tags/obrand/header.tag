@@ -10,7 +10,7 @@
         <ul class="nav navbar-nav navbar-utility">
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="pficon pficon-user" style="font-size: 11px; cursor: pointer;"></span>
+                    <span class="pf-icon pf-icon-user" style="font-size: 11px; cursor: pointer;"></span>
                     <c:choose>
                     <c:when test='${sessionScope["sso_user"] != null}'>
                         ${sessionScope["sso_user"]}

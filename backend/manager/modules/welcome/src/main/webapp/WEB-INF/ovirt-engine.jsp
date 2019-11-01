@@ -5,7 +5,7 @@
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="languages" var="lang" />
 <!DOCTYPE html>
-<html class="login-pf">
+<html class="pf-c-page">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,15 +20,13 @@
     <div class="obrand_landingBgTop"></div>
     <div class="obrand_landingBgBottom"></div>
 
-    <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoLink">
-        <span class="obrand_loginPageLogo"></span>
-    </a>
     <div class="ovirt-container">
         <obrand:header />
         <div class="container">
             <div id="welcome-section">
-                <div id="welcome-title"><fmt:message key="obrand.welcome.welcome.text" /></div>
-                <div class="obrand_middleLogoName"></div>
+                    <a href="<obrand:messages key=" obrand.common.vendor_url" />" class="obrand_welcomePageLogoLink">
+                    <span class="obrand_loginPageLogo"></span>
+                    </a>
                 <div id="welcome-version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope['version']}" /></fmt:message></div>
             </div>
 
@@ -47,9 +45,9 @@
                     <c:if test="${sessionScope.error_description != null && sessionScope.error_description != '' }">
                         <div class="alert alert-warning alert-dismissable">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                                <span class="pficon pficon-close"></span>
+                                <span class="pf-icon pf-icon-close"></span>
                             </button>
-                            <span class="pficon pficon-warning-triangle-o"></span>
+                            <span class="pf-icon pf-icon-warning-triangle-o"></span>
                             ${sessionScope.error_description}
                         </div>
                         <c:remove var="error" scope="session"/>
@@ -65,7 +63,7 @@
 
                 <div style="clear: both;"></div>
                 <div class="col-sm-12 locale-div">
-                    <select class="gwt-ListBox obrand_locale_list_box" onchange="localeSelected(this)" id="localeBox">
+                    <select class="pf-c-form-control" onchange="localeSelected(this)" id="localeBox">
                         <c:forEach items="${requestScope['localeKeys']}" var="localeKey">
                             <c:choose>
                             <c:when test="${requestScope['locale'].toString() == localeKey}">

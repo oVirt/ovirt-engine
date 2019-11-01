@@ -27,7 +27,7 @@
 .welcome-section-title {
     padding-bottom: 7px;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .welcome-section-title.sub-title {
@@ -35,11 +35,17 @@
 }
 
 .welcome-link {
-    font-size: 14px;
+    font-family: RedHatDisplay;
+    line-height: 1.5;
+    color: #0066CC;
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .locale-div {
-    padding-top: 20px;
+    padding-top: 40px;
+    padding-left: 40px;
+    width: 20%;
 }
 
 #well-error {
@@ -55,14 +61,13 @@
 }
 
 .ovirt-container .container {
-    background-color: rgba(0, 0, 0, 0.25);
     padding-left: 80px;
     width: 100%;
     clear: right;
     color: #fff;
     padding-bottom: 40px;
     position: absolute;
-    bottom: 13%;
+    top: 30%;
 }
 
 .ovirt-container select {
