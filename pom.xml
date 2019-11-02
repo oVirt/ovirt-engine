@@ -400,7 +400,7 @@
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>nimbus-jose-jwt</artifactId>
-        <version>5.12</version>
+        <version>7.9</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
