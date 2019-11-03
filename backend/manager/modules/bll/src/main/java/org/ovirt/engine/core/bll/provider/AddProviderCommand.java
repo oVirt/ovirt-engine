@@ -35,6 +35,13 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         super(parameters, cmdContext);
     }
 
+    @Override
+    protected void init() {
+        if (getProvider() != null) {
+            getProvider().setId(Guid.newGuid());
+        }
+    }
+
     private Provider<?> getProvider() {
         return getParameters().getProvider();
     }
@@ -67,7 +74,6 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Override
     protected void executeCommand() {
-        getProvider().setId(Guid.newGuid());
         providerDao.save(getProvider());
         getProviderProxy().onAddition();
         setActionReturnValue(getProvider().getId());
