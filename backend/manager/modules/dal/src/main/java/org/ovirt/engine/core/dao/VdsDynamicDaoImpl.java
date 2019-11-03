@@ -132,6 +132,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setTscFrequency(rs.getString("tsc_frequency"));
         entity.setTscScalingEnabled(rs.getBoolean("tsc_scaling"));
         entity.setFipsEnabled(rs.getBoolean("fips_enabled"));
+        entity.setBootUuid(rs.getString("boot_uuid"));
 
         return entity;
     };
@@ -334,7 +335,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                         ObjectUtils.mapNullable(vds.getSupportedBlockSize(), JsonHelper::mapToJsonUnchecked))
                 .addValue("tsc_frequency", vds.getTscFrequency())
                 .addValue("tsc_scaling", vds.isTscScalingEnabled())
-                .addValue("fips_enabled", vds.isFipsEnabled());
+                .addValue("fips_enabled", vds.isFipsEnabled())
+                .addValue("boot_uuid", vds.getBootUuid());
     }
 
     @Override

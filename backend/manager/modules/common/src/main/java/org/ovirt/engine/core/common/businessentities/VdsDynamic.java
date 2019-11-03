@@ -225,6 +225,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean fipsEnabled;
 
+    private String bootUuid;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -946,6 +948,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.fipsEnabled = fipsEnabled;
     }
 
+    public String getBootUuid() {
+        return bootUuid;
+    }
+
+    public void setBootUuid(String bootUuid) {
+        this.bootUuid = bootUuid;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1023,7 +1033,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 supportedBlockSize,
                 tscFrequency,
                 tscScalingEnabled,
-                fipsEnabled
+                fipsEnabled,
+                bootUuid
         );
     }
 
@@ -1112,6 +1123,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(supportedBlockSize, other.supportedBlockSize)
                 && Objects.equals(tscFrequency, other.tscFrequency)
                 && tscScalingEnabled == other.tscScalingEnabled
-                && fipsEnabled == other.fipsEnabled;
+                && fipsEnabled == other.fipsEnabled
+                && Objects.equals(bootUuid, other.bootUuid);
     }
 }

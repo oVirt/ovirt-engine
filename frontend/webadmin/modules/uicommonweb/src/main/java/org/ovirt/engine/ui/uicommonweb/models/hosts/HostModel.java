@@ -126,6 +126,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privateName = value;
     }
 
+    private EntityModel<String> bootUuid;
+
+    public EntityModel<String> getKernelCmdlineBootUuid() {
+        return getCurrentKernelCmdLine().getEntity().toLowerCase().contains("boot=uuid=") ? new EntityModel<String>("") : bootUuid; //$NON-NLS-1$
+    }
+
+    private void setKernelCmdlineBootUuid(EntityModel<String> value) {
+        bootUuid = value;
+    }
+
     private EntityModel<String> privateUserName;
 
     public EntityModel<String> getUserName() {
@@ -847,6 +857,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setKernelCmdlineUnsafeInterrupts(new EntityModel<>(false));
         setKernelCmdlinePciRealloc(new EntityModel<>(false));
         setKernelCmdlineFips(new EntityModel<>(false));
+        setKernelCmdlineBootUuid(new EntityModel<>(""));
         setKernelCmdlineSmtDisabled(new EntityModel<>(false));
         kernelCmdlineListener = new EnableableEventListener<>(null);
         setCurrentKernelCmdLine(new EntityModel<>(""));
@@ -1183,6 +1194,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
         getComment().setEntity(vds.getComment());
+        getKernelCmdlineBootUuid().setEntity(vds.getBootUuid());
         getHost().setEntity(vds.getHostName());
         getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
         getUserName().setEntity(vds.getSshUsername());
@@ -1461,6 +1473,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 getKernelCmdlineUnsafeInterrupts().getEntity(),
                 getKernelCmdlinePciRealloc().getEntity(),
                 getKernelCmdlineFips().getEntity(),
+                getKernelCmdlineBootUuid().getEntity(),
                 getKernelCmdlineSmtDisabled().getEntity());
         kernelCmdlineListener.whilePaused(() -> getKernelCmdline().setEntity(kernelCmdline));
     }

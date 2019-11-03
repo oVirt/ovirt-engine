@@ -1832,7 +1832,8 @@ SELECT cluster.cluster_id AS cluster_id,
     cluster.smt_disabled AS cluster_smt_disabled,
     vds_dynamic.tsc_frequency AS tsc_frequency,
     vds_dynamic.tsc_scaling AS tsc_scaling,
-    vds_dynamic.fips_enabled AS fips_enabled
+    vds_dynamic.fips_enabled AS fips_enabled,
+    vds_dynamic.boot_uuid AS boot_uuid
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1986,7 +1987,8 @@ SELECT cluster.cluster_id,
     cluster.smt_disabled AS cluster_smt_disabled,
     vds_dynamic.tsc_frequency AS tsc_frequency,
     vds_dynamic.tsc_scaling AS tsc_scaling,
-    vds_dynamic.fips_enabled AS fips_enabled
+    vds_dynamic.fips_enabled AS fips_enabled,
+    vds_dynamic.boot_uuid AS boot_uuid
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

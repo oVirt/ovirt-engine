@@ -263,6 +263,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setTscScalingEnabled(isTscScalingEnabled());
         vds.setCpuFlagsMissing(getCpuFlagsMissing());
         vds.setSupportedCpus(getSupportedCpus());
+        vds.setBootUuid(getBootUuid());
         return vds;
     }
 
@@ -1847,5 +1848,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public boolean isManaged() {
         return vdsStatic.isManaged();
+    }
+
+    public String getBootUuid() {
+        return vdsDynamic.getBootUuid();
+    }
+
+    public void setBootUuid(String bootUuid) {
+        vdsDynamic.setBootUuid(bootUuid);
     }
 }

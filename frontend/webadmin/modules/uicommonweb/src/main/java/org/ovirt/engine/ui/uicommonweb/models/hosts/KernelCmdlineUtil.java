@@ -12,6 +12,7 @@ public class KernelCmdlineUtil {
             boolean unsafeInterrupts,
             boolean pciRealloc,
             boolean fips,
+            String boot_uuid,
             boolean smtDisabled) {
         StringBuilder cmdlineBuilder = new StringBuilder();
         cmdlineBuilder.append(getBlacklistNouveau(cpuVendor, blacklistNouveau));
@@ -19,7 +20,7 @@ public class KernelCmdlineUtil {
         cmdlineBuilder.append(getKvmNested(cpuVendor, kvmNested));
         cmdlineBuilder.append(getUnsafeInterrupts(cpuVendor, unsafeInterrupts));
         cmdlineBuilder.append(getPciRealloc(cpuVendor, pciRealloc));
-        cmdlineBuilder.append(getFips(fips));
+        cmdlineBuilder.append(getFips(fips, boot_uuid));
         cmdlineBuilder.append(getSmt(smtDisabled));
         return cmdlineBuilder.toString().trim();
     }
@@ -107,12 +108,12 @@ public class KernelCmdlineUtil {
         }
     }
 
-    private static String getFips(boolean fips) {
+    private static String getFips(boolean fips, String boot_uuid) {
         if (!fips) {
             return "";
         }
-
-        return "fips=1 "; //$NON-NLS-1$
+        String fipsLine = "fips=1 "; //$NON-NLS-1$
+        return boot_uuid == null ? fipsLine : fipsLine + "boot=UUID=" + boot_uuid + " "; //$NON-NLS-1$ $NON-NLS-2$
     }
 
     private static String getSmt(boolean smtDisabled) {

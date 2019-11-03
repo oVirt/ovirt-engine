@@ -551,4 +551,6 @@ public final class VdsProperties {
     public static final String FIPS_MODE = "fipsEnabled";
 
     public static final String TSC_SCALING = "tscScaling";
+
+    public static final String BOOT_UUID = "boot_uuid";
 }

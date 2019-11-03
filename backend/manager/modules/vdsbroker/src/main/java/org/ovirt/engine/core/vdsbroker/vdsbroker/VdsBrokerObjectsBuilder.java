@@ -1018,6 +1018,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setKernelCmdlineFips(assignBoolValue(struct, VdsProperties.FIPS_MODE));
         vds.setTscScalingEnabled(assignBoolValue(struct, VdsProperties.TSC_SCALING));
         vds.setFipsEnabled(assignBoolValue(struct, VdsProperties.FIPS_MODE));
+        vds.setBootUuid(assignStringValue(struct, VdsProperties.BOOT_UUID));
     }
 
     private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
