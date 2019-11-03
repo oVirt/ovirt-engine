@@ -128,8 +128,9 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     private void saveLastVmsList(List<Pair<VmDynamic, VdsmVm>> pairs) {
         Map<Guid, VMStatus> vmIdToStatus = pairs.stream()
                 .filter(pair -> pair.getFirst() != null)
-                .map(pair -> pair.getSecond().getVmDynamic())
+                .map(Pair::getSecond)
                 .filter(Objects::nonNull)
+                .map(VdsmVm::getVmDynamic)
                 .collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
         vdsManager.setLastVmsList(vmIdToStatus);
     }
