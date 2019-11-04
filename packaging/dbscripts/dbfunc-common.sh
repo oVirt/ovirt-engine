@@ -176,7 +176,7 @@ _dbfunc_common_schema_create() {
 _dbfunc_common_schema_upgrade() {
 
         dbfunc_common_check_uuid_extension_installation
-	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/04_00_0000_set_version.sql" > /dev/null
+	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/04_01_0000_set_version.sql" > /dev/null
 
 	local files="$(_dbfunc_common_get_files "upgrade" 1)"
 	if [ -n "${files}" ]; then

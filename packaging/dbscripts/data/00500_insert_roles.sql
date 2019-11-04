@@ -2,6 +2,10 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 10.6
+-- Dumped by pg_dump version 10.6
+
+
 --
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: engine
 --
@@ -41,6 +45,8 @@ INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00006-0000-0000-0000-def000000011', 'UserVmRunTimeManager', 'User Role, with permissions for any operations on VMs except snapshot manipulation', true, 2, false, 1);
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00021-0000-0000-0000-def000000015', 'UserProfileEditor', 'Role that allow users to edit the UserProfile', true, 2, false, 255);
 INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00030-0000-0000-0000-def000000011', 'VmImporterExporter', 'Administrator Role, with permission to import or export Vms', true, 1, true, 1);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00017-0000-0000-0000-def000000017', 'CpuProfileOperator', 'Cpu Profile Operation', true, 2, false, 1);
+INSERT INTO roles (id, name, description, is_readonly, role_type, allows_viewing_children, app_mode) VALUES ('def00016-0000-0000-0000-def000000016', 'CpuProfileCreator', 'Cpu Profile Creation/Deletion/Updating and Operation', true, 1, false, 1);
 
 
 --

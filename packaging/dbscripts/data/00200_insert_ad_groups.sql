@@ -2,6 +2,9 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 10.6
+-- Dumped by pg_dump version 10.6
+
 
 --
 -- Data for Name: ad_groups; Type: TABLE DATA; Schema: public; Owner: engine

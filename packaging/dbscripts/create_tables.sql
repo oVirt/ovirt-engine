@@ -2,6 +2,8 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 10.6
+-- Dumped by pg_dump version 10.6
 
 --
 -- Name: all_cluster_usage_rs; Type: TYPE; Schema: public; Owner: engine
@@ -31,23 +33,6 @@ CREATE TYPE all_storage_usage_rs AS (
 	storage_name character varying(250),
 	storage_size_gb bigint,
 	storage_size_gb_usage double precision
-);
-
-
-
---
--- Name: all_vds_group_usage_rs; Type: TYPE; Schema: public; Owner: engine
---
-
-CREATE TYPE all_vds_group_usage_rs AS (
-	quota_vds_group_id uuid,
-	quota_id uuid,
-	vds_group_id uuid,
-	vds_group_name character varying(40),
-	virtual_cpu integer,
-	virtual_cpu_usage integer,
-	mem_size_mb bigint,
-	mem_size_mb_usage bigint
 );
 
 
@@ -154,33 +139,10 @@ CREATE TYPE user_permissions AS (
 
 
 
---
--- Name: vds_group_usage_rs; Type: TYPE; Schema: public; Owner: engine
---
-
-CREATE TYPE vds_group_usage_rs AS (
-	virtual_cpu_usage integer,
-	mem_size_mb_usage bigint
-);
-
-
-
 
 
 --
--- Name: action_version_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
---
-
-CREATE TABLE action_version_map (
-    action_type integer NOT NULL,
-    cluster_minimal_version character varying(40) NOT NULL,
-    storage_pool_minimal_version character varying(40) NOT NULL
-);
-
-
-
---
--- Name: ad_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: ad_groups; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE ad_groups (
@@ -195,7 +157,7 @@ CREATE TABLE ad_groups (
 
 
 --
--- Name: affinity_group_members; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: affinity_group_members; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE affinity_group_members (
@@ -206,7 +168,7 @@ CREATE TABLE affinity_group_members (
 
 
 --
--- Name: affinity_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: affinity_groups; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE affinity_groups (
@@ -223,7 +185,7 @@ CREATE TABLE affinity_groups (
 
 
 --
--- Name: async_tasks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: async_tasks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE async_tasks (
@@ -244,7 +206,7 @@ CREATE TABLE async_tasks (
 
 
 --
--- Name: async_tasks_entities; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: async_tasks_entities; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE async_tasks_entities (
@@ -269,7 +231,7 @@ CREATE SEQUENCE audit_log_seq
 
 
 --
--- Name: audit_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: audit_log; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE audit_log (
@@ -292,8 +254,8 @@ CREATE TABLE audit_log (
     storage_pool_name character varying(40),
     storage_domain_id uuid,
     storage_domain_name character varying(250),
-    vds_group_id uuid,
-    vds_group_name character varying(255),
+    cluster_id uuid,
+    cluster_name character varying(255),
     correlation_id character varying(50),
     job_id uuid,
     quota_id uuid,
@@ -301,7 +263,7 @@ CREATE TABLE audit_log (
     gluster_volume_id uuid,
     gluster_volume_name character varying(1000),
     origin character varying(255) DEFAULT 'oVirt'::character varying,
-    custom_event_id integer DEFAULT (-1),
+    custom_event_id integer DEFAULT '-1'::integer,
     event_flood_in_sec integer DEFAULT 30,
     custom_data text DEFAULT ''::text,
     deleted boolean DEFAULT false,
@@ -313,18 +275,16 @@ CREATE TABLE audit_log (
 
 
 --
--- Name: base_disks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: base_disks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE base_disks (
     disk_id uuid NOT NULL,
-    disk_interface character varying(32) NOT NULL,
     wipe_after_delete boolean DEFAULT false NOT NULL,
     propagate_errors character varying(32) DEFAULT 'Off'::character varying NOT NULL,
     disk_alias character varying(255),
     disk_description character varying(500),
     shareable boolean DEFAULT false,
-    boot boolean DEFAULT false NOT NULL,
     sgio smallint,
     alignment smallint DEFAULT 0 NOT NULL,
     last_alignment_scan timestamp with time zone,
@@ -335,7 +295,7 @@ CREATE TABLE base_disks (
 
 
 --
--- Name: bookmarks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: bookmarks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE bookmarks (
@@ -347,7 +307,7 @@ CREATE TABLE bookmarks (
 
 
 --
--- Name: business_entity_snapshot; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: business_entity_snapshot; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE business_entity_snapshot (
@@ -366,7 +326,62 @@ CREATE TABLE business_entity_snapshot (
 
 
 --
--- Name: cluster_features; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: cluster; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE cluster (
+    cluster_id uuid NOT NULL,
+    name character varying(40) NOT NULL,
+    description character varying(4000),
+    cpu_name character varying(255),
+    _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
+    _update_date timestamp with time zone,
+    storage_pool_id uuid,
+    max_vds_memory_over_commit integer DEFAULT 100 NOT NULL,
+    compatibility_version character varying(40) DEFAULT '2.2'::character varying NOT NULL,
+    transparent_hugepages boolean DEFAULT false NOT NULL,
+    migrate_on_error integer DEFAULT 1 NOT NULL,
+    virt_service boolean DEFAULT true NOT NULL,
+    gluster_service boolean DEFAULT false NOT NULL,
+    count_threads_as_cores boolean DEFAULT false NOT NULL,
+    emulated_machine character varying(40),
+    trusted_service boolean DEFAULT false NOT NULL,
+    tunnel_migration boolean DEFAULT false NOT NULL,
+    cluster_policy_id uuid,
+    cluster_policy_custom_properties text,
+    enable_balloon boolean DEFAULT false NOT NULL,
+    free_text_comment text,
+    detect_emulated_machine boolean DEFAULT false,
+    architecture integer DEFAULT 0 NOT NULL,
+    optimization_type smallint DEFAULT 0,
+    spice_proxy character varying(255),
+    ha_reservation boolean DEFAULT false NOT NULL,
+    enable_ksm boolean DEFAULT true NOT NULL,
+    serial_number_policy smallint,
+    custom_serial_number character varying(255) DEFAULT NULL::character varying,
+    optional_reason boolean DEFAULT false NOT NULL,
+    required_rng_sources character varying(255),
+    skip_fencing_if_sd_active boolean DEFAULT false,
+    skip_fencing_if_connectivity_broken boolean DEFAULT false,
+    hosts_with_broken_connectivity_threshold smallint DEFAULT 50,
+    fencing_enabled boolean DEFAULT true,
+    is_auto_converge boolean,
+    is_migrate_compressed boolean,
+    maintenance_reason_required boolean DEFAULT false NOT NULL,
+    gluster_tuned_profile character varying(50),
+    gluster_cli_based_snapshot_scheduled boolean DEFAULT true NOT NULL,
+    ksm_merge_across_nodes boolean DEFAULT true,
+    migration_bandwidth_limit_type character varying(16) DEFAULT 'AUTO'::character varying NOT NULL,
+    custom_migration_bandwidth_limit integer,
+    migration_policy_id uuid,
+    CONSTRAINT check_cluster_custom_migration_bandwidth_set CHECK ((((migration_bandwidth_limit_type)::text <> 'CUSTOM'::text) OR (custom_migration_bandwidth_limit IS NOT NULL))),
+    CONSTRAINT check_cluster_migration_bandwidth_limit_type_enum CHECK ((((migration_bandwidth_limit_type)::text = 'AUTO'::text) OR ((migration_bandwidth_limit_type)::text = 'VDSM_CONFIG'::text) OR ((migration_bandwidth_limit_type)::text = 'CUSTOM'::text)))
+);
+
+
+
+--
+-- Name: cluster_features; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE cluster_features (
@@ -380,7 +395,7 @@ CREATE TABLE cluster_features (
 
 
 --
--- Name: cluster_policies; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: cluster_policies; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE cluster_policies (
@@ -395,7 +410,7 @@ CREATE TABLE cluster_policies (
 
 
 --
--- Name: cluster_policy_units; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: cluster_policy_units; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE cluster_policy_units (
@@ -408,7 +423,7 @@ CREATE TABLE cluster_policy_units (
 
 
 --
--- Name: command_assoc_entities; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: command_assoc_entities; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE command_assoc_entities (
@@ -420,7 +435,7 @@ CREATE TABLE command_assoc_entities (
 
 
 --
--- Name: command_entities; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: command_entities; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE command_entities (
@@ -439,14 +454,15 @@ CREATE TABLE command_entities (
     step_id uuid,
     executed boolean DEFAULT false,
     user_id uuid,
-    parent_command_id uuid
+    parent_command_id uuid,
+    data text,
+    engine_session_seq_id bigint
 );
 
 
 
-
 --
--- Name: cpu_profiles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: cpu_profiles; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE cpu_profiles (
@@ -474,9 +490,8 @@ CREATE SEQUENCE custom_actions_seq
 
 
 
-
 --
--- Name: custom_actions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: custom_actions; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE custom_actions (
@@ -490,7 +505,7 @@ CREATE TABLE custom_actions (
 
 
 --
--- Name: disk_image_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: disk_image_dynamic; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE disk_image_dynamic (
@@ -507,7 +522,7 @@ CREATE TABLE disk_image_dynamic (
 
 
 --
--- Name: disk_lun_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: disk_lun_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE disk_lun_map (
@@ -517,9 +532,8 @@ CREATE TABLE disk_lun_map (
 
 
 
-
 --
--- Name: disk_profiles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: disk_profiles; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE disk_profiles (
@@ -534,9 +548,21 @@ CREATE TABLE disk_profiles (
 
 
 
+--
+-- Name: disk_vm_element; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE disk_vm_element (
+    disk_id uuid NOT NULL,
+    vm_id uuid NOT NULL,
+    is_boot boolean DEFAULT false NOT NULL,
+    disk_interface character varying(32) NOT NULL
+);
+
+
 
 --
--- Name: dwh_history_timekeeping; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: dwh_history_timekeeping; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE dwh_history_timekeeping (
@@ -548,7 +574,7 @@ CREATE TABLE dwh_history_timekeeping (
 
 
 --
--- Name: dwh_osinfo; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: dwh_osinfo; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE dwh_osinfo (
@@ -559,7 +585,7 @@ CREATE TABLE dwh_osinfo (
 
 
 --
--- Name: engine_backup_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: engine_backup_log; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE engine_backup_log (
@@ -587,7 +613,7 @@ CREATE SEQUENCE engine_session_seq
 
 
 --
--- Name: engine_sessions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: engine_sessions; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE engine_sessions (
@@ -596,13 +622,15 @@ CREATE TABLE engine_sessions (
     user_id uuid NOT NULL,
     user_name character varying(255) NOT NULL,
     group_ids text,
-    role_ids text
+    role_ids text,
+    source_ip character varying(50),
+    authz_name character varying(255) DEFAULT ''::character varying NOT NULL
 );
 
 
 
 --
--- Name: event_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: event_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE event_map (
@@ -613,7 +641,7 @@ CREATE TABLE event_map (
 
 
 --
--- Name: event_notification_hist; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: event_notification_hist; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE event_notification_hist (
@@ -628,7 +656,7 @@ CREATE TABLE event_notification_hist (
 
 
 --
--- Name: event_subscriber; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: event_subscriber; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE event_subscriber (
@@ -643,7 +671,7 @@ CREATE TABLE event_subscriber (
 
 
 --
--- Name: external_variable; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: external_variable; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE external_variable (
@@ -655,7 +683,7 @@ CREATE TABLE external_variable (
 
 
 --
--- Name: fence_agents; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: fence_agents; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE fence_agents (
@@ -674,7 +702,7 @@ CREATE TABLE fence_agents (
 
 
 --
--- Name: gluster_cluster_services; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_cluster_services; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_cluster_services (
@@ -687,9 +715,8 @@ CREATE TABLE gluster_cluster_services (
 
 
 
-
 --
--- Name: gluster_config_master; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_config_master; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_config_master (
@@ -703,7 +730,7 @@ CREATE TABLE gluster_config_master (
 
 
 --
--- Name: gluster_georep_config; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_georep_config; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_georep_config (
@@ -716,7 +743,7 @@ CREATE TABLE gluster_georep_config (
 
 
 --
--- Name: gluster_georep_session; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_georep_session; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_georep_session (
@@ -736,7 +763,7 @@ CREATE TABLE gluster_georep_session (
 
 
 --
--- Name: gluster_georep_session_details; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_georep_session_details; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_georep_session_details (
@@ -760,9 +787,8 @@ CREATE TABLE gluster_georep_session_details (
 
 
 
-
 --
--- Name: gluster_hooks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_hooks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_hooks (
@@ -783,7 +809,7 @@ CREATE TABLE gluster_hooks (
 
 
 --
--- Name: gluster_server; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_server; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_server (
@@ -795,7 +821,7 @@ CREATE TABLE gluster_server (
 
 
 --
--- Name: gluster_server_hooks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_server_hooks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_server_hooks (
@@ -811,7 +837,7 @@ CREATE TABLE gluster_server_hooks (
 
 
 --
--- Name: gluster_server_services; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_server_services; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_server_services (
@@ -828,7 +854,7 @@ CREATE TABLE gluster_server_services (
 
 
 --
--- Name: gluster_service_types; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_service_types; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_service_types (
@@ -838,7 +864,7 @@ CREATE TABLE gluster_service_types (
 
 
 --
--- Name: gluster_services; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_services; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_services (
@@ -850,7 +876,7 @@ CREATE TABLE gluster_services (
 
 
 --
--- Name: gluster_volume_access_protocols; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_access_protocols; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_access_protocols (
@@ -861,7 +887,7 @@ CREATE TABLE gluster_volume_access_protocols (
 
 
 --
--- Name: gluster_volume_brick_details; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_brick_details; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_brick_details (
@@ -875,7 +901,7 @@ CREATE TABLE gluster_volume_brick_details (
 
 
 --
--- Name: gluster_volume_bricks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_bricks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_bricks (
@@ -888,13 +914,15 @@ CREATE TABLE gluster_volume_bricks (
     id uuid NOT NULL,
     brick_order integer DEFAULT 0,
     task_id uuid,
-    network_id uuid
+    network_id uuid,
+    unsynced_entries integer,
+    unsynced_entries_history text
 );
 
 
 
 --
--- Name: gluster_volume_details; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_details; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_details (
@@ -908,7 +936,7 @@ CREATE TABLE gluster_volume_details (
 
 
 --
--- Name: gluster_volume_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_options; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_options (
@@ -920,9 +948,8 @@ CREATE TABLE gluster_volume_options (
 
 
 
-
 --
--- Name: gluster_volume_snapshot_config; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_snapshot_config; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_snapshot_config (
@@ -937,7 +964,7 @@ CREATE TABLE gluster_volume_snapshot_config (
 
 
 --
--- Name: gluster_volume_snapshot_schedules; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_snapshot_schedules; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_snapshot_schedules (
@@ -959,7 +986,7 @@ CREATE TABLE gluster_volume_snapshot_schedules (
 
 
 --
--- Name: gluster_volume_snapshots; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_snapshots; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_snapshots (
@@ -974,9 +1001,8 @@ CREATE TABLE gluster_volume_snapshots (
 
 
 
-
 --
--- Name: gluster_volume_transport_types; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_transport_types; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volume_transport_types (
@@ -987,7 +1013,7 @@ CREATE TABLE gluster_volume_transport_types (
 
 
 --
--- Name: gluster_volumes; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volumes; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE gluster_volumes (
@@ -1010,7 +1036,7 @@ CREATE TABLE gluster_volumes (
 
 
 --
--- Name: host_device; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: host_device; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE host_device (
@@ -1026,13 +1052,15 @@ CREATE TABLE host_device (
     physfn character varying(255),
     total_vfs integer,
     vm_id uuid,
-    net_iface_name character varying(50)
+    net_iface_name character varying(50),
+    driver character varying(255),
+    is_assignable boolean DEFAULT true NOT NULL
 );
 
 
 
 --
--- Name: host_nic_vfs_config; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: host_nic_vfs_config; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE host_nic_vfs_config (
@@ -1046,7 +1074,7 @@ CREATE TABLE host_nic_vfs_config (
 
 
 --
--- Name: image_storage_domain_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: image_storage_domain_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE image_storage_domain_map (
@@ -1059,7 +1087,28 @@ CREATE TABLE image_storage_domain_map (
 
 
 --
--- Name: images; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: image_transfers; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE image_transfers (
+    command_id uuid NOT NULL,
+    command_type integer NOT NULL,
+    phase integer NOT NULL,
+    last_updated timestamp with time zone NOT NULL,
+    message character varying,
+    vds_id uuid,
+    disk_id uuid,
+    imaged_ticket_id uuid,
+    proxy_uri character varying,
+    signed_ticket character varying,
+    bytes_sent bigint,
+    bytes_total bigint
+);
+
+
+
+--
+-- Name: images; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE images (
@@ -1083,7 +1132,7 @@ CREATE TABLE images (
 
 
 --
--- Name: iscsi_bonds; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: iscsi_bonds; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE iscsi_bonds (
@@ -1096,7 +1145,7 @@ CREATE TABLE iscsi_bonds (
 
 
 --
--- Name: iscsi_bonds_networks_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: iscsi_bonds_networks_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE iscsi_bonds_networks_map (
@@ -1107,7 +1156,7 @@ CREATE TABLE iscsi_bonds_networks_map (
 
 
 --
--- Name: iscsi_bonds_storage_connections_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: iscsi_bonds_storage_connections_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE iscsi_bonds_storage_connections_map (
@@ -1118,7 +1167,7 @@ CREATE TABLE iscsi_bonds_storage_connections_map (
 
 
 --
--- Name: job; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: job; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE job (
@@ -1133,13 +1182,14 @@ CREATE TABLE job (
     last_update_time timestamp with time zone,
     correlation_id character varying(50) NOT NULL,
     is_external boolean DEFAULT false,
-    is_auto_cleared boolean DEFAULT true
+    is_auto_cleared boolean DEFAULT true,
+    engine_session_seq_id bigint
 );
 
 
 
 --
--- Name: job_subject_entity; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: job_subject_entity; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE job_subject_entity (
@@ -1151,7 +1201,31 @@ CREATE TABLE job_subject_entity (
 
 
 --
--- Name: libvirt_secrets; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: labels; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE labels (
+    label_id uuid NOT NULL,
+    label_name character varying(50) NOT NULL,
+    read_only boolean DEFAULT false NOT NULL
+);
+
+
+
+--
+-- Name: labels_map; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE labels_map (
+    label_id uuid NOT NULL,
+    vm_id uuid,
+    vds_id uuid
+);
+
+
+
+--
+-- Name: libvirt_secrets; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE libvirt_secrets (
@@ -1167,7 +1241,7 @@ CREATE TABLE libvirt_secrets (
 
 
 --
--- Name: lun_storage_server_connection_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: lun_storage_server_connection_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE lun_storage_server_connection_map (
@@ -1178,7 +1252,7 @@ CREATE TABLE lun_storage_server_connection_map (
 
 
 --
--- Name: luns; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: luns; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE luns (
@@ -1194,9 +1268,8 @@ CREATE TABLE luns (
 
 
 
-
 --
--- Name: mac_pool_ranges; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: mac_pool_ranges; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE mac_pool_ranges (
@@ -1207,9 +1280,8 @@ CREATE TABLE mac_pool_ranges (
 
 
 
-
 --
--- Name: mac_pools; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: mac_pools; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE mac_pools (
@@ -1223,7 +1295,7 @@ CREATE TABLE mac_pools (
 
 
 --
--- Name: materialized_views; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: materialized_views; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE materialized_views (
@@ -1240,7 +1312,7 @@ CREATE TABLE materialized_views (
 
 
 --
--- Name: network; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: network; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE network (
@@ -1266,7 +1338,7 @@ CREATE TABLE network (
 
 
 --
--- Name: network_attachments; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: network_attachments; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE network_attachments (
@@ -1280,13 +1352,17 @@ CREATE TABLE network_attachments (
     custom_properties text,
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
     _update_date timestamp with time zone,
-    CONSTRAINT boot_protocol_enum_values CHECK (((((boot_protocol)::text = 'DHCP'::text) OR ((boot_protocol)::text = 'STATIC_IP'::text)) OR ((boot_protocol)::text = 'NONE'::text)))
+    ipv6_boot_protocol character varying(20) DEFAULT NULL::character varying,
+    ipv6_address character varying(50) DEFAULT NULL::character varying,
+    ipv6_prefix integer,
+    ipv6_gateway character varying(50) DEFAULT NULL::character varying,
+    CONSTRAINT boot_protocol_enum_values CHECK ((((boot_protocol)::text = 'DHCP'::text) OR ((boot_protocol)::text = 'STATIC_IP'::text) OR ((boot_protocol)::text = 'NONE'::text)))
 );
 
 
 
 --
--- Name: network_cluster; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: network_cluster; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE network_cluster (
@@ -1303,7 +1379,19 @@ CREATE TABLE network_cluster (
 
 
 --
--- Name: numa_node; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: network_filter; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE network_filter (
+    filter_id uuid NOT NULL,
+    filter_name character varying(50) NOT NULL,
+    version character varying(40) NOT NULL
+);
+
+
+
+--
+-- Name: numa_node; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE numa_node (
@@ -1325,7 +1413,7 @@ CREATE TABLE numa_node (
 
 
 --
--- Name: numa_node_cpu_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: numa_node_cpu_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE numa_node_cpu_map (
@@ -1337,7 +1425,7 @@ CREATE TABLE numa_node_cpu_map (
 
 
 --
--- Name: object_column_white_list; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: object_column_white_list; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE object_column_white_list (
@@ -1348,7 +1436,7 @@ CREATE TABLE object_column_white_list (
 
 
 --
--- Name: object_column_white_list_sql; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: object_column_white_list_sql; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE object_column_white_list_sql (
@@ -1359,7 +1447,7 @@ CREATE TABLE object_column_white_list_sql (
 
 
 --
--- Name: permissions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: permissions; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE permissions (
@@ -1374,7 +1462,7 @@ CREATE TABLE permissions (
 
 
 --
--- Name: policy_units; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: policy_units; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE policy_units (
@@ -1390,7 +1478,7 @@ CREATE TABLE policy_units (
 
 
 --
--- Name: providers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: providers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE providers (
@@ -1409,14 +1497,14 @@ CREATE TABLE providers (
     plugin_type character varying(64),
     agent_configuration text,
     auth_url text,
-    additional_properties text
+    additional_properties text,
+    read_only boolean DEFAULT false NOT NULL
 );
 
 
 
-
 --
--- Name: qos; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qos; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qos (
@@ -1447,9 +1535,8 @@ CREATE TABLE qos (
 
 
 
-
 --
--- Name: qrtz_blob_triggers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_blob_triggers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_blob_triggers (
@@ -1462,7 +1549,7 @@ CREATE TABLE qrtz_blob_triggers (
 
 
 --
--- Name: qrtz_calendars; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_calendars; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_calendars (
@@ -1474,7 +1561,7 @@ CREATE TABLE qrtz_calendars (
 
 
 --
--- Name: qrtz_cron_triggers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_cron_triggers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_cron_triggers (
@@ -1488,7 +1575,7 @@ CREATE TABLE qrtz_cron_triggers (
 
 
 --
--- Name: qrtz_fired_triggers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_fired_triggers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_fired_triggers (
@@ -1510,7 +1597,7 @@ CREATE TABLE qrtz_fired_triggers (
 
 
 --
--- Name: qrtz_job_details; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_job_details; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_job_details (
@@ -1529,7 +1616,7 @@ CREATE TABLE qrtz_job_details (
 
 
 --
--- Name: qrtz_locks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_locks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_locks (
@@ -1540,7 +1627,7 @@ CREATE TABLE qrtz_locks (
 
 
 --
--- Name: qrtz_paused_trigger_grps; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_paused_trigger_grps; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_paused_trigger_grps (
@@ -1551,7 +1638,7 @@ CREATE TABLE qrtz_paused_trigger_grps (
 
 
 --
--- Name: qrtz_scheduler_state; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_scheduler_state; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_scheduler_state (
@@ -1564,7 +1651,7 @@ CREATE TABLE qrtz_scheduler_state (
 
 
 --
--- Name: qrtz_simple_triggers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_simple_triggers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_simple_triggers (
@@ -1579,7 +1666,7 @@ CREATE TABLE qrtz_simple_triggers (
 
 
 --
--- Name: qrtz_simprop_triggers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_simprop_triggers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_simprop_triggers (
@@ -1602,7 +1689,7 @@ CREATE TABLE qrtz_simprop_triggers (
 
 
 --
--- Name: qrtz_triggers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_triggers; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE qrtz_triggers (
@@ -1627,7 +1714,7 @@ CREATE TABLE qrtz_triggers (
 
 
 --
--- Name: quota; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: quota; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE quota (
@@ -1637,23 +1724,23 @@ CREATE TABLE quota (
     description character varying(250),
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
     _update_date timestamp with time zone,
-    threshold_vds_group_percentage integer DEFAULT 80,
+    threshold_cluster_percentage integer DEFAULT 80,
     threshold_storage_percentage integer DEFAULT 80,
-    grace_vds_group_percentage integer DEFAULT 20,
+    grace_cluster_percentage integer DEFAULT 20,
     grace_storage_percentage integer DEFAULT 20
 );
 
 
 
 --
--- Name: quota_limitation; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: quota_limitation; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE quota_limitation (
     id uuid NOT NULL,
     quota_id uuid NOT NULL,
     storage_id uuid,
-    vds_group_id uuid,
+    cluster_id uuid,
     virtual_cpu integer,
     mem_size_mb bigint,
     storage_size_gb bigint
@@ -1662,7 +1749,7 @@ CREATE TABLE quota_limitation (
 
 
 --
--- Name: repo_file_meta_data; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: repo_file_meta_data; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE repo_file_meta_data (
@@ -1678,7 +1765,7 @@ CREATE TABLE repo_file_meta_data (
 
 
 --
--- Name: roles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: roles; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE roles (
@@ -1694,7 +1781,7 @@ CREATE TABLE roles (
 
 
 --
--- Name: roles_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: roles_groups; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE roles_groups (
@@ -1718,7 +1805,7 @@ CREATE SEQUENCE schema_version_seq
 
 
 --
--- Name: schema_version; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: schema_version; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE schema_version (
@@ -1737,7 +1824,7 @@ CREATE TABLE schema_version (
 
 
 --
--- Name: snapshots; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: snapshots; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE snapshots (
@@ -1751,13 +1838,75 @@ CREATE TABLE snapshots (
     vm_configuration text,
     _create_date timestamp with time zone DEFAULT now(),
     _update_date timestamp with time zone,
-    memory_volume character varying(255)
+    memory_volume character varying(255),
+    memory_metadata_disk_id uuid,
+    memory_dump_disk_id uuid
 );
 
 
 
 --
--- Name: step; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: sso_clients_seq; Type: SEQUENCE; Schema: public; Owner: engine
+--
+
+CREATE SEQUENCE sso_clients_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: sso_clients; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE sso_clients (
+    id bigint DEFAULT nextval('sso_clients_seq'::regclass) NOT NULL,
+    client_id character varying(128) NOT NULL,
+    client_secret character varying(1024) NOT NULL,
+    callback_prefix character varying(1024),
+    certificate_location character varying(1024),
+    notification_callback character varying(1024),
+    description text,
+    email character varying(256),
+    scope character varying(1024),
+    trusted boolean DEFAULT true NOT NULL,
+    notification_callback_protocol character varying(32) NOT NULL,
+    notification_callback_verify_host boolean DEFAULT false NOT NULL,
+    notification_callback_verify_chain boolean DEFAULT true NOT NULL
+);
+
+
+
+--
+-- Name: sso_scope_dependency_seq; Type: SEQUENCE; Schema: public; Owner: engine
+--
+
+CREATE SEQUENCE sso_scope_dependency_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+
+--
+-- Name: sso_scope_dependency; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE sso_scope_dependency (
+    id bigint DEFAULT nextval('sso_scope_dependency_seq'::regclass) NOT NULL,
+    scope character varying(128) NOT NULL,
+    dependencies text
+);
+
+
+
+--
+-- Name: step; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE step (
@@ -1778,9 +1927,8 @@ CREATE TABLE step (
 
 
 
-
 --
--- Name: storage_device; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_device; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_device (
@@ -1803,9 +1951,8 @@ CREATE TABLE storage_device (
 
 
 
-
 --
--- Name: storage_domain_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_domain_dynamic; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_domain_dynamic (
@@ -1819,7 +1966,7 @@ CREATE TABLE storage_domain_dynamic (
 
 
 --
--- Name: storage_domain_static; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_domain_static; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_domain_static (
@@ -1843,7 +1990,7 @@ CREATE TABLE storage_domain_static (
 
 
 --
--- Name: storage_domains_ovf_info; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_domains_ovf_info; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_domains_ovf_info (
@@ -1857,7 +2004,7 @@ CREATE TABLE storage_domains_ovf_info (
 
 
 --
--- Name: storage_pool; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_pool; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_pool (
@@ -1881,7 +2028,7 @@ CREATE TABLE storage_pool (
 
 
 --
--- Name: storage_pool_iso_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_pool_iso_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_pool_iso_map (
@@ -1893,7 +2040,7 @@ CREATE TABLE storage_pool_iso_map (
 
 
 --
--- Name: storage_server_connection_extension; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_server_connection_extension; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_server_connection_extension (
@@ -1907,7 +2054,7 @@ CREATE TABLE storage_server_connection_extension (
 
 
 --
--- Name: storage_server_connections; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_server_connections; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE storage_server_connections (
@@ -1929,7 +2076,7 @@ CREATE TABLE storage_server_connections (
 
 
 --
--- Name: supported_cluster_features; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: supported_cluster_features; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE supported_cluster_features (
@@ -1941,7 +2088,7 @@ CREATE TABLE supported_cluster_features (
 
 
 --
--- Name: supported_host_features; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: supported_host_features; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE supported_host_features (
@@ -1952,7 +2099,7 @@ CREATE TABLE supported_host_features (
 
 
 --
--- Name: tags; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: tags; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE tags (
@@ -1969,7 +2116,7 @@ CREATE TABLE tags (
 
 
 --
--- Name: tags_user_group_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_user_group_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE tags_user_group_map (
@@ -1981,7 +2128,7 @@ CREATE TABLE tags_user_group_map (
 
 
 --
--- Name: tags_user_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_user_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE tags_user_map (
@@ -1993,7 +2140,7 @@ CREATE TABLE tags_user_map (
 
 
 --
--- Name: tags_vds_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_vds_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE tags_vds_map (
@@ -2005,7 +2152,7 @@ CREATE TABLE tags_vds_map (
 
 
 --
--- Name: tags_vm_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_vm_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE tags_vm_map (
@@ -2018,7 +2165,7 @@ CREATE TABLE tags_vm_map (
 
 
 --
--- Name: tags_vm_pool_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_vm_pool_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE tags_vm_pool_map (
@@ -2030,7 +2177,39 @@ CREATE TABLE tags_vm_pool_map (
 
 
 --
--- Name: unregistered_ovf_of_entities; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: unregistered_disks; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE unregistered_disks (
+    disk_id uuid NOT NULL,
+    disk_alias character varying(255),
+    disk_description character varying(255),
+    storage_domain_id uuid NOT NULL,
+    creation_date timestamp with time zone,
+    last_modified timestamp with time zone,
+    volume_type integer,
+    volume_format integer,
+    actual_size bigint,
+    size bigint,
+    image_id uuid
+);
+
+
+
+--
+-- Name: unregistered_disks_to_vms; Type: TABLE; Schema: public; Owner: engine
+--
+
+CREATE TABLE unregistered_disks_to_vms (
+    disk_id uuid NOT NULL,
+    entity_id uuid NOT NULL,
+    entity_name character varying(255)
+);
+
+
+
+--
+-- Name: unregistered_ovf_of_entities; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE unregistered_ovf_of_entities (
@@ -2046,9 +2225,8 @@ CREATE TABLE unregistered_ovf_of_entities (
 
 
 
-
 --
--- Name: user_profiles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: user_profiles; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE user_profiles (
@@ -2061,9 +2239,8 @@ CREATE TABLE user_profiles (
 
 
 
-
 --
--- Name: users; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: users; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE users (
@@ -2111,7 +2288,7 @@ CREATE SEQUENCE vdc_db_log_seq
 
 
 --
--- Name: vdc_db_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vdc_db_log; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vdc_db_log (
@@ -2139,20 +2316,21 @@ CREATE SEQUENCE vdc_options_seq
 
 
 --
--- Name: vdc_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vdc_options; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vdc_options (
     option_id integer DEFAULT nextval('vdc_options_seq'::regclass) NOT NULL,
     option_name character varying(100) NOT NULL,
     option_value character varying(4000) NOT NULL,
-    version character varying(40) DEFAULT 'general'::character varying NOT NULL
+    version character varying(40) DEFAULT 'general'::character varying NOT NULL,
+    default_value character varying(4000)
 );
 
 
 
 --
--- Name: vds_cpu_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_cpu_statistics; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_cpu_statistics (
@@ -2168,7 +2346,7 @@ CREATE TABLE vds_cpu_statistics (
 
 
 --
--- Name: vds_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_dynamic; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_dynamic (
@@ -2220,13 +2398,11 @@ CREATE TABLE vds_dynamic (
     supported_emulated_machines text,
     gluster_version character varying(4000),
     controlled_by_pm_policy boolean DEFAULT false,
-    kdump_status smallint DEFAULT (-1) NOT NULL,
+    kdump_status smallint DEFAULT '-1'::integer NOT NULL,
     selinux_enforce_mode integer,
     auto_numa_balancing smallint,
     is_numa_supported boolean,
     supported_rng_sources character varying(255),
-    is_live_snapshot_supported boolean DEFAULT true NOT NULL,
-    is_live_merge_supported boolean DEFAULT true NOT NULL,
     online_cpus text,
     maintenance_reason text,
     incoming_migrations integer DEFAULT 0 NOT NULL,
@@ -2235,63 +2411,64 @@ CREATE TABLE vds_dynamic (
     external_status integer DEFAULT 0 NOT NULL,
     is_hostdev_enabled boolean DEFAULT false NOT NULL,
     librbd1_version character varying(4000),
-    glusterfs_cli_version character varying(4000)
+    glusterfs_cli_version character varying(4000),
+    kernel_args text
 );
 
 
 
 --
--- Name: vds_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_groups; Type: VIEW; Schema: public; Owner: engine
 --
 
-CREATE TABLE vds_groups (
-    vds_group_id uuid NOT NULL,
-    name character varying(40) NOT NULL,
-    description character varying(4000),
-    cpu_name character varying(255),
-    _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
-    _update_date timestamp with time zone,
-    storage_pool_id uuid,
-    max_vds_memory_over_commit integer DEFAULT 100 NOT NULL,
-    compatibility_version character varying(40) DEFAULT '2.2'::character varying NOT NULL,
-    transparent_hugepages boolean DEFAULT false NOT NULL,
-    migrate_on_error integer DEFAULT 1 NOT NULL,
-    virt_service boolean DEFAULT true NOT NULL,
-    gluster_service boolean DEFAULT false NOT NULL,
-    count_threads_as_cores boolean DEFAULT false NOT NULL,
-    emulated_machine character varying(40),
-    trusted_service boolean DEFAULT false NOT NULL,
-    tunnel_migration boolean DEFAULT false NOT NULL,
-    cluster_policy_id uuid,
-    cluster_policy_custom_properties text,
-    enable_balloon boolean DEFAULT false NOT NULL,
-    free_text_comment text,
-    detect_emulated_machine boolean DEFAULT false,
-    architecture integer DEFAULT 0 NOT NULL,
-    optimization_type smallint DEFAULT 0,
-    spice_proxy character varying(255),
-    ha_reservation boolean DEFAULT false NOT NULL,
-    enable_ksm boolean DEFAULT true NOT NULL,
-    serial_number_policy smallint,
-    custom_serial_number character varying(255) DEFAULT NULL::character varying,
-    optional_reason boolean DEFAULT false NOT NULL,
-    required_rng_sources character varying(255),
-    skip_fencing_if_sd_active boolean DEFAULT false,
-    skip_fencing_if_connectivity_broken boolean DEFAULT false,
-    hosts_with_broken_connectivity_threshold smallint DEFAULT 50,
-    fencing_enabled boolean DEFAULT true,
-    is_auto_converge boolean,
-    is_migrate_compressed boolean,
-    maintenance_reason_required boolean DEFAULT false NOT NULL,
-    gluster_tuned_profile character varying(50),
-    gluster_cli_based_snapshot_scheduled boolean DEFAULT true NOT NULL,
-    ksm_merge_across_nodes boolean DEFAULT true
-);
+CREATE VIEW vds_groups AS
+ SELECT cluster.cluster_id,
+    cluster.name,
+    cluster.description,
+    cluster.cpu_name,
+    cluster._create_date,
+    cluster._update_date,
+    cluster.storage_pool_id,
+    cluster.max_vds_memory_over_commit,
+    cluster.compatibility_version,
+    cluster.transparent_hugepages,
+    cluster.migrate_on_error,
+    cluster.virt_service,
+    cluster.gluster_service,
+    cluster.count_threads_as_cores,
+    cluster.emulated_machine,
+    cluster.trusted_service,
+    cluster.tunnel_migration,
+    cluster.cluster_policy_id,
+    cluster.cluster_policy_custom_properties,
+    cluster.enable_balloon,
+    cluster.free_text_comment,
+    cluster.detect_emulated_machine,
+    cluster.architecture,
+    cluster.optimization_type,
+    cluster.spice_proxy,
+    cluster.ha_reservation,
+    cluster.enable_ksm,
+    cluster.serial_number_policy,
+    cluster.custom_serial_number,
+    cluster.optional_reason,
+    cluster.required_rng_sources,
+    cluster.skip_fencing_if_sd_active,
+    cluster.skip_fencing_if_connectivity_broken,
+    cluster.hosts_with_broken_connectivity_threshold,
+    cluster.fencing_enabled,
+    cluster.is_auto_converge,
+    cluster.is_migrate_compressed,
+    cluster.maintenance_reason_required,
+    cluster.gluster_tuned_profile,
+    cluster.gluster_cli_based_snapshot_scheduled,
+    cluster.ksm_merge_across_nodes
+   FROM cluster;
 
 
 
 --
--- Name: vds_interface; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_interface; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_interface (
@@ -2317,13 +2494,18 @@ CREATE TABLE vds_interface (
     bridged boolean DEFAULT true NOT NULL,
     labels text,
     qos_overridden boolean DEFAULT false NOT NULL,
-    base_interface character varying(50)
+    base_interface character varying(50),
+    ipv6_boot_protocol integer,
+    ipv6_address character varying(50),
+    ipv6_prefix integer,
+    ipv6_gateway character varying(50),
+    ad_partner_mac character varying(59)
 );
 
 
 
 --
--- Name: vds_interface_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_interface_statistics; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_interface_statistics (
@@ -2345,7 +2527,7 @@ CREATE TABLE vds_interface_statistics (
 
 
 --
--- Name: vds_kdump_status; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_kdump_status; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_kdump_status (
@@ -2357,7 +2539,7 @@ CREATE TABLE vds_kdump_status (
 
 
 --
--- Name: vds_spm_id_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_spm_id_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_spm_id_map (
@@ -2369,7 +2551,7 @@ CREATE TABLE vds_spm_id_map (
 
 
 --
--- Name: vds_static; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_static; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_static (
@@ -2378,7 +2560,7 @@ CREATE TABLE vds_static (
     vds_unique_id character varying(128),
     host_name character varying(255) NOT NULL,
     port integer NOT NULL,
-    vds_group_id uuid NOT NULL,
+    cluster_id uuid NOT NULL,
     server_ssl_enabled boolean,
     vds_type integer DEFAULT 0 NOT NULL,
     vds_strength integer DEFAULT 100 NOT NULL,
@@ -2398,13 +2580,16 @@ CREATE TABLE vds_static (
     pm_detect_kdump boolean DEFAULT false NOT NULL,
     protocol smallint DEFAULT 0 NOT NULL,
     host_provider_id uuid,
-    CONSTRAINT vds_static_vds_spm_priority_check CHECK (((vds_spm_priority >= (-1)) AND (vds_spm_priority <= 10)))
+    openstack_network_provider_id uuid,
+    kernel_cmdline text,
+    last_stored_kernel_cmdline text,
+    CONSTRAINT vds_static_vds_spm_priority_check CHECK (((vds_spm_priority >= '-1'::integer) AND (vds_spm_priority <= 10)))
 );
 
 
 
 --
--- Name: vds_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_statistics; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vds_statistics (
@@ -2438,7 +2623,7 @@ CREATE TABLE vds_statistics (
 
 
 --
--- Name: vfs_config_labels; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vfs_config_labels; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vfs_config_labels (
@@ -2451,7 +2636,7 @@ CREATE TABLE vfs_config_labels (
 
 
 --
--- Name: vfs_config_networks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vfs_config_networks; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vfs_config_networks (
@@ -2464,7 +2649,7 @@ CREATE TABLE vfs_config_networks (
 
 
 --
--- Name: vm_device; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_device; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_device (
@@ -2484,13 +2669,14 @@ CREATE TABLE vm_device (
     custom_properties text,
     snapshot_id uuid,
     logical_name character varying(255),
-    is_using_scsi_reservation boolean DEFAULT false NOT NULL
+    is_using_scsi_reservation boolean DEFAULT false NOT NULL,
+    host_device character varying(255)
 );
 
 
 
 --
--- Name: vm_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_dynamic; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_dynamic (
@@ -2528,7 +2714,7 @@ CREATE TABLE vm_dynamic (
     last_stop_time timestamp with time zone,
     current_cd character varying(4000) DEFAULT NULL::character varying,
     reason text,
-    exit_reason integer DEFAULT (-1),
+    exit_reason integer DEFAULT '-1'::integer,
     guest_cpu_count integer,
     emulated_machine character varying(255),
     spice_port integer,
@@ -2547,13 +2733,14 @@ CREATE TABLE vm_dynamic (
     guestos_distribution character varying(255),
     guestos_kernel_version character varying(255),
     guestos_type character varying(255) DEFAULT 'Other'::character varying NOT NULL,
-    guestos_version character varying(255)
+    guestos_version character varying(255),
+    guest_containers text DEFAULT '[]'::text
 );
 
 
 
 --
--- Name: vm_guest_agent_interfaces; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_guest_agent_interfaces; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_guest_agent_interfaces (
@@ -2567,7 +2754,7 @@ CREATE TABLE vm_guest_agent_interfaces (
 
 
 --
--- Name: vm_host_pinning_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_host_pinning_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_host_pinning_map (
@@ -2578,7 +2765,7 @@ CREATE TABLE vm_host_pinning_map (
 
 
 --
--- Name: vm_icon_defaults; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_icon_defaults; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_icon_defaults (
@@ -2591,7 +2778,7 @@ CREATE TABLE vm_icon_defaults (
 
 
 --
--- Name: vm_icons; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_icons; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_icons (
@@ -2602,7 +2789,7 @@ CREATE TABLE vm_icons (
 
 
 --
--- Name: vm_init; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_init; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_init (
@@ -2630,7 +2817,7 @@ CREATE TABLE vm_init (
 
 
 --
--- Name: vm_interface; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_interface; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_interface (
@@ -2650,7 +2837,7 @@ CREATE TABLE vm_interface (
 
 
 --
--- Name: vm_interface_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_interface_statistics; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_interface_statistics (
@@ -2672,7 +2859,7 @@ CREATE TABLE vm_interface_statistics (
 
 
 --
--- Name: vm_jobs; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_jobs; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_jobs (
@@ -2690,7 +2877,7 @@ CREATE TABLE vm_jobs (
 
 
 --
--- Name: vm_ovf_generations; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_ovf_generations; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_ovf_generations (
@@ -2703,7 +2890,7 @@ CREATE TABLE vm_ovf_generations (
 
 
 --
--- Name: vm_pool_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_pool_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_pool_map (
@@ -2714,7 +2901,7 @@ CREATE TABLE vm_pool_map (
 
 
 --
--- Name: vm_pools; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_pools; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_pools (
@@ -2723,18 +2910,19 @@ CREATE TABLE vm_pools (
     vm_pool_description character varying(4000) NOT NULL,
     vm_pool_type integer,
     parameters character varying(200),
-    vds_group_id uuid,
+    cluster_id uuid,
     prestarted_vms smallint DEFAULT 0,
     max_assigned_vms_per_user smallint DEFAULT 1,
     vm_pool_comment text,
     spice_proxy character varying(255),
-    is_being_destroyed boolean DEFAULT false NOT NULL
+    is_being_destroyed boolean DEFAULT false NOT NULL,
+    stateful boolean DEFAULT false NOT NULL
 );
 
 
 
 --
--- Name: vm_static; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_static; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_static (
@@ -2744,7 +2932,7 @@ CREATE TABLE vm_static (
     vmt_guid uuid NOT NULL,
     os integer DEFAULT 0 NOT NULL,
     description character varying(4000),
-    vds_group_id uuid,
+    cluster_id uuid,
     creation_date timestamp with time zone,
     num_of_monitors integer NOT NULL,
     is_initialized boolean,
@@ -2814,13 +3002,16 @@ CREATE TABLE vm_static (
     large_icon_id uuid,
     provider_id uuid,
     num_of_io_threads integer DEFAULT 0 NOT NULL,
-    console_disconnect_action character varying(64)
+    console_disconnect_action character varying(64),
+    threads_per_cpu integer DEFAULT 1 NOT NULL,
+    custom_compatibility_version character varying(40),
+    migration_policy_id uuid
 );
 
 
 
 --
--- Name: vm_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_statistics; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_statistics (
@@ -2842,7 +3033,7 @@ CREATE TABLE vm_statistics (
 
 
 --
--- Name: vm_vds_numa_node_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_vds_numa_node_map; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vm_vds_numa_node_map (
@@ -2856,7 +3047,7 @@ CREATE TABLE vm_vds_numa_node_map (
 
 
 --
--- Name: vnic_profiles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
+-- Name: vnic_profiles; Type: TABLE; Schema: public; Owner: engine
 --
 
 CREATE TABLE vnic_profiles (
@@ -2869,13 +3060,14 @@ CREATE TABLE vnic_profiles (
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone,
     _update_date timestamp with time zone,
     network_qos_id uuid,
-    passthrough boolean DEFAULT false NOT NULL
+    passthrough boolean DEFAULT false NOT NULL,
+    network_filter_id uuid
 );
 
 
 
 --
--- Name: affinity_group_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: affinity_groups affinity_group_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY affinity_groups
@@ -2883,7 +3075,7 @@ ALTER TABLE ONLY affinity_groups
 
 
 --
--- Name: cluster_policy_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: cluster_policies cluster_policy_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY cluster_policies
@@ -2891,7 +3083,7 @@ ALTER TABLE ONLY cluster_policies
 
 
 --
--- Name: command_assoc_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: command_assoc_entities command_assoc_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY command_assoc_entities
@@ -2899,7 +3091,7 @@ ALTER TABLE ONLY command_assoc_entities
 
 
 --
--- Name: cpu_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: cpu_profiles cpu_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY cpu_profiles
@@ -2907,7 +3099,7 @@ ALTER TABLE ONLY cpu_profiles
 
 
 --
--- Name: disk_lun_map_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: disk_lun_map disk_lun_map_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_lun_map
@@ -2915,7 +3107,7 @@ ALTER TABLE ONLY disk_lun_map
 
 
 --
--- Name: disk_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: disk_profiles disk_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_profiles
@@ -2923,7 +3115,7 @@ ALTER TABLE ONLY disk_profiles
 
 
 --
--- Name: engine_backup_log_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: engine_backup_log engine_backup_log_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY engine_backup_log
@@ -2931,7 +3123,7 @@ ALTER TABLE ONLY engine_backup_log
 
 
 --
--- Name: fence_agent_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: fence_agents fence_agent_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY fence_agents
@@ -2939,7 +3131,7 @@ ALTER TABLE ONLY fence_agents
 
 
 --
--- Name: gluster_volumes_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volumes gluster_volumes_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volumes
@@ -2947,7 +3139,7 @@ ALTER TABLE ONLY gluster_volumes
 
 
 --
--- Name: groups_domain_external_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: ad_groups groups_domain_external_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY ad_groups
@@ -2955,7 +3147,7 @@ ALTER TABLE ONLY ad_groups
 
 
 --
--- Name: host_device_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: host_device host_device_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_device
@@ -2963,7 +3155,7 @@ ALTER TABLE ONLY host_device
 
 
 --
--- Name: idx_gluster_volume_bricks_volume_server_brickdir; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_bricks idx_gluster_volume_bricks_volume_server_brickdir; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_bricks
@@ -2971,7 +3163,7 @@ ALTER TABLE ONLY gluster_volume_bricks
 
 
 --
--- Name: idx_gluster_volume_options_volume_id_option_key; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_options idx_gluster_volume_options_volume_id_option_key; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_options
@@ -2979,7 +3171,15 @@ ALTER TABLE ONLY gluster_volume_options
 
 
 --
--- Name: mac_pools_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: labels label_name; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY labels
+    ADD CONSTRAINT label_name UNIQUE (label_name);
+
+
+--
+-- Name: mac_pools mac_pools_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY mac_pools
@@ -2987,7 +3187,7 @@ ALTER TABLE ONLY mac_pools
 
 
 --
--- Name: materialized_views_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: materialized_views materialized_views_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY materialized_views
@@ -2995,7 +3195,7 @@ ALTER TABLE ONLY materialized_views
 
 
 --
--- Name: network_attachments_network_id_nic_id_key; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: network_attachments network_attachments_network_id_nic_id_key; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network_attachments
@@ -3003,15 +3203,15 @@ ALTER TABLE ONLY network_attachments
 
 
 --
--- Name: pk_action_version_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: network_filter network_filter_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
-ALTER TABLE ONLY action_version_map
-    ADD CONSTRAINT pk_action_version_map PRIMARY KEY (action_type);
+ALTER TABLE ONLY network_filter
+    ADD CONSTRAINT network_filter_pkey PRIMARY KEY (filter_name);
 
 
 --
--- Name: pk_ad_group_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: ad_groups pk_ad_group_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY ad_groups
@@ -3019,7 +3219,7 @@ ALTER TABLE ONLY ad_groups
 
 
 --
--- Name: pk_async_tasks; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: async_tasks pk_async_tasks; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY async_tasks
@@ -3027,7 +3227,7 @@ ALTER TABLE ONLY async_tasks
 
 
 --
--- Name: pk_audit_log; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: audit_log pk_audit_log; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY audit_log
@@ -3035,7 +3235,7 @@ ALTER TABLE ONLY audit_log
 
 
 --
--- Name: pk_bookmarks; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: bookmarks pk_bookmarks; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY bookmarks
@@ -3043,7 +3243,15 @@ ALTER TABLE ONLY bookmarks
 
 
 --
--- Name: pk_cluster_features; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: cluster pk_cluster; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY cluster
+    ADD CONSTRAINT pk_cluster PRIMARY KEY (cluster_id);
+
+
+--
+-- Name: cluster_features pk_cluster_features; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY cluster_features
@@ -3051,7 +3259,7 @@ ALTER TABLE ONLY cluster_features
 
 
 --
--- Name: pk_command_entities; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: command_entities pk_command_entities; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY command_entities
@@ -3059,7 +3267,7 @@ ALTER TABLE ONLY command_entities
 
 
 --
--- Name: pk_config_key; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_config_master pk_config_key; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_config_master
@@ -3067,7 +3275,7 @@ ALTER TABLE ONLY gluster_config_master
 
 
 --
--- Name: pk_custom_actions; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: custom_actions pk_custom_actions; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY custom_actions
@@ -3075,7 +3283,23 @@ ALTER TABLE ONLY custom_actions
 
 
 --
--- Name: pk_disk_image_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: unregistered_disks pk_disk_id_storage_domain_unregistered; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY unregistered_disks
+    ADD CONSTRAINT pk_disk_id_storage_domain_unregistered PRIMARY KEY (disk_id, storage_domain_id);
+
+
+--
+-- Name: unregistered_disks_to_vms pk_disk_id_unregistered; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY unregistered_disks_to_vms
+    ADD CONSTRAINT pk_disk_id_unregistered PRIMARY KEY (disk_id, entity_id);
+
+
+--
+-- Name: disk_image_dynamic pk_disk_image_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_image_dynamic
@@ -3083,7 +3307,15 @@ ALTER TABLE ONLY disk_image_dynamic
 
 
 --
--- Name: pk_disks; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: disk_vm_element pk_disk_vm_element; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY disk_vm_element
+    ADD CONSTRAINT pk_disk_vm_element PRIMARY KEY (vm_id, disk_id);
+
+
+--
+-- Name: base_disks pk_disks; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY base_disks
@@ -3091,7 +3323,7 @@ ALTER TABLE ONLY base_disks
 
 
 --
--- Name: pk_engine_session; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: engine_sessions pk_engine_session; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY engine_sessions
@@ -3099,7 +3331,7 @@ ALTER TABLE ONLY engine_sessions
 
 
 --
--- Name: pk_entity_guid_storage_domain_unregistered; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: unregistered_ovf_of_entities pk_entity_guid_storage_domain_unregistered; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY unregistered_ovf_of_entities
@@ -3107,7 +3339,7 @@ ALTER TABLE ONLY unregistered_ovf_of_entities
 
 
 --
--- Name: pk_event_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: event_map pk_event_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY event_map
@@ -3115,7 +3347,7 @@ ALTER TABLE ONLY event_map
 
 
 --
--- Name: pk_external_variable; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: external_variable pk_external_variable; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY external_variable
@@ -3123,7 +3355,7 @@ ALTER TABLE ONLY external_variable
 
 
 --
--- Name: pk_gluster_cluster_services; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_cluster_services pk_gluster_cluster_services; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_cluster_services
@@ -3131,7 +3363,7 @@ ALTER TABLE ONLY gluster_cluster_services
 
 
 --
--- Name: pk_gluster_georep_config; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_georep_config pk_gluster_georep_config; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_config
@@ -3139,7 +3371,7 @@ ALTER TABLE ONLY gluster_georep_config
 
 
 --
--- Name: pk_gluster_georep_session; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_georep_session pk_gluster_georep_session; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_session
@@ -3147,7 +3379,7 @@ ALTER TABLE ONLY gluster_georep_session
 
 
 --
--- Name: pk_gluster_georep_session_details; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_georep_session_details pk_gluster_georep_session_details; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_session_details
@@ -3155,7 +3387,7 @@ ALTER TABLE ONLY gluster_georep_session_details
 
 
 --
--- Name: pk_gluster_hooks; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_hooks pk_gluster_hooks; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_hooks
@@ -3163,7 +3395,7 @@ ALTER TABLE ONLY gluster_hooks
 
 
 --
--- Name: pk_gluster_server; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_server pk_gluster_server; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server
@@ -3171,7 +3403,7 @@ ALTER TABLE ONLY gluster_server
 
 
 --
--- Name: pk_gluster_server_services; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_server_services pk_gluster_server_services; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server_services
@@ -3179,7 +3411,7 @@ ALTER TABLE ONLY gluster_server_services
 
 
 --
--- Name: pk_gluster_service_types; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_service_types pk_gluster_service_types; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_service_types
@@ -3187,7 +3419,7 @@ ALTER TABLE ONLY gluster_service_types
 
 
 --
--- Name: pk_gluster_services; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_services pk_gluster_services; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_services
@@ -3195,7 +3427,7 @@ ALTER TABLE ONLY gluster_services
 
 
 --
--- Name: pk_gluster_volume_access_protocols; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_access_protocols pk_gluster_volume_access_protocols; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_access_protocols
@@ -3203,7 +3435,7 @@ ALTER TABLE ONLY gluster_volume_access_protocols
 
 
 --
--- Name: pk_gluster_volume_brick_details; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_brick_details pk_gluster_volume_brick_details; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_brick_details
@@ -3211,7 +3443,7 @@ ALTER TABLE ONLY gluster_volume_brick_details
 
 
 --
--- Name: pk_gluster_volume_bricks; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_bricks pk_gluster_volume_bricks; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_bricks
@@ -3219,7 +3451,7 @@ ALTER TABLE ONLY gluster_volume_bricks
 
 
 --
--- Name: pk_gluster_volume_details; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_details pk_gluster_volume_details; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_details
@@ -3227,7 +3459,7 @@ ALTER TABLE ONLY gluster_volume_details
 
 
 --
--- Name: pk_gluster_volume_options; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_options pk_gluster_volume_options; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_options
@@ -3235,7 +3467,7 @@ ALTER TABLE ONLY gluster_volume_options
 
 
 --
--- Name: pk_gluster_volume_transport_types; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_transport_types pk_gluster_volume_transport_types; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_transport_types
@@ -3243,7 +3475,7 @@ ALTER TABLE ONLY gluster_volume_transport_types
 
 
 --
--- Name: pk_gluster_volumes; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volumes pk_gluster_volumes; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volumes
@@ -3251,7 +3483,7 @@ ALTER TABLE ONLY gluster_volumes
 
 
 --
--- Name: pk_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: business_entity_snapshot pk_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY business_entity_snapshot
@@ -3259,7 +3491,7 @@ ALTER TABLE ONLY business_entity_snapshot
 
 
 --
--- Name: pk_image_storage_domain_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: image_storage_domain_map pk_image_storage_domain_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY image_storage_domain_map
@@ -3267,7 +3499,15 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
--- Name: pk_images; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: image_transfers pk_image_transfers; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY image_transfers
+    ADD CONSTRAINT pk_image_transfers PRIMARY KEY (command_id);
+
+
+--
+-- Name: images pk_images; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY images
@@ -3275,7 +3515,7 @@ ALTER TABLE ONLY images
 
 
 --
--- Name: pk_iscsi_bonds; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: iscsi_bonds pk_iscsi_bonds; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds
@@ -3283,7 +3523,7 @@ ALTER TABLE ONLY iscsi_bonds
 
 
 --
--- Name: pk_iscsi_bonds_networks_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: iscsi_bonds_networks_map pk_iscsi_bonds_networks_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds_networks_map
@@ -3291,7 +3531,7 @@ ALTER TABLE ONLY iscsi_bonds_networks_map
 
 
 --
--- Name: pk_iscsi_bonds_storage_connections_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: iscsi_bonds_storage_connections_map pk_iscsi_bonds_storage_connections_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds_storage_connections_map
@@ -3299,7 +3539,7 @@ ALTER TABLE ONLY iscsi_bonds_storage_connections_map
 
 
 --
--- Name: pk_jobs; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: job pk_jobs; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY job
@@ -3307,7 +3547,7 @@ ALTER TABLE ONLY job
 
 
 --
--- Name: pk_jobs_subject_entity; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: job_subject_entity pk_jobs_subject_entity; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY job_subject_entity
@@ -3315,7 +3555,15 @@ ALTER TABLE ONLY job_subject_entity
 
 
 --
--- Name: pk_lun_storage_server_connection_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: labels pk_labels_id; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY labels
+    ADD CONSTRAINT pk_labels_id PRIMARY KEY (label_id);
+
+
+--
+-- Name: lun_storage_server_connection_map pk_lun_storage_server_connection_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY lun_storage_server_connection_map
@@ -3323,7 +3571,7 @@ ALTER TABLE ONLY lun_storage_server_connection_map
 
 
 --
--- Name: pk_luns; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: luns pk_luns; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY luns
@@ -3331,7 +3579,7 @@ ALTER TABLE ONLY luns
 
 
 --
--- Name: pk_network; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: network pk_network; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network
@@ -3339,7 +3587,7 @@ ALTER TABLE ONLY network
 
 
 --
--- Name: pk_network_attachments_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: network_attachments pk_network_attachments_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network_attachments
@@ -3347,7 +3595,7 @@ ALTER TABLE ONLY network_attachments
 
 
 --
--- Name: pk_network_cluster; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: network_cluster pk_network_cluster; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network_cluster
@@ -3355,7 +3603,7 @@ ALTER TABLE ONLY network_cluster
 
 
 --
--- Name: pk_numa_node; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: numa_node pk_numa_node; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY numa_node
@@ -3363,7 +3611,7 @@ ALTER TABLE ONLY numa_node
 
 
 --
--- Name: pk_numa_node_cpu_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: numa_node_cpu_map pk_numa_node_cpu_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY numa_node_cpu_map
@@ -3371,7 +3619,7 @@ ALTER TABLE ONLY numa_node_cpu_map
 
 
 --
--- Name: pk_object_column_white_list; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: object_column_white_list pk_object_column_white_list; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY object_column_white_list
@@ -3379,7 +3627,7 @@ ALTER TABLE ONLY object_column_white_list
 
 
 --
--- Name: pk_object_column_white_list_sql; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: object_column_white_list_sql pk_object_column_white_list_sql; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY object_column_white_list_sql
@@ -3387,7 +3635,7 @@ ALTER TABLE ONLY object_column_white_list_sql
 
 
 --
--- Name: pk_os_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: dwh_osinfo pk_os_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY dwh_osinfo
@@ -3395,7 +3643,7 @@ ALTER TABLE ONLY dwh_osinfo
 
 
 --
--- Name: pk_permissions_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: permissions pk_permissions_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY permissions
@@ -3403,7 +3651,7 @@ ALTER TABLE ONLY permissions
 
 
 --
--- Name: pk_profile_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: user_profiles pk_profile_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY user_profiles
@@ -3411,7 +3659,7 @@ ALTER TABLE ONLY user_profiles
 
 
 --
--- Name: pk_qos_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qos pk_qos_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qos
@@ -3419,7 +3667,7 @@ ALTER TABLE ONLY qos
 
 
 --
--- Name: pk_quota; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: quota pk_quota; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY quota
@@ -3427,7 +3675,7 @@ ALTER TABLE ONLY quota
 
 
 --
--- Name: pk_quota_limitation; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: quota_limitation pk_quota_limitation; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY quota_limitation
@@ -3435,7 +3683,7 @@ ALTER TABLE ONLY quota_limitation
 
 
 --
--- Name: pk_repo_file_meta_data; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: repo_file_meta_data pk_repo_file_meta_data; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY repo_file_meta_data
@@ -3443,7 +3691,7 @@ ALTER TABLE ONLY repo_file_meta_data
 
 
 --
--- Name: pk_roles_groups; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: roles_groups pk_roles_groups; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY roles_groups
@@ -3451,7 +3699,7 @@ ALTER TABLE ONLY roles_groups
 
 
 --
--- Name: pk_roles_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: roles pk_roles_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY roles
@@ -3459,7 +3707,7 @@ ALTER TABLE ONLY roles
 
 
 --
--- Name: pk_secret_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: libvirt_secrets pk_secret_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY libvirt_secrets
@@ -3467,7 +3715,7 @@ ALTER TABLE ONLY libvirt_secrets
 
 
 --
--- Name: pk_snapshot_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_snapshots pk_snapshot_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_snapshots
@@ -3475,7 +3723,7 @@ ALTER TABLE ONLY gluster_volume_snapshots
 
 
 --
--- Name: pk_snapshots; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: snapshots pk_snapshots; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY snapshots
@@ -3483,7 +3731,23 @@ ALTER TABLE ONLY snapshots
 
 
 --
--- Name: pk_steps; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: sso_clients pk_sso_clients; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY sso_clients
+    ADD CONSTRAINT pk_sso_clients PRIMARY KEY (id);
+
+
+--
+-- Name: sso_scope_dependency pk_sso_scope_dependency; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY sso_scope_dependency
+    ADD CONSTRAINT pk_sso_scope_dependency PRIMARY KEY (id);
+
+
+--
+-- Name: step pk_steps; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY step
@@ -3491,7 +3755,7 @@ ALTER TABLE ONLY step
 
 
 --
--- Name: pk_storage; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_domain_static pk_storage; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_domain_static
@@ -3499,7 +3763,7 @@ ALTER TABLE ONLY storage_domain_static
 
 
 --
--- Name: pk_storage_device; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_device pk_storage_device; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_device
@@ -3507,7 +3771,7 @@ ALTER TABLE ONLY storage_device
 
 
 --
--- Name: pk_storage_domain_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_domain_dynamic pk_storage_domain_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_domain_dynamic
@@ -3515,7 +3779,7 @@ ALTER TABLE ONLY storage_domain_dynamic
 
 
 --
--- Name: pk_storage_domain_pool_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_pool_iso_map pk_storage_domain_pool_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_pool_iso_map
@@ -3523,7 +3787,7 @@ ALTER TABLE ONLY storage_pool_iso_map
 
 
 --
--- Name: pk_storage_pool; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_pool pk_storage_pool; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_pool
@@ -3531,7 +3795,7 @@ ALTER TABLE ONLY storage_pool
 
 
 --
--- Name: pk_storage_server; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_server_connections pk_storage_server; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_server_connections
@@ -3539,7 +3803,7 @@ ALTER TABLE ONLY storage_server_connections
 
 
 --
--- Name: pk_storage_server_connection_extension; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_server_connection_extension pk_storage_server_connection_extension; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_server_connection_extension
@@ -3547,7 +3811,7 @@ ALTER TABLE ONLY storage_server_connection_extension
 
 
 --
--- Name: pk_supported_cluster_features; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: supported_cluster_features pk_supported_cluster_features; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY supported_cluster_features
@@ -3555,7 +3819,7 @@ ALTER TABLE ONLY supported_cluster_features
 
 
 --
--- Name: pk_supported_host_features; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: supported_host_features pk_supported_host_features; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY supported_host_features
@@ -3563,7 +3827,7 @@ ALTER TABLE ONLY supported_host_features
 
 
 --
--- Name: pk_tags_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: tags pk_tags_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags
@@ -3571,7 +3835,7 @@ ALTER TABLE ONLY tags
 
 
 --
--- Name: pk_tags_user_group_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_user_group_map pk_tags_user_group_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_user_group_map
@@ -3579,7 +3843,7 @@ ALTER TABLE ONLY tags_user_group_map
 
 
 --
--- Name: pk_tags_user_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_user_map pk_tags_user_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_user_map
@@ -3587,7 +3851,7 @@ ALTER TABLE ONLY tags_user_map
 
 
 --
--- Name: pk_tags_vds_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_vds_map pk_tags_vds_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vds_map
@@ -3595,7 +3859,7 @@ ALTER TABLE ONLY tags_vds_map
 
 
 --
--- Name: pk_tags_vm_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_vm_map pk_tags_vm_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vm_map
@@ -3603,7 +3867,7 @@ ALTER TABLE ONLY tags_vm_map
 
 
 --
--- Name: pk_tags_vm_pool_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: tags_vm_pool_map pk_tags_vm_pool_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vm_pool_map
@@ -3611,7 +3875,7 @@ ALTER TABLE ONLY tags_vm_pool_map
 
 
 --
--- Name: pk_users; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: users pk_users; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY users
@@ -3619,7 +3883,7 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: pk_vdc_db_log; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vdc_db_log pk_vdc_db_log; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vdc_db_log
@@ -3627,7 +3891,7 @@ ALTER TABLE ONLY vdc_db_log
 
 
 --
--- Name: pk_vdc_options; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vdc_options pk_vdc_options; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vdc_options
@@ -3635,7 +3899,7 @@ ALTER TABLE ONLY vdc_options
 
 
 --
--- Name: pk_vds_cpu_statistics; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_cpu_statistics pk_vds_cpu_statistics; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_cpu_statistics
@@ -3643,7 +3907,7 @@ ALTER TABLE ONLY vds_cpu_statistics
 
 
 --
--- Name: pk_vds_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_dynamic pk_vds_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_dynamic
@@ -3651,15 +3915,7 @@ ALTER TABLE ONLY vds_dynamic
 
 
 --
--- Name: pk_vds_groups; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
---
-
-ALTER TABLE ONLY vds_groups
-    ADD CONSTRAINT pk_vds_groups PRIMARY KEY (vds_group_id);
-
-
---
--- Name: pk_vds_interface; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_interface pk_vds_interface; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_interface
@@ -3667,7 +3923,7 @@ ALTER TABLE ONLY vds_interface
 
 
 --
--- Name: pk_vds_interface_statistics; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_interface_statistics pk_vds_interface_statistics; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_interface_statistics
@@ -3675,7 +3931,7 @@ ALTER TABLE ONLY vds_interface_statistics
 
 
 --
--- Name: pk_vds_kdump_status; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_kdump_status pk_vds_kdump_status; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_kdump_status
@@ -3683,7 +3939,7 @@ ALTER TABLE ONLY vds_kdump_status
 
 
 --
--- Name: pk_vds_spm_id_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_spm_id_map pk_vds_spm_id_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_spm_id_map
@@ -3691,7 +3947,7 @@ ALTER TABLE ONLY vds_spm_id_map
 
 
 --
--- Name: pk_vds_static; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_static pk_vds_static; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_static
@@ -3699,7 +3955,7 @@ ALTER TABLE ONLY vds_static
 
 
 --
--- Name: pk_vds_statistics; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_statistics pk_vds_statistics; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_statistics
@@ -3707,7 +3963,7 @@ ALTER TABLE ONLY vds_statistics
 
 
 --
--- Name: pk_vm_device; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_device pk_vm_device; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_device
@@ -3715,7 +3971,7 @@ ALTER TABLE ONLY vm_device
 
 
 --
--- Name: pk_vm_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_dynamic pk_vm_dynamic; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_dynamic
@@ -3723,7 +3979,7 @@ ALTER TABLE ONLY vm_dynamic
 
 
 --
--- Name: pk_vm_icon_defaults; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_icon_defaults pk_vm_icon_defaults; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_icon_defaults
@@ -3731,7 +3987,7 @@ ALTER TABLE ONLY vm_icon_defaults
 
 
 --
--- Name: pk_vm_icons; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_icons pk_vm_icons; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_icons
@@ -3739,7 +3995,7 @@ ALTER TABLE ONLY vm_icons
 
 
 --
--- Name: pk_vm_init; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_init pk_vm_init; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_init
@@ -3747,7 +4003,7 @@ ALTER TABLE ONLY vm_init
 
 
 --
--- Name: pk_vm_interface; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_interface pk_vm_interface; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface
@@ -3755,7 +4011,7 @@ ALTER TABLE ONLY vm_interface
 
 
 --
--- Name: pk_vm_interface_statistics; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_interface_statistics pk_vm_interface_statistics; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface_statistics
@@ -3763,7 +4019,7 @@ ALTER TABLE ONLY vm_interface_statistics
 
 
 --
--- Name: pk_vm_jobs; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_jobs pk_vm_jobs; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_jobs
@@ -3771,7 +4027,7 @@ ALTER TABLE ONLY vm_jobs
 
 
 --
--- Name: pk_vm_pool_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_pool_map pk_vm_pool_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_pool_map
@@ -3779,7 +4035,7 @@ ALTER TABLE ONLY vm_pool_map
 
 
 --
--- Name: pk_vm_pools; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_pools pk_vm_pools; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_pools
@@ -3787,7 +4043,7 @@ ALTER TABLE ONLY vm_pools
 
 
 --
--- Name: pk_vm_static; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_static pk_vm_static; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -3795,7 +4051,7 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: pk_vm_statistics; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_statistics pk_vm_statistics; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_statistics
@@ -3803,7 +4059,7 @@ ALTER TABLE ONLY vm_statistics
 
 
 --
--- Name: pk_vm_vds_numa_node_map; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_vds_numa_node_map pk_vm_vds_numa_node_map; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_vds_numa_node_map
@@ -3811,7 +4067,7 @@ ALTER TABLE ONLY vm_vds_numa_node_map
 
 
 --
--- Name: pk_vnic_profiles_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vnic_profiles pk_vnic_profiles_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vnic_profiles
@@ -3819,7 +4075,7 @@ ALTER TABLE ONLY vnic_profiles
 
 
 --
--- Name: pk_volume_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_volume_snapshot_schedules pk_volume_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_snapshot_schedules
@@ -3827,7 +4083,7 @@ ALTER TABLE ONLY gluster_volume_snapshot_schedules
 
 
 --
--- Name: policy_unit_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: policy_units policy_unit_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY policy_units
@@ -3835,7 +4091,7 @@ ALTER TABLE ONLY policy_units
 
 
 --
--- Name: providers_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: providers providers_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY providers
@@ -3843,7 +4099,7 @@ ALTER TABLE ONLY providers
 
 
 --
--- Name: qos_qos_type_name_storage_pool_id_key; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qos qos_qos_type_name_storage_pool_id_key; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qos
@@ -3851,7 +4107,7 @@ ALTER TABLE ONLY qos
 
 
 --
--- Name: qrtz_blob_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_blob_triggers qrtz_blob_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_blob_triggers
@@ -3859,7 +4115,7 @@ ALTER TABLE ONLY qrtz_blob_triggers
 
 
 --
--- Name: qrtz_calendars_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_calendars qrtz_calendars_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_calendars
@@ -3867,7 +4123,7 @@ ALTER TABLE ONLY qrtz_calendars
 
 
 --
--- Name: qrtz_cron_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_cron_triggers qrtz_cron_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_cron_triggers
@@ -3875,7 +4131,7 @@ ALTER TABLE ONLY qrtz_cron_triggers
 
 
 --
--- Name: qrtz_fired_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_fired_triggers qrtz_fired_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_fired_triggers
@@ -3883,7 +4139,7 @@ ALTER TABLE ONLY qrtz_fired_triggers
 
 
 --
--- Name: qrtz_job_details_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_job_details qrtz_job_details_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_job_details
@@ -3891,7 +4147,7 @@ ALTER TABLE ONLY qrtz_job_details
 
 
 --
--- Name: qrtz_locks_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_locks qrtz_locks_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_locks
@@ -3899,7 +4155,7 @@ ALTER TABLE ONLY qrtz_locks
 
 
 --
--- Name: qrtz_paused_trigger_grps_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_paused_trigger_grps qrtz_paused_trigger_grps_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_paused_trigger_grps
@@ -3907,7 +4163,7 @@ ALTER TABLE ONLY qrtz_paused_trigger_grps
 
 
 --
--- Name: qrtz_scheduler_state_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_scheduler_state qrtz_scheduler_state_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_scheduler_state
@@ -3915,7 +4171,7 @@ ALTER TABLE ONLY qrtz_scheduler_state
 
 
 --
--- Name: qrtz_simple_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_simple_triggers qrtz_simple_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_simple_triggers
@@ -3923,7 +4179,7 @@ ALTER TABLE ONLY qrtz_simple_triggers
 
 
 --
--- Name: qrtz_simprop_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_simprop_triggers qrtz_simprop_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_simprop_triggers
@@ -3931,7 +4187,7 @@ ALTER TABLE ONLY qrtz_simprop_triggers
 
 
 --
--- Name: qrtz_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: qrtz_triggers qrtz_triggers_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_triggers
@@ -3939,7 +4195,7 @@ ALTER TABLE ONLY qrtz_triggers
 
 
 --
--- Name: quota_quota_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: quota quota_quota_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY quota
@@ -3947,7 +4203,7 @@ ALTER TABLE ONLY quota
 
 
 --
--- Name: schema_version_primary_key; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: schema_version schema_version_primary_key; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY schema_version
@@ -3955,7 +4211,7 @@ ALTER TABLE ONLY schema_version
 
 
 --
--- Name: storage_domains_ovf_info_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_domains_ovf_info storage_domains_ovf_info_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_domains_ovf_info
@@ -3963,7 +4219,7 @@ ALTER TABLE ONLY storage_domains_ovf_info
 
 
 --
--- Name: storage_server_connection_extension_vds_id_iqn; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: storage_server_connection_extension storage_server_connection_extension_vds_id_iqn; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_server_connection_extension
@@ -3971,7 +4227,7 @@ ALTER TABLE ONLY storage_server_connection_extension
 
 
 --
--- Name: unique_gluster_server_services_server_service; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_server_services unique_gluster_server_services_server_service; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server_services
@@ -3979,7 +4235,7 @@ ALTER TABLE ONLY gluster_server_services
 
 
 --
--- Name: unique_gluster_services_type_name; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: gluster_services unique_gluster_services_type_name; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_services
@@ -3987,7 +4243,15 @@ ALTER TABLE ONLY gluster_services
 
 
 --
--- Name: unique_vm_icon_defaults_record; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: network_filter unique_network_filter_id; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY network_filter
+    ADD CONSTRAINT unique_network_filter_id UNIQUE (filter_id);
+
+
+--
+-- Name: vm_icon_defaults unique_vm_icon_defaults_record; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_icon_defaults
@@ -3995,7 +4259,15 @@ ALTER TABLE ONLY vm_icon_defaults
 
 
 --
--- Name: uq_command_id_entity_id; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: unregistered_disks unregistered_disks_disk_id_key; Type: CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY unregistered_disks
+    ADD CONSTRAINT unregistered_disks_disk_id_key UNIQUE (disk_id);
+
+
+--
+-- Name: business_entity_snapshot uq_command_id_entity_id; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY business_entity_snapshot
@@ -4003,7 +4275,7 @@ ALTER TABLE ONLY business_entity_snapshot
 
 
 --
--- Name: users_domain_external_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: users users_domain_external_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY users
@@ -4011,7 +4283,7 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: vds_interface_vds_id_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_interface vds_interface_vds_id_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_interface
@@ -4019,7 +4291,7 @@ ALTER TABLE ONLY vds_interface
 
 
 --
--- Name: vds_interface_vds_id_network_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_interface vds_interface_vds_id_network_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_interface
@@ -4027,7 +4299,7 @@ ALTER TABLE ONLY vds_interface
 
 
 --
--- Name: vds_static_host_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_static vds_static_host_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_static
@@ -4035,7 +4307,7 @@ ALTER TABLE ONLY vds_static
 
 
 --
--- Name: vds_static_vds_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vds_static vds_static_vds_name_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_static
@@ -4043,7 +4315,7 @@ ALTER TABLE ONLY vds_static
 
 
 --
--- Name: vfs_config_id_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: host_nic_vfs_config vfs_config_id_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_nic_vfs_config
@@ -4051,7 +4323,7 @@ ALTER TABLE ONLY host_nic_vfs_config
 
 
 --
--- Name: vfs_config_labels_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vfs_config_labels vfs_config_labels_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vfs_config_labels
@@ -4059,7 +4331,7 @@ ALTER TABLE ONLY vfs_config_labels
 
 
 --
--- Name: vfs_config_networks_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vfs_config_networks vfs_config_networks_pk; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vfs_config_networks
@@ -4067,7 +4339,7 @@ ALTER TABLE ONLY vfs_config_networks
 
 
 --
--- Name: vfs_config_nic_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: host_nic_vfs_config vfs_config_nic_id_unique; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_nic_vfs_config
@@ -4075,7 +4347,7 @@ ALTER TABLE ONLY host_nic_vfs_config
 
 
 --
--- Name: vm_host_pinning_map_vm_id_vds_id_key; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_host_pinning_map vm_host_pinning_map_vm_id_vds_id_key; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_host_pinning_map
@@ -4083,7 +4355,7 @@ ALTER TABLE ONLY vm_host_pinning_map
 
 
 --
--- Name: vm_ovf_generations_pkey; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_ovf_generations vm_ovf_generations_pkey; Type: CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_ovf_generations
@@ -4091,1436 +4363,1520 @@ ALTER TABLE ONLY vm_ovf_generations
 
 
 --
--- Name: audit_log_origin_custom_event_id_idx; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: audit_log_origin_custom_event_id_idx; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX audit_log_origin_custom_event_id_idx ON audit_log USING btree (origin, custom_event_id) WHERE ((origin)::text !~~* 'ovirt'::text);
 
 
 --
--- Name: idx_affinity_group_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_affinity_group_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_affinity_group_cluster_id ON affinity_groups USING btree (cluster_id);
 
 
 --
--- Name: idx_affinity_group_members_affinity_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_affinity_group_members_affinity_group_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_affinity_group_members_affinity_group_id ON affinity_group_members USING btree (affinity_group_id);
 
 
 --
--- Name: idx_affinity_group_members_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_affinity_group_members_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_affinity_group_members_vm_id ON affinity_group_members USING btree (vm_id);
 
 
 --
--- Name: idx_async_tasks_entities_async_task_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_async_tasks_entities_async_task_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_async_tasks_entities_async_task_id ON async_tasks_entities USING btree (async_task_id);
 
 
 --
--- Name: idx_audit_correlation_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_correlation_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_correlation_id ON audit_log USING btree (correlation_id);
 
 
 --
--- Name: idx_audit_log_gluster_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_gluster_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_gluster_volume_id ON audit_log USING btree (gluster_volume_id) WHERE (gluster_volume_id IS NOT NULL);
 
 
 --
--- Name: idx_audit_log_job_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_job_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_job_id ON audit_log USING btree (job_id);
 
 
 --
--- Name: idx_audit_log_log_time; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_log_time; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_log_time ON audit_log USING btree (log_time);
 
 
 --
--- Name: idx_audit_log_storage_domain_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_storage_domain_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_storage_domain_name ON audit_log USING btree (storage_domain_name);
 
 
 --
--- Name: idx_audit_log_storage_pool_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_storage_pool_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_storage_pool_name ON audit_log USING btree (storage_pool_name);
 
 
 --
--- Name: idx_audit_log_user_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_type_name; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_audit_log_type_name ON audit_log USING btree (log_type, log_type_name);
+
+
+--
+-- Name: idx_audit_log_user_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_user_name ON audit_log USING btree (user_name);
 
 
 --
--- Name: idx_audit_log_vds_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_vds_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_vds_name ON audit_log USING btree (vds_name);
 
 
 --
--- Name: idx_audit_log_vm_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_vm_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_vm_name ON audit_log USING btree (vm_name);
 
 
 --
--- Name: idx_audit_log_vm_template_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_audit_log_vm_template_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_audit_log_vm_template_name ON audit_log USING btree (vm_template_name);
 
 
 --
--- Name: idx_business_entity_snapshot_command_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_base_disks_disk_alias; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_base_disks_disk_alias ON base_disks USING btree (disk_alias);
+
+
+--
+-- Name: idx_business_entity_snapshot_command_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_business_entity_snapshot_command_id ON business_entity_snapshot USING btree (command_id);
 
 
 --
--- Name: idx_cluster_features_version_and_category; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_cluster_cluster_policy_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_cluster_cluster_policy_id ON cluster USING btree (cluster_policy_id);
+
+
+--
+-- Name: idx_cluster_features_version_and_category; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_cluster_features_version_and_category ON cluster_features USING btree (category, version);
 
 
 --
--- Name: idx_cluster_policy_units_cluster_policy_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_cluster_policy_units_cluster_policy_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_cluster_policy_units_cluster_policy_id ON cluster_policy_units USING btree (cluster_policy_id);
 
 
 --
--- Name: idx_cluster_policy_units_policy_unit_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_cluster_policy_units_policy_unit_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_cluster_policy_units_policy_unit_id ON cluster_policy_units USING btree (policy_unit_id);
 
 
 --
--- Name: idx_combined_ad_role_object; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_cluster_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_cluster_storage_pool_id ON cluster USING btree (storage_pool_id);
+
+
+--
+-- Name: idx_combined_ad_role_object; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_combined_ad_role_object ON permissions USING btree (ad_element_id, role_id, object_id);
 
 
 --
--- Name: idx_command_assoc_entities_command_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_command_assoc_entities_command_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_command_assoc_entities_command_id ON command_assoc_entities USING btree (command_id);
 
 
 --
--- Name: idx_cpu_profiles_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_cpu_profiles_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_cpu_profiles_cluster_id ON cpu_profiles USING btree (cluster_id);
 
 
 --
--- Name: idx_cpu_profiles_qos_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_cpu_profiles_create_date; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_cpu_profiles_create_date ON cpu_profiles USING btree (_create_date);
+
+
+--
+-- Name: idx_cpu_profiles_qos_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_cpu_profiles_qos_id ON cpu_profiles USING btree (qos_id);
 
 
 --
--- Name: idx_disk_lun_map_disk_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_disk_lun_map_disk_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_disk_lun_map_disk_id ON disk_lun_map USING btree (disk_id);
 
 
 --
--- Name: idx_disk_lun_map_lun_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_disk_lun_map_lun_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_disk_lun_map_lun_id ON disk_lun_map USING btree (lun_id);
 
 
 --
--- Name: idx_disk_profiles_qos_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_disk_profiles_qos_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_disk_profiles_qos_id ON disk_profiles USING btree (qos_id);
 
 
 --
--- Name: idx_disk_profiles_storage_domain_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_disk_profiles_storage_domain_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_disk_profiles_storage_domain_id ON disk_profiles USING btree (storage_domain_id);
 
 
 --
--- Name: idx_engine_backup_log; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_engine_backup_log; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_engine_backup_log ON engine_backup_log USING btree (scope, done_at DESC);
 
 
 --
--- Name: idx_engine_session_session_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_engine_session_session_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_engine_session_session_id ON engine_sessions USING btree (engine_session_id);
 
 
 --
--- Name: idx_event_notification_hist_audit_log_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_event_notification_hist; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_event_notification_hist ON event_notification_hist USING btree (audit_log_id);
+
+
+--
+-- Name: idx_event_notification_hist_audit_log_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_event_notification_hist_audit_log_id ON event_notification_hist USING btree (audit_log_id);
 
 
 --
--- Name: idx_event_subscriber_subscriber_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_event_subscriber_subscriber_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_event_subscriber_subscriber_id ON event_subscriber USING btree (subscriber_id);
 
 
 --
--- Name: idx_fence_agents_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_fence_agents_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_fence_agents_vds_id ON fence_agents USING btree (vds_id);
 
 
 --
--- Name: idx_georep_slave_host_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_georep_slave_host_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_georep_slave_host_name ON gluster_georep_session USING btree (slave_host_name);
 
 
 --
--- Name: idx_georep_slave_volume_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_georep_slave_volume_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_georep_slave_volume_name ON gluster_georep_session USING btree (slave_volume_name);
 
 
 --
--- Name: idx_gluster_bricks_task_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_bricks_task_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_bricks_task_id ON gluster_volume_bricks USING btree (task_id);
 
 
 --
--- Name: idx_gluster_cluster_services_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_cluster_services_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_cluster_services_cluster_id ON gluster_cluster_services USING btree (cluster_id);
 
 
 --
--- Name: idx_gluster_cluster_services_service_type; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_cluster_services_service_type; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_cluster_services_service_type ON gluster_cluster_services USING btree (service_type);
 
 
 --
--- Name: idx_gluster_georep_config_session_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_georep_config_session_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_georep_config_session_id ON gluster_georep_config USING btree (session_id);
 
 
 --
--- Name: idx_gluster_georep_session_details_master_brick_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_georep_session_details_master_brick_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_georep_session_details_master_brick_id ON gluster_georep_session_details USING btree (master_brick_id);
 
 
 --
--- Name: idx_gluster_georep_session_details_session_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_georep_session_details_session_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_georep_session_details_session_id ON gluster_georep_session_details USING btree (session_id);
 
 
 --
--- Name: idx_gluster_georep_session_master_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_georep_session_master_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_georep_session_master_volume_id ON gluster_georep_session USING btree (master_volume_id);
 
 
 --
--- Name: idx_gluster_georep_session_unique; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_georep_session_unique; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_gluster_georep_session_unique ON gluster_georep_session USING btree (master_volume_id, session_key);
 
 
 --
--- Name: idx_gluster_hooks_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_hooks_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_hooks_cluster_id ON gluster_hooks USING btree (cluster_id);
 
 
 --
--- Name: idx_gluster_hooks_unique; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_hooks_unique; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_gluster_hooks_unique ON gluster_hooks USING btree (cluster_id, gluster_command, stage, name);
 
 
 --
--- Name: idx_gluster_server_hooks_hook_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_server_hooks_hook_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_server_hooks_hook_id ON gluster_server_hooks USING btree (hook_id);
 
 
 --
--- Name: idx_gluster_server_hooks_server_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_server_hooks_server_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_server_hooks_server_id ON gluster_server_hooks USING btree (server_id);
 
 
 --
--- Name: idx_gluster_server_hooks_unique; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_server_hooks_unique; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_gluster_server_hooks_unique ON gluster_server_hooks USING btree (hook_id, server_id);
 
 
 --
--- Name: idx_gluster_server_services_server_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_server_services_server_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_server_services_server_id ON gluster_server_services USING btree (server_id);
 
 
 --
--- Name: idx_gluster_server_services_service_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_server_services_service_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_server_services_service_id ON gluster_server_services USING btree (service_id);
 
 
 --
--- Name: idx_gluster_server_unique; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_server_unique; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_gluster_server_unique ON gluster_server USING btree (server_id, gluster_server_uuid);
 
 
 --
--- Name: idx_gluster_services_service_type; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_services_service_type; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_services_service_type ON gluster_services USING btree (service_type);
 
 
 --
--- Name: idx_gluster_volume_access_protocols_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_access_protocols_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_access_protocols_volume_id ON gluster_volume_access_protocols USING btree (volume_id);
 
 
 --
--- Name: idx_gluster_volume_bricks_network_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_bricks_network_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_bricks_network_id ON gluster_volume_bricks USING btree (network_id);
 
 
 --
--- Name: idx_gluster_volume_bricks_server_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_bricks_server_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_bricks_server_id ON gluster_volume_bricks USING btree (server_id);
 
 
 --
--- Name: idx_gluster_volume_bricks_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_bricks_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_bricks_volume_id ON gluster_volume_bricks USING btree (volume_id);
 
 
 --
--- Name: idx_gluster_volume_options_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_options_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_options_volume_id ON gluster_volume_options USING btree (volume_id);
 
 
 --
--- Name: idx_gluster_volume_snapshot_config_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_snapshot_config_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_snapshot_config_cluster_id ON gluster_volume_snapshot_config USING btree (cluster_id);
 
 
 --
--- Name: idx_gluster_volume_snapshot_config_unique; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_snapshot_config_unique; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_gluster_volume_snapshot_config_unique ON gluster_volume_snapshot_config USING btree (cluster_id, volume_id, param_name);
 
 
 --
--- Name: idx_gluster_volume_snapshot_config_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_snapshot_config_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_snapshot_config_volume_id ON gluster_volume_snapshot_config USING btree (volume_id);
 
 
 --
--- Name: idx_gluster_volume_snapshots_unique; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_snapshots_unique; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_gluster_volume_snapshots_unique ON gluster_volume_snapshots USING btree (volume_id, snapshot_name);
 
 
 --
--- Name: idx_gluster_volume_snapshots_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_snapshots_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_snapshots_volume_id ON gluster_volume_snapshots USING btree (volume_id);
 
 
 --
--- Name: idx_gluster_volume_transport_types_volume_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volume_transport_types_volume_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volume_transport_types_volume_id ON gluster_volume_transport_types USING btree (volume_id);
 
 
 --
--- Name: idx_gluster_volumes_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_gluster_volumes_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_gluster_volumes_cluster_id ON gluster_volumes USING btree (cluster_id);
 
 
 --
--- Name: idx_host_device_host_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_host_device_host_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_host_device_host_id ON host_device USING btree (host_id);
 
 
 --
--- Name: idx_host_device_host_id_parent_device_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_host_device_host_id_parent_device_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_host_device_host_id_parent_device_name ON host_device USING btree (host_id, parent_device_name);
 
 
 --
--- Name: idx_host_device_host_id_physfn; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_host_device_host_id_physfn; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_host_device_host_id_physfn ON host_device USING btree (host_id, physfn);
 
 
 --
--- Name: idx_host_device_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_host_device_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_host_device_vm_id ON host_device USING btree (vm_id);
 
 
 --
--- Name: idx_image_storage_domain_map_image_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_image_storage_domain_map_image_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_image_storage_domain_map_image_id ON image_storage_domain_map USING btree (image_id);
 
 
 --
--- Name: idx_image_storage_domain_map_profile_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_image_storage_domain_map_profile_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_image_storage_domain_map_profile_id ON image_storage_domain_map USING btree (disk_profile_id);
 
 
 --
--- Name: idx_image_storage_domain_map_quota_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_image_storage_domain_map_quota_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_image_storage_domain_map_quota_id ON image_storage_domain_map USING btree (quota_id);
 
 
 --
--- Name: idx_image_storage_domain_map_storage_domain_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_image_storage_domain_map_storage_domain_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_image_storage_domain_map_storage_domain_id ON image_storage_domain_map USING btree (storage_domain_id);
 
 
 --
--- Name: idx_images_images_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_image_transfers_disk_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_image_transfers_disk_id ON image_transfers USING btree (disk_id);
+
+
+--
+-- Name: idx_images_images_group_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_images_images_group_id ON images USING btree (image_group_id);
 
 
 --
--- Name: idx_iscsi_bonds_networks_map_iscsi_bond_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_iscsi_bonds_networks_map_iscsi_bond_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_iscsi_bonds_networks_map_iscsi_bond_id ON iscsi_bonds_networks_map USING btree (iscsi_bond_id);
 
 
 --
--- Name: idx_iscsi_bonds_networks_map_network_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_iscsi_bonds_networks_map_network_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_iscsi_bonds_networks_map_network_id ON iscsi_bonds_networks_map USING btree (network_id);
 
 
 --
--- Name: idx_iscsi_bonds_storage_connections_map_connection_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_iscsi_bonds_storage_connections_map_connection_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_iscsi_bonds_storage_connections_map_connection_id ON iscsi_bonds_storage_connections_map USING btree (connection_id);
 
 
 --
--- Name: idx_iscsi_bonds_storage_connections_map_iscsi_bond_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_iscsi_bonds_storage_connections_map_iscsi_bond_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_iscsi_bonds_storage_connections_map_iscsi_bond_id ON iscsi_bonds_storage_connections_map USING btree (iscsi_bond_id);
 
 
 --
--- Name: idx_iscsi_bonds_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_iscsi_bonds_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_iscsi_bonds_storage_pool_id ON iscsi_bonds USING btree (storage_pool_id);
 
 
 --
--- Name: idx_job_start_time; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_job_engine_session_seq_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_job_engine_session_seq_id ON job USING btree (engine_session_seq_id);
+
+
+--
+-- Name: idx_job_start_time; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_job_start_time ON job USING btree (start_time);
 
 
 --
--- Name: idx_job_subject_entity_entity_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_job_subject_entity_entity_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_job_subject_entity_entity_id ON job_subject_entity USING btree (entity_id);
 
 
 --
--- Name: idx_job_subject_entity_job_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_job_subject_entity_job_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_job_subject_entity_job_id ON job_subject_entity USING btree (job_id);
 
 
 --
--- Name: idx_libvirt_secrets_provider_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_labels_map_label_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_labels_map_label_id ON labels_map USING btree (label_id);
+
+
+--
+-- Name: idx_labels_map_vds_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_labels_map_vds_id ON labels_map USING btree (vds_id);
+
+
+--
+-- Name: idx_labels_map_vm_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_labels_map_vm_id ON labels_map USING btree (vm_id);
+
+
+--
+-- Name: idx_libvirt_secrets_provider_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_libvirt_secrets_provider_id ON libvirt_secrets USING btree (provider_id);
 
 
 --
--- Name: idx_lun_storage_server_connection_map_lun_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_lun_storage_server_connection_map_lun_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_lun_storage_server_connection_map_lun_id ON lun_storage_server_connection_map USING btree (lun_id);
 
 
 --
--- Name: idx_lun_storage_server_connection_map_storage_server_connection; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_lun_storage_server_connection_map_storage_server_connection; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_lun_storage_server_connection_map_storage_server_connection ON lun_storage_server_connection_map USING btree (storage_server_connection);
 
 
 --
--- Name: idx_mac_pool_ranges_mac_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_mac_pool_ranges_mac_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_mac_pool_ranges_mac_pool_id ON mac_pool_ranges USING btree (mac_pool_id);
 
 
 --
--- Name: idx_network_attachments_network_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_attachments_network_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_attachments_network_id ON network_attachments USING btree (network_id);
 
 
 --
--- Name: idx_network_attachments_nic_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_attachments_nic_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_attachments_nic_id ON network_attachments USING btree (nic_id);
 
 
 --
--- Name: idx_network_cluster_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_cluster_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_cluster_cluster_id ON network_cluster USING btree (cluster_id);
 
 
 --
--- Name: idx_network_cluster_network_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_cluster_network_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_cluster_network_id ON network_cluster USING btree (network_id);
 
 
 --
--- Name: idx_network_external_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_external_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_external_id ON network USING btree (provider_network_external_id) WHERE (provider_network_external_id IS NOT NULL);
 
 
 --
--- Name: idx_network_provider_network_provider_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_provider_network_provider_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_provider_network_provider_id ON network USING btree (provider_network_provider_id);
 
 
 --
--- Name: idx_network_qos_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_qos_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_qos_id ON network USING btree (qos_id);
 
 
 --
--- Name: idx_network_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_network_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_network_storage_pool_id ON network USING btree (storage_pool_id);
 
 
 --
--- Name: idx_numa_node_cpu_map_numa_node_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_numa_node_cpu_map_numa_node_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_numa_node_cpu_map_numa_node_id ON numa_node_cpu_map USING btree (numa_node_id);
 
 
 --
--- Name: idx_numa_node_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_numa_node_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_numa_node_vds_id ON numa_node USING btree (vds_id);
 
 
 --
--- Name: idx_numa_node_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_numa_node_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_numa_node_vm_id ON numa_node USING btree (vm_id);
 
 
 --
--- Name: idx_permissions_ad_element_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_permissions_ad_element_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_permissions_ad_element_id ON permissions USING btree (ad_element_id);
 
 
 --
--- Name: idx_permissions_object_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_permissions_object_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_permissions_object_id ON permissions USING btree (object_id);
 
 
 --
--- Name: idx_permissions_role_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_permissions_role_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_permissions_role_id ON permissions USING btree (role_id);
 
 
 --
--- Name: idx_qos_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qos_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qos_storage_pool_id ON qos USING btree (storage_pool_id);
 
 
 --
--- Name: idx_qrtz_ft_inst_job_req_rcvry; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_ft_inst_job_req_rcvry; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_ft_inst_job_req_rcvry ON qrtz_fired_triggers USING btree (sched_name, instance_name, requests_recovery);
 
 
 --
--- Name: idx_qrtz_ft_j_g; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_ft_j_g; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_ft_j_g ON qrtz_fired_triggers USING btree (sched_name, job_name, job_group);
 
 
 --
--- Name: idx_qrtz_ft_jg; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_ft_jg; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_ft_jg ON qrtz_fired_triggers USING btree (sched_name, job_group);
 
 
 --
--- Name: idx_qrtz_ft_t_g; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_ft_t_g; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_ft_t_g ON qrtz_fired_triggers USING btree (sched_name, trigger_name, trigger_group);
 
 
 --
--- Name: idx_qrtz_ft_tg; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_ft_tg; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_ft_tg ON qrtz_fired_triggers USING btree (sched_name, trigger_group);
 
 
 --
--- Name: idx_qrtz_ft_trig_inst_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_ft_trig_inst_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_ft_trig_inst_name ON qrtz_fired_triggers USING btree (sched_name, instance_name);
 
 
 --
--- Name: idx_qrtz_j_grp; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_j_grp; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_j_grp ON qrtz_job_details USING btree (sched_name, job_group);
 
 
 --
--- Name: idx_qrtz_j_req_recovery; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_j_req_recovery; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_j_req_recovery ON qrtz_job_details USING btree (sched_name, requests_recovery);
 
 
 --
--- Name: idx_qrtz_t_c; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_c; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_c ON qrtz_triggers USING btree (sched_name, calendar_name);
 
 
 --
--- Name: idx_qrtz_t_g; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_g; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_g ON qrtz_triggers USING btree (sched_name, trigger_group);
 
 
 --
--- Name: idx_qrtz_t_j; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_j; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_j ON qrtz_triggers USING btree (sched_name, job_name, job_group);
 
 
 --
--- Name: idx_qrtz_t_jg; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_jg; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_jg ON qrtz_triggers USING btree (sched_name, job_group);
 
 
 --
--- Name: idx_qrtz_t_n_g_state; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_n_g_state; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_n_g_state ON qrtz_triggers USING btree (sched_name, trigger_group, trigger_state);
 
 
 --
--- Name: idx_qrtz_t_n_state; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_n_state; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_n_state ON qrtz_triggers USING btree (sched_name, trigger_name, trigger_group, trigger_state);
 
 
 --
--- Name: idx_qrtz_t_next_fire_time; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_next_fire_time; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_next_fire_time ON qrtz_triggers USING btree (sched_name, next_fire_time);
 
 
 --
--- Name: idx_qrtz_t_nft_misfire; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_nft_misfire; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_nft_misfire ON qrtz_triggers USING btree (sched_name, misfire_instr, next_fire_time);
 
 
 --
--- Name: idx_qrtz_t_nft_st; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_nft_st; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_nft_st ON qrtz_triggers USING btree (sched_name, trigger_state, next_fire_time);
 
 
 --
--- Name: idx_qrtz_t_nft_st_misfire; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_nft_st_misfire; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_nft_st_misfire ON qrtz_triggers USING btree (sched_name, misfire_instr, next_fire_time, trigger_state);
 
 
 --
--- Name: idx_qrtz_t_nft_st_misfire_grp; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_nft_st_misfire_grp; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_nft_st_misfire_grp ON qrtz_triggers USING btree (sched_name, misfire_instr, next_fire_time, trigger_group, trigger_state);
 
 
 --
--- Name: idx_qrtz_t_state; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_qrtz_t_state; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_qrtz_t_state ON qrtz_triggers USING btree (sched_name, trigger_state);
 
 
 --
--- Name: idx_quota_limitation_quota_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_quota_limitation_cluster_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_quota_limitation_cluster_id ON quota_limitation USING btree (cluster_id) WHERE (cluster_id IS NOT NULL);
+
+
+--
+-- Name: idx_quota_limitation_quota_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_quota_limitation_quota_id ON quota_limitation USING btree (quota_id);
 
 
 --
--- Name: idx_quota_limitation_storage_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_quota_limitation_storage_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_quota_limitation_storage_id ON quota_limitation USING btree (storage_id) WHERE (storage_id IS NOT NULL);
 
 
 --
--- Name: idx_quota_limitation_vds_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
---
-
-CREATE INDEX idx_quota_limitation_vds_group_id ON quota_limitation USING btree (vds_group_id) WHERE (vds_group_id IS NOT NULL);
-
-
---
--- Name: idx_repo_file_file_type; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_repo_file_file_type; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_repo_file_file_type ON repo_file_meta_data USING btree (file_type);
 
 
 --
--- Name: idx_repo_file_meta_data_repo_domain_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_repo_file_meta_data_repo_domain_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_repo_file_meta_data_repo_domain_id ON repo_file_meta_data USING btree (repo_domain_id);
 
 
 --
--- Name: idx_roles__app_mode; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_roles__app_mode; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_roles__app_mode ON roles USING btree (app_mode);
 
 
 --
--- Name: idx_roles_groups_action_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_roles_groups_action_group_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_roles_groups_action_group_id ON roles_groups USING btree (action_group_id);
 
 
 --
--- Name: idx_roles_groups_role_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_roles_groups_role_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_roles_groups_role_id ON roles_groups USING btree (role_id);
 
 
 --
--- Name: idx_root_command_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_root_command_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_root_command_id ON command_entities USING btree (root_command_id) WHERE (root_command_id IS NOT NULL);
 
 
 --
--- Name: idx_snapshots_snapshot_type; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_snapshots_snapshot_type; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_snapshots_snapshot_type ON snapshots USING btree (snapshot_type);
 
 
 --
--- Name: idx_snapshots_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_snapshots_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_snapshots_vm_id ON snapshots USING btree (vm_id);
 
 
 --
--- Name: idx_step_external_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_step_external_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_step_external_id ON step USING btree (external_id);
 
 
 --
--- Name: idx_step_job_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_step_job_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_step_job_id ON step USING btree (job_id);
 
 
 --
--- Name: idx_step_parent_step_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_step_parent_step_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_step_parent_step_id ON step USING btree (parent_step_id);
 
 
 --
--- Name: idx_storage_device_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_storage_device_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_storage_device_vds_id ON storage_device USING btree (vds_id);
 
 
 --
--- Name: idx_storage_domains_ovf_info_storage_domain_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_storage_domains_ovf_info_storage_domain_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_storage_domains_ovf_info_storage_domain_id ON storage_domains_ovf_info USING btree (storage_domain_id);
 
 
 --
--- Name: idx_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_storage_pool_id ON quota USING btree (storage_pool_id) WHERE (storage_pool_id IS NOT NULL);
 
 
 --
--- Name: idx_storage_pool_iso_map_storage_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_storage_pool_iso_map_storage_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_storage_pool_iso_map_storage_id ON storage_pool_iso_map USING btree (storage_id);
 
 
 --
--- Name: idx_storage_pool_iso_map_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_storage_pool_iso_map_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_storage_pool_iso_map_storage_pool_id ON storage_pool_iso_map USING btree (storage_pool_id);
 
 
 --
--- Name: idx_storage_pool_mac_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_storage_pool_mac_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_storage_pool_mac_pool_id ON storage_pool USING btree (mac_pool_id);
 
 
 --
--- Name: idx_supported_cluster_features; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_supported_cluster_features; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX idx_supported_cluster_features ON supported_cluster_features USING btree (cluster_id, feature_id);
 
 
 --
--- Name: idx_supported_cluster_features_cluster_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_supported_cluster_features_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_supported_cluster_features_cluster_id ON supported_cluster_features USING btree (cluster_id);
 
 
 --
--- Name: idx_supported_cluster_features_feature_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_supported_cluster_features_feature_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_supported_cluster_features_feature_id ON supported_cluster_features USING btree (feature_id);
 
 
 --
--- Name: idx_supported_host_features_host_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_supported_host_features_host_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_supported_host_features_host_id ON supported_host_features USING btree (host_id);
 
 
 --
--- Name: idx_tags_user_group_map_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_user_group_map_group_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_user_group_map_group_id ON tags_user_group_map USING btree (group_id);
 
 
 --
--- Name: idx_tags_user_group_map_tag_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_user_group_map_tag_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_user_group_map_tag_id ON tags_user_group_map USING btree (tag_id);
 
 
 --
--- Name: idx_tags_user_map_tag_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_user_map_tag_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_user_map_tag_id ON tags_user_map USING btree (tag_id);
 
 
 --
--- Name: idx_tags_user_map_user_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_user_map_user_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_user_map_user_id ON tags_user_map USING btree (user_id);
 
 
 --
--- Name: idx_tags_vds_map_tag_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_vds_map_tag_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_vds_map_tag_id ON tags_vds_map USING btree (tag_id);
 
 
 --
--- Name: idx_tags_vds_map_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_vds_map_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_vds_map_vds_id ON tags_vds_map USING btree (vds_id);
 
 
 --
--- Name: idx_tags_vm_map_tag_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_vm_map_tag_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_vm_map_tag_id ON tags_vm_map USING btree (tag_id);
 
 
 --
--- Name: idx_tags_vm_map_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_vm_map_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_vm_map_vm_id ON tags_vm_map USING btree (vm_id);
 
 
 --
--- Name: idx_tags_vm_pool_map_tag_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_vm_pool_map_tag_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_vm_pool_map_tag_id ON tags_vm_pool_map USING btree (tag_id);
 
 
 --
--- Name: idx_tags_vm_pool_map_vm_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_tags_vm_pool_map_vm_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_tags_vm_pool_map_vm_pool_id ON tags_vm_pool_map USING btree (vm_pool_id);
 
 
 --
--- Name: idx_unregistered_ovf_of_entities_storage_domain_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_unregistered_ovf_of_entities_storage_domain_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_unregistered_ovf_of_entities_storage_domain_id ON unregistered_ovf_of_entities USING btree (storage_domain_id);
 
 
 --
--- Name: idx_user_profiles_user_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_user_profiles_user_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_user_profiles_user_id ON user_profiles USING btree (user_id);
 
 
 --
--- Name: idx_vds_cpu_statistics_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_cpu_statistics_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_cpu_statistics_vds_id ON vds_cpu_statistics USING btree (vds_id);
 
 
 --
--- Name: idx_vds_dynamic_status; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_dynamic_status; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_dynamic_status ON vds_dynamic USING btree (status);
 
 
 --
--- Name: idx_vds_groups_cluster_policy_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
---
-
-CREATE INDEX idx_vds_groups_cluster_policy_id ON vds_groups USING btree (cluster_policy_id);
-
-
---
--- Name: idx_vds_groups_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
---
-
-CREATE INDEX idx_vds_groups_storage_pool_id ON vds_groups USING btree (storage_pool_id);
-
-
---
--- Name: idx_vds_interface_statistics_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_interface_statistics_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_interface_statistics_vds_id ON vds_interface_statistics USING btree (vds_id);
 
 
 --
--- Name: idx_vds_interface_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_interface_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_interface_vds_id ON vds_interface USING btree (vds_id);
 
 
 --
--- Name: idx_vds_kdump_status_status; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_kdump_status_status; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_kdump_status_status ON vds_kdump_status USING btree (status);
 
 
 --
--- Name: idx_vds_spm_id_map_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_spm_id_map_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_spm_id_map_storage_pool_id ON vds_spm_id_map USING btree (storage_pool_id);
 
 
 --
--- Name: idx_vds_spm_id_map_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_spm_id_map_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_spm_id_map_vds_id ON vds_spm_id_map USING btree (vds_id);
 
 
 --
--- Name: idx_vds_static_host_provider_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vds_static_cluster_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_vds_static_cluster_id ON vds_static USING btree (cluster_id);
+
+
+--
+-- Name: idx_vds_static_host_provider_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vds_static_host_provider_id ON vds_static USING btree (host_provider_id);
 
 
 --
--- Name: idx_vds_static_vds_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
---
-
-CREATE INDEX idx_vds_static_vds_group_id ON vds_static USING btree (vds_group_id);
-
-
---
--- Name: idx_vdsm_task_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vdsm_task_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vdsm_task_id ON async_tasks USING btree (vdsm_task_id);
 
 
 --
--- Name: idx_vfs_config_labels_vfs_config_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vfs_config_labels_vfs_config_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vfs_config_labels_vfs_config_id ON vfs_config_labels USING btree (vfs_config_id);
 
 
 --
--- Name: idx_vfs_config_networks_network_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vfs_config_networks_network_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vfs_config_networks_network_id ON vfs_config_networks USING btree (network_id);
 
 
 --
--- Name: idx_vfs_config_networks_vfs_config_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vfs_config_networks_vfs_config_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vfs_config_networks_vfs_config_id ON vfs_config_networks USING btree (vfs_config_id);
 
 
 --
--- Name: idx_vm_device_snapshot_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_device_alias_type_device; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_vm_device_alias_type_device ON vm_device USING btree (alias, type, device);
+
+
+--
+-- Name: idx_vm_device_snapshot_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_device_snapshot_id ON vm_device USING btree (snapshot_id);
 
 
 --
--- Name: idx_vm_device_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_device_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_device_vm_id ON vm_device USING btree (vm_id);
 
 
 --
--- Name: idx_vm_dynamic_migrating_to_vds; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_dynamic_migrating_to_vds; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_dynamic_migrating_to_vds ON vm_dynamic USING btree (migrating_to_vds);
 
 
 --
--- Name: idx_vm_dynamic_run_on_vds; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_dynamic_run_on_vds; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_dynamic_run_on_vds ON vm_dynamic USING btree (run_on_vds);
 
 
 --
--- Name: idx_vm_guest_agent_interfaces_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_guest_agent_interfaces_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_guest_agent_interfaces_vm_id ON vm_guest_agent_interfaces USING btree (vm_id);
 
 
 --
--- Name: idx_vm_host_pinning_map_vds_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_host_pinning_map_vds_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_host_pinning_map_vds_id ON vm_host_pinning_map USING btree (vds_id);
 
 
 --
--- Name: idx_vm_host_pinning_map_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_host_pinning_map_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_host_pinning_map_vm_id ON vm_host_pinning_map USING btree (vm_id);
 
 
 --
--- Name: idx_vm_icon_defaults_large_icon_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_icon_defaults_large_icon_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_icon_defaults_large_icon_id ON vm_icon_defaults USING btree (large_icon_id);
 
 
 --
--- Name: idx_vm_icon_defaults_small_icon_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_icon_defaults_small_icon_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_icon_defaults_small_icon_id ON vm_icon_defaults USING btree (small_icon_id);
 
 
 --
--- Name: idx_vm_interface_statistics_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_interface_statistics_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_interface_statistics_vm_id ON vm_interface_statistics USING btree (vm_id);
 
 
 --
--- Name: idx_vm_interface_vm_guid; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_interface_vm_guid; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_interface_vm_guid ON vm_interface USING btree (vm_guid);
 
 
 --
--- Name: idx_vm_interface_vm_vmt_guid; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_interface_vm_vmt_guid; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_interface_vm_vmt_guid ON vm_interface USING btree (vm_guid, vmt_guid);
 
 
 --
--- Name: idx_vm_interface_vmt_guid; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_interface_vmt_guid; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_interface_vmt_guid ON vm_interface USING btree (vmt_guid);
 
 
 --
--- Name: idx_vm_interface_vnic_profile_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_interface_vnic_profile_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_interface_vnic_profile_id ON vm_interface USING btree (vnic_profile_id);
 
 
 --
--- Name: idx_vm_jobs_vm_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_jobs_vm_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_jobs_vm_id ON vm_jobs USING btree (vm_id);
 
 
 --
--- Name: idx_vm_ovf_generations_storage_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_ovf_generations_storage_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_ovf_generations_storage_pool_id ON vm_ovf_generations USING btree (storage_pool_id);
 
 
 --
--- Name: idx_vm_ovf_generations_vm_guid; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_ovf_generations_vm_guid; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_ovf_generations_vm_guid ON vm_ovf_generations USING btree (vm_guid);
 
 
 --
--- Name: idx_vm_pool_map_vm_pool_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_pool_map_vm_pool_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_pool_map_vm_pool_id ON vm_pool_map USING btree (vm_pool_id);
 
 
 --
--- Name: idx_vm_pools_vds_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_pools_cluster_id; Type: INDEX; Schema: public; Owner: engine
 --
 
-CREATE INDEX idx_vm_pools_vds_group_id ON vm_pools USING btree (vds_group_id);
+CREATE INDEX idx_vm_pools_cluster_id ON vm_pools USING btree (cluster_id);
 
 
 --
--- Name: idx_vm_static_cpu_profile_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_cluster_id; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_vm_static_cluster_id ON vm_static USING btree (cluster_id);
+
+
+--
+-- Name: idx_vm_static_cpu_profile_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_cpu_profile_id ON vm_static USING btree (cpu_profile_id);
 
 
 --
--- Name: idx_vm_static_large_icon_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_large_icon_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_large_icon_id ON vm_static USING btree (large_icon_id);
 
 
 --
--- Name: idx_vm_static_provider_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_origin; Type: INDEX; Schema: public; Owner: engine
+--
+
+CREATE INDEX idx_vm_static_origin ON vm_static USING btree (origin);
+
+
+--
+-- Name: idx_vm_static_provider_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_provider_id ON vm_static USING btree (provider_id);
 
 
 --
--- Name: idx_vm_static_quota_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_quota_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_quota_id ON vm_static USING btree (quota_id);
 
 
 --
--- Name: idx_vm_static_small_icon_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_small_icon_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_small_icon_id ON vm_static USING btree (small_icon_id);
 
 
 --
--- Name: idx_vm_static_vds_group_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_template_version_name; Type: INDEX; Schema: public; Owner: engine
 --
 
-CREATE INDEX idx_vm_static_vds_group_id ON vm_static USING btree (vds_group_id);
+CREATE INDEX idx_vm_static_template_version_name ON vm_static USING btree (template_version_number);
 
 
 --
--- Name: idx_vm_static_vm_name; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_vm_name; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_vm_name ON vm_static USING btree (vm_name);
 
 
 --
--- Name: idx_vm_static_vmt_guid; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_static_vmt_guid; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_static_vmt_guid ON vm_static USING btree (vmt_guid);
 
 
 --
--- Name: idx_vm_vds_numa_node_map_vds_numa_node_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_vds_numa_node_map_vds_numa_node_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_vds_numa_node_map_vds_numa_node_id ON vm_vds_numa_node_map USING btree (vds_numa_node_id);
 
 
 --
--- Name: idx_vm_vds_numa_node_map_vm_numa_node_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vm_vds_numa_node_map_vm_numa_node_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vm_vds_numa_node_map_vm_numa_node_id ON vm_vds_numa_node_map USING btree (vm_numa_node_id);
 
 
 --
--- Name: idx_vnic_profiles_network_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vnic_profiles_network_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vnic_profiles_network_id ON vnic_profiles USING btree (network_id);
 
 
 --
--- Name: idx_vnic_profiles_network_qos_id; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: idx_vnic_profiles_network_qos_id; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX idx_vnic_profiles_network_qos_id ON vnic_profiles USING btree (network_qos_id);
 
 
 --
--- Name: ix_vdc_options; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: ix_vdc_options; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE INDEX ix_vdc_options ON vdc_options USING btree (option_name);
 
 
 --
--- Name: vm_icons_data_url_unique_index; Type: INDEX; Schema: public; Owner: engine; Tablespace:
+-- Name: vm_icons_data_url_unique_index; Type: INDEX; Schema: public; Owner: engine
 --
 
 CREATE UNIQUE INDEX vm_icons_data_url_unique_index ON vm_icons USING btree (md5((data_url)::text));
 
 
 --
--- Name: affinity_group_cluster_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: affinity_groups affinity_group_cluster_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY affinity_groups
-    ADD CONSTRAINT affinity_group_cluster_id_fk FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT affinity_group_cluster_id_fk FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: affinity_group_member_affinity_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: affinity_group_members affinity_group_member_affinity_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY affinity_group_members
@@ -5528,7 +5884,7 @@ ALTER TABLE ONLY affinity_group_members
 
 
 --
--- Name: affinity_group_member_vm_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: affinity_group_members affinity_group_member_vm_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY affinity_group_members
@@ -5536,15 +5892,15 @@ ALTER TABLE ONLY affinity_group_members
 
 
 --
--- Name: cpu_profiles_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: cpu_profiles cpu_profiles_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY cpu_profiles
-    ADD CONSTRAINT cpu_profiles_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT cpu_profiles_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: cpu_profiles_qos_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: cpu_profiles cpu_profiles_qos_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY cpu_profiles
@@ -5552,7 +5908,7 @@ ALTER TABLE ONLY cpu_profiles
 
 
 --
--- Name: disk_lun_to_disk_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: disk_lun_map disk_lun_to_disk_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_lun_map
@@ -5560,7 +5916,7 @@ ALTER TABLE ONLY disk_lun_map
 
 
 --
--- Name: disk_lun_to_lun_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: disk_lun_map disk_lun_to_lun_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_lun_map
@@ -5568,7 +5924,7 @@ ALTER TABLE ONLY disk_lun_map
 
 
 --
--- Name: disk_profiles_qos_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: disk_profiles disk_profiles_qos_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_profiles
@@ -5576,7 +5932,7 @@ ALTER TABLE ONLY disk_profiles
 
 
 --
--- Name: disk_profiles_storage_domain_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: disk_profiles disk_profiles_storage_domain_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY disk_profiles
@@ -5584,7 +5940,7 @@ ALTER TABLE ONLY disk_profiles
 
 
 --
--- Name: fence_agent_host_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: fence_agents fence_agent_host_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY fence_agents
@@ -5592,7 +5948,7 @@ ALTER TABLE ONLY fence_agents
 
 
 --
--- Name: fk_async_task_entity; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: async_tasks_entities fk_async_task_entity; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY async_tasks_entities
@@ -5600,7 +5956,7 @@ ALTER TABLE ONLY async_tasks_entities
 
 
 --
--- Name: fk_cluster_policy_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: cluster_policy_units fk_cluster_policy_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY cluster_policy_units
@@ -5608,7 +5964,39 @@ ALTER TABLE ONLY cluster_policy_units
 
 
 --
--- Name: fk_coco_command_assoc_entity; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: cluster fk_cluster_storage_pool_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY cluster
+    ADD CONSTRAINT fk_cluster_storage_pool_id FOREIGN KEY (storage_pool_id) REFERENCES storage_pool(id) ON DELETE SET NULL;
+
+
+--
+-- Name: vds_static fk_cluster_vds_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vds_static
+    ADD CONSTRAINT fk_cluster_vds_static FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id);
+
+
+--
+-- Name: vm_pools fk_cluster_vm_pools; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vm_pools
+    ADD CONSTRAINT fk_cluster_vm_pools FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id);
+
+
+--
+-- Name: vm_static fk_cluster_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vm_static
+    ADD CONSTRAINT fk_cluster_vm_static FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id);
+
+
+--
+-- Name: command_assoc_entities fk_coco_command_assoc_entity; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY command_assoc_entities
@@ -5616,7 +6004,23 @@ ALTER TABLE ONLY command_assoc_entities
 
 
 --
--- Name: fk_event_notification_hist_audit_log; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: disk_vm_element fk_disk_vm_element_base_disks; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY disk_vm_element
+    ADD CONSTRAINT fk_disk_vm_element_base_disks FOREIGN KEY (disk_id) REFERENCES base_disks(disk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: disk_vm_element fk_disk_vm_element_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY disk_vm_element
+    ADD CONSTRAINT fk_disk_vm_element_vm_static FOREIGN KEY (vm_id) REFERENCES vm_static(vm_guid) ON DELETE CASCADE;
+
+
+--
+-- Name: event_notification_hist fk_event_notification_hist_audit_log; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY event_notification_hist
@@ -5624,7 +6028,7 @@ ALTER TABLE ONLY event_notification_hist
 
 
 --
--- Name: fk_event_subscriber_users; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: event_subscriber fk_event_subscriber_users; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY event_subscriber
@@ -5632,7 +6036,7 @@ ALTER TABLE ONLY event_subscriber
 
 
 --
--- Name: fk_gluster_georep_config_session_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_georep_config fk_gluster_georep_config_session_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_config
@@ -5640,7 +6044,7 @@ ALTER TABLE ONLY gluster_georep_config
 
 
 --
--- Name: fk_gluster_georep_details_brick_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_georep_session_details fk_gluster_georep_details_brick_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_session_details
@@ -5648,7 +6052,7 @@ ALTER TABLE ONLY gluster_georep_session_details
 
 
 --
--- Name: fk_gluster_georep_details_session_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_georep_session_details fk_gluster_georep_details_session_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_session_details
@@ -5656,7 +6060,7 @@ ALTER TABLE ONLY gluster_georep_session_details
 
 
 --
--- Name: fk_gluster_georep_session_vol_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_georep_session fk_gluster_georep_session_vol_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_georep_session
@@ -5664,7 +6068,7 @@ ALTER TABLE ONLY gluster_georep_session
 
 
 --
--- Name: fk_gluster_volume_bricks_network_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_bricks fk_gluster_volume_bricks_network_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_bricks
@@ -5672,15 +6076,15 @@ ALTER TABLE ONLY gluster_volume_bricks
 
 
 --
--- Name: fk_gluster_volume_snapshot_config_cluster_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_snapshot_config fk_gluster_volume_snapshot_config_cluster_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_snapshot_config
-    ADD CONSTRAINT fk_gluster_volume_snapshot_config_cluster_id FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_gluster_volume_snapshot_config_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: fk_gluster_volume_snapshot_config_volume_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_snapshot_config fk_gluster_volume_snapshot_config_volume_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_snapshot_config
@@ -5688,7 +6092,7 @@ ALTER TABLE ONLY gluster_volume_snapshot_config
 
 
 --
--- Name: fk_gluster_volume_snapshot_schedules_volume_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_snapshot_schedules fk_gluster_volume_snapshot_schedules_volume_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_snapshot_schedules
@@ -5696,7 +6100,7 @@ ALTER TABLE ONLY gluster_volume_snapshot_schedules
 
 
 --
--- Name: fk_gluster_volume_snapshots_volume_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_snapshots fk_gluster_volume_snapshots_volume_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_snapshots
@@ -5704,7 +6108,7 @@ ALTER TABLE ONLY gluster_volume_snapshots
 
 
 --
--- Name: fk_host_device_host_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: host_device fk_host_device_host_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_device
@@ -5712,7 +6116,7 @@ ALTER TABLE ONLY host_device
 
 
 --
--- Name: fk_host_device_parent_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: host_device fk_host_device_parent_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_device
@@ -5720,7 +6124,7 @@ ALTER TABLE ONLY host_device
 
 
 --
--- Name: fk_host_device_physfn; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: host_device fk_host_device_physfn; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_device
@@ -5728,7 +6132,7 @@ ALTER TABLE ONLY host_device
 
 
 --
--- Name: fk_host_device_vm_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: host_device fk_host_device_vm_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_device
@@ -5736,7 +6140,7 @@ ALTER TABLE ONLY host_device
 
 
 --
--- Name: fk_image_storage_domain_map_disk_profile_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: image_storage_domain_map fk_image_storage_domain_map_disk_profile_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY image_storage_domain_map
@@ -5744,7 +6148,7 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
--- Name: fk_image_storage_domain_map_images; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: image_storage_domain_map fk_image_storage_domain_map_images; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY image_storage_domain_map
@@ -5752,7 +6156,7 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
--- Name: fk_image_storage_domain_map_quota; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: image_storage_domain_map fk_image_storage_domain_map_quota; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY image_storage_domain_map
@@ -5760,7 +6164,7 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
--- Name: fk_image_storage_domain_map_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: image_storage_domain_map fk_image_storage_domain_map_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY image_storage_domain_map
@@ -5768,7 +6172,7 @@ ALTER TABLE ONLY image_storage_domain_map
 
 
 --
--- Name: fk_iscsi_bonds_networks_map_iscsi_bond_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: iscsi_bonds_networks_map fk_iscsi_bonds_networks_map_iscsi_bond_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds_networks_map
@@ -5776,7 +6180,7 @@ ALTER TABLE ONLY iscsi_bonds_networks_map
 
 
 --
--- Name: fk_iscsi_bonds_networks_map_network_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: iscsi_bonds_networks_map fk_iscsi_bonds_networks_map_network_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds_networks_map
@@ -5784,7 +6188,7 @@ ALTER TABLE ONLY iscsi_bonds_networks_map
 
 
 --
--- Name: fk_iscsi_bonds_storage_connections_map_connection_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: iscsi_bonds_storage_connections_map fk_iscsi_bonds_storage_connections_map_connection_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds_storage_connections_map
@@ -5792,7 +6196,7 @@ ALTER TABLE ONLY iscsi_bonds_storage_connections_map
 
 
 --
--- Name: fk_iscsi_bonds_storage_connections_map_iscsi_bond_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: iscsi_bonds_storage_connections_map fk_iscsi_bonds_storage_connections_map_iscsi_bond_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds_storage_connections_map
@@ -5800,7 +6204,7 @@ ALTER TABLE ONLY iscsi_bonds_storage_connections_map
 
 
 --
--- Name: fk_iscsi_bonds_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: iscsi_bonds fk_iscsi_bonds_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY iscsi_bonds
@@ -5808,7 +6212,7 @@ ALTER TABLE ONLY iscsi_bonds
 
 
 --
--- Name: fk_job_subject_entity_job; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: job_subject_entity fk_job_subject_entity_job; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY job_subject_entity
@@ -5816,7 +6220,7 @@ ALTER TABLE ONLY job_subject_entity
 
 
 --
--- Name: fk_lun_storage_server_connection_map_luns; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: lun_storage_server_connection_map fk_lun_storage_server_connection_map_luns; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY lun_storage_server_connection_map
@@ -5824,7 +6228,7 @@ ALTER TABLE ONLY lun_storage_server_connection_map
 
 
 --
--- Name: fk_lun_storage_server_connection_map_storage_server_connections; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: lun_storage_server_connection_map fk_lun_storage_server_connection_map_storage_server_connections; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY lun_storage_server_connection_map
@@ -5832,7 +6236,15 @@ ALTER TABLE ONLY lun_storage_server_connection_map
 
 
 --
--- Name: fk_network_cluster_network; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: network_cluster fk_network_cluster_cluster; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY network_cluster
+    ADD CONSTRAINT fk_network_cluster_cluster FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
+
+
+--
+-- Name: network_cluster fk_network_cluster_network; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network_cluster
@@ -5840,15 +6252,7 @@ ALTER TABLE ONLY network_cluster
 
 
 --
--- Name: fk_network_cluster_vds_groups; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY network_cluster
-    ADD CONSTRAINT fk_network_cluster_vds_groups FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
-
-
---
--- Name: fk_network_provided_by; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: network fk_network_provided_by; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network
@@ -5856,7 +6260,7 @@ ALTER TABLE ONLY network
 
 
 --
--- Name: fk_network_qos_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: network fk_network_qos_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network
@@ -5864,7 +6268,7 @@ ALTER TABLE ONLY network
 
 
 --
--- Name: fk_network_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: network fk_network_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network
@@ -5872,7 +6276,7 @@ ALTER TABLE ONLY network
 
 
 --
--- Name: fk_numa_node_cpu_map_numa_node; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: numa_node_cpu_map fk_numa_node_cpu_map_numa_node; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY numa_node_cpu_map
@@ -5880,7 +6284,7 @@ ALTER TABLE ONLY numa_node_cpu_map
 
 
 --
--- Name: fk_numa_node_vds; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: numa_node fk_numa_node_vds; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY numa_node
@@ -5888,7 +6292,7 @@ ALTER TABLE ONLY numa_node
 
 
 --
--- Name: fk_numa_node_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: numa_node fk_numa_node_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY numa_node
@@ -5896,7 +6300,7 @@ ALTER TABLE ONLY numa_node
 
 
 --
--- Name: fk_permissions_roles; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: permissions fk_permissions_roles; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY permissions
@@ -5904,15 +6308,7 @@ ALTER TABLE ONLY permissions
 
 
 --
--- Name: fk_policy_unit_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY cluster_policy_units
-    ADD CONSTRAINT fk_policy_unit_id FOREIGN KEY (policy_unit_id) REFERENCES policy_units(id) ON DELETE CASCADE;
-
-
---
--- Name: fk_qos_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: qos fk_qos_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qos
@@ -5920,7 +6316,7 @@ ALTER TABLE ONLY qos
 
 
 --
--- Name: fk_qrtz_blob_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: qrtz_blob_triggers fk_qrtz_blob_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_blob_triggers
@@ -5928,7 +6324,7 @@ ALTER TABLE ONLY qrtz_blob_triggers
 
 
 --
--- Name: fk_qrtz_cron_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: qrtz_cron_triggers fk_qrtz_cron_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_cron_triggers
@@ -5936,7 +6332,7 @@ ALTER TABLE ONLY qrtz_cron_triggers
 
 
 --
--- Name: fk_qrtz_simple_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: qrtz_simple_triggers fk_qrtz_simple_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_simple_triggers
@@ -5944,7 +6340,7 @@ ALTER TABLE ONLY qrtz_simple_triggers
 
 
 --
--- Name: fk_qrtz_simprop_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: qrtz_simprop_triggers fk_qrtz_simprop_triggers_sched_name; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_simprop_triggers
@@ -5952,7 +6348,15 @@ ALTER TABLE ONLY qrtz_simprop_triggers
 
 
 --
--- Name: fk_repo_file_meta_data_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: quota_limitation fk_quota_limitation_cluster_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY quota_limitation
+    ADD CONSTRAINT fk_quota_limitation_cluster_id FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
+
+
+--
+-- Name: repo_file_meta_data fk_repo_file_meta_data_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY repo_file_meta_data
@@ -5960,7 +6364,7 @@ ALTER TABLE ONLY repo_file_meta_data
 
 
 --
--- Name: fk_roles_groups_action_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: roles_groups fk_roles_groups_action_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY roles_groups
@@ -5968,7 +6372,7 @@ ALTER TABLE ONLY roles_groups
 
 
 --
--- Name: fk_snapshot_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: snapshots fk_snapshot_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY snapshots
@@ -5976,7 +6380,23 @@ ALTER TABLE ONLY snapshots
 
 
 --
--- Name: fk_step_job; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: snapshots fk_snapshots_dump_disk_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY snapshots
+    ADD CONSTRAINT fk_snapshots_dump_disk_id FOREIGN KEY (memory_dump_disk_id) REFERENCES base_disks(disk_id) ON DELETE SET NULL;
+
+
+--
+-- Name: snapshots fk_snapshots_metadata_disk_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY snapshots
+    ADD CONSTRAINT fk_snapshots_metadata_disk_id FOREIGN KEY (memory_metadata_disk_id) REFERENCES base_disks(disk_id) ON DELETE SET NULL;
+
+
+--
+-- Name: step fk_step_job; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY step
@@ -5984,7 +6404,7 @@ ALTER TABLE ONLY step
 
 
 --
--- Name: fk_storage_domain_dynamic_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_domain_dynamic fk_storage_domain_dynamic_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_domain_dynamic
@@ -5992,7 +6412,7 @@ ALTER TABLE ONLY storage_domain_dynamic
 
 
 --
--- Name: fk_storage_domain_pool_map_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_pool_iso_map fk_storage_domain_pool_map_storage_domain_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_pool_iso_map
@@ -6000,7 +6420,7 @@ ALTER TABLE ONLY storage_pool_iso_map
 
 
 --
--- Name: fk_storage_domain_pool_map_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_pool_iso_map fk_storage_domain_pool_map_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_pool_iso_map
@@ -6008,7 +6428,7 @@ ALTER TABLE ONLY storage_pool_iso_map
 
 
 --
--- Name: fk_tags_vm_pool_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_vm_pool_map fk_tags_vm_pool_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vm_pool_map
@@ -6016,7 +6436,7 @@ ALTER TABLE ONLY tags_vm_pool_map
 
 
 --
--- Name: fk_tags_vm_pool_map_vm_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_vm_pool_map fk_tags_vm_pool_map_vm_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vm_pool_map
@@ -6024,7 +6444,23 @@ ALTER TABLE ONLY tags_vm_pool_map
 
 
 --
--- Name: fk_unregistered_ovf_of_entities_storage_domain; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: unregistered_disks fk_unregistered_disks_storage_domain; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY unregistered_disks
+    ADD CONSTRAINT fk_unregistered_disks_storage_domain FOREIGN KEY (storage_domain_id) REFERENCES storage_domain_static(id) ON DELETE CASCADE;
+
+
+--
+-- Name: unregistered_disks_to_vms fk_unregistered_disks_to_vms; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY unregistered_disks_to_vms
+    ADD CONSTRAINT fk_unregistered_disks_to_vms FOREIGN KEY (disk_id) REFERENCES unregistered_disks(disk_id) ON DELETE CASCADE;
+
+
+--
+-- Name: unregistered_ovf_of_entities fk_unregistered_ovf_of_entities_storage_domain; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY unregistered_ovf_of_entities
@@ -6032,7 +6468,7 @@ ALTER TABLE ONLY unregistered_ovf_of_entities
 
 
 --
--- Name: fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: user_profiles fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY user_profiles
@@ -6040,7 +6476,7 @@ ALTER TABLE ONLY user_profiles
 
 
 --
--- Name: fk_vds_cpu_statistics_vds; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_cpu_statistics fk_vds_cpu_statistics_vds; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_cpu_statistics
@@ -6048,23 +6484,7 @@ ALTER TABLE ONLY vds_cpu_statistics
 
 
 --
--- Name: fk_vds_groups_storage_pool_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY vds_groups
-    ADD CONSTRAINT fk_vds_groups_storage_pool_id FOREIGN KEY (storage_pool_id) REFERENCES storage_pool(id) ON DELETE SET NULL;
-
-
---
--- Name: fk_vds_groups_vm_pools; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY vm_pools
-    ADD CONSTRAINT fk_vds_groups_vm_pools FOREIGN KEY (vds_group_id) REFERENCES vds_groups(vds_group_id);
-
-
---
--- Name: fk_vds_interface_statistics_vds_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_interface_statistics fk_vds_interface_statistics_vds_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_interface_statistics
@@ -6072,7 +6492,7 @@ ALTER TABLE ONLY vds_interface_statistics
 
 
 --
--- Name: fk_vds_interface_vds_interface; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_interface fk_vds_interface_vds_interface; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_interface
@@ -6080,7 +6500,7 @@ ALTER TABLE ONLY vds_interface
 
 
 --
--- Name: fk_vds_kdump_status_vds_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_kdump_status fk_vds_kdump_status_vds_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_kdump_status
@@ -6088,7 +6508,7 @@ ALTER TABLE ONLY vds_kdump_status
 
 
 --
--- Name: fk_vds_spm_id_map_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_spm_id_map fk_vds_spm_id_map_storage_pool; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_spm_id_map
@@ -6096,7 +6516,7 @@ ALTER TABLE ONLY vds_spm_id_map
 
 
 --
--- Name: fk_vds_spm_id_map_vds_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_spm_id_map fk_vds_spm_id_map_vds_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_spm_id_map
@@ -6104,7 +6524,7 @@ ALTER TABLE ONLY vds_spm_id_map
 
 
 --
--- Name: fk_vds_static_host_provider_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_static fk_vds_static_host_provider_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_static
@@ -6112,7 +6532,15 @@ ALTER TABLE ONLY vds_static
 
 
 --
--- Name: fk_vm_device_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_static fk_vds_static_openstack_network_provider_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vds_static
+    ADD CONSTRAINT fk_vds_static_openstack_network_provider_id FOREIGN KEY (openstack_network_provider_id) REFERENCES providers(id) ON DELETE SET NULL;
+
+
+--
+-- Name: vm_device fk_vm_device_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_device
@@ -6120,7 +6548,7 @@ ALTER TABLE ONLY vm_device
 
 
 --
--- Name: fk_vm_guest_agent_interfaces; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_guest_agent_interfaces fk_vm_guest_agent_interfaces; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_guest_agent_interfaces
@@ -6128,7 +6556,7 @@ ALTER TABLE ONLY vm_guest_agent_interfaces
 
 
 --
--- Name: fk_vm_icon_defaults_large_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_icon_defaults fk_vm_icon_defaults_large_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_icon_defaults
@@ -6136,7 +6564,7 @@ ALTER TABLE ONLY vm_icon_defaults
 
 
 --
--- Name: fk_vm_icon_defaults_small_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_icon_defaults fk_vm_icon_defaults_small_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_icon_defaults
@@ -6144,7 +6572,7 @@ ALTER TABLE ONLY vm_icon_defaults
 
 
 --
--- Name: fk_vm_interface_statistics_vm_interface; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_interface_statistics fk_vm_interface_statistics_vm_interface; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface_statistics
@@ -6152,7 +6580,7 @@ ALTER TABLE ONLY vm_interface_statistics
 
 
 --
--- Name: fk_vm_interface_statistics_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_interface_statistics fk_vm_interface_statistics_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface_statistics
@@ -6160,7 +6588,7 @@ ALTER TABLE ONLY vm_interface_statistics
 
 
 --
--- Name: fk_vm_interface_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_interface fk_vm_interface_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface
@@ -6168,7 +6596,7 @@ ALTER TABLE ONLY vm_interface
 
 
 --
--- Name: fk_vm_interface_vm_static_template; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_interface fk_vm_interface_vm_static_template; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface
@@ -6176,7 +6604,7 @@ ALTER TABLE ONLY vm_interface
 
 
 --
--- Name: fk_vm_interface_vnic_profile_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_interface fk_vm_interface_vnic_profile_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_interface
@@ -6184,7 +6612,7 @@ ALTER TABLE ONLY vm_interface
 
 
 --
--- Name: fk_vm_jobs_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_jobs fk_vm_jobs_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_jobs
@@ -6192,7 +6620,7 @@ ALTER TABLE ONLY vm_jobs
 
 
 --
--- Name: fk_vm_static_cpu_profile_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_static fk_vm_static_cpu_profile_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -6200,7 +6628,7 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: fk_vm_static_large_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_static fk_vm_static_large_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -6208,7 +6636,7 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: fk_vm_static_provider_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_static fk_vm_static_provider_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -6216,7 +6644,7 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: fk_vm_static_quota; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_static fk_vm_static_quota; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -6224,7 +6652,7 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: fk_vm_static_small_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_static fk_vm_static_small_icon_id_vm_icons_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -6232,7 +6660,7 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: fk_vm_vds_numa_node_map_vds_numa_node; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_vds_numa_node_map fk_vm_vds_numa_node_map_vds_numa_node; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_vds_numa_node_map
@@ -6240,7 +6668,7 @@ ALTER TABLE ONLY vm_vds_numa_node_map
 
 
 --
--- Name: fk_vm_vds_numa_node_map_vm_numa_node; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_vds_numa_node_map fk_vm_vds_numa_node_map_vm_numa_node; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_vds_numa_node_map
@@ -6248,7 +6676,7 @@ ALTER TABLE ONLY vm_vds_numa_node_map
 
 
 --
--- Name: fk_vnic_profiles_network_qos_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vnic_profiles fk_vnic_profiles_network_qos_id; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vnic_profiles
@@ -6256,15 +6684,15 @@ ALTER TABLE ONLY vnic_profiles
 
 
 --
--- Name: gluster_cluster_services_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_cluster_services gluster_cluster_services_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_cluster_services
-    ADD CONSTRAINT gluster_cluster_services_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT gluster_cluster_services_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: gluster_cluster_services_service_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_cluster_services gluster_cluster_services_service_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_cluster_services
@@ -6272,15 +6700,15 @@ ALTER TABLE ONLY gluster_cluster_services
 
 
 --
--- Name: gluster_hooks_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_hooks gluster_hooks_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_hooks
-    ADD CONSTRAINT gluster_hooks_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT gluster_hooks_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: gluster_server_hooks_hook_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_server_hooks gluster_server_hooks_hook_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server_hooks
@@ -6288,7 +6716,7 @@ ALTER TABLE ONLY gluster_server_hooks
 
 
 --
--- Name: gluster_server_hooks_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_server_hooks gluster_server_hooks_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server_hooks
@@ -6296,7 +6724,7 @@ ALTER TABLE ONLY gluster_server_hooks
 
 
 --
--- Name: gluster_server_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_server gluster_server_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server
@@ -6304,7 +6732,7 @@ ALTER TABLE ONLY gluster_server
 
 
 --
--- Name: gluster_server_services_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_server_services gluster_server_services_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server_services
@@ -6312,7 +6740,7 @@ ALTER TABLE ONLY gluster_server_services
 
 
 --
--- Name: gluster_server_services_service_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_server_services gluster_server_services_service_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_server_services
@@ -6320,7 +6748,7 @@ ALTER TABLE ONLY gluster_server_services
 
 
 --
--- Name: gluster_services_service_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_services gluster_services_service_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_services
@@ -6328,7 +6756,7 @@ ALTER TABLE ONLY gluster_services
 
 
 --
--- Name: gluster_volume_access_protocols_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_access_protocols gluster_volume_access_protocols_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_access_protocols
@@ -6336,7 +6764,7 @@ ALTER TABLE ONLY gluster_volume_access_protocols
 
 
 --
--- Name: gluster_volume_brick_details_brick_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_brick_details gluster_volume_brick_details_brick_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_brick_details
@@ -6344,7 +6772,7 @@ ALTER TABLE ONLY gluster_volume_brick_details
 
 
 --
--- Name: gluster_volume_bricks_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_bricks gluster_volume_bricks_server_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_bricks
@@ -6352,7 +6780,7 @@ ALTER TABLE ONLY gluster_volume_bricks
 
 
 --
--- Name: gluster_volume_bricks_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_bricks gluster_volume_bricks_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_bricks
@@ -6360,7 +6788,7 @@ ALTER TABLE ONLY gluster_volume_bricks
 
 
 --
--- Name: gluster_volume_details_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_details gluster_volume_details_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_details
@@ -6368,7 +6796,7 @@ ALTER TABLE ONLY gluster_volume_details
 
 
 --
--- Name: gluster_volume_options_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_options gluster_volume_options_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_options
@@ -6376,7 +6804,7 @@ ALTER TABLE ONLY gluster_volume_options
 
 
 --
--- Name: gluster_volume_transport_types_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volume_transport_types gluster_volume_transport_types_volume_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volume_transport_types
@@ -6384,15 +6812,39 @@ ALTER TABLE ONLY gluster_volume_transport_types
 
 
 --
--- Name: gluster_volumes_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: gluster_volumes gluster_volumes_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY gluster_volumes
-    ADD CONSTRAINT gluster_volumes_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT gluster_volumes_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: libvirt_secrets_provider_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: labels_map labels_map_label_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY labels_map
+    ADD CONSTRAINT labels_map_label_id_fkey FOREIGN KEY (label_id) REFERENCES labels(label_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: labels_map labels_map_vds_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY labels_map
+    ADD CONSTRAINT labels_map_vds_id_fkey FOREIGN KEY (vds_id) REFERENCES vds_static(vds_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: labels_map labels_map_vm_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY labels_map
+    ADD CONSTRAINT labels_map_vm_id_fkey FOREIGN KEY (vm_id) REFERENCES vm_static(vm_guid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: libvirt_secrets libvirt_secrets_provider_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY libvirt_secrets
@@ -6400,7 +6852,7 @@ ALTER TABLE ONLY libvirt_secrets
 
 
 --
--- Name: mac_pool_ranges_mac_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: mac_pool_ranges mac_pool_ranges_mac_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY mac_pool_ranges
@@ -6408,7 +6860,7 @@ ALTER TABLE ONLY mac_pool_ranges
 
 
 --
--- Name: network_attachments_network_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: network_attachments network_attachments_network_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network_attachments
@@ -6416,7 +6868,7 @@ ALTER TABLE ONLY network_attachments
 
 
 --
--- Name: network_attachments_nic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: network_attachments network_attachments_nic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY network_attachments
@@ -6424,7 +6876,15 @@ ALTER TABLE ONLY network_attachments
 
 
 --
--- Name: qrtz_triggers_sched_name_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vnic_profiles network_filter_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+--
+
+ALTER TABLE ONLY vnic_profiles
+    ADD CONSTRAINT network_filter_id_fk FOREIGN KEY (network_filter_id) REFERENCES network_filter(filter_id) ON DELETE SET NULL;
+
+
+--
+-- Name: qrtz_triggers qrtz_triggers_sched_name_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY qrtz_triggers
@@ -6432,7 +6892,7 @@ ALTER TABLE ONLY qrtz_triggers
 
 
 --
--- Name: quota_limitation_quota_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: quota_limitation quota_limitation_quota_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY quota_limitation
@@ -6440,7 +6900,7 @@ ALTER TABLE ONLY quota_limitation
 
 
 --
--- Name: quota_limitation_storage_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: quota_limitation quota_limitation_storage_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY quota_limitation
@@ -6448,15 +6908,7 @@ ALTER TABLE ONLY quota_limitation
 
 
 --
--- Name: quota_limitation_vds_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY quota_limitation
-    ADD CONSTRAINT quota_limitation_vds_group_id_fkey FOREIGN KEY (vds_group_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
-
-
---
--- Name: quota_storage_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: quota quota_storage_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY quota
@@ -6464,7 +6916,7 @@ ALTER TABLE ONLY quota
 
 
 --
--- Name: storage_device_vds_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_device storage_device_vds_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_device
@@ -6472,7 +6924,7 @@ ALTER TABLE ONLY storage_device
 
 
 --
--- Name: storage_domains_ovf_info_ovf_disk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_domains_ovf_info storage_domains_ovf_info_ovf_disk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_domains_ovf_info
@@ -6480,7 +6932,7 @@ ALTER TABLE ONLY storage_domains_ovf_info
 
 
 --
--- Name: storage_domains_ovf_info_storage_domain_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_domains_ovf_info storage_domains_ovf_info_storage_domain_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_domains_ovf_info
@@ -6488,7 +6940,7 @@ ALTER TABLE ONLY storage_domains_ovf_info
 
 
 --
--- Name: storage_pool_mac_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: storage_pool storage_pool_mac_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY storage_pool
@@ -6496,15 +6948,15 @@ ALTER TABLE ONLY storage_pool
 
 
 --
--- Name: supported_cluster_features_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: supported_cluster_features supported_cluster_features_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY supported_cluster_features
-    ADD CONSTRAINT supported_cluster_features_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES vds_groups(vds_group_id) ON DELETE CASCADE;
+    ADD CONSTRAINT supported_cluster_features_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES cluster(cluster_id) ON DELETE CASCADE;
 
 
 --
--- Name: supported_cluster_features_feature_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: supported_cluster_features supported_cluster_features_feature_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY supported_cluster_features
@@ -6512,7 +6964,7 @@ ALTER TABLE ONLY supported_cluster_features
 
 
 --
--- Name: supported_host_features_host_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: supported_host_features supported_host_features_host_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY supported_host_features
@@ -6520,7 +6972,7 @@ ALTER TABLE ONLY supported_host_features
 
 
 --
--- Name: tags_user_group_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_user_group_map tags_user_group_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_user_group_map
@@ -6528,7 +6980,7 @@ ALTER TABLE ONLY tags_user_group_map
 
 
 --
--- Name: tags_user_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_user_map tags_user_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_user_map
@@ -6536,7 +6988,7 @@ ALTER TABLE ONLY tags_user_map
 
 
 --
--- Name: tags_user_map_user; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_user_map tags_user_map_user; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_user_map
@@ -6544,7 +6996,7 @@ ALTER TABLE ONLY tags_user_map
 
 
 --
--- Name: tags_user_map_user_group; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_user_group_map tags_user_map_user_group; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_user_group_map
@@ -6552,7 +7004,7 @@ ALTER TABLE ONLY tags_user_group_map
 
 
 --
--- Name: tags_vds_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_vds_map tags_vds_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vds_map
@@ -6560,7 +7012,7 @@ ALTER TABLE ONLY tags_vds_map
 
 
 --
--- Name: tags_vds_map_vds; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_vds_map tags_vds_map_vds; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vds_map
@@ -6568,7 +7020,7 @@ ALTER TABLE ONLY tags_vds_map
 
 
 --
--- Name: tags_vm_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_vm_map tags_vm_map_tag; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vm_map
@@ -6576,7 +7028,7 @@ ALTER TABLE ONLY tags_vm_map
 
 
 --
--- Name: tags_vm_map_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: tags_vm_map tags_vm_map_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY tags_vm_map
@@ -6584,31 +7036,7 @@ ALTER TABLE ONLY tags_vm_map
 
 
 --
--- Name: vds_groups_cluster_policy; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY vds_groups
-    ADD CONSTRAINT vds_groups_cluster_policy FOREIGN KEY (cluster_policy_id) REFERENCES cluster_policies(id);
-
-
---
--- Name: vds_groups_vds_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY vds_static
-    ADD CONSTRAINT vds_groups_vds_static FOREIGN KEY (vds_group_id) REFERENCES vds_groups(vds_group_id);
-
-
---
--- Name: vds_groups_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
---
-
-ALTER TABLE ONLY vm_static
-    ADD CONSTRAINT vds_groups_vm_static FOREIGN KEY (vds_group_id) REFERENCES vds_groups(vds_group_id);
-
-
---
--- Name: vds_static_vds_dynamic; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_dynamic vds_static_vds_dynamic; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_dynamic
@@ -6616,7 +7044,7 @@ ALTER TABLE ONLY vds_dynamic
 
 
 --
--- Name: vds_static_vds_statistics; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vds_statistics vds_static_vds_statistics; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vds_statistics
@@ -6624,7 +7052,7 @@ ALTER TABLE ONLY vds_statistics
 
 
 --
--- Name: vds_static_vm_dynamic_m; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_dynamic vds_static_vm_dynamic_m; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_dynamic
@@ -6632,7 +7060,7 @@ ALTER TABLE ONLY vm_dynamic
 
 
 --
--- Name: vds_static_vm_dynamic_r; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_dynamic vds_static_vm_dynamic_r; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_dynamic
@@ -6640,7 +7068,7 @@ ALTER TABLE ONLY vm_dynamic
 
 
 --
--- Name: vfs_config_labels_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vfs_config_labels vfs_config_labels_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vfs_config_labels
@@ -6648,7 +7076,7 @@ ALTER TABLE ONLY vfs_config_labels
 
 
 --
--- Name: vfs_config_networks_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vfs_config_networks vfs_config_networks_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vfs_config_networks
@@ -6656,7 +7084,7 @@ ALTER TABLE ONLY vfs_config_networks
 
 
 --
--- Name: vfs_config_networks_network_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vfs_config_networks vfs_config_networks_network_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vfs_config_networks
@@ -6664,7 +7092,7 @@ ALTER TABLE ONLY vfs_config_networks
 
 
 --
--- Name: vfs_config_nic_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: host_nic_vfs_config vfs_config_nic_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY host_nic_vfs_config
@@ -6672,7 +7100,7 @@ ALTER TABLE ONLY host_nic_vfs_config
 
 
 --
--- Name: vm_device_snapshot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_device vm_device_snapshot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_device
@@ -6680,7 +7108,7 @@ ALTER TABLE ONLY vm_device
 
 
 --
--- Name: vm_guid_pools; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_pool_map vm_guid_pools; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_pool_map
@@ -6688,7 +7116,7 @@ ALTER TABLE ONLY vm_pool_map
 
 
 --
--- Name: vm_host_pinning_map_vds_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_host_pinning_map vm_host_pinning_map_vds_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_host_pinning_map
@@ -6696,7 +7124,7 @@ ALTER TABLE ONLY vm_host_pinning_map
 
 
 --
--- Name: vm_host_pinning_map_vm_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_host_pinning_map vm_host_pinning_map_vm_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_host_pinning_map
@@ -6704,7 +7132,7 @@ ALTER TABLE ONLY vm_host_pinning_map
 
 
 --
--- Name: vm_ovf_generations_storage_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_ovf_generations vm_ovf_generations_storage_pool_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_ovf_generations
@@ -6712,7 +7140,7 @@ ALTER TABLE ONLY vm_ovf_generations
 
 
 --
--- Name: vm_pools_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_pool_map vm_pools_vm; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_pool_map
@@ -6720,7 +7148,7 @@ ALTER TABLE ONLY vm_pool_map
 
 
 --
--- Name: vm_static_vm_dynamic; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_dynamic vm_static_vm_dynamic; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_dynamic
@@ -6728,7 +7156,7 @@ ALTER TABLE ONLY vm_dynamic
 
 
 --
--- Name: vm_static_vm_init; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_init vm_static_vm_init; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_init
@@ -6736,7 +7164,7 @@ ALTER TABLE ONLY vm_init
 
 
 --
--- Name: vm_static_vm_statistics; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_statistics vm_static_vm_statistics; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_statistics
@@ -6744,7 +7172,7 @@ ALTER TABLE ONLY vm_statistics
 
 
 --
--- Name: vm_templates_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vm_static vm_templates_vm_static; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vm_static
@@ -6752,21 +7180,11 @@ ALTER TABLE ONLY vm_static
 
 
 --
--- Name: vnic_profiles_network_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
+-- Name: vnic_profiles vnic_profiles_network_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: engine
 --
 
 ALTER TABLE ONLY vnic_profiles
     ADD CONSTRAINT vnic_profiles_network_id_fkey FOREIGN KEY (network_id) REFERENCES network(id) ON DELETE CASCADE;
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
