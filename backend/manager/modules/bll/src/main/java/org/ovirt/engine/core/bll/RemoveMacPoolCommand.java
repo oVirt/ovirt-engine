@@ -63,7 +63,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
             return false;
         }
 
-        final MacPoolValidator validator = new MacPoolValidator(getOldMacPool());
+        final MacPoolValidator validator = new MacPoolValidator(macPoolDao.getAll(), getOldMacPool());
 
         return validate(validator.macPoolExists()) &&
                 validate(validator.notRemovingDefaultPool()) &&

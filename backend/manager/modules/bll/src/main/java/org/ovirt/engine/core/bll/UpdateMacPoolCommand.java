@@ -48,8 +48,9 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
         }
 
         oldMacPool = macPoolDao.get(getMacPoolId());
-        MacPoolValidator validator = new MacPoolValidator(getMacPoolEntity());
-        return validate(new MacPoolValidator(oldMacPool).macPoolExists()) &&
+        List<MacPool> allMacPools = macPoolDao.getAll();
+        MacPoolValidator validator = new MacPoolValidator(allMacPools, getMacPoolEntity());
+        return validate(new MacPoolValidator(allMacPools, oldMacPool).macPoolExists()) &&
                 validate(validator.hasUniqueName()) &&
                 validate(validator.validateDuplicates(macPoolPerCluster)) &&
                 validate(validateDefaultFlagIsNotChanged(oldMacPool, getMacPoolEntity()));

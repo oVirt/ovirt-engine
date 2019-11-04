@@ -14,26 +14,27 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class MacPoolValidator {
 
-    private final MacPool macPool;
+    private final MacPool macPoolUnderValidation;
+    private final List<MacPool> validMacPools;
 
-    public MacPoolValidator(MacPool macPool) {
-        this.macPool = macPool;
+    public MacPoolValidator(List<MacPool> validMacPools, MacPool macPoolUnderValidation) {
+        this.validMacPools = validMacPools;
+        this.macPoolUnderValidation = macPoolUnderValidation;
     }
 
     public ValidationResult notRemovingDefaultPool() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL).
-                when(macPool.isDefaultPool());
+                when(macPoolUnderValidation.isDefaultPool());
     }
 
     public ValidationResult notRemovingUsedPool() {
         final ClusterDao clusterDao = Injector.get(ClusterDao.class);
-        final List<Cluster> clusters = clusterDao.getAllClustersByMacPoolId(macPool.getId());
+        final List<Cluster> clusters = clusterDao.getAllClustersByMacPoolId(macPoolUnderValidation.getId());
 
         final Collection<String> replacements = ReplacementUtils.replaceWithNameable("CLUSTERS_USING_MAC_POOL", clusters);
         replacements.add(EngineMessage.VAR__ENTITIES__CLUSTERS.name());
@@ -43,12 +44,12 @@ public class MacPoolValidator {
 
     public ValidationResult macPoolExists() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST).
-                when(macPool == null);
+                when(macPoolUnderValidation == null);
     }
 
     public ValidationResult defaultPoolFlagIsNotSet() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED).
-                when(macPool.isDefaultPool());
+                when(macPoolUnderValidation.isDefaultPool());
     }
 
     public ValidationResult hasUniqueName() {
@@ -57,19 +58,14 @@ public class MacPoolValidator {
     }
 
     private boolean macPoolNameUnique() {
-        final List<MacPool> macPools = getMacPoolDao().getAll();
-        for (MacPool pool : macPools) {
-            if (!Objects.equals(pool.getId(), macPool.getId()) &&
-                    pool.getName().equals(macPool.getName())) {
+        for (MacPool pool : validMacPools) {
+            if (!Objects.equals(pool.getId(), macPoolUnderValidation.getId()) &&
+                    pool.getName().equals(macPoolUnderValidation.getName())) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    private MacPoolDao getMacPoolDao() {
-        return Injector.get(MacPoolDao.class);
     }
 
     /**
@@ -80,9 +76,9 @@ public class MacPoolValidator {
      */
     public ValidationResult validateDuplicates(MacPoolPerCluster macPoolPerCluster) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_CONTAINS_DUPLICATES)
-            .when(!macPool.isAllowDuplicateMacAddresses() &&
-                macPoolPerCluster.isDuplicateMacAddressesAllowed(macPool.getId()) &&
-                macPoolPerCluster.containsDuplicates(macPool.getId()));
+            .when(!macPoolUnderValidation.isAllowDuplicateMacAddresses() &&
+                macPoolPerCluster.isDuplicateMacAddressesAllowed(macPoolUnderValidation.getId()) &&
+                macPoolPerCluster.containsDuplicates(macPoolUnderValidation.getId()));
     }
 
     /**
@@ -92,8 +88,7 @@ public class MacPoolValidator {
      * @return a valid result if no overlap found; invalid otherwise
      */
     ValidationResult validateOverlapWithAllCurrentPools(MacPool macPool) {
-        final List<MacPool> macPools = getMacPoolDao().getAll();
-        return validateOverlapWithOtherPools(macPools, macPool);
+        return validateOverlapWithOtherPools(validMacPools, macPool);
     }
 
     ValidationResult validateOverlapWithOtherPools(List<MacPool> macPools, MacPool macPool) {

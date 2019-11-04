@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 
 public class MacPoolValidatorTest extends BaseCommandTest {
@@ -30,10 +29,6 @@ public class MacPoolValidatorTest extends BaseCommandTest {
     private final MacPool macPool = new MacPool();
 
     private MacPoolValidator macPoolValidator;
-
-    @Mock
-    @InjectedMock
-    public MacPoolDao macPoolDaoMock;
 
     @Mock
     @InjectedMock
@@ -45,7 +40,7 @@ public class MacPoolValidatorTest extends BaseCommandTest {
     }
 
     private MacPoolValidator createMacPoolValidator(MacPool macPool) {
-        MacPoolValidator macPoolValidator = spy(new MacPoolValidator(macPool));
+        macPoolValidator = spy(new MacPoolValidator(Collections.singletonList(new MacPool()), macPool));
         return macPoolValidator;
     }
 
@@ -116,7 +111,7 @@ public class MacPoolValidatorTest extends BaseCommandTest {
         final MacPool existingMacPool = new MacPool();
         existingMacPool.setId(macPool1Id);
         existingMacPool.setName(macPool1Name);
-        when(macPoolDaoMock.getAll()).thenReturn(Collections.singletonList(existingMacPool));
+        MacPoolValidator macPoolValidator = new MacPoolValidator(Collections.singletonList(existingMacPool), macPool);
 
         macPool.setId(macPool2Id);
         macPool.setName(macPool2Name);
