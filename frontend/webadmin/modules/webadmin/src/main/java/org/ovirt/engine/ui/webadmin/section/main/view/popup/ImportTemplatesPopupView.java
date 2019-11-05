@@ -6,17 +6,19 @@ import org.gwtbootstrap3.client.ui.constants.AlertType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -83,10 +85,13 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
     @WithElementId("hosts")
     ListModelListBoxEditor<VDS> hostsEditor;
 
+    @UiField(provided = true)
+    public InfoIcon ovaPathInfoIcon;
+
     @UiField
     @Path("ovaPath.entity")
     @WithElementId("ovaPath")
-    StringEntityModelTextBoxEditor ovaPathEditor;
+    StringEntityModelTextBoxOnlyEditor ovaPathEditor;
 
     @UiField
     @Ignore
@@ -113,6 +118,7 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
     StringEntityModelLabelEditor exportDomainDescription;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Inject
@@ -137,6 +143,8 @@ public class ImportTemplatesPopupView extends AbstractModelBoundPopupView<Import
                         importedTemplates,
                         constants.externalVms(),
                         constants.importedVms());
+
+        ovaPathInfoIcon = new InfoIcon(templates.italicText(messages.ovaPathInfo()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables();
 
