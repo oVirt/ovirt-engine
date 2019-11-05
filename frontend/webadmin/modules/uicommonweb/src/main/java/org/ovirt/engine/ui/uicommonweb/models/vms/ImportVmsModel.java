@@ -812,11 +812,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public Map<String, String> getVmNameToOva() {
-        return importedVmModels.getItems()
-            .stream()
-            .filter(e -> e instanceof OvaVmModel)
-            .map(e -> (OvaVmModel) e)
-            .collect(Collectors.toMap(e -> e.getEntity().getName(), e -> e.getOvaFileName()));
+        Map<String, String> vmNameToOva = new HashMap<>();
+        for (EntityModel<VM> item : importedVmModels.getItems()) {
+            if (item instanceof OvaVmModel) {
+                OvaVmModel ovaTemplate = (OvaVmModel) item;
+                vmNameToOva.put(item.getEntity().getName(), ovaTemplate.getOvaFileName());
+            }
+        }
+        return vmNameToOva;
     }
 
     private void addImport() {

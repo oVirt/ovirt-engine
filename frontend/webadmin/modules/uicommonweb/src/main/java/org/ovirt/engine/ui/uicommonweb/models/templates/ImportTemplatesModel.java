@@ -503,11 +503,14 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
     }
 
     public Map<String, String> getTemplateNameToOva() {
-        return importedTemplatesModels.getItems()
-            .stream()
-            .filter(e -> e instanceof OvaTemplateModel)
-            .map(e -> (OvaTemplateModel) e)
-            .collect(Collectors.toMap(e -> e.getEntity().getName(), e -> e.getOvaFileName()));
+        Map<String, String> templateNameToOva = new HashMap<>();
+        for (EntityModel<VmTemplate> item : importedTemplatesModels.getItems()) {
+            if (item instanceof OvaTemplateModel) {
+                OvaTemplateModel ovaTemplate = (OvaTemplateModel) item;
+                templateNameToOva.put(item.getEntity().getName(), ovaTemplate.getOvaFileName());
+            }
+        }
+        return templateNameToOva;
     }
 
     @Override
