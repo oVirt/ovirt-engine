@@ -491,6 +491,17 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             }
 
             Snapshot snapshot = getSelectedItem();
+            if (snapshot == null) {
+                snapshot = getItems().stream()
+                        .filter(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW)
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (snapshot == null) {
+                return;
+            }
+
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
             model.setTitle(ConstantsManager.getInstance().getConstants().commitSnapshotTitle());
