@@ -251,6 +251,43 @@ class CopyHostNetworksHelperTest {
         assertTrue(helper.getAttachmentsToApply().isEmpty());
     }
 
+    @Test
+    void testIPv4Configuration() {
+        var sourceConfiguration = createIpv4Scenario();
+        var destinationConfiguration = createScenarioOne();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        attachmentsToApply.sort(Comparator.comparing(NetworkAttachment::getNicName));
+        assertEquals(3, attachmentsToApply.size());
+        assertIPv4Configuration(attachmentsToApply.get(0), Ipv4BootProtocol.NONE);
+        assertIPv4Configuration(attachmentsToApply.get(1), Ipv4BootProtocol.DHCP);
+        assertIPv4Configuration(attachmentsToApply.get(2), Ipv4BootProtocol.NONE);
+    }
+
+    @Test
+    void testIPv6Configuration() {
+        var sourceConfiguration = createIpv6Scenario();
+        var destinationConfiguration = createScenarioOne();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        attachmentsToApply.sort(Comparator.comparing(NetworkAttachment::getNicName));
+        assertEquals(4, attachmentsToApply.size());
+        assertIPv6Configuration(attachmentsToApply.get(0), Ipv6BootProtocol.NONE);
+        assertIPv6Configuration(attachmentsToApply.get(1), Ipv6BootProtocol.DHCP);
+        assertIPv6Configuration(attachmentsToApply.get(2), Ipv6BootProtocol.AUTOCONF);
+        assertIPv6Configuration(attachmentsToApply.get(3), Ipv6BootProtocol.NONE);
+    }
+
     private static void assertAttachment(NetworkAttachment attachment, Guid netId, String nicName) {
         assertEquals(netId, attachment.getNetworkId());
         assertEquals(nicName, attachment.getNicName());
@@ -259,6 +296,18 @@ class CopyHostNetworksHelperTest {
     private static void assertAttachmentReused(NetworkAttachment attachment, Guid netId, String nicName) {
         assertAttachment(attachment, netId, nicName);
         assertNotNull(attachment.getId());
+    }
+
+    private static void assertIPv4Configuration(NetworkAttachment attachment, Ipv4BootProtocol bootProtocol) {
+        IpConfiguration ipConfig = attachment.getIpConfiguration();
+        assertTrue(ipConfig.hasIpv4PrimaryAddressSet());
+        assertEquals(bootProtocol, ipConfig.getIpv4PrimaryAddress().getBootProtocol());
+    }
+
+    private static void assertIPv6Configuration(NetworkAttachment attachment, Ipv6BootProtocol bootProtocol) {
+        IpConfiguration ipConfig = attachment.getIpConfiguration();
+        assertTrue(ipConfig.hasIpv6PrimaryAddressSet());
+        assertEquals(bootProtocol, ipConfig.getIpv6PrimaryAddress().getBootProtocol());
     }
 
     private static void assertBond(CreateOrUpdateBond bond, List<String> slaves, String bondName) {
@@ -324,6 +373,25 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
+    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv4Scenario() {
+        return new ScenarioBuilder(4)
+                .attachMgmtNetwork("eth0")
+                .attachNetwork("eth1", NET1, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.NONE, null))
+                .attachNetwork("eth2", NET2, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.DHCP, null))
+                .attachNetwork("eth3", NET3, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.STATIC_IP, null))
+                .build();
+    }
+
+    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv6Scenario() {
+        return new ScenarioBuilder(4)
+                .attachMgmtNetwork("eth0")
+                .attachNetwork("eth1", NET1, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.NONE))
+                .attachNetwork("eth2", NET2, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.DHCP))
+                .attachNetwork("eth2", NET3, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.AUTOCONF))
+                .attachNetwork("eth3", NET4, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.STATIC_IP))
+                .build();
+    }
+
     private static class ScenarioBuilder {
 
         private static Guid MGMT_ID = new Guid("00000000-0000-0000-0020-010203040506");
@@ -354,6 +422,15 @@ class CopyHostNetworksHelperTest {
         ScenarioBuilder attachNetwork(String ifaceName, Guid networkId) {
             VdsNetworkInterface iface = interfaces.get(ifaceName);
             NetworkAttachment attachment = createAttachment(iface.getId(), networkId);
+            attachment.setIpConfiguration(createIpConfiguration(null, null));
+            attachments.add(attachment);
+            return this;
+        }
+
+        ScenarioBuilder attachNetwork(String ifaceName, Guid networkId, IpConfiguration ipConfig) {
+            VdsNetworkInterface iface = interfaces.get(ifaceName);
+            NetworkAttachment attachment = createAttachment(iface.getId(), networkId);
+            attachment.setIpConfiguration(ipConfig);
             attachments.add(attachment);
             return this;
         }
@@ -424,7 +501,6 @@ class CopyHostNetworksHelperTest {
             attachment.setId(Guid.newGuid());
             attachment.setNicId(nicId);
             attachment.setNetworkId(netId);
-            attachment.setIpConfiguration(createIpConfiguration(null, null));
             return attachment;
         }
 
