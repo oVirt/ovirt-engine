@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageFormatUpgradeConfirmationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -396,7 +397,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                         cancel.setIsCancel(true);
                         confirmationModel.getCommands().add(cancel);
                     } else {
-                        executeAttachStorageDomains();
+                        showFormatUpgradeConfirmIfRequired();
                     }
                 }), getEntity(), selectedDataStorageDomains);
     }
@@ -407,7 +408,27 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             return;
         }
 
-        executeAttachStorageDomains();
+        showFormatUpgradeConfirmIfRequired();
+    }
+
+    private void showFormatUpgradeConfirmIfRequired() {
+        StoragePool dc = getEntity();
+
+        StorageFormatUpgradeConfirmationModel model = new StorageFormatUpgradeConfirmationModel();
+        boolean shouldDisplay = model.initialize(
+                selectedStorageDomains, dc,
+                "OnShowFormatUpgrade", //$NON-NLS-1$
+                "Cancel", //$NON-NLS-1$
+                this);
+        if (shouldDisplay) {
+            setConfirmWindow(model);
+            model.setHelpTag(HelpTag.attach_storage_from_dc_confirmation);
+            model.setHashName("attach_storage_from_dc_confirmation"); //$NON-NLS-1$
+        } else {
+            UICommand okCommand = UICommand.createDefaultOkUiCommand(
+                    "OnShowFormatUpgrade", this); //$NON-NLS-1$
+            okCommand.execute();
+        }
     }
 
     private void executeAttachStorageDomains() {
@@ -533,6 +554,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void cancel() {
+        setConfirmWindow(null);
         setWindow(null);
     }
 
@@ -653,6 +675,8 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             onDetach();
         } else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
+        } else if ("OnShowFormatUpgrade".equals(command.getName())) { //$NON-NLS-1$
+            executeAttachStorageDomains();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }

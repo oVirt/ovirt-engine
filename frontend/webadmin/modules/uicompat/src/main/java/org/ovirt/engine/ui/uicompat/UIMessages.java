@@ -438,5 +438,9 @@ public interface UIMessages extends Messages {
     String labelName(String labelName);
 
     String availableInVersionOrHigher(String version);
-}
 
+    String compareStorageFormatToDataCenterWarningMessage(String dataCenterName, String storageDomainName,
+            String storageDomainFormat, String dcVersion);
+
+    String compareMultipleStorageFormatsToDataCenterWarningMessage(String dataCenterName, String storageDomainNames);
+}

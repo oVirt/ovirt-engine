@@ -222,6 +222,8 @@ public enum HelpTag {
 
     attach_storage_domain_confirmation("attach_storage_domain_confirmation", HelpTagType.WEBADMIN, "Storage main-tab > Data Center sub-tab > Attach > Confirm attach storage domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    attach_storage_from_dc_confirmation("attach_storage_from_dc_confirmation", HelpTagType.WEBADMIN, "Data Center main-tab > Storage sub-tab > Attach > Confirm attach storage domain"), //$NON-NLS-1$ //$NON-NLS-2$
+
     general("general", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     new_storage_dr("new_storage_dr", HelpTagType.WEBADMIN, "[storage] Storage -> DR Setup -> New"), //$NON-NLS-1$ //$NON-NLS-2$

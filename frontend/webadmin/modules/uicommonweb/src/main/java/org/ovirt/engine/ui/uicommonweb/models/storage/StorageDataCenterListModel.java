@@ -382,11 +382,33 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                         cancel.setIsCancel(true);
                         confirmationModel.getCommands().add(cancel);
                     } else {
-                        executeAttachStorageDomains(model);
+                        showFormatUpgradeConfirmIfRequired();
                     }
                 }), dataCenter, storageDomains);
         } else {
-            executeAttachStorageDomains(model);
+            showFormatUpgradeConfirmIfRequired();
+        }
+    }
+
+    private void showFormatUpgradeConfirmIfRequired() {
+        StoragePool dc = getSelectedDataCentersForAttach().get(0);
+        StorageDomain sd = getEntity();
+
+        StorageFormatUpgradeConfirmationModel model = new StorageFormatUpgradeConfirmationModel();
+        boolean shouldDisplay = model.initialize(
+                Collections.singletonList(sd), dc,
+                "OnShowFormatUpgrade", //$NON-NLS-1$
+                "Cancel", //$NON-NLS-1$
+                this);
+        if (shouldDisplay) {
+            setConfirmWindow(model);
+            model.setHelpTag(HelpTag.attach_storage_domain_confirmation);
+            model.setHashName("attach_storage_domain_confirmation"); //$NON-NLS-1$
+        } else {
+            UICommand okCommand = UICommand.createDefaultOkUiCommand(
+                    "OnShowFormatUpgrade", //$NON-NLS-1$
+                    this);
+            okCommand.execute();
         }
     }
 
@@ -395,7 +417,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         if (!model.validate()) {
             return;
         }
-        executeAttachStorageDomains(model);
+        showFormatUpgradeConfirmIfRequired();
     }
 
     public void executeAttachStorageDomains(Model model) {
@@ -589,6 +611,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void cancel() {
+        setConfirmWindow(null);
         setWindow(null);
     }
 
@@ -649,6 +672,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             onDetach();
         } else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
+        } else if ("OnShowFormatUpgrade".equals(command.getName())) { //$NON-NLS-1$
+            executeAttachStorageDomains(getWindow());
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }

@@ -2172,4 +2172,6 @@ public interface UIConstants extends Constants {
     String systemDefaultCustomSerialNumberDisabledReason();
 
     String clusterDefaultCustomSerialNumberDisabledReason();
+
+    String updatingStorageDomainTitle();
 }
