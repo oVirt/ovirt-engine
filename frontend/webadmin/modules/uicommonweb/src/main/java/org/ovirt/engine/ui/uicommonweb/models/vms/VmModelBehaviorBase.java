@@ -928,11 +928,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         if (clusterSupportsHostCpu && !clusterHasPpcArchitecture()
-                && ((Boolean.FALSE.equals(isAutoAssign) && numOfPinnedHosts > 0))) {
+                && ((Boolean.FALSE.equals(isAutoAssign) && numOfPinnedHosts > 0)
+                || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)) {
             getModel().getHostCpu().setIsChangeable(true);
-            if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
-                getModel().getHostCpu().setEntity(true);
-            }
         } else {
             getModel().getHostCpu().setEntity(false);
             getModel().getHostCpu().setIsChangeable(false);
@@ -1418,12 +1416,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             // Random Generator tab
             getModel().getIsRngEnabled().setEntity(true);
 
+            // Host tab
+            if (!clusterHasPpcArchitecture()) {
+                getModel().getHostCpu().setEntity(true);
+            }
+
             // Resource allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
             getModel().getIoThreadsEnabled().setEntity(true);
             if (getModel().getMultiQueues().getIsAvailable()) {
                 getModel().getMultiQueues().setEntity(true);
             }
+        } else {
+            getModel().getHostCpu().setEntity(false);
         }
 
         // Configuration relevant for either High Performance or VMs with pinned configuration
