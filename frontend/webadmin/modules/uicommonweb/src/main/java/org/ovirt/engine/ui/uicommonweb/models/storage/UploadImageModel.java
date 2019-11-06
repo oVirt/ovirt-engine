@@ -407,6 +407,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 diskParameters.getStorageDomainId(),
                 diskParameters);
         parameters.setTransferSize(imageInfoModel.getActualSize());
+        parameters.setVolumeFormat(imageInfoModel.getFormat());
         parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
 
         return parameters;
