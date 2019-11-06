@@ -20,6 +20,7 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private Integer clientInactivityTimeout;
     private VolumeFormat volumeFormat;
     private Guid backupId;
+    private boolean transferringViaBrowser;
 
     public TransferDiskImageParameters() {}
 
@@ -114,5 +115,13 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
 
     public void setBackupId(Guid backupId) {
         this.backupId = backupId;
+    }
+
+    public boolean isTransferringViaBrowser() {
+        return transferringViaBrowser;
+    }
+
+    public void setTransferringViaBrowser(boolean transferringViaBrowser) {
+        this.transferringViaBrowser = transferringViaBrowser;
     }
 }

@@ -626,8 +626,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             throw new RuntimeException(String.format(
                     "Invalid volume format: %s", image.getVolumeFormat()));
         } else if (getParameters().getTransferType() == TransferType.Upload) {
-            if (getParameters().getTransferSize() != 0) {
-                // TransferSize is only set by the webadmin
+            // TransferSize is only set by the webadmin
+            getParameters().setTransferringViaBrowser(getParameters().getTransferSize() != 0);
+            if (getParameters().isTransferringViaBrowser()) {
                 return getParameters().getTransferSize();
             }
             if (image.getVolumeFormat() == VolumeFormat.RAW) {
@@ -979,9 +980,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
         if (!addImageTicketToProxy(imagedTicketId, signedTicket)) {
             log.error("Failed to add image ticket to ovirt-imageio-proxy");
-            updateEntityPhaseToStoppedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
-            return;
+            if (getParameters().isTransferringViaBrowser()) {
+                updateEntityPhaseToStoppedBySystem(
+                        AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
+                return;
+            }
+            // No need to stop the transfer - API client can use the daemon url directly.
+            auditLog(this, AuditLogType.TRANSFER_FAILED_TO_ADD_TICKET_TO_PROXY);
         }
 
         ImageTransfer updates = new ImageTransfer();
