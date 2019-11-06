@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -316,7 +317,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
             DiskImage diskImage = (DiskImage) getDiskModel().getDisk();
             diskImage.setSize(getVirtualSize());
             diskImage.setActualSizeInBytes(imageInfoModel.getActualSize());
-            diskImage.setVolumeFormat(getImageInfoModel().getFormat());
+            diskImage.setVolumeFormat(diskModel.getIsIncrementalBackup().getEntity() ?
+                    VolumeFormat.COW : getImageInfoModel().getFormat());
             diskImage.setVolumeType(AsyncDataProvider.getInstance().getVolumeType(
                     diskImage.getVolumeFormat(),
                     getDiskModel().getStorageDomain().getSelectedItem().getStorageType(), null, null));
