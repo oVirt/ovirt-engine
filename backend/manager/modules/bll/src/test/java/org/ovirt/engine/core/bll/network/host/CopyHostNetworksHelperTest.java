@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -137,9 +138,127 @@ class CopyHostNetworksHelperTest {
         assertBond(bondsToApply.get(0), Arrays.asList("eth1", "eth3"), "bond0");
     }
 
+    @Test
+    void testScenarioSevenToSix() {
+        var sourceConfiguration = createScenarioSeven();
+        var destinationConfiguration = createScenarioSix();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        attachmentsToApply.sort(Comparator.comparing(NetworkAttachment::getNicName));
+        assertEquals(1, attachmentsToApply.size());
+        assertAttachment(attachmentsToApply.get(0), NET1, "bond1");
+
+        List<CreateOrUpdateBond> bondsToApply = helper.getBondsToApply();
+        assertEquals(1, bondsToApply.size());
+        assertBond(bondsToApply.get(0), Arrays.asList("eth2", "eth3"), "bond1");
+    }
+
+    @Test
+    void testScenarioThreeToTwo() {
+        var sourceConfiguration = createScenarioThree();
+        var destinationConfiguration = createScenarioTwo();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+        assertTrue(helper.getBondsToApply().isEmpty());
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        attachmentsToApply.sort(Comparator.comparing(NetworkAttachment::getNicName));
+        assertEquals(2, attachmentsToApply.size());
+        assertAttachment(attachmentsToApply.get(0), NET2, "eth1");
+        assertAttachmentReused(attachmentsToApply.get(1), NET1, "eth2");
+
+    }
+
+    @Test
+    void testScenarioFourToThree() {
+        var sourceConfiguration = createScenarioFour();
+        var destinationConfiguration = createScenarioThree();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        attachmentsToApply.sort(Comparator.comparing(NetworkAttachment::getNicName));
+        assertEquals(4, attachmentsToApply.size());
+        assertAttachment(attachmentsToApply.get(0), NET3, "bond0");
+        assertAttachment(attachmentsToApply.get(1), NET4, "bond0");
+        assertAttachmentReused(attachmentsToApply.get(2), NET1, "eth1");
+        assertAttachmentReused(attachmentsToApply.get(3), NET2, "eth1");
+
+        List<CreateOrUpdateBond> bondsToApply = helper.getBondsToApply();
+        assertEquals(1, bondsToApply.size());
+        assertBond(bondsToApply.get(0), Arrays.asList("eth2", "eth3"), "bond0");
+    }
+
+    @Test
+    void testScenarioFiveToFour() {
+        var sourceConfiguration = createScenarioFive();
+        var destinationConfiguration = createScenarioFour();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        attachmentsToApply.sort(Comparator.comparing(NetworkAttachment::getNicName));
+        assertEquals(4, attachmentsToApply.size());
+        assertAttachmentReused(attachmentsToApply.get(0), NET1, "bond0");
+        assertAttachmentReused(attachmentsToApply.get(1), NET2, "bond0");
+        assertAttachmentReused(attachmentsToApply.get(2), NET3, "bond0");
+        assertAttachmentReused(attachmentsToApply.get(3), NET4, "eth2");
+
+        List<CreateOrUpdateBond> bondsToApply = helper.getBondsToApply();
+        assertEquals(1, bondsToApply.size());
+        assertBond(bondsToApply.get(0), Arrays.asList("eth1", "eth3"), "bond0");
+    }
+
+    @Test
+    void testScenarioOneToFive() {
+        var sourceConfiguration = createScenarioOne();
+        var destinationConfiguration = createScenarioFive();
+        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
+                sourceConfiguration.getSecond(),
+                destinationConfiguration.getFirst(),
+                destinationConfiguration.getSecond());
+        helper.buildDestinationConfig();
+
+        assertEquals(4, helper.getAttachmentsToRemove().size());
+        assertEquals(1, helper.getBondsToRemove().size());
+        assertTrue(helper.getBondsToApply().isEmpty());
+        assertTrue(helper.getAttachmentsToApply().isEmpty());
+    }
+
     private static void assertAttachment(NetworkAttachment attachment, Guid netId, String nicName) {
         assertEquals(netId, attachment.getNetworkId());
         assertEquals(nicName, attachment.getNicName());
+    }
+
+    private static void assertAttachmentReused(NetworkAttachment attachment, Guid netId, String nicName) {
+        assertAttachment(attachment, netId, nicName);
+        assertNotNull(attachment.getId());
     }
 
     private static void assertBond(CreateOrUpdateBond bond, List<String> slaves, String bondName) {
@@ -187,6 +306,21 @@ class CopyHostNetworksHelperTest {
                 .attachNetwork("bond0", NET1)
                 .attachVlanNetwork("bond0", NET2, 10)
                 .attachVlanNetwork("bond0", NET3, 20)
+                .build();
+    }
+
+    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSix() {
+        return new ScenarioBuilder(4)
+                .createBondIface("bond0", Arrays.asList("eth0", "eth1"))
+                .attachMgmtNetwork("bond0")
+                .build();
+    }
+
+    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSeven() {
+        return new ScenarioBuilder(3)
+                .attachMgmtNetwork("eth0")
+                .createBondIface("bond0", Arrays.asList("eth1", "eth2"))
+                .attachNetwork("bond0", NET1)
                 .build();
     }
 
