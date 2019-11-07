@@ -70,7 +70,7 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
     }
 
     @Override
-    public boolean isVisible(E parentEntity, List<T> selectedItems) {
+    public boolean isVisible(E mainEntity, List<T> selectedItems) {
         return true;
     }
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.plugin.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -93,10 +94,13 @@ public final class EntityObject extends JsMutableObjectWithProperties {
     }
 
     public static <T> JsArray<EntityObject> arrayFrom(List<T> businessEntityList) {
+        List<T> nullSafeList = businessEntityList != null ? businessEntityList : new ArrayList<>();
         JsArray<EntityObject> result = JavaScriptObject.createArray().cast();
-        for (T businessEntity : businessEntityList) {
+
+        for (T businessEntity : nullSafeList) {
             result.push(EntityObject.from(businessEntity));
         }
+
         return result;
     }
 

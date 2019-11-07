@@ -53,53 +53,53 @@ public class PluginEventHandler {
         // Main place item selection change
         eventBus.addHandler(DataCenterSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("DataCenterSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(ClusterSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("ClusterSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(HostSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("HostSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(NetworkSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("NetworkSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(StorageSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("StorageSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(DiskSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("DiskSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(VirtualMachineSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("VirtualMachineSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(PoolSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("PoolSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(TemplateSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("TemplateSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(VolumeSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("GlusterVolumeSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(ProviderSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("ProviderSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(UserSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("UserSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(QuotaSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("QuotaSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
         eventBus.addHandler(EventSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("EventSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
 
         // Detail place item selection change
         // Note: the 'DetailItemSelectionChange' event covers all detail tabs.
         // To determine which detail tab the user is currently on, use the 'currentPlace' API function.
         eventBus.addHandler(DetailItemSelectionChangeEvent.getType(),
                 event -> manager.invokePluginsNow("DetailItemSelectionChange", //$NON-NLS-1$
-                        EntityObject.arrayFrom(event.getSelectedItems())));
+                        JsArrayHelper.createMixedArray(EntityObject.arrayFrom(event.getSelectedItems()))));
 
         // Cross-window messaging
         eventBus.addHandler(MessageReceivedEvent.getType(), event -> {

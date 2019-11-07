@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.plugin.api;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AddActionButtonEvent;
@@ -16,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
 import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
+import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
@@ -214,25 +214,34 @@ public class PluginUiFunctions implements HasHandlers {
         return new AbstractButtonDefinition<E, T>(eventBus, label) {
 
             @Override
-            public void onClick(E parentEntity, List<T> selectedItems) {
-                actionButtonInterface.onClick().invoke(
-                        EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()), null);
+            public void onClick(E mainEntity, List<T> selectedItems) {
+                JsArray<?> invokeArgs = JsArrayHelper.createMixedArray(
+                        EntityObject.arrayFrom(selectedItems),
+                        EntityObject.from(mainEntity));
+
+                actionButtonInterface.onClick().invoke(invokeArgs, null);
             }
 
             @Override
-            public boolean isEnabled(E parentEntity, List<T> selectedItems) {
+            public boolean isEnabled(E mainEntity, List<T> selectedItems) {
+                JsArray<?> invokeArgs = JsArrayHelper.createMixedArray(
+                        EntityObject.arrayFrom(selectedItems),
+                        EntityObject.from(mainEntity));
+
                 return JsFunctionResultHelper.invokeAndGetResultAsBoolean(
                         actionButtonInterface.isEnabled(),
-                        EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),
-                            null, true);
+                        invokeArgs, null, true);
             }
 
             @Override
-            public boolean isAccessible(E parentEntity, List<T> selectedItems) {
+            public boolean isAccessible(E mainEntity, List<T> selectedItems) {
+                JsArray<?> invokeArgs = JsArrayHelper.createMixedArray(
+                        EntityObject.arrayFrom(selectedItems),
+                        EntityObject.from(mainEntity));
+
                 return JsFunctionResultHelper.invokeAndGetResultAsBoolean(
                         actionButtonInterface.isAccessible(),
-                        EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),
-                            null, true);
+                        invokeArgs, null, true);
             }
 
             @Override

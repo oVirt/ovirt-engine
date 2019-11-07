@@ -101,22 +101,22 @@ public abstract class UiCommandButtonDefinition<E, T> extends AbstractButtonDefi
     }
 
     @Override
-    public boolean isAccessible(E parentEntity, List<T> selectedItems) {
+    public boolean isAccessible(E mainEntity, List<T> selectedItems) {
         return command.getIsAvailable();
     }
 
     @Override
-    public boolean isVisible(E parentEntity, List<T> selectedItems) {
+    public boolean isVisible(E mainEntity, List<T> selectedItems) {
         return command == null || command.getIsVisible();
     }
 
     @Override
-    public boolean isEnabled(E parentEntity, List<T> selectedItems) {
+    public boolean isEnabled(E mainEntity, List<T> selectedItems) {
         return command.getIsExecutionAllowed();
     }
 
     @Override
-    public void onClick(E parentEntity, List<T> selectedItems) {
+    public void onClick(E mainEntity, List<T> selectedItems) {
         command.execute();
     }
 

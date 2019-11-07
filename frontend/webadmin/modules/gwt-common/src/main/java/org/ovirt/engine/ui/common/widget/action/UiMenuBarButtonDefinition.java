@@ -43,7 +43,7 @@ public abstract class UiMenuBarButtonDefinition<E, T> extends ImageUiCommandButt
     }
 
     @Override
-    public boolean isAccessible(E parentEntity, List<T> selectedItems) {
+    public boolean isAccessible(E mainEntity, List<T> selectedItems) {
         return true;
     }
 
@@ -58,21 +58,19 @@ public abstract class UiMenuBarButtonDefinition<E, T> extends ImageUiCommandButt
     }
 
     @Override
-    public void onClick(E parentEntity, List<T> selectedItems) {
+    public void onClick(E mainEntity, List<T> selectedItems) {
         // Do nothing
     }
 
     @Override
-    public boolean isEnabled(E parentEntity, List<T> selectedItems) {
-        boolean isEnabled = false;
-
+    public boolean isEnabled(E mainEntity, List<T> selectedItems) {
         for (ActionButtonDefinition<E, T> subAction : getSubActions()) {
-            if (subAction.isEnabled(parentEntity, selectedItems) && subAction.isVisible(parentEntity, selectedItems)) {
+            if (subAction.isEnabled(mainEntity, selectedItems) && subAction.isVisible(mainEntity, selectedItems)) {
                 return true;
             }
         }
 
-        return isEnabled;
+        return false;
     }
 
     @Override
