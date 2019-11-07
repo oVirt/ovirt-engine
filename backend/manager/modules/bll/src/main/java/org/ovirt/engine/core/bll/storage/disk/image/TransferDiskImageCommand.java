@@ -626,8 +626,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             throw new RuntimeException(String.format(
                     "Invalid volume format: %s", image.getVolumeFormat()));
         } else if (getParameters().getTransferType() == TransferType.Upload) {
-            // TransferSize is only set by the webadmin
-            getParameters().setTransferringViaBrowser(getParameters().getTransferSize() != 0);
             if (getParameters().isTransferringViaBrowser()) {
                 return getParameters().getTransferSize();
             }

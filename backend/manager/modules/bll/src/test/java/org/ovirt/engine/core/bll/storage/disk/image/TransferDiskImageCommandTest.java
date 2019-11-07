@@ -338,6 +338,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
         transferImageCommand.getParameters().setTransferType(TransferType.Upload);
         transferImageCommand.getParameters().setTransferSize(readyImage.getSize());
+        transferImageCommand.getParameters().setTransferringViaBrowser(true);
         transferImageCommand.handleImageIsReadyForTransfer();
 
         assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());

@@ -42,6 +42,8 @@ public class DownloadImageHandler {
                 ".qcow2" : ".raw"; //$NON-NLS-1$ //$NON-NLS-2$
         parameters.setDownloadFilename(diskImage.getDiskAlias() + fileExtension); //$NON-NLS-1$
         parameters.setTransferSize(diskImage.getActualSizeInBytes());
+        parameters.setTransferringViaBrowser(true);
+
         return parameters;
     }
 
