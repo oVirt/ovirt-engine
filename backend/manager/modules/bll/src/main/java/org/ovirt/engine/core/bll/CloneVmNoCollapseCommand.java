@@ -198,7 +198,8 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         Map<DiskImage, DiskImage> oldToNewDiskImageMap =
                 imagesHandler.mapChainToNewIDs(diskImage.getId(),
                         destImageGroupID,
-                        getParameters().getDestStorageDomainId());
+                        getParameters().getDestStorageDomainId(),
+                        getCurrentUser());
         getParameters().getSrcToDstChainMap()
                 .put(destImageGroupID,
                         oldToNewDiskImageMap

@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
@@ -133,6 +135,9 @@ public class ImagesHandler {
 
     @Inject
     private FullListAdapter fullListAdapter;
+
+    @Inject
+    private DiskProfileHelper diskProfileHelper;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -1062,7 +1067,10 @@ public class ImagesHandler {
                 .getReturnValue();
     }
 
-    public Map<DiskImage, DiskImage> mapChainToNewIDs(Guid sourceImageGroupID, Guid newImageGroupID, Guid targetStorageDomainID) {
+    public Map<DiskImage, DiskImage> mapChainToNewIDs(Guid sourceImageGroupID,
+            Guid newImageGroupID,
+            Guid targetStorageDomainID,
+            DbUser user) {
         List<DiskImage> oldChain = diskImageDao.getAllSnapshotsForImageGroup(sourceImageGroupID);
         Map<DiskImage, DiskImage> oldToNewChain = new HashMap<>(oldChain.size());
         Guid nextParentId = Guid.Empty;
@@ -1076,6 +1084,7 @@ public class ImagesHandler {
             nextParentId = Guid.newGuid();
             newImage.setImageId(nextParentId);
             newImage.setVmSnapshotId(null);
+            diskProfileHelper.setAndValidateDiskProfiles(Map.of(newImage, targetStorageDomainID), user);
             oldToNewChain.put(diskImage, newImage);
         }
 

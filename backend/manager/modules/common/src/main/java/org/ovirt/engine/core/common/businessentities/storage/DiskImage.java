@@ -454,6 +454,8 @@ public class DiskImage extends DiskImageBase {
         di.setCreationDate(new Date());
         di.setLastModified(new Date());
         di.setImageStatus(ImageStatus.LOCKED);
+        di.setDiskProfileId(diskImage.getDiskProfileId());
+
         return di;
     }
 
