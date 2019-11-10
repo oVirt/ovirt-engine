@@ -160,6 +160,9 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         oldVm.setId(getVmId());
         oldVm.setDiskMap(getVm().getDiskMap());
         oldVm.setName(getVm().getName());
+        oldVm.setOriginalTemplateGuid(getVm().getOriginalTemplateGuid());
+        oldVm.setOriginalTemplateName(getVm().getOriginalTemplateName());
+        oldVm.setVmtGuid(getVm().getVmtGuid());
         oldVm.getInterfaces().forEach(iface -> {
             iface.setId(Guid.newGuid());
             iface.setVmId(getVmId());

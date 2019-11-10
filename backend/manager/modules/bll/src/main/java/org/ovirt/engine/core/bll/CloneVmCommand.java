@@ -303,6 +303,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     protected void updateOriginalTemplate(VmStatic vmStatic) {
         vmStatic.setOriginalTemplateGuid(getVm().getOriginalTemplateGuid());
         vmStatic.setOriginalTemplateName(getVm().getOriginalTemplateName());
+        vmStatic.setVmtGuid(getVm().getVmtGuid());
     }
 
     private VmManagementParametersBase createUpdateVmParameters() {

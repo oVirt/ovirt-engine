@@ -1073,7 +1073,7 @@ public class ImagesHandler {
             DbUser user) {
         List<DiskImage> oldChain = diskImageDao.getAllSnapshotsForImageGroup(sourceImageGroupID);
         Map<DiskImage, DiskImage> oldToNewChain = new HashMap<>(oldChain.size());
-        Guid nextParentId = Guid.Empty;
+        Guid nextParentId = oldChain.get(0).getImageTemplateId() != Guid.Empty ? oldChain.get(0).getParentId() : Guid.Empty;
         sortImageList(oldChain);
 
         for (DiskImage diskImage : oldChain) {
