@@ -78,8 +78,9 @@ public class VmsListFetcher {
     private void saveLastVmsList() {
         Map<Guid, VMStatus> vmIdToStatus = matchVms().stream()
                 .filter(pair -> pair.getFirst() != null)
-                .map(pair -> pair.getSecond().getVmDynamic())
+                .map(Pair::getSecond)
                 .filter(Objects::nonNull)
+                .map(VdsmVm::getVmDynamic)
                 .collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
         vdsManager.setLastVmsList(vmIdToStatus);
     }
