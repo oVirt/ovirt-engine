@@ -56,6 +56,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     @Override
     protected void executeCommand() {
+        // This method extends size for RAW disks only (using volume.extendSize() on VDSM)
         VDSReturnValue vdsReturnValue = extendUnderlyingVolumeSize(getImage());
         setSucceeded(vdsReturnValue.getSucceeded());
 
@@ -90,6 +91,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     protected void endSuccessfully() {
         boolean updateAllVmsSucceeded = true;
         if (getImage().getActive()) {
+            // This method extends size for QCOW disks only (using hsm.updateVolumeSize() on VDSM)
             updateAllVmsSucceeded = updateRelevantVms();
         } else if (getImage().hasRawBlock()) {
             refreshVolume();
@@ -109,6 +111,9 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     private boolean updateRelevantVms() {
         List<VM> vms = getVmsDiskPluggedTo();
+        if (vms.isEmpty()) {
+            return extendFloatingDiskSize();
+        }
         boolean updateAllVmsSucceeded = true;
         for (VM vm : vms) {
             try {
@@ -129,11 +134,26 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         return updateAllVmsSucceeded;
     }
 
+    private boolean extendFloatingDiskSize() {
+        try {
+            VDSReturnValue ret = extendVmDiskSize(null, getParameters().getNewSize());
+            if (!ret.getSucceeded()) {
+                updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, getParameters().getNewSizeInGB());
+                return false;
+            }
+        } catch (EngineException e) {
+            updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, getParameters().getNewSizeInGB());
+            log.debug("Exception", e);
+            return false;
+        }
+        return true;
+    }
+
     private VDSReturnValue extendVmDiskSize(VM vm, Long newSize) {
         Guid vdsId;
         Guid vmId;
 
-        if (vm.getStatus().isDownOrSuspended()) {
+        if (vm == null || vm.getStatus().isDownOrSuspended()) {
             vdsId = getStoragePool().getSpmVdsId();
             vmId = Guid.Empty;
         } else {
