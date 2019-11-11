@@ -3,6 +3,10 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -52,7 +56,12 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
 
     @Override
     protected void executeCommand() {
-        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+        // If we are copying a template we will get the same disk multiple times
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID())
+                .stream()
+                .filter(distinctByKey(DiskImage::getId))
+                .collect(Collectors.toList());
+
         ImagesHandler.sortImageList(images);
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));
 
@@ -128,6 +137,11 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
 
     private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId) {
         return new VdsmImageLocationInfo(domId, imageGroupId, imageId, null);
+    }
+
+    private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 }
 

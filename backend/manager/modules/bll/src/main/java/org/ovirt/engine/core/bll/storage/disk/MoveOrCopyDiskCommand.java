@@ -506,7 +506,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         MoveOrCopyImageGroupParameters parameters = new MoveOrCopyImageGroupParameters(getParameters());
         if (parameters.getOperation() == ImageOperation.Copy) {
             parameters.setUseCopyCollapse(getParameters().getUseCopyCollapse());
-            parameters.setAddImageDomainMapping(getParameters().getAddImageDomainMapping());
+            parameters.setAddImageDomainMapping(isTemplate() ? true : getParameters().getAddImageDomainMapping());
             parameters.setShouldLockImageOnRevert(false);
             parameters.setDestImages(getParameters().getDestImages());
             parameters.setDestImageGroupId(getParameters().getDestImageGroupId());
