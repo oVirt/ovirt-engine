@@ -338,6 +338,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public String buildConditionSql(String objName, String fieldName, String customizedValue, String customizedRelation,
             String tableName, boolean caseSensitive) {
         Pair<String, String> pair = new Pair<>();
+        // replace "_" with "\_" since  an underscore in pattern matches any single character
+        customizedValue = customizedValue.replace("_", "\\_");
         pair.setFirst(customizedRelation);
         pair.setSecond(customizedValue);
         formatValue(fieldName, pair, caseSensitive);
