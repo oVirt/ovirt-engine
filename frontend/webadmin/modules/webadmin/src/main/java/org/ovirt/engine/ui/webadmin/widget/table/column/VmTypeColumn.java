@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,10 +70,10 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         Map<SafeHtml, SafeHtml> res = new LinkedHashMap<>();
 
         if (vm.getVmPoolId() == null) {
-            VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
+            VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), configurationWillChangeAfterRestart(vm));
             res.put(getImageSafeHtml(config.getImageResource()), config.getTooltip());
         } else {
-            ImageResource img = getPoolVmImageResource(vm.getVmType(), vm.isNextRunConfigurationExists());
+            ImageResource img = getPoolVmImageResource(vm.getVmType(), configurationWillChangeAfterRestart(vm));
             res.put(getImageSafeHtml(img), getPoolVmTooltip(vm.getVmType()));
         }
 
@@ -79,10 +81,25 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
             res.put(getImageSafeHtml(resources.mgmtNetwork()), SafeHtmlUtils.fromString(constants.isHostedEngineVmTooltip()));
         }
 
-        if (vm.isNextRunConfigurationExists()) {
-            res.put(SafeHtmlUtils.EMPTY_SAFE_HTML, getNextRunChangedFieldsTooltip(vm.getNextRunChangedFields()));
+        if (configurationWillChangeAfterRestart(vm)) {
+            Set<String> nextRunFields = vm.getNextRunChangedFields() != null ? vm.getNextRunChangedFields() : new HashSet<>();
+            if (clusterCpuChanged(vm) && !nextRunFields.contains("customCpuName")){ //$NON-NLS-1$
+                nextRunFields.add("clusterCpuChange"); //$NON-NLS-1$
+            }
+            res.put(SafeHtmlUtils.EMPTY_SAFE_HTML, getNextRunChangedFieldsTooltip(nextRunFields));
         }
         return res;
+    }
+
+    private static boolean clusterCpuChanged(VM vm){
+        return vm.isRunningOrPaused()
+                && vm.getCustomCpuName() == null
+                && !vm.isUsingCpuPassthrough()
+                && !Objects.equals(vm.getCpuName(), vm.getClusterCpuVerb());
+    }
+
+    private static boolean configurationWillChangeAfterRestart(VM vm){
+        return clusterCpuChanged(vm) || vm.isNextRunConfigurationExists();
     }
 
     private SafeHtml getNextRunChangedFieldsTooltip(Set<String> changedFields) {
@@ -126,10 +143,10 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         List<SafeHtml> images = new ArrayList<>();
 
         if (vm.getVmPoolId() == null) {
-            VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
+            VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), configurationWillChangeAfterRestart(vm));
             images.add(getImageSafeHtml(config.getImageResource()));
         } else {
-            ImageResource img = getPoolVmImageResource(vm.getVmType(), vm.isNextRunConfigurationExists());
+            ImageResource img = getPoolVmImageResource(vm.getVmType(), configurationWillChangeAfterRestart(vm));
             images.add(getImageSafeHtml(img));
         }
 

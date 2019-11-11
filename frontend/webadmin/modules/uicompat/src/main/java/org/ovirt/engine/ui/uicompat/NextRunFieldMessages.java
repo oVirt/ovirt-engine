@@ -62,6 +62,8 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String customCpuName();
 
+    String clusterCpuChange();
+
     String useHostCpuFlags();
 
     String numOfIoThreads();
