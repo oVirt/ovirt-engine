@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 
 public class TransferImageStatusCommand<T extends TransferImageStatusParameters> extends CommandBase<T> {
@@ -91,9 +92,19 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
+        Guid objectId = getStorageDomainId();
+        if (objectId == null) {
+            objectId = getParameters().getStorageDomainId();
+            if (objectId != null) {
+                setStorageDomainId(objectId);
+            } else {
+                objectId = MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID;
+            }
+        }
+
         // Only check generic permissions because the command and/or ImageUpload entity may be missing
         return Collections.singletonList(new PermissionSubject(
-                MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                objectId,
                 VdcObjectType.System,
                 ActionGroup.CREATE_DISK));
     }

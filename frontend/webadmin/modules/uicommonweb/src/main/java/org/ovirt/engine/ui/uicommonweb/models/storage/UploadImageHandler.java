@@ -82,6 +82,7 @@ public class UploadImageHandler {
     private Guid vdsId;
     private Guid diskId;
     private Element fileUploadElement;
+    private Guid storageDomainId;
 
     private Event<EventArgs> uploadFinishedEvent =
             new Event<>("UploadFinished", UploadImageHandler.class); //$NON-NLS-1$
@@ -199,6 +200,14 @@ public class UploadImageHandler {
         return uploadFinishedEvent;
     }
 
+    public Guid getStorageDomainId() {
+        return storageDomainId;
+    }
+
+    public void setStorageDomainId(Guid storageDomainId) {
+        this.storageDomainId = storageDomainId;
+    }
+
     /**
      * A single upload image handler
      *
@@ -258,6 +267,7 @@ public class UploadImageHandler {
         Scheduler.get().scheduleFixedDelay(() -> {
             log.info("Polling for status"); //$NON-NLS-1$
             TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId());
+            statusParameters.setStorageDomainId(getStorageDomainId());
 
             ImageTransfer updates = new ImageTransfer();
             updates.setMessage(getProgressStr());
@@ -376,6 +386,7 @@ public class UploadImageHandler {
 
         ImageTransfer updates = new ImageTransfer();
         TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId(), updates);
+        statusParameters.setStorageDomainId(getStorageDomainId());
 
         if (getUploadState() == UploadState.SUCCESS) {
             setProgressStr("Finalizing success..."); //$NON-NLS-1$
@@ -667,6 +678,7 @@ public class UploadImageHandler {
 
             TransferImageStatusParameters parameters = new TransferImageStatusParameters(rv.getId());
             parameters.setUpdates(updates);
+            parameters.setStorageDomainId(getStorageDomainId());
             Frontend.getInstance().runAction(ActionType.TransferImageStatus, parameters,
                     this::initiateResumeUploadStartTransfer);
         } else {

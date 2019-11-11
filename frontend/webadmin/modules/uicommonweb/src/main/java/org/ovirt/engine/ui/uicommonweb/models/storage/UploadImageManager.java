@@ -67,7 +67,8 @@ public class UploadImageManager {
      */
     public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
             String proxyLocation, long startByte, long endByte) {
-        UploadImageHandler uploadImageHandler = createUploadImageHandler(fileUploadElement, proxyLocation);
+        UploadImageHandler uploadImageHandler =
+                createUploadImageHandler(fileUploadElement, proxyLocation, transferDiskImageParameters.getStorageDomainId());
         uploadImageHandlers.add(uploadImageHandler);
         uploadImageHandler.start(transferDiskImageParameters, startByte, endByte);
     }
@@ -87,7 +88,9 @@ public class UploadImageManager {
         Optional<UploadImageHandler> uploadImageHandlerOptional =
             getUploadImageHandler(transferImageStatusParameters.getDiskId());
         UploadImageHandler uploadImageHandler =
-            uploadImageHandlerOptional.orElseGet(() -> createUploadImageHandler(fileUploadElement, proxyLocation));
+            uploadImageHandlerOptional.orElseGet(
+                    () -> createUploadImageHandler(fileUploadElement, proxyLocation, transferImageStatusParameters.getStorageDomainId())
+            );
         uploadImageHandler.resetUploadState();
         uploadImageHandlers.add(uploadImageHandler);
         uploadImageHandler.resume(transferImageStatusParameters, asyncQuery);
@@ -105,8 +108,9 @@ public class UploadImageManager {
         return uploadImageHandlerOptional.isPresent();
     }
 
-    private UploadImageHandler createUploadImageHandler(Element fileUploadElement, String proxyLocation) {
+    private UploadImageHandler createUploadImageHandler(Element fileUploadElement, String proxyLocation, Guid storageDomainId) {
         final UploadImageHandler uploadImageHandler = new UploadImageHandler(fileUploadElement, proxyLocation);
+        uploadImageHandler.setStorageDomainId(storageDomainId);
         uploadImageHandler.getUploadFinishedEvent().addListener((ev, sender, args) -> {
             uploadImageHandlers.remove(uploadImageHandler);
             log.info("Removed upload handler for disk: " //$NON-NLS-1$
