@@ -28,7 +28,7 @@
     - name: Copy vmconsole key pending file
       copy:
         src: "{{ vmconsolekey.path }}"
-        dest: "{{ vmconsole_store }}/{{ vmconsole_key_pending_file }}"
+        dest: "{{ ovirt_vmconsole_store }}/{{ ovirt_vmconsole_key_pending_file }}"
         owner: root
         mode: 0400
         remote_src: yes
