@@ -39,9 +39,13 @@ class CopyHostNetworksHelperTest {
     // Vlan 30
     private static final Guid NET4 = new Guid("00000000-0000-0000-0020-000000000003");
 
+    private static final ScenarioBuilder scenarios = new ScenarioBuilder();
+    private static final Node SOURCE = Node.SOURCE;
+    private static final Node DEST = Node.DEST;
+
     @Test
     void testScenarioTwoToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioTwo(), createScenarioOne());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.two(SOURCE), scenarios.one(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -55,7 +59,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioThreeToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioThree(), createScenarioOne());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.three(SOURCE), scenarios.one(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -71,7 +75,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFourToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFour(), createScenarioOne());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.four(SOURCE), scenarios.one(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -92,7 +96,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFiveToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFive(), createScenarioOne());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.five(SOURCE), scenarios.one(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -113,7 +117,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioSevenToSix() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioSeven(), createScenarioSix());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.seven(SOURCE), scenarios.six(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -131,7 +135,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioThreeToTwo() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioThree(), createScenarioTwo());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.three(SOURCE), scenarios.two(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -148,7 +152,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFourToThree() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFour(), createScenarioThree());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.four(SOURCE), scenarios.three(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -169,7 +173,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFiveToFour() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFive(), createScenarioFour());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.five(SOURCE), scenarios.four(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -190,7 +194,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioOneToFive() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioOne(), createScenarioFive());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.one(SOURCE), scenarios.five(DEST));
         helper.buildDestinationConfig();
 
         assertEquals(4, helper.getAttachmentsToRemove().size());
@@ -201,7 +205,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testIPv4Configuration() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createIpv4Scenario(), createScenarioOne());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.ipv4(SOURCE), scenarios.one(DEST));
         helper.buildDestinationConfig();
 
         List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
@@ -214,7 +218,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testIPv6Configuration() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createIpv6Scenario(), createScenarioOne());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.ipv6(SOURCE), scenarios.one(DEST));
         helper.buildDestinationConfig();
 
         List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
@@ -260,88 +264,94 @@ class CopyHostNetworksHelperTest {
         assertEquals(bondName, bond.getName());
     }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioOne() {
-        return new NetConfigBuilder(4)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .attachMgmtNetwork("eth0")
-                .build();
-    }
+    private enum Node { SOURCE, DEST }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioTwo() {
-        return new NetConfigBuilder(4)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .attachMgmtNetwork("eth0")
-                .attachNetwork("eth1", NET1)
-                .build();
-    }
+    private static class ScenarioBuilder {
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioThree() {
-        return new NetConfigBuilder(4)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .attachMgmtNetwork("eth0")
-                .attachVlanNetwork("eth1", NET2, 10)
-                .attachNetwork("eth2", NET1)
-                .build();
-    }
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> one(Node node) {
+            return new NetConfigBuilder(4)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachMgmtNetwork("eth0")
+                    .build();
+        }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFour() {
-        return new NetConfigBuilder(4)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .attachMgmtNetwork("eth0")
-                .attachNetwork("eth1", NET1)
-                .attachVlanNetwork("eth1", NET2, 10)
-                .createBondIface("bond0", Arrays.asList("eth2", "eth3"))
-                .attachVlanNetwork("bond0", NET3, 20)
-                .attachVlanNetwork("bond0", NET4, 30)
-                .build();
-    }
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> two(Node node) {
+            return new NetConfigBuilder(4)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachMgmtNetwork("eth0")
+                    .attachNetwork("eth1", NET1)
+                    .build();
+        }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFive() {
-        return new NetConfigBuilder(4)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .attachMgmtNetwork("eth0")
-                .attachVlanNetwork("eth2", NET4, 30)
-                .createBondIface("bond0", Arrays.asList("eth1", "eth3"))
-                .attachNetwork("bond0", NET1)
-                .attachVlanNetwork("bond0", NET2, 10)
-                .attachVlanNetwork("bond0", NET3, 20)
-                .build();
-    }
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> three(Node node) {
+            return new NetConfigBuilder(4)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachMgmtNetwork("eth0")
+                    .attachVlanNetwork("eth1", NET2, 10)
+                    .attachNetwork("eth2", NET1)
+                    .build();
+        }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSix() {
-        return new NetConfigBuilder(4)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .createBondIface("bond0", Arrays.asList("eth0", "eth1"))
-                .attachMgmtNetwork("bond0")
-                .build();
-    }
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> four(Node node) {
+            return new NetConfigBuilder(4)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachMgmtNetwork("eth0")
+                    .attachNetwork("eth1", NET1)
+                    .attachVlanNetwork("eth1", NET2, 20)
+                    .createBondIface("bond0", Arrays.asList("eth2", "eth3"))
+                    .attachVlanNetwork("bond0", NET3, 30)
+                    .attachVlanNetwork("bond0", NET4, 40)
+                    .build();
+        }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSeven() {
-        return new NetConfigBuilder(3)
-                .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
-                .attachMgmtNetwork("eth0")
-                .createBondIface("bond0", Arrays.asList("eth1", "eth2"))
-                .attachNetwork("bond0", NET1)
-                .build();
-    }
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> five(Node node) {
+            return new NetConfigBuilder(4)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachMgmtNetwork("eth0")
+                    .attachVlanNetwork("eth2", NET4, 30)
+                    .createBondIface("bond0", Arrays.asList("eth1", "eth3"))
+                    .attachNetwork("bond0", NET1)
+                    .attachVlanNetwork("bond0", NET2, 10)
+                    .attachVlanNetwork("bond0", NET3, 20)
+                    .build();
+        }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv4Scenario() {
-        return new NetConfigBuilder(4)
-                .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
-                .attachNetwork("eth1", NET1, IpConfigBuilder.NONE4_NULL6)
-                .attachNetwork("eth2", NET2, IpConfigBuilder.DHCP4_NULL6)
-                .attachNetwork("eth3", NET3, IpConfigBuilder.STATIC4_NULL6)
-                .build();
-    }
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> six(Node node) {
+            return new NetConfigBuilder(4)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .createBondIface("bond0", Arrays.asList("eth0", "eth1"))
+                    .attachMgmtNetwork("bond0")
+                    .build();
+        }
 
-    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv6Scenario() {
-        return new NetConfigBuilder(4)
-                .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
-                .attachNetwork("eth1", NET1, IpConfigBuilder.NULL4_NONE6)
-                .attachNetwork("eth2", NET2, IpConfigBuilder.NULL4_DHCP6)
-                .attachNetwork("eth2", NET3, IpConfigBuilder.NULL4_AUTOCONF6)
-                .attachNetwork("eth3", NET4, IpConfigBuilder.NULL4_STATIC6)
-                .build();
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> seven(Node node) {
+            return new NetConfigBuilder(3)
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachMgmtNetwork("eth0")
+                    .createBondIface("bond0", Arrays.asList("eth1", "eth2"))
+                    .attachNetwork("bond0", NET1)
+                    .build();
+        }
+
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> ipv4(Node node) {
+            return new NetConfigBuilder(4)
+                    .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
+                    .attachNetwork("eth1", NET1, IpConfigBuilder.NONE4_NULL6)
+                    .attachNetwork("eth2", NET2, IpConfigBuilder.DHCP4_NULL6)
+                    .attachNetwork("eth3", NET3, IpConfigBuilder.STATIC4_NULL6)
+                    .build();
+        }
+
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> ipv6(Node node) {
+            return new NetConfigBuilder(4)
+                    .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
+                    .attachNetwork("eth1", NET1, IpConfigBuilder.NULL4_NONE6)
+                    .attachNetwork("eth2", NET2, IpConfigBuilder.NULL4_DHCP6)
+                    .attachNetwork("eth2", NET3, IpConfigBuilder.NULL4_AUTOCONF6)
+                    .attachNetwork("eth3", NET4, IpConfigBuilder.NULL4_STATIC6)
+                    .build();
+        }
+
     }
 
     private static class NetConfigBuilder {
