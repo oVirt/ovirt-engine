@@ -261,14 +261,14 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioOne() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .attachMgmtNetwork("eth0")
                 .build();
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioTwo() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .attachMgmtNetwork("eth0")
                 .attachNetwork("eth1", NET1)
@@ -276,7 +276,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioThree() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .attachMgmtNetwork("eth0")
                 .attachVlanNetwork("eth1", NET2, 10)
@@ -285,7 +285,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFour() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .attachMgmtNetwork("eth0")
                 .attachNetwork("eth1", NET1)
@@ -297,7 +297,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFive() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .attachMgmtNetwork("eth0")
                 .attachVlanNetwork("eth2", NET4, 30)
@@ -309,7 +309,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSix() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .createBondIface("bond0", Arrays.asList("eth0", "eth1"))
                 .attachMgmtNetwork("bond0")
@@ -317,7 +317,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSeven() {
-        return new ScenarioBuilder(3)
+        return new NetConfigBuilder(3)
                 .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                 .attachMgmtNetwork("eth0")
                 .createBondIface("bond0", Arrays.asList("eth1", "eth2"))
@@ -326,7 +326,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv4Scenario() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
                 .attachNetwork("eth1", NET1, IpConfigBuilder.NONE4_NULL6)
                 .attachNetwork("eth2", NET2, IpConfigBuilder.DHCP4_NULL6)
@@ -335,7 +335,7 @@ class CopyHostNetworksHelperTest {
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv6Scenario() {
-        return new ScenarioBuilder(4)
+        return new NetConfigBuilder(4)
                 .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
                 .attachNetwork("eth1", NET1, IpConfigBuilder.NULL4_NONE6)
                 .attachNetwork("eth2", NET2, IpConfigBuilder.NULL4_DHCP6)
@@ -344,7 +344,7 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
-    private static class ScenarioBuilder {
+    private static class NetConfigBuilder {
 
         private static final Guid MGMT_ID = new Guid("00000000-0000-0000-0020-010203040506");
         private static final Integer MGMT_TYPE = 2;
@@ -353,39 +353,39 @@ class CopyHostNetworksHelperTest {
         List<NetworkAttachment> attachments;
         private IpConfiguration ipConfiguration;
 
-        ScenarioBuilder(int interfaceCount) {
+        NetConfigBuilder(int interfaceCount) {
             interfaces = createNics(interfaceCount);
             attachments = new ArrayList<>();
         }
 
-        public Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> build() {
+        Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> build() {
             Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> pair = new Pair<>();
             pair.setFirst(new ArrayList<>(interfaces.values()));
             pair.setSecond(attachments);
             return pair;
         }
 
-        ScenarioBuilder setDefaultIpConfig(IpConfiguration ipConfiguration) {
+        NetConfigBuilder setDefaultIpConfig(IpConfiguration ipConfiguration) {
             this.ipConfiguration = ipConfiguration;
             return this;
         }
 
-        ScenarioBuilder attachMgmtNetwork(String ifaceName) {
+        NetConfigBuilder attachMgmtNetwork(String ifaceName) {
             return attachMgmtNetwork(ifaceName, ipConfiguration);
         }
 
-        ScenarioBuilder attachMgmtNetwork(String ifaceName, IpConfiguration ipConfiguration) {
+        NetConfigBuilder attachMgmtNetwork(String ifaceName, IpConfiguration ipConfiguration) {
             VdsNetworkInterface iface = interfaces.get(ifaceName);
             iface.setType(MGMT_TYPE);
             this.attachNetwork(ifaceName, MGMT_ID, ipConfiguration);
             return this;
         }
 
-        ScenarioBuilder attachNetwork(String ifaceName, Guid networkId) {
+        NetConfigBuilder attachNetwork(String ifaceName, Guid networkId) {
             return attachNetwork(ifaceName, networkId, ipConfiguration);
         }
 
-        ScenarioBuilder attachNetwork(String ifaceName, Guid networkId, IpConfiguration ipConfig) {
+        NetConfigBuilder attachNetwork(String ifaceName, Guid networkId, IpConfiguration ipConfig) {
             VdsNetworkInterface iface = interfaces.get(ifaceName);
             NetworkAttachment attachment = createAttachment(iface.getId(), networkId);
             attachment.setIpConfiguration(ipConfig);
@@ -393,18 +393,18 @@ class CopyHostNetworksHelperTest {
             return this;
         }
 
-        ScenarioBuilder attachVlanNetwork(String ifaceName, Guid networkId, Integer vlanId) {
+        NetConfigBuilder attachVlanNetwork(String ifaceName, Guid networkId, Integer vlanId) {
             return attachVlanNetwork(ifaceName, networkId, vlanId, ipConfiguration);
         }
 
-        ScenarioBuilder attachVlanNetwork(String ifaceName, Guid networkId, Integer vlanId, IpConfiguration ipConfiguration) {
+        NetConfigBuilder attachVlanNetwork(String ifaceName, Guid networkId, Integer vlanId, IpConfiguration ipConfiguration) {
             VdsNetworkInterface vlanIface = createVlan(ifaceName, vlanId);
             interfaces.put(vlanIface.getName(), vlanIface);
             this.attachNetwork(ifaceName, networkId, ipConfiguration);
             return this;
         }
 
-        ScenarioBuilder createBondIface(String bondName, List<String> slaveNames) {
+        NetConfigBuilder createBondIface(String bondName, List<String> slaveNames) {
             Bond bond = createBond(bondName, slaveNames);
             bond.setBonded(true);
             slaveNames.stream()
