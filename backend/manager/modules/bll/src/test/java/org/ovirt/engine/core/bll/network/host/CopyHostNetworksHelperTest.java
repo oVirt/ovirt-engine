@@ -27,9 +27,12 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class CopyHostNetworksHelperTest {
 
+    private static final Logger log = LoggerFactory.getLogger(CopyHostNetworksHelperTest.class);
     // Non-vlan
     private static final Guid NET1 = new Guid("00000000-0000-0000-0020-000000000000");
     // Vlan 10
@@ -280,14 +283,14 @@ class CopyHostNetworksHelperTest {
     private static class ScenarioBuilder {
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> one(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
                     .build();
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> two(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
                     .attachNetwork("eth1", NET1)
@@ -295,7 +298,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> three(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
                     .attachVlanNetwork("eth1", NET2, 10)
@@ -304,7 +307,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> four(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
                     .attachNetwork("eth1", NET1)
@@ -316,7 +319,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> five(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
                     .attachVlanNetwork("eth2", NET4, 30)
@@ -328,7 +331,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> six(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .createBondIface("bond0", Arrays.asList("eth0", "eth1"))
                     .attachMgmtNetwork("bond0")
@@ -336,7 +339,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> seven(Node node) {
-            return new NetConfigBuilder(3)
+            return new NetConfigBuilder(3, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
                     .createBondIface("bond0", Arrays.asList("eth1", "eth2"))
@@ -345,7 +348,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> ipv4(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
                     .attachNetwork("eth1", NET1, IpConfigBuilder.NONE4_NULL6)
                     .attachNetwork("eth2", NET2, IpConfigBuilder.DHCP4_NULL6)
@@ -354,7 +357,7 @@ class CopyHostNetworksHelperTest {
         }
 
         private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> ipv6(Node node) {
-            return new NetConfigBuilder(4)
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .attachMgmtNetwork("eth0", IpConfigBuilder.NULL4_NULL6)
                     .attachNetwork("eth1", NET1, IpConfigBuilder.NULL4_NONE6)
                     .attachNetwork("eth2", NET2, IpConfigBuilder.NULL4_DHCP6)
@@ -365,6 +368,120 @@ class CopyHostNetworksHelperTest {
 
     }
 
+    /**
+     * Prints a Graphiz representation of the network layout. see graphviz.org
+     */
+    private static class NetsConfigPrinter {
+
+        private Node node;
+        private boolean printIfaceAttachment = true;
+        private StringBuilder printout = new StringBuilder();
+
+        NetsConfigPrinter(Node node) {
+            this.node = node;
+        }
+
+        void printIfaceAttachment(String ifaceName, Guid networkId) {
+            if (printIfaceAttachment) {
+                printShape(ifaceName);
+                String networkName = toNetworkName(networkId);
+                printShape(networkName);
+                printout.append("    " + prefix() + ifaceName + " -> " + prefix() +  networkName);
+            }
+            printIfaceAttachment = true;
+        }
+
+        void printVlanToNetwork(Integer vlanId, Guid networkId) {
+            String networkName = toNetworkName(networkId);
+            printShape(networkName);
+            printout.append("    " + prefix() + toVlanName(vlanId) + " -> " + prefix() +  networkName);
+            printIfaceAttachment = false;
+        }
+
+        void printIfaceToVlan(String ifaceName, Integer vlanId) {
+            printShape(ifaceName);
+            printout.append("    " + prefix() + ifaceName + " -> " + prefix() + toVlanName(vlanId));
+            printShape(toVlanName(vlanId));
+        }
+
+        void printBondAttachment(String bondName, List<String> slaveNames) {
+            slaveNames.forEach( slaveName -> {
+                printShape(slaveName);
+                printout.append("    " + prefix() + slaveName + " -> " + prefix() + bondName);
+            });
+        }
+
+        private void printShape(String fullName) {
+            String shape = fullName.contains("bond") ? "invtrapezium" :
+                fullName.contains("net") ? "circle" :
+                fullName.contains("mgmt") ? "circle" :
+                fullName.contains("eth") ? "component" :
+                fullName.contains("vlan") ? "diamond" :
+                "missing shape. you have an error";
+
+            String color = fullName.contains("bond") ? "cyan" :
+                fullName.contains("net") ? "pink" :
+                fullName.contains("mgmt") ? "red" :
+                fullName.contains("eth") ? "grey" :
+                fullName.contains("vlan") ? "sienna" :
+                "missing color. you have an error";
+            printout.append("    " + prefix() + fullName + "[shape=" + "\"" + shape + "\",color=\"" + color + "\"]");
+        }
+
+        String toNetworkName(Guid networkId) {
+            return NET1.equals(networkId) ? "net1" :
+                NET2.equals(networkId) ? "net2" :
+                NET3.equals(networkId) ? "net3" :
+                NET4.equals(networkId) ? "net4" :
+                MGMT.equals(networkId) ? "mgmt" :
+                "missing network name. you have an error";
+        }
+
+        private String toVlanName(Integer vlanId) {
+            return "vlan_" + vlanId;
+        }
+
+        private String prefix() {
+            return node == SOURCE ? "" : "_";
+        }
+
+        void printDigraphSuffix() {
+            switch (node) {
+            case SOURCE:
+                printout.append("  }");
+                break;
+            case DEST:
+                printout.append("  }\n"
+                        + "}");
+                break;
+            }
+        }
+
+        void printDigraphPrefix() {
+            switch(node){
+            case SOURCE:
+                printout.append("digraph ScenarioResult {\n"
+                        + "\n"
+                        + "  subgraph cluster_source {\n"
+                        + "    label = \"source layout\";\n"
+                        + "    color=blue;\n"
+                        + "    node [style=filled];");
+                break;
+            case DEST:
+                printout.append("\n"
+                        + "  subgraph cluster_dest {\n"
+                        + "    label = \"destination layout\";\n"
+                        + "    color=blue\n"
+                        + "    node [style=filled];");
+                break;
+            }
+        }
+
+        void writePrintout() {
+            log.debug(printout.toString());
+        }
+    }
+
     private static class NetConfigBuilder {
 
         private static final Integer MGMT_TYPE = 2;
@@ -372,8 +489,11 @@ class CopyHostNetworksHelperTest {
         private Map<String, VdsNetworkInterface> interfaces;
         private List<NetworkAttachment> attachments;
         private IpConfiguration ipConfiguration;
+        private final NetsConfigPrinter netsConfigPrinter;
 
-        NetConfigBuilder(int interfaceCount) {
+        NetConfigBuilder(int interfaceCount, NetsConfigPrinter netsConfigPrinter) {
+            this.netsConfigPrinter = netsConfigPrinter;
+            netsConfigPrinter.printDigraphPrefix();
             interfaces = createNics(interfaceCount);
             attachments = new ArrayList<>();
         }
@@ -382,6 +502,8 @@ class CopyHostNetworksHelperTest {
             Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> pair = new Pair<>();
             pair.setFirst(new ArrayList<>(interfaces.values()));
             pair.setSecond(attachments);
+            netsConfigPrinter.printDigraphSuffix();
+            netsConfigPrinter.writePrintout();
             return pair;
         }
 
@@ -409,6 +531,7 @@ class CopyHostNetworksHelperTest {
             NetworkAttachment attachment = createAttachment(iface.getId(), networkId);
             attachment.setIpConfiguration(ipConfig);
             attachments.add(attachment);
+            netsConfigPrinter.printIfaceAttachment(ifaceName, networkId);
             return this;
         }
 
@@ -419,11 +542,14 @@ class CopyHostNetworksHelperTest {
         NetConfigBuilder attachVlanNetwork(String ifaceName, Guid networkId, Integer vlanId, IpConfiguration ipConfiguration) {
             VdsNetworkInterface vlanIface = createVlan(ifaceName, vlanId);
             interfaces.put(vlanIface.getName(), vlanIface);
+            netsConfigPrinter.printIfaceToVlan(ifaceName, vlanId);
+            netsConfigPrinter.printVlanToNetwork(vlanId, networkId);
             return attachNetwork(ifaceName, networkId, ipConfiguration);
         }
 
         NetConfigBuilder createBondIface(String bondName, List<String> slaveNames) {
             Bond bond = createBond(bondName, slaveNames);
+            netsConfigPrinter.printBondAttachment(bondName, slaveNames);
             bond.setBonded(true);
             slaveNames.stream()
                     .map(interfaces::get)
@@ -437,6 +563,7 @@ class CopyHostNetworksHelperTest {
             for (int i = 0; i < count; i++) {
                 String nicName = "eth" + i;
                 VdsNetworkInterface nic = createNic(nicName);
+                netsConfigPrinter.printShape(nicName);
                 nicMap.put(nicName, nic);
             }
             return nicMap;
