@@ -216,6 +216,10 @@ class CopyHostNetworksHelperTest {
         assertIPv4Configuration(attachmentsToApply.get(0), Ipv4BootProtocol.NONE);
         assertIPv4Configuration(attachmentsToApply.get(1), Ipv4BootProtocol.DHCP);
         assertIPv4Configuration(attachmentsToApply.get(2), Ipv4BootProtocol.NONE);
+
+        assertAttachment(attachmentsToApply.get(0), NET1, "eth1");
+        assertAttachment(attachmentsToApply.get(1), NET2, "eth2");
+        assertAttachment(attachmentsToApply.get(2), NET3, "eth3");
     }
 
     @Test
@@ -230,6 +234,11 @@ class CopyHostNetworksHelperTest {
         assertIPv6Configuration(attachmentsToApply.get(1), Ipv6BootProtocol.DHCP);
         assertIPv6Configuration(attachmentsToApply.get(2), Ipv6BootProtocol.AUTOCONF);
         assertIPv6Configuration(attachmentsToApply.get(3), Ipv6BootProtocol.NONE);
+
+        assertAttachment(attachmentsToApply.get(0), NET1, "eth1");
+        assertAttachment(attachmentsToApply.get(1), NET2, "eth2");
+        assertAttachment(attachmentsToApply.get(2), NET3, "eth2");
+        assertAttachment(attachmentsToApply.get(3), NET4, "eth3");
     }
 
     private CopyHostNetworksHelper createCopyHostNetworksHelper(
