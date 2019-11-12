@@ -41,12 +41,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioTwoToOne() {
-        var sourceConfiguration = createScenarioTwo();
-        var destinationConfiguration = createScenarioOne();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioTwo(), createScenarioOne());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -60,12 +55,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioThreeToOne() {
-        var sourceConfiguration = createScenarioThree();
-        var destinationConfiguration = createScenarioOne();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioThree(), createScenarioOne());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -81,12 +71,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFourToOne() {
-        var sourceConfiguration = createScenarioFour();
-        var destinationConfiguration = createScenarioOne();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFour(), createScenarioOne());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -107,12 +92,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFiveToOne() {
-        var sourceConfiguration = createScenarioFive();
-        var destinationConfiguration = createScenarioOne();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFive(), createScenarioOne());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -133,12 +113,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioSevenToSix() {
-        var sourceConfiguration = createScenarioSeven();
-        var destinationConfiguration = createScenarioSix();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioSeven(), createScenarioSix());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -156,12 +131,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioThreeToTwo() {
-        var sourceConfiguration = createScenarioThree();
-        var destinationConfiguration = createScenarioTwo();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioThree(), createScenarioTwo());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -178,12 +148,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFourToThree() {
-        var sourceConfiguration = createScenarioFour();
-        var destinationConfiguration = createScenarioThree();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFour(), createScenarioThree());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -204,12 +169,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFiveToFour() {
-        var sourceConfiguration = createScenarioFive();
-        var destinationConfiguration = createScenarioFour();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioFive(), createScenarioFour());
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -230,12 +190,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioOneToFive() {
-        var sourceConfiguration = createScenarioOne();
-        var destinationConfiguration = createScenarioFive();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createScenarioOne(), createScenarioFive());
         helper.buildDestinationConfig();
 
         assertEquals(4, helper.getAttachmentsToRemove().size());
@@ -246,12 +201,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testIPv4Configuration() {
-        var sourceConfiguration = createIpv4Scenario();
-        var destinationConfiguration = createScenarioOne();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createIpv4Scenario(), createScenarioOne());
         helper.buildDestinationConfig();
 
         List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
@@ -264,12 +214,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testIPv6Configuration() {
-        var sourceConfiguration = createIpv6Scenario();
-        var destinationConfiguration = createScenarioOne();
-        var helper = new CopyHostNetworksHelper(sourceConfiguration.getFirst(),
-                sourceConfiguration.getSecond(),
-                destinationConfiguration.getFirst(),
-                destinationConfiguration.getSecond());
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(createIpv6Scenario(), createScenarioOne());
         helper.buildDestinationConfig();
 
         List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
@@ -279,6 +224,13 @@ class CopyHostNetworksHelperTest {
         assertIPv6Configuration(attachmentsToApply.get(1), Ipv6BootProtocol.DHCP);
         assertIPv6Configuration(attachmentsToApply.get(2), Ipv6BootProtocol.AUTOCONF);
         assertIPv6Configuration(attachmentsToApply.get(3), Ipv6BootProtocol.NONE);
+    }
+
+    private CopyHostNetworksHelper createCopyHostNetworksHelper(
+            Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> sourceConfiguration,
+            Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> destinationConfiguration) {
+        return new CopyHostNetworksHelper(sourceConfiguration.getFirst(), sourceConfiguration.getSecond(),
+            destinationConfiguration.getFirst(), destinationConfiguration.getSecond());
     }
 
     private void assertAttachment(NetworkAttachment attachment, Guid netId, String nicName) {
