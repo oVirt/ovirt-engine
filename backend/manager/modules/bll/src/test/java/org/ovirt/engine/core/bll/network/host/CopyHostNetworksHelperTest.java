@@ -369,19 +369,19 @@ class CopyHostNetworksHelperTest {
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv4Scenario() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
-                .attachNetwork("eth1", NET1, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.NONE, null))
-                .attachNetwork("eth2", NET2, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.DHCP, null))
-                .attachNetwork("eth3", NET3, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.STATIC_IP, null))
+                .attachNetwork("eth1", NET1, IpConfigBuilder.NONE4_NULL6)
+                .attachNetwork("eth2", NET2, IpConfigBuilder.DHCP4_NULL6)
+                .attachNetwork("eth3", NET3, IpConfigBuilder.STATIC4_NULL6)
                 .build();
     }
 
     private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv6Scenario() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
-                .attachNetwork("eth1", NET1, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.NONE))
-                .attachNetwork("eth2", NET2, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.DHCP))
-                .attachNetwork("eth2", NET3, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.AUTOCONF))
-                .attachNetwork("eth3", NET4, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.STATIC_IP))
+                .attachNetwork("eth1", NET1, IpConfigBuilder.NULL4_NONE6)
+                .attachNetwork("eth2", NET2, IpConfigBuilder.NULL4_DHCP6)
+                .attachNetwork("eth2", NET3, IpConfigBuilder.NULL4_AUTOCONF6)
+                .attachNetwork("eth3", NET4, IpConfigBuilder.NULL4_STATIC6)
                 .build();
     }
 
@@ -415,7 +415,7 @@ class CopyHostNetworksHelperTest {
         ScenarioBuilder attachNetwork(String ifaceName, Guid networkId) {
             VdsNetworkInterface iface = interfaces.get(ifaceName);
             NetworkAttachment attachment = createAttachment(iface.getId(), networkId);
-            attachment.setIpConfiguration(createIpConfiguration(null, null));
+            attachment.setIpConfiguration(IpConfigBuilder.NULL4_NULL6);
             attachments.add(attachment);
             return this;
         }
@@ -443,17 +443,6 @@ class CopyHostNetworksHelperTest {
                     .forEach(iface -> iface.setBondName(bondName));
             interfaces.put(bondName, bond);
             return this;
-        }
-
-        static IpConfiguration createIpConfiguration(Ipv4BootProtocol ipv4BootProto, Ipv6BootProtocol ipv6BootProto) {
-            var ipconfig = new IpConfiguration();
-            if (ipv4BootProto != null) {
-                ipconfig.setIPv4Addresses(Collections.singletonList(createIpv4Addr(ipv4BootProto)));
-            }
-            if (ipv6BootProto != null) {
-                ipconfig.setIpV6Addresses(Collections.singletonList(createIpv6Addr(ipv6BootProto)));
-            }
-            return ipconfig;
         }
 
         private Map<String, VdsNetworkInterface> createNics(int count) {
@@ -496,18 +485,41 @@ class CopyHostNetworksHelperTest {
             attachment.setNetworkId(netId);
             return attachment;
         }
+   }
 
-        private static IPv4Address createIpv4Addr(Ipv4BootProtocol bootProtocol) {
+    private static class IpConfigBuilder {
+
+        private static final IpConfigBuilder IP_CONFIG_BUILDER = new IpConfigBuilder();
+        static final IpConfiguration NULL4_NULL6 = IP_CONFIG_BUILDER.createIpConfiguration(null, null);
+        static final IpConfiguration NULL4_NONE6 = IP_CONFIG_BUILDER.createIpConfiguration(null, Ipv6BootProtocol.NONE);
+        static final IpConfiguration NULL4_DHCP6 = IP_CONFIG_BUILDER.createIpConfiguration(null, Ipv6BootProtocol.DHCP);
+        static final IpConfiguration NULL4_AUTOCONF6 = IP_CONFIG_BUILDER.createIpConfiguration(null, Ipv6BootProtocol.AUTOCONF);
+        static final IpConfiguration NULL4_STATIC6 = IP_CONFIG_BUILDER.createIpConfiguration(null, Ipv6BootProtocol.STATIC_IP);
+        static final IpConfiguration STATIC4_NULL6 = IP_CONFIG_BUILDER.createIpConfiguration(Ipv4BootProtocol.STATIC_IP, null);
+        static final IpConfiguration DHCP4_NULL6 = IP_CONFIG_BUILDER.createIpConfiguration(Ipv4BootProtocol.DHCP, null);
+        static final IpConfiguration NONE4_NULL6 = IP_CONFIG_BUILDER.createIpConfiguration(Ipv4BootProtocol.NONE, null);
+
+        IpConfiguration createIpConfiguration(Ipv4BootProtocol ipv4BootProto, Ipv6BootProtocol ipv6BootProto) {
+            var ipconfig = new IpConfiguration();
+            if (ipv4BootProto != null) {
+                ipconfig.setIPv4Addresses(Collections.singletonList(createIpv4Addr(ipv4BootProto)));
+            }
+            if (ipv6BootProto != null) {
+                ipconfig.setIpV6Addresses(Collections.singletonList(createIpv6Addr(ipv6BootProto)));
+            }
+            return ipconfig;
+        }
+
+        private IPv4Address createIpv4Addr(Ipv4BootProtocol bootProtocol) {
             var ipv4 = new IPv4Address();
             ipv4.setBootProtocol(bootProtocol);
             return ipv4;
         }
 
-        private static IpV6Address createIpv6Addr(Ipv6BootProtocol bootProtocol) {
+        private IpV6Address createIpv6Addr(Ipv6BootProtocol bootProtocol) {
             var ipv6 = new IpV6Address();
             ipv6.setBootProtocol(bootProtocol);
             return ipv6;
         }
-
     }
 }
