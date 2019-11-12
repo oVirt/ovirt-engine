@@ -38,6 +38,8 @@ class CopyHostNetworksHelperTest {
     private static final Guid NET3 = new Guid("00000000-0000-0000-0020-000000000002");
     // Vlan 30
     private static final Guid NET4 = new Guid("00000000-0000-0000-0020-000000000003");
+    // ovirt-mgmt
+    private static final Guid MGMT = new Guid("00000000-0000-0000-0020-010203040506");
 
     private static final ScenarioBuilder scenarios = new ScenarioBuilder();
     private static final Node SOURCE = Node.SOURCE;
@@ -356,7 +358,6 @@ class CopyHostNetworksHelperTest {
 
     private static class NetConfigBuilder {
 
-        private static final Guid MGMT_ID = new Guid("00000000-0000-0000-0020-010203040506");
         private static final Integer MGMT_TYPE = 2;
 
         private Map<String, VdsNetworkInterface> interfaces;
@@ -387,7 +388,7 @@ class CopyHostNetworksHelperTest {
         NetConfigBuilder attachMgmtNetwork(String ifaceName, IpConfiguration ipConfiguration) {
             VdsNetworkInterface iface = interfaces.get(ifaceName);
             iface.setType(MGMT_TYPE);
-            return attachNetwork(ifaceName, MGMT_ID, ipConfiguration);
+            return attachNetwork(ifaceName, MGMT, ipConfiguration);
         }
 
         NetConfigBuilder attachNetwork(String ifaceName, Guid networkId) {
