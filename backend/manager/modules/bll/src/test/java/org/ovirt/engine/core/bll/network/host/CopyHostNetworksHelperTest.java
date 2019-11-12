@@ -281,47 +281,47 @@ class CopyHostNetworksHelperTest {
         assertIPv6Configuration(attachmentsToApply.get(3), Ipv6BootProtocol.NONE);
     }
 
-    private static void assertAttachment(NetworkAttachment attachment, Guid netId, String nicName) {
+    private void assertAttachment(NetworkAttachment attachment, Guid netId, String nicName) {
         assertEquals(netId, attachment.getNetworkId());
         assertEquals(nicName, attachment.getNicName());
     }
 
-    private static void assertAttachmentReused(NetworkAttachment attachment, Guid netId, String nicName) {
+    private void assertAttachmentReused(NetworkAttachment attachment, Guid netId, String nicName) {
         assertAttachment(attachment, netId, nicName);
         assertNotNull(attachment.getId());
     }
 
-    private static void assertIPv4Configuration(NetworkAttachment attachment, Ipv4BootProtocol bootProtocol) {
+    private void assertIPv4Configuration(NetworkAttachment attachment, Ipv4BootProtocol bootProtocol) {
         IpConfiguration ipConfig = attachment.getIpConfiguration();
         assertTrue(ipConfig.hasIpv4PrimaryAddressSet());
         assertEquals(bootProtocol, ipConfig.getIpv4PrimaryAddress().getBootProtocol());
     }
 
-    private static void assertIPv6Configuration(NetworkAttachment attachment, Ipv6BootProtocol bootProtocol) {
+    private void assertIPv6Configuration(NetworkAttachment attachment, Ipv6BootProtocol bootProtocol) {
         IpConfiguration ipConfig = attachment.getIpConfiguration();
         assertTrue(ipConfig.hasIpv6PrimaryAddressSet());
         assertEquals(bootProtocol, ipConfig.getIpv6PrimaryAddress().getBootProtocol());
     }
 
-    private static void assertBond(CreateOrUpdateBond bond, List<String> slaves, String bondName) {
+    private void assertBond(CreateOrUpdateBond bond, List<String> slaves, String bondName) {
         assertEquals(new HashSet<>(slaves), bond.getSlaves());
         assertEquals(bondName, bond.getName());
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioOne() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioOne() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioTwo() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioTwo() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .attachNetwork("eth1", NET1)
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioThree() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioThree() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .attachVlanNetwork("eth1", NET2, 10)
@@ -329,7 +329,7 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFour() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFour() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .attachNetwork("eth1", NET1)
@@ -340,7 +340,7 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFive() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioFive() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .attachVlanNetwork("eth2", NET4, 30)
@@ -351,14 +351,14 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSix() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSix() {
         return new ScenarioBuilder(4)
                 .createBondIface("bond0", Arrays.asList("eth0", "eth1"))
                 .attachMgmtNetwork("bond0")
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSeven() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createScenarioSeven() {
         return new ScenarioBuilder(3)
                 .attachMgmtNetwork("eth0")
                 .createBondIface("bond0", Arrays.asList("eth1", "eth2"))
@@ -366,7 +366,7 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv4Scenario() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv4Scenario() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .attachNetwork("eth1", NET1, ScenarioBuilder.createIpConfiguration(Ipv4BootProtocol.NONE, null))
@@ -375,7 +375,7 @@ class CopyHostNetworksHelperTest {
                 .build();
     }
 
-    private static Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv6Scenario() {
+    private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> createIpv6Scenario() {
         return new ScenarioBuilder(4)
                 .attachMgmtNetwork("eth0")
                 .attachNetwork("eth1", NET1, ScenarioBuilder.createIpConfiguration(null, Ipv6BootProtocol.NONE))
@@ -456,7 +456,7 @@ class CopyHostNetworksHelperTest {
             return ipconfig;
         }
 
-        private static Map<String, VdsNetworkInterface> createNics(int count) {
+        private Map<String, VdsNetworkInterface> createNics(int count) {
             Map<String, VdsNetworkInterface> nicMap = new HashMap<>();
             for (int i = 0; i < count; i++) {
                 String nicName = "eth" + i;
@@ -466,14 +466,14 @@ class CopyHostNetworksHelperTest {
             return nicMap;
         }
 
-        private static Nic createNic(String name) {
+        private Nic createNic(String name) {
             var iface = new Nic();
             iface.setId(Guid.newGuid());
             iface.setName(name);
             return iface;
         }
 
-        private static Vlan createVlan(String baseName, Integer vlanId) {
+        private Vlan createVlan(String baseName, Integer vlanId) {
             var iface = new Vlan();
             iface.setId(Guid.newGuid());
             iface.setName(baseName + "." + vlanId);
@@ -481,7 +481,7 @@ class CopyHostNetworksHelperTest {
             return iface;
         }
 
-        private static Bond createBond(String name, List<String> slaves) {
+        private Bond createBond(String name, List<String> slaves) {
             var iface = new Bond();
             iface.setId(Guid.newGuid());
             iface.setName(name);
@@ -489,7 +489,7 @@ class CopyHostNetworksHelperTest {
             return iface;
         }
 
-        private static NetworkAttachment createAttachment(Guid nicId, Guid netId) {
+        private NetworkAttachment createAttachment(Guid nicId, Guid netId) {
             NetworkAttachment attachment = new NetworkAttachment();
             attachment.setId(Guid.newGuid());
             attachment.setNicId(nicId);
