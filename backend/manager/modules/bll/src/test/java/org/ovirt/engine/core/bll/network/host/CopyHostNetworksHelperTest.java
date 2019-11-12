@@ -31,13 +31,13 @@ import org.ovirt.engine.core.compat.Guid;
 class CopyHostNetworksHelperTest {
 
     // Non-vlan
-    private static Guid NET1 = new Guid("00000000-0000-0000-0020-000000000000");
+    private static final Guid NET1 = new Guid("00000000-0000-0000-0020-000000000000");
     // Vlan 10
-    private static Guid NET2 = new Guid("00000000-0000-0000-0020-000000000001");
+    private static final Guid NET2 = new Guid("00000000-0000-0000-0020-000000000001");
     // Vlan 20
-    private static Guid NET3 = new Guid("00000000-0000-0000-0020-000000000002");
+    private static final Guid NET3 = new Guid("00000000-0000-0000-0020-000000000002");
     // Vlan 30
-    private static Guid NET4 = new Guid("00000000-0000-0000-0020-000000000003");
+    private static final Guid NET4 = new Guid("00000000-0000-0000-0020-000000000003");
 
     @Test
     void testScenarioTwoToOne() {
@@ -387,8 +387,8 @@ class CopyHostNetworksHelperTest {
 
     private static class ScenarioBuilder {
 
-        private static Guid MGMT_ID = new Guid("00000000-0000-0000-0020-010203040506");
-        private static Integer MGMT_TYPE = 2;
+        private static final Guid MGMT_ID = new Guid("00000000-0000-0000-0020-010203040506");
+        private static final Integer MGMT_TYPE = 2;
 
         Map<String, VdsNetworkInterface> interfaces;
         List<NetworkAttachment> attachments;
