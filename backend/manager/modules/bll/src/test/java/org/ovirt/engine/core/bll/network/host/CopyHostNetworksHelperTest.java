@@ -349,8 +349,8 @@ class CopyHostNetworksHelperTest {
         private static final Guid MGMT_ID = new Guid("00000000-0000-0000-0020-010203040506");
         private static final Integer MGMT_TYPE = 2;
 
-        Map<String, VdsNetworkInterface> interfaces;
-        List<NetworkAttachment> attachments;
+        private Map<String, VdsNetworkInterface> interfaces;
+        private List<NetworkAttachment> attachments;
         private IpConfiguration ipConfiguration;
 
         NetConfigBuilder(int interfaceCount) {
@@ -377,8 +377,7 @@ class CopyHostNetworksHelperTest {
         NetConfigBuilder attachMgmtNetwork(String ifaceName, IpConfiguration ipConfiguration) {
             VdsNetworkInterface iface = interfaces.get(ifaceName);
             iface.setType(MGMT_TYPE);
-            this.attachNetwork(ifaceName, MGMT_ID, ipConfiguration);
-            return this;
+            return attachNetwork(ifaceName, MGMT_ID, ipConfiguration);
         }
 
         NetConfigBuilder attachNetwork(String ifaceName, Guid networkId) {
@@ -400,8 +399,7 @@ class CopyHostNetworksHelperTest {
         NetConfigBuilder attachVlanNetwork(String ifaceName, Guid networkId, Integer vlanId, IpConfiguration ipConfiguration) {
             VdsNetworkInterface vlanIface = createVlan(ifaceName, vlanId);
             interfaces.put(vlanIface.getName(), vlanIface);
-            this.attachNetwork(ifaceName, networkId, ipConfiguration);
-            return this;
+            return attachNetwork(ifaceName, networkId, ipConfiguration);
         }
 
         NetConfigBuilder createBondIface(String bondName, List<String> slaveNames) {
