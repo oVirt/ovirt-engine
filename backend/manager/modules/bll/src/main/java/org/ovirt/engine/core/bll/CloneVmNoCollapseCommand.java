@@ -174,12 +174,14 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
     private MoveOrCopyImageGroupParameters createCopyParams(DiskImage diskImage) {
         Guid srcStorageDomainID = diskImage.getStorageIds().get(0);
         Guid destImageGroupID = Guid.newGuid();
-        List<DiskImage> newChain = prepareImageChainMap(diskImage, destImageGroupID);
+        Guid destStorageDomainID = getParameters().getDestStorageDomainId() == null ? srcStorageDomainID :
+                diskImage.getStorageIds().get(0);
+        List<DiskImage> newChain = prepareImageChainMap(diskImage, destImageGroupID, destStorageDomainID);
 
         MoveOrCopyImageGroupParameters p =
                 new MoveOrCopyImageGroupParameters(diskImage.getImageId(),
                         srcStorageDomainID,
-                        getParameters().getDestStorageDomainId(),
+                        destStorageDomainID,
                         ImageOperation.Copy);
         p.setAddImageDomainMapping(false);
         p.setVolumeFormat(diskImage.getVolumeFormat());
@@ -197,11 +199,11 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         return p;
     }
 
-    private List<DiskImage> prepareImageChainMap(DiskImage diskImage, Guid destImageGroupID) {
+    private List<DiskImage> prepareImageChainMap(DiskImage diskImage, Guid destImageGroupID, Guid destStorageDomainID) {
         Map<DiskImage, DiskImage> oldToNewDiskImageMap =
                 imagesHandler.mapChainToNewIDs(diskImage.getId(),
                         destImageGroupID,
-                        getParameters().getDestStorageDomainId(),
+                        destStorageDomainID,
                         getCurrentUser());
         getParameters().getSrcToDstChainMap()
                 .put(destImageGroupID,
