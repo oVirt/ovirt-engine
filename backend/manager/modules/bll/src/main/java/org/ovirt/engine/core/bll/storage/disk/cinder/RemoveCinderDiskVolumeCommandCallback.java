@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.enterprise.inject.Typed;
 
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpStatus;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
