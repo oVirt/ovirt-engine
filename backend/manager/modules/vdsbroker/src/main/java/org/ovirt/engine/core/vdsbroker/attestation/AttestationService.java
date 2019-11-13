@@ -11,11 +11,21 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.UnsupportedSchemeException;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.impl.conn.DefaultRoutePlanner;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonProcessingException;
@@ -23,7 +33,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
+import org.ovirt.engine.core.utils.ssl.AuthSSLContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,35 +41,60 @@ public class AttestationService {
     private static final String HEADER_HOSTS = "hosts";
     private static final String HEADER_HOST_NAME = "host_name";
     private static final String HEADER_RESULT = "trust_lvl";
-    private static final String HEADER_VTIME = "vtime";
     private static final String CONTENT_TYPE = "application/json";
     private static final AttestationService instance = new AttestationService();
 
     private static final Logger log = LoggerFactory.getLogger(AttestationService.class);
 
+    private AttestationService() {
+    }
+
     public static HttpClient getClient() {
-        HttpClient httpClient = new HttpClient();
+        HttpClientBuilder httpClient = HttpClients.custom();
+        RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
+
         if (Config.getValue(ConfigValues.SecureConnectionWithOATServers)) {
-            URL trustStoreUrl;
             try {
                 int port = Config.getValue(ConfigValues.AttestationPort);
-                trustStoreUrl = new URL("file://"
+                URL trustStoreUrl = new URL("file://"
                         + Config.resolveAttestationTrustStorePath());
                 String truststorePassword = Config.getValue(ConfigValues.AttestationTruststorePass);
                 String attestationServer = Config.getValue(ConfigValues.AttestationServer);
-                // registering the https protocol with a socket factory that
-                // provides client authentication.
-                ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(getTrustStore(trustStoreUrl.getPath(),
-                        truststorePassword), Config.getValue(ConfigValues.ExternalCommunicationProtocol));
-                Protocol clientAuthHTTPS = new Protocol("https", factory, port);
-                httpClient.getHostConfiguration().setHost(attestationServer,
-                        port, clientAuthHTTPS);
+
+                TrustManagerFactory tmfactory =
+                        TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                tmfactory.init(getTrustStore(trustStoreUrl.getPath(), truststorePassword));
+                AuthSSLContextFactory authSSLContextFactory =
+                        new AuthSSLContextFactory(() -> Config.getValue(ConfigValues.ExternalCommunicationProtocol));
+                authSSLContextFactory.setTrustManagersSupplier(tmfactory::getTrustManagers);
+                authSSLContextFactory.setKeyManagersSupplier(() -> null);
+
+                authSSLContextFactory.createSSLContext()
+                        .orError(e -> log.error(
+                                "Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work: {}",
+                                e))
+                        .ifPresent(sslContext -> registryBuilder.register("https",
+                                new SSLConnectionSocketFactory(sslContext)));
+
+                httpClient.setRoutePlanner(new DefaultRoutePlanner(host -> {
+                    String hostName = host.getAddress().getHostName();
+                    // todo is that really needed?
+                    if (hostName != null && hostName.contains(attestationServer)) {
+                        return port;
+                    }
+                    throw new UnsupportedSchemeException(" protocol is not supported for host: " + hostName);
+                }));
+
             } catch (Exception e) {
-                log.error("Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work: {}", e.getMessage());
+                log.error("Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work: {}",
+                        e.getMessage());
                 log.debug("Exception", e);
             }
         }
-        return httpClient;
+
+        BasicHttpClientConnectionManager connManager = new BasicHttpClientConnectionManager(registryBuilder.build());
+        httpClient.setConnectionManager(connManager);
+        return httpClient.build();
     }
 
     private static KeyStore getTrustStore(String filePath, String password) throws IOException,
@@ -77,22 +112,20 @@ public class AttestationService {
         return instance;
     }
 
-    private AttestationService() {
-    }
-
     public List<AttestationValue> attestHosts(List<String> hosts) {
         String pollURI = Config.getValue(ConfigValues.PollUri);
         List<AttestationValue> values = new ArrayList<>();
 
-        PostMethod postMethod = new PostMethod("/" + pollURI);
+        HttpPost postMethod = new HttpPost("/" + pollURI);
         try {
-            postMethod.setRequestEntity(new StringRequestEntity(
-                    writeListJson(hosts)));
-            postMethod.addRequestHeader("Accept", CONTENT_TYPE);
-            postMethod.addRequestHeader("Content-type", CONTENT_TYPE);
+
+            postMethod.setEntity(new StringEntity(writeListJson(hosts)));
+            postMethod.addHeader("Accept", CONTENT_TYPE);
+            postMethod.addHeader("Content-type", CONTENT_TYPE);
             HttpClient httpClient = getClient();
-            int statusCode = httpClient.executeMethod(postMethod);
-            String strResponse = postMethod.getResponseBodyAsString();
+            HttpResponse response = httpClient.execute(postMethod);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String strResponse = EntityUtils.toString(response.getEntity());
             log.debug("return attested result: {}", strResponse);
             if (statusCode == 200) {
                 values = parsePostedResp(strResponse);
@@ -121,14 +154,14 @@ public class AttestationService {
 
         JsonNode hosts = tree.get(HEADER_HOSTS);
         if (hosts != null) {
-          for (JsonNode host : hosts) {
-            String name = host.get(HEADER_HOST_NAME).asText();
-            String level = host.get(HEADER_RESULT).asText();
-            AttestationValue value = new AttestationValue();
-            value.setHostName(name);
-            value.setTrustLevel(AttestationResultEnum.valueOf(level.toUpperCase()));
-            values.add(value);
-          }
+            for (JsonNode host : hosts) {
+                String name = host.get(HEADER_HOST_NAME).asText();
+                String level = host.get(HEADER_RESULT).asText();
+                AttestationValue value = new AttestationValue();
+                value.setHostName(name);
+                value.setTrustLevel(AttestationResultEnum.valueOf(level.toUpperCase()));
+                values.add(value);
+            }
         }
         return values;
     }
