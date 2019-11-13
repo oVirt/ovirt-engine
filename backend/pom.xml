@@ -22,4 +22,31 @@
     <engine.groupId>org.ovirt.engine.core</engine.groupId>
   </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+          <execution>
+            <id>enforce-banned-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <rules>
+            <bannedDependencies>
+              <excludes>
+                <exclude>commons-httpclient</exclude>
+              </excludes>
+            </bannedDependencies>
+          </rules>
+          <fail>true</fail>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

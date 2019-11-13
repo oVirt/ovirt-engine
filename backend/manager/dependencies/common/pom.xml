@@ -47,12 +47,6 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>${httpclient.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>commons-jxpath</groupId>
       <artifactId>commons-jxpath</artifactId>
       <version>${commons-jxpath.version}</version>
@@ -250,6 +244,12 @@
       <groupId>com.woorea</groupId>
       <artifactId>resteasy-connector</artifactId>
       <version>${openstack-client.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-httpclient</groupId>
+          <artifactId>commons-httpclient</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -322,12 +322,6 @@
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
                 <moduleName>org.apache.commons.configuration</moduleName>
-              </module>
-
-              <module>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <moduleName>org.apache.commons.httpclient</moduleName>
               </module>
 
               <module>

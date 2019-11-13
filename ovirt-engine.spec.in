@@ -266,10 +266,13 @@ BuildRequires:	java-1.8.0-openjdk-headless >= 1:1.8.0
 BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
 BuildRequires:	make
+
 %if 0%{?rhel}
 BuildRequires:	rh-maven35-maven >= 3.5.0
+BuildRequires:  rh-maven35-maven-enforcer-plugin
 %else
 BuildRequires:	maven >= 3.5.0
+BuildRequires:  maven-enforcer-plugin
 %endif
 BuildRequires:	python
 BuildRequires:	python2-devel
@@ -311,7 +314,6 @@ Requires:	apache-commons-jxpath
 Requires:	archaius-core
 Requires:	hystrix-core
 Requires:	hystrix-metrics-event-stream
-Requires:	jakarta-commons-httpclient
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
 Requires:	objectweb-asm
@@ -969,7 +971,6 @@ common/net/minidev/main/json-smart.jar json-smart.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
-common/org/apache/commons/httpclient/main/commons-httpclient.jar
 common/org/apache/commons/jxpath/main/commons-jxpath.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
 common/org/apache/xmlrpc/main/xmlrpc-client.jar
