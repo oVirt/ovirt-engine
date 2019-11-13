@@ -354,7 +354,15 @@ public class BackendVmResource
                 new IdQueryParameters(guid), "VM: id=" + guid);
                 CloneVmParameters cloneVmParameters = new CloneVmParameters(vm, action.getVm().getName());
         cloneVmParameters.setMakeCreatorExplicitOwner(isFiltered());
-        Response response = doAction(ActionType.CloneVm,
+        if (action.isSetStorageDomain() && getStorageDomainId(action) != null) {
+            cloneVmParameters.setDestStorageDomainId(getStorageDomainId(action));
+        }
+
+        ActionType actionType = !action.isSetDiscardSnapshots() || action.isDiscardSnapshots() ?
+                ActionType.CloneVm:
+                ActionType.CloneVmNoCollapse;
+
+        Response response = doAction(actionType,
                 cloneVmParameters,
                 action);
 
