@@ -11,6 +11,7 @@
   - supervdsmd.service
   - libvirtd.service
   - virt-imageio-daemon.service
+  - NetworkManager.service
   when: "item in ansible_facts.services"
 
 - name: Start and enable services
@@ -23,5 +24,6 @@
   - messagebus.service
   - libvirtd.service
   - virt-imageio-daemon.service
+  - NetworkManager.service
   - vdsmd.service
   when: "item in ansible_facts.services"
