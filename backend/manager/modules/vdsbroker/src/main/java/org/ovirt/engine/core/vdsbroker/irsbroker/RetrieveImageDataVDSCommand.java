@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -10,23 +13,24 @@ import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 @Logged(returnLevel = LogLevel.DEBUG)
-public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandParameters> extends HttpImageTaskVDSCommand<GetMethod, P> {
+public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandParameters> extends HttpImageTaskVDSCommand<HttpGet, P> {
 
     public RetrieveImageDataVDSCommand(P parameters) {
         super(parameters);
     }
 
     protected void prepareMethod() {
-        getMethod().setRequestHeader("Range", String.format("bytes=0-%s", getParameters().getSize() - 1));
+        getMethod().setHeader("Range", String.format("bytes=0-%s", getParameters().getSize() - 1));
     }
 
     @Override
-    protected void handleOkResponse() {
+    protected void handleOkResponse(HttpResponse httpResponse) {
         processResponseHeaderValue(getMethod(), "Content-Length", getParameters().getSize().toString());
 
         byte[] data;
         try {
-            data = getMethod().getResponseBody();
+            HttpEntity entity = httpResponse.getEntity();
+            data = EntityUtils.toByteArray(entity);
         } catch (Exception e) {
             throw createNetworkException(e);
         }
@@ -51,8 +55,8 @@ public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandPara
     }
 
     @Override
-    protected GetMethod concreteCreateMethod(String url) {
-        return new GetMethod(url);
+    protected HttpGet concreteCreateMethod(String url) {
+        return new HttpGet(url);
     }
 
     @Override

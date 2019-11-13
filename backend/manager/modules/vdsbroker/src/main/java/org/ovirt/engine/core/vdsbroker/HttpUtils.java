@@ -1,25 +1,23 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
+import org.ovirt.engine.core.utils.ssl.AuthSSLContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,22 +25,11 @@ public class HttpUtils {
 
     private static final String HTTP = "http";
     private static final String HTTPS = "https";
+    // todo will be injectable in futher patches (HttpUtils will no longer be 'static' based)
+    private static final AuthSSLContextFactory authSslContextFactory =
+            new AuthSSLContextFactory(() -> Config.getValue(ConfigValues.VdsmSSLProtocol));
+
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
-    private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<>(Arrays.asList("create", "hotplugDisk"));
-    static {
-        if (Config.getValue(ConfigValues.EncryptHostCommunication)) {
-            try {
-                // registering the https protocol with a socket factory that
-                // provides client authentication.
-                ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(EngineEncryptionUtils.getKeyManagers(),
-                    EngineEncryptionUtils.getTrustManagers(), Config.getValue(ConfigValues.VdsmSSLProtocol));
-                Protocol clientAuthHTTPS = new Protocol("https", factory, 54321);
-                Protocol.registerProtocol("https", clientAuthHTTPS);
-            } catch (Exception e) {
-                log.error("Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work", e);
-            }
-        }
-    }
 
     /**
      * There are places in the code where use http to communicate with vdsm or external providers
@@ -55,31 +42,42 @@ public class HttpUtils {
      *            - maximum number of connections allowed for a given host
      * @param maxTotalConnections
      *            - The maximum number of connections allowed
-     * @return {@link HttpClient}.
+     * @return {@link CloseableHttpClient}.
      */
-    public static HttpClient getConnection(
+    public static CloseableHttpClient getConnection(
             int connectionTimeOut,
             int clientRetries,
             int maxConnectionsPerHost,
             int maxTotalConnections) {
-        HttpConnectionManagerParams params = new HttpConnectionManagerParams();
-        params.setConnectionTimeout(connectionTimeOut);
-        params.setDefaultMaxConnectionsPerHost(maxConnectionsPerHost);
-        params.setMaxTotalConnections(maxTotalConnections);
-        MultiThreadedHttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
-        httpConnectionManager.setParams(params);
-        // Create the client:
-        HttpClient client = new HttpClient(httpConnectionManager);
 
-        // Configure the HTTP client so it will retry the execution of
-        // methods when there are IO errors:
-        int retries = Config.getValue(ConfigValues.vdsRetries);
-        HttpMethodRetryHandler handler = new DefaultHttpMethodRetryHandler(retries, false);
-        HttpClientParams parameters = client.getParams();
-        parameters.setParameter(HttpMethodParams.RETRY_HANDLER, handler);
+        RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory> create()
+                // todo: should it be registered by default - need to be verified
+                .register(HTTP, PlainConnectionSocketFactory.INSTANCE);
 
-        // Done:
-        return client;
+        if (Config.getValue(ConfigValues.EncryptHostCommunication)) {
+            authSslContextFactory.createSSLContext()
+                    .orError(err -> log.error("Failed to init SSL factory. SSL connections will not work. {}", err))
+                    .ifPresent(sslContext -> registryBuilder.register(HTTPS,
+                            new SSLConnectionSocketFactory(sslContext)));
+        }
+
+        DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(clientRetries, false);
+
+        RequestConfig defaultRequestConfig = RequestConfig.custom().setConnectTimeout(connectionTimeOut).build();
+
+        PoolingHttpClientConnectionManager connManager =
+                new PoolingHttpClientConnectionManager(registryBuilder.build());
+        connManager.setDefaultConnectionConfig(ConnectionConfig.DEFAULT);
+        connManager.setMaxTotal(maxTotalConnections);
+        connManager.setDefaultMaxPerRoute(maxConnectionsPerHost);
+
+        return HttpClients.custom()
+                .setConnectionManager(connManager)
+                .setMaxConnPerRoute(maxConnectionsPerHost)
+                .setMaxConnTotal(maxTotalConnections)
+                .setRetryHandler(retryHandler)
+                .setDefaultRequestConfig(defaultRequestConfig)
+                .build();
     }
 
     public static Pair<String, URL> getConnectionUrl(String hostName, int port, String path, boolean isSecure) {
@@ -93,9 +91,14 @@ public class HttpUtils {
         }
     }
 
-    public static void shutDownConnection(HttpClient httpClient) {
-        if (httpClient != null && httpClient.getHttpConnectionManager() != null) {
-            ((MultiThreadedHttpConnectionManager) httpClient.getHttpConnectionManager()).shutdown();
+    public static void shutDownConnection(CloseableHttpClient httpClient) {
+        if (httpClient != null) {
+            try {
+                httpClient.close();
+            } catch (IOException e) {
+                log.debug("Http client shutdown error details", e);
+                log.warn("Http client shutdown error: {}", e.getMessage());
+            }
         }
     }
 }

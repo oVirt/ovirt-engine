@@ -7,9 +7,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -28,7 +31,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
-public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extends ImageHttpAccessVDSCommandParameters> extends VdsBrokerCommand<P> {
+public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P extends ImageHttpAccessVDSCommandParameters> extends VdsBrokerCommand<P> {
     private T method;
 
     public HttpImageTaskVDSCommand(P parameters) {
@@ -52,22 +55,22 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
     }
 
     private void addHeaders() {
-        getMethod().setRequestHeader("connection", "close");
-        getMethod().setRequestHeader("Storage-Pool-Id", getParameters().getStoragePoolId().toString());
-        getMethod().setRequestHeader("Storage-Domain-Id", getParameters().getStorageDomainId().toString());
-        getMethod().setRequestHeader("Image-Id", getParameters().getImageGroupId().toString());
-        getMethod().setRequestHeader("Volume-Id", getParameters().getImageId().toString());
+        getMethod().setHeader("connection", "close");
+        getMethod().setHeader("Storage-Pool-Id", getParameters().getStoragePoolId().toString());
+        getMethod().setHeader("Storage-Domain-Id", getParameters().getStorageDomainId().toString());
+        getMethod().setHeader("Image-Id", getParameters().getImageGroupId().toString());
+        getMethod().setHeader("Volume-Id", getParameters().getImageId().toString());
     }
 
     protected void executeHttpMethod(final T method) {
-        int responseCode = -1;
+        HttpResponse httpResponse = null;
         VdsManager manager = resourceManager.getVdsManager(getParameters().getVdsId());
         final HttpClient httpclient = manager.getVdsProxy().getHttpClient();
         try {
-            FutureTask<Integer> futureTask = new FutureTask(() -> httpclient.executeMethod(method));
-            Future<Integer> f = ThreadPoolUtil.execute(futureTask);
+            FutureTask<HttpResponse> futureTask = new FutureTask(() -> httpclient.execute(method));
+            Future<HttpResponse> f = ThreadPoolUtil.execute(futureTask);
             if (f.get(Config.<Integer>getValue(getConfigValueTimeLimitForOperation()), TimeUnit.MINUTES) == null) {
-                responseCode = futureTask.get();
+                httpResponse = futureTask.get();
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -76,22 +79,25 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
             throw createNetworkException(e);
         }
 
-        if (responseCode == getSuccessCode()) {
+        if (httpResponse.getStatusLine().getStatusCode() == getSuccessCode()) {
             Guid createdTask =
                     Guid.createGuidFromString(processResponseHeaderValue(getMethod(), "Task-Id", null));
             getVDSReturnValue().setCreationInfo(
                     new AsyncTaskCreationInfo(createdTask, getCreatedTaskType(), getParameters()
                             .getStoragePoolId()));
-            handleOkResponse();
+            handleOkResponse(httpResponse);
             getVDSReturnValue().setSucceeded(true);
             return;
         }
 
         processResponseHeaderValue(getMethod(), "Content-type", "application/json");
 
-        String response;
+        String response = null;
         try {
-            response = getMethod().getResponseBodyAsString();
+            HttpEntity entity = httpResponse.getEntity();
+            if(entity!=null){
+                response = EntityUtils.toString(entity);
+            }
         } catch (Exception e) {
             throw createNetworkException(e);
         }
@@ -107,10 +113,10 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         proceedProxyReturnValue();
     }
 
-    protected void handleOkResponse() {}
+    protected void handleOkResponse(HttpResponse httpResponse) {}
 
-    protected String processResponseHeaderValue(HttpMethodBase method, String headerName, String expectedValue) {
-        Header header = method.getResponseHeader(headerName);
+    protected String processResponseHeaderValue(HttpRequestBase method, String headerName, String expectedValue) {
+        Header header = method.getFirstHeader(headerName);
         if (header == null) {
             throwVdsErrorException("response was missing the following header: "
                     + headerName, EngineError.GeneralException);

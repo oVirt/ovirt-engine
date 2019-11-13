@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.HttpUtils;
@@ -101,9 +101,9 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonRpcVdsServer.class);
     private final JsonRpcClient client;
-    private final HttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
-    public JsonRpcVdsServer(JsonRpcClient client, HttpClient httpClient) {
+    public JsonRpcVdsServer(JsonRpcClient client, CloseableHttpClient httpClient) {
         this.client = client;
         this.httpClient = httpClient;
     }
@@ -126,7 +126,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public HttpClient getHttpClient() {
+    public CloseableHttpClient getHttpClient() {
         return this.httpClient;
     }
 

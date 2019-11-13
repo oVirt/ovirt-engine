@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
@@ -45,7 +45,7 @@ public interface IVdsServer {
 
     List<Certificate> getPeerCertificates();
 
-    HttpClient getHttpClient();
+    CloseableHttpClient getHttpClient();
 
     OneVmReturn create(Map createInfo);
 

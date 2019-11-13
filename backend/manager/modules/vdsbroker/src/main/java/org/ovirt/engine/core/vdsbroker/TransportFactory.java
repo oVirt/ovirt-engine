@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IIrsServer;
@@ -33,9 +33,15 @@ public class TransportFactory {
     }
 
     public static IVdsServer createVdsServer(
-            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat, ScheduledExecutorService executorService) {
+            String hostname,
+            int port,
+            int clientTimeOut,
+            int connectionTimeOut,
+            int clientRetries,
+            int heartbeat,
+            ScheduledExecutorService executorService) {
 
-        HttpClient client = HttpUtils.getConnection(
+        CloseableHttpClient client = HttpUtils.getConnection(
                 connectionTimeOut,
                 clientRetries,
                 Config.getValue(ConfigValues.VdsMaxConnectionsPerHost),
