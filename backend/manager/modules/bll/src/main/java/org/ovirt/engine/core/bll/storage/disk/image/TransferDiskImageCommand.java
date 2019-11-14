@@ -1167,7 +1167,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
         if (!removeImageTicketFromProxy(entity.getImagedTicketId())) {
-            return false;
+            // ignoring when we are not uploading using the browser which
+            // always uses the proxy url.
+            return !getParameters().isTransferringViaBrowser();
         }
 
         ImageTransfer updates = new ImageTransfer();
