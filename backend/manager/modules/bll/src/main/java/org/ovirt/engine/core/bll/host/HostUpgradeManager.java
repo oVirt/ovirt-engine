@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.host;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -73,29 +72,10 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 .playAction(String.format("Check for update of host %1$s", host.getName()));
 
             List<String> availablePackages = new ArrayList<>();
-            ansibleReturnValue = ansibleExecutor.runCommand(
-                command,
-                (String taskName, String eventUrl) -> {
-                    AuditLogable logable = AuditLogableImpl.createHostEvent(
-                            command.hosts().get(0),
-                            command.correlationId(),
-                            new HashMap<String, String>() {
-                                {
-                                    put("Message", taskName);
-                                    put("PlayAction", command.playAction());
-                                }
-                            }
-                    );
-                    auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+            ansibleReturnValue = ansibleExecutor.runCommand(command,
+                    log,
+                    eventUrl -> availablePackages.addAll(runnerClient.getYumPackages(eventUrl)));
 
-                    try {
-                        availablePackages.addAll(runnerClient.getYumPackages(eventUrl));
-                    } catch (Exception ex) {
-                        log.error("Error: {}", ex.getMessage());
-                        log.debug("Exception: ", ex);
-                    }
-                }
-            );
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format(
                     "Failed to run check-update of host '%1$s'. Error: %2$s",

@@ -5,8 +5,9 @@
 
 package org.ovirt.engine.core.common.utils.ansible;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,9 @@ public class AnsibleExecutor {
 
     @Inject
     private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable
@@ -61,17 +64,8 @@ public class AnsibleExecutor {
             command,
             timeout,
             (String taskName, String eventUrl) -> {
-                AuditLogable logable = AuditLogableImpl.createHostEvent(
-                    command.hosts().get(0),
-                    command.correlationId(),
-                    new HashMap<>() {
-                        {
-                            put("Message", taskName);
-                            put("PlayAction", command.playAction());
-                        }
-                    }
-                );
-                Injector.get(AuditLogDirector.class).log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+                AuditLogable logable = createAuditLogable(command, taskName);
+                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
             }
         );
     }
@@ -79,6 +73,25 @@ public class AnsibleExecutor {
     public AnsibleReturnValue runCommand(AnsibleCommandConfig command, BiConsumer<String, String> fn) {
         int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         return runCommand(command, timeout, fn);
+    }
+
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command,
+            Logger originLogger,
+            Consumer<String> eventUrlConsumer) {
+        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        return runCommand(
+            command,
+            timeout,
+            (String taskName, String eventUrl) -> {
+                AuditLogable logable = createAuditLogable(command, taskName);
+                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+                try {
+                    eventUrlConsumer.accept(eventUrl);
+                } catch (Exception ex) {
+                    originLogger.error("Error: {}", ex.getMessage());
+                    originLogger.debug("Exception: ", ex);
+                }
+            });
     }
 
     public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout, BiConsumer<String, String> fn) {
@@ -146,5 +159,13 @@ public class AnsibleExecutor {
         }
 
         return ret;
+    }
+
+    private AuditLogable createAuditLogable(AnsibleCommandConfig command, String taskName) {
+        return AuditLogableImpl.createHostEvent(
+            command.hosts().get(0),
+            command.correlationId(),
+            Map.of("Message", taskName, "PlayAction", command.playAction())
+        );
     }
 }

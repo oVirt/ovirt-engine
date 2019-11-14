@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -33,8 +31,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -173,29 +169,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
-            command,
-            (String taskName, String eventUrl) -> {
-                AuditLogable logable = AuditLogableImpl.createHostEvent(
-                        command.hosts().get(0),
-                        command.correlationId(),
-                        new HashMap<String, String>() {
-                            {
-                                put("Message", taskName);
-                                put("PlayAction", command.playAction());
-                            }
-                        }
-                );
-                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
-
-                try {
-                    stdout.append(runnerClient.getCommandStdout(eventUrl));
-                } catch (Exception ex) {
-                    log.error("Error: {}", ex.getMessage());
-                    log.debug("Exception: ", ex);
-                }
-            }
-        );
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor
+                .runCommand(command, log, eventUrl -> stdout.append(runnerClient.getCommandStdout(eventUrl)));
 
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {

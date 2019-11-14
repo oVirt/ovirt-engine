@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.exportimport.ExtractOvaCommand;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -22,8 +21,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 
 public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters> extends QueriesCommandBase<P> {
@@ -63,29 +60,9 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
             .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
-            command,
-            (String taskName, String eventUrl) -> {
-                AuditLogable logable = AuditLogableImpl.createHostEvent(
-                        command.hosts().get(0),
-                        command.correlationId(),
-                        new HashMap<String, String>() {
-                            {
-                                put("Message", taskName);
-                                put("PlayAction", command.playAction());
-                            }
-                        }
-                );
-                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor
+                .runCommand(command, log, eventUrl -> stdout.append(runnerClient.getCommandStdout(eventUrl)));
 
-                try {
-                    stdout.append(runnerClient.getCommandStdout(eventUrl));
-                } catch (Exception ex) {
-                    log.error("Error: {}", ex.getMessage());
-                    log.debug("Exception: ", ex);
-                }
-            }
-        );
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {
             log.error("Failed to query OVA info: {}", ansibleReturnValue.getStderr());
