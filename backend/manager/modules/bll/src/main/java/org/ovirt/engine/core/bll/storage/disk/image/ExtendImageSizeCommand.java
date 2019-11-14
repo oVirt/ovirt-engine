@@ -120,6 +120,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
                 VDSReturnValue ret = extendVmDiskSize(vm, getParameters().getNewSize());
                 if (!ret.getSucceeded()) {
                     updateAuditLogFailedToUpdateVM(vm.getName());
+                    updateAllVmsSucceeded = false;
                 }
             } catch (EngineException e) {
                 log.warn("Failed to update VM '{}' with the new volume size due to error, "
