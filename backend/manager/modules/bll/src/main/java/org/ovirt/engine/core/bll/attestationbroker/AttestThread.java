@@ -38,16 +38,16 @@ public class AttestThread extends Thread {
     public void run() {
         List<AttestationValue> values;
         if (trustedHostsNames.size() > FIRST_STAGE_QUERY_SIZE) {
-            values = AttestationService.getInstance().attestHosts(trustedHostsNames.subList(0, FIRST_STAGE_QUERY_SIZE));
+            values = AttestationService.INSTANCE.attestHosts(trustedHostsNames.subList(0, FIRST_STAGE_QUERY_SIZE));
             handleValues(values);
             for (int from = FIRST_STAGE_QUERY_SIZE; from < trustedHostsNames.size(); from+= SECOND_STAGE_QUERY_SIZE) {
                 int to = (from + SECOND_STAGE_QUERY_SIZE < trustedHostsNames.size()) ?
                         from + SECOND_STAGE_QUERY_SIZE : trustedHostsNames.size();
-                values = AttestationService.getInstance(). attestHosts(trustedHostsNames.subList(from, to));
+                values = AttestationService.INSTANCE. attestHosts(trustedHostsNames.subList(from, to));
                 handleValues(values);
             }
         } else {
-            values = AttestationService.getInstance().attestHosts(trustedHostsNames);
+            values = AttestationService.INSTANCE.attestHosts(trustedHostsNames);
             handleValues(values);
         }
     }

@@ -125,7 +125,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         hosts.add(getVds().getHostName());
         List<AttestationValue> value = new ArrayList<>();
         try {
-            value = AttestationService.getInstance().attestHosts(hosts);
+            value = AttestationService.INSTANCE.attestHosts(hosts);
         } catch (Exception e) {
             log.error("Encounter an exception while attesting host's trustworthiness for Host '{}': {}",
                     hosts,
