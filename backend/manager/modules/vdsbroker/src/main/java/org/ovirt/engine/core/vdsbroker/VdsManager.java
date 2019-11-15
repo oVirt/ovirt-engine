@@ -250,7 +250,7 @@ public class VdsManager {
         try {
             refreshImpl();
         } catch (Throwable t) {
-            log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(t));
+            log.error("Timer update runtime info failed. Exception: {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception:", t);
         }
     }
@@ -354,7 +354,7 @@ public class VdsManager {
                 setDomains(domainsList);
             }
         } catch (Exception e) {
-            log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
+            log.error("Timer update runtime info failed. Exception: {}", ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception:", e);
         } finally {
             lockManager.releaseLock(monitoringLock);
@@ -405,7 +405,7 @@ public class VdsManager {
     }
 
     private void logException(final RuntimeException ex) {
-        log.error("ResourceManager::refreshVdsRunTimeInfo", ExceptionUtils.getRootCauseMessage(ex));
+        log.error("ResourceManager::refreshVdsRunTimeInfo {}", ExceptionUtils.getRootCauseMessage(ex));
         log.debug("Exception", ex);
     }
 
