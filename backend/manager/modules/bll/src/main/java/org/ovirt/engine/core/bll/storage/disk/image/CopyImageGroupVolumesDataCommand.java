@@ -63,6 +63,13 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
                 .collect(Collectors.toList());
 
         ImagesHandler.sortImageList(images);
+
+        // When perform LSM we do not want to copy the LEAF as it is the auto-generated
+        // snapshot and is synchronized separately
+        if (getParameters().getParentCommand() == ActionType.LiveMigrateDisk) {
+            images.remove(images.size() - 1);
+        }
+
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));
 
         prepareWeights(images);

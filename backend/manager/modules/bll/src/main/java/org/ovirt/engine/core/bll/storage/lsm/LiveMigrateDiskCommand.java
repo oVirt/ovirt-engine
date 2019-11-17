@@ -30,7 +30,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.CreateImagePlaceholderCommandParameters;
+import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
+import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters.LiveDiskMigrateStage;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
-import org.ovirt.engine.core.common.action.SyncImageGroupDataCommandParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -165,15 +166,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 ActionGroup.DISK_LIVE_STORAGE_MIGRATION));
     }
 
-    private CreateImagePlaceholderCommandParameters buildCreateImagePlacerholderParams() {
-        CreateImagePlaceholderCommandParameters p = new CreateImagePlaceholderCommandParameters(
-                getParameters().getStoragePoolId(),
-                getParameters().getImageGroupID(),
-                getParameters().getSourceStorageDomainId(),
-                getParameters().getTargetStorageDomainId());
-        p.setParentCommand(getActionType());
-        p.setParentParameters(getParameters());
+    private CloneImageGroupVolumesStructureCommandParameters buildCloneImageGroupVolumesStructureCommandParams() {
+        CloneImageGroupVolumesStructureCommandParameters p =
+                new CloneImageGroupVolumesStructureCommandParameters(getParameters().getStoragePoolId(),
+                        getParameters().getSourceStorageDomainId(),
+                        getParameters().getTargetStorageDomainId(),
+                        getImageGroupId(),
+                        getActionType(),
+                        getParameters());
+        p.setDestImageGroupId(getImageGroupId());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        p.setJobWeight(Job.MAX_WEIGHT);
         return p;
     }
 
@@ -219,13 +222,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     public boolean performNextOperation(int completedChildCount) {
         if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.CREATE_SNAPSHOT) {
-            updateStage(LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION);
-            runInternalAction(ActionType.CreateImagePlaceholder,
-                    buildCreateImagePlacerholderParams(), createStepsContext(StepEnum.CLONE_IMAGE_STRUCTURE));
+            runInternalAction(ActionType.CloneImageGroupVolumesStructure,
+                    buildCloneImageGroupVolumesStructureCommandParams(),
+                    ExecutionHandler.createInternalJobContext(createStepsContext(StepEnum.CLONE_IMAGE_STRUCTURE)));
+            updateStage(LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE);
             return true;
         }
 
-        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION) {
+        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE) {
             updateStage(LiveDiskMigrateStage.VM_REPLICATE_DISK_START);
             replicateDiskStart();
             updateStage(LiveDiskMigrateStage.IMAGE_DATA_SYNC_EXEC_START);
@@ -489,15 +493,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     private void syncImageData() {
-        SyncImageGroupDataCommandParameters parameters =
-                new SyncImageGroupDataCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters().getImageGroupID(),
+        CopyImageGroupVolumesDataCommandParameters parameters =
+                new CopyImageGroupVolumesDataCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceStorageDomainId(),
-                        getParameters().getTargetStorageDomainId());
+                        getParameters().getImageGroupID(),
+                        getParameters().getTargetStorageDomainId(),
+                        getActionType(),
+                        getParameters());
+
+        parameters.setJobWeight(Job.MAX_WEIGHT);
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        parameters.setParentCommand(getActionType());
-        parameters.setParentParameters(getParameters());
-        runInternalAction(ActionType.SyncImageGroupData, parameters, createStepsContext(StepEnum.SYNC_IMAGE_DATA));
+        runInternalAction(ActionType.CopyImageGroupVolumesData, parameters, createStepsContext(StepEnum.SYNC_IMAGE_DATA));
     }
 
     private void replicateDiskStart() {
@@ -706,7 +712,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private void handleDestDisk() {
         if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CREATE_SNAPSHOT &&
-                getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION &&
+                getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE &&
                 getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.SOURCE_IMAGE_DELETION) {
             if (Guid.Empty.equals(getParameters().getVdsId())) {
                 log.error("Failed during live storage migration of disk '{}' of vm '{}', as the vm is not running" +
