@@ -1,7 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostDevice;
+import org.ovirt.engine.api.model.MDevType;
+import org.ovirt.engine.api.model.MDevTypes;
 import org.ovirt.engine.api.model.Product;
 import org.ovirt.engine.api.model.Vendor;
 import org.ovirt.engine.api.model.Vm;
@@ -27,6 +32,19 @@ public class HostDeviceMapper {
         model.setCapability(entity.getCapability());
         model.setParentDevice(getSameHostDeviceReference(entity.getHostId(), entity.getParentDeviceName()));
         model.setDriver(entity.getDriver());
+
+        if (entity.getMdevTypes() != null && !entity.getMdevTypes().isEmpty()) {
+            List<MDevType> mDevsList = new ArrayList<>();
+            entity.getMdevTypes().stream().forEach(mDevString -> {
+                MDevType mDev = new MDevType();
+                mDev.setName(mDevString);
+                mDevsList.add(mDev);
+            });
+
+            MDevTypes mDevTypes = new MDevTypes();
+            mDevTypes.getMDevTypes().addAll(mDevsList);
+            model.setMDevTypes(mDevTypes);
+        }
 
         if (entity.getProductId() != null || entity.getProductName() != null) {
             if (!model.isSetProduct()) {
