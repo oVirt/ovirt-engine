@@ -599,14 +599,14 @@ ENGINE_SCHEDULER_POOL_REJECT_POLICY=false
 # Specify the thread pool size for jboss managed executor services used by the command executor framework. This thread
 # pool is used to execute asynchronous commands like deleting a disk, live snapshot removal, remove vm or remove vm
 # pool or removing vm template. It is generally not necessary to increase the number of threads in this thread pool.
-# To change the value permanentaly create a conf file 99-coco-thread-pool.conf in /etc/ovirt-engine/engine.conf.d/
+# To change the value permanently create a conf file 99-coco-thread-pool.conf in /etc/ovirt-engine/engine.conf.d/
 #
 COMMAND_COORDINATOR_THREAD_POOL_SIZE=10
 
 #
 # Specify the thread pool size for jboss managed executor service used by host update checker service. This thread pool
 # is used by the service which checks for the updates on hosts. Host update check does not happen that often so it is
-# not necessary to change this pool size. To change the value permanentaly create a conf file 99-host-thread-pool.conf
+# not necessary to change this pool size. To change the value permanently create a conf file 99-host-thread-pool.conf
 # in /etc/ovirt-engine/engine.conf.d/
 #
 HOST_CHECK_FOR_UPDATES_THREAD_POOL_SIZE=5
@@ -614,7 +614,7 @@ HOST_CHECK_FOR_UPDATES_THREAD_POOL_SIZE=5
 #
 # Specify the core thread pool size for jboss managed executor services used by the thread pool util. This thread pool
 # is used to execute multiple commands from UI. It is generally not necessary to increase the number of threads in
-# this thread pool. To change the value permanentaly create a conf file 99-engine-thread-pool.conf in
+# this thread pool. To change the value permanently create a conf file 99-engine-thread-pool.conf in
 # /etc/ovirt-engine/engine.conf.d/
 #
 ENGINE_THREAD_POOL_MIN_SIZE=50
@@ -622,7 +622,7 @@ ENGINE_THREAD_POOL_MIN_SIZE=50
 #
 # Specify the max thread pool size for jboss managed executor services used by the thread pool util. This thread pool
 # is used to execute multiple commands from UI. It is generally not necessary to increase the number of threads in
-# this thread pool. To change the value permanentaly create a conf file 99-engine-thread-pool.conf in
+# this thread pool. To change the value permanently create a conf file 99-engine-thread-pool.conf in
 # /etc/ovirt-engine/engine.conf.d/
 #
 ENGINE_THREAD_POOL_MAX_SIZE=500
@@ -630,28 +630,28 @@ ENGINE_THREAD_POOL_MAX_SIZE=500
 #
 # Specify the queue size for jboss managed executor services used by the thread pool util. This thread pool
 # is used to execute multiple commands from UI. It is generally not necessary to increase the queue size for
-# this thread pool. To change the value permanentaly create a conf file 99-engine-thread-pool.conf in
+# this thread pool. To change the value permanently create a conf file 99-engine-thread-pool.conf in
 # /etc/ovirt-engine/engine.conf.d/
 #
 ENGINE_THREAD_POOL_QUEUE_SIZE=100
 
 # Specify the thread pool size for jboss managed scheduled executor service used by commands to periodically execute
 # methods. It is generally not necessary to increase the number of threads in this thread pool. To change the value
-# permanentaly create a conf file 99-engine-scheduled-thread-pool.conf in /etc/ovirt-engine/engine.conf.d/
+# permanently create a conf file 99-engine-scheduled-thread-pool.conf in /etc/ovirt-engine/engine.conf.d/
 ENGINE_SCHEDULED_THREAD_POOL_SIZE=100
 
 # Specify the thread pool monitoring interval in seconds used by the ThreadPoolMonitoringService to monitor the
-# thread pool usage. To change the value permanentaly create a conf file 99-engine-monitoring-interval.conf in
+# thread pool usage. To change the value permanently create a conf file 99-engine-monitoring-interval.conf in
 # /etc/ovirt-engine/engine.conf.d/
 THREAD_POOL_MONITORING_INTERVAL_IN_SECONDS=600
 
 # Specify the ansible-playbook command execution timeout in minutes. It's used for any task, which executes
-# AnsibleExecutor class. To change the value permanentaly create a conf file 99-ansible-playbook-timeout.conf in
+# AnsibleExecutor class. To change the value permanently create a conf file 99-ansible-playbook-timeout.conf in
 # /etc/ovirt-engine/engine.conf.d/
 ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT=120
 
 # Specify the ansible-playbook command verbose level. It's used for any task, which executes AnsibleExecutor class.
-# To change the value permanentaly create a conf file 99-ansible-playbook-verbose-level.conf in
+# To change the value permanently create a conf file 99-ansible-playbook-verbose-level.conf in
 # /etc/ovirt-engine/engine.conf.d/
 #
 # Following values are supported:
