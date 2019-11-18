@@ -134,27 +134,23 @@ public class HostMonitoring {
             boolean isVdsUpOrGoingToMaintenance = vds.getStatus() == VDSStatus.Up
                     || vds.getStatus() == VDSStatus.PreparingForMaintenance || vds.getStatus() == VDSStatus.Error
                     || vds.getStatus() == VDSStatus.NonOperational;
-            try {
-                if (isVdsUpOrGoingToMaintenance) {
-                    // check if its time for statistics refresh
-                    if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
-                        refreshVdsStats(isVdsUpOrGoingToMaintenance);
-                    } else {
-                        refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
-                    }
+            if (isVdsUpOrGoingToMaintenance) {
+                // check if its time for statistics refresh
+                if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
+                    refreshVdsStats(isVdsUpOrGoingToMaintenance);
                 } else {
-                    refreshCapabilities();
+                    refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
                 }
-            } catch (VDSRecoveringException e) {
-                handleVDSRecoveringException(vds, e);
-            } catch (ClassCastException cce) {
-                handleClassCastException(cce);
-            } catch (Throwable t) {
-                log.error("Failure to refresh host '{}' runtime info: {}", vds.getName(), t.getMessage());
-                log.debug("Exception", t);
-                throw t;
+            } else {
+                refreshCapabilities();
             }
-        } catch(Throwable t) {
+        } catch (VDSRecoveringException e) {
+            handleVDSRecoveringException(vds, e);
+        } catch (ClassCastException cce) {
+            handleClassCastException(cce);
+        } catch (Throwable t) {
+            log.error("Failure to refresh host '{}' runtime info: {}", vds.getName(), t.getMessage());
+            log.debug("Exception", t);
             throw t;
         }
     }
