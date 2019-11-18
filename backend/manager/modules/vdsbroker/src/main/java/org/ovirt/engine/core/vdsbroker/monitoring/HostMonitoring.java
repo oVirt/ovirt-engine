@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public class HostMonitoring {
     private final VDS vds;
     private final VdsManager vdsManager;
-    private VDSStatus firstStatus = VDSStatus.forValue(0);
+    private VDSStatus firstStatus;
     private final MonitoringStrategy monitoringStrategy;
     private volatile boolean saveVdsDynamic;
     private volatile boolean saveVdsStatistics;
@@ -129,17 +129,18 @@ public class HostMonitoring {
         }
     }
 
-    public void refreshVdsRunTimeInfo() {
+    private void refreshVdsRunTimeInfo() {
         try {
-            boolean isVdsUpOrGoingToMaintenance = vds.getStatus() == VDSStatus.Up
-                    || vds.getStatus() == VDSStatus.PreparingForMaintenance || vds.getStatus() == VDSStatus.Error
-                    || vds.getStatus() == VDSStatus.NonOperational;
+            VDSStatus vdsStatus = vds.getStatus();
+            boolean isVdsUpOrGoingToMaintenance = vdsStatus == VDSStatus.Up
+                    || vdsStatus == VDSStatus.PreparingForMaintenance || vdsStatus == VDSStatus.Error
+                    || vdsStatus == VDSStatus.NonOperational;
             if (isVdsUpOrGoingToMaintenance) {
                 // check if its time for statistics refresh
-                if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
-                    refreshVdsStats(isVdsUpOrGoingToMaintenance);
+                if (vdsManager.isTimeToRefreshStatistics() || vdsStatus == VDSStatus.PreparingForMaintenance) {
+                    refreshVdsStats(true);
                 } else {
-                    refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
+                    refreshVdsRunTimeInfo(true);
                 }
             } else {
                 refreshCapabilities();
