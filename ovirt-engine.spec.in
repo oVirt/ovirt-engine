@@ -1210,8 +1210,10 @@ fi
 %config(noreplace) %{engine_pki}/openssl.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/certs
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/certs-qemu
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/private
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/requests
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/requests-qemu
 %dir %{engine_pki}/keys
 %{engine_data}/bin/pki-common.sh
 %{engine_data}/bin/pki-create-ca.sh

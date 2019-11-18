@@ -22,6 +22,8 @@
         with_items:
           - 'ca': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_ca_file }}"
             'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
+          - 'ca': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_ca_file }}"
+            'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_cert_file }}"
           - 'ca': "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_ca_file }}"
             'cert': "{{ ovirt_libvirt_default_trust_store }}/{{ ovirt_libvirt_default_client_cert_file }}"
           - 'ca': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"

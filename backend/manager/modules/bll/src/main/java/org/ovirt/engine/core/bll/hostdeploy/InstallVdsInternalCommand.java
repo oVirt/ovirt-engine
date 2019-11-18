@@ -202,6 +202,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
                 .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
+                .variable("ovirt_qemu_ca_cert", PKIResources.getQemuCaCertificate().toString(PKIResources.Format.X509_PEM))
                 .variable("ovirt_engine_usr", config.getUsrDir())
                 .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
                 .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))

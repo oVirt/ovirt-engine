@@ -1,18 +1,6 @@
 # ====================================================================
-# Copyright 2008-2016 Red Hat, Inc. and/or its affiliates.
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-#  SPDX-License-Identifier: Apache-2.0
+# Copyright oVirt Authors
+# SPDX-License-Identifier: Apache-2.0
 # ====================================================================
 
 #
@@ -544,9 +532,11 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/bin/ovirt-register-sso-client-tool.sh" "$(DESTDIR)$(BIN_DIR)/ovirt-register-sso-client-tool"
 
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/certs"
+	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/certs-qemu"
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/keys"
 	install -d -m 750 "$(DESTDIR)$(PKG_PKI_DIR)/private"
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/requests"
+	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/requests-qemu"
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
