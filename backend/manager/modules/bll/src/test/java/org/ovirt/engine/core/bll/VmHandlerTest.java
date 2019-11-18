@@ -213,8 +213,8 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
-        assertFalse(updateIsValid,
-                "Update should be invalid for different names on a running, hosted engine VM");
+        assertTrue(updateIsValid,
+                "Update should be valid for different names on a running, hosted engine VM");
     }
 
     @Test
