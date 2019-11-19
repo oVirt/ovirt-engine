@@ -193,6 +193,9 @@ public class StorageDomainMapper {
                 if (model.isSetPort()) {
                     entity.setPort(model.getPort().toString());
                 }
+                if (model.isSetPortal()) {
+                    entity.setPortal(model.getPortal());
+                }
                 if (model.isSetUsername()) {
                     entity.setUserName(model.getUsername());
                 }
