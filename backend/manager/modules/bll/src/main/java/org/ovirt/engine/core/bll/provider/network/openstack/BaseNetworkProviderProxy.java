@@ -350,7 +350,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
                 return NO_SECURITY_GROUPS;
             }
 
-            return Arrays.asList(securityGroupsString.split(",\\w*"));
+            return Arrays.asList(securityGroupsString.split(",\\s*"));
         }
 
         return DEFAULT_SECURITY_GROUP;
