@@ -100,7 +100,11 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         if (syntaxErrorInProperties(properties)) {
             return invalidSyntaxValidationError;
         }
-        return validateProperties(allVmProperties.get(version), convertProperties(properties));
+        return validateVmProperties(version, convertProperties(properties));
+    }
+
+    public List<ValidationError> validateVmProperties(Version version, Map<String, String> properties) {
+        return validateProperties(allVmProperties.get(version), properties);
     }
 
     /**

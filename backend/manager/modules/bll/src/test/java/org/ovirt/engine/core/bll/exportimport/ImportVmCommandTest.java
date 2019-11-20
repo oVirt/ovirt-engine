@@ -112,6 +112,38 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public void setUp() {
         doReturn(null).when(cmd).getCluster();
         doReturn(emptyList()).when(cloudInitHandler).validate(any());
+
+        cmd.getParameters().setCopyCollapse(true);
+
+        ImportValidator validator = spy(new ImportValidator(cmd.getParameters()));
+        doReturn(validator).when(cmd).getImportValidator();
+
+        doNothing().when(cmd).updateVmVersion();
+        doReturn(true).when(cmd).validateNoDuplicateVm();
+        doReturn(true).when(cmd).validateVdsCluster();
+        doReturn(true).when(cmd).validateUniqueVmName();
+        doReturn(true).when(cmd).checkTemplateInStorageDomain();
+        doReturn(true).when(cmd).checkImagesGUIDsLegal();
+        doReturn(true).when(cmd).setAndValidateDiskProfiles();
+        doReturn(true).when(cmd).setAndValidateCpuProfile();
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any());
+        doReturn(createSourceDomain()).when(cmd).getSourceDomain();
+        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
+        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
+        doReturn(new VmTemplate()).when(cmd).getVmTemplate();
+        doReturn(macPool).when(cmd).getMacPool();
+
+        StoragePool sp = new StoragePool();
+        sp.setId(cmd.getParameters().getStoragePoolId());
+        sp.setStatus(StoragePoolStatus.Up);
+        sp.setCompatibilityVersion(Version.getLast());
+        doReturn(sp).when(cmd).getStoragePool();
+
+        Cluster cluster = new Cluster();
+        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
+        cluster.setClusterId(cmd.getParameters().getClusterId());
+        cluster.setCompatibilityVersion(Version.getLast());
+        doReturn(cluster).when(cmd).getCluster();
     }
 
     @Test
@@ -134,7 +166,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
-    void addBalloonToVm(VM vm) {
+    private void addBalloonToVm(VM vm) {
         Guid deviceId = Guid.newGuid();
         Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
@@ -211,7 +243,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
                 Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
-        cmd.initEffectiveCompatibilityVersion();
         assertTrue(cmd.validateBallonDevice());
     }
 
@@ -226,31 +257,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     private void setupDiskSpaceTest() {
-        final ImportValidator validator = spy(new ImportValidator(cmd.getParameters()));
-        doReturn(validator).when(cmd).getImportValidator();
-        cmd.init();
-        cmd.getParameters().setCopyCollapse(true);
-        doReturn(true).when(cmd).validateNoDuplicateVm();
-        doReturn(true).when(cmd).validateVdsCluster();
-        doReturn(true).when(cmd).validateUniqueVmName();
-        doReturn(true).when(cmd).checkTemplateInStorageDomain();
-        doReturn(true).when(cmd).checkImagesGUIDsLegal();
-        doReturn(true).when(cmd).setAndValidateDiskProfiles();
-        doReturn(true).when(cmd).setAndValidateCpuProfile();
-        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any());
-        doReturn(createSourceDomain()).when(cmd).getSourceDomain();
-        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
-        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
-        doReturn(new VmTemplate()).when(cmd).getVmTemplate();
-        StoragePool sp = new StoragePool();
-        sp.setStatus(StoragePoolStatus.Up);
-        doReturn(sp).when(cmd).getStoragePool();
-        Cluster cluster = new Cluster();
-        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
-        cluster.setClusterId(cmd.getParameters().getClusterId());
-        doReturn(cluster).when(cmd).getCluster();
-        doReturn(macPool).when(cmd).getMacPool();
-
         when(poolPerCluster.getMacPoolForCluster(any())).thenReturn(macPool);
 
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
@@ -259,6 +265,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         }
 
         doReturn(Collections.emptyList()).when(cmd).createDiskDummiesForSpaceValidations(any());
+
+        cmd.init();
     }
 
     protected ImportVmParameters createParameters() {
@@ -266,6 +274,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         vm.setName("testVm");
         Guid clusterId = Guid.newGuid();
         vm.setClusterId(clusterId);
+        vm.setClusterCompatibilityVersion(Version.getLast());
+        vm.setClusterCompatibilityVersionOrigin(Version.getLast());
         Guid spId = Guid.newGuid();
         return new ImportVmParameters(vm, Guid.newGuid(), Guid.newGuid(), spId, clusterId);
     }
@@ -442,30 +452,10 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testEmptyGuidFails() {
-        cmd.getParameters().setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = cmd.getParameters().getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        doReturn(macPool).when(cmd).getMacPool();
-        cmd.init();
-        doReturn(true).when(cmd).validateNoDuplicateVm();
-        doReturn(true).when(cmd).validateVdsCluster();
-        doReturn(true).when(cmd).validateUniqueVmName();
-        doReturn(true).when(cmd).checkTemplateInStorageDomain();
-        doReturn(true).when(cmd).checkImagesGUIDsLegal();
-        doReturn(true).when(cmd).setAndValidateDiskProfiles();
-        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any());
-        doReturn(createSourceDomain()).when(cmd).getSourceDomain();
-        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
-        doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
-        doReturn(new VmTemplate()).when(cmd).getVmTemplate();
-        StoragePool sp = new StoragePool();
-        sp.setStatus(StoragePoolStatus.Up);
-        doReturn(sp).when(cmd).getStoragePool();
-        Cluster cluster = new Cluster();
-        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
-        cluster.setId(cmd.getParameters().getClusterId());
-        doReturn(cluster).when(cmd).getCluster();
 
+        cmd.init();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()

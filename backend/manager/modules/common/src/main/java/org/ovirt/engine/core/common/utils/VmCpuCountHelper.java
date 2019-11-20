@@ -23,11 +23,6 @@ public class VmCpuCountHelper {
         return clusterArchitecture == null ? null : clusterArchitecture.getFamily();
     }
 
-    private static ArchitectureType architectureFamily(VmTemplate vmTemplate) {
-        ArchitectureType clusterArchitecture = vmTemplate.getClusterArch();
-        return clusterArchitecture == null ? null : clusterArchitecture.getFamily();
-    }
-
     static Integer calcMaxVCpu(ArchitectureType architecture, Integer maxSockets, Integer maxVCpus,
                                       int threadsPerCore, int cpuPerSocket) {
         if (architecture == null || architecture == ArchitectureType.x86) {
@@ -71,7 +66,9 @@ public class VmCpuCountHelper {
      * @param architecture Architecture family of the VM
      * @return The maximum supported number of vCPUs
      */
-    private static Integer calcMaxVCpu(VmBase vm, Version compatibilityVersion, ArchitectureType architecture) {
+    public static Integer calcMaxVCpu(VmBase vm, Version compatibilityVersion, ArchitectureType architecture) {
+        ArchitectureType architectureFamily = architecture != null ? architecture.getFamily() : null;
+
         Integer maxSockets = Config.<Integer>getValue(
                 ConfigValues.MaxNumOfVmSockets,
                 compatibilityVersion.getValue());
@@ -81,7 +78,7 @@ public class VmCpuCountHelper {
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
-        return calcMaxVCpu(architecture, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket);
+        return calcMaxVCpu(architectureFamily, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket);
     }
 
     /**
@@ -93,7 +90,7 @@ public class VmCpuCountHelper {
      * @return The maximum supported number of vCPUs
      */
     public static Integer calcMaxVCpu(VM vm, Version compatibilityVersion) {
-        return calcMaxVCpu(vm.getStaticData(), compatibilityVersion, architectureFamily(vm));
+        return calcMaxVCpu(vm.getStaticData(), compatibilityVersion, vm.getClusterArch());
     }
 
     /**
@@ -105,7 +102,7 @@ public class VmCpuCountHelper {
      * @return The maximum supported number of vCPUs
      */
     public static Integer calcMaxVCpu(VmTemplate vmTemplate, Version compatibilityVersion) {
-        return calcMaxVCpu(vmTemplate, compatibilityVersion, architectureFamily(vmTemplate));
+        return calcMaxVCpu(vmTemplate, compatibilityVersion, vmTemplate.getClusterArch());
     }
 
     /**

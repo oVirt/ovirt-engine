@@ -32,6 +32,7 @@ import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmVersionUpdater;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -123,6 +124,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private MacPool macPool;
 
+    private Runnable logOnExecuteEnd = () -> {};
+
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -145,6 +148,13 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
+
+        if (!isVmVersionUpdatePossible()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VERSION_TOO_OLD,
+                    ReplacementUtils.createSetVariableString("lowestVersion",
+                            VmVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
+        }
+
         if (getParameters().getStoragePoolId() != null
                 && !getParameters().getStoragePoolId().equals(getCluster().getStoragePoolId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
@@ -171,6 +181,11 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return true;
+    }
+
+    // Mocked in unit tests
+    protected boolean isVmVersionUpdatePossible() {
+        return VmVersionUpdater.isVersionUpdatePossible(getVm().getStaticData());
     }
 
     private boolean ifaceMacCannotBeAddedToMacPool(VmNetworkInterface iface) {
@@ -355,12 +370,54 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (parameters.getVm() != null) {
             setVmId(parameters.getVm().getId());
         }
+
+        updateVmVersion();
         initEffectiveCompatibilityVersion();
     }
 
     protected void initEffectiveCompatibilityVersion() {
         setEffectiveCompatibilityVersion(
                 CompatibilityVersionUtils.getEffective(getParameters().getVm(), this::getCluster));
+    }
+
+    protected void updateVmVersion() {
+        // When cluster ID is invalid, this command does not pass validation,
+        // but this method is called before validate(). Invalid cluster would
+        // cause NPE.
+        if (getCluster() == null) {
+            return;
+        }
+
+        // This condition is here for similar reason as the last one.
+        if (getVm() == null) {
+            setEffectiveCompatibilityVersion(getCluster().getCompatibilityVersion());
+            return;
+        }
+
+        if (!isVmVersionUpdatePossible()) {
+            return;
+        }
+
+        Version newVersion = CompatibilityVersionUtils.getEffective(getVm(), this::getCluster);
+
+        // A VM can have custom compatibility version that is lower than
+        // the DC version. In that case, the custom version has to be updated.
+        if (newVersion.less(getCluster().getCompatibilityVersion())) {
+            var dataCenterVersion = getStoragePool().getCompatibilityVersion();
+            if (newVersion.less(dataCenterVersion)) {
+                Version originalVersion = newVersion;
+                String vmName = getVmName();
+                logOnExecuteEnd = () -> {
+                    addCustomValue("OriginalVersion", originalVersion.toString());
+                    addCustomValue("NewVersion", dataCenterVersion.toString());
+                    auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_CUSTOM_VERSION_CHANGE);
+                };
+
+                newVersion = dataCenterVersion;
+            }
+        }
+
+        new VmVersionUpdater().updateVmToVersion(getVm(), newVersion, getCluster());
     }
 
     /**
@@ -483,6 +540,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             throw e;
         }
 
+        logOnExecuteEnd.run();
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getVm());
     }

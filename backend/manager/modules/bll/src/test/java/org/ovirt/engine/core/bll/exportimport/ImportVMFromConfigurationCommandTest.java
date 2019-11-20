@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
@@ -142,9 +144,17 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         cluster.setId(clusterId);
         cluster.setStoragePoolId(storagePoolId);
         cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setCompatibilityVersion(Version.getLast());
 
+        storagePool = new StoragePool();
+        storagePool.setId(storagePoolId);
+        storagePool.setCompatibilityVersion(Version.getLast());
+
+        doNothing().when(cmd).updateVmVersion();
         doReturn(cluster).when(cmd).getCluster();
+        doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(emptyList()).when(cmd).getImages();
+        doReturn(true).when(cmd).isVmVersionUpdatePossible();
         doReturn(emptyList()).when(cloudInitHandler).validate(any());
 
         doReturn(null).when(affinityGroupDao).getByName(any());
@@ -160,7 +170,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Test
     public void testPositiveImportVmFromConfiguration() {
         initCommand(getOvfEntityData());
-        doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
         when(validator.validateUnregisteredEntity(any())) .thenReturn(ValidationResult.VALID);
@@ -240,7 +249,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(mock(MacPool.class)).when(cmd).getMacPool();
         validator = spy(new ImportValidator(cmd.getParameters()));
         doReturn(validator).when(cmd).getImportValidator();
-        mockStoragePool();
         doReturn(storagePool).when(validator).getStoragePool();
         cmd.init();
     }
@@ -260,11 +268,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         ovfEntity.setEntityName("Some VM");
         ovfEntity.setOvfData(xmlOvfData);
         return ovfEntity;
-    }
-
-    private void mockStoragePool() {
-        storagePool = new StoragePool();
-        storagePool.setId(storagePoolId);
     }
 
     protected StorageDomain createStorageDomain() {
