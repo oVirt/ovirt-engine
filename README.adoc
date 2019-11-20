@@ -415,6 +415,13 @@ To build engine without obfuscated CSS styles:
 DEV_REBUILD:: Disable if only packaging components were modified.
 Default is `1`.
 
+PY_VERSION:: Python defaults to python3 if available, use PY_VERSION=2
+in order to override. +
+This options affects various services and several features written in python.
+
+NOTE: `engine-setup` which runs otopi, uses different customized variable `OTOPI_PYTHON`
+
+
 WILDFLY_OVERLAY_MODULES:: Change location of WildFly overlay modules.
 If you want to disable WildFly overlay configuration completely, please
 set to empty string. Default is
@@ -426,7 +433,10 @@ To setup the product use the following command:
 
   $ "${PREFIX}/bin/engine-setup"
 
-NOTE: If on el7, make sure you run `scl enable rh-postgresql10 bash` first.
+NOTE: [1] If on el7, make sure you run `scl enable rh-postgresql10 bash` first. +
+[2] otopi, and therefore engine-setup, now defaults to python3 except el7, use: +
+`$  OTOPI_PYTHON=/usr/bin/python2 "${PREFIX}/bin/engine-setup"` +
+to override.
 
 During engine setup, a certificate has to be issued and you will be asked for a hostname. If you want to use
 imageio-proxy along with the engine, it has to be the name by which your machine is accessible from the outside.
