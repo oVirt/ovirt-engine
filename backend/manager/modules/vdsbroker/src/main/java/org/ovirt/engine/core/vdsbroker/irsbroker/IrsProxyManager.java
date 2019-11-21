@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.BackendService;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.di.Injector;
@@ -28,11 +27,7 @@ public class IrsProxyManager implements BackendService {
     @PostConstruct
     public void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        for (StoragePool dataCenter : storagePoolDao.getAll()) {
-            if (!irsProxyData.containsKey(dataCenter.getId())) {
-                irsProxyData.put(dataCenter.getId(), createProxy(dataCenter.getId()));
-            }
-        }
+        storagePoolDao.getAll().forEach(dc -> irsProxyData.computeIfAbsent(dc.getId(), IrsProxyManager::createProxy));
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
@@ -51,9 +46,7 @@ public class IrsProxyManager implements BackendService {
     }
 
     public IrsProxy getCurrentProxy(Guid storagePoolId) {
-        if (!irsProxyData.containsKey(storagePoolId)) {
-            irsProxyData.put(storagePoolId, createProxy(storagePoolId));
-        }
+        irsProxyData.computeIfAbsent(storagePoolId, IrsProxyManager::createProxy);
         return irsProxyData.get(storagePoolId);
     }
 
