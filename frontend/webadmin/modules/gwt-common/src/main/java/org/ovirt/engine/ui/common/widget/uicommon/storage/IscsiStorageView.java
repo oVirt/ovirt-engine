@@ -75,7 +75,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     private double treeCollapsedHeight = 245;
     private double treeExpandedHeight = 355;
     private double lunsTreeHeight = 405;
-    private double tabContentHeight = 430;
+    private double tabContentHeight = 100;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -178,7 +178,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         iscsiLunToTargetView = new IscsiLunToTargetView(lunsTreeHeight, multiSelection);
 
         // Update Style
-        dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PX);
+        dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PCT);
 
         // Add view widgets to panel
         lunsListPanel.setWidget(iscsiLunToTargetView);
