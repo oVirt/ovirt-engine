@@ -33,7 +33,7 @@ public class IrsProxyManager implements BackendService {
                 irsProxyData.put(dataCenter.getId(), createProxy(dataCenter.getId()));
             }
         }
-        log.info("Start initializing {}", getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     private static IrsProxy createProxy(Guid storagePoolId) {
