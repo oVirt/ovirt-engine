@@ -84,7 +84,7 @@ select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.4');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel7.6.0,pc-q35-4.1,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.4');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
@@ -1045,18 +1045,20 @@ select fn_db_update_config_value('ServerCPUList',
         || '4:Secure Intel Westmere Family:aes,vmx,spec_ctrl,ssbd,md_clear,model_Westmere:Westmere,+pcid,+spec-ctrl,+ssbd,+md-clear:x86_64; '
         || '5:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; '
         || '6:Secure Intel SandyBridge Family:vmx,spec_ctrl,ssbd,md_clear,model_SandyBridge:SandyBridge,+pcid,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '7:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; '
-        || '8:Secure Intel Haswell-noTSX Family:vmx,spec_ctrl,ssbd,md_clear,model_Haswell-noTSX:Haswell-noTSX,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '9:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; '
-        || '10:Secure Intel Haswell Family:vmx,spec_ctrl,ssbd,md_clear,model_Haswell:Haswell,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '11:Intel Broadwell-noTSX Family:vmx,nx,model_Broadwell-noTSX:Broadwell-noTSX:x86_64; '
-        || '12:Secure Intel Broadwell-noTSX Family:vmx,spec_ctrl,ssbd,md_clear,model_Broadwell-noTSX:Broadwell-noTSX,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '13:Intel Broadwell Family:vmx,nx,model_Broadwell:Broadwell:x86_64; '
-        || '14:Secure Intel Broadwell Family:vmx,spec_ctrl,ssbd,md_clear,model_Broadwell:Broadwell,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '15:Intel Skylake Client Family:vmx,nx,model_Skylake-Client:Skylake-Client:x86_64; '
-        || '16:Secure Intel Skylake Client Family:vmx,spec_ctrl,ssbd,md_clear,model_Skylake-Client:Skylake-Client,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '17:Intel Skylake Server Family:vmx,nx,model_Skylake-Server:Skylake-Server:x86_64; '
-        || '18:Secure Intel Skylake Server Family:vmx,spec_ctrl,ssbd,md_clear,model_Skylake-Server:Skylake-Server,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '7:Intel IvyBridge Family:vmx,nx,model_IvyBridge:IvyyBridge:x86_64; '
+        || '8:Secure Intel IvyBridge Family:vmx,spec_ctrl,ssbd,md_clear,model_IvyBridge:IvyBridge,+pcid,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '9:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; '
+        || '10:Secure Intel Haswell-noTSX Family:vmx,spec_ctrl,ssbd,md_clear,model_Haswell-noTSX:Haswell-noTSX,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '11:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; '
+        || '12:Secure Intel Haswell Family:vmx,spec_ctrl,ssbd,md_clear,model_Haswell:Haswell,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '13:Intel Broadwell-noTSX Family:vmx,nx,model_Broadwell-noTSX:Broadwell-noTSX:x86_64; '
+        || '14:Secure Intel Broadwell-noTSX Family:vmx,spec_ctrl,ssbd,md_clear,model_Broadwell-noTSX:Broadwell-noTSX,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '15:Intel Broadwell Family:vmx,nx,model_Broadwell:Broadwell:x86_64; '
+        || '16:Secure Intel Broadwell Family:vmx,spec_ctrl,ssbd,md_clear,model_Broadwell:Broadwell,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '17:Intel Skylake Client Family:vmx,nx,model_Skylake-Client:Skylake-Client:x86_64; '
+        || '18:Secure Intel Skylake Client Family:vmx,spec_ctrl,ssbd,md_clear,model_Skylake-Client:Skylake-Client,+spec-ctrl,+ssbd,+md-clear:x86_64; '
+        || '19:Intel Skylake Server Family:vmx,nx,model_Skylake-Server:Skylake-Server:x86_64; '
+        || '20:Secure Intel Skylake Server Family:vmx,spec_ctrl,ssbd,md_clear,model_Skylake-Server:Skylake-Server,+spec-ctrl,+ssbd,+md-clear:x86_64; '
         || '1:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; '
         || '2:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; '
         || '3:AMD EPYC:svm,nx,model_EPYC:EPYC:x86_64; '
