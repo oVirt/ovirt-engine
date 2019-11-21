@@ -969,7 +969,7 @@ public abstract class RunOnceModel extends Model {
                                                     getCustomCpu().setSelectedItem(oldVal);
                                                 }
                                             }
-                                        }), cluster.getCpuName());
+                                        }), cluster.getCpuName(), cluster.getCompatibilityVersion());
                             }
                         }
                     }), clusterId);

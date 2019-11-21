@@ -1352,7 +1352,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         getModel().getCustomCpu().setItems(cpuList);
                         getModel().getCustomCpu().setSelectedItem(oldVal);
                     }
-                }), cluster.getCpuName());
+                }), cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 
     protected void updateSelectedCdImage(VmBase vmBase) {

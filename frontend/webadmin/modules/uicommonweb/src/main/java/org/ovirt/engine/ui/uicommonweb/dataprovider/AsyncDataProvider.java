@@ -3120,11 +3120,11 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetHostsByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
-    public void getSupportedCpuList(AsyncQuery<List<ServerCpu>> aQuery, String cpuName) {
+    public void getSupportedCpuList(AsyncQuery<List<ServerCpu>> aQuery, String cpuName, Version version) {
         aQuery.converterCallback = new CastingConverter<>();
 
         Frontend.getInstance().runQuery(QueryType.GetSupportedCpuList,
-                new GetSupportedCpuListParameters(cpuName),
+                new GetSupportedCpuListParameters(cpuName, version),
                 aQuery);
 
     }
