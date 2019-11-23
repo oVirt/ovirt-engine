@@ -1,10 +1,6 @@
 package org.ovirt.engine.core.utils.lock;
 
-import java.util.Set;
-
 import org.ovirt.engine.core.common.locks.LockInfo;
-import org.ovirt.engine.core.common.utils.Pair;
-
 
 /**
  * The following interface is represent a lock mechanism
@@ -15,7 +11,7 @@ public interface LockManager {
      * The following method will try to acquire provided lock
      * @return true - in case of locked was acquired , false with set of appropriate error messages otherwise
      */
-    Pair<Boolean, Set<String>> acquireLock(EngineLock lock);
+    LockingResult acquireLock(EngineLock lock);
 
     /**
      * The following method will try to acquire lock and will wait until lock acquired The lock should be exclusive and
@@ -27,7 +23,7 @@ public interface LockManager {
      * The following method will wait until lock is acquired or until the specified timeout elapses.
      * The lock should be exclusive and only one, otherwise exception will be thrown
      */
-    Pair<Boolean, Set<String>> acquireLockWait(EngineLock lock, long timeoutMillis);
+    LockingResult acquireLockWait(EngineLock lock, long timeoutMillis);
 
     /**
      * The following method will release a lock Also it will notify all threads awaiting inside acquireLockWait that

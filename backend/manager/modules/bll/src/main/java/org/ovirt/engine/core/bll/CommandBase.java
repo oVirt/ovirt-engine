@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -101,6 +100,7 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.lock.LockingResult;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
@@ -1849,14 +1849,14 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (context.getLock() == null) {
             EngineLock lock = buildLock();
             if (lock != null) {
-                Pair<Boolean, Set<String>> lockAcquireResult = lockManager.acquireLock(lock);
-                if (lockAcquireResult.getFirst()) {
+                var lockAcquireResult = lockManager.acquireLock(lock);
+                if (lockAcquireResult.isAcquired()) {
                     log.info("Lock Acquired to object '{}'", lock);
                     context.withLock(lock);
                 } else {
                     log.info("Failed to Acquire Lock to object '{}'", lock);
                     getReturnValue().getValidationMessages()
-                    .addAll(extractVariableDeclarations(lockAcquireResult.getSecond()));
+                    .addAll(extractVariableDeclarations(lockAcquireResult.getMessages()));
                     return false;
                 }
             }
@@ -1917,16 +1917,16 @@ public abstract class CommandBase<T extends ActionParametersBase>
             EngineLock lock = buildLockFromExclusives();
             if (lock != null) {
                 log.info("Before acquiring lock-timeout '{}'", lock);
-                Pair<Boolean, Set<String>> lockAcquireResult = lockManager.acquireLockWait(
+                LockingResult lockAcquireResult = lockManager.acquireLockWait(
                     lock, getLockProperties().getTimeoutMillis()
                 );
-                if (lockAcquireResult.getFirst()) {
+                if (lockAcquireResult.isAcquired()) {
                     log.info("Lock-timeout acquired to object '{}'", lock);
                     context.withLock(lock);
                 } else {
                     log.info("Failed to acquire lock-timeout to object '{}'", lock);
                     getReturnValue().getValidationMessages()
-                        .addAll(extractVariableDeclarations(lockAcquireResult.getSecond()));
+                        .addAll(extractVariableDeclarations(lockAcquireResult.getMessages()));
                     return false;
                 }
             }

@@ -233,7 +233,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             log.debug("Attempt to apply NEXT_RUN snapshot for VM '{}'", getVmId());
 
             EngineLock updateVmLock = createUpdateVmLock();
-            if (lockManager.acquireLock(updateVmLock).getFirst()) {
+            if (lockManager.acquireLock(updateVmLock).isAcquired()) {
                 snapshotDao.remove(runSnap.getId());
                 Date originalCreationDate = getVm().getVmCreationDate();
                 snapshotsManager.updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());

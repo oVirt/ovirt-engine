@@ -1580,7 +1580,7 @@ public class IrsProxy {
                 vdsHandeledReportsOnUnseenDomains.put(vdsId, currentReportId);
                 Map<String, Pair<String, String>> lockMap = resourceManager.getVdsPoolAndStorageConnectionsLock(vdsId);
                 EngineLock engineLock = new EngineLock(lockMap, null);
-                if (!lockManager.acquireLock(engineLock).getFirst()) {
+                if (!lockManager.acquireLock(engineLock).isAcquired()) {
                     log.info("Failed to acquire lock to refresh storage connection and pool metadata for host '{}', skipping it",
                             vdsId);
                     continue;

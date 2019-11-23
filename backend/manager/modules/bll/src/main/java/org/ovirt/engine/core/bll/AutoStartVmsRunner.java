@@ -308,7 +308,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
     }
 
     private boolean acquireLock(EngineLock lock) {
-        return lockManager.acquireLock(lock).getFirst();
+        return lockManager.acquireLock(lock).isAcquired();
     }
 
     private void releaseLock(EngineLock lock) {

@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockingResult;
 
 public class InMemoryLockManagerTest {
 
@@ -60,65 +60,65 @@ public class InMemoryLockManagerTest {
 
     @Test
     public void checkAcquireLockSuccess() {
-        assertTrue(lockManager.acquireLock(updateLock1).getFirst());
-        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        assertTrue(lockManager.acquireLock(updateLock1).isAcquired());
+        assertTrue(lockManager.acquireLock(lockLock2).isAcquired());
         lockManager.releaseLock(lockLock2);
-        assertTrue(lockManager.acquireLock(updateLock2).getFirst());
+        assertTrue(lockManager.acquireLock(updateLock2).isAcquired());
         lockManager.releaseLock(updateLock1);
         lockManager.releaseLock(updateLock2);
-        assertTrue(lockManager.acquireLock(updateAndLockLock).getFirst());
+        assertTrue(lockManager.acquireLock(updateAndLockLock).isAcquired());
         lockManager.releaseLock(updateAndLockLock);
-        assertTrue(lockManager.acquireLock(updateLock1).getFirst());
+        assertTrue(lockManager.acquireLock(updateLock1).isAcquired());
         assertTrue(lockManager.releaseLock(updateGuid + "1"));
         assertTrue(lockManager.showAllLocks().isEmpty());
     }
 
     @Test
     public void checkAcquireLockFailure() {
-        assertTrue(lockManager.acquireLock(updateLock1).getFirst());
-        assertFalse(lockManager.acquireLock(lockLock1).getFirst());
+        assertTrue(lockManager.acquireLock(updateLock1).isAcquired());
+        assertFalse(lockManager.acquireLock(lockLock1).isAcquired());
         lockManager.releaseLock(updateLock1);
-        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
         lockManager.releaseLock(lockLock1);
-        assertTrue(lockManager.acquireLock(updateAndLockLock).getFirst());
-        Pair<Boolean, Set<String>> lockResult = lockManager.acquireLock(lockLock1);
-        assertFalse(lockResult.getFirst());
-        assertTrue(lockResult.getSecond().contains(ERROR1));
-        assertEquals(1, lockResult.getSecond().size());
+        assertTrue(lockManager.acquireLock(updateAndLockLock).isAcquired());
+        LockingResult lockResult = lockManager.acquireLock(lockLock1);
+        assertFalse(lockResult.isAcquired());
+        assertTrue(lockResult.getMessages().contains(ERROR1));
+        assertEquals(1, lockResult.getMessages().size());
         lockResult = lockManager.acquireLock(updateLock2);
-        assertFalse(lockResult.getFirst());
-        assertTrue(lockResult.getSecond().contains(ERROR2));
-        assertEquals(1, lockResult.getSecond().size());
+        assertFalse(lockResult.isAcquired());
+        assertTrue(lockResult.getMessages().contains(ERROR2));
+        assertEquals(1, lockResult.getMessages().size());
         lockManager.releaseLock(updateAndLockLock);
-        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
-        assertTrue(lockManager.acquireLock(updateLock2).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
+        assertTrue(lockManager.acquireLock(updateLock2).isAcquired());
         lockManager.releaseLock(lockLock1);
         lockManager.releaseLock(updateLock2);
-        assertTrue(lockManager.acquireLock(updateAndLockLock).getFirst());
-        assertTrue(lockManager.acquireLock(updateLock3).getFirst());
+        assertTrue(lockManager.acquireLock(updateAndLockLock).isAcquired());
+        assertTrue(lockManager.acquireLock(updateLock3).isAcquired());
         lockResult = lockManager.acquireLock(failLockLock);
-        assertFalse(lockResult.getFirst());
-        assertTrue(lockResult.getSecond().contains(ERROR1));
-        assertTrue(lockResult.getSecond().contains(ERROR3));
-        assertEquals(2, lockResult.getSecond().size());
+        assertFalse(lockResult.isAcquired());
+        assertTrue(lockResult.getMessages().contains(ERROR1));
+        assertTrue(lockResult.getMessages().contains(ERROR3));
+        assertEquals(2, lockResult.getMessages().size());
         lockManager.releaseLock(updateAndLockLock);
         lockManager.releaseLock(updateLock3);
     }
 
     @Test
     public void checkClear() {
-        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
-        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
+        assertTrue(lockManager.acquireLock(lockLock2).isAcquired());
         lockManager.clear();
-        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
-        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
+        assertTrue(lockManager.acquireLock(lockLock2).isAcquired());
         lockManager.clear();
     }
 
     @Test
     public void checkShowLocks() {
-        assertTrue(lockManager.acquireLock(lockLock1).getFirst());
-        assertTrue(lockManager.acquireLock(lockLock2).getFirst());
+        assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
+        assertTrue(lockManager.acquireLock(lockLock2).isAcquired());
         assertEquals(2, lockManager.showAllLocks().size());
         lockManager.clear();
         assertTrue(lockManager.showAllLocks().isEmpty());
@@ -126,16 +126,16 @@ public class InMemoryLockManagerTest {
 
     @Test
     public void testAcquireLockWaitTwoTimeouts() {
-        assertTrue(lockManager.acquireLockWait(lockLock1, 1000L).getFirst());
+        assertTrue(lockManager.acquireLockWait(lockLock1, 1000L).isAcquired());
         assertEquals(1, lockManager.showAllLocks().size());
         long before = System.currentTimeMillis();
-        assertFalse(lockManager.acquireLockWait(failLockLock, 5500L).getFirst());
+        assertFalse(lockManager.acquireLockWait(failLockLock, 5500L).isAcquired());
         assertEquals(1, lockManager.showAllLocks().size());
         long after = System.currentTimeMillis();
         assertTrue(after - before >= 5000 && after - before < 7000L);
         lockManager.releaseLock(lockLock1);
         assertEquals(0, lockManager.showAllLocks().size());
-        assertTrue(lockManager.acquireLockWait(failLockLock, 1000L).getFirst());
+        assertTrue(lockManager.acquireLockWait(failLockLock, 1000L).isAcquired());
         assertEquals(1, lockManager.showAllLocks().size());
         lockManager.releaseLock(failLockLock);
         assertEquals(0, lockManager.showAllLocks().size());
@@ -146,13 +146,13 @@ public class InMemoryLockManagerTest {
         lockManager.acquireLockWait(lockLock1);
         assertEquals(1, lockManager.showAllLocks().size());
         long before = System.currentTimeMillis();
-        assertFalse(lockManager.acquireLockWait(failLockLock, 5500L).getFirst());
+        assertFalse(lockManager.acquireLockWait(failLockLock, 5500L).isAcquired());
         assertEquals(1, lockManager.showAllLocks().size());
         long after = System.currentTimeMillis();
         assertTrue(after - before >= 5000 && after - before < 7000L);
         lockManager.releaseLock(lockLock1);
         assertEquals(0, lockManager.showAllLocks().size());
-        assertTrue(lockManager.acquireLockWait(failLockLock, 1000L).getFirst());
+        assertTrue(lockManager.acquireLockWait(failLockLock, 1000L).isAcquired());
         assertEquals(1, lockManager.showAllLocks().size());
         lockManager.releaseLock(failLockLock);
         assertEquals(0, lockManager.showAllLocks().size());
@@ -160,7 +160,7 @@ public class InMemoryLockManagerTest {
 
     @Test
     public void testAcquireLockWaitTimeoutBeforeForever() {
-        assertTrue(lockManager.acquireLockWait(lockLock1, 1000L).getFirst());
+        assertTrue(lockManager.acquireLockWait(lockLock1, 1000L).isAcquired());
         assertEquals(1, lockManager.showAllLocks().size());
         new Thread(() -> lockManager.acquireLockWait(failLockLock)).start();
         assertEquals(1, lockManager.showAllLocks().size());
@@ -184,14 +184,14 @@ public class InMemoryLockManagerTest {
     public void testLockHijack() {
         new Thread(() -> {
             System.out.println("t1 start " + System.currentTimeMillis());
-            assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+            assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
             System.out.println("t1 end " + System.currentTimeMillis());
         }, "t1").start();
 
         sleep();
         new Thread(() -> {
             System.out.println("t2 start " + System.currentTimeMillis());
-            assertFalse(lockManager.acquireLockWait(lockLock1, 100L).getFirst());
+            assertFalse(lockManager.acquireLockWait(lockLock1, 100L).isAcquired());
             // lock "must" be released because EngineLock implements AutoCloseable
             lockManager.releaseLock(lockLock1);
             System.out.println("t2 end " + System.currentTimeMillis());
@@ -200,7 +200,7 @@ public class InMemoryLockManagerTest {
         sleep();
         new Thread(() -> {
             System.out.println("t3 start " + System.currentTimeMillis());
-            assertTrue(lockManager.acquireLock(lockLock1).getFirst());
+            assertTrue(lockManager.acquireLock(lockLock1).isAcquired());
             System.out.println("t3 end " + System.currentTimeMillis());
         }, "t3").start();
 

@@ -97,7 +97,7 @@ public class VmPoolHandler implements BackendService {
     }
 
     private boolean acquireLock(EngineLock lock) {
-        boolean success = lockManager.acquireLock(lock).getFirst();
+        boolean success = lockManager.acquireLock(lock).isAcquired();
         if (success) {
             log.info("Lock Acquired to object '{}'", lock);
         } else {

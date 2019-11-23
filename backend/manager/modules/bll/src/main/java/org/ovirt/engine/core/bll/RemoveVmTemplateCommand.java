@@ -54,6 +54,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockingResult;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -229,12 +230,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
                         createSubTemplateLockMessage(baseTemplateSuccessor)));
         baseTemplateSuccessorLock = new EngineLock(null, lockSharedMap);
-        final Pair<Boolean, Set<String>> isLockedAndFailReason = lockManager.acquireLock(baseTemplateSuccessorLock);
-        if (isLockedAndFailReason.getFirst()) {
+        LockingResult lockingResult = lockManager.acquireLock(baseTemplateSuccessorLock);
+        if (lockingResult.isAcquired()) {
             return true;
         }
         baseTemplateSuccessorLock = null;
-        getReturnValue().getValidationMessages().addAll(extractVariableDeclarations(isLockedAndFailReason.getSecond()));
+        getReturnValue().getValidationMessages().addAll(extractVariableDeclarations(lockingResult.getMessages()));
         return false;
     }
 

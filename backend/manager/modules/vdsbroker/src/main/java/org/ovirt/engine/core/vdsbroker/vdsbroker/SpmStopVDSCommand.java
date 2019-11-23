@@ -62,7 +62,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
         boolean lockAcquired = false;
         try {
             if (canVdsBeReached()) {
-                lockAcquired = lockManager.acquireLock(retrieveVdsExecutionLock()).getFirst();
+                lockAcquired = lockManager.acquireLock(retrieveVdsExecutionLock()).isAcquired();
                 if (!lockAcquired) {
                     getVDSReturnValue().setVdsError(new VDSError(EngineError.ENGINE,
                             "Failed to acquire vds execution lock - related operation is under execution"));

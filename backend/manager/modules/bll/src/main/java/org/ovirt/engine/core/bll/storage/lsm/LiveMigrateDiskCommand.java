@@ -264,7 +264,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             // at the end of CreateSnapshotForVm command called from the executeCommand() method.
             // Here the lock is acquired again and will be released when this command (LiveMigrateDisk)
             // finishes.
-            if (!lockManager.acquireLock(getLock()).getFirst()) {
+            if (!lockManager.acquireLock(getLock()).isAcquired()) {
                 log.info("Failed to acquire VM lock, will retry on the next polling cycle");
                 return true;
             }
