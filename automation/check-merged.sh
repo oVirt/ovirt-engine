@@ -74,8 +74,11 @@ make clean \
 
 # Since spotbugs is a pure java task, there's no reason to run it on multiple
 # platforms.
-# It seems to be stabler on EL7 for some reason, so we'll run it there:
-if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+# Spotbugs currently has false negatives using mvn 3.5.0, which is the current
+# CentOS version from SCL (rh-maven35).
+# We will work with the Fedora version meanwhile which has maven 3.5.4 and is
+# known to work.
+if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
     source automation/spotbugs.sh
 fi
 
@@ -104,10 +107,11 @@ rpmbuild \
     -D "ovirt_build_draft 1" \
     --rebuild output/*.src.rpm
 
-if [[ "$STD_CI_DISTRO" = "el7" ]]; then
-    # Store any relevant artifacts in exported-artifacts for the ci system to
-    # archive
-    [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+# Store any relevant artifacts in exported-artifacts for the ci system to
+# archive
+[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+
+if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
     # Move find bugs to a dedicated directory under exported-artifacts
     mkdir -p exported-artifacts/find-bugs
     find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \

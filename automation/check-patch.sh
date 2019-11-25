@@ -156,8 +156,10 @@ make validations
 
 # Since spotbugs is a pure java task, there's no reason to run it on multiple
 # platforms.
-# Spotbugs currently has false negatives using mvn 3.5.0, which is the currnt centos version from SCL (rh-maven35).
-# We will work with the Fedora version meanwhile which has maven 3.5.4 and is known to work.
+# Spotbugs currently has false negatives using mvn 3.5.0, which is the current
+# CentOS version from SCL (rh-maven35).
+# We will work with the Fedora version meanwhile which has maven 3.5.4 and is
+# known to work.
 if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
     source automation/spotbugs.sh
 fi
@@ -194,11 +196,15 @@ rpmbuild \
     -D "${RPM_BUILD_MODE} 1" \
     --rebuild output/*.src.rpm
 
+# Store any relevant artifacts in exported-artifacts for the ci system to
+# archive
+[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+
 # Move any relevant artifacts to exported-artifacts for the ci system to
 # archive
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 
-if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
     # Collect any mvn spotbugs artifacts
     mkdir -p exported-artifacts/find-bugs
     find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
