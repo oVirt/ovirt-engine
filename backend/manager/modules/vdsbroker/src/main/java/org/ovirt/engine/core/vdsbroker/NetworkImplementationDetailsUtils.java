@@ -61,18 +61,17 @@ public class NetworkImplementationDetailsUtils {
     }
 
     public Set<VdsNetworkInterface> getAllInterfacesOutOfSync(Guid clusterId) {
-        Map<String, Network> clusterNetworksByName = networkDao
-                .getNetworksForCluster(clusterId);
-
+        Map<String, Network> clusterNetworksByName = networkDao.getNetworksForCluster(clusterId);
+        Cluster cluster = clusterDao.get(clusterId);
         return interfaceDao.getAllInterfacesByClusterId(clusterId)
             .stream()
-            .filter(iface -> isNetworkOutOfSync(iface, clusterNetworksByName.get(iface.getNetworkName())))
+            .filter(iface -> isNetworkOutOfSync(iface, clusterNetworksByName.get(iface.getNetworkName()), cluster))
             .collect(Collectors.toSet());
 
     }
 
-    public boolean isNetworkOutOfSync(VdsNetworkInterface iface, Network network) {
-        return isNetworkOutOfSync(calculateNetworkImplementationDetails(iface, network));
+    public boolean isNetworkOutOfSync(VdsNetworkInterface iface, Network network, Cluster cluster) {
+        return isNetworkOutOfSync(calculateNetworkImplementationDetails(iface, network, cluster));
     }
 
     private boolean isNetworkOutOfSync(NetworkImplementationDetails details) {
@@ -88,20 +87,24 @@ public class NetworkImplementationDetailsUtils {
      * @param iface
      *            The network device to update.
      */
-    public NetworkImplementationDetails calculateNetworkImplementationDetails(VdsNetworkInterface iface,
-        Network network) {
+    public NetworkImplementationDetails calculateNetworkImplementationDetails(VdsNetworkInterface iface, Network network,
+            Cluster cluster) {
 
         if (iface == null || StringUtils.isEmpty(iface.getNetworkName())) {
             return null;
         }
 
         if (network != null) {
-            Cluster cluster = getCluster(iface.getVdsId());
             boolean networkInSync = build(iface, network, cluster).isNetworkInSync();
             return new NetworkImplementationDetails(networkInSync, true);
         } else {
             return new NetworkImplementationDetails();
         }
+    }
+
+    public NetworkImplementationDetails calculateNetworkImplementationDetails(VdsNetworkInterface iface, Network network) {
+        Cluster cluster = getCluster(iface.getVdsId());
+        return calculateNetworkImplementationDetails(iface, network, cluster);
     }
 
     private NetworkInSyncWithVdsNetworkInterface build(NetworkAttachment networkAttachment,
