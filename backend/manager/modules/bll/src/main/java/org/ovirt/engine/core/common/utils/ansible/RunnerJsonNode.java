@@ -197,6 +197,13 @@ public final class RunnerJsonNode {
      */
 
     /**
+     * Return true if the event should be ignored.
+     */
+    public static boolean ignore(JsonNode node) {
+        return node.get("data").get("event_data").get("ignore_errors").asBoolean();
+    }
+
+    /**
      * Return the data of the task output.
      */
     public static JsonNode taskNode(JsonNode node) {
@@ -208,6 +215,13 @@ public final class RunnerJsonNode {
      */
     public static boolean changed(JsonNode node) {
         return node.get("changed").asBoolean();
+    }
+
+    /**
+     * Returns true if yum task contains changes.
+     */
+    public static boolean hasChanges(JsonNode node) {
+        return node.has("changes");
     }
 
     /**

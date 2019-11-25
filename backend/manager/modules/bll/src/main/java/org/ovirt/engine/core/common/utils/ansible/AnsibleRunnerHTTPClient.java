@@ -199,9 +199,12 @@ public class AnsibleRunnerHTTPClient {
                             fn.accept(taskNode.getTextValue(), String.format("jobs/%1$s/events/%2$s", playUuid, n));
                         }
                     } else if (RunnerJsonNode.isEventFailed(currentNode) || RunnerJsonNode.isEventError(currentNode)) {
-                        throw new AnsibleRunnerCallException(
-                            String.format("Task %1$s failed to execute: %2$s", task, "") // stdout, stderr?
-                        );
+                        JsonNode event = getEvent(String.format("jobs/%1$s/events/%2$s", playUuid, n));
+                        if (!RunnerJsonNode.ignore(event)) {
+                            throw new AnsibleRunnerCallException(
+                                    String.format("Task %1$s failed to execute: %2$s", task, "") // stdout, stderr?
+                            );
+                        }
                     }
                 }
             }
@@ -210,7 +213,7 @@ public class AnsibleRunnerHTTPClient {
         return RunnerJsonNode.totalEvents(responseNode);
     }
 
-    public List<String> getYumPackages(String eventUrl) {
+    private JsonNode getEvent(String eventUrl) {
         // Fetch the event info:
         URI eventsUri = buildRunnerURI(eventUrl);
         HttpGet events = new HttpGet(eventsUri);
@@ -218,16 +221,23 @@ public class AnsibleRunnerHTTPClient {
         JsonNode event = readResponse(statusResponse);
         if (statusResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
             throw new AnsibleRunnerCallException(
-                "Failed to fetch info about system packages. %1$s: %2$s",
-                RunnerJsonNode.status(event),
-                RunnerJsonNode.msg(event)
+                    "Failed to fetch info about event. %1$s: %2$s",
+                    RunnerJsonNode.status(event),
+                    RunnerJsonNode.msg(event)
             );
         }
+
+        return event;
+    }
+
+    public List<String> getYumPackages(String eventUrl) {
+        // Fetch the event info:
+        JsonNode event = getEvent(eventUrl);
 
         // Parse the output of the events info:
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
         List<String> packages = new ArrayList<>();
-        if (RunnerJsonNode.changed(taskNode)) {
+        if (RunnerJsonNode.changed(taskNode) && RunnerJsonNode.hasChanges(taskNode)) {
             Iterator<JsonNode> nodes = RunnerJsonNode.installed(taskNode).getElements();
             while (nodes.hasNext()) {
                 packages.add(nodes.next().getElements().next().asText());

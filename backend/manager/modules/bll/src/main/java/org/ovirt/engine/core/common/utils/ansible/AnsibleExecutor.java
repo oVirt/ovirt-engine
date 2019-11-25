@@ -142,7 +142,6 @@ public class AnsibleExecutor {
                     // Playbook failed:
                     ret.setAnsibleReturnCode(AnsibleReturnCode.ERROR);
                     ret.setLogFile(runnerLogger.getLogFile());
-                    // TODO: fetch runner_on_failed and set to stderr
                     return ret;
                 }
             }
