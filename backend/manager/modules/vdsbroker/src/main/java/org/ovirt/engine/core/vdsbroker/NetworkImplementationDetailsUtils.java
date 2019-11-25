@@ -96,7 +96,8 @@ public class NetworkImplementationDetailsUtils {
         }
 
         if (network != null) {
-            boolean networkInSync = build(iface, network).isNetworkInSync();
+            Cluster cluster = getCluster(iface.getVdsId());
+            boolean networkInSync = build(iface, network, cluster).isNetworkInSync();
             return new NetworkImplementationDetails(networkInSync, true);
         } else {
             return new NetworkImplementationDetails();
@@ -105,10 +106,9 @@ public class NetworkImplementationDetailsUtils {
 
     private NetworkInSyncWithVdsNetworkInterface build(NetworkAttachment networkAttachment,
             VdsNetworkInterface vdsNetworkInterface,
-            Network network) {
+            Network network, Cluster cluster) {
 
         Guid vdsId = vdsNetworkInterface.getVdsId();
-        Cluster cluster = getCluster(vdsId);
 
         HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
         return new NetworkInSyncWithVdsNetworkInterface(vdsNetworkInterface,
@@ -128,9 +128,9 @@ public class NetworkImplementationDetailsUtils {
     }
 
 
-    private NetworkInSyncWithVdsNetworkInterface build(VdsNetworkInterface nic, Network network) {
+    private NetworkInSyncWithVdsNetworkInterface build(VdsNetworkInterface nic, Network network, Cluster cluster) {
         NetworkAttachment networkAttachment = getNetworkAttachmentForNicAndNetwork(nic, network);
-        return build(networkAttachment, nic, network);
+        return build(networkAttachment, nic, network, cluster);
     }
 
     private NetworkAttachment getNetworkAttachmentForNicAndNetwork(VdsNetworkInterface nic, Network network) {
