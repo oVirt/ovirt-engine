@@ -172,6 +172,7 @@ export ENVFILEC
 
 # Rule to generate files from templates:
 .in:
+	GENERATED_FILE_LIST=$$(echo "$(GENERATED)" | sed -e "s/.gitignore\s//g" -e "s/ /\\\n/g"); \
 	sed \
 	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/services/ovirt-engine/ovirt-engine.conf|g" \
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
@@ -220,10 +221,13 @@ export ENVFILEC
 	-e "s|@VMCONSOLE_PROXY_HELPER_DEFAULTS@|$(DATA_DIR)/conf/ovirt-vmconsole-proxy-helper.conf|g" \
 	-e "s|@BIN_DIR@|$(BIN_DIR)|g" \
 	-e "s|@AAA_JDBC_USR@|$(DATAROOT_DIR)/ovirt-engine-extension-aaa-jdbc|g" \
+	-e "s|@GENERATED_FILE_LIST@|$${GENERATED_FILE_LIST}|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
+# Once add new template file, if required chmod, add it in generated-files target.
 GENERATED = \
+	.gitignore \
 	ovirt-engine.spec \
 	build/helptag.py \
 	build/helptag_checker.py \

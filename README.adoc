@@ -312,6 +312,10 @@ all-dev:: Build project for development.
 install-dev:: Install a development environment at PREFIX.
 dist:: Create source tarball out of git repository.
 maven:: Force execution of maven.
+generated-files:: Create file from templates (.in files).
++
+  When creating new templates, generated files will be automatically appears in .gitignore, updated .gitignore should be part of commiting new templates.
++
 
 ==== Build customization
 

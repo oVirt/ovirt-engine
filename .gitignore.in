@@ -1,0 +1,58 @@
+# ovirt-engine global ignore list
+###########################
+
+# mvn folders
+###########################
+target
+
+# build-time files
+###########################
+.metadata
+*.class
+*.swp
+*.iws
+tmp.*
+
+# IDE files
+###########################
+.settings
+.project
+.classpath
+.factorypath
+.externalToolBuilders
+.checkstyle
+maven-eclipse.xml
+.pmd
+*.ipr
+*.iml
+.idea
+.pydevproject
+
+# python files
+###########################
+*.pyo
+*.pyc
+__pycache__
+
+# UI folders
+###########################
+/frontend/webadmin/modules/webadmin/gen
+/frontend/webadmin/modules/webadmin/war
+
+# Local scripts log files
+# #########################
+/backend/manager/dbscripts/*.sh.log
+
+# Files generated from templates
+###########################
+@GENERATED_FILE_LIST@
+
+# dbscripts
+###########################
+packaging/dbscripts/*.scripts.md5
+packaging/dbscripts/*.schema
+packaging/dbscripts/*.log
+
+# jrebel plugin integration for IDE
+# #########################
+*rebel.xml
