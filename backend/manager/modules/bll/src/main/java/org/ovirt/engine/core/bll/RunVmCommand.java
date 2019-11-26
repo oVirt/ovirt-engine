@@ -648,12 +648,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
         parameters.setPassthroughVnicToVfMap(flushPassthroughVnicToVfMap());
         if (initializationType == InitializationType.Sysprep
-                && osRepository.isWindows(getVm().getVmOsId())
+                && osRepository.isSysprep(getVm().getVmOsId())
                 && (getVm().getFloppyPath() == null || "".equals(getVm().getFloppyPath()))) {
             parameters.setInitializationType(InitializationType.Sysprep);
         }
-        if (initializationType == InitializationType.CloudInit && !osRepository.isWindows(getVm().getVmOsId())) {
+        if (initializationType == InitializationType.CloudInit && osRepository.isCloudInit(getVm().getVmOsId())) {
             parameters.setInitializationType(InitializationType.CloudInit);
+        }
+        if (initializationType == InitializationType.Ignition && osRepository.isIgnition(getVm().getVmOsId())) {
+            parameters.setInitializationType(InitializationType.Ignition);
         }
         return parameters;
     }
@@ -850,13 +853,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getParameters().getInitializationType() == null) {
             vmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
             if (!getVm().isInitialized() && getVm().getVmInit() != null) {
-                if (osRepository.isWindows(getVm().getVmOsId())) {
+                if (osRepository.isSysprep(getVm().getVmOsId())) {
                     if (!isPayloadExists(VmDeviceType.FLOPPY)) {
                         initializationType = InitializationType.Sysprep;
                     }
                 } else {
                     if (!isPayloadExists(VmDeviceType.CDROM)) {
-                        initializationType = InitializationType.CloudInit;
+                        if(osRepository.isCloudInit(getVm().getVmOsId())) {
+                            initializationType = InitializationType.CloudInit;
+                        } else {
+                            initializationType = InitializationType.Ignition;
+                        }
                     }
                 }
             }
@@ -868,6 +875,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     isPayloadExists(VmDeviceType.FLOPPY)) {
                 vmPayload = null;
             } else if (getParameters().getInitializationType() == InitializationType.CloudInit &&
+                    isPayloadExists(VmDeviceType.CDROM)) {
+                vmPayload = null;
+            } else if (getParameters().getInitializationType() == InitializationType.Ignition &&
                     isPayloadExists(VmDeviceType.CDROM)) {
                 vmPayload = null;
             }
@@ -1072,12 +1082,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        boolean isWindowsOs = osRepository.isWindows(getVm().getVmOsId());
-
-        boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && !isWindowsOs) ||
+        boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isCloudInit(getVm().getVmOsId())) ||
                 (getParameters().getInitializationType() == InitializationType.CloudInit);
 
-        if (isCloudInitEnabled && hasMaximumNumberOfDisks()) {
+        boolean isIgnitionEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isIgnition(getVm().getVmOsId())) ||
+                (getParameters().getInitializationType() == InitializationType.Ignition);
+
+        if ((isCloudInitEnabled || isIgnitionEnabled) && hasMaximumNumberOfDisks()) {
             return failValidation(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);
         }
 

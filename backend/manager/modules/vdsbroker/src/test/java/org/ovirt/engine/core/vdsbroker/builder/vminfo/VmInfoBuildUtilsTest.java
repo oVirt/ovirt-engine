@@ -391,7 +391,7 @@ public class VmInfoBuildUtilsTest {
         VmInit vmInit = new VmInit();
         vmInit.setCustomScript("packages: [foo]");
 
-        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayloadCloudInit(vmInit));
         String userData = new String(stringMap.get("openstack/latest/user_data"));
         assertTrue(userData.startsWith("#cloud-config"));
         assertTrue(userData.contains("packages: [foo]"));
@@ -401,8 +401,13 @@ public class VmInfoBuildUtilsTest {
     public void testBuildIgnition() {
         VmInit vmInit = new VmInit();
         vmInit.setCustomScript("{\"ignition\": {} }");
+        VM vm = new VM();
+        vm.setVmOs(35); //rhcos
+        reset(osRepository);
+        when(osRepository.getVmInitMap()).thenReturn(Collections.singletonMap(35, "ignition_2.2.0"));
+        String[] version = osRepository.getVmInitMap().get(vm.getVmOsId()).split("_");
 
-        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayloadIgnition(vmInit, new Version(version[1])));
         assertTrue(new String(stringMap.get("openstack/latest/user_data")).startsWith("{\"ignition\""));
     }
 
@@ -410,13 +415,13 @@ public class VmInfoBuildUtilsTest {
     public void testBuildCloudInitWitNullCustomScript() {
         VmInit vmInit = new VmInit();
 
-        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(vmInit));
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayloadCloudInit(vmInit));
         Assertions.assertThat(stringMap.get("openstack/latest/user_data")).isNotEmpty();
     }
 
     @Test
     public void testBuildCloudInitWitNullVmInit() {
-        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayload(null));
+        Map<String, byte[]> stringMap = assertDoesNotThrow(() -> underTest.buildPayloadCloudInit(null));
         Assertions.assertThat(stringMap.get("openstack/latest/user_data")).isNotEmpty();
     }
 

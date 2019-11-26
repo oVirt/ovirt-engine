@@ -38,6 +38,7 @@ void attribute() : {} {
     | (<SYSPREP_PATH> stringValue())
     | (<SYSPREP_FILENAME> stringValue())
     | (<PRODUCT_KEY>  stringValue())
+    | (<VM_INIT_TYPE>) stringValue()
     | ("isTimezoneTypeInteger" booleanValue())
     | resources()
     | devices()
@@ -224,6 +225,7 @@ void valueSpecifier() : {} {
 |   < SYSPREP_PATH : "sysprepPath" > : STRING_VALUE
 |   < SYSPREP_FILENAME : "sysprepFileName" > : STRING_VALUE
 |   < PRODUCT_KEY : "productKey" > : STRING_VALUE
+|   < VM_INIT_TYPE : "vmInitType" > : STRING_VALUE
 |   < CHAR : ["a"-"z","A"-"Z","0"-"9","_"] >
 |   < OS_UNIQUE_NAME : (<CHAR>)+ >
 |   < LINECOMMENT : "#" (~["\r","\n"])* >

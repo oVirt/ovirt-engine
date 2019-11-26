@@ -264,6 +264,9 @@ public class AsyncDataProvider {
     // cached linux OS
     private List<Integer> linuxOsIds;
 
+    // cached VM init type to OS ids
+    private Map<Integer, String> vmInitMap;
+
     // cached NIC hotplug support map
     private Map<Pair<Integer, Version>, Boolean> nicHotplugSupportMap;
 
@@ -333,6 +336,7 @@ public class AsyncDataProvider {
         initOsDefaultIconIds();
         initUniqueOsNames();
         initLinuxOsTypes();
+        initVmInitTypes();
         initWindowsOsTypes();
         initDisplayTypes();
         initBalloonSupportMap();
@@ -2564,6 +2568,15 @@ public class AsyncDataProvider {
         return linuxOsIds.contains(osId);
     }
 
+    public boolean isIgnition(Integer osId) {
+        // can be null as a consequence of setItems on ListModel
+        if (osId == null) {
+            return false;
+        }
+
+        return vmInitMap.containsKey(osId) && vmInitMap.get(osId).startsWith("ignition"); //$NON-NLS-1$
+    }
+
     public void initWindowsOsTypes() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetWindowsOss),
@@ -2576,6 +2589,13 @@ public class AsyncDataProvider {
                 new OsQueryParameters(OsRepositoryVerb.GetLinuxOss),
                 new AsyncQuery<QueryReturnValue>(
                         returnValue -> linuxOsIds = (ArrayList<Integer>) returnValue.getReturnValue()));
+    }
+
+    public void initVmInitTypes() {
+        Frontend.getInstance().runQuery(QueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetVmInitMap),
+                new AsyncQuery<QueryReturnValue>(
+                        returnValue -> vmInitMap = returnValue.getReturnValue()));
     }
 
     public void initUniqueOsNames() {

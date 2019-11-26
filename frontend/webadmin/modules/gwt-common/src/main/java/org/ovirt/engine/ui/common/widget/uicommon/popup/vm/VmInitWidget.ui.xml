@@ -153,6 +153,9 @@
                 </b:Column>
               </b:Row>
               <b:Row>
+                <w:EntityModelWidgetWithInfo ui:field="ignitionPasswordEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+              </b:Row>
+              <b:Row>
                 <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>

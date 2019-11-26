@@ -109,7 +109,6 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
-import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
@@ -1459,29 +1458,20 @@ public class VmInfoBuildUtils {
 
     /**
      * buildPayload will create a proper payload to pass to libvirt.
-     * It supports both cloud-init, and ignition.
-     * Cloud init payload is supported before 4.0
-     * Ignition support is experimental, and is implicit. To get an ignition
-     * payload, a valid json with an 'ignition' key must be passed as a custom script
-     * Only in that case the payload will be passed as-is, without extra cloud-init additions.
+     * It supports cloud-init. Cloud init payload is supported before 4.0
      * vmInit - holding all the init data for a VM - hostname, script, root password etc.
      **/
-    public Map<String, byte[]> buildPayload(VmInit vmInit) throws IOException {
-        // detect ignition
-        boolean isIgnition = false;
-        try {
-            if (vmInit != null && vmInit.getCustomScript() != null) {
-                isIgnition = JsonHelper.jsonToMap(vmInit.getCustomScript()).containsKey("ignition");
-                if (isIgnition) {
-                    // there is no json schema or a java library that validates ignition files yet. The passing criterira now
-                    // is a valid json structure with an 'ignition' key
-                    log.info("the json content under custom script is an ignition json file, the content has not been validated");
-                }
-            }
-        } catch (IOException e) {
-            // not a json - probably not an ignition config
-        }
-        return isIgnition ? new IgnitionHandler(vmInit).getFileData() : new CloudInitHandler(vmInit).getFileData();
+    public Map<String, byte[]> buildPayloadCloudInit(VmInit vmInit) throws IOException {
+        return new CloudInitHandler(vmInit).getFileData();
+    }
+
+    /**
+     * buildPayload will create a proper payload to pass to libvirt.
+     * It supports ignition. Ignition support is experimental, and is implicit.
+     * vmInit - holding all the init data for a VM - hostname, script, root password etc.
+     **/
+    public Map<String, byte[]> buildPayloadIgnition(VmInit vmInit, Version ignitionVersion) throws IOException {
+        return new IgnitionHandler(vmInit, ignitionVersion).getFileData();
     }
 
     String getTscFrequency(Guid vdsGuid) {

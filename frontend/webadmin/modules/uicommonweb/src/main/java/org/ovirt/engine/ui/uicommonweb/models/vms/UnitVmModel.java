@@ -393,6 +393,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
+    private boolean isIgnition;
+
+    public boolean getIsIgnition() {
+        return isIgnition;
+    }
+
+    public void setIsIgnition(boolean value) {
+        if (isIgnition != value) {
+            isIgnition = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsIgnition")); //$NON-NLS-1$
+        }
+    }
+
     private String cpuNotification;
 
     public String getCPUNotification() {
@@ -1160,6 +1173,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private EntityModel<Boolean> sysprepEnabled;
 
+    private EntityModel<Boolean> ignitionEnabled;
+
     public EntityModel<Boolean> getCloudInitEnabled() {
         return cloudInitEnabled;
     }
@@ -1167,6 +1182,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public void setCloudInitEnabled(EntityModel<Boolean> cloudInitEnabled) {
         this.cloudInitEnabled = cloudInitEnabled;
     }
+
+    public EntityModel<Boolean> getIgnitionEnabled() {
+        return ignitionEnabled;
+    }
+
+    public void setIgnitionEnabled(EntityModel<Boolean> ignitionEnabled) {
+        this.ignitionEnabled = ignitionEnabled;
+    }
+
 
     public EntityModel<Boolean> getSysprepEnabled() {
         return sysprepEnabled;
@@ -1634,6 +1658,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setPriority(new NotChangableForVmInPoolListModel<EntityModel<Integer>>());
         setVmInitEnabled(new EntityModel<>(false));
         setCloudInitEnabled(new EntityModel<Boolean>());
+        setIgnitionEnabled(new EntityModel<Boolean>());
         setSpiceFileTransferEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setSpiceCopyPasteEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setSysprepEnabled(new EntityModel<Boolean>());
@@ -2149,10 +2174,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if(!getVmInitEnabled().getEntity()) {
             getSysprepEnabled().setEntity(false);
             getCloudInitEnabled().setEntity(false);
+            getIgnitionEnabled().setEntity(false);
         } else {
             getSysprepEnabled().setEntity(getIsWindowsOS());
-            // for the "other" also use cloud init
-            getCloudInitEnabled().setEntity(!getIsWindowsOS());
+            if(getIsIgnition()) {
+                // because the usage of the same flow panel order matters
+                getCloudInitEnabled().setEntity(!getIsWindowsOS() && !getIsIgnition());
+                getIgnitionEnabled().setEntity(getIsIgnition());
+            } else {
+                // for the "other" also use cloud init
+                getIgnitionEnabled().setEntity(getIsIgnition());
+                getCloudInitEnabled().setEntity(!getIsWindowsOS() && !getIsIgnition());
+            }
             autoSetHostname();
 
             if (getSysprepEnabled().getEntity()) {
@@ -2483,6 +2516,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(osType));
         setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(osType));
+        setIsIgnition(AsyncDataProvider.getInstance().isIgnition(osType));
 
         getBehavior().updateDefaultTimeZone();
 

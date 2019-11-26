@@ -56,9 +56,20 @@ public interface OsRepository {
     String getOsFamily(int osId);
 
     /**
+     * VM init type, cloudinit(linux), sysprep(windows) and ignition(coreos)
+     */
+    String getVmInitType(int osId);
+
+    /**
      * @return a list of OSs who's {@link OsRepository#getOsFamily(int)} returns "linux"
      */
     List<Integer> getLinuxOss();
+
+    /**
+     * @return map of osId to the vmInitType
+     */
+    Map<Integer, String> getVmInitMap();
+
 
     List<Integer> get64bitOss();
 
@@ -157,6 +168,21 @@ public interface OsRepository {
      * a convenience method the for  family type "windows"
      */
     boolean isWindows(int osId);
+
+    /**
+     * a convenience method the for vmInit type "ignition"
+     */
+    boolean isCloudInit(int osId);
+
+    /**
+     * a convenience method the for vmInit type "ignition"
+     */
+    boolean isSysprep(int osId);
+
+    /**
+     * a convenience method the for vmInit type "ignition"
+     */
+    boolean isIgnition(int osId);
 
     /**
      * @return list of supported disk interface devices

@@ -374,6 +374,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Ignore
     EntityModelWidgetWithInfo cloudInitProtocolEditorWithInfo;
 
+    @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo ignitionPasswordEditorWithInfo;
+
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -402,6 +406,32 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         driver.initialize(this);
     }
 
+    public void switchCloudInitToIgnition(){
+        timeZoneEnabledEditor.setVisible(false);
+        timeZoneEditor.setVisible(false);
+        networkExpander.setVisible(false);
+        networkExpanderContent.setVisible(false);
+        regenerateKeysEnabledEditor.setVisible(false);
+        ignitionPasswordEditorWithInfo.setVisible(true);
+        cloudInitRootPasswordEditor.setVisible(false);
+        customScriptInfoIcon.setText(templates.italicText(constants.ignitionScriptInfo()));
+        customScriptExpander.setTitleWhenExpanded(constants.ignitionScriptLabel());
+        customScriptExpander.setTitleWhenCollapsed(constants.ignitionScriptLabel());
+    }
+
+    public void switchIgnitiontoCloudInit(){
+        timeZoneEnabledEditor.setVisible(true);
+        timeZoneEditor.setVisible(true);
+        networkExpander.setVisible(true);
+        networkExpanderContent.setVisible(true);
+        regenerateKeysEnabledEditor.setVisible(true);
+        ignitionPasswordEditorWithInfo.setVisible(false);
+        cloudInitRootPasswordEditor.setVisible(true);
+        customScriptInfoIcon.setText(templates.italicText(constants.customScriptInfo()));
+        customScriptExpander.setTitleWhenExpanded(constants.customScriptLabel());
+        customScriptExpander.setTitleWhenCollapsed(constants.customScriptLabel());
+    }
+
     private void initEditorsWithIcon() {
         windowsHostnameEditor = new StringEntityModelTextBoxOnlyEditor();
 
@@ -409,6 +439,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         label.setText(constants.cloudInitHostnameLabel());
         windowsHostnameEditorWithInfo = new EntityModelWidgetWithInfo(label, windowsHostnameEditor);
         windowsHostnameEditorWithInfo.setExplanation(templates.italicText(constants.windowsHostNameInfo()));
+
+        cloudInitRootPasswordEditor = new StringEntityModelPasswordBoxEditor();
+        label.setText(constants.ignitionRootPasswordLabel());
+        ignitionPasswordEditorWithInfo = new EntityModelWidgetWithInfo(label, cloudInitRootPasswordEditor);
+        ignitionPasswordEditorWithInfo.setExplanation(templates.italicText(constants.ignitionPasswordInfo()));
     }
 
     private void initAdvancedParameterExpanders() {

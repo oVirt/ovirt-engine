@@ -453,16 +453,20 @@ public class BackendVmResource
         boolean useSysPrep = sysPrepSet && action.isUseSysprep();
         boolean cloudInitSet = action.isSetUseCloudInit();
         boolean useCloudInit = cloudInitSet && action.isUseCloudInit();
-        if (useSysPrep && useCloudInit) {
+        boolean ignitionSet = action.isSetUseIgnition();
+        boolean useIgnition = ignitionSet && action.isUseIgnition();
+        if (useSysPrep && useCloudInit || useSysPrep && useIgnition || useCloudInit && useIgnition) {
             Fault fault = new Fault();
-            fault.setReason(localize(Messages.CANT_USE_SYSPREP_AND_CLOUD_INIT_SIMULTANEOUSLY));
+            fault.setReason(localize(Messages.CANT_USE_MIXED_INIT_SIMULTANEOUSLY));
             return Response.status(Response.Status.CONFLICT).entity(fault).build();
         }
         if (useSysPrep) {
             params.setInitializationType(InitializationType.Sysprep);
         } else if (useCloudInit) {
             params.setInitializationType(InitializationType.CloudInit);
-        } else if ((sysPrepSet && !useSysPrep) || (cloudInitSet && !useCloudInit)) {
+        } else if (useIgnition) {
+            params.setInitializationType(InitializationType.Ignition);
+        } else if ((sysPrepSet && !useSysPrep) || (cloudInitSet && !useCloudInit) || (ignitionSet && !useIgnition)) {
             //if sysprep or cloud-init were explicitly set to false, this indicates
             //that the user wants no initialization
             params.setInitializationType(InitializationType.None);

@@ -16,6 +16,22 @@
       }
     ]
   },
-  "storage": {},
+  "storage": {
+    "filesystems": [
+      {
+      "mount": {
+        "device": "/dev/disk/by-label/ROOT",
+        "format": "btrfs",
+        "wipeFilesystem": true,
+        "label": "ROOT"
+      }
+    }],
+    "files": [{
+      "filesystem": "root",
+      "path": "/etc/test",
+      "mode": 420,
+      "contents": { "source": "data:,core1" }
+    }]
+  },
   "systemd": {}
 }

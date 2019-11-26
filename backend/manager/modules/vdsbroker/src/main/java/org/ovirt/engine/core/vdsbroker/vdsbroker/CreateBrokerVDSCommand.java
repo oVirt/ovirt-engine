@@ -9,8 +9,10 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
@@ -29,6 +31,8 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     private SysprepHandler sysprepHandler;
     @Inject
     private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+    @Inject
+    protected OsRepository osRepository;
 
     public CreateBrokerVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
@@ -104,13 +108,27 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         case CloudInit:
             Map<String, byte[]> cloudInitContent;
             try {
-                cloudInitContent = vmInfoBuildUtils.buildPayload(getParameters().getVm().getVmInit());
+                cloudInitContent = vmInfoBuildUtils.buildPayloadCloudInit(getParameters().getVm().getVmInit());
             } catch (Exception e) {
                 throw new RuntimeException("Failed to build cloud-init data:", e);
             }
 
             return (cloudInitContent != null && !cloudInitContent.isEmpty()) ?
                     vmInfoBuildUtils.createCloudInitPayloadDevice(cloudInitContent, getParameters().getVm())
+                    : null;
+
+        case Ignition:
+            Map<String, byte[]> ignitionContent;
+            try {
+                String[] version = osRepository.getVmInitMap().get(getParameters().getVm().getVmOsId()).split("_");
+                Version ver = version.length <= 1 ? null : new Version(version[1]);
+                ignitionContent = vmInfoBuildUtils.buildPayloadIgnition(getParameters().getVm().getVmInit(), ver);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to build ignition data:", e);
+            }
+
+            return (ignitionContent != null && !ignitionContent.isEmpty()) ?
+                    vmInfoBuildUtils.createCloudInitPayloadDevice(ignitionContent, getParameters().getVm())
                     : null;
 
         case None:

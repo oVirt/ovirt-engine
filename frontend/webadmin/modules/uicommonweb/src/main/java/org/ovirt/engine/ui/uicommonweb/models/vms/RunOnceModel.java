@@ -368,6 +368,16 @@ public abstract class RunOnceModel extends Model {
         privateIsWindowsOS = value;
     }
 
+    private boolean privateIsIgnition;
+
+    public boolean getIsIgnition() {
+        return privateIsIgnition;
+    }
+
+    public void setIsIgnition(boolean value) {
+        privateIsIgnition = value;
+    }
+
 
     private BootSequenceModel bootSequence;
 
@@ -604,6 +614,7 @@ public abstract class RunOnceModel extends Model {
         setIsCustomPropertiesSheetVisible(true);
 
         setIsWindowsOS(false);
+        setIsIgnition(false);
 
         setVolatileRun(new EntityModel<>(false));
         getVolatileRun().setIsChangeable(true);
@@ -618,6 +629,11 @@ public abstract class RunOnceModel extends Model {
         getCommands().addAll(Arrays.asList(runOnceCommand, cancelCommand));
     }
 
+    public void updateOSs(){
+        setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
+        setIsIgnition(AsyncDataProvider.getInstance().isIgnition(vm.getVmOsId()));
+    }
+
     public void init() {
         setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
         setHelpTag(HelpTag.run_once_virtual_machine);
@@ -629,7 +645,7 @@ public abstract class RunOnceModel extends Model {
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
 
-        setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
+        updateOSs();
         getIsVmFirstRun().setEntity(!vm.isInitialized());
 
         initVmInitEnabled(vm.getVmInit(), vm.isInitialized());
@@ -1077,15 +1093,16 @@ public abstract class RunOnceModel extends Model {
         }
     }
 
-    // Sysprep/cloud-init sections displayed only with proper OS type (Windows
-    // or Linux, respectively) and when proper floppy or CD is attached.
+    // Sysprep/cloud-init/ignition sections displayed only with proper OS type (Windows
+    // /Linux or core os, respectively) and when proper floppy or CD is attached.
     // Currently vm.isFirstRun() status is not considered.
     public void updateInitialRunFields() {
         getIsSysprepPossible().setEntity(getIsWindowsOS());
         getIsSysprepEnabled().setEntity(getInitializationType() == InitializationType.Sysprep);
         // also other can be cloud inited
         getIsCloudInitPossible().setEntity(!getIsWindowsOS());
-        getIsCloudInitEnabled().setEntity(getInitializationType() == InitializationType.CloudInit);
+        getIsCloudInitEnabled().setEntity(getInitializationType() == InitializationType.CloudInit
+                || getInitializationType() == InitializationType.Ignition);
         getIsCloudInitEnabled().setIsAvailable(!getIsWindowsOS());
 
         if (getIsSysprepPossible().getEntity() && getIsSysprepEnabled().getEntity()) {

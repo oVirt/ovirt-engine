@@ -85,6 +85,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case Get64BitOss:
                 setReturnValue(osRepository.get64bitOss());
                 break;
+            case GetVmInitMap:
+                setReturnValue(osRepository.getVmInitMap());
+                break;
         }
     }
 }

@@ -189,6 +189,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public String getVmInitType(int osId) {
+        return getValueByVersion(idToUnameLookup.get(osId), "vmInitType", null);
+    }
+
+    @Override
     public List<Integer> getLinuxOss() {
         List<Integer> oss = new ArrayList<>();
         for (int osId : getOsIds()) {
@@ -197,6 +202,18 @@ public enum OsRepositoryImpl implements OsRepository {
             }
         }
         return oss;
+    }
+
+    @Override
+    public Map<Integer, String> getVmInitMap() {
+        Map<Integer, String> osNames = new HashMap<>();
+        for (int osId : getOsIds()) {
+            String vmInitType = getValueByVersion(idToUnameLookup.get(osId), "vmInitType", null);
+            if (vmInitType != null) {
+                osNames.put(osId, vmInitType);
+            }
+        }
+        return osNames;
     }
 
     @Override
@@ -289,6 +306,21 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public boolean isLinux(int osId) {
         return getOsFamily(osId).equalsIgnoreCase("linux");
+    }
+
+    @Override
+    public boolean isCloudInit(int osId) {
+        return getVmInitType(osId).equalsIgnoreCase("cloudinit");
+    }
+
+    @Override
+    public boolean isSysprep(int osId) {
+        return getVmInitType(osId).equalsIgnoreCase("sysprep");
+    }
+
+    @Override
+    public boolean isIgnition(int osId) {
+        return getVmInitType(osId).startsWith("ignition");
     }
 
     @Override

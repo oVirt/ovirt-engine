@@ -151,6 +151,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cloudInitRootPasswordLabel();
 
+    String ignitionRootPasswordLabel();
+
     String cloudInitRootPasswordVerificationLabel();
 
     String sysprepAdminPasswordLabel();
@@ -184,6 +186,8 @@ public interface CommonApplicationConstants extends Constants {
     String cloudInitDnsSearchDomainsLabel();
 
     String customScriptLabel();
+
+    String ignitionScriptLabel();
 
     String cloudInitAttachmentLabel();
 
@@ -252,6 +256,8 @@ public interface CommonApplicationConstants extends Constants {
     String cloudInitAttachmentContentTextToolTip();
 
     String cloudInitOrSysprep();
+
+    String ignition();
 
     String cloudInitAttachmentContentBase64ToolTip();
 
@@ -1425,6 +1431,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String customScriptInfo();
 
+    String ignitionScriptInfo();
+
     String diskInterfaceInfo();
 
     String cinderVolumeTypeInfoIcon();
@@ -1866,6 +1874,8 @@ public interface CommonApplicationConstants extends Constants {
     String cloudInitProtocolLabel();
 
     String cloudInitProtocolInfo();
+
+    String ignitionPasswordInfo();
 
     String storageDomainStatus();
 

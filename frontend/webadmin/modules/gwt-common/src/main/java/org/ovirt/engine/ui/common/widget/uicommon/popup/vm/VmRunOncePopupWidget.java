@@ -520,6 +520,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         boolean possible = model.getIsCloudInitPossible().getEntity();
 
         vmInitWidget.setCloudInitContentVisible(selected && possible);
+        runOnceModel.updateOSs();
+        if(runOnceModel.getIsIgnition()){
+            cloudInitEnabledEditor.setLabel(constants.ignition());
+            vmInitWidget.switchCloudInitToIgnition();
+        } else {
+            cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabel());
+            vmInitWidget.switchIgnitiontoCloudInit();
+        }
     }
 
     @UiHandler("isoImagesRefreshButton")
