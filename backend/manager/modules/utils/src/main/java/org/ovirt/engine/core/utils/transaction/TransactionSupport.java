@@ -28,30 +28,6 @@ public class TransactionSupport {
     }
 
     /**
-     * Suspends and returns current transaction
-     */
-    public static Transaction suspend() {
-        try {
-            TransactionManager tm = findTransactionManager();
-            return tm.suspend();
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to suspend transaction", e);
-        }
-    }
-
-    /**
-     * Resumes given transaction
-     */
-    public static void resume(Transaction transaction) {
-        try {
-            TransactionManager tm = findTransactionManager();
-            tm.resume(transaction);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to resume transaction", e);
-        }
-    }
-
-    /**
      * Returns current transaction
      */
     public static Transaction current() {
@@ -177,16 +153,19 @@ public class TransactionSupport {
         return result;
     }
 
+    public static <T> T executeInSuppressed(TransactionMethod<T> code) {
+        return executeInSuppressed(findTransactionManager(), code);
+    }
+
     /**
      * Forces "REQUIRES_NEW" and executes given code in that scope
      */
     public static <T> T executeInNewTransaction(TransactionMethod<T> code) {
         T result = null;
         Transaction transaction = null;
+        TransactionManager tm = findTransactionManager();
 
         try {
-            TransactionManager tm = findTransactionManager();
-
             // suspend existing if exists
             transaction = tm.getTransaction();
             if (transaction != null) {
@@ -225,7 +204,11 @@ public class TransactionSupport {
         } finally {
             // check if we need to resume previous transaction
             if (transaction != null) {
-                resume(transaction);
+                try {
+                    tm.resume(transaction);
+                } catch (Exception e) {
+                    log.error("Unable to resume transaction", e);
+                }
             }
         }
         // and we are done...

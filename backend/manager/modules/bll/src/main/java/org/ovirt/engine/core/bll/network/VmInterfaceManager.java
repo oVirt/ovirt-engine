@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transaction;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
@@ -140,12 +138,12 @@ public class VmInterfaceManager {
     }
 
     protected void removeFromExternalNetworks(List<? extends VmNic> interfaces) {
-        Transaction transaction = TransactionSupport.suspend();
-        for (VmNic iface : interfaces) {
-            getExternalNetworkManagerFactory().create(iface).deallocateIfExternal();
-        }
-
-        TransactionSupport.resume(transaction);
+        TransactionSupport.executeInSuppressed(() -> {
+            for (VmNic iface : interfaces) {
+                getExternalNetworkManagerFactory().create(iface).deallocateIfExternal();
+            }
+            return null;
+        });
     }
 
     /***

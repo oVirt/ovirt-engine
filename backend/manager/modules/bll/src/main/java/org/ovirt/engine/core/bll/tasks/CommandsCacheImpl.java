@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.transaction.Transaction;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
@@ -107,14 +106,10 @@ public class CommandsCacheImpl implements CommandsCache {
     }
 
     public void saveOrUpdateWithoutTransaction(CommandEntity cmdEntity) {
-        Transaction transaction = TransactionSupport.suspend();
-        try {
+        TransactionSupport.executeInSuppressed(() -> {
             commandEntityDao.saveOrUpdate(cmdEntity);
-        } finally {
-            if (transaction != null) {
-                TransactionSupport.resume(transaction);
-            }
-        }
+            return null;
+        });
     }
 
     @Override
@@ -132,14 +127,10 @@ public class CommandsCacheImpl implements CommandsCache {
             return;
         }
 
-        Transaction transaction = TransactionSupport.suspend();
-        try {
+        TransactionSupport.executeInSuppressed(() -> {
             commandEntityDao.insertCommandAssociatedEntities(cmdAssociatedEntities);
-        } finally {
-            if (transaction != null) {
-                TransactionSupport.resume(transaction);
-            }
-        }
+            return null;
+        });
     }
 
     @Override
