@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,11 +28,11 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
     private String driver;
     private boolean assignable;
     private Map<String, String> address;
-    private Set<String> mdevTypes;
+    private List<MDevType> mdevTypes;
 
     public HostDevice() {
         address = Collections.emptyMap();
-        mdevTypes = Collections.emptySet();
+        mdevTypes = Collections.emptyList();
     }
 
     @Override
@@ -183,11 +183,11 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
         return CAPABILITY_PCI.equals(getCapability());
     }
 
-    public Set<String> getMdevTypes() {
+    public List<MDevType> getMdevTypes() {
         return mdevTypes;
     }
 
-    public void setMdevTypes(Set<String> mdevTypes) {
+    public void setMdevTypes(List<MDevType> mdevTypes) {
         this.mdevTypes = mdevTypes;
     }
 

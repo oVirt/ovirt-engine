@@ -35,11 +35,13 @@ public class HostDeviceMapper {
 
         if (entity.getMdevTypes() != null && !entity.getMdevTypes().isEmpty()) {
             List<MDevType> mDevsList = new ArrayList<>();
-            entity.getMdevTypes().stream().forEach(mDevString -> {
+            for (org.ovirt.engine.core.common.businessentities.MDevType mDevEntity : entity.getMdevTypes()) {
                 MDevType mDev = new MDevType();
-                mDev.setName(mDevString);
+                mDev.setName(mDevEntity.getName());
+                mDev.setAvailableInstances(mDevEntity.getAvailableInstances());
+                mDev.setDescription(mDevEntity.getDescription());
                 mDevsList.add(mDev);
-            });
+            }
 
             MDevTypes mDevTypes = new MDevTypes();
             mDevTypes.getMDevTypes().addAll(mDevsList);

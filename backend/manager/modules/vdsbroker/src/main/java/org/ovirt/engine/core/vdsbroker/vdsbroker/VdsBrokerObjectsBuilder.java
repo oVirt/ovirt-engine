@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LeaseStatus;
+import org.ovirt.engine.core.common.businessentities.MDevType;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.SessionState;
@@ -2536,7 +2537,7 @@ public class VdsBrokerObjectsBuilder {
      *        'vendor': 'Intel Corporation',
      *        'vendor_id': '0x8086'
      *        'mdev': {
-     *          'nvidia-11': {'available_instances': '16', 'name': 'GRID M60-0B'}
+     *          'nvidia-11': {'available_instances': '16', 'name': 'GRID M60-0B', 'description': 'mDev detail description'}
      *           ...
      *        }
      *      }
@@ -2570,7 +2571,7 @@ public class VdsBrokerObjectsBuilder {
                     : true);
 
             if (params.containsKey(VdsProperties.MDEV)) {
-                device.setMdevTypes(((Map<String, Object>) params.get(VdsProperties.MDEV)).keySet());
+                device.setMdevTypes(buildMDevTypesList((Map<String, Object>) params.get(VdsProperties.MDEV)));
             }
             if (params.containsKey(VdsProperties.IOMMU_GROUP)) {
                 device.setIommuGroup(Integer.parseInt(params.get(VdsProperties.IOMMU_GROUP).toString()));
@@ -2607,6 +2608,29 @@ public class VdsBrokerObjectsBuilder {
         }
 
         return devices;
+    }
+
+    private static List<MDevType> buildMDevTypesList(Map<String, Object> mDevParams) {
+        List<MDevType> mdevs = new ArrayList<>();
+        for (String mDevName : mDevParams.keySet()) {
+            Integer availableInstances = null;
+            String description = null;
+            if (mDevParams.get(mDevName) instanceof Map) {
+                Map<String, Object> mDevParam = (Map<String, Object>) mDevParams.get(mDevName);
+                if (mDevParam.containsKey(VdsProperties.MDEV_AVAILABLE_INSTANCES)) {
+                    try {
+                        availableInstances = Integer.parseInt(mDevParam.get(VdsProperties.MDEV_AVAILABLE_INSTANCES).toString());
+                    } catch (NumberFormatException e) {
+                        log.error("mdev_type -> available instances value was illegal : {0}", mDevParam.get(VdsProperties.MDEV_AVAILABLE_INSTANCES));
+                    }
+                }
+                if (mDevParam.containsKey(VdsProperties.MDEV_DESCRIPTION)) {
+                    description = mDevParam.get(VdsProperties.MDEV_DESCRIPTION).toString();
+                }
+            }
+            mdevs.add(new MDevType(mDevName, availableInstances, description));
+        }
+        return mdevs;
     }
 
     private static void updateV2VJobs(VDS vds, Map<String, Object> struct) {

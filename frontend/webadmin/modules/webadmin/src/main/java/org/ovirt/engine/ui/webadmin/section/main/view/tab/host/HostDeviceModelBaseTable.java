@@ -83,7 +83,7 @@ public abstract class HostDeviceModelBaseTable<E, M extends HostDeviceListModelB
             @Override
             public String getValue(HostDeviceView object) {
                 return object.getMdevTypes() == null ? "" :
-                        object.getMdevTypes().stream().sorted().collect(Collectors.joining(", ")); //$NON-NLS-1$
+                        object.getMdevTypes().stream().map(mDevType -> mDevType.getName()).sorted().collect(Collectors.joining(", ")); //$NON-NLS-1$
             }
         });
     }

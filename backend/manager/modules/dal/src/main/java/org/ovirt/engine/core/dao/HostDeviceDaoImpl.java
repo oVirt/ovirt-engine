@@ -2,9 +2,8 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.common.businessentities.MDevType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,7 +44,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                 .addValue("parent_device_name", entity.getParentDeviceName())
                 .addValue("capability", entity.getCapability())
                 .addValue("iommu_group", entity.getIommuGroup())
-                .addValue("mdev_types", String.join(",", entity.getMdevTypes()))
+                .addValue("mdev_types", SerializationFactory.getSerializer().serialize(entity.getMdevTypes()))
                 .addValue("product_name", entity.getProductName())
                 .addValue("product_id", entity.getProductId())
                 .addValue("vendor_name", entity.getVendorName())
@@ -144,10 +144,23 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
             device.setParentDeviceName(rs.getString("parent_device_name"));
             device.setCapability(rs.getString("capability"));
             device.setIommuGroup((Integer) rs.getObject("iommu_group"));
-            String mdevTypes = rs.getString("mdev_types");
-            if (mdevTypes != null && !mdevTypes.isEmpty()) {
-                device.setMdevTypes(new HashSet<>(Arrays.asList(mdevTypes.split(","))));
+            String mdevs = rs.getString("mdev_types");
+            if (mdevs != null && !mdevs.isEmpty()) {
+                if (mdevs.contains("[")) {
+                    // new JSON format
+                    device.setMdevTypes(SerializationFactory.getDeserializer()
+                            .deserializeOrCreateNew(rs.getString("mdev_types"), ArrayList.class));
+                } else {
+                    // old comma separated format
+                    String[] mdevNames = mdevs.split(",");
+                    List<MDevType> mdevTypes = new ArrayList<>();
+                    for (String mdevName : mdevNames) {
+                        mdevTypes.add(new MDevType(mdevName, null, null));
+                    }
+                    device.setMdevTypes(mdevTypes);
+                }
             }
+
             device.setProductName(rs.getString("product_name"));
             device.setProductId(rs.getString("product_id"));
             device.setVendorName(rs.getString("vendor_name"));
