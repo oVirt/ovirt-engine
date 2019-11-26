@@ -1,13 +1,14 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.model.AffinityLabels;
 import org.ovirt.engine.api.model.AffinityRule;
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Hosts;
@@ -169,37 +170,29 @@ public class AffinityGroupMapper {
         }
 
         if (model.isSetHosts()) {
-            List<Guid> hostIds = entity.getVdsIds();
-            if (hostIds == null) {
-                hostIds = new ArrayList<>();
-                entity.setVdsIds(hostIds);
-            }
-
-            // Replace the existing list with the provided one
-            hostIds.clear();
-            model.getHosts().getHosts().stream()
-                    .filter(Host::isSetId)
-                    .map(Host::getId)
-                    .map(Guid::createGuidFromString)
-                    .forEach(hostIds::add);
+            entity.setVdsIds(extractIds(model.getHosts().getHosts()));
         }
 
         if (model.isSetVms()) {
-            List<Guid> vmIds = entity.getVmIds();
-            if (vmIds == null) {
-                vmIds = new ArrayList<>();
-                entity.setVmIds(vmIds);
-            }
+            entity.setVmIds(extractIds(model.getVms().getVms()));
+        }
 
-            // Replace the existing list with the provided one
-            vmIds.clear();
-            model.getVms().getVms().stream()
-                    .filter(Vm::isSetId)
-                    .map(Vm::getId)
-                    .map(Guid::createGuidFromString)
-                    .forEach(vmIds::add);
+        if (model.isSetHostLabels()) {
+            entity.setHostLabels(extractIds(model.getHostLabels().getAffinityLabels()));
+        }
+
+        if (model.isSetVmLabels()) {
+            entity.setVmLabels(extractIds(model.getVmLabels().getAffinityLabels()));
         }
 
         return entity;
+    }
+
+    private static List<Guid> extractIds(List<? extends BaseResource> resources) {
+        return resources.stream()
+                .filter(BaseResource::isSetId)
+                .map(BaseResource::getId)
+                .map(Guid::createGuidFromString)
+                .collect(Collectors.toList());
     }
 }
