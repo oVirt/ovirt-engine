@@ -69,7 +69,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
             @Override
             public void update(int index, VM vm, String value) {
                 Map<String, String> parameters = new HashMap<>();
-                parameters.put(FragmentParams.NAME.getName(), vm.getName());
+                parameters.put(FragmentParams.ID.getName(), vm.getId().toString());
                 //The link was clicked, now fire an event to switch to details.
                 getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace, parameters);
