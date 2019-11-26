@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.network.cluster.DefaultRouteUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -208,8 +209,9 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         testIface.setNetworkName(null);
 
         assertNull(initMocksForNetworkImplementationDetailsUtils(null, null, testIface)
-                .calculateNetworkImplementationDetails(testIface, null),
+                .calculateNetworkImplementationDetails(testIface, null, clusterDaoMock.get(CLUSTER_ID)),
                 "Network implementation details should not be filled.");
+        assertEquals(1, Mockito.mockingDetails(clusterDaoMock).getInvocations().size());
     }
 
     @Test
@@ -217,8 +219,9 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         testIface.setNetworkName("");
 
         assertNull(initMocksForNetworkImplementationDetailsUtils(null, null, testIface)
-                .calculateNetworkImplementationDetails(testIface, null),
+                .calculateNetworkImplementationDetails(testIface, null, clusterDaoMock.get(CLUSTER_ID)),
                 "Network implementation details should not be filled.");
+        assertEquals(1, Mockito.mockingDetails(clusterDaoMock).getInvocations().size());
     }
 
     @Test
@@ -243,11 +246,12 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
 
         VdsNetworkInterface.NetworkImplementationDetails networkImplementationDetails =
             initMocksForNetworkImplementationDetailsUtils(network, null, testIface)
-                .calculateNetworkImplementationDetails(iface, network);
+                .calculateNetworkImplementationDetails(iface, network, clusterDaoMock.get(CLUSTER_ID));
 
         assertNotNull(networkImplementationDetails, "Network implementation details should be filled.");
         assertEquals(expectManaged, networkImplementationDetails.isManaged(),
                 "Network implementation details should be " + (expectManaged ? "" : "un") + "managed.");
+        assertEquals(1, Mockito.mockingDetails(clusterDaoMock).getInvocations().size());
     }
 
     protected void calculateNetworkImplementationDetailsAndAssertSync(VdsNetworkInterface iface,
@@ -257,11 +261,14 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
 
         VdsNetworkInterface.NetworkImplementationDetails networkImplementationDetails =
             initMocksForNetworkImplementationDetailsUtils(network, qos, testIface)
-                .calculateNetworkImplementationDetails(iface, network);
+                .calculateNetworkImplementationDetails(iface, network, clusterDaoMock.get(CLUSTER_ID));
+
+
 
         assertNotNull(networkImplementationDetails, "Network implementation details should be filled.");
         assertEquals(expectSync, networkImplementationDetails.isInSync(),
                 "Network implementation details should be " + (expectSync ? "in" : "out of") + " sync.");
+        assertEquals(1, Mockito.mockingDetails(clusterDaoMock).getInvocations().size());
     }
 
     protected Network createNetwork(boolean vmNetwork,
