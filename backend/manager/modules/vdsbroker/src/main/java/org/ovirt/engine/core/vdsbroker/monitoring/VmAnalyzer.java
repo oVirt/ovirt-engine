@@ -149,10 +149,6 @@ public class VmAnalyzer {
             return;
         }
 
-        if (isVmRebooting()) {
-            proceedRebootingVm();
-        }
-
         if (!isVmRunningInDatabaseOnMonitoredHost()) {
             proceedVmReportedOnOtherHost();
             return;
@@ -184,14 +180,6 @@ public class VmAnalyzer {
     private boolean isVmDown() {
         if (vdsmVm.getVmDynamic().getStatus() == VMStatus.Down) {
             logVmDown();
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isVmRebooting() {
-        if (vdsmVm.getVmDynamic().getStatus() == VMStatus.RebootInProgress) {
-            logVmRebooting();
             return true;
         }
         return false;
@@ -368,10 +356,6 @@ public class VmAnalyzer {
         }
     }
 
-    void proceedRebootingVm() {
-        auditVmOnRebooting();
-    }
-
     private String getPowerOffExitMessage() {
         return String.format("VM %s power off complete", getVmManager().getName());
     }
@@ -402,15 +386,6 @@ public class VmAnalyzer {
                         "Exit message: " + vdsmVm.getVmDynamic().getExitMessage()
                         : " ");
         auditLog(logable, AuditLogType.VM_DOWN_ERROR);
-    }
-
-    private void auditVmOnRebooting() {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), getVmId()));
-        logable.addCustomValue("RebootingMessage",
-                vdsmVm.getVmDynamic().getExitMessage() != null ?
-                        "Rebooting message: " + vdsmVm.getVmDynamic().getExitMessage()
-                        : " ");
-        auditLog(logable, AuditLogType.VM_REBOOT);
     }
 
     private void auditVmSuspended() {
@@ -810,11 +785,6 @@ public class VmAnalyzer {
 
     private void logVmDown() {
         log.info("VM '{}' was reported as Down on VDS '{}'({})",
-                vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
-    }
-
-    private void logVmRebooting() {
-        log.info("VM '{}' was reported as Rebooting on VDS '{}'({})",
                 vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
     }
 
