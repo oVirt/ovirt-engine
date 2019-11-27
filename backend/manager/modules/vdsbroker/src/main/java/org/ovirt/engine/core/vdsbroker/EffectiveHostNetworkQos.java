@@ -27,7 +27,12 @@ public class EffectiveHostNetworkQos {
                 : getHostNetworkQosFromNetwork(network);
     }
 
-    private HostNetworkQos getHostNetworkQosFromNetwork(Network network) {
-        return hostNetworkQosDao.get(network.getQosId());
+    HostNetworkQos selectQos(NetworkAttachment networkAttachment, HostNetworkQos daoHostNetworkQos) {
+        return networkAttachment != null && networkAttachment.isQosOverridden()
+            ? HostNetworkQos.fromAnonymousHostNetworkQos(networkAttachment.getHostNetworkQos()) : daoHostNetworkQos;
+    }
+
+    HostNetworkQos getHostNetworkQosFromNetwork(Network network) {
+        return network != null ? hostNetworkQosDao.get(network.getQosId()) : null;
     }
 }

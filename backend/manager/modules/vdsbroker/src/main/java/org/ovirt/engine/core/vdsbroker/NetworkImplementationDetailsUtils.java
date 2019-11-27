@@ -89,13 +89,19 @@ public class NetworkImplementationDetailsUtils {
      */
     public NetworkImplementationDetails calculateNetworkImplementationDetails(VdsNetworkInterface iface, Network network,
             Cluster cluster) {
+        HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getHostNetworkQosFromNetwork(network);
+        return calculateNetworkImplementationDetails(iface, network, cluster, hostNetworkQos);
+    }
+
+    private NetworkImplementationDetails calculateNetworkImplementationDetails(
+            VdsNetworkInterface iface, Network network, Cluster cluster, HostNetworkQos hostNetworkQos) {
 
         if (iface == null || StringUtils.isEmpty(iface.getNetworkName())) {
             return null;
         }
 
         if (network != null) {
-            boolean networkInSync = build(iface, network, cluster).isNetworkInSync();
+            boolean networkInSync = build(iface, network, cluster, hostNetworkQos).isNetworkInSync();
             return new NetworkImplementationDetails(networkInSync, true);
         } else {
             return new NetworkImplementationDetails();
@@ -109,14 +115,14 @@ public class NetworkImplementationDetailsUtils {
 
     private NetworkInSyncWithVdsNetworkInterface build(NetworkAttachment networkAttachment,
             VdsNetworkInterface vdsNetworkInterface,
-            Network network, Cluster cluster) {
+            Network network, Cluster cluster, HostNetworkQos hostNetworkQos) {
 
         Guid vdsId = vdsNetworkInterface.getVdsId();
 
-        HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(networkAttachment, network);
+        HostNetworkQos qos = effectiveHostNetworkQos.selectQos(networkAttachment, hostNetworkQos);
         return new NetworkInSyncWithVdsNetworkInterface(vdsNetworkInterface,
                 network,
-                hostNetworkQos,
+                qos,
                 networkAttachment,
                 dnsResolverConfigurationDao.get(vdsId),
                 cluster,
@@ -131,9 +137,9 @@ public class NetworkImplementationDetailsUtils {
     }
 
 
-    private NetworkInSyncWithVdsNetworkInterface build(VdsNetworkInterface nic, Network network, Cluster cluster) {
+    private NetworkInSyncWithVdsNetworkInterface build(VdsNetworkInterface nic, Network network, Cluster cluster, HostNetworkQos qos) {
         NetworkAttachment networkAttachment = getNetworkAttachmentForNicAndNetwork(nic, network);
-        return build(networkAttachment, nic, network, cluster);
+        return build(networkAttachment, nic, network, cluster, qos);
     }
 
     private NetworkAttachment getNetworkAttachmentForNicAndNetwork(VdsNetworkInterface nic, Network network) {
