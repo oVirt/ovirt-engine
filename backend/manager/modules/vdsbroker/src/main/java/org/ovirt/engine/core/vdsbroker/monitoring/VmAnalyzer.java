@@ -389,6 +389,12 @@ public class VmAnalyzer {
         auditLog(logable, AuditLogType.VM_DOWN_ERROR);
     }
 
+    private void auditVmOnRebooting() {
+        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsManager.getVdsId(), getVmId()));
+        logable.addCustomValue("UserName", "Guest OS");
+        auditLog(logable, AuditLogType.USER_REBOOT_VM);
+    }
+
     private void auditVmSuspended() {
         VmDynamic vm = vdsmVm.getVmDynamic();
         AuditLogType type = vm.getExitStatus() == VmExitStatus.Normal ? AuditLogType.USER_SUSPEND_VM_OK
@@ -598,6 +604,14 @@ public class VmAnalyzer {
                 && dbVm.getPauseStatus().isError()
                 && vdsmVmDynamic.getStatus() == VMStatus.Up) {
             auditVmRecoveredFromError();
+        }
+
+        // Generates an event for those machines that are transitioning to
+        // "RebootInProgress". This means that reboot has started/been triggered from the guest OS.
+        // Engine-initialed reboots shall set the state directly within the RebootVmCommand.
+        if (vdsmVmDynamic.getStatus() == VMStatus.RebootInProgress &&
+                dbVm.getStatus() != VMStatus.RebootInProgress) {
+            auditVmOnRebooting();
         }
 
         if (isRunSucceeded() || isMigrationSucceeded()) {

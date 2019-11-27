@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -24,6 +25,8 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     private ResourceManager resourceManager;
     @Inject
     private KubevirtMonitoring kubevirt;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
 
     public RebootVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -59,6 +62,9 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
             final VDSReturnValue returnValue = runVdsCommand(VDSCommandType.RebootVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
             setActionReturnValue(returnValue.getReturnValue());
             setSucceeded(returnValue.getSucceeded());
+        }
+        if (getSucceeded()) {
+            vmDynamicDao.updateStatus(getVm().getId(), VMStatus.RebootInProgress);
         }
     }
 
