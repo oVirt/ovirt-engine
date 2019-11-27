@@ -63,8 +63,8 @@
                 align-items: center;
             }
         </style>
-        <nav class="navbar navbar-pf-vertical obrand_mastheadBackground obrand_topBorder" role="navigation">
-            <div class="navbar-header">
+        <nav class="navbar navbar-pf-vertical" role="navigation">
+            <div class="navbar-header obrand_mastheadBackground obrand_topBorder">
                 <button type="button" class="navbar-toggle" data-toggle="collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
