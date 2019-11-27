@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,16 +66,32 @@ public class NetworkImplementationDetailsUtils {
 
     public Set<VdsNetworkInterface> getAllInterfacesOutOfSync(Guid clusterId) {
         Map<String, Network> clusterNetworksByName = networkDao.getNetworksForCluster(clusterId);
+        Map<Guid, HostNetworkQos> qosByNetworkId = calcQosByNetworkIdMap(clusterNetworksByName.values());
         Cluster cluster = clusterDao.get(clusterId);
         return interfaceDao.getAllInterfacesByClusterId(clusterId)
-            .stream()
-            .filter(iface -> isNetworkOutOfSync(iface, clusterNetworksByName.get(iface.getNetworkName()), cluster))
-            .collect(Collectors.toSet());
+                .stream()
+                .filter(iface -> clusterNetworksByName.get(iface.getNetworkName()) != null)
+                .filter(iface -> {
+                    Network network = clusterNetworksByName.get(iface.getNetworkName());
+                    HostNetworkQos qos = qosByNetworkId.get(network.getId());
+                    return isNetworkOutOfSync(iface, network, cluster, qos);
+                })
+                .collect(Collectors.toSet());
 
     }
 
-    public boolean isNetworkOutOfSync(VdsNetworkInterface iface, Network network, Cluster cluster) {
-        return isNetworkOutOfSync(calculateNetworkImplementationDetails(iface, network, cluster));
+    private Map<Guid, HostNetworkQos> calcQosByNetworkIdMap(Collection<Network> networks) {
+        Map<Guid, HostNetworkQos> networkIdsByQos = new HashMap<>();
+        List<HostNetworkQos> allQos = effectiveHostNetworkQos.getAll();
+        allQos.forEach(qos -> {
+            Optional<Network> network = networks.stream().filter(net -> net.getQosId() == qos.getId()).findFirst();
+            network.ifPresent(net -> networkIdsByQos.put(net.getId(), qos));
+        });
+        return networkIdsByQos;
+    }
+
+    private boolean isNetworkOutOfSync(VdsNetworkInterface iface, Network network, Cluster cluster, HostNetworkQos hostNetworkQos) {
+        return isNetworkOutOfSync(calculateNetworkImplementationDetails(iface, network, cluster, hostNetworkQos));
     }
 
     private boolean isNetworkOutOfSync(NetworkImplementationDetails details) {
