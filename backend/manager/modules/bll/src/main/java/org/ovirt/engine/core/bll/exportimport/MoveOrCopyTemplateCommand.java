@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -32,7 +31,6 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -46,8 +44,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
     protected VmTemplateHandler vmTemplateHandler;
     @Inject
     private VmStaticDao vmStaticDao;
-    @Inject
-    private StorageDomainDao storageDomainDao;
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
@@ -155,10 +151,6 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
-    }
-
-    protected StorageDomain getStorageDomain(Guid domainId) {
-        return storageDomainDao.getForStoragePool(domainId, getStoragePool().getId());
     }
 
     protected boolean validateSpaceRequirements(Collection<DiskImage> diskImages) {

@@ -169,11 +169,11 @@ implements SerialChildExecutingCommand {
     @Override
     protected void addDisksToDb() {
         // we cannot trigger AddDiskToTemplate here because we're inside a transaction
-        // so the disks would be added to DB and attached as part of moveOrCopyAllImageGroups
+        // so the disks would be added to DB and attached as part of copyImagesToTargetDomain
     }
 
     @Override
-    protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
+    protected void copyImagesToTargetDomain() {
         getImages().stream().map(this::adjustDisk).forEach(this::createDisk);
         getParameters().setDiskMappings(getImageMappings());
     }
