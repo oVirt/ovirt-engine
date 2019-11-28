@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.action.ImportVmTemplateFromOvaParameters.Pha
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -44,8 +43,8 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
-public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaParameters> extends ImportVmTemplateCommand<T>
-implements SerialChildExecutingCommand {
+public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaParameters> extends ImportVmTemplateCommandBase<T>
+        implements SerialChildExecutingCommand {
 
     @Inject
     private VdsDao vdsDao;
@@ -72,6 +71,18 @@ implements SerialChildExecutingCommand {
         return super.validate();
     }
 
+    @Override
+    protected void initImportClonedTemplateDisks() {
+        for (DiskImage image : getImages()) {
+            if (getParameters().isImportAsNewEntity()) {
+                generateNewDiskId(image);
+            } else {
+                originalDiskIdMap.put(image.getId(), image.getId());
+                originalDiskImageIdMap.put(image.getId(), image.getImageId());
+            }
+        }
+    }
+
     protected Guid createDisk(DiskImage image) {
         ActionReturnValue actionReturnValue = runInternalActionWithTasksContext(
                 ActionType.AddDiskToTemplate,
@@ -84,11 +95,6 @@ implements SerialChildExecutingCommand {
 
         getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
         return actionReturnValue.getActionReturnValue();
-    }
-
-    @Override
-    protected void updateManagedDeviceMap(DiskImage disk, Map<Guid, VmDevice> managedDeviceMap) {
-        // no-op
     }
 
     protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
