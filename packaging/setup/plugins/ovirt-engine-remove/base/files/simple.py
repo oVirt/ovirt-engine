@@ -224,14 +224,25 @@ class Plugin(plugin.PluginBase):
                     REMOVE_GROUPS
                 ] += ',' + group
 
+        remove_groups_set = set([
+            x.strip()
+            for x in self.environment[
+                osetupcons.RemoveEnv.REMOVE_GROUPS
+            ].split(',')
+            if x.strip()
+        ])
         self._toremove = set([
             name
             for name, info in self.environment[
                 osetupcons.CoreEnv.UNINSTALL_FILES_INFO
             ].items()
-            if 'unremovable' not in info['groups']
+            if (
+                'unremovable' not in info['groups']
+            ) and True in [
+                g in remove_groups_set
+                for g in info['groups']
+            ]
         ])
-
         changed = [
             name
             for name, info in self.environment[
