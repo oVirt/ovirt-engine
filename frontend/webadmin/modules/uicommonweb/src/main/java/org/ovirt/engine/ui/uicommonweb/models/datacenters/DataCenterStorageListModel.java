@@ -110,7 +110,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         return storageDomainType;
     }
 
-    public void setStorageDomainType(StorageDomainType value) {
+    private void setStorageDomainType(StorageDomainType value) {
         storageDomainType = value;
     }
 
@@ -175,7 +175,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByStoragePoolId, tempVar, new SetItemsAsyncQuery());
     }
 
-    public void onMaintenance() {
+    private void onMaintenance() {
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
 
         List<ActionParametersBase> pb = getSelectedItems()
@@ -227,7 +227,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         Frontend.getInstance().runMultipleAction(ActionType.ActivateStorageDomain, pb);
     }
 
-    public void attachBackup() {
+    private void attachBackup() {
         ListModel listModel = new ListModel();
         listModel.setTitle(ConstantsManager.getInstance().getConstants().attachExportDomainTitle());
         listModel.setHelpTag(HelpTag.attach_export_domain);
@@ -235,7 +235,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         attachInternal(listModel, StorageDomainType.ImportExport);
     }
 
-    public void attachISO() {
+    private void attachISO() {
         ListModel listModel = new ListModel();
         listModel.setTitle(ConstantsManager.getInstance().getConstants().attachISOLibraryTitle());
         listModel.setHelpTag(HelpTag.attach_iso_library);
@@ -243,7 +243,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         attachInternal(listModel, StorageDomainType.ISO);
     }
 
-    public void attachStorage() {
+    private void attachStorage() {
         ListModel listModel = new ListModel();
         listModel.setTitle(ConstantsManager.getInstance().getConstants().attachStorageTitle());
         listModel.setHelpTag(HelpTag.attach_storage);
@@ -401,7 +401,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                 }), getEntity(), selectedDataStorageDomains);
     }
 
-    public void onAttachApprove() {
+    private void onAttachApprove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
         if (!model.validate()) {
             return;
@@ -410,7 +410,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         executeAttachStorageDomains();
     }
 
-    public void executeAttachStorageDomains() {
+    private void executeAttachStorageDomains() {
         List<ActionParametersBase> pb = selectedStorageDomains
                 .stream()
                 .map(sd -> new AttachStorageDomainToPoolParameters(sd.getId(), getEntity().getId()))
@@ -472,7 +472,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         return getSelectedItems().stream().anyMatch(sd -> sd.getStorageType() == StorageType.LOCALFS);
     }
 
-    public void onDetach() {
+    private void onDetach() {
         final ConfirmationModel confirmModel = (ConfirmationModel) getWindow();
 
         if (confirmModel.getProgress() != null) {
@@ -514,7 +514,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
     }
 
-    public void postDetach(Model model) {
+    private void postDetach(Model model) {
         Frontend.getInstance().runMultipleAction(ActionType.RemoveStorageDomain, getRemoveParams(),
                 outerResult -> {
 
