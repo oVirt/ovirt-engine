@@ -72,7 +72,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     @Inject
     private VmDeviceUtils vmDeviceUtils;
     @Inject
-    private DiskProfileHelper diskProfileHelper;
+    protected DiskProfileHelper diskProfileHelper;
     @Inject
     protected LunHelper lunHelper;
     @Inject
@@ -84,9 +84,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     @Inject
     private StorageDomainDynamicDao storageDomainDynamicDao;
     @Inject
-    private StorageDomainStaticDao storageDomainStaticDao;
+    protected StorageDomainStaticDao storageDomainStaticDao;
     @Inject
-    private VmDao vmDao;
+    protected VmDao vmDao;
 
     @Inject
     protected ImagesHandler imagesHandler;

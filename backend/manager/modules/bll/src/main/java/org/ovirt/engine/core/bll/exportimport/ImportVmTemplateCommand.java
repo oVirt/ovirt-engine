@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -16,13 +15,11 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
-import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
-import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -51,7 +48,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
-import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -67,17 +63,11 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
-import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
@@ -86,21 +76,10 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> extends MoveOrCopyTemplateCommand<T>
         implements QuotaStorageDependent {
 
-    /**
-     * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
-     * domain.
-     */
-    private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
-
     @Inject
-    private AuditLogDirector auditLogDirector;
-
-    @Inject
-    VmNicMacsUtils vmNicMacsUtils;
+    private VmNicMacsUtils vmNicMacsUtils;
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-    @Inject
-    private DiskProfileHelper diskProfileHelper;
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
     @Inject
@@ -112,26 +91,16 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     @Inject
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
     @Inject
-    private ImageDao imageDao;
-    @Inject
-    private VmTemplateDao vmTemplateDao;
-    @Inject
-    private StorageDomainStaticDao storageDomainStaticDao;
-    @Inject
-    private VmNicDao vmNicDao;
-    @Inject
-    private DiskImageDao diskImageDao;
-    @Inject
-    private VmDao vmDao;
+    protected ImageDao imageDao;
     @Inject
     private ImportUtils importUtils;
     @Inject
     private CloudInitHandler cloudInitHandler;
 
-    private ImportValidator importValidator;
+    private final Map<Guid, Guid> originalDiskIdMap = new HashMap<>();
+    private final Map<Guid, Guid> originalDiskImageIdMap = new HashMap<>();
+
     private Version effectiveCompatibilityVersion;
-    private StorageDomain sourceDomain;
-    private Guid sourceDomainId = Guid.Empty;
     private Guid sourceTemplateId;
     private Map<Guid, QemuImageInfo> diskImageInfoMap = new HashMap<>();
 
@@ -184,8 +153,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             return false;
         }
 
-        // set the source domain and check that it is ImportExport type and active
-        setSourceDomainId(getParameters().getSourceDomainId());
         if (!validateSourceStorageDomain()) {
             return false;
         }
@@ -250,11 +217,16 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     }
 
     protected boolean validateSourceStorageDomain() {
-        if (!validate(new StorageDomainValidator(getSourceDomain()).isDomainExistAndActive())) {
+        Guid sourceDomainId = getParameters().getSourceDomainId();
+        StorageDomain sourceDomain = !Guid.isNullOrEmpty(sourceDomainId) ?
+                storageDomainDao.getForStoragePool(sourceDomainId, getStoragePool().getId()) :
+                null;
+
+        if (!validate(new StorageDomainValidator(sourceDomain).isDomainExistAndActive())) {
             return false;
         }
 
-        if ((getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport)
+        if ((sourceDomain.getStorageDomainType() != StorageDomainType.ImportExport)
                 && !getParameters().isImagesExistOnTargetStorageDomain()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
@@ -315,17 +287,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         return true;
     }
 
-    protected StorageDomain getSourceDomain() {
-        if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
-            sourceDomain = storageDomainDao.getForStoragePool(sourceDomainId, getStoragePool().getId());
-        }
-        return sourceDomain;
-    }
-
-    protected void setSourceDomainId(Guid storageId) {
-        sourceDomainId = storageId;
-    }
-
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
@@ -340,7 +301,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         return true;
     }
 
-    protected boolean validateTemplateArchitecture () {
+    private boolean validateTemplateArchitecture() {
         if (getVmTemplate().getClusterArch() == ArchitectureType.undefined) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_TEMPLATE_WITH_NOT_SUPPORTED_ARCHITECTURE);
             return false;
@@ -373,15 +334,10 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
                 generateNewDiskId(image);
                 updateManagedDeviceMap(image, getVmTemplate().getManagedDeviceMap());
             } else {
-                newDiskIdForDisk.put(image.getId(), image);
+                originalDiskIdMap.put(image.getId(), image.getId());
+                originalDiskImageIdMap.put(image.getId(), image.getImageId());
             }
         }
-    }
-
-    protected Map<Guid, Guid> getImageMappings() {
-        return getImages().stream().collect(Collectors.toMap(
-                DiskImage::getImageId,
-                d -> newDiskIdForDisk.get(d.getId()).getImageId()));
     }
 
     protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {
@@ -414,7 +370,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
     }
 
-    protected boolean validateLeaseStorageDomain(Guid leaseStorageDomainId) {
+    private boolean validateLeaseStorageDomain(Guid leaseStorageDomainId) {
         StorageDomain domain = storageDomainDao.getForStoragePool(leaseStorageDomainId, getStoragePoolId());
         StorageDomainValidator validator = new StorageDomainValidator(domain);
         return validate(validator.isDomainExistAndActive()) && validate(validator.isDataDomain());
@@ -428,7 +384,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
                 .orElse(null);
     }
 
-    protected boolean shouldAddLease(VmTemplate vm) {
+    private boolean shouldAddLease(VmTemplate vm) {
         return vm.getLeaseStorageDomainId() != null;
     }
 
@@ -446,7 +402,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
         getVmTemplate().setLeaseStorageDomainId(getVmLeaseToDefaultStorageDomain());
         if (getVmTemplate().getLeaseStorageDomainId() == null) {
-            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_TEMPLATE_WITH_LEASE_STORAGE_DOMAIN);
+            auditLog(this, AuditLogType.CANNOT_IMPORT_VM_TEMPLATE_WITH_LEASE_STORAGE_DOMAIN);
         } else {
             log.warn("Setting the lease for the VM Template '{}' to the storage domain '{}', because the storage domain '{}' is unavailable",
                     getVmTemplate().getId(), getVmTemplate().getLeaseStorageDomainId(), importedLeaseStorageDomainId);
@@ -496,16 +452,16 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
     private void checkTrustedService() {
         if (getVmTemplate().isTrustedService() && !getCluster().supportsTrustedService()) {
-            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         } else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
-            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 
     protected void copyImagesToTargetDomain() {
         TransactionSupport.executeInNewTransaction(() -> {
             for (DiskImage disk : getImages()) {
-                Guid originalDiskId = newDiskIdForDisk.get(disk.getId()).getId();
+                Guid originalDiskId = originalDiskIdMap.get(disk.getId());
                 Guid destinationDomain = imageToDestinationDomainMap.get(originalDiskId);
 
                 ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
@@ -530,7 +486,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         MoveOrCopyImageGroupParameters p =
                 new MoveOrCopyImageGroupParameters(templateId,
                         originalDiskId,
-                        newDiskIdForDisk.get(disk.getId()).getImageId(),
+                        originalDiskImageIdMap.get(disk.getId()),
                         disk.getId(),
                         disk.getImageId(),
                         destinationDomain,
@@ -558,7 +514,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         return p;
     }
 
-    protected void addVmTemplateToDb() {
+    private void addVmTemplateToDb() {
         getVmTemplate().setClusterId(getParameters().getClusterId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
@@ -601,7 +557,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
     }
 
-    protected void addVmInterfaces() {
+    private void addVmInterfaces() {
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVmTemplate().getClusterId(),
                         getStoragePoolId(),
@@ -644,12 +600,12 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         setSucceeded(true);
     }
 
-    protected void removeNetwork() {
+    private void removeNetwork() {
         List<VmNic> nics = vmNicDao.getAllForTemplate(getVmTemplateId());
         nics.stream().map(VmNic::getId).forEach(vmNicDao::remove);
     }
 
-    protected void endActionForImageGroups() {
+    private void endActionForImageGroups() {
         for (ActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             backend.endAction(ActionType.CopyImageGroup,
@@ -753,30 +709,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         return list;
     }
 
-    protected void initQcowVersionForDisks(Guid imageGroupId) {
-        List<DiskImage> diskVolumes = diskImageDao.getAllSnapshotsForImageGroup(imageGroupId);
-        diskVolumes.stream().filter(volume -> volume.getVolumeFormat() == VolumeFormat.COW).forEach(volume -> {
-            try {
-                setQcowCompat(volume);
-            } catch (Exception e) {
-                log.error("Could not set qcow compat version for disk '{} with id '{}/{}'",
-                        volume.getDiskAlias(),
-                        volume.getId(),
-                        volume.getImageId());
-            }
-        });
-    }
-
-    protected void setQcowCompat(DiskImage diskImage) {
-        diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
-        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, diskImage.getStorageIds().get(0));
-        if (qemuImageInfo != null) {
-            diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
-        }
-        imageDao.update(diskImage.getImage());
-    }
-
-    protected void updateDiskSizeByQcowImageInfo(DiskImage diskImage) {
+    private void updateDiskSizeByQcowImageInfo(DiskImage diskImage) {
         QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, getParameters().getSourceDomainId());
         if (qemuImageInfo != null) {
             diskImage.setSize(qemuImageInfo.getSize());
@@ -784,7 +717,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         imageDao.update(diskImage.getImage());
     }
 
-    private QemuImageInfo getQemuImageInfo(DiskImage diskImage, Guid storageId) {
+    protected QemuImageInfo getQemuImageInfo(DiskImage diskImage, Guid storageId) {
         if (!diskImageInfoMap.containsKey(diskImage.getId())) {
             diskImageInfoMap.put(diskImage.getId(),
                     imagesHandler.getQemuImageInfoFromVdsm(diskImage.getStoragePoolId(),
@@ -808,7 +741,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
      *            - The managed device map contained in the VM.
      */
     protected void updateManagedDeviceMap(DiskImage disk, Map<Guid, VmDevice> managedDeviceMap) {
-        Guid oldDiskId = newDiskIdForDisk.get(disk.getId()).getId();
+        Guid oldDiskId = originalDiskIdMap.get(disk.getId());
         managedDeviceMap.put(disk.getId(), managedDeviceMap.get(oldDiskId));
         managedDeviceMap.remove(oldDiskId);
     }
@@ -821,24 +754,20 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
      * @param disk
      *            - The disk which is about to be cloned
      */
-    protected Guid generateNewDiskId(DiskImage disk) {
+    protected void generateNewDiskId(DiskImage disk) {
         Guid newGuidForDisk = Guid.newGuid();
 
-        // Copy the disk so it will preserve the old disk id and image id.
-        newDiskIdForDisk.put(newGuidForDisk, DiskImage.copyOf(disk));
+        originalDiskIdMap.put(newGuidForDisk, disk.getId());
+        originalDiskImageIdMap.put(newGuidForDisk, disk.getImageId());
         disk.setId(newGuidForDisk);
         disk.setImageId(Guid.newGuid());
-        return newGuidForDisk;
     }
 
-    protected DiskImage getNewDiskIdForDisk(Guid diskId) {
-        return newDiskIdForDisk.get(diskId);
+    protected Guid getOriginalDiskIdMap(Guid diskId) {
+        return originalDiskIdMap.get(diskId);
     }
 
-    protected ImportValidator getImportValidator() {
-        if (importValidator == null) {
-            importValidator = new ImportValidator(getParameters());
-        }
-        return importValidator;
+    protected Guid getOriginalDiskImageIdMap(Guid diskId) {
+        return originalDiskImageIdMap.get(diskId);
     }
 }

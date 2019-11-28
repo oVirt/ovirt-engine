@@ -113,13 +113,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     @Inject
     private  StorageDomainDao storageDomainDao;
     @Inject
-    private  VmTemplateDao vmTemplateDao;
+    protected VmTemplateDao vmTemplateDao;
     @Inject
     private  DiskImageDao diskImageDao;
     @Inject
     private  UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
-    private  VmNicDao vmNicDao;
+    protected VmNicDao vmNicDao;
     @Inject
     private  ClusterDao clusterDao;
     @Inject
