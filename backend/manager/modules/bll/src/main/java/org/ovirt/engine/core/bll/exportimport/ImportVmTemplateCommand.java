@@ -73,7 +73,6 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -116,8 +115,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     private ImageDao imageDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
-    @Inject
-    private StorageDomainDao storageDomainDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
@@ -291,8 +288,10 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
                 }
 
-                StorageDomain storageDomain =
-                        getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
+                StorageDomain storageDomain = storageDomainDao.getForStoragePool(
+                        imageToDestinationDomainMap.get(image.getId()),
+                        getStoragePool().getId());
+
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
                 if (!validate(validator.isDomainExistAndActive()) ||
                         !validate(validator.domainIsValidDestination())) {
@@ -470,7 +469,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
         boolean doesVmTemplateContainImages = !getImages().isEmpty();
         if (doesVmTemplateContainImages && !getParameters().isImagesExistOnTargetStorageDomain()) {
-            moveOrCopyAllImageGroups(getVmTemplateId(), getImages());
+            copyImagesToTargetDomain();
         }
 
         getVmDeviceUtils().addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity(), false);
@@ -503,16 +502,15 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
     }
 
-    @Override
-    protected void moveOrCopyAllImageGroups(final Guid containerID, final Iterable<DiskImage> disks) {
+    protected void copyImagesToTargetDomain() {
         TransactionSupport.executeInNewTransaction(() -> {
-            for (DiskImage disk : disks) {
+            for (DiskImage disk : getImages()) {
                 Guid originalDiskId = newDiskIdForDisk.get(disk.getId()).getId();
                 Guid destinationDomain = imageToDestinationDomainMap.get(originalDiskId);
 
                 ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                         ActionType.CopyImageGroup,
-                        buildMoveOrCopyImageGroupParameters(containerID, disk, originalDiskId, destinationDomain));
+                        buildMoveOrCopyImageGroupParameters(getVmTemplateId(), disk, originalDiskId, destinationDomain));
 
                 if (!vdcRetValue.getSucceeded()) {
                     throw vdcRetValue.getFault() != null ? new EngineException(vdcRetValue.getFault().getError())
@@ -525,12 +523,12 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         });
     }
 
-    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParameters(final Guid containerID,
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParameters(final Guid templateId,
             DiskImage disk,
             Guid originalDiskId,
             Guid destinationDomain) {
         MoveOrCopyImageGroupParameters p =
-                new MoveOrCopyImageGroupParameters(containerID,
+                new MoveOrCopyImageGroupParameters(templateId,
                         originalDiskId,
                         newDiskIdForDisk.get(disk.getId()).getImageId(),
                         disk.getId(),
@@ -546,7 +544,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         p.setSourceDomainId(getParameters().getSourceDomainId());
         p.setForceOverride(getParameters().getForceOverride());
         p.setImportEntity(true);
-        p.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
+        p.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, templateId));
         p.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
         for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
             if (originalDiskId.equals(diskImage.getId())) {
@@ -642,9 +640,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     @Override
     protected void endMoveOrCopyCommand() {
         vmTemplateHandler.unlockVmTemplate(getVmTemplateId());
-
-        endActionOnAllImageGroups();
-
+        endActionForImageGroups();
         setSucceeded(true);
     }
 
@@ -653,8 +649,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         nics.stream().map(VmNic::getId).forEach(vmNicDao::remove);
     }
 
-    @Override
-    protected void endActionOnAllImageGroups() {
+    protected void endActionForImageGroups() {
         for (ActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             backend.endAction(ActionType.CopyImageGroup,
@@ -666,7 +661,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     @Override
     protected void endWithFailure() {
         removeNetwork();
-        endActionOnAllImageGroups();
+        endActionForImageGroups();
         vmTemplateDao.remove(getVmTemplateId());
         setSucceeded(true);
     }

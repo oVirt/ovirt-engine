@@ -80,7 +80,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     @Inject
     private LunDao lunDao;
     @Inject
-    private StorageDomainDao storageDomainDao;
+    protected StorageDomainDao storageDomainDao;
     @Inject
     private StorageDomainDynamicDao storageDomainDynamicDao;
     @Inject
