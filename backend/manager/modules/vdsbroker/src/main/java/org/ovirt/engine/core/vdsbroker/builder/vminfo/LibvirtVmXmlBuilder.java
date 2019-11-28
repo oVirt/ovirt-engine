@@ -99,9 +99,12 @@ public class LibvirtVmXmlBuilder {
     // Namespace URIs:
     public static final String OVIRT_TUNE_URI = "http://ovirt.org/vm/tune/1.0";
     public static final String OVIRT_VM_URI = "http://ovirt.org/vm/1.0";
+    public static final String QEMU_URI = "http://libvirt.org/schemas/domain/qemu/1.0";
+
     // Namespace prefixes:
     public static final String OVIRT_TUNE_PREFIX = "ovirt-tune";
     public static final String OVIRT_VM_PREFIX = "ovirt-vm";
+    public static final String QEMU_PREFIX = "qemu";
 
     /** Timeout for the boot menu, in milliseconds */
     public static final int BOOT_MENU_TIMEOUT = 30000;
@@ -137,6 +140,7 @@ public class LibvirtVmXmlBuilder {
     private MemoizingSupplier<VgpuPlacement> hostVgpuPlacementSupplier;
     private MemoizingSupplier<String> tscFrequencySupplier;
     private MemoizingSupplier<String> cpuFlagsSupplier;
+    private MemoizingSupplier<Boolean> incrementalBackupSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, String>> diskMetadata;
@@ -242,6 +246,7 @@ public class LibvirtVmXmlBuilder {
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.vgpuPlacement(hostId));
             tscFrequencySupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getTscFrequency(hostId));
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getCpuFlags(hostId));
+            incrementalBackupSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.isHostIncrementalBackupEnabled(hostId));
         } else {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
@@ -249,6 +254,7 @@ public class LibvirtVmXmlBuilder {
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
             tscFrequencySupplier = new MemoizingSupplier<>(() -> "");
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> "");
+            incrementalBackupSupplier = new MemoizingSupplier<>(() -> false);
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
         mdevDisplayOn = isMdevDisplayOn(vmCustomProperties, vm);
@@ -272,6 +278,7 @@ public class LibvirtVmXmlBuilder {
         }
         writeCpu(numaEnabled || (vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty()));
         writeCpuTune(numaEnabled);
+        writeQemuCapabilities();
         writeDevices();
         writePowerManagement();
         // note that this must be called after writeDevices to get the serial console, if exists
@@ -327,11 +334,17 @@ public class LibvirtVmXmlBuilder {
     private void writeHeader() {
         writer.setPrefix(OVIRT_TUNE_PREFIX, OVIRT_TUNE_URI);
         writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        if (incrementalBackupSupplier.get()) {
+            writer.setPrefix(QEMU_PREFIX, QEMU_URI);
+        }
         writer.writeStartDocument(false);
         writer.writeStartElement("domain");
         writer.writeAttributeString("type", "kvm");
         writer.writeNamespace(OVIRT_TUNE_PREFIX, OVIRT_TUNE_URI);
         writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        if (incrementalBackupSupplier.get()) {
+            writer.writeNamespace(QEMU_PREFIX, QEMU_URI);
+        }
     }
 
     private void writeName() {
@@ -1925,6 +1938,30 @@ public class LibvirtVmXmlBuilder {
         }
 
         writer.writeEndElement();
+    }
+
+    private void writeQemuCapabilities() {
+        // TODO: using the qemu namespace XML override is needed in order
+        // to use experimental incremental backup feature, should be removed
+        // when the feature will be fully supported by libvirt -
+        // <qemu:capabilities>
+        //   <qemu:add capability='blockdev'/>
+        //   <qemu:add capability='incremental-backup'/>
+        // </qemu:capabilities>
+
+        if (incrementalBackupSupplier.get()) {
+            writer.writeStartElement(QEMU_URI, "capabilities");
+
+            writer.writeStartElement(QEMU_URI, "add");
+            writer.writeAttributeString("capability", "blockdev");
+            writer.writeEndElement();
+
+            writer.writeStartElement(QEMU_URI, "add");
+            writer.writeAttributeString("capability", "incremental-backup");
+            writer.writeEndElement();
+
+            writer.writeEndElement();
+        }
     }
 
     private void writeNetworkDiskAuth(CinderDisk cinderDisk) {

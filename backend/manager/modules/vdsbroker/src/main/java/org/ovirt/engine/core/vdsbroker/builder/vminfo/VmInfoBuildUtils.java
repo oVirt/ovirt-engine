@@ -1288,6 +1288,13 @@ public class VmInfoBuildUtils {
                 .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
     }
 
+    public boolean isHostIncrementalBackupEnabled(Guid hostId) {
+        if (hostId != null) {
+            return vdsDynamicDao.get(hostId).isBackupEnabled();
+        }
+        return false;
+    }
+
     public void refreshVmDevices(Guid vmId) {
         vmDevicesMonitoring.refreshVmDevices(vmId);
     }
