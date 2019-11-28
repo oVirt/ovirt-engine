@@ -112,7 +112,7 @@ public class AnsibleRunnerHTTPClient {
                     e.getKey(),
                     // Replace to have proper formatting of JSON newlines/quotes
                     String.valueOf(e.getValue())
-                        .replaceAll("\n", "\\n")
+                        .replaceAll("\n", "\\\\n")
                         .replaceAll("\"", "\\\\\"")
                     )
                 )
