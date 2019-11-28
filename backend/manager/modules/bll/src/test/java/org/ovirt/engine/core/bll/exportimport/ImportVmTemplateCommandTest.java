@@ -317,7 +317,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         Guid beforeOldDiskId = disk.getId();
         command.generateNewDiskId(disk);
         command.updateManagedDeviceMap(disk, managedDevices);
-        Guid oldDiskId = command.getNewDiskIdForDisk(disk.getId()).getId();
+        Guid oldDiskId = command.getOriginalDiskIdMap(disk.getId());
         assertEquals(beforeOldDiskId, oldDiskId, "The old disk id should be similar to the value at the newDiskIdForDisk.");
         assertNotNull(managedDevices.get(disk.getId()), "The manged deivce should return the disk device by the new key");
         assertNull(managedDevices.get(beforeOldDiskId), "The manged deivce should not return the disk device by the old key");

@@ -93,7 +93,7 @@ implements SerialChildExecutingCommand {
 
     protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
         AddDiskParameters diskParameters = new AddDiskParameters(image.getDiskVmElementForVm(getVmTemplateId()), image);
-        Guid originalId = getNewDiskIdForDisk(image.getId()).getId();
+        Guid originalId = getOriginalDiskIdMap(image.getId());
         diskParameters.setStorageDomainId(getParameters().getImageToDestinationDomainMap().get(originalId));
         diskParameters.setParentCommand(getActionType());
         diskParameters.setParentParameters(getParameters());
@@ -185,6 +185,12 @@ implements SerialChildExecutingCommand {
                 .map(dve -> DiskVmElement.copyOf(dve, image.getId(), getVmTemplateId()))
                 .collect(Collectors.toList()));
         return image;
+    }
+
+    protected Map<Guid, Guid> getImageMappings() {
+        return getImages().stream().collect(Collectors.toMap(
+                DiskImage::getImageId,
+                d -> getOriginalDiskImageIdMap(d.getId())));
     }
 
     private void convert() {

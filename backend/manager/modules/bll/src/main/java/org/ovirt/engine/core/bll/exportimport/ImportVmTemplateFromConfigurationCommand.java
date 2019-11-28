@@ -39,6 +39,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
+import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -48,6 +51,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.RoleDao;
@@ -94,6 +98,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private VmDeviceDao vmDeviceDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -132,8 +138,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             }
         }
 
-        removeInvalidUsers(getImportValidator());
-        removeInavlidRoles(getImportValidator());
+        ImportValidator importValidator = new ImportValidator(getParameters());
+        removeInvalidUsers(importValidator);
+        removeInavlidRoles(importValidator);
         return true;
     }
 
@@ -556,6 +563,29 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 .collect(Collectors.toSet());
         missingRoles = importValidator.findMissingEntities(candidateRoles, val -> roleDao.getByName(val));
         getParameters().getUserToRoles().forEach((k, v) -> v.removeAll(missingRoles));
+    }
+
+    private void initQcowVersionForDisks(Guid imageGroupId) {
+        List<DiskImage> diskVolumes = diskImageDao.getAllSnapshotsForImageGroup(imageGroupId);
+        diskVolumes.stream().filter(volume -> volume.getVolumeFormat() == VolumeFormat.COW).forEach(volume -> {
+            try {
+                setQcowCompat(volume);
+            } catch (Exception e) {
+                log.error("Could not set qcow compat version for disk '{} with id '{}/{}'",
+                        volume.getDiskAlias(),
+                        volume.getId(),
+                        volume.getImageId());
+            }
+        });
+    }
+
+    protected void setQcowCompat(DiskImage diskImage) {
+        diskImage.setQcowCompat(QcowCompat.QCOW2_V2);
+        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, diskImage.getStorageIds().get(0));
+        if (qemuImageInfo != null) {
+            diskImage.setQcowCompat(qemuImageInfo.getQcowCompat());
+        }
+        imageDao.update(diskImage.getImage());
     }
 
     @Override
