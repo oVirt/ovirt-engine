@@ -2501,6 +2501,78 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+DROP TYPE IF EXISTS network_attachments_qos_rs CASCADE;
+CREATE TYPE network_attachments_qos_rs AS (
+    id UUID,
+    network_id UUID,
+    nic_id UUID,
+    boot_protocol CHARACTER VARYING(20),
+    address CHARACTER VARYING(20),
+    netmask CHARACTER VARYING(20),
+    gateway CHARACTER VARYING(20),
+    custom_properties TEXT,
+    _create_date TIMESTAMP WITH TIME ZONE,
+    _update_date TIMESTAMP WITH TIME ZONE,
+    ipv6_boot_protocol CHARACTER VARYING(20),
+    ipv6_address CHARACTER VARYING(50),
+    ipv6_prefix INTEGER,
+    ipv6_gateway CHARACTER VARYING(50),
+    dns_resolver_configuration_id UUID,
+    qos_id UUID,
+    qos_name CHARACTER VARYING(50),
+    qos_type SMALLINT,
+    out_average_linkshare INTEGER,
+    out_average_upperlimit INTEGER,
+    out_average_realtime INTEGER
+);
+
+CREATE OR REPLACE FUNCTION GetNetworkAttachmentsWithQosByHostId (v_host_id UUID)
+RETURNS SETOF network_attachments_qos_rs STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT
+        s1.id,
+        s1.network_id,
+        s1.nic_id,
+        s1.boot_protocol,
+        s1.address,
+        s1.netmask,
+        s1.gateway,
+        s1.custom_properties,
+        s1._create_date,
+        s1._update_date,
+        s1.ipv6_boot_protocol,
+        s1.ipv6_address,
+        s1.ipv6_prefix,
+        s1.ipv6_gateway,
+        s1.dns_resolver_configuration_id,
+        s2.id AS qos_id,
+        s2.name AS qos_name,
+        s2.qos_type,
+        s2.out_average_linkshare,
+        s2.out_average_upperlimit,
+        s2.out_average_realtime
+    FROM (
+        SELECT *
+        FROM network_attachments na
+        WHERE EXISTS (
+            SELECT 1
+            FROM vds_interface
+            WHERE na.nic_id = vds_interface.id
+                AND vds_interface.vds_id = v_host_id
+            )
+        ) s1
+    LEFT JOIN (
+            SELECT *
+            FROM qos
+            WHERE qos.qos_type = 4
+        ) s2
+        ON s1.id = s2.id
+    ;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentByNicIdAndNetworkId (
     v_nic_id UUID,
     v_network_id UUID
