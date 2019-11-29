@@ -31,6 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.utils.CollectionUtils;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -58,7 +59,12 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
 
     @Override
     protected void executeCommand() {
-        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+        // If we are copying a template we will get the same disk multiple times
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID())
+                .stream()
+                .filter(CollectionUtils.distinctByKey(DiskImage::getImageId))
+                .collect(Collectors.toList());
+
         ImagesHandler.sortImageList(images);
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images));
         prepareWeights();
