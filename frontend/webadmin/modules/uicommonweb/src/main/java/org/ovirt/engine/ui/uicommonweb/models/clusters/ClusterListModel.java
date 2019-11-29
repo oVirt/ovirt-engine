@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -320,7 +321,35 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.Cluster,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(QueryType.Search, tempVar);
+
+        AsyncQuery<QueryReturnValue> asyncCallback = new AsyncQuery<>(
+                returnValue -> {
+                    Collection<Cluster> clusters = returnValue.getReturnValue();
+                    queryHostNamesOutOfSync(clusters);
+                }
+        );
+
+        super.syncSearch(QueryType.Search, tempVar, asyncCallback);
+    }
+
+    private void queryHostNamesOutOfSync(Collection<Cluster> clustersCollection) {
+        ArrayList<Cluster> clusters = new ArrayList<>(clustersCollection);
+        ArrayList<QueryParametersBase> parameters = new ArrayList<>();
+        ArrayList<QueryType> queryTypes = new ArrayList<>();
+
+        for (Cluster cluster : clusters) {
+            parameters.add(new IdQueryParameters(cluster.getId()));
+            queryTypes.add(QueryType.GetOutOfSyncHostNamesForCluster);
+        }
+
+        Frontend.getInstance().runMultipleQueries(queryTypes, parameters, result -> {
+            int index = 0;
+            for (QueryReturnValue returnValue : result.getReturnValues()) {
+                clusters.get(index).setHostNamesOutOfSync(returnValue.getReturnValue());
+                index++;
+            }
+            setItems(clusters);
+        });
     }
 
     @Override

@@ -392,10 +392,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     );
         }
         for(Cluster cluster: clusters) {
-            String names = backend.runInternalQuery(QueryType.GetOutOfSyncHostNamesForCluster,
-                new IdQueryParameters(cluster.getId())).getReturnValue();
-            cluster.setHostNamesOutOfSync(names);
-
             List<VDS> hostsWithMissingFlags = backend.runInternalQuery(QueryType.GetHostsWithMissingFlagsForCluster,
                     new IdQueryParameters(cluster.getId())).getReturnValue();
             cluster.setHasHostWithMissingCpuFlags(!hostsWithMissingFlags.isEmpty());
