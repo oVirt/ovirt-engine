@@ -404,7 +404,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             fcpStorageModel.getPropertyChangedEvent().clearListeners();
         }
 
-        iscsiStorageView = new IscsiStorageView(false, 196, 304, 244, 100, 142, 55, -67);
+        iscsiStorageView = new IscsiStorageView(false, 196, 204, 244, 100, 142, 55, -67);
         iscsiStorageView.setBarTop(0, Unit.PX);
         iscsiStorageView.edit(iscsiStorageModel);
 

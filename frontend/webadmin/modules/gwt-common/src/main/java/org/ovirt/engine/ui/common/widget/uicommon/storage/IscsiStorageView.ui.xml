@@ -29,9 +29,25 @@
 
         .barNewDisk {
             width: 50px;
-            top: 230px;
-            height: 376px;
+            height: 100%;
             position: absolute;
+        }
+
+        .barNewDisk .dialogTab {
+            height: 45%;
+            left: 50px;
+        }
+
+        .barNewDisk .dialogTab:first-child {
+            top: 65px;
+        }
+
+        .barNewDisk .dialogTab:last-child {
+            top: 83px;
+        }
+
+        .barNewDisk .labelWidth {
+            width: 170px !important;
         }
 
         .content {

@@ -46,7 +46,7 @@
 
     <b:Container fluid="true">
         <b:Row>
-            <b:Column size="SM_12">
+            <b:Column size="SM_12" addStyleNames="{style.topRow}">
                 <w:RadioButtonPanel ui:field="radioButtonPanel" name="diskTypePanel" dataToggle="BUTTONS" />
             </b:Column>
         </b:Row>
@@ -147,9 +147,10 @@
                 <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}"/>
             </b:Column>
         </b:Row>
+        <b:html.ClearFix />
         <b:Row>
             <b:Column size="SM_12">
-                <g:FlowPanel ui:field="externalDiskPanel" />
+                <g:FlowPanel ui:field="externalDiskPanel" height="330px"/>
             </b:Column>
         </b:Row>
     </b:Container>
