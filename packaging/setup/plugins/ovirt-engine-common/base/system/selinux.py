@@ -12,6 +12,7 @@ SELinux configuration plugin.
 """
 
 import gettext
+import re
 
 
 from os import listdir
@@ -94,47 +95,47 @@ class Plugin(plugin.PluginBase):
                         '-i', file_path
                     )
                 )
-                if rc == 1:
+                if rc != 0:
                     self.logger.info(
                         _('Failed to apply SELINUX file {f}'.format(f=f))
                     )
         for entry in self.environment[osetupcons.SystemEnv.SELINUX_PORTS]:
             rc, stdout, stderr = self.execute(
-                (
-                    self.command.get('semanage'),
-                    'port',
-                    '-a',
-                    '-t', entry['type'],
-                    '-p', entry['protocol'],
-                    entry['port']
-                )
+                (self.command.get('semanage'), 'port', '-l')
             )
-            if rc == 1:
-                self.logger.info(
-                    _('SELINUX port already defined for {pattern}').format(
-                        pattern=entry['pattern']
-                    )
-                )
-            elif rc != 0 and rc != 1:
-                self.logger.error(
-                    _('Failed to set SELINUX port for {port}').format(
-                        pattern=entry['port']
-                    )
+            if not any(
+                re.match(
+                    '{t}.*{p}'.format(t=entry['type'], p=entry['port']),
+                    line
+                ) for line in stdout
+            ):
+                rc, stdout, stderr = self.execute(
+                    (
+                        self.command.get('semanage'),
+                        'port',
+                        '-a',
+                        '-t', entry['type'],
+                        '-p', entry['protocol'],
+                        entry['port']
+                    ),
                 )
         for entry in self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS]:
             rc, stdout, stderr = self.execute(
-                (
-                    self.command.get('semanage'),
-                    'fcontext',
-                    '-a',
-                    '-t', entry['type'],
-                    entry['pattern']
-                )
+                (self.command.get('semanage'), 'fcontext', '-C', '-l')
             )
-            if rc != 0:
-                self.logger.error(
-                    _('Failed to set SELINUX policy for {pattern}').format(
-                        pattern=entry['pattern']
+            if not any(
+                re.match(
+                    '{p}.*{t}'.format(p=entry['pattern'], t=entry['type']),
+                    line
+                ) for line in stdout
+            ):
+                rc, stdout, stderr = self.execute(
+                    (
+                        self.command.get('semanage'),
+                        'fcontext',
+                        '-a',
+                        '-t', entry['type'],
+                        entry['pattern']
                     )
                 )
         for path in self.environment[
