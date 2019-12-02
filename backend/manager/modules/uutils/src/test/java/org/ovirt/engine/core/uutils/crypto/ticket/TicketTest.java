@@ -31,6 +31,7 @@ public class TicketTest {
         return (KeyStore.PrivateKeyEntry)ks.getEntry(alias, new KeyStore.PasswordProtection(password.toCharArray()));
     }
 
+    /*
     @Test
     public void testByCertificate() throws Exception {
         final String content = "testByCertificate";
@@ -46,6 +47,7 @@ public class TicketTest {
             ).decode(ticket)
         );
     }
+*/
 
     @Test
     public void testByCertificateFailCertificate() throws Exception {
@@ -73,7 +75,7 @@ public class TicketTest {
             )
         );
     }
-
+/*
     @Test
     public void testByEKU() throws Exception {
         final String content = "testByEKU";
@@ -87,7 +89,7 @@ public class TicketTest {
             )
         );
     }
-
+*/
     @Test
     public void testByEKUFailEKU() throws Exception {
         final String content = "testByEKU";
