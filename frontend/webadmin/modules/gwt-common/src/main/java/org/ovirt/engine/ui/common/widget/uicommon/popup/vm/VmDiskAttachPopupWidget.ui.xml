@@ -23,6 +23,7 @@
 
         .mainPanel {
             width: 100%;
+            padding: 10px 15px 15px 15px;
         }
 
         .isPluggedEditor {
@@ -36,7 +37,7 @@
         }
 
         .header {
-            padding-bottom: 15px;
+            padding: 15px;
         }
     </ui:style>
 
