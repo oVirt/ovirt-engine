@@ -1047,7 +1047,7 @@ select fn_db_update_config_value('ServerCPUList',
         || '4:Secure Intel Westmere Family:aes,vmx,spec_ctrl,ssbd,md_clear,model_Westmere:Westmere,+pcid,+spec-ctrl,+ssbd,+md-clear:x86_64; '
         || '5:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; '
         || '6:Secure Intel SandyBridge Family:vmx,spec_ctrl,ssbd,md_clear,model_SandyBridge:SandyBridge,+pcid,+spec-ctrl,+ssbd,+md-clear:x86_64; '
-        || '7:Intel IvyBridge Family:vmx,nx,model_IvyBridge:IvyyBridge:x86_64; '
+        || '7:Intel IvyBridge Family:vmx,nx,model_IvyBridge:IvyBridge:x86_64; '
         || '8:Secure Intel IvyBridge Family:vmx,spec_ctrl,ssbd,md_clear,model_IvyBridge:IvyBridge,+pcid,+spec-ctrl,+ssbd,+md-clear:x86_64; '
         || '9:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; '
         || '10:Secure Intel Haswell-noTSX Family:vmx,spec_ctrl,ssbd,md_clear,model_Haswell-noTSX:Haswell-noTSX,+spec-ctrl,+ssbd,+md-clear:x86_64; '
