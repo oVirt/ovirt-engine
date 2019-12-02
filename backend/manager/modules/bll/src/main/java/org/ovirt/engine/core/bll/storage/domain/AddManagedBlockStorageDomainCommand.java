@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainVali
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddManagedBlockStorageDomainParameters;
-import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorage;
@@ -15,7 +14,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.CinderStorageDao;
 
-public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorageDomainParameters> extends AddStorageDomainCommand {
+public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorageDomainParameters> extends AddStorageDomainCommand<T> {
 
     @Inject
     private CinderStorageDao cinderStorageDao;
@@ -27,7 +26,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
     @Override
     public void init() {
         super.init();
-        AddManagedBlockStorageDomainParameters parameters = (AddManagedBlockStorageDomainParameters) getParameters();
+        AddManagedBlockStorageDomainParameters parameters = getParameters();
         parameters.getStorageDomain().setStorage(Guid.Empty.toString());
         parameters.getStorageDomain().setStorageFormat(StorageFormatType.V1);
         parameters.getStorageDomain().setDiscardAfterDelete(false);
@@ -40,8 +39,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
         return canAddDomain();
     }
 
-    public AddManagedBlockStorageDomainCommand(StorageDomainManagementParameter parameters,
-            CommandContext commandContext) {
+    public AddManagedBlockStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
@@ -49,7 +47,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
     protected void executeCommand() {
         initializeStorageDomain();
         addStorageDomainInDb();
-        AddManagedBlockStorageDomainParameters parameters = (AddManagedBlockStorageDomainParameters) getParameters();
+        AddManagedBlockStorageDomainParameters parameters = getParameters();
         ManagedBlockStorage managedBlockStorage = new ManagedBlockStorage();
         managedBlockStorage.setId(getStorageDomainId());
         managedBlockStorage.setDriverOptions(parameters.getDriverOptions());
