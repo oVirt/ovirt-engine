@@ -13,7 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,8 +28,12 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.DoubleNode;
+import org.codehaus.jackson.node.IntNode;
+import org.codehaus.jackson.node.NumericNode;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +58,11 @@ public class PrometheusClient {
     private String promUrl;
 
     public PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl) {
-        this(provider, promUrl, null);
+        this.provider = provider;
+        this.promUrl = promUrl;
+        this.httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
     }
 
     public PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl, SSLContext sslContext) {
@@ -64,28 +74,104 @@ public class PrometheusClient {
                 .build();
     }
 
-    public static PrometheusClient create(Provider<KubevirtProviderProperties> provider) {
-        String promUrl = provider.getAdditionalProperties().getPrometheusUrl();
-        if (promUrl == null) {
-            promUrl = fetchPrometheusUrl(provider);
-            if (promUrl == null) {
-                log.error(
-                    "No prometheus URL provided. Statistics won't be fetched for provider '{}'", provider.getName()
-                );
-                return null;
-            }
-        }
-        if (promUrl.startsWith("https")) {
-            return new PrometheusClient(provider, promUrl, getContext(provider));
-        } else {
-            return new PrometheusClient(provider, promUrl);
-        }
+    //
+    // Host
+    //
+
+    // Swap
+    public Long getNodeSwapTotalMb(String nodeName) {
+        return bToMb(getMetric("node_memory_SwapTotal_bytes{instance='%1$s'}", nodeName).asLong());
     }
 
-    private static SSLContext getContext(Provider<KubevirtProviderProperties> provider) {
+    public Long getNodeSwapFreeMb(String nodeName) {
+        return bToMb(getMetric("node_memory_SwapFree_bytes{instance='%1$s'}", nodeName).asLong());
+    }
+
+    // Memory
+    public Integer getNodeMemUsage(String nodeName) {
+        return (int) Math.round(
+            getMetric(
+                "((node_memory_MemTotal_bytes{instance='%1$s'}-node_memory_MemFree_bytes{instance='%1$s'})/" +
+                    "node_memory_MemTotal_bytes{instance='%1$s'})",
+                nodeName
+        ).asDouble() * 100);
+    }
+
+    public Long getNodeMemFree(String nodeName) {
+        return bToMb(getMetric("node_memory_MemFree_bytes{instance='%1$s'}", nodeName).asLong());
+    }
+
+    public Long getNodeMemAvailable(String nodeName) {
+        return bToMb(getMetric("node_memory_MemAvailable_bytes{instance='%1$s'}", nodeName).asLong());
+    }
+
+    public Long getNodeMemShared(String nodeName) {
+        return bToMb(getMetric("node_memory_Shmem_bytes{instance='%1$s'}", nodeName).asLong());
+    }
+
+    // Huge pages
+    public Integer getNodeAnonHugePages(String nodeName) {
+        return getMetric("node_memory_AnonHugePages_bytes{instance='%1$s'}", nodeName).asInt();
+    }
+
+    public List<Pair<Integer, Integer>> getNodeHugePages(String nodeName) {
+        return Arrays.asList(new Pair<>(
+            getMetric("node_memory_HugePages_Free{instance='%1$s'}", nodeName).asInt(),
+            bToKb(getMetric("node_memory_Hugepagesize_bytes{instance='%1$s'}", nodeName).asLong()).intValue()
+        ));
+    }
+
+    // boot
+    public Long getNodeBootTime(String nodeName) {
+        return getMetric("node_boot_time_seconds{instance='%1$s'}", nodeName).asLong();
+    }
+
+    // CPU
+    public Double getNodeCpuIdle(String nodeName) {
+        return getMetric(
+            "avg by (mode) (irate(node_cpu_seconds_total{instance='%1$s', mode='idle'}[1m])) * 100", nodeName
+        ).asDouble();
+    }
+
+    public Double getNodeCpuSystem(String nodeName) {
+        return getMetric(
+                "avg by (mode) (irate(node_cpu_seconds_total{instance='%1$s', mode='system'}[1m])) * 100", nodeName
+        ).asDouble();
+    }
+
+    public Double getNodeCpuUser(String nodeName) {
+        return getMetric(
+                "avg by (mode) (irate(node_cpu_seconds_total{instance='%1$s', mode='user'}[1m])) * 100", nodeName
+        ).asDouble();
+    }
+
+    public Double getNodeCpuLoad(String nodeName) {
+        return getMetric(
+            "100 - (avg without (mode) (rate(node_cpu_seconds_total{instance='%1$s', mode='idle'}[5m])) * 100)", nodeName
+        ).asDouble();
+    }
+
+    public Integer getNodeCpuUsage(String nodeName) {
+        return (int) Math.round(getMetric(
+            "100 - (avg without (cpu, mode) (rate(node_cpu_seconds_total{instance='%1$s', mode='idle'}[1m])) * 100)", nodeName
+        ).asDouble());
+    }
+
+    // KSM
+
+    // Prometheus CA is prio 1. if it's not specified, try to use Openshift CA:
+    private static String getPrometheusCa(Provider<KubevirtProviderProperties> provider) {
+        String ca = provider.getAdditionalProperties().getPrometheusCertificateAuthority();
+        if (ca == null) {
+            ca = provider.getAdditionalProperties().getCertificateAuthority();
+        }
+        return ca;
+    }
+
+    public static SSLContext getContext(Provider<KubevirtProviderProperties> provider) {
         try {
-            String ca = provider.getAdditionalProperties().getPrometheusCertificateAuthority();
             SSLContext sslContext = SSLContext.getInstance("TLS");
+            String ca = getPrometheusCa(provider);
             if (ca == null) {
                 sslContext.init(null, new TrustManager[]{noCaTrustManager}, null);
             } else {
@@ -109,7 +195,7 @@ public class PrometheusClient {
         }
     }
 
-    private static String fetchPrometheusUrl(Provider<KubevirtProviderProperties> provider) {
+    public static String fetchPrometheusUrl(Provider<KubevirtProviderProperties> provider) {
         OpenshiftApi api;
         Optional<V1Route> route = null;
         try {
@@ -143,6 +229,8 @@ public class PrometheusClient {
         if (route != null && route.isPresent()) {
             String host = route.get().getSpec().getHost();
             try {
+                // TODO: Test if it's up and running before returning:
+                log.debug("Found Prometheus route '{}'", host);
                 return new URI("https", host, null, null).toString();
             } catch (URISyntaxException e) {
                 log.error("Failed to retrieve prometheus url for kubevirt provider (host = {}, url = {}): {}",
@@ -160,25 +248,45 @@ public class PrometheusClient {
         return bytes/BYTES_IN_MiB;
     }
 
-    private JsonNode getMetric(String query, String instance, String params) {
-        return getMetric(String.format("%1$s{instance='%2$s', %3$s}", query, instance, params));
+    private Long bToKb(Long bytes) {
+        return bytes/BYTES_IN_KiB;
     }
 
-    private JsonNode getMetric(String query, String instance) {
-        return getMetric(String.format("%1$s{instance='%2$s'}", query, instance));
-    }
+    private NumericNode getMetric(String query, String ... params) {
+        NumericNode retVal = new IntNode(0);
+        query = String.format(query, params);
+        if (promUrl == null) {
+            return retVal;
+        }
 
-    private JsonNode getMetric(String query) {
         HttpResponse<String> response = request(query);
-        // TODO: check for errors.
+        if (response == null) {
+            return retVal;
+        }
+        if (response.statusCode() >= 300) {
+            log.warn("Failed to fetch metric {}: {}", query, response.body());
+            return retVal;
+        }
         try {
             JsonNode node = mapper.readTree(response.body().getBytes());
-            return node.get("data").get("result").get(0).get("value").get(1);
+            if (node.has("status")) {
+                if (node.get("status").asText().equals("success")) {
+                    JsonNode result = node.get("data").get("result");
+                    if (result.size() > 0) {
+                        JsonNode value = result.get(0).get("value");
+                        return new DoubleNode(Double.parseDouble(value.get(1).asText()));
+                    }
+                } else {
+                    log.warn("Query '{}' failed to execute: {} - {}", query, node.get("status"), node.get("error"));
+                }
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        return retVal;
     }
 
     private HttpResponse<String> request(String query) {
@@ -187,6 +295,7 @@ public class PrometheusClient {
                 .uri(URI.create(String.format("%1$s/api/v1/query?", this.promUrl)))
                 .header("User-Agent", "oVirt Engine")
                 .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Authorization", String.format("Bearer %s", provider.getPassword()))
                 .build();
 
         return send(request);
@@ -209,7 +318,9 @@ public class PrometheusClient {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException|InterruptedException e) {
-            throw new RuntimeException(e);
+            log.error("Failed to contact the Prometheus server: {}", promUrl, e.getMessage());
+            log.debug("Exception: ", e);
+            return null;
         }
     }
 
