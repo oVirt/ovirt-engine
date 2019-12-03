@@ -704,7 +704,7 @@ public class LibvirtVmXmlBuilder {
         if (vm.getUseTscFrequency()) {
             writer.writeStartElement("timer");
             writer.writeAttributeString("name", "tsc");
-            writer.writeAttributeString("frequency", tscFrequencySupplier.get().split("\\.")[0] + "000");
+            writer.writeAttributeString("frequency", tscFrequencySupplier.get().split("\\.")[0] + "000000");
             writer.writeEndElement();
         }
         // Intentionally no 'break;', as code for s390x is shared with x86

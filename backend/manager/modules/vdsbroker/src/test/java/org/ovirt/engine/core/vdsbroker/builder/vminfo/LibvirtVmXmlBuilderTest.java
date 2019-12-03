@@ -260,7 +260,7 @@ public class LibvirtVmXmlBuilderTest {
         underTest.writeClock();
         verify(writer, times(4)).writeStartElement("timer");
         verify(writer, times(1)).writeAttributeString("name", "tsc");
-        verify(writer, times(1)).writeAttributeString("frequency", "1234000");
+        verify(writer, times(1)).writeAttributeString("frequency", "1234000000");
     }
 
     @Test
