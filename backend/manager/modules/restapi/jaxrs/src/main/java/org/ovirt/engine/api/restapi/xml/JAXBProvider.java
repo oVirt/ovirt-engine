@@ -35,7 +35,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.ObjectFactory;
-import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +47,6 @@ import org.slf4j.LoggerFactory;
 @Consumes(MediaType.APPLICATION_XML)
 @Produces(MediaType.APPLICATION_XML)
 public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
-    /**
-     * The version of the API supported by this provider.
-     */
-    private static final String SUPPORTED_VERSION = "4";
 
     /**
      * The logger used by this class.
@@ -118,7 +113,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
      */
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return SUPPORTED_VERSION.equals(CurrentManager.get().getVersion());
+        return true;
     }
 
     /**
@@ -126,7 +121,7 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
      */
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return SUPPORTED_VERSION.equals(CurrentManager.get().getVersion());
+        return true;
     }
 
     /**
