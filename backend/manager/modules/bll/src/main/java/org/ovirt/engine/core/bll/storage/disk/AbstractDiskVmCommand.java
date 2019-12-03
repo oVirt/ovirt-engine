@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -77,8 +76,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmDao vmDao;
-    @Inject
-    private StorageDomainDao storageDomainDao;
     @Inject
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
