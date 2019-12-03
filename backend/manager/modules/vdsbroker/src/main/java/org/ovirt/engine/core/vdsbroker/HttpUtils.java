@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import static org.apache.http.protocol.HTTP.CONTENT_LEN;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.RegistryBuilder;
@@ -14,6 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -72,6 +77,7 @@ public class HttpUtils {
         connManager.setDefaultMaxPerRoute(maxConnectionsPerHost);
 
         return HttpClients.custom()
+                .addInterceptorFirst(new ContentLengthHeaderRemover())
                 .setConnectionManager(connManager)
                 .setMaxConnPerRoute(maxConnectionsPerHost)
                 .setMaxConnTotal(maxTotalConnections)
@@ -99,6 +105,13 @@ public class HttpUtils {
                 log.debug("Http client shutdown error details", e);
                 log.warn("Http client shutdown error: {}", e.getMessage());
             }
+        }
+    }
+
+    private static class ContentLengthHeaderRemover implements HttpRequestInterceptor {
+        @Override
+        public void process(HttpRequest request, HttpContext context) {
+            request.removeHeaders(CONTENT_LEN);
         }
     }
 }
