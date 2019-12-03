@@ -1100,7 +1100,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         if (vm.getClusterArch().getFamily() == ArchitectureType.x86
-                && vm.getBiosType().getChipsetType() == ChipsetType.Q35) {
+                && vm.getEffectiveBiosType().getChipsetType() == ChipsetType.Q35) {
             writePciEControllers(pciERootExists, pciEPorts);
         }
 
