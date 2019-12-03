@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine</groupId>
     <artifactId>root</artifactId>
-    <version>4.3.7.3-SNAPSHOT</version>
+    <version>4.3.8.0</version>
   </parent>
 
   <artifactId>engine-server-ear</artifactId>
