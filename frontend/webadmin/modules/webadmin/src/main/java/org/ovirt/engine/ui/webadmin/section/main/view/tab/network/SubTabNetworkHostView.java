@@ -123,17 +123,24 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
 
         @Override
         public SafeHtml getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            ImageResource imageResource = InterfaceStatusImage.getResource(object.getFirst().getStatistics().getStatus());
-            SafeHtml nicStatus = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(imageResource).getHTML());
-            if (object.getFirst() != null && isNetworkUpdating(object)) {
-                return templates.networkDeviceStatusImgAndNetworkOperationInProgress(nicStatus, constants.networksUpdating());
-            } else if (object.getFirst() != null && !isNetworkUpdating(object)) {
-                return templates.networkDeviceStatusImg(nicStatus);
-            } else if (object.getFirst() == null && isNetworkUpdating(object)) {
+            if (object.getFirst() != null) {
+                ImageResource imageResource
+                        = InterfaceStatusImage.getResource(object.getFirst().getStatistics().getStatus());
+
+                SafeHtml nicStatus
+                        = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(imageResource).getHTML());
+
+                if (isNetworkUpdating(object)) {
+                    return templates.networkDeviceStatusImgAndNetworkOperationInProgress(nicStatus,
+                            constants.networksUpdating());
+
+                } else {
+                    return templates.networkDeviceStatusImg(nicStatus);
+                }
+            } else if (isNetworkUpdating(object)) {
                 return templates.networkOperationInProgressDiv(constants.networksUpdating());
-            } else {
-                return null;
             }
+            return null;
         }
 
         @Override
