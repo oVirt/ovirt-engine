@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 
 public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
@@ -138,13 +137,6 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     public AnsibleCommandConfig cluster(String cluster) {
         this.cluster = cluster;
-        return this;
-    }
-
-    public AnsibleCommandConfig hosts(VdsStatic... hosts) {
-        this.hostnames = Arrays.stream(hosts)
-                .map(h -> h.getHostName())
-                .collect(Collectors.toList());
         return this;
     }
 

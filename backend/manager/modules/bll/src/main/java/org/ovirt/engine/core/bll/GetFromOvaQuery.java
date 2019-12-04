@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.exportimport.ExtractOvaCommand;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -21,12 +21,12 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
-import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
-    private VdsStaticDao vdsStaticDao;
+    private VdsDao vdsDao;
     @Inject
     private AnsibleExecutor ansibleExecutor;
     @Inject
@@ -46,7 +46,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     }
 
     private String runAnsibleQueryOvaInfoPlaybook() {
-        VdsStatic host = vdsStaticDao.get(getParameters().getVdsId());
+        VDS host = vdsDao.get(getParameters().getVdsId());
         AnsibleCommandConfig command = new AnsibleCommandConfig()
             .hosts(host)
             .variable("ovirt_query_ova_path", getParameters().getPath())
