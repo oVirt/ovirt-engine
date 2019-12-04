@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.memory.MemoryDisks;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -91,7 +92,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     public Guid getStorageDomainId() {
         if (cachedStorageDomainId == null) {
-            List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
+            MemoryDisks diskDummiesForMemSize = MemoryUtils.createDiskDummies(
                     vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.memory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +70,7 @@ public class MemoryUtils {
         return memoryDiskIds;
     }
 
-    public static List<DiskImage> createDiskDummies(long memorySize, long metadataSize) {
+    public static MemoryDisks createDiskDummies(long memorySize, long metadataSize) {
         DiskImage memoryVolume = new DiskImage();
         memoryVolume.setDiskAlias("memory");
         memoryVolume.setVolumeFormat(VolumeFormat.RAW);
@@ -87,7 +86,7 @@ public class MemoryUtils {
         dataVolume.setActualSizeInBytes(metadataSize);
         dataVolume.getSnapshots().add(dataVolume);
 
-        return Arrays.asList(memoryVolume, dataVolume);
+        return new MemoryDisks(memoryVolume, dataVolume);
     }
 
     public static DiskImage createSnapshotMetadataDisk(String vmName, String diskDescription) {

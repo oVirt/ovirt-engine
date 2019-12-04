@@ -35,7 +35,7 @@ public class MemoryStorageHandlerTest {
     private StorageDomain invalidStorageDomain1;
     private StorageDomain invalidStorageDomain2;
     private StorageDomain invalidStorageDomain3;
-    private List<DiskImage> memoryDisks;
+    private MemoryDisks memoryDisks;
     private List<DiskImage> vmDisks;
 
     @Spy
@@ -43,7 +43,7 @@ public class MemoryStorageHandlerTest {
 
     @BeforeEach
     public void setUp() {
-        memoryDisks = new LinkedList<>();
+        memoryDisks = new MemoryDisks(null, null);
         vmDisks = new LinkedList<>();
         initStorageDomains();
         initFilters();

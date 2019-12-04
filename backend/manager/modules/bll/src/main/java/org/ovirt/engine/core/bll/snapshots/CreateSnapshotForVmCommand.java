@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
+import org.ovirt.engine.core.bll.memory.MemoryDisks;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
@@ -192,10 +193,10 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         return jobProperties;
     }
 
-    public Guid getStorageDomainIdForVmMemory(List<DiskImage> memoryDisksList) {
+    public Guid getStorageDomainIdForVmMemory(MemoryDisks memoryDisks) {
         if (cachedStorageDomainId.equals(Guid.Empty) && getVm() != null) {
             StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(
-                    getVm().getStoragePoolId(), memoryDisksList, getDisksList(), getVm());
+                    getVm().getStoragePoolId(), memoryDisks, getDisksList(), getVm());
             if (storageDomain != null) {
                 cachedStorageDomainId = storageDomain.getId();
             }
@@ -743,14 +744,14 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         vmDisksList = ImagesHandler.getDisksDummiesForStorageAllocations(vmDisksList);
         List<DiskImage> allDisks = new ArrayList<>(vmDisksList);
 
-        List<DiskImage> memoryDisksList = null;
+        MemoryDisks memoryDisks = null;
         if (getParameters().isSaveMemory()) {
-            memoryDisksList = MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
+            memoryDisks = MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                     MemoryUtils.METADATA_SIZE_IN_BYTES);
-            if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisksList))) {
+            if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisks))) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }
-            allDisks.addAll(memoryDisksList);
+            allDisks.addAll(memoryDisks.asList());
         }
 
         MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(allDisks);
@@ -761,11 +762,11 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             return false;
         }
 
-        if (memoryDisksList == null) { //no memory volumes
+        if (memoryDisks == null) { //no memory volumes
             return validate(sdValidator.allDomainsHaveSpaceForNewDisks(vmDisksList));
         }
 
-        return validate(sdValidator.allDomainsHaveSpaceForAllDisks(vmDisksList, memoryDisksList));
+        return validate(sdValidator.allDomainsHaveSpaceForAllDisks(vmDisksList, memoryDisks.asList()));
     }
 
     private List<DiskImage> getDiskImages(List<Disk> disks) {

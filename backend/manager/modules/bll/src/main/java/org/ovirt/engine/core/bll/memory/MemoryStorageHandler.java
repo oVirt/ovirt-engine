@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.memory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -49,7 +47,7 @@ public class MemoryStorageHandler {
      * @return storage domain in the given pool with at least the required amount of free space,
      *         or null if no such storage domain exists in the pool
      */
-    public StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> memoryDisks,
+    public StorageDomain findStorageDomainForMemory(Guid storagePoolId, MemoryDisks memoryDisks,
             Collection<DiskImage> vmDisks, VM vmForLogging) {
         List<StorageDomain> domainsInPool = storageDomainDao.getAllForStoragePool(storagePoolId);
         StorageDomain storageDomainForMemory = findStorageDomainForMemory(domainsInPool, memoryDisks, vmDisks);
@@ -65,25 +63,22 @@ public class MemoryStorageHandler {
         return storageDomainForMemory;
     }
 
-    public void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> memoryDisks) {
-        for (DiskImage disk : memoryDisks) {
-            disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
-        }
-        /*
-        There should be two disks in the disksList, first of which is memory disk.
-        Only its volume type should be modified.
-         */
-        updateDiskVolumeType(storageDomain.getStorageType(), memoryDisks.get(0));
+    public void updateDisksStorage(StorageDomain storageDomain, MemoryDisks memoryDisks) {
+        memoryDisks.getMemoryDisk().setStorageIds(new ArrayList<>(List.of(storageDomain.getId())));
+        memoryDisks.getMetadataDisk().setStorageIds(new ArrayList<>(List.of(storageDomain.getId())));
+
+        VolumeType volumeType = storageDomain.getStorageType().isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
+        memoryDisks.getMemoryDisk().setVolumeType(volumeType);
     }
 
-    protected StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks,
+    protected StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, MemoryDisks memoryDisks,
             Collection<DiskImage> vmDisks) {
         domainsInPool = filterStorageDomains(domainsInPool, memoryDisks);
         domainsInPool = sortStorageDomains(domainsInPool, vmDisks);
         return domainsInPool.stream().findFirst().orElse(null);
     }
 
-    protected List<Predicate<StorageDomain>> getStorageDomainFilters(List<DiskImage> memoryDisks) {
+    protected List<Predicate<StorageDomain>> getStorageDomainFilters(MemoryDisks memoryDisks) {
         return Arrays.asList(ACTIVE_DOMAINS_PREDICATE,
                 DATA_DOMAINS_PREDICATE,
                 new StorageDomainSpaceRequirementsFilter(this, memoryDisks));
@@ -96,7 +91,7 @@ public class MemoryStorageHandler {
                 AVAILABLE_SIZE_COMPARATOR);
     }
 
-    protected List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, List<DiskImage> memoryDisks) {
+    protected List<StorageDomain> filterStorageDomains(List<StorageDomain> domainsInPool, MemoryDisks memoryDisks) {
         Predicate<StorageDomain> predicate =
                 getStorageDomainFilters(memoryDisks).stream().reduce(Predicate::and).orElse(t -> true);
         return domainsInPool.stream().filter(predicate).collect(Collectors.toList());
@@ -108,11 +103,6 @@ public class MemoryStorageHandler {
         domainsInPool = domainsInPool.stream().filter(s -> s.getAvailableDiskSize() != null).collect(Collectors.toList());
         domainsInPool.sort(comp);
         return domainsInPool;
-    }
-
-    private void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
-        VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
-        disk.setVolumeType(volumeType);
     }
 
     /* Predicates */

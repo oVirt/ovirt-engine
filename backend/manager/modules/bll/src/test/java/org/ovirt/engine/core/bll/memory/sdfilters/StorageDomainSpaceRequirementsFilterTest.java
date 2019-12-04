@@ -7,19 +7,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.memory.MemoryDisks;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,13 +29,13 @@ public class StorageDomainSpaceRequirementsFilterTest {
     private StorageDomainValidator storageDomainValidator;
 
     private StorageDomain storageDomain;
-    private List<DiskImage> memoryDisks;
+    private MemoryDisks memoryDisks;
 
     @BeforeEach
     public void setUp() {
         storageDomain = new StorageDomain();
         storageDomain.setId(Guid.newGuid());
-        memoryDisks = new LinkedList<>();
+        memoryDisks = new MemoryDisks(null, null);
         initFilter();
     }
 
@@ -56,7 +53,7 @@ public class StorageDomainSpaceRequirementsFilterTest {
 
     @Test
     public void testStorageDomainForMemoryIsNotValidWhenItHasNoSpaceForClonedDisks() {
-        when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks))
+        when(storageDomainValidator.hasSpaceForClonedDisks(memoryDisks.asList()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         assertFalse(filter.test(storageDomain));
     }

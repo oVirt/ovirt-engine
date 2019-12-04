@@ -29,6 +29,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.memory.MemoryDisks;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -731,12 +732,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private StorageDomain findDomainForMemoryImagesAndCreateDummies(List<DiskImage> disksList) {
-        List<DiskImage> memoryDisksList =
+        MemoryDisks memoryDisks =
                 MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                         MemoryUtils.METADATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(
-                getParameters().getStoragePoolId(), memoryDisksList, getVmDisksDummies(), getVm());
-        disksList.addAll(memoryDisksList);
+                getParameters().getStoragePoolId(), memoryDisks, getVmDisksDummies(), getVm());
+        disksList.addAll(memoryDisks.asList());
         return storageDomain;
     }
 

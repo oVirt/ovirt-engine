@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.memory.MemoryDisks;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -250,11 +251,11 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         int numOfSnapshots = snapshotsWithMemory.size();
         long memorySize = numOfSnapshots * vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm());
         long metadataSize = numOfSnapshots * MemoryUtils.METADATA_SIZE_IN_BYTES;
-        List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(memorySize, metadataSize);
+        MemoryDisks memoryDisks = MemoryUtils.createDiskDummies(memorySize, metadataSize);
 
         //Set target domain in memory disks
-        memoryDisksList.stream().forEach(d -> d.setStorageIds(Collections.singletonList(getStorageDomainId())));
-        return memoryDisksList;
+        memoryDisks.asList().forEach(d -> d.setStorageIds(Collections.singletonList(getStorageDomainId())));
+        return memoryDisks.asList();
     }
 
     private Collection<Snapshot> getSnapshotsToBeExportedWithMemory() {
