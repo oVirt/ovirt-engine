@@ -35,6 +35,9 @@ public class AnsibleRunnerLogger {
     }
 
     public void log(String str, Object ...params) {
+        if (str == null) {
+            return;
+        }
         StringBuilder sb = new StringBuilder(ZonedDateTime.now().format(formatter));
         sb.append(" - ");
         sb.append(str);

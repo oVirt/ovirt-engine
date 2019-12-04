@@ -101,18 +101,21 @@ public class AnsibleExecutor {
         log.trace("Enter AnsibleExecutor::runCommand");
 
         AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
+        int lastEventId = 0;
+        int iteration = 0;
+        int totalEvents;
 
+        String playUuid = null;
         try {
-            // Run the playbook:
+            // Set up logging:
             AnsibleRunnerLogger runnerLogger = ansibleCommandLogFileFactory.create(command);
             runnerClient.setLogger(runnerLogger);
-            String playUuid = runnerClient.runPlaybook(command);
+            ret.setLogFile(runnerLogger.getLogFile());
+
+            // Run the playbook:
+            playUuid = runnerClient.runPlaybook(command);
 
             // Process the events of the playbook:
-            int totalEvents;
-            int lastEventId = 0;
-            int iteration = 0;
-
             while (iteration < timeout * 60) {
                 Thread.sleep(POLL_INTERVAL);
 
@@ -133,14 +136,11 @@ public class AnsibleExecutor {
                 } else if (msg.equalsIgnoreCase("successful")) {
                     // Exit the processing if playbook finished:
                     ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
-                    ret.setLogFile(runnerLogger.getLogFile());
                     return ret;
                 } else if (status.equalsIgnoreCase("unknown")) {
                     // ignore and continue:
                 } else {
                     // Playbook failed:
-                    ret.setAnsibleReturnCode(AnsibleReturnCode.ERROR);
-                    ret.setLogFile(runnerLogger.getLogFile());
                     return ret;
                 }
             }
@@ -154,6 +154,11 @@ public class AnsibleExecutor {
             log.error("Exception: {}", ex.getMessage());
             log.debug("Exception: ", ex);
             ret.setStderr(ex.getMessage());
+        } finally {
+            // Make sure all events are proccessed even in case of failure:
+            if (playUuid != null) {
+                runnerClient.processEvents(playUuid, lastEventId, fn);
+            }
         }
 
         return ret;

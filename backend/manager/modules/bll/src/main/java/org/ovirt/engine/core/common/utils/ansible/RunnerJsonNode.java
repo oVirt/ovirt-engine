@@ -252,6 +252,11 @@ public final class RunnerJsonNode {
      * Return stderr value of the command task.
      */
     public static String getStderr(JsonNode node) {
-        return node.get("stderr").getTextValue();
+        JsonNode n = node.get("stderr");
+        if (n != null) {
+            return n.getTextValue();
+        }
+
+        return null;
     }
 }

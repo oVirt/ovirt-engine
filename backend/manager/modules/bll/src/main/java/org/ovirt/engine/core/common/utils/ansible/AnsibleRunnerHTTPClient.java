@@ -11,9 +11,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -170,47 +174,63 @@ public class AnsibleRunnerHTTPClient {
     public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn) {
         JsonNode responseNode = getEvents(playUuid);
         JsonNode eventNodes = RunnerJsonNode.eventNodes(responseNode);
-        Iterator<String> iterator = eventNodes.getFieldNames();
-        while (iterator.hasNext()) {
-            String n = iterator.next();
-            int index = Integer.parseInt(n.substring(0, n.indexOf("-")));
-            if (index > lastEventId) {
-                // TODO: get stderr
-                String task = null;
-                JsonNode currentNode = eventNodes.get(n);
-                JsonNode taskNode = currentNode.get("task");
-                if (taskNode != null) {
-                    task = taskNode.getTextValue();
-                }
-                if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
-                    || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)
-                    || RunnerJsonNode.isEventError(currentNode)
-                ) {
-                    JsonNode okNode = readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, n));
-                    JsonNode data = okNode.get("data");
-                    String stdout = RunnerJsonNode.getStdout(data);
-                    runnerLogger.log(stdout.trim());
-                    //String stderr = RunnerJsonNode.getStderr(data);
-                    //runnerLogger.log(stderr);
+        Set<String> events = sortedEvents(eventNodes.getFieldNames(), lastEventId);
+        for (String event : events) {
+            String task = null;
+            JsonNode currentNode = eventNodes.get(event);
+            JsonNode taskNode = currentNode.get("task");
+            if (taskNode != null) {
+                task = taskNode.getTextValue();
+            }
+            if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
+                || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)
+                || RunnerJsonNode.isEventError(currentNode)
+            ) {
+                JsonNode okNode = readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event));
+                JsonNode data = okNode.get("data");
 
-                    if (RunnerJsonNode.isEventOk(currentNode)) {
-                        if (taskNode != null) {
-                            runnerLogger.log(readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, n)));
-                            fn.accept(taskNode.getTextValue(), String.format("jobs/%1$s/events/%2$s", playUuid, n));
-                        }
-                    } else if (RunnerJsonNode.isEventFailed(currentNode) || RunnerJsonNode.isEventError(currentNode)) {
-                        JsonNode event = getEvent(String.format("jobs/%1$s/events/%2$s", playUuid, n));
-                        if (!RunnerJsonNode.ignore(event)) {
-                            throw new AnsibleRunnerCallException(
-                                    String.format("Task %1$s failed to execute: %2$s", task, "") // stdout, stderr?
-                            );
-                        }
+                // Log stdout:
+                String stdout = RunnerJsonNode.getStdout(data);
+                runnerLogger.log(stdout.trim());
+
+                // Log stderr:
+                String stderr = RunnerJsonNode.getStderr(data);
+                runnerLogger.log(stderr);
+
+                if (RunnerJsonNode.isEventOk(currentNode)) {
+                    if (taskNode != null) {
+                        runnerLogger.log(readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event)));
+                        fn.accept(taskNode.getTextValue(), String.format("jobs/%1$s/events/%2$s", playUuid, event));
+                    }
+                } else if (RunnerJsonNode.isEventFailed(currentNode) || RunnerJsonNode.isEventError(currentNode)) {
+                    JsonNode eventNode = getEvent(String.format("jobs/%1$s/events/%2$s", playUuid, event));
+                    if (!RunnerJsonNode.ignore(eventNode)) {
+                        runnerLogger.log(readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event)));
+                        throw new AnsibleRunnerCallException(
+                            String.format("Task %1$s failed to execute: %2$s", task, "") // stdout, stderr?
+                        );
                     }
                 }
             }
         }
 
         return RunnerJsonNode.totalEvents(responseNode);
+    }
+
+    private SortedSet<String> sortedEvents(Iterator<String> it, int lastEventId) {
+        // Ansible-runner return the events randomly so we need to sort them:
+        SortedSet<String> set = new TreeSet<>(
+            Comparator.comparing(s -> Integer.parseInt(s.substring(0, s.indexOf("-"))))
+        );
+        while (it.hasNext()) {
+            String n = it.next();
+            int index = Integer.parseInt(n.substring(0, n.indexOf("-")));
+            if (index > lastEventId) {
+                set.add(n);
+            }
+        }
+
+        return set;
     }
 
     private JsonNode getEvent(String eventUrl) {
