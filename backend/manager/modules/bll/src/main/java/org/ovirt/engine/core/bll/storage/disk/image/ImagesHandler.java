@@ -283,7 +283,7 @@ public class ImagesHandler {
      * @param imageStorageDomainMap
      *            storage domain map entry to map between the image and its storage domain
      */
-    public void addDiskImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap, Guid vmId) {
+    private void addDiskImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap, Guid vmId) {
         try {
             addImage(image, active, imageStorageDomainMap);
             addDiskToVmIfNotExists(image, vmId);
@@ -355,7 +355,7 @@ public class ImagesHandler {
      * @param imageStorageDomainMap
      *            entry of image storagte domain map
      */
-    public void addDiskImageWithNoVmDevice(DiskImage image,
+    private void addDiskImageWithNoVmDevice(DiskImage image,
             boolean active,
             ImageStorageDomainMap imageStorageDomainMap) {
         try {
@@ -388,7 +388,7 @@ public class ImagesHandler {
      * @param disk
      *            disk to add
      */
-    public void addDisk(BaseDisk disk) {
+    private void addDisk(BaseDisk disk) {
         if (!baseDiskDao.exists(disk.getId())) {
             baseDiskDao.save(disk);
         }
@@ -436,7 +436,7 @@ public class ImagesHandler {
      * @param vmId
      *            the ID of the vm to add to if the disk does not exist for this VM
      */
-    public void addDiskToVmIfNotExists(BaseDisk disk, Guid vmId) {
+    private void addDiskToVmIfNotExists(BaseDisk disk, Guid vmId) {
         if (!baseDiskDao.exists(disk.getId())) {
             addDiskToVm(disk, vmId);
         }
@@ -503,7 +503,7 @@ public class ImagesHandler {
         return true;
     }
 
-    public static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
+    private static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
         return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental)
                 || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
                 || volumeFormat == VolumeFormat.Unassigned
@@ -642,13 +642,13 @@ public class ImagesHandler {
         return -1;
     }
 
-    public void removeImage(DiskImage diskImage) {
+    private void removeImage(DiskImage diskImage) {
         imageStorageDomainMapDao.remove(diskImage.getImageId());
         diskImageDynamicDao.remove(diskImage.getImageId());
         imageDao.remove(diskImage.getImageId());
     }
 
-    public void removeDiskFromVm(Guid vmGuid, Guid diskId) {
+    private void removeDiskFromVm(Guid vmGuid, Guid diskId) {
         vmDeviceDao.remove(new VmDeviceId(diskId, vmGuid));
         baseDiskDao.remove(diskId);
     }
@@ -912,7 +912,7 @@ public class ImagesHandler {
         return diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType();
     }
 
-    protected static void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
+    private static void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
         clonedDiskImage.setVolumeFormat(diskImageFromClient.getVolumeFormat());
         clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
     }
@@ -948,7 +948,7 @@ public class ImagesHandler {
         return null;
     }
 
-    public static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
+    private static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
         // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
         // case in which we won't have enough space. If the source is already COW we don't need the additional
         // space.
