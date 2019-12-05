@@ -32,6 +32,8 @@ public enum VmDeviceType {
     HOST_DEVICE("hostdev"),
     MEMORY("memory"),
     PCI("pci"),
+    IDE("ide"),
+    SATA("sata"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

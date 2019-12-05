@@ -2174,4 +2174,8 @@ public interface UIConstants extends Constants {
     String clusterDefaultCustomSerialNumberDisabledReason();
 
     String updatingStorageDomainTitle();
+
+    String q35VmDeviceChangesTitle();
+
+    String q35VmDeviceChangesMessage();
 }

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.utils;
+package org.ovirt.engine.core.common.utils;
 
 import java.util.function.Supplier;
 

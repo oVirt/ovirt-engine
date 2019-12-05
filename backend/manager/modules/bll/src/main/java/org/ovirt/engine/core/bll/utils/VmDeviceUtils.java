@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -1493,6 +1494,7 @@ public class VmDeviceUtils {
 
         final Cluster srcCluster = getCluster(srcVmBase.getClusterId());
         final Cluster dstCluster = getCluster(dstVmBase.getClusterId(), srcCluster);
+        ChipsetType dstChipsetType = BiosTypeUtils.getEffective(dstVmBase, dstCluster).getChipsetType();
 
         for (VmDevice device : srcDevices) {
             if (device.getSnapshotId() != null && !copySnapshotDevices) {
@@ -1514,6 +1516,9 @@ public class VmDeviceUtils {
                             // check here is source VM had CD (VM from snapshot)
                             String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
                             specParams.putAll(getCdDeviceSpecParams(srcCdPath, dstCdPath));
+                            if (dstChipsetType == ChipsetType.Q35 && !device.getAddress().contains("bus=0")) {
+                                device.setAddress("");
+                            }
                         } else { // CD already exists
                             continue;
                         }
@@ -1535,6 +1540,11 @@ public class VmDeviceUtils {
                         hasVirtioScsi = true;
                         if (Boolean.FALSE.equals(isVirtioScsiEnabled)) {
                             continue;
+                        }
+                    } else if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
+                        if (ChipsetType.Q35.equals(dstChipsetType)) {
+                            device.setDevice(VmDeviceType.SATA.getName());
+                            device.setAddress("");
                         }
                     }
                     break;

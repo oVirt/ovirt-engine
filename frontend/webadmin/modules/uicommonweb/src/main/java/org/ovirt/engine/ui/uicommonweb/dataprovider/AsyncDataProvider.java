@@ -3430,4 +3430,9 @@ public class AsyncDataProvider {
     public boolean isVgpuPlacementSupported(Version version) {
         return (Boolean) getConfigValuePreConverted(ConfigValues.VgpuPlacementSupported, version.getValue());
     }
+
+    public void isVmTemplateI440fx(AsyncQuery<Boolean> aQuery, Guid vmTemplateId) {
+        runQueryByIdParameter(QueryType.IsVmTemplateI440fx, aQuery, vmTemplateId);
+    }
+
 }

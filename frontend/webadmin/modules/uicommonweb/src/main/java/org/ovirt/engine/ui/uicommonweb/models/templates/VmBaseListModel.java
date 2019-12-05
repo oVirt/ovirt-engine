@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBui
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -62,6 +63,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     protected static final String IS_ADVANCED_MODEL_LOCAL_STORAGE_KEY = "wa_vm_dialog"; //$NON-NLS-1$
 
     private VM privatecurrentVm;
+    private UnitVmModel currentVmModel;
 
     public VM getcurrentVm() {
         return privatecurrentVm;
@@ -69,6 +71,14 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     public void setcurrentVm(VM value) {
         privatecurrentVm = value;
+    }
+
+    public UnitVmModel getCurrentVmModel() {
+        return currentVmModel;
+    }
+
+    public void setCurrentVmModel(UnitVmModel currentVmModel) {
+        this.currentVmModel = currentVmModel;
     }
 
     VmInterfaceCreatingManager addVmFromBlankTemplateNetworkManager =
@@ -359,7 +369,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         setConfirmWindow(null);
 
         if (model.getIsNew()) {
-            saveNewVm(model);
+            newVM(model);
         } else if (model.getIsClone()) {
             cloneVM(model);
         } else {
@@ -369,6 +379,39 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     protected void cancelConfirmation() {
         setConfirmWindow(null);
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
+        if ("SaveNewVm".equals(command.getName())) { //$NON-NLS-1$
+            cancelConfirmation();
+            saveNewVm(getCurrentVmModel());
+        }
+    }
+
+    private void confirmQ35VmDeviceChanges() {
+        ConfirmationModel confirmModel = new ConfirmationModel();
+        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().q35VmDeviceChangesTitle());
+        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().q35VmDeviceChangesMessage());
+
+        confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("SaveNewVm", this)); //$NON-NLS-1$
+        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", this)); //$NON-NLS-1$
+
+        setConfirmWindow(confirmModel);
+    }
+
+    private void newVM(UnitVmModel model) {
+        model.needsQ35VmDeviceChanges(
+                // no changes
+                () -> saveNewVm(model),
+                // needs changes
+                () -> {
+                    setCurrentVmModel(model);
+                    confirmQ35VmDeviceChanges();
+                }
+        );
     }
 
     private void saveNewVm(final UnitVmModel model) {

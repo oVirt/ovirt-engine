@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -3669,4 +3670,28 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getCustomSerialNumber().setIsChangeable(false, constants.customSerialNumberDisabledReason());
         }
     }
+
+    private BiosType getEffectiveBiosType(BiosType vmBiosType, Cluster cluster) {
+        return vmBiosType != BiosType.CLUSTER_DEFAULT ? vmBiosType : cluster.getBiosType();
+    }
+
+    public void needsQ35VmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
+        Cluster cluster = getSelectedCluster();
+        BiosType vmBiosType = getBiosType().getSelectedItem();
+        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86
+                || getEffectiveBiosType(vmBiosType, cluster).getChipsetType() == ChipsetType.I440FX) {
+            noChanges.run();
+            return;
+        }
+
+        Guid templateId = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getId();
+        AsyncDataProvider.getInstance().isVmTemplateI440fx(new AsyncQuery<>(isI440fx -> {
+            if (!isI440fx) {
+                noChanges.run();
+            } else {
+                needsChanges.run();
+            }
+        }), templateId);
+    }
+
 }
