@@ -32,7 +32,7 @@ public class VmVersionUpdater {
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
     }
 
-    private void updateVmBaseToVersion(VmBase vmBase, Version version, Cluster cluster) {
+    public void updateVmBaseToVersion(VmBase vmBase, Version version, Cluster cluster) {
         Version sourceVersion = getSourceVersion(vmBase);
         if (!isVersionUpdatePossible(sourceVersion)) {
             return;
