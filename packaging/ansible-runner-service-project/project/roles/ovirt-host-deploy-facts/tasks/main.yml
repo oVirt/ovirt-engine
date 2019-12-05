@@ -12,6 +12,12 @@
   args:
     warn: no
 
+- name: Install Python3 for CentOS/RHEL8 hosts
+  yum:
+    name: python3
+    state: latest
+  when: ansible_distribution|map(match, ['RedHat','CentOS']) and ansible_distribution_major_version|int >= 8
+
 - name: Set facts
   set_fact:
     host_deploy_vdsm_version: "{{ vdsm_version.stdout }}"
