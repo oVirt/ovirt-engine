@@ -596,7 +596,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             log.info("BIOS chipset type has changed for VM: {} ({}), removing its unmanaged devices.",
                     getVm().getName(),
                     getVm().getId());
-            vmDeviceDao.removeAllUnmanagedDevicsByVmId(getVmId());
+            vmDeviceDao.removeAllUnmanagedDevicesByVmId(getVmId());
         }
     }
 

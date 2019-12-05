@@ -78,7 +78,7 @@ public interface VmDeviceDao extends GenericDao<VmDevice, VmDeviceId>, MassOpera
     /**
      * Remove all unmanaged devices associated with the given VM.
      */
-    void removeAllUnmanagedDevicsByVmId(Guid vmId);
+    void removeAllUnmanagedDevicesByVmId(Guid vmId);
 
     /**
      * Runs an update for the device according to fields that were updated during
