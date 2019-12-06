@@ -61,7 +61,6 @@ public class OAuthAuthorizeServlet extends HttpServlet {
                             ssoContext.getLocalizationUtils().localize(
                                     SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)),
-                            responseType,
                             SsoConstants.JSON_RESPONSE_TYPE));
         }
         login(request, response, buildSsoSession(request));

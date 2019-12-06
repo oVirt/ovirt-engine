@@ -102,7 +102,6 @@ public class OAuthTokenInfoServlet extends HttpServlet {
                             ssoContext.getLocalizationUtils().localize(
                                     SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)),
-                            queryType,
                             SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE));
         }
     }
