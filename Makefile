@@ -342,7 +342,7 @@ clean:
 	rm -rf $(BUILD_FILE) tmp.dev.flist
 
 	# Clean files generated from templates:
-	rm -rf $(GENERATED)
+	rm -rf $$(echo $(GENERATED) | grep -v .gitignore)
 
 test:
 	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
