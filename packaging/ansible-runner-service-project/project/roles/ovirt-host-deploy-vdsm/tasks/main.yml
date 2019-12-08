@@ -1,8 +1,4 @@
 ---
-- name: Validate virtualization if virt service is supported
-  include_tasks: virtualization.yml
-  when: host_deploy_virt_enabled|bool
-
 - name: Include packages, vdsmid, pki and restart services tasks
   include_tasks: "{{ item }}.yml"
   with_items:
