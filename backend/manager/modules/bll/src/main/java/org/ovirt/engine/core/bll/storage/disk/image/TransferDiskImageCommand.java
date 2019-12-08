@@ -381,6 +381,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
+        if (getParameters().getBackupId() != null) {
+            // StartVmBackup should handle locks
+            return locks;
+        }
         if (getDiskImage() != null) {
             locks.put(getDiskImage().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
