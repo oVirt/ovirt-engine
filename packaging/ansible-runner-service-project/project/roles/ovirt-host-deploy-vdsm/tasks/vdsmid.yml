@@ -71,10 +71,10 @@
   set_fact:
     vdsm_config_prefix: "[vars]\nssl= {{ host_deploy_vdsm_encrypt_host_communication }} \n"
 
-- name: Add content to vdsm.conf for version 4.4
+- name: Add nmstate configuration
   set_fact:
     vdsm_config_prefix: "{{ vdsm_config_prefix }}net_nmstate_enabled= {{ host_deploy_vdsm_nmstate_enabled }} \n"
-  when: host_deploy_cluster_version|float >= 4.4 and host_deploy_vdsm_nmstate_enabled == true
+  when: host_deploy_vdsm_nmstate_enabled == true
 
 - name: Add content to vdsm.conf for version 4.2
   set_fact:
