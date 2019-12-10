@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.bll.utils.VmVersionUpdater;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
@@ -72,6 +74,8 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     private Version effectiveCompatibilityVersion;
     private Guid sourceTemplateId;
 
+    private Runnable logOnExecuteEnd = () -> {};
+
     public ImportVmTemplateCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmTemplate(parameters.getVmTemplate());
@@ -84,6 +88,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     @Override
     public void init() {
         super.init();
+        updateTemplateVersion();
         setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
         importUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
         vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
@@ -101,6 +106,45 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
     }
 
+    protected void updateTemplateVersion() {
+        // When cluster ID is invalid, this command does not pass validation,
+        // but this method is called before validate(). Invalid cluster would
+        // cause NPE.
+        if (getCluster() == null) {
+            return;
+        }
+
+        // This condition is here for similar reason as the last one.
+        if (getVmTemplate() == null) {
+            return;
+        }
+
+        if (!isTemplateVersionUpdatePossible()) {
+            return;
+        }
+
+        Version newVersion = CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster);
+
+        // A Template can have custom compatibility version that is lower than
+        // the DC version. In that case, the custom version has to be updated.
+        if (newVersion.less(getCluster().getCompatibilityVersion())) {
+            var dataCenterVersion = getStoragePool().getCompatibilityVersion();
+            if (newVersion.less(dataCenterVersion)) {
+                Version originalVersion = newVersion;
+                String templateName = getVmTemplateName();
+                logOnExecuteEnd = () -> {
+                    addCustomValue("OriginalVersion", originalVersion.toString());
+                    addCustomValue("NewVersion", dataCenterVersion.toString());
+                    auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_CUSTOM_VERSION_CHANGE);
+                };
+
+                newVersion = dataCenterVersion;
+            }
+        }
+
+        new VmVersionUpdater().updateVmtemplateToVersion(getVmTemplate(), newVersion, getCluster());
+    }
+
     @Override
     protected boolean validate() {
         if (getVmTemplate() == null) {
@@ -108,6 +152,11 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         }
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        }
+        if (!isTemplateVersionUpdatePossible()) {
+            return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_TOO_OLD,
+                    ReplacementUtils.createSetVariableString("lowestVersion",
+                            VmVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
         }
         if (!getCluster().getStoragePoolId().equals(getStoragePoolId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
@@ -182,6 +231,11 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         }
 
         return true;
+    }
+
+    // Mocked in unit tests
+    protected boolean isTemplateVersionUpdatePossible() {
+        return VmVersionUpdater.isVersionUpdatePossible(getVmTemplate());
     }
 
     protected abstract boolean validateSourceStorageDomain();
@@ -312,6 +366,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmTemplateId());
         checkTrustedService();
         incrementDbGeneration();
+        logOnExecuteEnd.run();
         setSucceeded(true);
     }
 

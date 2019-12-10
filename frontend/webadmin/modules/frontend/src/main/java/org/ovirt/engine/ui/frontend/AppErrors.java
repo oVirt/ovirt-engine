@@ -1599,6 +1599,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE();
 
+    String VMT_CANNOT_IMPORT_TEMPLATE_VERSION_TOO_OLD();
+
     String VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS();
 
     String VM_CANNOT_IMPORT_VM_EXISTS();

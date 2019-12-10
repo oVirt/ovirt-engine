@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,7 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -88,6 +90,12 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     @InjectMocks
     private ImportVmTemplateCommand<ImportVmTemplateParameters> command =
             new ImportVmTemplateCommand(createParameters(), CommandContext.createContext(""));
+
+    @BeforeEach
+    public void setUp() {
+        doReturn(true).when(command).isTemplateVersionUpdatePossible();
+        doNothing().when(command).updateTemplateVersion();
+    }
 
     @Test
     public void insufficientDiskSpace() {

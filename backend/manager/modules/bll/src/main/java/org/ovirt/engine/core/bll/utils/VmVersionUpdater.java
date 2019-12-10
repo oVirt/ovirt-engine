@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
@@ -30,6 +31,14 @@ public class VmVersionUpdater {
     public void updateVmToVersion(VM vm, Version version, Cluster cluster) {
         updateVmBaseToVersion(vm.getStaticData(), version, cluster);
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
+    }
+
+    /**
+     * Update VmTemplate fields so that it is valid for specified compatibility version.
+     */
+    public void updateVmtemplateToVersion(VmTemplate template, Version version, Cluster cluster) {
+        updateVmBaseToVersion(template, version, cluster);
+        template.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
     }
 
     public void updateVmBaseToVersion(VmBase vmBase, Version version, Cluster cluster) {
