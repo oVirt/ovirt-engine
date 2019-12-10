@@ -60,8 +60,11 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
             .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor
-                .runCommand(command, log, eventUrl -> stdout.append(runnerClient.getCommandStdout(eventUrl)));
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+            command,
+            log,
+            (eventName, eventUrl) -> stdout.append(runnerClient.getCommandStdout(eventUrl))
+        );
 
         boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
         if (!succeeded) {

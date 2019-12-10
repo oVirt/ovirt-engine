@@ -7,7 +7,6 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -76,7 +75,7 @@ public class AnsibleExecutor {
 
     public AnsibleReturnValue runCommand(AnsibleCommandConfig command,
             Logger originLogger,
-            Consumer<String> eventUrlConsumer) {
+            BiConsumer<String, String> eventUrlConsumer) {
         int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         return runCommand(
             command,
@@ -85,7 +84,7 @@ public class AnsibleExecutor {
                 AuditLogable logable = createAuditLogable(command, taskName);
                 auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
                 try {
-                    eventUrlConsumer.accept(eventUrl);
+                    eventUrlConsumer.accept(taskName, eventUrl);
                 } catch (Exception ex) {
                     originLogger.error("Error: {}", ex.getMessage());
                     originLogger.debug("Exception: ", ex);

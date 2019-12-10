@@ -74,7 +74,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             List<String> availablePackages = new ArrayList<>();
             ansibleReturnValue = ansibleExecutor.runCommand(command,
                     log,
-                    eventUrl -> availablePackages.addAll(runnerClient.getYumPackages(eventUrl)));
+                    (eventName, eventUrl) -> availablePackages.addAll(runnerClient.getYumPackages(eventUrl)));
 
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format(
