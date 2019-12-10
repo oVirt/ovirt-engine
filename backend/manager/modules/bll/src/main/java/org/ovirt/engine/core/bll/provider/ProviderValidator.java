@@ -21,7 +21,8 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
 
     protected Provider<P> provider;
 
-    public static final Pattern URL_PATTERN = Pattern.compile("^http(s)?://[^/]*:[\\d]+/(v3|v2\\.0)/?$");
+    public static final Pattern URL_PATTERN = Pattern.compile("^http(s)?://[^/]*:[\\d]*/?$");
+    public static final Pattern AUTH_URL_PATTERN = Pattern.compile("^http(s)?://[^/]*:[\\d]+/(v3|v2\\.0)/?$");
     static final String VAR_AUTH_URL = "AuthUrl";
 
     public ProviderValidator(Provider<P> provider) {
@@ -84,7 +85,7 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
     public ValidationResult validateAuthUrl() {
         String authUrl = provider.getAuthUrl();
         if (authUrl != null) {
-            Matcher matcher = URL_PATTERN.matcher(authUrl);
+            Matcher matcher = AUTH_URL_PATTERN.matcher(authUrl);
             return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_INVALID_AUTH_URL,
                     ReplacementUtils.createSetVariableString(VAR_AUTH_URL, authUrl))
                     .when(!matcher.matches());
