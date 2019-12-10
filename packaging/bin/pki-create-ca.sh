@@ -2,27 +2,42 @@
 
 CA_DAYS="3650"
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
+ENGINE_CA="ca"
 
 clean_pki_dir() {
-	for f in \
-		"${PKIDIR}/cacert.conf" \
-		"${PKIDIR}/cert.conf" \
-		"${PKIDIR}/serial.txt" \
-		"${PKIDIR}/serial.txt.old" \
-		"${PKIDIR}/database.txt" \
-		"${PKIDIR}/database.txt.old" \
-		"${PKIDIR}/database.txt.attr" \
-		"${PKIDIR}/database.txt.attr.old" \
-		"${PKIDIR}/private/${CA_FILE}.pem" \
-		"${PKIDIR}/${CA_FILE}.pem" \
-		"${PKIDIR}/certs"/*.cer \
-		"${PKIDIR}/certs"/*.pem \
-		"${PKIDIR}/keys"/*.p12 \
-		"${PKIDIR}/keys"/*.nopass \
-		"${PKIDIR}/keys/engine_id_rsa" \
-		"${PKIDIR}/requests"/*.req \
-		"${PKIDIR}/requests"/*.csr \
-	; do
+	if [ "${CA_FILE}" == "${ENGINE_CA}" ]; then
+		# engine CA is the main authority, so when renewing it,
+		# we remove all files shared with other authorities and
+		# expect to renew also all other authorities
+		files_to_clean=(
+			"${PKIDIR}/cacert.conf"
+			"${PKIDIR}/cert.conf"
+			"${PKIDIR}/serial.txt"
+			"${PKIDIR}/serial.txt.old"
+			"${PKIDIR}/database.txt"
+			"${PKIDIR}/database.txt.old"
+			"${PKIDIR}/database.txt.attr"
+			"${PKIDIR}/database.txt.attr.old"
+			"${PKIDIR}/private/${CA_FILE}.pem"
+			"${PKIDIR}/${CA_FILE}.pem"
+			"${PKIDIR}/certs"/*.cer
+			"${PKIDIR}/certs"/*.pem
+			"${PKIDIR}/keys"/*.p12
+			"${PKIDIR}/keys"/*.nopass
+			"${PKIDIR}/keys/engine_id_rsa"
+			"${PKIDIR}/requests"/*.req
+			"${PKIDIR}/requests"/*.csr
+		)
+	else
+		# when renewing non-engine CA, then we clean only private key
+		# and certificate of the relevant CA
+		files_to_clean=(
+			"${PKIDIR}/private/${CA_FILE}.pem"
+			"${PKIDIR}/${CA_FILE}.pem"
+		)
+	fi
+
+	for f in "${files_to_clean[@]}"; do
 		if [ -e "${f}" ]; then
 			common_backup "${f}"
 			rm "${f}" || \
@@ -48,9 +63,15 @@ enroll() {
 	# is in correct permissions
 	#
 
-	echo 1000 > "${PKIDIR}/serial.txt" || die "Cannot write to serial.txt"
+	if [ "${CA_FILE}" == "${ENGINE_CA}" ]; then
+		# When we renew engine CA, we need to initialize shared
+		# configuration files
+		echo 1000 > "${PKIDIR}/serial.txt" \
+			|| die "Cannot write to serial.txt"
+		touch "${PKIDIR}/database.txt" "${PKIDIR}/.rnd" \
+			|| die "Cannot write to database.txt"
+	fi
 
-	touch "${PKIDIR}/database.txt" "${PKIDIR}/.rnd" || die "Cannot write to database.txt"
 
 	touch "${PKIDIR}/private/${CA_FILE}.pem"
 	chmod o-rwx "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA permissions"
