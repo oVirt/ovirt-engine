@@ -659,6 +659,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
 
             hotPlugMemory(memoryAddedMb);
+
+            // Hosted engine VM does not care if hotplug failed. The requested memory size is serialized
+            // into the OVF store and automatically used during the next HE VM start
+            if (getVm().isHostedEngine()) {
+                newVmStatic.setMemSizeMb(newAmountOfMemory);
+            }
             return;
         }
 
@@ -813,9 +819,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 runInternalAction(
                         ActionType.HotSetAmountOfMemory,
                         params, cloneContextAndDetachFromParent());
-        // Hosted engine VM does not care if hostplug failed. The requested memory size is serialized
-        // into the OVF store and automatically used during the next HE VM start
-        if (!getVm().isHostedEngine() && setAmountOfMemoryResult.getSucceeded()) {
+
+        if (setAmountOfMemoryResult.getSucceeded()) {
             newVmStatic.setMemSizeMb(newVmStatic.getMemSizeMb() + memHotplugSize);
         }
         logHotSetActionEvent(setAmountOfMemoryResult, AuditLogType.FAILED_HOT_SET_MEMORY);
