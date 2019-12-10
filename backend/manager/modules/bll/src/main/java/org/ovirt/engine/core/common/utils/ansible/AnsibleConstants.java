@@ -68,4 +68,9 @@ public class AnsibleConstants {
      * This is name of file which executes the lvmcache via Ansible.
      */
     public static final String CREATE_BRICK_PLAYBOOK = "create-brick.yml";
+
+    /**
+     * Name of the task where VDSM_ID is loaded, so we can distinguish this task and parse it.
+     */
+    public static final String TASK_VDSM_ID = "Fetch vdsm id";
 }

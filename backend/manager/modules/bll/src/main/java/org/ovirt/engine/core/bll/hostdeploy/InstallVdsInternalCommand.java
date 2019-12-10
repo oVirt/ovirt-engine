@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -40,18 +41,22 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
+import org.ovirt.otopi.dialog.SoftError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +71,14 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private VdsStaticDao vdsStaticDao;
     @Inject
     private ClusterDao clusterDao;
+    @Inject
+    private VdsDao vdsDao;
 
     @Inject
     private AnsibleExecutor ansibleExecutor;
+
+    @Inject
+    private AnsibleRunnerHTTPClient runnerClient;
 
     private EngineLocalConfig config = EngineLocalConfig.getInstance();
 
@@ -232,7 +242,11 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         logable.setCorrelationId(getCorrelationId());
         auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
 
-        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+                commandConfig,
+                log,
+                (eventName, eventUrl) -> setVdsmId(eventName, eventUrl)
+        );
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             throw new VdsInstallException(
                 VDSStatus.InstallFailed,
@@ -245,6 +259,48 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
 
         auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_FINISHED);
+    }
+
+    private void setVdsmId(String eventName, String eventUrl) {
+        if (!eventName.equals(AnsibleConstants.TASK_VDSM_ID)) {
+            return;
+        }
+        String vdsmid = runnerClient.getVdsmId(eventUrl);
+        log.info(
+                "Host {} reports unique id {}",
+                getVds().getHostName(),
+                vdsmid
+        );
+
+        final String hosts = vdsDao.getAllWithUniqueId(vdsmid)
+                .stream()
+                .filter(vds -> !vds.getId().equals(getVds().getId()))
+                .map(VDS::getName)
+                .collect(Collectors.joining(","));
+
+        if (!hosts.isEmpty()) {
+            log.error(
+                    "Host {} reports duplicate unique id {} of following hosts {}",
+                    getVds().getHostName(),
+                    vdsmid,
+                    hosts
+            );
+            throw new SoftError(
+                    String.format(
+                            "Host %1$s reports unique id which already registered for %2$s",
+                            getVds().getHostName(),
+                            hosts
+                    )
+            );
+        }
+
+        log.info("Assigning unique id {} to Host {}", vdsmid, getVds().getHostName());
+        getVds().setUniqueId(vdsmid);
+
+        TransactionSupport.executeInNewTransaction(() -> {
+            vdsStaticDao.update(getVds().getStaticData());
+            return null;
+        });
     }
 
     private String getIptablesRules(VDS host, Cluster cluster) {

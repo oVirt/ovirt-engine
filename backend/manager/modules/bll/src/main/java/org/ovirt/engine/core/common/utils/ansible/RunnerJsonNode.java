@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils.ansible;
 
+import java.util.Base64;
+
 import org.codehaus.jackson.JsonNode;
 
 /**
@@ -229,6 +231,13 @@ public final class RunnerJsonNode {
      */
     public static JsonNode installed(JsonNode node) {
         return node.get("changes").get("installed");
+    }
+
+    /**
+     * Return base64 decoded 'content' attribute of the module.
+     */
+    public static String content(JsonNode node) {
+        return new String(Base64.getDecoder().decode(node.get("content").getTextValue()));
     }
 
     /**

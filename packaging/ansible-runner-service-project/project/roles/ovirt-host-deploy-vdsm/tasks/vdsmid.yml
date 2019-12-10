@@ -67,6 +67,14 @@
     dest: "{{ vdsm_id_file }}"
     owner: root
 
+# Important: Do not rename this task!
+# The name of the task is used by the runner parser
+# to load the VDSM id to the engine.
+# See org.ovirt.engine.core.common.utils.ansible.AnsibleConstants
+- name: Fetch vdsm id
+  slurp:
+    src: "{{ vdsm_id_file }}"
+
 - name: Create vdsm.conf content
   set_fact:
     vdsm_config_prefix: "[vars]\nssl= {{ host_deploy_vdsm_encrypt_host_communication }} \n"

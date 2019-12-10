@@ -250,6 +250,15 @@ public class AnsibleRunnerHTTPClient {
         return event;
     }
 
+    public String getVdsmId(String eventUrl) {
+        // Fetch the event info:
+        JsonNode event = getEvent(eventUrl);
+
+        // Parse the output of the events info:
+        JsonNode taskNode = RunnerJsonNode.taskNode(event);
+        return RunnerJsonNode.content(taskNode);
+    }
+
     public List<String> getYumPackages(String eventUrl) {
         // Fetch the event info:
         JsonNode event = getEvent(eventUrl);
