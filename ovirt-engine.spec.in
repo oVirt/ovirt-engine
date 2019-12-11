@@ -72,13 +72,13 @@
 
 #
 # Supported distributions:
-# Fedora >= 28
+# Fedora >= 30
 # EL >= 7
 #
 
 %global ovirt_install_poms 1
 %global ovirt_provides_jboss 1
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %global ovirt_rh_postgresql 0
 %global postgresql_systemd_service postgresql.service
 %else
@@ -94,7 +94,7 @@
 %global ovirt_product_group Virtualization/Management
 %global ovirt_user_description oVirt Manager
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %global policycoreutils_python_utils policycoreutils-python-utils
 %else
 %global policycoreutils_python_utils policycoreutils-python
@@ -287,7 +287,7 @@ BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
 
 # TODO Replace add_maven_depmap and then remove. See also:
 # https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/R3KZ7VI5DPCMCELFIVJQ4AXB2WQED35C/
-%if 0%{?fedora} >= 27
+%if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:	javapackages-local
 %endif
 
@@ -356,7 +356,7 @@ Requires:	libfastjson
 Requires:	liblognorm
 Requires:	libestr
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 # On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
 # Unfortunately this package is not available on EL7, so we are going to
 # bundle it within engine until available.
@@ -386,10 +386,10 @@ Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 Requires:	%{required_package_manager_versionlock}
 
-%if 0%{?fedora} >= 29
+%if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
 Requires:	apache-sshd
 %endif
 
@@ -1000,16 +1000,16 @@ tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 # On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
 # Unfortunately this package is not available on EL7, so we are going to
 # bundle it within engine until available.
 common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 %endif
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 
-%if 0%{?fedora} >= 29
+%if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 %endif
 

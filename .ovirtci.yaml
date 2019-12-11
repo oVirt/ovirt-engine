@@ -1,5 +1,6 @@
 distributions:
   - el7
+  - el8
   - fc30
 
 release_branches:
