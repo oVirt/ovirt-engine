@@ -1221,38 +1221,9 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (customizedRelation.equalsIgnoreCase("LIKE") || customizedRelation.equalsIgnoreCase("ILIKE")) {
             // Since '_' is treated in Postgres as '?' when using like, (i.e. match any single character)
             // we have to escape this character in the value to make it treated as a regular character.
-            // Due to changes between PG8.x and PG9.x on ESCAPE representation in a string, we should
-            // figure out what PG Release is running in order to escape the special character(_) correctly
-            // This is done in a IF block and not with Method Factory pattern since this is the only change
-            // right now, if we encounter other changes, this will be refactored to use the Method Factory pattern.
-            escapedValue = customizedValue.replace("_", getEscapedCharacter("_"));
+            escapedValue = customizedValue.replace("_", "\\_");
         }
         return escapedValue;
-    }
-
-    public static String getEscapedCharacter(String charToEscape) {
-        int pgMajorRelease = Config.<Integer> getValue(ConfigValues.PgMajorRelease);
-        if (pgMajorRelease == SyntaxChecker.PgMajorRelease.PG8.getValue()) {
-            return "\\\\" + charToEscape;
-        } else if (pgMajorRelease == SyntaxChecker.PgMajorRelease.PG9.getValue()) {
-            return "\\" + charToEscape;
-        }
-        return charToEscape;
-    }
-
-    private static enum PgMajorRelease {
-        PG8(8),
-        PG9(9);
-
-        private int value;
-
-        private PgMajorRelease(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
     }
 
     private static class ConditionData {

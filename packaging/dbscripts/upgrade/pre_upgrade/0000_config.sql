@@ -763,7 +763,6 @@ select fn_db_add_config_value('MaxWriteThroughputUpperBoundQosValue', '1000000',
 select fn_db_add_config_value('MigrationThresholdForEvenGuestDistribute', '5', 'general');
 select fn_db_add_config_value('MinimumPercentageToUpdateQuotaCache', '60', 'general');
 select fn_db_add_config_value('MultiFirewallSupportSince', '4.0', 'general');
-select fn_db_add_config_value('PgMajorRelease', '9', 'general');
 select fn_db_add_config_value('QuotaCacheIntervalInMinutes', '10', 'general');
 select fn_db_add_config_value('RepoDomainInvalidateCacheTimeInMinutes', '1', 'general');
 select fn_db_add_config_value('SSHDefaultKeyDigest', 'SHA-256', 'general');
@@ -1179,22 +1178,6 @@ select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-
 --                 complex updates using a temporary function section
 --                 each temporary function name should start with __temp
 ------------------------------------------------------------------------------------
-
-create or replace function __temp_set_pg_major_release()
-RETURNS void
-AS $procedure$
-DECLARE
-    v_pg_major_release char(1);
-BEGIN
-    -- the folowing evaluates currently to 8 on PG 8.x and to 9 on PG 9.x
-    v_pg_major_release:=substring ((string_to_array(version(),' '))[2],1,1);
-    perform fn_db_add_config_value('PgMajorRelease',v_pg_major_release,'general');
-    -- ensure that if PG was upgraded we will get the right value
-    perform fn_db_update_config_value('PgMajorRelease',v_pg_major_release,'general');
-END; $procedure$
-LANGUAGE plpgsql;
-SELECT  __temp_set_pg_major_release();
-DROP FUNCTION __temp_set_pg_major_release();
 
 
 

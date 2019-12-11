@@ -31,7 +31,6 @@ public class SyntaxCheckerTest {
                 MockConfigDescriptor.of(ConfigValues.DBPagingType, "Range"),
                 MockConfigDescriptor.of(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
                 MockConfigDescriptor.of(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
-                MockConfigDescriptor.of(ConfigValues.PgMajorRelease, 9),
                 MockConfigDescriptor.of(ConfigValues.DBI18NPrefix, "")
         );
     }

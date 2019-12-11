@@ -927,9 +927,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     LogMaxNetworkUsedThresholdInPercentage,
 
-    @TypeConverterAttribute(Integer.class)
-    PgMajorRelease,
-
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     VncKeyboardLayoutValidValues(ClientAccessLevel.User),
