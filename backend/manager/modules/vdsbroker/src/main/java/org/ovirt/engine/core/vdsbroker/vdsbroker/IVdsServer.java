@@ -22,6 +22,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVDOVolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigList;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatus;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetail;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGlobalOptionsInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturn;
@@ -281,6 +282,8 @@ public interface IVdsServer {
     StatusOnlyReturn glusterVolumeReset(String volumeName, String volumeOption, Boolean force);
 
     GlusterVolumeOptionsInfoReturn glusterVolumeSetOptionsList();
+
+    GlusterVolumeGlobalOptionsInfoReturn glusterVolumeGlobalOptionsGet();
 
     GlusterTaskInfoReturn glusterVolumeRemoveBricksStart(String volumeName,
             String[] brickList,

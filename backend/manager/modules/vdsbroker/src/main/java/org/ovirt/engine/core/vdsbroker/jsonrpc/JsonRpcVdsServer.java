@@ -29,6 +29,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVDOVolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigList;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatus;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetail;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGlobalOptionsInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturn;
@@ -1118,6 +1119,12 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
+    }
+
+    public GlusterVolumeGlobalOptionsInfoReturn glusterVolumeGlobalOptionsGet() {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.globalVolumeOptions").build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new GlusterVolumeGlobalOptionsInfoReturn(response);
     }
 
     @Override

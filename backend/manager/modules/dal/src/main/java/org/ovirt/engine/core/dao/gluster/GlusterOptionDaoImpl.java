@@ -7,6 +7,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGlobalVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDao;
@@ -20,6 +21,14 @@ public class GlusterOptionDaoImpl extends MassOperationsGenericDao<GlusterVolume
         GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
         option.setId(getGuidDefaultEmpty(rs, "id"));
         option.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
+        option.setKey(rs.getString("option_key"));
+        option.setValue(rs.getString("option_val"));
+        return option;
+    };
+    private static final RowMapper<GlusterGlobalVolumeOptionEntity> globalOptionRowMapper = (rs, rowNum) -> {
+        GlusterGlobalVolumeOptionEntity option = new GlusterGlobalVolumeOptionEntity();
+        option.setId(getGuidDefaultEmpty(rs, "id"));
+        option.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
         option.setKey(rs.getString("option_key"));
         option.setValue(rs.getString("option_val"));
         return option;
@@ -75,6 +84,14 @@ public class GlusterOptionDaoImpl extends MassOperationsGenericDao<GlusterVolume
                 .addValue("option_val", option.getValue());
     }
 
+    private MapSqlParameterSource createGlobalVolumeOptionParams(GlusterGlobalVolumeOptionEntity option) {
+        return getCustomMapSqlParameterSource()
+                .addValue("id", option.getId())
+                .addValue("cluster_id", option.getClusterId())
+                .addValue("option_key", option.getKey())
+                .addValue("option_val", option.getValue());
+    }
+
     @Override
     protected MapSqlParameterSource createFullParametersMapper(GlusterVolumeOptionEntity option) {
         return createVolumeOptionParams(option);
@@ -88,5 +105,29 @@ public class GlusterOptionDaoImpl extends MassOperationsGenericDao<GlusterVolume
     @Override
     protected RowMapper<GlusterVolumeOptionEntity> createEntityRowMapper() {
         return optionRowMapper;
+    }
+
+    @Override
+    public List<GlusterGlobalVolumeOptionEntity> getGlobalVolumeOptions(Guid clusterId) {
+        return getCallsHandler().executeReadList(
+                "GetGlobalOptionsByGlusterClusterGuid",
+                globalOptionRowMapper,
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
+    @Override
+    public void saveGlobalVolumeOption(GlusterGlobalVolumeOptionEntity option) {
+        getCallsHandler().executeModification("InsertGlusterGlobalVolumeOption",
+                createGlobalVolumeOptionParams(option));
+    }
+
+    @Override
+    public void updateGlobalVolumeOption(Guid clusterId, String key, String value) {
+        getCallsHandler().executeModification("UpdateGlusterGlobalVolumeOption",
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("option_key", key)
+                        .addValue("option_val", value));
+
     }
 }
