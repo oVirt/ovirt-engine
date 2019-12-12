@@ -29,7 +29,7 @@ public class OpenIdJwksServlet extends HttpServlet {
     private Map<String, Object> buildResponse() {
         Map<String, Object> payload = new HashMap<>();
         List<Object> keys = new ArrayList<>();
-        keys.add(OpenIdUtils.getJWK().toJSONObject());
+        keys.add(OpenIdUtils.getJWK());
         payload.put("keys", keys);
         return payload;
     }
