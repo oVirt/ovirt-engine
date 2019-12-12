@@ -345,7 +345,9 @@ install: \
 	$(NULL)
 
 .PHONY: ovirt-engine.spec.in
+
 ovirt-engine.spec: version.mak
+.gitignore: Makefile
 
 dist:	ovirt-engine.spec
 	git ls-files | tar --files-from /proc/self/fd/0 -czf "$(TARBALL)" ovirt-engine.spec
