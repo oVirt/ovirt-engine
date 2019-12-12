@@ -6,6 +6,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -17,10 +18,8 @@ import org.jboss.resteasy.jose.jws.JWSBuilder;
 import org.jboss.resteasy.jwt.JsonSerialization;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.utils.SsoSession;
+import org.ovirt.engine.core.sso.utils.jwk.JWK;
 import org.ovirt.engine.core.sso.utils.jwt.OpenIdJWT;
-
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.RSAKey;
 
 public class OpenIdUtils {
 
@@ -45,11 +44,10 @@ public class OpenIdUtils {
      * Get the Java Web Key used to sign userinfo jwt. HS256 used to sign token's jwt does not need to be included here
      * as HS256 used client secret to sign the jwt which the client already has.
      */
-    public static JWK getJWK() {
-        return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
-                .privateKey((RSAPrivateKey) keyPair.getPrivate())
-                .keyID("oVirt") // Give the key some ID (optional)
-                .build();
+    static Map<String, Object> getJWK() {
+        RSAPublicKey rsa = (RSAPublicKey) keyPair.getPublic();
+        RSAPrivateKey rsaPrivate = (RSAPrivateKey) keyPair.getPrivate();
+        return JWK.builder(rsa).withPrivateRsa(rsaPrivate).withKeyId("oVirt").build().asJsonMap();
     }
 
     /**
