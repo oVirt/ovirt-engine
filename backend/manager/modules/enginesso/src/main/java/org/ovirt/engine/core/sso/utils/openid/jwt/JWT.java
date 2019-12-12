@@ -1,11 +1,11 @@
-package org.ovirt.engine.core.sso.utils.jwt;
+package org.ovirt.engine.core.sso.utils.openid.jwt;
 
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.jboss.resteasy.jwt.JsonWebToken;
 
-public class OpenIdJWT extends JsonWebToken {
+public final class JWT extends JsonWebToken {
     @JsonProperty("acr")
     private String acr;
     @JsonProperty("auth_time")
@@ -29,7 +29,7 @@ public class OpenIdJWT extends JsonWebToken {
         return acr;
     }
 
-    public OpenIdJWT acr(String acr) {
+    public JWT acr(String acr) {
         this.acr = acr;
         return this;
     }
@@ -38,7 +38,7 @@ public class OpenIdJWT extends JsonWebToken {
         return authTime;
     }
 
-    public OpenIdJWT authTime(Date authTime) {
+    public JWT authTime(Date authTime) {
         this.authTime = authTime;
         return this;
     }
@@ -47,7 +47,7 @@ public class OpenIdJWT extends JsonWebToken {
         return sub;
     }
 
-    public OpenIdJWT sub(String sub) {
+    public JWT sub(String sub) {
         this.sub = sub;
         return this;
     }
@@ -56,7 +56,7 @@ public class OpenIdJWT extends JsonWebToken {
         return preferredUserName;
     }
 
-    public OpenIdJWT preferredUserName(String preferredUserName) {
+    public JWT preferredUserName(String preferredUserName) {
         this.preferredUserName = preferredUserName;
         return this;
     }
@@ -65,7 +65,7 @@ public class OpenIdJWT extends JsonWebToken {
         return email;
     }
 
-    public OpenIdJWT email(String email) {
+    public JWT email(String email) {
         this.email = email;
         return this;
     }
@@ -74,7 +74,7 @@ public class OpenIdJWT extends JsonWebToken {
         return familyName;
     }
 
-    public OpenIdJWT familyName(String familyName) {
+    public JWT familyName(String familyName) {
         this.familyName = familyName;
         return this;
     }
@@ -83,7 +83,7 @@ public class OpenIdJWT extends JsonWebToken {
         return givenName;
     }
 
-    public OpenIdJWT givenName(String givenName) {
+    public JWT givenName(String givenName) {
         this.givenName = givenName;
         return this;
     }
@@ -92,7 +92,7 @@ public class OpenIdJWT extends JsonWebToken {
         return nonce;
     }
 
-    public OpenIdJWT nonce(String nonce) {
+    public JWT nonce(String nonce) {
         this.nonce = nonce;
         return this;
     }
@@ -101,7 +101,7 @@ public class OpenIdJWT extends JsonWebToken {
         return name;
     }
 
-    public OpenIdJWT name(String name) {
+    public JWT name(String name) {
         this.name = name;
         return this;
     }

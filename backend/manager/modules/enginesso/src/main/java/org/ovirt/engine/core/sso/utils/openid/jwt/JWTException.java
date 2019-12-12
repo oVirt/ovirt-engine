@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.servlets;
+package org.ovirt.engine.core.sso.utils.openid.jwt;
 
 public class JWTException extends RuntimeException {
     public JWTException(ErrorCode errorCode, Throwable cause) {
@@ -6,7 +6,7 @@ public class JWTException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    enum ErrorCode{
+    public enum ErrorCode{
         CANNOT_SERIALIZE_PLAIN_JWT
     }
 

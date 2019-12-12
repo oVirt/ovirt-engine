@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.ServletException;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.sso.utils.OAuthException;
 import org.ovirt.engine.core.sso.utils.SsoConstants;
 import org.ovirt.engine.core.sso.utils.SsoSession;
 import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.utils.openid.OpenIdService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +23,11 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
 
     private static Logger log = LoggerFactory.getLogger(OpenIdTokenServlet.class);
 
+    @Inject
+    private Instance<OpenIdService> openIdService;
+
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             log.debug("Entered OpenIdTokenServlet Query String: {}, Parameters : {}",
                     request.getQueryString(),
@@ -98,9 +102,9 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
     protected Map<String, Object> buildResponse(HttpServletRequest request,
                                                 SsoSession ssoSession,
                                                 String clientId,
-                                                String clientSecret) throws Exception {
+                                                String clientSecret) {
         Map<String, Object> payload = buildResponse(ssoSession);
-        payload.put("id_token", OpenIdUtils.createJWT(request, ssoSession, clientId, clientSecret));
+        payload.put("id_token", openIdService.get().createJWT(request, ssoSession, clientId, clientSecret));
         return payload;
     }
 

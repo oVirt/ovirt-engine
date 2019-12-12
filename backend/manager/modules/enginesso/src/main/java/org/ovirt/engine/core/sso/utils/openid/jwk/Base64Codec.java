@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package org.ovirt.engine.core.sso.utils.jwk;
+package org.ovirt.engine.core.sso.utils.openid.jwk;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

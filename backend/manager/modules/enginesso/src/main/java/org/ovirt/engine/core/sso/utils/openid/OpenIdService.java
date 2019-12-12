@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.servlets;
+package org.ovirt.engine.core.sso.utils.openid;
 
 import java.io.IOException;
 import java.security.KeyPair;
@@ -7,7 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
+import java.util.function.Supplier;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
@@ -18,25 +20,38 @@ import org.jboss.resteasy.jose.jws.JWSBuilder;
 import org.jboss.resteasy.jwt.JsonSerialization;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.jwk.JWK;
-import org.ovirt.engine.core.sso.utils.jwt.OpenIdJWT;
+import org.ovirt.engine.core.sso.utils.openid.jwk.JWK;
+import org.ovirt.engine.core.sso.utils.openid.jwt.JWT;
+import org.ovirt.engine.core.sso.utils.openid.jwt.JWTException;
 
-public class OpenIdUtils {
+@ApplicationScoped
+public final class OpenIdService{
 
-    private static KeyPair keyPair;
-
-    static {
+    public static final String OVIRT = "oVirt";
+    static final Supplier<KeyPair> DEFAULT_RSA_KEY_PAIR_GENERATOR = () -> {
         try {
             KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
             keyGenerator.initialize(1024);
-            keyPair = keyGenerator.genKeyPair();
+            return keyGenerator.genKeyPair();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Unable to generate KeyPair", e);
         }
+    };
+    private final ObjectMapper mapper = new ObjectMapper().disableDefaultTyping();
+
+    private final KeyPair keyPair;
+
+    @SuppressWarnings("unused") // injectable
+    public OpenIdService() {
+        this(DEFAULT_RSA_KEY_PAIR_GENERATOR);
     }
 
-    public static String getJson(Object obj) throws IOException {
-        ObjectMapper mapper = new ObjectMapper().disableDefaultTyping();
+    // for testing
+    OpenIdService(Supplier<KeyPair> keyPairGenerator) {
+        keyPair = keyPairGenerator.get();
+    }
+
+    public String getJson(Object obj) throws IOException {
         return mapper.writeValueAsString(obj);
     }
 
@@ -44,10 +59,10 @@ public class OpenIdUtils {
      * Get the Java Web Key used to sign userinfo jwt. HS256 used to sign token's jwt does not need to be included here
      * as HS256 used client secret to sign the jwt which the client already has.
      */
-    static Map<String, Object> getJWK() {
+    public Map<String, Object> getJWK() {
         RSAPublicKey rsa = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey rsaPrivate = (RSAPrivateKey) keyPair.getPrivate();
-        return JWK.builder(rsa).withPrivateRsa(rsaPrivate).withKeyId("oVirt").build().asJsonMap();
+        return JWK.builder(rsa).withPrivateRsa(rsaPrivate).withKeyId(OVIRT).build().asJsonMap();
     }
 
     /**
@@ -55,10 +70,9 @@ public class OpenIdUtils {
      *
      * @throws JWTException RuntimeException thrown when unable to build JWT
      */
-    static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId) {
+    public String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId) throws JWTException {
         String plainToken = buildUnencodedOpenIDJWT(request, ssoSession, clientId);
         // Create RSA-signer with the private key
-
         return new JWSBuilder()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(plainToken, MediaType.APPLICATION_JSON_TYPE)
@@ -71,14 +85,14 @@ public class OpenIdUtils {
      *
      * @throws JWTException RuntimeException thrown when unable to build JWT
      */
-    static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId, String clientSecret) {
+    public String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId, String clientSecret)
+            throws JWTException {
         String plainToken = buildUnencodedOpenIDJWT(request, ssoSession, clientId);
 
-        String encoded = new JWSBuilder()
+        return new JWSBuilder()
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(plainToken, MediaType.APPLICATION_JSON_TYPE)
                 .hmac256(clientSecret.getBytes());
-        return encoded;
 
     }
 
@@ -94,7 +108,8 @@ public class OpenIdUtils {
      *
      * @throws JWTException RuntimeException thrown when unable to build JWT
      */
-    private static String buildUnencodedOpenIDJWT(HttpServletRequest request, SsoSession ssoSession, String clientId) {
+    private String buildUnencodedOpenIDJWT(HttpServletRequest request, SsoSession ssoSession, String clientId)
+            throws JWTException {
         long expirationTime = ssoSession.getAuthTime().getTime() + 30000 * 60;
         String serverName = request.getServerName();
         String issuer = String.format("%s://%s:%s",
@@ -103,7 +118,7 @@ public class OpenIdUtils {
                 request.getServerPort());
 
         // Open ID JWT
-        OpenIdJWT token = new OpenIdJWT()
+        JWT token = new JWT()
                 .acr("0")
                 .authTime(ssoSession.getAuthTime())
                 .sub(ssoSession.getUserIdWithProfile())
