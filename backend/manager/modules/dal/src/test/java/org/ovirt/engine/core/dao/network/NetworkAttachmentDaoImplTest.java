@@ -134,6 +134,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase<NetworkAttachm
 
         assertNotNull(result);
         assertEquals(2, result.size());
+        result.forEach(r -> assertNull(r.getHostNetworkQos()));
     }
 
     @Test

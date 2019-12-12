@@ -38,37 +38,57 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     @Inject
     private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
-    private final RowMapper<NetworkAttachment> networkAttachmentRowMapper = (rs, rowNum) -> {
-        NetworkAttachment entity = new NetworkAttachment();
-        entity.setId(getGuid(rs, "id"));
-        entity.setNetworkId(getGuid(rs, "network_id"));
-        entity.setNicId(getGuid(rs, "nic_id"));
-        entity.setProperties(getCustomProperties(rs));
 
-        final IpConfiguration ipConfiguration = new IpConfiguration();
+    private final RowMapper<HostNetworkQos> qosDaoRetriever = (rs, rowNum) -> hostNetworkQosDao.get(getGuid(rs, "id"));
+    private final RowMapper<DnsResolverConfiguration> dnsDaoRetriever = (rs, rowNum) ->
+            dnsResolverConfigurationDao.get(getGuid(rs, "dns_resolver_configuration_id")
+    );
+    private final NetworkAttachmentRowMapper qosDaoAttachmentMapper = new NetworkAttachmentRowMapper(
+            qosDaoRetriever, dnsDaoRetriever
+    );
 
-        final String bootProtocol = rs.getString("boot_protocol");
-        if (bootProtocol != null) {
-            final IPv4Address iPv4Address = createIpv4Address(rs, bootProtocol);
-            ipConfiguration.getIPv4Addresses().add(iPv4Address);
+    private static final class NetworkAttachmentRowMapper  implements RowMapper<NetworkAttachment>  {
+
+        private final RowMapper<HostNetworkQos> hostNetworkQosMapper;
+        private final RowMapper<DnsResolverConfiguration> dnsMapper;
+
+        NetworkAttachmentRowMapper(RowMapper<HostNetworkQos> qosMapper, RowMapper<DnsResolverConfiguration> dnsMapper) {
+            this.hostNetworkQosMapper = qosMapper;
+            this.dnsMapper = dnsMapper;
         }
 
-        final String v6BootProtocol = rs.getString("ipv6_boot_protocol");
-        if (v6BootProtocol != null) {
-            final IpV6Address ipV6Address = createIpV6Address(rs, v6BootProtocol);
-            ipConfiguration.getIpV6Addresses().add(ipV6Address);
+        @Override
+        public NetworkAttachment mapRow(ResultSet rs, int rowNum) throws SQLException {
+            NetworkAttachment entity = new NetworkAttachment();
+            entity.setId(getGuid(rs, "id"));
+            entity.setNetworkId(getGuid(rs, "network_id"));
+            entity.setNicId(getGuid(rs, "nic_id"));
+            entity.setProperties(getCustomProperties(rs));
+
+            final IpConfiguration ipConfiguration = new IpConfiguration();
+
+            final String bootProtocol = rs.getString("boot_protocol");
+            if (bootProtocol != null) {
+                final IPv4Address iPv4Address = createIpv4Address(rs, bootProtocol);
+                ipConfiguration.getIPv4Addresses().add(iPv4Address);
+            }
+
+            final String v6BootProtocol = rs.getString("ipv6_boot_protocol");
+            if (v6BootProtocol != null) {
+                final IpV6Address ipV6Address = createIpV6Address(rs, v6BootProtocol);
+                ipConfiguration.getIpV6Addresses().add(ipV6Address);
+            }
+
+            if (bootProtocol != null || v6BootProtocol != null) {
+                entity.setIpConfiguration(ipConfiguration);
+            }
+            entity.setHostNetworkQos(asAnonymousHostNetworkQos(hostNetworkQosMapper.mapRow(rs, rowNum)));
+
+            entity.setDnsResolverConfiguration(dnsMapper.mapRow(rs, rowNum));
+
+            return entity;
         }
-
-        if (bootProtocol != null || v6BootProtocol != null) {
-            entity.setIpConfiguration(ipConfiguration);
-        }
-        entity.setHostNetworkQos(asAnonymousHostNetworkQos(hostNetworkQosDao.get(entity.getId())));
-
-        Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
-        entity.setDnsResolverConfiguration(this.dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
-
-        return entity;
-    };
+    }
 
     public NetworkAttachmentDaoImpl() {
         super("NetworkAttachment");
@@ -77,14 +97,14 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     @Override
     public List<NetworkAttachment> getAllForNic(Guid nicId) {
         return getCallsHandler().executeReadList("GetNetworkAttachmentsByNicId",
-                networkAttachmentRowMapper,
+                qosDaoAttachmentMapper,
                 getCustomMapSqlParameterSource().addValue("nic_id", nicId));
     }
 
     @Override
     public List<NetworkAttachment> getAllForNetwork(Guid networkId) {
         return getCallsHandler().executeReadList("GetNetworkAttachmentsByNetworkId",
-                networkAttachmentRowMapper,
+                qosDaoAttachmentMapper,
                 getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
@@ -94,14 +114,14 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
         Objects.requireNonNull(networkId, "networkId cannot be null");
 
         return getCallsHandler().executeRead("GetNetworkAttachmentByNicIdAndNetworkId",
-                networkAttachmentRowMapper,
+                qosDaoAttachmentMapper,
                 getCustomMapSqlParameterSource().addValue("nic_id", nicId).addValue("network_id", networkId));
     }
 
     @Override
     public List<NetworkAttachment> getAllForHost(Guid hostId) {
         return getCallsHandler().executeReadList("GetNetworkAttachmentsByHostId",
-                networkAttachmentRowMapper,
+                qosDaoAttachmentMapper,
                 getCustomMapSqlParameterSource().addValue("host_id", hostId));
     }
 
@@ -190,7 +210,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
     @Override
     protected RowMapper<NetworkAttachment> createEntityRowMapper() {
-        return networkAttachmentRowMapper;
+        return qosDaoAttachmentMapper;
     }
 
     @Override
@@ -211,7 +231,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
         return HostNetworkQos.fromAnonymousHostNetworkQos(anonymousHostNetworkQos);
     }
 
-    private AnonymousHostNetworkQos asAnonymousHostNetworkQos(HostNetworkQos hostNetworkQos) {
+    private static AnonymousHostNetworkQos asAnonymousHostNetworkQos(HostNetworkQos hostNetworkQos) {
         return AnonymousHostNetworkQos.fromHostNetworkQos(hostNetworkQos);
     }
 
