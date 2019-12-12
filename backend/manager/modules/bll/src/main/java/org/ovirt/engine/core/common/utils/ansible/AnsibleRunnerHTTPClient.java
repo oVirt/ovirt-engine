@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class AnsibleRunnerHTTPClient {
 
+    private static final Object inventoryLock = new Object();
     private static final String HOST_GROUP = "ovirt";
     private static final String API_VERSION = "/api/v1";
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHTTPClient.class);
@@ -74,13 +75,15 @@ public class AnsibleRunnerHTTPClient {
         HttpPost request = new HttpPost(uri);
         request.setEntity(entity);
 
-        HttpResponse response = execute(request);
-        JsonNode node = readResponse(response);
-
-        if (!RunnerJsonNode.isStatusOk(node)) {
-            throw new InventoryException("Failed to add host to inventory: %1$s", RunnerJsonNode.msg(node));
+        // There is no synchronization in ansible-runner-service for accessing the inventory file,
+        // so we need to synchronize it here:
+        synchronized (inventoryLock) {
+            HttpResponse response = execute(request);
+            JsonNode node = readResponse(response);
+            if (!RunnerJsonNode.isStatusOk(node)) {
+                throw new InventoryException("Failed to add host to inventory: %1$s", RunnerJsonNode.msg(node));
+            }
         }
-
     }
 
     public void cancelPlaybook(String playUuid) {
