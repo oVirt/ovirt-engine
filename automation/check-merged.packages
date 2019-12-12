@@ -12,3 +12,4 @@ postgresql-server
 pyflakes
 python-devel
 python-pep8
+python3-ansible-lint

@@ -10,6 +10,7 @@ otopi
 postgresql-contrib
 postgresql-jdbc
 postgresql-server
+python3-ansible-lint
 python3-mock
 python3-psycopg2
 python3-pytest
