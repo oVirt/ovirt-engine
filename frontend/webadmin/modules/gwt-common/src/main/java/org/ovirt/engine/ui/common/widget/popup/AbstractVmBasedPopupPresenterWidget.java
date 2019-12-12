@@ -67,7 +67,7 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
 
         initAdvancedModeFromLocalStorage(model);
 
-        swithAccordingToMode(model);
+        switchAccordingToMode(model);
 
         initToCreateInstanceMode(model);
 
@@ -101,10 +101,10 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
     private void initListeners(final UnitVmModel model) {
         model.getAdvancedMode().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             storeAdvancedModeToLocalStorage(model);
-            swithAccordingToMode(model);
+            switchAccordingToMode(model);
         });
 
-        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener((ev, sender, args) -> swithAttachToInstanceType(model));
+        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener((ev, sender, args) -> switchAttachToInstanceType(model));
 
         model.getValid().getPropertyChangedEvent().addListener((ev, sender, args) -> switchToAdvancedIfNeeded(model));
 
@@ -135,11 +135,11 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         }
     }
 
-    private void swithAttachToInstanceType(final UnitVmModel model) {
+    private void switchAttachToInstanceType(final UnitVmModel model) {
         getView().switchAttachToInstanceType(model.getAttachedToInstanceType().getEntity());
     }
 
-    private void swithAccordingToMode(final UnitVmModel model) {
+    private void switchAccordingToMode(final UnitVmModel model) {
         getView().switchMode(model.getAdvancedMode().getEntity());
     }
 
