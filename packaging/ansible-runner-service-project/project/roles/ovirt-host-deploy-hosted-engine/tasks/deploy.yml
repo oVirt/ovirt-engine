@@ -9,7 +9,7 @@
 
 - name: Stop services
   service:
-    name: {{ item }}
+    name: "{{ item }}"
     state: stopped
   loop:
   - ovirt-ha-agent.service
