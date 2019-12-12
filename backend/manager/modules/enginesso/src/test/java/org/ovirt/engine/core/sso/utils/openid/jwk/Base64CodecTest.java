@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.utils.jwk;
+package org.ovirt.engine.core.sso.utils.openid.jwk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
