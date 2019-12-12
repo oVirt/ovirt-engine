@@ -11,13 +11,13 @@
 - name: Fetch boot drive UUID
   shell: findmnt --output=UUID --noheadings --target=/boot
   register: uuid
-  when: add_boot_param == true
+  when: add_boot_param|bool
   failed_when: uuid.stdout == ""
 
 - name: Add boot parameter to kernel parameters
   set_fact:
     host_deploy_kernel_cmdline_new: "boot=UUID={{ uuid.stdout }} {{ host_deploy_kernel_cmdline_new }}"
-  when: uuid.changed == true
+  when: uuid.changed|bool
 
 - name: Removing old kernel arguments
   shell: "grubby --update-kernel DEFAULT --remove-args '{{ host_deploy_kernel_cmdline_old }}'"

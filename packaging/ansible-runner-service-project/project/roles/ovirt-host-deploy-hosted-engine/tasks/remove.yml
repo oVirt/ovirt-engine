@@ -8,7 +8,7 @@
   copy:
     dest: hosted_engine_conf
     content: ''
-  when: stat_results.stat.exists == true
+  when: stat_results.stat.exists|bool
 
 - name: Remove hosted engine conf file
   file:

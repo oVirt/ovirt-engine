@@ -8,4 +8,4 @@
 
 - name: Include tuned profile tasks
   include_tasks: tuned_profile.yml
-  when: not (host_deploy_tuned_profile == 'null' and host_deploy_virt_enabled == false)
+  when: not (host_deploy_tuned_profile == 'null' and not host_deploy_virt_enabled|bool)
