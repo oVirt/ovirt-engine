@@ -387,16 +387,6 @@
         <version>${archaius.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.minidev</groupId>
-        <artifactId>json-smart</artifactId>
-        <version>2.2</version>
-      </dependency>
-      <dependency>
-        <groupId>net.minidev</groupId>
-        <artifactId>accessors-smart</artifactId>
-        <version>1.1</version>
-      </dependency>
-      <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>jose-jwt</artifactId>
         <version>${resteasy.version}</version>
@@ -405,11 +395,6 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxrs</artifactId>
         <version>${resteasy.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.nimbusds</groupId>
-        <artifactId>nimbus-jose-jwt</artifactId>
-        <version>5.12</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

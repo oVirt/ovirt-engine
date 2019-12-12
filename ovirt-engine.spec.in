@@ -404,9 +404,6 @@ Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
 %endif
 
-Requires:	nimbus-jose-jwt >= 5.12
-Requires:	json-smart >= 2.2
-
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
 # of the update process implemented in the engine-upgrade script:
@@ -985,9 +982,6 @@ common/com/netflix/hystrix/main/hystrix-core.jar hystrix/hystrix-core.jar
 common/com/netflix/hystrix/contrib/main/hystrix-metrics-event-stream.jar hystrix/hystrix-metrics-event-stream.jar
 common/io/reactivex/rxjava/main/rxjava.jar
 %endif
-common/com/nimbusds/main/nimbus-jose-jwt.jar nimbus-jose-jwt/nimbus-jose-jwt.jar
-common/net/minidev/main/accessors-smart.jar json-smart/accessors-smart.jar
-common/net/minidev/main/json-smart.jar json-smart.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar

@@ -58,20 +58,6 @@
     </dependency>
 
     <dependency>
-      <groupId>net.minidev</groupId>
-      <artifactId>json-smart</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>net.minidev</groupId>
-      <artifactId>accessors-smart</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>jose-jwt</artifactId>
     </dependency>
@@ -303,16 +289,7 @@
                 <artifactId>hystrix-core</artifactId>
                 <moduleName>com.netflix.hystrix</moduleName>
               </module>
-              <module>
-                <groupId>net.minidev</groupId>
-                <artifactId>json-smart</artifactId>
-                <moduleName>net.minidev</moduleName>
-              </module>
-              <module>
-                <groupId>net.minidev</groupId>
-                <artifactId>accessors-smart</artifactId>
-                <moduleName>net.minidev</moduleName>
-              </module>
+
               <module>
                 <groupId>io.reactivex</groupId>
                 <artifactId>rxjava</artifactId>
