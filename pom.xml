@@ -84,6 +84,7 @@
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.5.3</snmp4j.version>
+    <resteasy.version>3.0.24.Final</resteasy.version>
     <!-- hystrix -->
     <hystrix.version>1.4.14</hystrix.version>
     <archaius.version>0.4.1</archaius.version>
@@ -367,6 +368,17 @@
         <version>1.1</version>
       </dependency>
       <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>jose-jwt</artifactId>
+        <version>${resteasy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <scope>provided</scope>
+        <version>${resteasy.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>nimbus-jose-jwt</artifactId>
         <version>5.12</version>
@@ -428,7 +440,7 @@
       <id>central</id>
       <name>maven repo1</name>
       <layout>default</layout>
-      <url>http://repo1.maven.org/maven2</url>
+      <url>https://repo1.maven.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -470,7 +482,7 @@
     <pluginRepository>
       <id>central</id>
       <name>Maven Plugin Repository</name>
-      <url>http://repo1.maven.org/maven2</url>
+      <url>https://repo1.maven.org/maven2</url>
       <layout>default</layout>
       <snapshots>
         <enabled>false</enabled>

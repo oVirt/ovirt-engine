@@ -295,11 +295,6 @@
                 <moduleName>com.netflix.hystrix</moduleName>
               </module>
               <module>
-                <groupId>com.nimbusds</groupId>
-                <artifactId>nimbus-jose-jwt</artifactId>
-                <moduleName>com.nimbusds</moduleName>
-              </module>
-              <module>
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
                 <moduleName>net.minidev</moduleName>
