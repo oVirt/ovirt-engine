@@ -12,7 +12,6 @@
 
       <module name="asm.asm" export="true"/>
       <module name="com.woorea.openstack.sdk" export="true" services="export"/>
-      <module name="com.nimbusds" export="true"/>
       <module name="org.apache.commons.beanutils" export="true"/>
       <module name="org.apache.commons.codec" export="true"/>
       <module name="org.apache.commons.collections" export="true"/>

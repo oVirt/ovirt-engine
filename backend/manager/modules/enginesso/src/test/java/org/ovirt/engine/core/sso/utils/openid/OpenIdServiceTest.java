@@ -5,8 +5,6 @@ import static org.mockito.BDDMockito.given;
 
 import java.io.IOException;
 import java.security.KeyPair;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,8 +26,6 @@ import org.mockito.Mockito;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.utils.SsoSession;
-
-import com.nimbusds.jose.jwk.RSAKey;
 
 class OpenIdServiceTest {
 
@@ -114,21 +110,8 @@ class OpenIdServiceTest {
         String jwkString =
                 mapper.writeValueAsString(jwk);
 
-        com.nimbusds.jose.jwk.JWK nimbusjwk = getJWK();
-        String nimbusJwkString = nimbusjwk.toJSONString();
-
-        assertThat(jwkString).isEqualTo(nimbusJwkString);
-    }
-
-    /**
-     * Get the Java Web Key used to sign userinfo jwt. HS256 used to sign token's jwt does not need to be included here
-     * as HS256 used client secret to sign the jwt which the client already has.
-     */
-    private com.nimbusds.jose.jwk.JWK getJWK() {
-        return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
-                .privateKey((RSAPrivateKey) keyPair.getPrivate())
-                .keyID("oVirt") // Give the key some ID (optional)
-                .build();
+        // at least this is proper json and no exception is thrown
+        assertThat(jwkString).isNotEmpty();
     }
 
     private SsoSession getTestSsoSession() {
