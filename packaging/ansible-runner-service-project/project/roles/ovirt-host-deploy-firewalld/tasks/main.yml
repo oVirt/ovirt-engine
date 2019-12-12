@@ -1,11 +1,4 @@
 ---
-- name: Check if VDSM version is supported for FirewallD
-  fail:
-    msg: "VDSM version {{ host_deploy_vdsm_version }} is not supported for FirewallD."
-  when:
-    - "host_deploy_firewall_type == 'FIREWALLD'"
-    - "host_deploy_vdsm_version is version_compare('4.20', '<')"
-
 - block:
     - name: Stop iptables service if running
       service:
@@ -58,4 +51,3 @@
   when:
     - "host_deploy_override_firewall"
     - "host_deploy_firewall_type == 'FIREWALLD'"
-    - "host_deploy_vdsm_version is version_compare('4.20', '>=')"

@@ -12,7 +12,7 @@
         enabled: yes
 
   when:
-    - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr and ovn_engine_cluster_version is version_compare('4.2', '>='))
+    - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr)
 
 - block:
   - name: Install ovirt-provider-ovn-driver
@@ -31,6 +31,5 @@
         vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }}
 
   when:
-    - ovn_engine_cluster_version is version_compare('4.2', '>=')
     - ovn_central is defined
     - ovn_central | ipaddr
