@@ -2,10 +2,7 @@
 - block:
     - name: Fail host deploy if firewall type is iptables for hosts other than CentOS 7/ RHEL 7
       fail:
-      when: >
-        not (
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat') and
-        ansible_distribution_major_version|int == 7)
+      when: el_ver|int != 7
 
     - name: Get latest iptables-services package
       yum:

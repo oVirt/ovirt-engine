@@ -12,19 +12,24 @@
   args:
     warn: no
 
+- name: Detect host operating system
+  set_fact:
+    el_ver: "{{ ansible_distribution_major_version|int
+        if ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+        else 0 }}"
+    fc_ver: "{{ ansible_distribution_major_version|int
+        if ansible_distribution == 'Fedora'
+        else 0 }}"
+
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
     name: python3
     state: latest
-  when: ansible_distribution|map(match, ['RedHat','CentOS']) and ansible_distribution_major_version|int >= 8
+  when: el_ver|int >= 8
 
 - name: Set facts
   set_fact:
     host_deploy_vdsm_version: "{{ vdsm_version.stdout }}"
-    ansible_python_interpreter : "{{ '/usr/bin/python3' if (ansible_distribution == 'Fedora') or (
-        (
-            ansible_distribution|map(match, ['RedHat','CentOS'])
-        ) and (
-            ansible_distribution_major_version|int >= 8
-        )
-    ) else '/usr/bin/python2' }}"
+    ansible_python_interpreter : "{{ '/usr/bin/python3'
+        if (fc_ver|int > 0 or el_ver|int >= 8)
+        else '/usr/bin/python2' }}"

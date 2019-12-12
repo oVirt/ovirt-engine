@@ -84,10 +84,10 @@
     vdsm_config_prefix: "{{ vdsm_config_prefix }}net_nmstate_enabled= {{ host_deploy_vdsm_nmstate_enabled }} \n"
   when: host_deploy_vdsm_nmstate_enabled|bool
 
-- name: Add content to vdsm.conf for version 4.2
+- name: Configure SSL ciphers for EL7
   set_fact:
     vdsm_config_prefix: "{{ vdsm_config_prefix }}ssl_ciphers= {{ host_deploy_vdsm_ssl_ciphers }} \n"
-  when: host_deploy_cluster_version|float >= 4.2
+  when: el_ver|int == 7
 
 - name: Add adresses to vdsm.conf
   set_fact:
