@@ -26,6 +26,7 @@
       <module name="org.hibernate.validator" export="true"/>
       <module name="org.infinispan" export="true"/>
       <module name="org.jboss.resteasy.resteasy-jaxrs" export="true"/>
+      <module name="org.jboss.resteasy.jose-jwt" export="true"/>
       <module name="org.quartz" export="true"/>
       <module name="org.slf4j" export="true"/>
       <module name="org.springframework" export="true"/>

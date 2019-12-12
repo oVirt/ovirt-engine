@@ -62,6 +62,6 @@ public class OpenIdUserInfoServlet extends HttpServlet {
     }
 
     private String buildResponse(HttpServletRequest request, SsoSession ssoSession) throws Exception {
-        return OpenIdUtils.createJWT(request, ssoSession, ssoSession.getClientId()).toString();
+        return OpenIdUtils.createJWT(request, ssoSession, ssoSession.getClientId());
     }
 }

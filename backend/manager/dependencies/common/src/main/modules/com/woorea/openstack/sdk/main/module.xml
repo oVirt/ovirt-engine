@@ -18,6 +18,7 @@
    <dependencies>
      <module name="javax.ws.rs.api"/>
      <module name="org.jboss.resteasy.resteasy-jaxrs"/>
+     <module name="org.jboss.resteasy.jose-jwt"/>
      <module name="org.codehaus.jackson.jackson-core-asl"/>
      <module name="org.codehaus.jackson.jackson-mapper-asl"/>
      <module name="org.codehaus.jackson.jackson-jaxrs"/>

@@ -220,9 +220,16 @@ public class ExternalOIDCUtils {
 
     private static Map<String, Object> getResponse(SsoContext ssoContext, HttpUriRequest request) throws Exception {
         try (CloseableHttpResponse response = execute(ssoContext, request)) {
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode == HttpStatus.SC_NOT_FOUND) {
                 throw new FileNotFoundException();
             }
+
+            if(statusCode == HttpStatus.SC_NO_CONTENT){
+                return new HashMap<>();
+            }
+
             try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
                 try (InputStream input = response.getEntity().getContent()) {
                     copy(input, os);
@@ -309,7 +316,7 @@ public class ExternalOIDCUtils {
                 throw new OAuthException((String) response.get("error"), (String) response.get("error_description"));
             }
         } catch (Throwable t) {
-            log.error("Unable to logout of external OIDC", ExceptionUtils.getRootCauseMessage(t));
+            log.error("Unable to logout of external OIDC {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
         }
     }

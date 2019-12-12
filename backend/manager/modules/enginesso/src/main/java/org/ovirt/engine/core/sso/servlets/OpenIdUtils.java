@@ -6,26 +6,21 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.conn.util.InetAddressUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.jboss.resteasy.jose.jws.JWSBuilder;
+import org.jboss.resteasy.jwt.JsonSerialization;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.utils.SsoSession;
+import org.ovirt.engine.core.sso.utils.jwt.OpenIdJWT;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 
 public class OpenIdUtils {
 
@@ -59,58 +54,80 @@ public class OpenIdUtils {
 
     /**
      * Create a Java web token and sign with the RSA key. Used by the openid userinfo endpoint to send userinfo back.
+     *
+     * @throws JWTException RuntimeException thrown when unable to build JWT
      */
-    public static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId)
-            throws JOSEException {
+    static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId) {
+        String plainToken = buildUnencodedOpenIDJWT(request, ssoSession, clientId);
         // Create RSA-signer with the private key
-        JWSSigner signer = new RSASSASigner(keyPair.getPrivate());
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256),
-                createJWTClaimSet(request, ssoSession, clientId));
-        signedJWT.sign(signer);
-        return signedJWT.serialize();
+
+        return new JWSBuilder()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(plainToken, MediaType.APPLICATION_JSON_TYPE)
+                .rsa256(keyPair.getPrivate());
     }
 
     /**
      * Create a Java web token and sign with the client secret. Used by openid token endpoint to get id_token along with
      * access_token.
+     *
+     * @throws JWTException RuntimeException thrown when unable to build JWT
      */
-    public static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId, String clientSecret)
-            throws NoSuchAlgorithmException, JOSEException {
-        JWSSigner signer = new MACSigner(clientSecret);
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256),
-                createJWTClaimSet(request, ssoSession, clientId));
-        signedJWT.sign(signer);
+    static String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId, String clientSecret) {
+        String plainToken = buildUnencodedOpenIDJWT(request, ssoSession, clientId);
 
-        return signedJWT.serialize();
+        String encoded = new JWSBuilder()
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(plainToken, MediaType.APPLICATION_JSON_TYPE)
+                .hmac256(clientSecret.getBytes());
+        return encoded;
+
     }
 
-    private static JWTClaimsSet createJWTClaimSet(HttpServletRequest request, SsoSession ssoSession, String clientId) {
+    /**
+     * @param request
+     *            HTTP servlet request
+     * @param ssoSession
+     *            SSO session
+     * @param clientId
+     *            Client Id
+     *
+     * @return Encoded JWT token with OpenId extensions
+     *
+     * @throws JWTException RuntimeException thrown when unable to build JWT
+     */
+    private static String buildUnencodedOpenIDJWT(HttpServletRequest request, SsoSession ssoSession, String clientId) {
+        long expirationTime = ssoSession.getAuthTime().getTime() + 30000 * 60;
         String serverName = request.getServerName();
         String issuer = String.format("%s://%s:%s",
                 request.getScheme(),
                 InetAddressUtils.isIPv6Address(serverName) ? String.format("[%s]", serverName) : serverName,
                 request.getServerPort());
 
-        Date expirationTime = new Date(ssoSession.getAuthTime().getTime() + 30000 * 60);
-        // Compose the JWT claims set
-        JWTClaimsSet.Builder jwtClaimsBuilder = new JWTClaimsSet.Builder()
-                .jwtID(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID))
-                .issueTime(ssoSession.getAuthTime())
-                .expirationTime(expirationTime)
-                .issuer(issuer)
-                .subject(ssoSession.getUserIdWithProfile())
-                .audience(clientId)
-                .claim("acr", "0")
-                .claim("auth_time", ssoSession.getAuthTime())
-                .claim("sub", ssoSession.getUserIdWithProfile())
-                .claim("preferred_username", ssoSession.getUserIdWithProfile())
-                .claim("email", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.EMAIL))
-                .claim("name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME))
-                .claim("family_name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME))
-                .claim("given_name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME));
+        // Open ID JWT
+        OpenIdJWT token = new OpenIdJWT()
+                .acr("0")
+                .authTime(ssoSession.getAuthTime())
+                .sub(ssoSession.getUserIdWithProfile())
+                .preferredUserName(ssoSession.getUserIdWithProfile())
+                .email(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.EMAIL))
+                .familyName(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.FIRST_NAME))
+                .givenName(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.FIRST_NAME))
+                .name(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.FIRST_NAME));
         if (StringUtils.isNotEmpty(ssoSession.getOpenIdNonce())) {
-            jwtClaimsBuilder.claim("nonce", ssoSession.getOpenIdNonce());
+            token.nonce(ssoSession.getOpenIdNonce());
         }
-        return jwtClaimsBuilder.build();
+        // regular JWT
+        token.id(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.ID))
+                .issuedAt(ssoSession.getAuthTime().getTime())
+                .expiration(expirationTime)
+                .issuer(issuer)
+                .audience(clientId);
+
+        try {
+            return JsonSerialization.toString(token, true);
+        } catch (Exception e) {
+            throw new JWTException(JWTException.ErrorCode.CANNOT_SERIALIZE_PLAIN_JWT, e);
+        }
     }
 }

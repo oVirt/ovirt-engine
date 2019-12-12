@@ -86,6 +86,7 @@
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.5.3</snmp4j.version>
     <kubevirt-client.version>0.2.0</kubevirt-client.version>
+    <resteasy.version>3.6.1.Final</resteasy.version>
     <!-- hystrix -->
     <hystrix.version>1.4.14</hystrix.version>
     <archaius.version>0.4.1</archaius.version>
@@ -394,6 +395,16 @@
         <groupId>net.minidev</groupId>
         <artifactId>accessors-smart</artifactId>
         <version>1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>jose-jwt</artifactId>
+        <version>${resteasy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <version>${resteasy.version}</version>
       </dependency>
       <dependency>
         <groupId>com.nimbusds</groupId>
