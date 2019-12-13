@@ -20,6 +20,8 @@
   yum:
     name: ovirt-hosted-engine-setup
     state: latest
+  tags:
+    - skip_ansible_lint # E403
 
 - name: Update hosted engine configuration
   set_fact:

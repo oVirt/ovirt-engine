@@ -3,6 +3,8 @@
   yum:
     name: ovirt-host
     state: latest
+  tags:
+    - skip_ansible_lint # E403
 
 - name: get packages
   package_facts:
@@ -18,6 +20,8 @@
     name: vdsm-hook-*
     state: latest
     update_only: yes
+  tags:
+    - skip_ansible_lint # E403
 
 - name: Reconfigure vdsm tool
   shell: vdsm-tool configure --force

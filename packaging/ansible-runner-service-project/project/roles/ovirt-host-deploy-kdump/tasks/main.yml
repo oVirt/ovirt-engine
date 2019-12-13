@@ -7,10 +7,10 @@
   register: crashkernel_param
   failed_when: crashkernel_param.changed
 
-- name: Install latest kexec-tools package
+- name: Install kexec-tools package
   yum:
     name: kexec-tools
-    state: latest
+    state: present
 
 - name: Fetch packages information
   package_facts:

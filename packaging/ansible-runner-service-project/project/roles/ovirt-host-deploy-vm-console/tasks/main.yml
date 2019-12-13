@@ -3,6 +3,8 @@
   yum:
     name: ovirt-vmconsole-host
     state: latest
+  tags:
+    - skip_ansible_lint # E403
 
 - name: Run vm-console-certificates role
   include_role:

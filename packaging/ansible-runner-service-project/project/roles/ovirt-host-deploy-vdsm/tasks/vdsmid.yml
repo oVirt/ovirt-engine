@@ -18,10 +18,10 @@
   when: vdsm_id_stat.stat.exists
 
 - block:
-  - name: Get latest dmidecode package
+  - name: Install dmidecode package
     yum:
       name: dmidecode
-      state: latest
+      state: present
 
   - name: Detect vdsm id for x86_64 or i686
     shell: dmidecode -s system-uuid

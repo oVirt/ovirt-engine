@@ -12,6 +12,7 @@
     update_cache: yes
   tags:
     - updatecheck
+    - skip_ansible_lint # E403
 
 - name: Update system
   yum:
@@ -20,3 +21,4 @@
     update_cache: yes
   tags:
     - updatecheck
+    - skip_ansible_lint # E403

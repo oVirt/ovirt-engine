@@ -2,7 +2,7 @@
 - name: Verify that grubby package is installed
   yum:
     name: grubby
-    state: latest
+    state: present
 
 - name: Detect if boot parameter is set when FIPS support is enabled
   set_fact:

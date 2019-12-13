@@ -24,7 +24,7 @@
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
     name: python3
-    state: latest
+    state: present
   when: el_ver|int >= 8
 
 - name: Set facts

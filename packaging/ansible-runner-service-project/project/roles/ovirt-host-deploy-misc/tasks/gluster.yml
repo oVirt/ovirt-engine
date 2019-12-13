@@ -8,6 +8,8 @@
       yum:
         name: vdsm-gluster
         state: latest
+      tags:
+      - skip_ansible_lint # E403
 
     - name: Restart gluster
       service:

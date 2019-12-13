@@ -7,7 +7,7 @@
     - name: Get latest iptables-services package
       yum:
         name: iptables-services
-        state: latest
+        state: present
 
     - name: Store iptables
       copy:
