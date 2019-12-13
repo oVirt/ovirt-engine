@@ -21,3 +21,5 @@
 
 - name: Reconfigure vdsm tool
   shell: vdsm-tool configure --force
+  tags:
+    - skip_ansible_lint # E305

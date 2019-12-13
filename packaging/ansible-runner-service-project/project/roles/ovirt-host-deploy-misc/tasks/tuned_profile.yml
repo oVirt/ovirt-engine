@@ -18,6 +18,8 @@
 - name: Set tune profile
   shell: "tuned-adm profile {{ profile }}"
   register: tune_profile_set
+  tags:
+    - skip_ansible_lint # E305
 
 - name: Enable tune service
   service:

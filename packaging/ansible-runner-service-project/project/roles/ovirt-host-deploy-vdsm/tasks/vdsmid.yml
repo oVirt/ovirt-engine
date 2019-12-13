@@ -9,6 +9,8 @@
   - name: Get vdsm id
     shell: cat "{{ vdsm_id_file }}"
     register: vdsm_id_file_content
+    tags:
+      - skip_ansible_lint # E305
 
   - name: Set vdsm id
     set_fact:
@@ -24,6 +26,8 @@
   - name: Detect vdsm id for x86_64 or i686
     shell: dmidecode -s system-uuid
     register: vdsm_id_res
+    tags:
+      - skip_ansible_lint # E305
 
   - name: Set vdsm id for x86_64 or i686
     set_fact:
@@ -47,6 +51,8 @@
     shell: cat "{{ ppc_system_id }}"
     register: vdsm_id_res
     when: stat_results.stat.exists
+    tags:
+      - skip_ansible_lint # E305
 
   - name: Set vdsm id for ppc or ppc64
     set_fact:
