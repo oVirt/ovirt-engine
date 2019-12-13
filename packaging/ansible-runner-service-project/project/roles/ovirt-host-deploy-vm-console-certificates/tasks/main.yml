@@ -72,7 +72,9 @@
 
     - name: Set vmconsole key path
       set_fact:
-        vmconsolekey_path: "{{ ovirt_vmconsole_trust_store~'/'~ovirt_vmconsole_key_pending_file if ovirt_enrollment_type == certificate_enrollment_accept else vmconsolekey.path  }}"
+        vmconsolekey_path: "{{ ovirt_vmconsole_trust_store~'/'~ovirt_vmconsole_key_pending_file
+            if ovirt_enrollment_type == certificate_enrollment_accept
+            else vmconsolekey.path  }}"
 
     - name: Add vmconsole key file
       copy:

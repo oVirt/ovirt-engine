@@ -140,7 +140,9 @@
 
     - name: Set vdsm key path
       set_fact:
-        vdsmkey_path: "{{ ovirt_vdsm_trust_store~'/'~ovirt_vdsm_key_pending_file if ovirt_enrollment_type == certificate_enrollment_accept else vdsmkeys.results[0].path  }}"
+        vdsmkey_path: "{{ ovirt_vdsm_trust_store~'/'~ovirt_vdsm_key_pending_file
+            if ovirt_enrollment_type == certificate_enrollment_accept
+            else vdsmkeys.results[0].path  }}"
 
     - name: Add vdsm key files
       copy:
@@ -159,7 +161,9 @@
 
     - name: Set QEMU key path
       set_fact:
-        qemukey_path: "{{ ovirt_vdsm_trust_store~'/'~ovirt_qemu_key_pending_file if ovirt_enrollment_type == certificate_enrollment_accept else vdsmkeys.results[1].path  }}"
+        qemukey_path: "{{ ovirt_vdsm_trust_store~'/'~ovirt_qemu_key_pending_file
+            if ovirt_enrollment_type == certificate_enrollment_accept
+            else vdsmkeys.results[1].path  }}"
 
     - name: Add QEMU key file
       copy:
