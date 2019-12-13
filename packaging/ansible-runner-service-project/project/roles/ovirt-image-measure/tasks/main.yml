@@ -4,3 +4,5 @@
   register: measurement_result
   become: yes
   become_user: vdsm
+  tags:
+    - skip_ansible_lint # E301

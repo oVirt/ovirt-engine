@@ -52,3 +52,5 @@
   command: >
      lvconvert -y --type cache --cachepool "/dev/{{ vgname }}/{{ cache_lvname }}"
      "/dev/{{ vgname }}/{{ lvname }}_pool"
+  tags:
+    - skip_ansible_lint
