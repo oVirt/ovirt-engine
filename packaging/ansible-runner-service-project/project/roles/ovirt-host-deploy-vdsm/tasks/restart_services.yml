@@ -20,9 +20,10 @@
     state: started
     enabled: yes
   loop:
+  # libvirtd may not be started automatically on hosts >= 4.4, it will
+  # be started by vdsmd if needed.
   - cgconfig.service
   - messagebus.service
-  - libvirtd.service
   - virt-imageio-daemon.service
   - NetworkManager.service
   - vdsmd.service

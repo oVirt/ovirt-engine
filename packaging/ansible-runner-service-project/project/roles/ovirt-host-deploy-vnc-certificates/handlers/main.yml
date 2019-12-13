@@ -12,10 +12,13 @@
   when: host_deploy_vnc_restart_services|bool
   listen: "restart libvirtd"
 
-- name: restart libvirtd
+# libvirtd may not be started automatically on hosts >= 4.4 if not
+# already running.  Let's stop, rather than restart, it and vdsmd will
+# start it below if needed.
+- name: stop libvirtd
   service:
     name: libvirtd
-    state: restarted
+    state: stopped
   when: host_deploy_vnc_restart_services|bool
   listen: "restart libvirtd"
 

@@ -1,5 +1,12 @@
+- name: populate service facts for sasl libvirtd restart
+  service_facts:
+  register: services_in_vnc_sasl
+
+# libvirtd may not be started automatically on hosts >= 4.4 if not
+# already running.
 - name: restart libvirtd
   service:
     name: libvirtd
     state: restarted
+  when: "services_in_vnc_sasl['ansible_facts']['services'].get('libvirtd.service', {}).get('state') == 'running'"
   listen: "restart libvirtd"
