@@ -34,7 +34,7 @@
       - not vdsm_id_res.stdout_lines[0]|regex_search(not_regexp)
   when:
     - not vdsm_id_stat.stat.exists
-    - vdsm_id == ''
+    - not vdsm_id
     - (ansible_facts.architecture == 'x86_64' or ansible_facts.architecture == 'i686')
 
 - block:
@@ -53,13 +53,13 @@
       vdsm_id: "{{ vdsm_id_res.stdout|replace(',', '') }}"
     when: stat_results.stat.exists
   when:
-    - vdsm_id == ''
+    - not vdsm_id
     - (ansible_facts.architecture == 'ppc' or ansible_facts.architecture == 'ppc64')
 
 - name: Set vdsm id if it wasn't found
   set_fact:
     vdsm_id: "{{ 9999999999999999999999|random|to_uuid }}"
-  when: vdsm_id == ''
+  when: not vdsm_id
 
 - name: Store vdsm id
   copy:

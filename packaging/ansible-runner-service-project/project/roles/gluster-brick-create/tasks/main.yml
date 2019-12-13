@@ -85,7 +85,7 @@
      thinpool: "{{ lvname }}_pool"
 
 - include_tasks: lvmcache.yml
-  when: ssd is defined and ssd != ''
+  when: ssd is defined and ssd
 
 - name: Create an xfs filesystem
   filesystem:
