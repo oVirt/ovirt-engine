@@ -9,3 +9,5 @@
 - name: Unconfigure the OVN chassis
   command: vdsm-tool ovn-unconfigure
   when: not ovn_packages.changed
+  tags:
+    - skip_ansible_lint # E503

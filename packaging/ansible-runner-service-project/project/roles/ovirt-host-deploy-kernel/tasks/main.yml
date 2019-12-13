@@ -20,6 +20,8 @@
   set_fact:
     host_deploy_kernel_cmdline_new: "boot=UUID={{ uuid.stdout }} {{ host_deploy_kernel_cmdline_new }}"
   when: uuid.changed|bool
+  tags:
+    - skip_ansible_lint # E503
 
 - name: Removing old kernel arguments
   shell: "grubby --update-kernel DEFAULT --remove-args '{{ host_deploy_kernel_cmdline_old }}'"
