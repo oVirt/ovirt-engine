@@ -4,8 +4,8 @@
     - ovirt-to-vdsm-network
 
 - name: Install and configure oVirt provider OVN driver
-  hosts: ovirt_cluster_{{cluster_name}}
+  hosts: ovirt_cluster_{{ cluster_name }}
 
   roles:
     - role: ovirt-provider-ovn-driver
-      ovn_tunneling_interface: "{{hostvars['localhost']['vdsm_network_name']['stdout']}}"
+      ovn_tunneling_interface: "{{ hostvars['localhost']['vdsm_network_name']['stdout'] }}"

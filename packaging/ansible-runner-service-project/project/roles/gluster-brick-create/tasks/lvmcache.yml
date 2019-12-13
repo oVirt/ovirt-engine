@@ -33,8 +33,8 @@
   command: >
      lvconvert -y --type cache-pool --poolmetadata {{ cache_meta_lv }}
         --poolmetadataspare n
-        --cachemode {{cachemode | default('writethrough')}}
-        "/dev/{{vgname}}/{{cache_lvname}}"
+        --cachemode {{ cachemode | default('writethrough') }}
+        "/dev/{{ vgname }}/{{ cache_lvname }}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
 
 # It is valid not to have cachemetalvname! Writing a separate task not to
@@ -43,12 +43,12 @@
   command: >
      lvconvert -y --type cache-pool
         --poolmetadataspare n
-        --cachemode {{cachemode | default('writethrough')}}
-        "/dev/{{vgname}}/{{cache_lvname}}"
+        --cachemode {{ cachemode | default('writethrough') }}
+        "/dev/{{ vgname }}/{{ cache_lvname }}"
   when: cache_meta_lv is not defined
 
 # Run lvs -a -o +devices to see the cache settings
 - name: Setup SSD for caching | Convert an existing logical volume to a cache LV
   command: >
-     lvconvert -y --type cache --cachepool "/dev/{{vgname}}/{{cache_lvname}}"
-     "/dev/{{vgname}}/{{ lvname }}_pool"
+     lvconvert -y --type cache --cachepool "/dev/{{ vgname }}/{{ cache_lvname }}"
+     "/dev/{{ vgname }}/{{ lvname }}_pool"

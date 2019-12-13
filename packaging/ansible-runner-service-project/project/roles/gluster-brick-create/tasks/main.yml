@@ -94,7 +94,7 @@
     opts: "{{ fsopts }}{{ raidopts }}"
   vars:
     fsopts: "-f -K -i size=512 -n size=8192"
-    raidopts: "{% if 'raid' in disktype %} -d sw={{diskcount}},su={{stripesize}}k {% endif %}"
+    raidopts: "{% if 'raid' in disktype %} -d sw={{ diskcount }},su={{ stripesize }}k {% endif %}"
 
 - name: Create the backend directory, skips if present
   file:
