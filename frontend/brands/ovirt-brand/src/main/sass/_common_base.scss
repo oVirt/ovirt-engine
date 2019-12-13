@@ -2,7 +2,6 @@
 oVirt base common css file
 landing page (welcome), login (sso), docs, 404, etc
 ****************************************************/
-
 .pf-c-page body {
     background-color: #151515;
     background-image: none;
@@ -13,7 +12,9 @@ landing page (welcome), login (sso), docs, 404, etc
 }
 
 .pf-c-page .ovirt-container .pf-c-login{
-    position: absolute
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 .pf-c-page .container {
