@@ -7,6 +7,7 @@
     "{{ ovirt_import_ova_image_mappings }}"
   register: extraction_result
 
-- fail:
+- name: Check OVA extraction process result
+  fail:
     msg: "Failed to extract OVA file"
   when: extraction_result.rc is defined and extraction_result.rc != 0

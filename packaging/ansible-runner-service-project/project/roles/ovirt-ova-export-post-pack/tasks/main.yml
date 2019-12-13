@@ -9,6 +9,7 @@
     state: absent
   when: packing_result.rc is defined and packing_result.rc != 0
 
-- fail:
+- name: Check OVA creation process result
+  fail:
     msg: "Failed to create OVA file"
   when: packing_result.rc is defined and packing_result.rc != 0
