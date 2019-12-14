@@ -51,20 +51,22 @@
                                 <b:Row ui:field="datacenterEditorRow">
                                     <e:ListModelListBoxEditor ui:field="datacenterEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
-                                <b:Row addStyleNames="{style.topElement}">
-                                    <ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" label="{constants.pluginType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                </b:Row>
-                                <b:Row addStyleNames="{style.topElement}">
-                                    <ge:EntityModelCheckBoxEditor ui:field="autoSyncEditor" label="{constants.autoSync}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <ge:EntityModelCheckBoxEditor ui:field="isUnmanagedEditor" label="{constants.isUnmanaged}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                </b:Row>
+                                <g:FlowPanel ui:field="networkingPanel">
+                                    <b:Row addStyleNames="{style.topElement}">
+                                        <ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" label="{constants.pluginType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    </b:Row>
+                                    <b:Row addStyleNames="{style.topElement}">
+                                        <ge:EntityModelCheckBoxEditor ui:field="autoSyncEditor" label="{constants.autoSync}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    </b:Row>
+                                    <b:Row>
+                                        <ge:EntityModelCheckBoxEditor ui:field="isUnmanagedEditor" label="{constants.isUnmanaged}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    </b:Row>
+                                    <b:Row>
+                                        <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" label="{constants.readOnly}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    </b:Row>
+                                </g:FlowPanel>
                                 <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="urlEditor" label="{constants.urlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" label="{constants.readOnly}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <p:VmwarePropertiesWidget addStyleNames="{style.topElement}" ui:field="vmwarePropertiesWidget" visible="false" />
                                 <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" visible="false" />

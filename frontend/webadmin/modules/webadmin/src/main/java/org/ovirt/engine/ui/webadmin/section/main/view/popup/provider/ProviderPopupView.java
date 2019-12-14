@@ -38,6 +38,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.inject.Inject;
 
 public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel> implements ProviderPopupPresenterWidget.ViewDef {
@@ -157,6 +158,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Path(value = "pluginType.selectedItem")
     @WithElementId
     ListModelSuggestBoxEditor pluginTypeEditor;
+
+    @UiField
+    @WithElementId
+    FlowPanel networkingPanel;
 
     @UiField
     @WithElementId
@@ -280,6 +285,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
                 typeEditorRow.addStyleName(style.headerSeparator());
                 datacenterEditorRow.removeStyleName(style.headerSeparator());
             }
+            networkingPanel.setVisible(providerModel.getNeutronAgentModel().getIsAvailable());
             kvmPropertiesWidget.setVisible(providerModel.getKvmPropertiesModel().getIsAvailable());
             vmwarePropertiesWidget.setVisible(providerModel.getVmwarePropertiesModel().getIsAvailable());
             xenPropertiesWidget.setVisible(providerModel.getXenPropertiesModel().getIsAvailable());

@@ -50,6 +50,11 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
                 getView().setCurrentActiveProviderWidget();
             }
         });
+        model.getNeutronAgentModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (IS_AVAILABLE.equals(args.propertyName)) {
+                getView().setCurrentActiveProviderWidget();
+            }
+        });
     }
 
 }
