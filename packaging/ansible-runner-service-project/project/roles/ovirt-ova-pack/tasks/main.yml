@@ -6,6 +6,8 @@
     "{{ ova_file.dest }}"
     "{{ ovirt_ova_pack_ovf }}"
     "{{ ovirt_ova_pack_disks }}"
+  args:
+    executable: "{{ ansible_python_interpreter }}"
   register: packing_result
   ignore_errors: yes
   when: ova_file is defined and ova_file.dest is defined

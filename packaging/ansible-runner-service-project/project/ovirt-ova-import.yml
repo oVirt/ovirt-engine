@@ -3,4 +3,5 @@
   gather_facts: no
 
   roles:
+    - python-ver-detect
     - ovirt-ova-extract

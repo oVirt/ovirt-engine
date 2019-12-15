@@ -52,9 +52,6 @@ build/helptag_checker.py
 build/helptag-oneline-check.py
 build/python-check.sh
 build/shell-check.sh
-packaging/ansible-runner-service-project/project/roles/ovirt-ova-query/files/query_ova.py
-packaging/ansible-runner-service-project/project/roles/ovirt-ova-pack/files/pack_ova.py
-packaging/ansible-runner-service-project/project/roles/ovirt-ova-extract/files/extract_ova.py
 packaging/ansible-runner-service-project/project/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py
 packaging/bin/engine-backup.sh
 packaging/bin/engine-host-update.py

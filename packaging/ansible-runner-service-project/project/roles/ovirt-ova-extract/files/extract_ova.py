@@ -1,5 +1,3 @@
-#!/usr/bin/python@PY_VERSION@
-
 import io
 import mmap
 import os
@@ -11,9 +9,8 @@ from contextlib import closing
 from subprocess import call
 from subprocess import check_output
 
-import yaml
-
 import six
+import yaml
 
 NUL = b"\0"
 TAR_BLOCK_SIZE = 512
@@ -21,10 +18,15 @@ TAR_BLOCK_SIZE = 512
 python2 = sys.version_info < (3, 0)
 
 
+def from_bytes(string):
+    return (string.decode('utf-8')
+            if isinstance(string, six.binary_type) else string)
+
+
 def extract_disk(ova_path, offset, image_path):
     output = check_output(['losetup', '--find', '--show', '-o', str(offset),
                            ova_path])
-    loop = output.splitlines()[0]
+    loop = from_bytes(output.splitlines()[0])
     loop_stat = os.stat(loop)
     vdsm_user = pwd.getpwnam('vdsm')
     os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)

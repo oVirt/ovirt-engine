@@ -1,5 +1,3 @@
-#!/usr/bin/python@PY_VERSION@
-
 import io
 import os
 import pwd
@@ -11,10 +9,18 @@ import time
 from subprocess import call
 from subprocess import check_output
 
+import six
+
 TAR_BLOCK_SIZE = 512
 NUL = b"\0"
 
+python2 = sys.version_info < (3, 0)
 path_to_offset = {}
+
+
+def from_bytes(string):
+    return (string.decode('utf-8')
+            if isinstance(string, six.binary_type) else string)
 
 
 def create_tar_info(name, size):
@@ -35,17 +41,17 @@ def write_ovf(entity, ova_file, ovf):
     print ("writing ovf: %s" % ovf)
     tar_info = create_tar_info(entity + ".ovf", len(ovf))
     ova_file.write(tar_info.tobuf())
-    ova_file.write(ovf)
+    ova_file.write(ovf if python2 else ovf.encode())
     pad_to_block_size(ova_file)
     os.fsync(ova_file.fileno())
 
 
 def convert_disks(ova_path):
-    for path, offset in path_to_offset.iteritems():
+    for path, offset in six.iteritems(path_to_offset):
         print ("converting disk: %s, offset %s" % (path, offset))
         output = check_output(['losetup', '--find', '--show', '-o', offset,
                                ova_path])
-        loop = output.splitlines()[0]
+        loop = from_bytes(output.splitlines()[0])
         loop_stat = os.stat(loop)
         vdsm_user = pwd.getpwnam('vdsm')
         os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)

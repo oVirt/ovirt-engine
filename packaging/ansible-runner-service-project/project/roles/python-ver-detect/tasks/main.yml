@@ -1,0 +1,10 @@
+---
+- name: Run import yaml on py3
+  command: python3 -c "import yaml"
+  register: result
+  ignore_errors: yes
+  changed_when: true
+
+- name: Set facts
+  set_fact:
+    ansible_python_interpreter: "{{ '/usr/bin/python3' if result.rc == 0 else '/usr/bin/python2' }}"

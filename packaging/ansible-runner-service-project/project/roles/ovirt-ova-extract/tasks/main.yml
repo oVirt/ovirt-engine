@@ -5,6 +5,8 @@
     "{{ ovirt_import_ova_path }}"
     "{{ ovirt_import_ova_disks }}"
     "{{ ovirt_import_ova_image_mappings }}"
+  args:
+    executable: "{{ ansible_python_interpreter }}"
   register: extraction_result
 
 - name: Check OVA extraction process result
