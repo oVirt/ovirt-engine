@@ -536,8 +536,8 @@ Requires:	logrotate
 Requires:	%{required_python_lib_otopi}
 Requires:	%{required_python_lib_paramiko}
 Requires(pre):	shadow-utils
-Conflicts:	%{name}-dwh < 4.2.0
-Conflicts:	%{name}-dwh-setup < 4.3.0
+Conflicts:	%{name}-dwh < 4.3.0
+Conflicts:	%{name}-dwh-setup < 4.4.0
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
@@ -584,7 +584,7 @@ Requires:       %{scl_pg_base}-postgresql-contrib
 Requires:       postgresql-server >= 10.0
 Requires:       postgresql-contrib >= 10.0
 %endif
-Conflicts:	%{name} < 4.2.6
+Conflicts:	%{name} < 4.3.7
 # See rhbz# 1676461
 Requires:	ovirt-vmconsole >= 1.0.7
 
