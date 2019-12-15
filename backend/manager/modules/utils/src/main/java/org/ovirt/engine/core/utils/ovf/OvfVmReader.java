@@ -2,7 +2,9 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -147,6 +149,11 @@ public class OvfVmReader extends OvfOvirtReader {
         List<Snapshot> snapshots = new ArrayList<>();
         _vm.setSnapshots(snapshots);
 
+        Map<Guid, List<DiskImage>> snapshotIdToDiskImagesMap = new HashMap<>();
+
+        _images.forEach(diskImage -> snapshotIdToDiskImagesMap.computeIfAbsent(diskImage.getImage().getSnapshotId(),
+                imagesList -> new ArrayList<>()).add(diskImage));
+
         for (XmlNode node : list) {
             XmlNode vmConfiguration = selectSingleNode(node, "VmConfiguration", _xmlNS);
             Snapshot snapshot = new Snapshot(vmConfiguration != null);
@@ -168,6 +175,8 @@ public class OvfVmReader extends OvfOvirtReader {
                 snapshot.setCreationDate(creationDate);
             }
 
+            setDiskImageActiveBySnapshotType(snapshotIdToDiskImagesMap, snapshot);
+
             snapshot.setVmConfiguration(vmConfiguration == null
                     ? null : new String(Base64.decodeBase64(vmConfiguration.innerText)));
 
@@ -178,6 +187,18 @@ public class OvfVmReader extends OvfOvirtReader {
 
             snapshots.add(snapshot);
         }
+    }
+
+    private void setDiskImageActiveBySnapshotType(Map<Guid, List<DiskImage>> diskImageMap, Snapshot snapshot) {
+        List<DiskImage> diskImages = diskImageMap.get(snapshot.getId());
+        if (diskImages == null) {
+            return;
+        }
+
+        boolean isActiveSnapshotType = snapshot.getType() == SnapshotType.ACTIVE || snapshot.getType() == SnapshotType.PREVIEW;
+
+        diskImages.forEach(diskImage -> diskImage.setActive(isActiveSnapshotType));
+        diskImageMap.remove(snapshot.getId());
     }
 
     @Override
