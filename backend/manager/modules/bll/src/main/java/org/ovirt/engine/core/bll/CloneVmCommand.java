@@ -222,13 +222,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     @Override
-    protected boolean addVmImages() {
-        if (super.addVmImages()) {
-            attachDisks();
-            return true;
-        }
-
-        return false;
+    protected void addVmImages() {
+        super.addVmImages();
+        attachDisks();
     }
 
     private void detachDisks() {

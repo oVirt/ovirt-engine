@@ -1023,27 +1023,28 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return null;
         });
 
-        if (addVmImages()) {
-            TransactionSupport.executeInNewTransaction(() -> {
-                copyDiskVmElements();
-                copyVmDevices();
-                addDiskPermissions();
-                addVmPayload();
-                updateSmartCardDevices();
-                addVmWatchdog();
-                addGraphicsDevice();
-                getVmDeviceUtils().updateVirtioScsiController(getVm().getStaticData(), getParameters().isVirtioScsiEnabled());
-                setActionReturnValue(getVm().getId());
-                setSucceeded(true);
-                return null;
-            });
-        }
+        addVmImages();
 
-        if (getParameters().getPoolId() != null) {
-            addVmToPool();
+        TransactionSupport.executeInNewTransaction(() -> {
+            copyDiskVmElements();
+            copyVmDevices();
+            addDiskPermissions();
+            addVmPayload();
+            updateSmartCardDevices();
+            addVmWatchdog();
+            addGraphicsDevice();
+            getVmDeviceUtils().updateVirtioScsiController(getVm().getStaticData(), getParameters().isVirtioScsiEnabled());
+            return null;
+        });
+
+        if (getParameters().getPoolId() != null && !addVmToPool()) {
+            log.error("Error adding VM {} to Pool {}", getVmId(), getParameters().getPoolId());
+            return;
         }
 
         discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
+        setActionReturnValue(getVm().getId());
+        setSucceeded(true);
     }
 
     /**
@@ -1288,7 +1289,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         getCompensationContext().snapshotNewEntity(stats);
     }
 
-    protected boolean addVmImages() {
+    protected void addVmImages() {
         if (!vmDisksSource.getDiskTemplateMap().isEmpty()) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
@@ -1317,7 +1318,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             addVmCinderDisks(templateDisks);
             addManagedBlockDisks(templateDisks);
         }
-        return true;
     }
 
     protected ActionType getDiskCreationCommandType() {
@@ -1408,19 +1408,17 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return createParams;
     }
 
-    private void addVmToPool() {
+    private boolean addVmToPool() {
         AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(), getVmId());
         parameters.setShouldBeLogged(false);
         ActionReturnValue result = runInternalActionWithTasksContext(
                 ActionType.AddVmToPool,
                 parameters);
-        setSucceeded(result.getSucceeded());
         if (!result.getSucceeded()) {
-            log.error("Error adding VM {} to Pool {}", getVmId(), getParameters().getPoolId());
             getReturnValue().setFault(result.getFault());
-            return;
+            return false;
         }
-        addVmPermission();
+        return true;
     }
 
     @Override

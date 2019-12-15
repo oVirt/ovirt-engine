@@ -382,7 +382,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     @Override
-    protected boolean addVmImages() {
+    protected void addVmImages() {
         int numberOfStartedCopyTasks = 0;
         List<DiskImage> cinderDisks = new ArrayList<>();
         List<DiskImage> managedBlockDisks = new ArrayList<>();
@@ -435,7 +435,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 unlockEntities();
             }
         }
-        return true;
     }
 
     private void saveIllegalDisk(final DiskImage diskImage) {

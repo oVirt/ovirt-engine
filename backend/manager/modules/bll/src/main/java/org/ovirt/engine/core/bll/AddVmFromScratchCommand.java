@@ -73,8 +73,8 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     }
 
     @Override
-    protected boolean addVmImages() {
-        return true;
+    protected void addVmImages() {
+        // no-op
     }
 
     @Override

@@ -64,7 +64,7 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
     }
 
     @Override
-    protected boolean addVmImages() {
+    protected void addVmImages() {
         getParameters()
                 .getSrcToDstChainMap()
                 .values()
@@ -73,8 +73,6 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
                 .flatMap(diskImages -> diskImages.stream())
                 .forEach(imagesHandler::addDiskImageWithNoVmDevice);
         super.attachDisks();
-
-        return true;
     }
 
     @Override
