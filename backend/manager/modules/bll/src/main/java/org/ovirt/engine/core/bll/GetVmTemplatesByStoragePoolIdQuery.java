@@ -9,8 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
-public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
-        extends QueriesCommandBase<P> {
+public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private VmHandler vmHandler;
@@ -24,16 +23,17 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
 
     @Override
     protected void executeQueryCommand() {
-        List<VmTemplate> templateList = vmTemplateDao.getAllForStoragePool(getParameters().getId());
-        // Load VmInit
-        for (VmTemplate template : templateList) {
-            vmHandler.updateVmInitFromDB(template, true);
-        }
+        List<VmTemplate> templates = vmTemplateDao.getAllForStoragePool(getParameters().getId());
+        templates.forEach(this::loadVmInit);
         VmTemplate blank = vmTemplateDao.get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        if (!templateList.contains(blank)) {
-            vmHandler.updateVmInitFromDB(blank, true);
-            templateList.add(0, blank);
+        if (!templates.contains(blank)) {
+            loadVmInit(blank);
+            templates.add(0, blank);
         }
-        getQueryReturnValue().setReturnValue(templateList);
+        setReturnValue(templates);
+    }
+
+    private void loadVmInit(VmTemplate template) {
+        vmHandler.updateVmInitFromDB(template, true);
     }
 }
