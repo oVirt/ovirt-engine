@@ -26,7 +26,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
-public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
+public abstract class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
 
     /**
      * This is the maximum value we can pass to cpuShares according to

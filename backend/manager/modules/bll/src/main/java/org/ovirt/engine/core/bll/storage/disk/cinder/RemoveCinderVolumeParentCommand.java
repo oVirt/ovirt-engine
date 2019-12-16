@@ -29,7 +29,7 @@ import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> implements SerialChildExecutingCommand {
+public abstract class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameters> extends RemoveImageCommand<T> implements SerialChildExecutingCommand {
 
     @Inject
     private ImageDao imageDao;
