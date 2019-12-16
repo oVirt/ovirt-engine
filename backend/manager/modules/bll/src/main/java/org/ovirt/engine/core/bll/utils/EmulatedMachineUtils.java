@@ -73,15 +73,23 @@ public class EmulatedMachineUtils {
     }
 
     private static String replaceChipset(String emulatedMachine, ChipsetType chipsetType) {
-        if (chipsetType != ChipsetType.Q35) {
-            return emulatedMachine;
-        }
+        switch (chipsetType) {
+            case Q35:
+                if (emulatedMachine.contains(I440FX_CHIPSET_NAME)) {
+                    return emulatedMachine.replace(I440FX_CHIPSET_NAME, Q35_CHIPSET_NAME);
+                }
+                if (!emulatedMachine.contains(Q35_CHIPSET_NAME)) {
+                    return emulatedMachine.replace("pc-", "pc-" + Q35_CHIPSET_NAME + '-');
+                }
+                break;
 
-        if (emulatedMachine.contains(I440FX_CHIPSET_NAME)) {
-            return emulatedMachine.replace(I440FX_CHIPSET_NAME, Q35_CHIPSET_NAME);
+            case I440FX:
+                if (emulatedMachine.contains(Q35_CHIPSET_NAME)) {
+                    return emulatedMachine.replace(Q35_CHIPSET_NAME, I440FX_CHIPSET_NAME);
+                }
+                break;
         }
-
-        return emulatedMachine.replace("pc-", "pc-" + Q35_CHIPSET_NAME + '-');
+        return emulatedMachine;
     }
 
 }
