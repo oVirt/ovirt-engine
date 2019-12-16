@@ -20,4 +20,5 @@ Dialogs
 .dialog_noMax {
     height: initial;
     max-height: initial;
+    position: inherit;
 }
