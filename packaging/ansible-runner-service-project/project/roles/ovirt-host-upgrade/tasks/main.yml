@@ -10,6 +10,7 @@
     name: ovirt-host
     state: latest
     update_cache: yes
+    lock_timeout: 300
   tags:
     - updatecheck
     - skip_ansible_lint # E403
@@ -19,6 +20,7 @@
     name: '*'
     state: latest
     update_cache: yes
+    lock_timeout: 300
   tags:
     - updatecheck
     - skip_ansible_lint # E403
