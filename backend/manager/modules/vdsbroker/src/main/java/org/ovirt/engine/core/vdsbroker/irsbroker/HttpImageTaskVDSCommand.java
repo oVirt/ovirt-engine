@@ -81,7 +81,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P exten
 
         if (httpResponse.getStatusLine().getStatusCode() == getSuccessCode()) {
             Guid createdTask =
-                    Guid.createGuidFromString(processResponseHeaderValue(getMethod(), "Task-Id", null));
+                    Guid.createGuidFromString(processResponseHeaderValue(httpResponse, "Task-Id", null));
             getVDSReturnValue().setCreationInfo(
                     new AsyncTaskCreationInfo(createdTask, getCreatedTaskType(), getParameters()
                             .getStoragePoolId()));
@@ -90,7 +90,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P exten
             return;
         }
 
-        processResponseHeaderValue(getMethod(), "Content-type", "application/json");
+        processResponseHeaderValue(httpResponse, "Content-type", "application/json");
 
         String response = null;
         try {
@@ -115,8 +115,8 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P exten
 
     protected void handleOkResponse(HttpResponse httpResponse) {}
 
-    protected String processResponseHeaderValue(HttpRequestBase method, String headerName, String expectedValue) {
-        Header header = method.getFirstHeader(headerName);
+    protected String processResponseHeaderValue(HttpResponse response, String headerName, String expectedValue) {
+        Header header = response.getFirstHeader(headerName);
         if (header == null) {
             throwVdsErrorException("response was missing the following header: "
                     + headerName, EngineError.GeneralException);

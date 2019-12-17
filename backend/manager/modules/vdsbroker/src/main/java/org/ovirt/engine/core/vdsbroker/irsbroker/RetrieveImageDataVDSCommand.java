@@ -25,7 +25,7 @@ public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandPara
 
     @Override
     protected void handleOkResponse(HttpResponse httpResponse) {
-        processResponseHeaderValue(getMethod(), "Content-Length", getParameters().getSize().toString());
+        processResponseHeaderValue(httpResponse, "Content-Length", getParameters().getSize().toString());
 
         byte[] data;
         try {
