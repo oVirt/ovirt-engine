@@ -162,7 +162,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 # If you pass -r, then macro expands to: {all arguments}{r value}
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global with_python3 1
-%define required_python_lib(l:r:) python%{python3_pkgversion}-%{*}, python2-%{*}
+%define required_python_lib(l:r:) python%{python3_pkgversion}-%{*}
 %define py_version 3
 %else
 %global with_python3 0
