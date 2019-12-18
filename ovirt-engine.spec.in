@@ -415,8 +415,12 @@ Obsoletes:	%{name}-userportal
 Requires:	pyOpenSSL
 Requires:	ovirt-provider-ovn >= 1.2.1
 
-# JavaScript and CSS libraries are currently bundled
-Provides:	 bundled(js-jquery) = 3.2.1
+#JavaScript and CSS libraries are currently bundled
+Provides:	bundled(js-jquery) = 3.4.1
+Provides:	bundled(js-jquery-ui) = 1.12.1
+Provides:	bundled(js-bootstrap) = 3.4.1
+Provides:	bundled(js-patternfly) = 3.59.3
+Provides:	bundled(js-patternfly-next) = 2.26.1
 
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
