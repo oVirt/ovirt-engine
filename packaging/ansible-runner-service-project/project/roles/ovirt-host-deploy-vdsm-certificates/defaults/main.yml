@@ -1,5 +1,3 @@
-ovirt_enrollment_type: inline
-
 # Certificate paths:
 ovirt_libvirt_default_trust_store: '/etc/pki/libvirt'
 ovirt_vdsm_trust_store: '/etc/pki/vdsm'

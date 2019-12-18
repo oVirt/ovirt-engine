@@ -1,5 +1,3 @@
-ovirt_enrollment_type: inline
-
 # Certificate path:
 ovirt_vmconsole_store: '/etc/pki/ovirt-vmconsole'
 
