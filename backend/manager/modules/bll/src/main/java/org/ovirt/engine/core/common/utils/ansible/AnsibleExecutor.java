@@ -28,13 +28,10 @@ public class AnsibleExecutor {
     private static final int POLL_INTERVAL = 3000;
 
     @Inject
-    private AnsibleRunnerHTTPClient runnerClient;
-
-    @Inject
-    private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
-
-    @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private AnsibleClientFactory ansibleClientFactory;
 
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable
@@ -105,11 +102,10 @@ public class AnsibleExecutor {
         int totalEvents;
 
         String playUuid = null;
+        AnsibleRunnerHTTPClient runnerClient = null;
         try {
-            // Set up logging:
-            AnsibleRunnerLogger runnerLogger = ansibleCommandLogFileFactory.create(command);
-            runnerClient.setLogger(runnerLogger);
-            ret.setLogFile(runnerLogger.getLogFile());
+            runnerClient = ansibleClientFactory.create(command);
+            ret.setLogFile(runnerClient.getLogger().getLogFile());
 
             // Run the playbook:
             playUuid = runnerClient.runPlaybook(command);
@@ -155,7 +151,7 @@ public class AnsibleExecutor {
             ret.setStderr(ex.getMessage());
         } finally {
             // Make sure all events are proccessed even in case of failure:
-            if (playUuid != null) {
+            if (playUuid != null && runnerClient != null) {
                 runnerClient.processEvents(playUuid, lastEventId, fn);
             }
         }

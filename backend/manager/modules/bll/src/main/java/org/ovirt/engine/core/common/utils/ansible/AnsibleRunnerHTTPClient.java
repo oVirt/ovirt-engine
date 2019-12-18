@@ -310,6 +310,10 @@ public class AnsibleRunnerHTTPClient {
         this.runnerLogger = runnerLogger;
     }
 
+    public AnsibleRunnerLogger getLogger() {
+        return this.runnerLogger;
+    }
+
     private URIBuilder baseURI() {
         return new URIBuilder()
                 .setScheme("http")
