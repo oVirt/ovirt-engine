@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -89,25 +90,29 @@ class InterfaceConfigurationMapper {
     }
 
     private List<Nic> filterNicsWithoutManagement(List<VdsNetworkInterface> vdsNetworkInterfaces) {
-        return vdsNetworkInterfaces.stream()
-                .filter(VdsNetworkInterface::getIsManagement)
-                .findFirst()
-                .map(
-                        mgmtInterface -> {
-                            Stream<VdsNetworkInterface> interfaces = vdsNetworkInterfaces.stream();
-                            if (mgmtInterface.isBond()) {
-                                interfaces = interfaces
-                                        .filter(iface -> !iface.isPartOfBond(mgmtInterface.getName()));
-                            }
-                            return interfaces
-                                    .filter(iface -> !iface.getIsManagement())
-                                    .collect(Collectors.toList());
-                        }
-                )
-                .get()
+        return  filterInterfacesWithoutManagment(vdsNetworkInterfaces)
                 .stream()
                 .filter(noBondAndVlanPredicate())
                 .map(nic -> (Nic) nic)
+                .collect(Collectors.toList());
+    }
+
+    private List<VdsNetworkInterface> filterInterfacesWithoutManagment(List<VdsNetworkInterface> vdsNetworkInterfaces) {
+        Optional<VdsNetworkInterface> mgmtInterface = vdsNetworkInterfaces.stream()
+                .filter(VdsNetworkInterface::getIsManagement)
+                .findFirst();
+
+        if (mgmtInterface.isEmpty()) {
+            return vdsNetworkInterfaces;
+        }
+
+        Stream<VdsNetworkInterface> interfaces = vdsNetworkInterfaces.stream();
+        if (mgmtInterface.get().isBond()) {
+            interfaces = interfaces
+                    .filter(iface -> !iface.isPartOfBond(mgmtInterface.get().getName()));
+        }
+        return interfaces
+                .filter(iface -> !iface.getIsManagement())
                 .collect(Collectors.toList());
     }
 

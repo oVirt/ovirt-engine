@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -49,8 +50,64 @@ class CopyHostNetworksHelperTest {
     private static final Node DEST = Node.DEST;
 
     @Test
+    void testScenarioNoneToNone() {
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.none(SOURCE), scenarios.none(DEST));
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+        assertTrue(helper.getBondsToApply().isEmpty());
+        assertTrue(helper.getAttachmentsToApply().isEmpty());
+    }
+
+    @Test
+    void testScenarioMgmtToNone() {
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.mgmtOnly(SOURCE), scenarios.none(DEST));
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+        assertTrue(helper.getBondsToApply().isEmpty());
+        assertTrue(helper.getAttachmentsToApply().isEmpty());
+    }
+
+    @Test
+    void testScenarioNoneToMgmt() {
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.none(SOURCE), scenarios.mgmtOnly(DEST));
+        assertThrows(IndexOutOfBoundsException.class, helper::buildDestinationConfig);
+    }
+
+    @Test
+    void testScenarioOneToNone() {
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.oneVm(SOURCE), scenarios.none(DEST));
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+        assertTrue(helper.getBondsToApply().isEmpty());
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        assertEquals(1, attachmentsToApply.size());
+        assertAttachment(attachmentsToApply.get(0), NET1, "eth1");
+    }
+
+    @Test
+    void testScenarioMgmtToMgmt() {
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(
+                scenarios.mgmtOnly(SOURCE), scenarios.mgmtOnly(DEST));
+        helper.buildDestinationConfig();
+
+        assertTrue(helper.getAttachmentsToRemove().isEmpty());
+        assertTrue(helper.getBondsToRemove().isEmpty());
+        assertTrue(helper.getBondsToApply().isEmpty());
+
+        List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
+        assertTrue(attachmentsToApply.isEmpty());
+    }
+
+    @Test
     void testScenarioTwoToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.two(SOURCE), scenarios.one(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.two(SOURCE), scenarios.mgmtOnly(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -64,7 +121,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioThreeToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.three(SOURCE), scenarios.one(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.three(SOURCE), scenarios.mgmtOnly(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -80,7 +137,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFourToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.four(SOURCE), scenarios.one(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.four(SOURCE), scenarios.mgmtOnly(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -101,7 +158,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioFiveToOne() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.five(SOURCE), scenarios.one(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.five(SOURCE), scenarios.mgmtOnly(DEST));
         helper.buildDestinationConfig();
 
         assertTrue(helper.getAttachmentsToRemove().isEmpty());
@@ -199,7 +256,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testScenarioOneToFive() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.one(SOURCE), scenarios.five(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.mgmtOnly(SOURCE), scenarios.five(DEST));
         helper.buildDestinationConfig();
 
         assertEquals(4, helper.getAttachmentsToRemove().size());
@@ -210,7 +267,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testIPv4Configuration() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.ipv4(SOURCE), scenarios.one(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.ipv4(SOURCE), scenarios.mgmtOnly(DEST));
         helper.buildDestinationConfig();
 
         List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
@@ -227,7 +284,7 @@ class CopyHostNetworksHelperTest {
 
     @Test
     void testIPv6Configuration() {
-        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.ipv6(SOURCE), scenarios.one(DEST));
+        CopyHostNetworksHelper helper = createCopyHostNetworksHelper(scenarios.ipv6(SOURCE), scenarios.mgmtOnly(DEST));
         helper.buildDestinationConfig();
 
         List<NetworkAttachment> attachmentsToApply = helper.getAttachmentsToApply();
@@ -282,7 +339,21 @@ class CopyHostNetworksHelperTest {
 
     private static class ScenarioBuilder {
 
-        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> one(Node node) {
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> none(Node node) {
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .build();
+        }
+
+
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> oneVm(Node node) {
+            return new NetConfigBuilder(4, new NetsConfigPrinter(node))
+                    .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
+                    .attachNetwork("eth1", NET1)
+                    .build();
+        }
+
+        private Pair<List<VdsNetworkInterface>, List<NetworkAttachment>> mgmtOnly(Node node) {
             return new NetConfigBuilder(4, new NetsConfigPrinter(node))
                     .setDefaultIpConfig(IpConfigBuilder.NULL4_NULL6)
                     .attachMgmtNetwork("eth0")
