@@ -278,7 +278,7 @@ public class SnapshotsManager {
      *            The VM to generate configuration from.
      * @return A String containing the VM configuration.
      */
-    protected String generateVmConfiguration(VM vm, List<DiskImage> disks, Map<Guid, VmDevice> vmDevices) {
+    private String generateVmConfiguration(VM vm, List<DiskImage> disks, Map<Guid, VmDevice> vmDevices) {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
@@ -587,7 +587,7 @@ public class SnapshotsManager {
         }
     }
 
-    public boolean canSynchronizeNics(VM snapshotedVm,
+    private boolean canSynchronizeNics(VM snapshotedVm,
            VmInterfaceManager vmInterfaceManager,
            List<VmNetworkInterface> interfaces,
            boolean macsInSnapshotAreExpectedToBeAlreadyAllocated) {
@@ -665,7 +665,7 @@ public class SnapshotsManager {
      * @param disksFromSnapshot
      *            The disks that existed in the snapshot.
      */
-    protected void synchronizeDisksFromSnapshot(Guid vmId,
+    private void synchronizeDisksFromSnapshot(Guid vmId,
             Guid snapshotId,
             Guid activeSnapshotId,
             List<DiskImage> disksFromSnapshot,
