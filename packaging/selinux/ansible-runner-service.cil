@@ -5,3 +5,4 @@
 (allow httpd_t cert_t (file (create unlink setattr write rename relabelto)))
 (allow httpd_t ptmx_t (chr_file (ioctl open read write getattr)))
 (allow httpd_t devpts_t (chr_file (ioctl open read write getattr)))
+(allow httpd_t var_lib_t (sock_file (create link unlink write relablefrom)))
