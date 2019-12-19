@@ -138,6 +138,7 @@ public class KubevirtClusterMigrationMonitoring {
 
     private void auditMigrationFailed(V1VirtualMachineInstanceMigration vmim) {
         final AuditLogable event = createMigrationEvent(vmim, false);
+        event.addCustomValue("DueToMigrationError", " ");
         auditLogDirector.log(event, AuditLogType.VM_MIGRATION_FAILED);
     }
 
