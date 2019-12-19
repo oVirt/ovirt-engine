@@ -64,7 +64,7 @@ class Plugin(plugin.PluginBase):
         )
         self.environment.setdefault(
             osetupcons.RemoveEnv.REMOVE_ALL,
-            None
+            True
         )
         self.environment.setdefault(
             osetupcons.RemoveEnv.REMOVE_OPTIONS,
@@ -132,6 +132,15 @@ class Plugin(plugin.PluginBase):
         if self.environment[
             osetupcons.RemoveEnv.REMOVE_ALL
         ] is None:
+            self.logger.warn(_('Partial cleanup is not supported'))
+            self.dialog.note(_(
+                'Removing only some components is not supported. If you reply '
+                'No, you will be prompted for components to be removed, '
+                'but regardless of which ones you choose, the engine will '
+                'not be functional. Some parts of the configuration are '
+                'removed unconditionally. If unsure, stop this utility, e.g. '
+                'by pressing Ctrl-C.'
+            ))
             self.environment[
                 osetupcons.RemoveEnv.REMOVE_ALL
             ] = dialog.queryBoolean(
@@ -146,14 +155,15 @@ class Plugin(plugin.PluginBase):
                 false=_('No'),
                 default=True,
             )
-            if not self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
-                self.logger.warn(_('Partial cleanup is not supported'))
-                self.dialog.note(_(
-                    'You will now be prompted for components to be removed, '
-                    'but regardless of which ones you choose, the engine will '
-                    'not be functional. Some parts of the configuration are '
-                    'removed unconditionally. If unsure, stop this utility.'
-                ))
+        if not self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
+            self.logger.warn(_('Partial cleanup is not supported'))
+            self.dialog.note(_(
+                'You will now be prompted for components to be removed, '
+                'but regardless of which ones you choose, the engine will '
+                'not be functional. Some parts of the configuration are '
+                'removed unconditionally. If unsure, stop this utility, e.g. '
+                'by pressing Ctrl-C.'
+            ))
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
