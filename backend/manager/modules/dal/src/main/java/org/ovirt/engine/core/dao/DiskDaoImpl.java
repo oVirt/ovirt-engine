@@ -64,6 +64,20 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     }
 
     @Override
+    public List<Guid> getImagesWithDamagedSnapshotForVm(Guid vmId) {
+        return getImagesWithDamagedSnapshotForVm(vmId, null, false);
+    }
+
+    @Override
+    public List<Guid> getImagesWithDamagedSnapshotForVm(Guid vmId, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", vmId)
+                .addValue("user_id", userID)
+                .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetImagesWithDamagedSnapshotForVm", createGuidMapper(), parameterSource);
+    }
+
+    @Override
     public List<Disk> getAllForVmPartialData(Guid vmId,
             boolean onlyPluggedDisks,
             Guid userID,

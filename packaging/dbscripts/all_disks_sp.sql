@@ -78,6 +78,37 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetImagesWithDamagedSnapshotForVm (
+    v_vm_guid UUID,
+    v_user_id UUID,
+    v_is_filtered BOOLEAN
+    )
+RETURNS SETOF UUID STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT device_id
+    FROM vm_device
+    WHERE vm_id = v_vm_guid
+        AND device_id IN (
+            SELECT image_group_id
+            FROM images i
+            WHERE i.image_group_id = image_group_id
+            GROUP BY image_group_id
+            HAVING COALESCE(sum(CASE WHEN active THEN 1 ELSE 0 END),0) <> 1
+            UNION
+            SELECT image_group_id
+            FROM images i
+            WHERE NOT EXISTS (
+                SELECT *
+                FROM snapshots
+                WHERE i.vm_snapshot_id = snapshots.snapshot_id)
+                    AND i.vm_snapshot_id is not null
+                    AND i.vm_snapshot_id != '00000000-0000-0000-0000-000000000000'::uuid
+        );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetDisksVmGuids (
   v_vm_guids UUID[]
 )

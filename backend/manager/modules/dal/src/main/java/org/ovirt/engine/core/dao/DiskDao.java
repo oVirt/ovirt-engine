@@ -71,6 +71,31 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
     List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks, Guid userID, boolean isFiltered);
 
     /**
+     * Retrieves a list of disk IDs with missing/damaged snapshot for a specified virtual machine id.
+     *
+     * @param vmId
+     *            the VM id
+     *
+     * @return the list of disk ids
+     */
+    List<Guid> getImagesWithDamagedSnapshotForVm(Guid vmId);
+
+    /**
+     * Retrieves a list of disk IDs with missing/damaged snapshot for a specified virtual machine id,
+     * with optional filtering
+     *
+     * @param vmId
+     *            the VM id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     *
+     * @return the list of disk ids
+     */
+    List<Guid> getImagesWithDamagedSnapshotForVm(Guid vmId, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all disks for the specified user
      * with optional filtering
      *

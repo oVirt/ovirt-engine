@@ -17,6 +17,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -626,6 +627,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     || !validate(storageValidator.isSupportedByManagedBlockStorageDomains(getActionType()))) {
                 return false;
             }
+
+            if (!validateDamagedSnapshotsForVmImages(getVmId())) {
+                return false;
+            }
         }
 
         DiskSnapshotsValidator diskSnapshotsValidator = new DiskSnapshotsValidator(getParameters().getDisks());
@@ -639,6 +644,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         if(!canRestoreVmConfigFromSnapshot()) {
             return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+        }
+        return true;
+    }
+
+    private boolean validateDamagedSnapshotsForVmImages(Guid vmId) {
+        List<Guid> vmImagesWithDamagedSnapshot = diskDao.getImagesWithDamagedSnapshotForVm(vmId);
+        if (!vmImagesWithDamagedSnapshot.isEmpty()) {
+            addValidationMessageVariable("diskIds", StringUtils.join(vmImagesWithDamagedSnapshot, "\n"));
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DAMAGED_IMAGE_SNAPSHOT);
         }
         return true;
     }
