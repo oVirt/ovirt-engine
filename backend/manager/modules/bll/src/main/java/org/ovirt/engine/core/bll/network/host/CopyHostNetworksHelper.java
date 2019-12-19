@@ -41,10 +41,10 @@ class CopyHostNetworksHelper {
             List<NetworkAttachment> destinationAttachments) {
         sourceMapper = new InterfaceConfigurationMapper(sourceInterfaces, sourceAttachments);
         destinationMapper = new InterfaceConfigurationMapper(destinationInterfaces, destinationAttachments);
-        nicsMap = createNicsMap();
     }
 
     void buildDestinationConfig() {
+        nicsMap = createNicsMap();
         clearDestinationHost();
         prepareBondsAndCopyNicAttachments();
         createDestinationBondDefinitionsAndCopyAttachments();
