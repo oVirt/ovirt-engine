@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -140,9 +141,26 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
              * TODO: do we have a way to pass correlationId to ansible playbook, so it will be logged to audit log when
              * we start using ansible-runner?
              */
-            // deploy.setCorrelationId(getCorrelationId());
 
             runAnsibleHostDeployPlaybook();
+            List<VDS> hostlist = vdsDao.getAllForCluster(getClusterId());
+            if(getVds().getClusterSupportsGlusterService() && (hostlist.size()) >= 3) {
+                String oldGlusterClusterNode = getVds().getName();
+                VDS vds = getVds();
+                hostlist.removeIf(host -> host.getHostName().equals(vds.getHostName()));
+                String firstGlusterClusterNode = hostlist.get(0).getName();
+                String secondGlusterClusterNode = hostlist.get(1).getName();
+                VDS maintenanceVds = hostlist.get(0);
+                runAnsibleReconfigureGluster(oldGlusterClusterNode, firstGlusterClusterNode,
+                    secondGlusterClusterNode, maintenanceVds);
+            } else {
+                if(!getVds().getClusterSupportsGlusterService()) {
+                    log.info("Skipping Reconfigure gluster since cluster does not support gluster");
+                } else if(vdsDao.getAllForCluster(getClusterId()).size()<3) {
+                    log.info("Skipping Reconfigure gluster since minimum of three hosts are required in the same cluster");
+                }
+            }
+
             markCurrentCmdlineAsStored();
             markVdsReinstalled();
             configureManagementNetwork();
@@ -285,6 +303,46 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                             ex.getMessage());
                 }
             }
+        }
+    }
+
+    private void runAnsibleReconfigureGluster(String oldGlusterClusterNode, String firstGlusterClusterNode,
+                                              String secondGlusterClusterNode, VDS maintenanceVds) {
+        log.info("Started Ansible Installation for reconfigure gluster");
+        VDS vds = getVds();
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+                .hosts(maintenanceVds)
+                .variable("gluster_maintenance_old_node", oldGlusterClusterNode)
+                .variable("gluster_maintenance_new_node", oldGlusterClusterNode)    //since here old_node and new_node have the same hostname
+                .variable("gluster_maintenance_cluster_node", firstGlusterClusterNode)
+                .variable("gluster_maintenance_cluster_node_2", secondGlusterClusterNode)
+                .playbook(AnsibleConstants.REPLACE_GLUSTER_PLAYBOOK)
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-replace-glusterd-ansible")
+                .logFileName("replace-glusterd-host")
+                .logFileSuffix(getCorrelationId())
+                .correlationId(getCorrelationId())
+                .playAction(String.format("Installing Host %s", vds.getName()))
+                .playbook(AnsibleConstants.REPLACE_GLUSTER_PLAYBOOK);
+
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsName(vds.getName());
+        logable.setVdsId(vds.getId());
+        logable.setClusterId(getClusterId());
+        logable.setCorrelationId(getCorrelationId());
+        auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+                commandConfig,
+                log,
+                (eventName, eventUrl) -> setVdsmId(eventName, eventUrl)
+        );
+        log.info("Command Configuration Done ->" + ansibleReturnValue.getAnsibleReturnCode());
+        if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+            throw new VdsInstallException(
+                    VDSStatus.InstallFailed,
+                    String.format(
+                            "Failed to execute Ansible replace gluster role. Please check logs for more details: %1$s",
+                            ansibleReturnValue.getLogFile()));
         }
     }
 

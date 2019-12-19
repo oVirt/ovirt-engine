@@ -1,0 +1,106 @@
+---
+- name: Fetch the UUID of the old node
+  shell: >
+    gluster peer status |
+    grep -A1 {{ gluster_maintenance_old_node | mandatory }} |
+    awk -F: '/uid/ { print $2}'
+  register: old_node_uuid
+  run_once: true
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Fetch the cluster_node UUID of the cluster node 2
+  shell: >
+    gluster peer status |
+    grep -A1 {{ gluster_maintenance_cluster_node_2 | mandatory }} |
+    awk -F: '/uid/ { print $2}'
+  register: cluster_node_uuid
+  run_once: true
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Get the UUID of master
+  shell: awk -F= '/UUID/{print $2}' "{{ glusterd_libdir }}/glusterd.info"
+  register: master_uuid
+  run_once: true
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Store the UUID
+  set_fact:
+    old_uuid: "{{ old_node_uuid.stdout | trim }}"
+    master_uuid: "{{ master_uuid.stdout }}"
+    cluster_uuid: "{{ cluster_node_uuid.stdout | trim }}"
+
+- name: Copy the details of peers from cluster_node 2
+  fetch:
+    src: "{{ glusterd_libdir }}/peers/{{ master_uuid }}"
+    dest: /tmp/peers/
+    flat: yes
+  delegate_to: "{{ gluster_maintenance_cluster_node_2 | mandatory }}"
+
+- name: Copy the details of the old node
+  fetch:
+    src: "{{ glusterd_libdir }}/peers/{{ cluster_uuid }}"
+    dest: /tmp/peers/
+    flat: yes
+  delegate_to: "{{ gluster_maintenance_cluster_node | mandatory }}"
+
+- name: stop the gluster service
+  shell: >
+    systemctl stop glusterd
+  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Delete the glusterd library from the old host
+  file:
+    path: "{{ glusterd_libdir }}"
+    state: absent
+  delegate_to: "{{ gluster_maintenance_old_node }}"
+
+- name: Restart glusterd
+  shell: >
+    systemctl restart glusterd
+  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
+  tags:
+    - skip_ansible_lint # E301
+
+- pause: seconds=15
+  tags:
+    - skip_ansible_lint # E501
+
+- name: stop the gluster service
+  shell: >
+    systemctl stop glusterd
+  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Edit the new node's gluster.info
+  lineinfile:
+    path: "{{ glusterd_libdir }}/glusterd.info"
+    regexp: '^UUID='
+    line: "UUID={{ old_uuid }}"
+  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
+
+- name: Copy the peer data to new node
+  copy:
+    src: "{{ item }}"
+    dest: "{{ glusterd_libdir }}/peers/"
+  with_fileglob:
+    - /tmp/peers/*
+  delegate_to: "{{ gluster_maintenance_new_node }}"
+
+- name: Delete temp directory
+  file:
+    path: "/tmp/peers/"
+    state: absent
+  delegate_to: "{{ gluster_maintenance_cluster_node | mandatory }}"
+
+- name: Start glusterd service
+  shell: >
+    systemctl start glusterd
+  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
+  tags:
+    - skip_ansible_lint # E301

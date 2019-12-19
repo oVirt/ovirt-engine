@@ -1328,6 +1328,7 @@ fi
 %{engine_data}/ansible-runner-service-project/project/create-brick.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-fetch-he-config.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-deploy.yml
+%{engine_data}/ansible-runner-service-project/project/replace-gluster.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-enroll-certificate.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-remove.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-upgrade.yml

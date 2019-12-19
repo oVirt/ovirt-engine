@@ -1,0 +1,7 @@
+---
+# Set the glusterd location
+- name: Set the path of glusterd.info file
+  set_fact:
+    glusterd_libdir: "/var/lib/glusterd"
+
+- import_tasks: peers.yml

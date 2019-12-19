@@ -80,6 +80,10 @@ public class AnsibleConstants {
     public static final String CREATE_BRICK_PLAYBOOK = "create-brick.yml";
 
     /**
+     *  This is the name of file which executes Replace Gluster
+     */
+    public static final String REPLACE_GLUSTER_PLAYBOOK = "replace-gluster.yml";
+    /**
      * Name of the task where VDSM_ID is loaded, so we can distinguish this task and parse it.
      */
     public static final String TASK_VDSM_ID = "Fetch vdsm id";
