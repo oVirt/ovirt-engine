@@ -2,21 +2,15 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Date;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
 public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends ManagingVmCommand<P> {
-
-    @Inject
-    private VmDao vmDao;
 
     public CreateVDSCommand(P parameters) {
         super(parameters);
@@ -42,9 +36,6 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
             }
 
             if (!getParameters().isRunInUnknownStatus()) {
-                if (!vm.isInitialized()) {
-                    vmDao.saveIsInitialized(vm.getId(), true);
-                }
                 boolean vmIsBooting = StringUtils.isEmpty(getParameters().getHibernationVolHandle())
                         && getParameters().getMemoryConfImage() == null;
                 if (vmIsBooting) {
@@ -56,7 +47,6 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
                 }
                 vm.setLastStartTime(now);
                 vm.setStopReason(null);
-                vm.setInitialized(true);
                 vm.setRunOnVds(getParameters().getVdsId());
                 vmManager.update(vm.getDynamicData());
             }
