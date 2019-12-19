@@ -12,7 +12,7 @@ BEGIN
          object_name varchar(128) NOT NULL,
          column_name varchar(128) NOT NULL,
          CONSTRAINT pk_object_column_white_list PRIMARY KEY(object_name,column_name)
-      ) WITH OIDS;
+      );
    END IF;
 
    -- this table holds generated sql per object and is truncated upon upgrade to reflect schema changes
@@ -24,7 +24,7 @@ BEGIN
          object_name varchar(128) NOT NULL,
          sql text NOT NULL,
          CONSTRAINT pk_object_column_white_list_sql PRIMARY KEY(object_name)
-      ) WITH OIDS;
+      );
 
    END IF;
    -----------------------------------
