@@ -11,7 +11,7 @@ public class CopyHostNetworksParameters extends VdsActionParameters {
 
     }
 
-    CopyHostNetworksParameters(Guid sourceHostId, Guid destinationHostId) {
+    public CopyHostNetworksParameters(Guid sourceHostId, Guid destinationHostId) {
         setVdsId(destinationHostId);
         this.sourceHostId = sourceHostId;
     }
