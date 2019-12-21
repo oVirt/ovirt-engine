@@ -1,17 +1,4 @@
 ---
-- name: Install yum-utils
-  package:
-    name: yum-utils
-    state: present
-
-- name: Fetch info about VDSM
-  command: "repoquery --qf '%{VERSION}' vdsm"
-  changed_when: false
-  register: vdsm_version
-  check_mode: no
-  args:
-    warn: no
-
 - name: Detect host operating system
   set_fact:
     el_ver: "{{ ansible_distribution_major_version|int
@@ -29,7 +16,6 @@
 
 - name: Set facts
   set_fact:
-    host_deploy_vdsm_version: "{{ vdsm_version.stdout }}"
     ansible_python_interpreter : "{{ '/usr/bin/python3'
         if (fc_ver|int > 0 or el_ver|int >= 8)
         else '/usr/bin/python2' }}"
