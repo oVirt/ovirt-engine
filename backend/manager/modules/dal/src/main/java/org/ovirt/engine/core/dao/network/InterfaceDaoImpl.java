@@ -17,6 +17,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -184,7 +185,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("addr", ipAddress).addValue("cluster_id", clusterId);
 
         return getCallsHandler().executeReadList("Getinterface_viewByAddr",
-                vdsNetworkInterfaceRowMapper, parameterSource);
+                qosDaoInterfaceMapper, parameterSource);
     }
 
     @Override
@@ -193,7 +194,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("vds_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeReadList("Getinterface_viewByvds_id",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 parameterSource);
     }
 
@@ -203,7 +204,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("vds_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeRead("GetVdsManagedInterfaceByVdsId",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 parameterSource);
     }
 
@@ -227,21 +228,21 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
     @Override
     public List<VdsNetworkInterface> getVdsInterfacesByNetworkId(Guid networkId) {
         return getCallsHandler().executeReadList("GetVdsInterfacesByNetworkId",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
     @Override
     public VdsNetworkInterface get(Guid id) {
         return getCallsHandler().executeRead("GetVdsInterfaceById",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource().addValue("vds_interface_id", id));
     }
 
     @Override
     public VdsNetworkInterface get(Guid hostId, String name) {
         return getCallsHandler().executeRead("GetVdsInterfaceByName",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource()
                         .addValue("host_id", hostId)
                         .addValue("name", name));
@@ -250,7 +251,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
     @Override
     public List<VdsNetworkInterface> getAllInterfacesByClusterId(Guid clusterId) {
         return getCallsHandler().executeReadList("GetInterfacesByClusterId",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
     }
 
@@ -273,7 +274,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
     @Override
     public List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId) {
         return getCallsHandler().executeReadList("GetInterfacesByDataCenterId",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
     }
 
@@ -288,23 +289,34 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
     @Override
     public List<VdsNetworkInterface> getIscsiIfacesByHostIdAndStorageTargetId(Guid hostId, String storageTargetId) {
         return getCallsHandler().executeReadList("GetIscsiIfacesByHostIdAndStorageTargetId",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource().addValue("host_id", hostId).addValue("target_id", storageTargetId));
     }
 
     @Override
     public Optional<VdsNetworkInterface> getActiveMigrationNetworkInterfaceForHost(Guid hostId) {
         return Optional.ofNullable(getCallsHandler().executeRead("getActiveMigrationNetworkInterfaceForHost",
-                vdsNetworkInterfaceRowMapper,
+                qosDaoInterfaceMapper,
                 getCustomMapSqlParameterSource().addValue("host_id", hostId)));
     }
 
-    private final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
-            new RowMapper<VdsNetworkInterface>() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public VdsNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    VdsNetworkInterface entity = createInterface(rs);
+    private final RowMapper<HostNetworkQos> qosDaoRetriever = (rs, rowNum) ->
+            hostNetworkQosDao.get(getGuidDefaultEmpty(rs, "id"));
+
+    private final VdsNetworkInterfaceRowMapper qosDaoInterfaceMapper = new VdsNetworkInterfaceRowMapper(qosDaoRetriever);
+
+    private static final class VdsNetworkInterfaceRowMapper  implements RowMapper<VdsNetworkInterface> {
+
+        private final RowMapper<HostNetworkQos> hostNetworkQosMapper;
+
+        VdsNetworkInterfaceRowMapper(RowMapper<HostNetworkQos> mapper) {
+            this.hostNetworkQosMapper = mapper;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public VdsNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VdsNetworkInterface entity = createInterface(rs);
 
                     entity.setSpeed((Integer) rs.getObject("speed"));
                     entity.setMacAddress(rs.getString("mac_addr"));
@@ -327,52 +339,52 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setReportedSwitchType(SwitchType.parse(rs.getString("reported_switch_type")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
-                    entity.setQos(hostNetworkQosDao.get(entity.getId()));
+                    entity.setQos(hostNetworkQosMapper.mapRow(rs, rowNum));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                         HashSet.class));
                     entity.setAdPartnerMac(rs.getString("ad_partner_mac"));
                     entity.setAdAggregatorId(getInteger(rs, "ad_aggregator_id"));
 
-                    return entity;
-                }
+            return entity;
+        }
 
-                /**
-                 * Create the correct type according to the row.
-                 *
-                 * @param rs The row representing the entity.
-                 * @return The instance of the correct type as represented by the row.
-                 */
-                private VdsNetworkInterface createInterface(ResultSet rs) throws SQLException {
-                    Integer vlanId = (Integer) rs.getObject("vlan_id");
-                    Boolean isBond = (Boolean) rs.getObject("is_bond");
+        /**
+         * Create the correct type according to the row.
+         *
+         * @param rs The row representing the entity.
+         * @return The instance of the correct type as represented by the row.
+         */
+        private VdsNetworkInterface createInterface(ResultSet rs) throws SQLException {
+            Integer vlanId = (Integer) rs.getObject("vlan_id");
+            Boolean isBond = (Boolean) rs.getObject("is_bond");
 
-                    if (Boolean.TRUE.equals(isBond)) {
-                        Bond bond = new Bond();
+            if (Boolean.TRUE.equals(isBond)) {
+                Bond bond = new Bond();
 
-                        bond.setBonded(isBond);
-                        bond.setBondOptions(rs.getString("bond_opts"));
-                        bond.setBondType((Integer) rs.getObject("bond_type"));
-                        bond.setActiveSlave(rs.getString("bond_active_slave"));
+                bond.setBonded(isBond);
+                bond.setBondOptions(rs.getString("bond_opts"));
+                bond.setBondType((Integer) rs.getObject("bond_type"));
+                bond.setActiveSlave(rs.getString("bond_active_slave"));
 
-                        return bond;
-                    }
+                return bond;
+            }
 
-                    if (vlanId != null) {
-                        Vlan vlan = new Vlan();
-                        vlan.setVlanId(vlanId);
-                        vlan.setBaseInterface(rs.getString("base_interface"));
-                        vlan.setBonded(isBond);
-                        return vlan;
-                    }
+            if (vlanId != null) {
+                Vlan vlan = new Vlan();
+                vlan.setVlanId(vlanId);
+                vlan.setBaseInterface(rs.getString("base_interface"));
+                vlan.setBonded(isBond);
+                return vlan;
+            }
 
+            Nic nic = new Nic();
+            nic.setBondName(rs.getString("bond_name"));
+            nic.setBonded(isBond);
+            return nic;
 
-                    Nic nic = new Nic();
-                    nic.setBondName(rs.getString("bond_name"));
-                    nic.setBonded(isBond);
-                    return nic;
+        }
 
-                }
-            };
+    }
 
     private static final RowMapper<Pair<Guid, String>> hostNetworkNameMapper =
             (rs, rowNum) -> new Pair<>(getGuid(rs, "vds_id"), rs.getString("network_name"));
