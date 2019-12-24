@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao.network;
 
+import static org.ovirt.engine.core.dao.network.HostNetworkQosDaoImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
@@ -45,6 +47,19 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
     );
     private final NetworkAttachmentRowMapper qosDaoAttachmentMapper = new NetworkAttachmentRowMapper(
             qosDaoRetriever, dnsDaoRetriever
+    );
+
+    private final RowMapper<HostNetworkQos> qosResultSetMapper = (rs, rowNum) -> {
+        HostNetworkQos qos = null;
+        if (getGuid(rs, "qos_id") != null) {
+            qos = MAPPER.createQosEntity(rs);
+            qos.setId(getGuid(rs, "id"));
+        }
+        return qos;
+    };
+
+    private final NetworkAttachmentRowMapper attachmentWithQosMapper = new NetworkAttachmentRowMapper(
+            qosResultSetMapper, dnsDaoRetriever
     );
 
     private static final class NetworkAttachmentRowMapper  implements RowMapper<NetworkAttachment>  {
@@ -120,8 +135,8 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
     @Override
     public List<NetworkAttachment> getAllForHost(Guid hostId) {
-        return getCallsHandler().executeReadList("GetNetworkAttachmentsByHostId",
-                qosDaoAttachmentMapper,
+        return getCallsHandler().executeReadList("GetNetworkAttachmentsWithQosByHostId",
+                attachmentWithQosMapper,
                 getCustomMapSqlParameterSource().addValue("host_id", hostId));
     }
 
