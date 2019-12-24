@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
@@ -35,6 +36,8 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase<NetworkAttachm
     private NetworkAttachment networkAttachment;
     @Inject
     private DnsResolverConfigurationDao dnsResolverConfigurationDao;
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
 
     @BeforeEach
     @Override
@@ -135,6 +138,26 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase<NetworkAttachm
         assertNotNull(result);
         assertEquals(2, result.size());
         result.forEach(r -> assertNull(r.getHostNetworkQos()));
+
+        result.forEach(r-> {
+            HostNetworkQos hostNetworkQos = new HostNetworkQos();
+            hostNetworkQos.setId(r.getId());
+            hostNetworkQos.setOutAverageLinkshare(31);
+            hostNetworkQos.setOutAverageUpperlimit(32);
+            hostNetworkQos.setOutAverageRealtime(33);
+            hostNetworkQosDao.save(hostNetworkQos);
+        });
+
+        result = dao.getAllForHost(FixturesTool.NETWORK_ATTACHMENT_HOST);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        result.forEach(r -> {
+            assertNotNull(r.getHostNetworkQos());
+            assertEquals(r.getId(), r.getHostNetworkQos().getId());
+            assertEquals(31, r.getHostNetworkQos().getOutAverageLinkshare().intValue());
+            assertEquals(32, r.getHostNetworkQos().getOutAverageUpperlimit().intValue());
+            assertEquals(33, r.getHostNetworkQos().getOutAverageRealtime().intValue());
+        });
     }
 
     @Test
