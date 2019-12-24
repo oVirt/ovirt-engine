@@ -652,6 +652,142 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+DROP TYPE IF EXISTS vds_interface_view_qos_rs CASCADE;
+CREATE TYPE vds_interface_view_qos_rs AS (
+    rx_rate NUMERIC(18,4),
+    tx_rate NUMERIC(18,4),
+    rx_drop NUMERIC(18,4),
+    tx_drop NUMERIC(18,4),
+    rx_total BIGINT,
+    tx_total BIGINT,
+    rx_offset BIGINT,
+    tx_offset BIGINT,
+    iface_status INTEGER,
+    sample_time DOUBLE PRECISION,
+    type INTEGER,
+    gateway CHARACTER VARYING(20),
+    ipv4_default_route BOOLEAN,
+    ipv6_gateway CHARACTER VARYING(50),
+    subnet CHARACTER VARYING(20),
+    ipv6_prefix INTEGER,
+    addr CHARACTER VARYING(20),
+    ipv6_address CHARACTER VARYING(50),
+    speed INTEGER,
+    base_interface CHARACTER VARYING(50),
+    vlan_id INTEGER,
+    bond_type INTEGER,
+    bond_name CHARACTER VARYING(50),
+    is_bond BOOLEAN,
+    bond_opts CHARACTER VARYING(4000),
+    mac_addr CHARACTER VARYING(59),
+    network_name CHARACTER VARYING(256),
+    name CHARACTER VARYING(50),
+    vds_id UUID,
+    vds_name CHARACTER VARYING(255),
+    id UUID,
+    boot_protocol INTEGER,
+    ipv6_boot_protocol INTEGER,
+    mtu INTEGER,
+    bridged BOOLEAN,
+    reported_switch_type CHARACTER VARYING(6),
+    is_vds INTEGER,
+    qos_overridden BOOLEAN,
+    labels TEXT,
+    cluster_id UUID,
+    ad_partner_mac CHARACTER VARYING(59),
+    ad_aggregator_id INTEGER,
+    bond_active_slave CHARACTER VARYING(50),
+    qos_id UUID,
+    qos_name CHARACTER VARYING(50),
+    qos_type SMALLINT,
+    out_average_linkshare INTEGER,
+    out_average_upperlimit INTEGER,
+    out_average_realtime INTEGER
+);
+
+CREATE OR REPLACE FUNCTION GetInterfaceViewWithQosByVdsId (
+    v_vds_id UUID,
+    v_user_id UUID,
+    v_is_filtered boolean
+    )
+RETURNS SETOF vds_interface_view_qos_rs STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT
+        s1.rx_rate,
+        s1.tx_rate,
+        s1.rx_drop,
+        s1.tx_drop,
+        s1.rx_total,
+        s1.tx_total,
+        s1.rx_offset,
+        s1.tx_offset,
+        s1.iface_status,
+        s1.sample_time,
+        s1.type,
+        s1.gateway,
+        s1.ipv4_default_route,
+        s1.ipv6_gateway,
+        s1.subnet,
+        s1.ipv6_prefix,
+        s1.addr,
+        s1.ipv6_address,
+        s1.speed,
+        s1.base_interface,
+        s1.vlan_id,
+        s1.bond_type,
+        s1.bond_name,
+        s1.is_bond,
+        s1.bond_opts,
+        s1.mac_addr,
+        s1.network_name,
+        s1.name,
+        s1.vds_id,
+        s1.vds_name,
+        s1.id,
+        s1.boot_protocol,
+        s1.ipv6_boot_protocol,
+        s1.mtu,
+        s1.bridged,
+        s1.reported_switch_type,
+        s1.is_vds,
+        s1.qos_overridden,
+        s1.labels,
+        s1.cluster_id,
+        s1.ad_partner_mac,
+        s1.ad_aggregator_id,
+        s1.bond_active_slave,
+        s2.id AS qos_id,
+        s2.name AS qos_name,
+        s2.qos_type,
+        s2.out_average_linkshare,
+        s2.out_average_upperlimit,
+        s2.out_average_realtime
+    FROM (
+        SELECT *
+        FROM vds_interface_view
+        WHERE vds_id = v_vds_id
+            AND (
+                NOT v_is_filtered
+                OR EXISTS (
+                    SELECT 1
+                    FROM user_vds_permissions_view
+                    WHERE user_id = v_user_id
+                        AND entity_id = v_vds_id
+                    )
+                )
+        ) s1
+    LEFT JOIN (
+            SELECT *
+            FROM qos
+            WHERE qos.qos_type = 4
+        ) s2
+        ON s1.id = s2.id
+    ;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 DROP TYPE IF EXISTS host_networks_by_cluster_rs CASCADE;
 CREATE TYPE host_networks_by_cluster_rs AS (
         vds_id UUID,
