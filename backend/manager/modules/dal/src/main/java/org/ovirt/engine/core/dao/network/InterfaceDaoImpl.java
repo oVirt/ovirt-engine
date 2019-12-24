@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao.network;
 
+import static org.ovirt.engine.core.dao.network.HostNetworkQosDaoImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -193,8 +195,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        return getCallsHandler().executeReadList("Getinterface_viewByvds_id",
-                qosDaoInterfaceMapper,
+        return getCallsHandler().executeReadList("GetInterfaceViewWithQosByVdsId",
+                interfaceWithQosMapper,
                 parameterSource);
     }
 
@@ -304,6 +306,17 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
             hostNetworkQosDao.get(getGuidDefaultEmpty(rs, "id"));
 
     private final VdsNetworkInterfaceRowMapper qosDaoInterfaceMapper = new VdsNetworkInterfaceRowMapper(qosDaoRetriever);
+
+    private final RowMapper<HostNetworkQos> qosResultSetMapper = (rs, rowNum) -> {
+        HostNetworkQos qos = null;
+        if (getGuid(rs, "qos_id") != null) {
+            qos = MAPPER.createQosEntity(rs);
+            qos.setId(getGuid(rs, "id"));
+        }
+        return qos;
+    };
+
+    private final VdsNetworkInterfaceRowMapper interfaceWithQosMapper = new VdsNetworkInterfaceRowMapper(qosResultSetMapper);
 
     private static final class VdsNetworkInterfaceRowMapper  implements RowMapper<VdsNetworkInterface> {
 
