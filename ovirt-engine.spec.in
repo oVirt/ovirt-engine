@@ -407,6 +407,8 @@ Requires:	%{name}-setup >= %{version}-%{release}
 # we drop Requires: mod_ssl
 Conflicts:	freeipa-server
 Conflicts:	ipa-server
+Conflicts:	python2-ipaserver
+Conflicts:	python3-ipaserver
 
 # Userportal is retired
 Obsoletes:	%{name}-userportal
