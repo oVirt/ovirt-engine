@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
@@ -260,6 +261,12 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
         assertFalse(result.isEmpty());
         for (VdsNetworkInterface iface : result) {
             assertEquals(VDS_ID, iface.getVdsId());
+            if (FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId())) {
+                assertNotNull(iface.getQos());
+                assertEquals(QosType.HOSTNETWORK, iface.getQos().getQosType());
+            } else {
+                assertNull(iface.getQos());
+            }
         }
     }
 
