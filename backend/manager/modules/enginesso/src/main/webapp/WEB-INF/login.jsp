@@ -133,7 +133,7 @@
                 </main>
                 <footer class="pf-c-login__footer">
                     <p>
-                        <fmt:message key="loginpage.subtitle" bundle="${loginpage}" />
+                        <fmt:message key="obrand.loginpage.subtitle" />
                     </p>
                 </footer>
             </div>
