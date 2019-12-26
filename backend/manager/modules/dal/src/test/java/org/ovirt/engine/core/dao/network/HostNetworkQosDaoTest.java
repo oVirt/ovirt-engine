@@ -43,7 +43,7 @@ public class HostNetworkQosDaoTest extends BaseGenericDaoTestCase<Guid, HostNetw
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 3;
+        return 4;
     }
 
     /**
