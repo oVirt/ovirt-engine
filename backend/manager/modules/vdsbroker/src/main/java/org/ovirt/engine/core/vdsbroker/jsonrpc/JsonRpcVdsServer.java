@@ -57,6 +57,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageTicketInformationReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LldpReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.MeasureReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NbdServerURLReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturn;
@@ -2363,6 +2364,20 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new VolumeInfoReturn(response);
+    }
+
+    @Override
+    public MeasureReturn measureVolume(String sdUUID, String spUUID, String imgUUID, String volUUID, int dstVolFormat) {
+        JsonRpcRequest request =
+                new RequestBuilder("Volume.measure")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgUUID)
+                        .withParameter("volumeID", volUUID)
+                        .withParameter("dstVolFormat", dstVolFormat)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new MeasureReturn(response);
     }
 
     @Override
