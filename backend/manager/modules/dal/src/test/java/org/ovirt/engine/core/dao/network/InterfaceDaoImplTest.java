@@ -42,6 +42,8 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
 
     @Inject
     private NetworkQoSDao networkQoSDao;
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
 
     @BeforeEach
     @Override
@@ -99,6 +101,37 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
         List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(VDS_ID);
 
         assertGetAllForVdsCorrectResult(result);
+        testQosAppendedToResultSet(result);
+    }
+
+    private void testQosAppendedToResultSet(List<VdsNetworkInterface> result) {
+        result.forEach(r-> {
+            if (r.getQos() == null) {
+                HostNetworkQos hostNetworkQos = new HostNetworkQos();
+                hostNetworkQos.setId(r.getId());
+                hostNetworkQos.setOutAverageLinkshare(31);
+                hostNetworkQos.setOutAverageUpperlimit(32);
+                hostNetworkQos.setOutAverageRealtime(33);
+                hostNetworkQosDao.save(hostNetworkQos);
+            } else {
+                r.getQos().setOutAverageLinkshare(31);
+                r.getQos().setOutAverageUpperlimit(32);
+                r.getQos().setOutAverageRealtime(33 );
+                hostNetworkQosDao.update(r.getQos());
+            }
+        });
+
+        result = dao.getAllInterfacesForVds(VDS_ID);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        result.forEach(r -> {
+            assertNotNull(r.getQos());
+            assertEquals(r.getId(), r.getQos().getId());
+            assertEquals(QosType.HOSTNETWORK, r.getQos().getQosType());
+            assertEquals(31, r.getQos().getOutAverageLinkshare().intValue());
+            assertEquals(32, r.getQos().getOutAverageUpperlimit().intValue());
+            assertEquals(33, r.getQos().getOutAverageRealtime().intValue());
+        });
     }
 
     /**
