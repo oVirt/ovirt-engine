@@ -103,18 +103,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.ovirt.otopi</groupId>
-      <artifactId>otopi</artifactId>
-      <version>${otopi.version}</version>
-   </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.ovirt-host-deploy</groupId>
-      <artifactId>ovirt-host-deploy</artifactId>
-      <version>${ovirt-host-deploy.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>metamodel-server</artifactId>
       <version>${metamodel.version}</version>
@@ -367,21 +355,9 @@
               </module>
 
               <module>
-                <groupId>org.ovirt.otopi</groupId>
-                <artifactId>otopi</artifactId>
-                <moduleName>org.ovirt.otopi</moduleName>
-              </module>
-
-              <module>
                 <groupId>org.ovirt.engine.api</groupId>
                 <artifactId>metamodel-server</artifactId>
                 <moduleName>org.ovirt.engine.api.metamodel-server</moduleName>
-              </module>
-
-              <module>
-                <groupId>org.ovirt.ovirt-host-deploy</groupId>
-                <artifactId>ovirt-host-deploy</artifactId>
-                <moduleName>org.ovirt.ovirt-host-deploy</moduleName>
               </module>
 
               <module>

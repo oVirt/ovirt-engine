@@ -58,7 +58,7 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
                 // /var/log/ovirt-engine/host-deploy/ovirt-enroll-certs-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-enroll-certs-ansible")
                 .logFileName(getVds().getHostName())
                 .logFileSuffix(CorrelationIdTracker.getCorrelationId())

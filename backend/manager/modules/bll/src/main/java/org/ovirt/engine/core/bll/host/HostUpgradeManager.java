@@ -10,7 +10,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CertificationValidityChecker;
-import org.ovirt.engine.core.bll.hostdeploy.VdsDeployBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -64,7 +63,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 .hosts(host)
                 .checkMode(true)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-check-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible-check")
                 .logFileName(host.getHostName())
                 .logFileSuffix(CorrelationIdTracker.getCorrelationId())
@@ -167,7 +166,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible")
                 .logFileName(host.getHostName())
                 .logFileSuffix(CorrelationIdTracker.getCorrelationId())

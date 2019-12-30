@@ -73,4 +73,6 @@ public class AnsibleConstants {
      * Name of the task where VDSM_ID is loaded, so we can distinguish this task and parse it.
      */
     public static final String TASK_VDSM_ID = "Fetch vdsm id";
+
+    public static final String HOST_DEPLOY_LOG_DIRECTORY = "host-deploy";
 }

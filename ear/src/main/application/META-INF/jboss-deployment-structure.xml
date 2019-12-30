@@ -48,8 +48,6 @@
       <module name="org.ovirt.engine.core.utils" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.uutils" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.extensions.builtin" export="true" meta-inf="import"/>
-      <module name="org.ovirt.otopi" export="true"/>
-      <module name="org.ovirt.ovirt-host-deploy" export="true" meta-inf="import"/>
       <module name="org.ovirt.vdsm-jsonrpc-java" export="true"/>
     </dependencies>
   </deployment>

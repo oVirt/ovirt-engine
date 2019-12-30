@@ -57,7 +57,6 @@ import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
-import org.ovirt.otopi.dialog.SoftError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,7 +233,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .variable("hosted_engine_deploy_content", hostedEngineContent)
                 .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-deploy-ansible")
                 .logFileName(vds.getHostName())
                 .logFileSuffix(getCorrelationId())
@@ -291,7 +290,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     vdsmid,
                     hosts
             );
-            throw new SoftError(
+            throw new RuntimeException(
                     String.format(
                             "Host %1$s reports unique id which already registered for %2$s",
                             getVds().getHostName(),
