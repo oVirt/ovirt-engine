@@ -43,6 +43,6 @@ public class DisplayAllAuditLogAlertsCommand<T extends ActionParametersBase> ext
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_DISPLAY_ALL_AUDIT_LOG : AuditLogType.USER_DISPLAY_ALL_AUDIT_LOG_FAILED;
+        return getSucceeded() ? AuditLogType.USER_DISPLAY_ALL_AUDIT_LOG_ALERTS : AuditLogType.USER_DISPLAY_ALL_AUDIT_LOG_ALERTS_FAILED;
     }
 }
