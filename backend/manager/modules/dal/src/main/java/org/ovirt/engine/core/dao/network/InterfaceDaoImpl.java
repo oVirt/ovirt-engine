@@ -252,8 +252,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
 
     @Override
     public List<VdsNetworkInterface> getAllInterfacesByClusterId(Guid clusterId) {
-        return getCallsHandler().executeReadList("GetInterfacesByClusterId",
-                qosDaoInterfaceMapper,
+        return getCallsHandler().executeReadList("GetInterfacesWithQosByClusterId",
+                interfaceWithQosMapper,
                 getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
     }
 
