@@ -76,7 +76,7 @@ public enum ActionType {
     UpdateConvertedVm(63, QuotaDependency.NONE),
     RemoveUnregisteredVmTemplate(67, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),
     RemoveUnregisteredVm(68, ActionGroup.DELETE_VM, QuotaDependency.NONE),
-
+    MeasureVolume(69, false, QuotaDependency.NONE),
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),

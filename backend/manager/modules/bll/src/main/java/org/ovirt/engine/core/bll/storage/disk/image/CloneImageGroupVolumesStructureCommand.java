@@ -15,13 +15,18 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.CommandsWeightsUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
+import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -30,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.CollectionUtils;
 
@@ -46,11 +52,16 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     @Inject
     private ImagesHandler imagesHandler;
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
+
 
     public CloneImageGroupVolumesStructureCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -149,7 +160,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                     .getImage();
         }
 
-        Long initialSize = imagesHandler.determineImageInitialSize(innerImage,
+        Long initialSize = determineImageInitialSize(innerImage,
                 volumeFormat,
                 getParameters().getStoragePoolId(),
                 getParameters().getSrcDomain(),
@@ -174,6 +185,51 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         parameters.setParentParameters(getParameters());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(image.getImageId().toString()));
         runInternalActionWithTasksContext(ActionType.CreateVolumeContainer, parameters);
+    }
+
+    private Long determineImageInitialSize(Image sourceImage,
+            VolumeFormat destFormat,
+            Guid storagePoolId,
+            Guid srcDomain,
+            Guid dstDomain,
+            Guid imageGroupID) {
+        Guid hostId = vdsCommandsHelper.getHostForExecution(storagePoolId,
+                vds -> FeatureSupported.isMeasureVolumeSupported(vds));
+        if (hostId != null) {
+            if (storageDomainDao.get(dstDomain).getStorageType().isBlockDomain() &&
+                    Guid.Empty.equals(sourceImage.getParentId())) {
+                MeasureVolumeParameters parameters = new MeasureVolumeParameters(storagePoolId,
+                        srcDomain,
+                        imageGroupID,
+                        sourceImage.getId(),
+                        destFormat.getValue());
+                parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+                parameters.setParentCommand(getActionType());
+                parameters.setVdsRunningOn(hostId);
+                parameters.setCorrelationId(getCorrelationId());
+                ActionReturnValue actionReturnValue =
+                        runInternalAction(ActionType.MeasureVolume, parameters,
+                                ExecutionHandler.createDefaultContextForTasks(getContext()));
+                if (!actionReturnValue.getSucceeded()) {
+                    throw new RuntimeException("Could not measure volume");
+                }
+
+                return actionReturnValue.getActionReturnValue();
+            }
+        }
+
+        // We don't support Sparse-RAW volumes on block domains, therefore if the volume is RAW there is no
+        // need to pass initial size (it can be only preallocated).
+        if (imagesHandler.isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
+            //TODO: inspect if we can rely on the database to get the actual size.
+            DiskImage imageInfoFromStorage = imagesHandler.getVolumeInfoFromVdsm(storagePoolId,
+                    srcDomain, imageGroupID, sourceImage.getId());
+
+            return ImagesHandler.computeCowImageNeededSize(sourceImage.getVolumeFormat(),
+                    imageInfoFromStorage.getActualSizeInBytes());
+        }
+
+        return null;
     }
 
     private VolumeFormat determineVolumeFormat(Guid destStorageDomainId,

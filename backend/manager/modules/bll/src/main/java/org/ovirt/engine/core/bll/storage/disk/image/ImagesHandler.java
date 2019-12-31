@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
-import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -919,38 +918,7 @@ public class ImagesHandler {
         clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
     }
 
-    /**
-     * This method is use to compute the initial size of an image base on the source image size
-     * It is needed when copying/moving an existing image in order to create the destination image
-     * with the right size from the beginning, saving the process of extending the allocation.
-     *
-     * @param sourceImage The source image GUID
-     * @param destFormat The volume format of the destination image (COW/RAW)
-     * @param storagePoolId The storage pool GUID
-     * @param srcDomain The storage domain where the source image is located
-     * @param dstDomain The storage domain where the image will be copied to
-     * @param imageGroupID The image group GUID of the source image
-     * @return the computed initial size in bytes or null if it is not needed/supported
-     */
-    public Long determineImageInitialSize(Image sourceImage,
-            VolumeFormat destFormat,
-            Guid storagePoolId,
-            Guid srcDomain,
-            Guid dstDomain,
-            Guid imageGroupID) {
-        // We don't support Sparse-RAW volumes on block domains, therefore if the volume is RAW there is no
-        // need to pass initial size (it can be only preallocated).
-        if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
-            //TODO: inspect if we can rely on the database to get the actual size.
-            DiskImage imageInfoFromStorage = getVolumeInfoFromVdsm(storagePoolId,
-                    srcDomain, imageGroupID, sourceImage.getId());
-
-            return computeCowImageNeededSize(sourceImage.getVolumeFormat(), imageInfoFromStorage.getActualSizeInBytes());
-        }
-        return null;
-    }
-
-    private static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
+    public static long computeCowImageNeededSize(VolumeFormat sourceFormat, long actualSize) {
         // When vdsm creates a COW volume with provided initial size the size is multiplied by 1.1 to prevent a
         // case in which we won't have enough space. If the source is already COW we don't need the additional
         // space.
@@ -986,7 +954,7 @@ public class ImagesHandler {
         return null;
     }
 
-    private boolean isInitialSizeSupportedForFormat(VolumeFormat destFormat, Guid dstDomain) {
+    public boolean isInitialSizeSupportedForFormat(VolumeFormat destFormat, Guid dstDomain) {
         return destFormat == VolumeFormat.COW &&
                 isImageInitialSizeSupported(storageDomainDao.get(dstDomain).getStorageType());
     }
