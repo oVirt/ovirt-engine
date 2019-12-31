@@ -588,37 +588,37 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         ONLY_SNAPABLE, ONLY_ACTIVE);
         diskImages.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
         if (!diskImages.isEmpty()) {
-          if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
-              return false;
-          }
+            if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
+                return false;
+            }
 
-          DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImages);
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImages);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
                     !validate(diskImagesValidator.diskImagesNotLocked())) {
-              return false;
-          }
+                return false;
+            }
 
-          List<DiskImage> images = getImagesToPreview();
-          DiskImagesValidator diskImagesToPreviewValidator = new DiskImagesValidator(images);
-          if (!validate(diskImagesToPreviewValidator.noDuplicatedIds()) ||
-                  !validate(diskImagesToPreviewValidator.diskImagesSnapshotsAttachedToVm(getVmId())) ||
-                  !validate(diskImagesToPreviewValidator.diskImagesNotIllegal()) ||
-                  !validate(diskImagesToPreviewValidator.diskImagesNotLocked())) {
-              return false;
-          }
+            List<DiskImage> images = getImagesToPreview();
+            DiskImagesValidator diskImagesToPreviewValidator = new DiskImagesValidator(images);
+            if (!validate(diskImagesToPreviewValidator.noDuplicatedIds()) ||
+                    !validate(diskImagesToPreviewValidator.diskImagesSnapshotsAttachedToVm(getVmId())) ||
+                    !validate(diskImagesToPreviewValidator.diskImagesNotIllegal()) ||
+                    !validate(diskImagesToPreviewValidator.diskImagesNotLocked())) {
+                return false;
+            }
 
-          Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
-          // verify lease storage domain status
-          if (getParameters().getDstLeaseDomainId() != null) {
-              storageIds.add(getParameters().getDstLeaseDomainId());
-          } else if (getDstSnapshot().getVmConfiguration() != null && getParameters().isRestoreLease()) {
-              Guid leaseDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
-              if (leaseDomainId != null) {
-                  storageIds.add(leaseDomainId);
-              }
-          }
+            Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
+            // verify lease storage domain status
+            if (getParameters().getDstLeaseDomainId() != null) {
+                storageIds.add(getParameters().getDstLeaseDomainId());
+            } else if (getDstSnapshot().getVmConfiguration() != null && getParameters().isRestoreLease()) {
+                Guid leaseDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
+                if (leaseDomainId != null) {
+                    storageIds.add(leaseDomainId);
+                }
+            }
 
-          MultipleStorageDomainsValidator storageValidator =
+            MultipleStorageDomainsValidator storageValidator =
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
             if (!validate(storageValidator.allDomainsExistAndActive())
                     || !validate(storageValidator.allDomainsWithinThresholds())
