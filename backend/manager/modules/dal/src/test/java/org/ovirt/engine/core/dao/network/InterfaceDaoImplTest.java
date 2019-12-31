@@ -365,10 +365,10 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
     }
 
     @Test
-    public void testgetAllInterfacesByClusterId() {
+    public void testGetAllInterfacesByClusterId() {
         List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByClusterId(FixturesTool.CLUSTER);
-        assertNotNull(interfaces);
-        assertFalse(interfaces.isEmpty());
+        assertGetAllForVdsCorrectResult(interfaces);
+        testQosAppendedToResultSet(interfaces);
     }
 
     @Test
