@@ -884,6 +884,80 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetInterfacesWithQosByClusterId (
+    v_cluster_id UUID
+    )
+RETURNS SETOF vds_interface_view_qos_rs STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT
+        s1.rx_rate,
+        s1.tx_rate,
+        s1.rx_drop,
+        s1.tx_drop,
+        s1.rx_total,
+        s1.tx_total,
+        s1.rx_offset,
+        s1.tx_offset,
+        s1.iface_status,
+        s1.sample_time,
+        s1.type,
+        s1.gateway,
+        s1.ipv4_default_route,
+        s1.ipv6_gateway,
+        s1.subnet,
+        s1.ipv6_prefix,
+        s1.addr,
+        s1.ipv6_address,
+        s1.speed,
+        s1.base_interface,
+        s1.vlan_id,
+        s1.bond_type,
+        s1.bond_name,
+        s1.is_bond,
+        s1.bond_opts,
+        s1.mac_addr,
+        s1.network_name,
+        s1.name,
+        s1.vds_id,
+        s1.vds_name,
+        s1.id,
+        s1.boot_protocol,
+        s1.ipv6_boot_protocol,
+        s1.mtu,
+        s1.bridged,
+        s1.reported_switch_type,
+        s1.is_vds,
+        s1.qos_overridden,
+        s1.labels,
+        s1.cluster_id,
+        s1.ad_partner_mac,
+        s1.ad_aggregator_id,
+        s1.bond_active_slave,
+        s2.id AS qos_id,
+        s2.name AS qos_name,
+        s2.qos_type,
+        s2.out_average_linkshare,
+        s2.out_average_upperlimit,
+        s2.out_average_realtime
+    FROM (
+        SELECT vds_interface_view.*
+        FROM vds_interface_view
+        INNER JOIN vds_static
+            ON vds_interface_view.vds_id = vds_static.vds_id
+        WHERE vds_static.cluster_id = v_cluster_id
+        ) s1
+    LEFT JOIN (
+            SELECT *
+            FROM qos
+            WHERE qos.qos_type = 4
+        ) s2
+        ON s1.id = s2.id
+    ;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetInterfacesByDataCenterId (v_data_center_id UUID)
 RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
 BEGIN
