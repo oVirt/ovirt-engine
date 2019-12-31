@@ -871,19 +871,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetInterfacesByClusterId (v_cluster_id UUID)
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT vds_interface_view.*
-    FROM vds_interface_view
-    INNER JOIN vds_static
-        ON vds_interface_view.vds_id = vds_static.vds_id
-    WHERE vds_static.cluster_id = v_cluster_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetInterfacesWithQosByClusterId (
     v_cluster_id UUID
     )
