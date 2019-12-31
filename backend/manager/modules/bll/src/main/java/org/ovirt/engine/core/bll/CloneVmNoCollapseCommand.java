@@ -173,7 +173,7 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         Guid srcStorageDomainID = diskImage.getStorageIds().get(0);
         Guid destImageGroupID = Guid.newGuid();
         Guid destStorageDomainID = getParameters().getDestStorageDomainId() == null ? srcStorageDomainID :
-                diskImage.getStorageIds().get(0);
+                getParameters().getDestStorageDomainId();
         List<DiskImage> newChain = prepareImageChainMap(diskImage, destImageGroupID, destStorageDomainID);
 
         MoveOrCopyImageGroupParameters p =
