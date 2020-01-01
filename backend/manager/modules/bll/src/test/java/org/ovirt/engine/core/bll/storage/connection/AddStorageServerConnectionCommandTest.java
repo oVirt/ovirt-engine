@@ -183,7 +183,7 @@ public class AddStorageServerConnectionCommandTest extends
 
        when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(existingConn);
        String isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
-       assertTrue(!isExists.isEmpty());
+       assertFalse(isExists.isEmpty());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class AddStorageServerConnectionCommandTest extends
         when(storageConnDao.getAllForStorage(newLocalConnection.getConnection())).thenReturn(connections);
 
         String isExists = command.isConnWithSameDetailsExists(newLocalConnection, storagePoolId);
-        assertTrue(!isExists.isEmpty());
+        assertFalse(isExists.isEmpty());
     }
 
     @Test
@@ -216,7 +216,7 @@ public class AddStorageServerConnectionCommandTest extends
         when(storageConnDao.getAllForStorage(newLocalConnection.getConnection())).thenReturn(connections);
 
         String isExists = command.isConnWithSameDetailsExists(newLocalConnection, newLocalConnectionStoragePoolId);
-        assertFalse(!isExists.isEmpty());
+        assertTrue(isExists.isEmpty());
     }
 
     @Override
