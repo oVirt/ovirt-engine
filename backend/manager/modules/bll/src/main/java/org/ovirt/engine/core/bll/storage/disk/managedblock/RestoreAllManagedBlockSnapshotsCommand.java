@@ -82,7 +82,6 @@ public class RestoreAllManagedBlockSnapshotsCommand<T extends RestoreAllManagedB
         List<Guid> failedToRemoveDisks = new ArrayList<>();
 
         getParameters().getManagedBlockStorageDisks()
-                .stream()
                 .forEach(disk -> {
                     TransactionSupport.executeInNewTransaction(() -> {
                         managedBlockStorageDiskUtil.updateOldImageAsActive(Snapshot.SnapshotType.PREVIEW,

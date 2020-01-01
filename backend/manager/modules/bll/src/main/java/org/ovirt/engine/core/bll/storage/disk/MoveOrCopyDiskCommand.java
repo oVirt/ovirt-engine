@@ -458,7 +458,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             }
             vmStaticDao.incrementDbGeneration(getVmTemplateId());
         } else {
-            getVmsWithVmDeviceInfoForDiskId().stream().forEach(p -> vmStaticDao.incrementDbGeneration(p.getFirst().getId()));
+            getVmsWithVmDeviceInfoForDiskId().forEach(p -> vmStaticDao.incrementDbGeneration(p.getFirst().getId()));
         }
     }
 

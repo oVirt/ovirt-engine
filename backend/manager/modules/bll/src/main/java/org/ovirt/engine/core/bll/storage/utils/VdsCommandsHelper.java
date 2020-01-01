@@ -186,7 +186,7 @@ public class VdsCommandsHelper {
             log.debug("No AuditLogType found for " + getAuditLogType(cmd));
             return;
         }
-        jobProperties.entrySet().stream().forEach(entry -> cmd.addCustomValue(entry.getKey(), entry.getValue()));
+        jobProperties.entrySet().forEach(entry -> cmd.addCustomValue(entry.getKey(), entry.getValue()));
         Injector.get(AuditLogDirector.class).log(cmd, logType);
     }
 
