@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 
-@NonTransactiveCommandAttribute(forceCompensation = false)
+@NonTransactiveCommandAttribute
 public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParametersBase> extends
         StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
     @Inject
