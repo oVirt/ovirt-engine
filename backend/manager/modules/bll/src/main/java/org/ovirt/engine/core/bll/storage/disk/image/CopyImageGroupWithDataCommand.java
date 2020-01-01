@@ -15,9 +15,13 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
@@ -25,9 +29,11 @@ import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParam
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters.CopyStage;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
+import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -44,11 +50,12 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
-
-    private DiskImage diskImage;
-
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
     @Inject
     private ImagesHandler imagesHandler;
+
+    private DiskImage diskImage;
 
     public CopyImageGroupWithDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -130,10 +137,9 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 getParameters().getDestinationVolumeType(),
                 getParameters().getDescription(),
                 getDiskImage().getSize(),
-                imagesHandler.determineTotalImageInitialSize(getDiskImage(),
+                determineTotalImageInitialSize(getDiskImage(),
                         getParameters().getDestinationFormat(),
-                        getParameters().getSrcDomain(),
-                        getParameters().getDestDomain()));
+                        getParameters().getSrcDomain()));
 
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
         parameters.setParentCommand(getActionType());
@@ -180,6 +186,45 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         return false;
     }
 
+    private Long determineTotalImageInitialSize(DiskImage sourceImage,
+            VolumeFormat destFormat,
+            Guid srcDomain) {
+        // Check if we have a host in the DC capable of running the measure volume verb,
+        // otherwise fallback to the legacy method
+        Guid hostId = vdsCommandsHelper.getHostForExecution(sourceImage.getStoragePoolId(),
+                vds -> FeatureSupported.isMeasureVolumeSupported(vds));
+        if (hostId == null) {
+            return imagesHandler.determineTotalImageInitialSize(getDiskImage(),
+                    getParameters().getDestinationFormat(),
+                    getParameters().getSrcDomain(),
+                    getParameters().getDestDomain());
+        } else {
+            // We are collapsing the chain, so we want to measure the leaf to get the size
+            // of the entire chain
+            List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(sourceImage.getId());
+            imagesHandler.sortImageList(images);
+            DiskImage leaf = images.get(images.size() - 1);
+
+            MeasureVolumeParameters parameters = new MeasureVolumeParameters(leaf.getStoragePoolId(),
+                    srcDomain,
+                    leaf.getId(),
+                    leaf.getImageId(),
+                    destFormat.getValue());
+            parameters.setParentCommand(getActionType());
+            parameters.setEndProcedure(EndProcedure.PARENT_MANAGED);
+            parameters.setVdsRunningOn(hostId);
+            parameters.setCorrelationId(getCorrelationId());
+            ActionReturnValue actionReturnValue =
+                    runInternalAction(ActionType.MeasureVolume, parameters,
+                            ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+            if (!actionReturnValue.getSucceeded()) {
+                throw new RuntimeException("Could not measure volume");
+            }
+
+            return actionReturnValue.getActionReturnValue();
+        }
+    }
 
     private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId) {
         return new VdsmImageLocationInfo(domId, imageGroupId, imageId, null);
