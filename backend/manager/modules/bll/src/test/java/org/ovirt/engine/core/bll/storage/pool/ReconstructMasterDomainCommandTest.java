@@ -40,13 +40,9 @@ public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
 
     private StoragePool storagePool;
 
-    private StorageDomain masterStorageDomain;
-
     private StoragePoolIsoMap masterDomainIsoMap;
 
     private StoragePoolIsoMap regularDomainIsoMap;
-
-    private StoragePoolValidator storagePoolValidator;
 
     @BeforeEach
     public void setUp() {
@@ -61,7 +57,7 @@ public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
     private void initializeStorageDomains() {
         masterDomainIsoMap = new StoragePoolIsoMap(masterStorageDomainId, storagePoolId, StorageDomainStatus.Active);
         regularDomainIsoMap = new StoragePoolIsoMap(regularStorageDomainId, storagePoolId, StorageDomainStatus.Active);
-        masterStorageDomain = new StorageDomain();
+        StorageDomain masterStorageDomain = new StorageDomain();
         masterStorageDomain.setStoragePoolIsoMapData(masterDomainIsoMap);
         doReturn(masterStorageDomain).when(cmd).getStorageDomain();
     }
@@ -74,7 +70,7 @@ public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
     }
 
     private void initializeStoragePoolValidator() {
-        storagePoolValidator = spy(new StoragePoolValidator(storagePool));
+        StoragePoolValidator storagePoolValidator = spy(new StoragePoolValidator(storagePool));
         doReturn(storagePoolIsoMapDao).when(storagePoolValidator).getStoragePoolIsoMapDao();
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();
     }
