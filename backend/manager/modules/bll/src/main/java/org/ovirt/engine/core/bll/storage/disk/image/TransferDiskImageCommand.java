@@ -104,6 +104,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private static final String IMAGES_PATH = "/images";
     private static final String TICKETS_PATH = "/tickets/";
     private static final String FILE_URL_SCHEME = "file://";
+    private static final String IMAGE_TYPE = "disk";
 
     @Inject
     private ImageTransferDao imageTransferDao;
@@ -316,10 +317,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getDiskImage().getDiskAlias();
     }
 
-    protected String getImageType() {
-        return "disk";
-    }
-
     protected DiskImage getDiskImage() {
         if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
             setImageId(getParameters().getImageId());
@@ -418,7 +415,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 setSucceeded(false);
                 return;
             }
-            log.info("Creating {} image", getImageType());
+            log.info("Creating {} image", IMAGE_TYPE);
             createImage();
         }
 
@@ -529,13 +526,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             case NOT_STARTED:
             case ACTIVE:
                 log.info("Waiting for {} to be added for image transfer command '{}'",
-                        getImageType(), getCommandId());
+                        IMAGE_TYPE, getCommandId());
                 return;
             case SUCCEEDED:
                 break;
             default:
                 log.error("Failed to add {} for image transfer command '{}'",
-                        getImageType(), getCommandId());
+                        IMAGE_TYPE, getCommandId());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
         }
@@ -543,7 +540,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         ActionReturnValue addDiskRetVal = commandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
         if (addDiskRetVal == null || !addDiskRetVal.getSucceeded()) {
             log.error("Failed to add {} (command status was success, but return value was failed)"
-                    + " for image transfer command '{}'", getImageType(), getCommandId());
+                    + " for image transfer command '{}'", IMAGE_TYPE, getCommandId());
             setReturnValue(addDiskRetVal);
             setCommandStatus(CommandStatus.FAILED);
             return;
@@ -1339,7 +1336,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private String getTransferDescription() {
         return String.format("%s %s '%s' (disk id: '%s', image id: '%s')",
                 getParameters().getTransferType().name(),
-                getImageType(),
+                IMAGE_TYPE,
                 getImageAlias(),
                 getDiskImage().getId(),
                 getDiskImage().getImageId());
