@@ -80,9 +80,8 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
                 VDSCommandType.CreateVG,
                 new CreateVGVDSCommandParameters(getVds().getId(), getStorageDomain().getId(),
                         getParameters().getLunIds(), getParameters().isForce()));
-        String volumeGroupId = (String) ((returnValue.getReturnValue() instanceof String) ? returnValue
+        return (String) ((returnValue.getReturnValue() instanceof String) ? returnValue
                 .getReturnValue() : null);
-        return volumeGroupId;
     }
 
     @Override

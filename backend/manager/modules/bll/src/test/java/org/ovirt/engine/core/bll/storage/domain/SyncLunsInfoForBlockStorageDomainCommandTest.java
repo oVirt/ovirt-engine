@@ -178,9 +178,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     }
 
     private SyncLunsInfoForBlockStorageDomainParameters createParameters() {
-        SyncLunsInfoForBlockStorageDomainParameters params =
-                new SyncLunsInfoForBlockStorageDomainParameters(Guid.newGuid(), Guid.newGuid());
-        return params;
+        return new SyncLunsInfoForBlockStorageDomainParameters(Guid.newGuid(), Guid.newGuid());
     }
 
     /**
