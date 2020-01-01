@@ -216,11 +216,9 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
     protected VDSReturnValue getStatsForDomain() {
         Optional<VDS> vds = getAllRunningVdssInPool().stream().filter(VDS::isSpm).findFirst();
-        if (!vds.isPresent()) {
-            return null;
-        }
-        return runVdsCommand(VDSCommandType.GetStorageDomainStats,
-                new GetStorageDomainStatsVDSCommandParameters(vds.get().getId(), getParameters().getStorageDomainId()));
+        return vds.map(value -> runVdsCommand(VDSCommandType.GetStorageDomainStats,
+                new GetStorageDomainStatsVDSCommandParameters(value.getId(), getParameters().getStorageDomainId())))
+                .orElse(null);
     }
 
     protected void updateStorageDomain(final StorageDomain storageDomainToUpdate) {
