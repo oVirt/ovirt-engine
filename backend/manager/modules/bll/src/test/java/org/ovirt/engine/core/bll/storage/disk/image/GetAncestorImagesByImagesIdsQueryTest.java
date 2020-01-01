@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +68,7 @@ public class GetAncestorImagesByImagesIdsQueryTest extends
         assertEquals(image1, queryReturnValue.get(image1.getImageId()));
         assertEquals(image1, queryReturnValue.get(image2.getImageId()));
         assertEquals(image1, queryReturnValue.get(image3.getImageId()));
-        assertEquals(null, queryReturnValue.get(image4.getImageId()));
+        assertNull(queryReturnValue.get(image4.getImageId()));
     }
 
     private void initializeImages() {
