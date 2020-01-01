@@ -172,7 +172,8 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
             }
             if (!getSucceeded()) {
                 log.error("There are no luns with VG that match the SD VG '{}'."
-                        + " Connections details are missing.  completing this automatic import");
+                        + " Connections details are missing.  completing this automatic import",
+                        heStorageDomain.getStorage());
             }
         }
     }

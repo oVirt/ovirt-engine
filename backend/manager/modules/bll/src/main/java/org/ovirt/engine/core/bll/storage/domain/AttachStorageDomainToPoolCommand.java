@@ -165,8 +165,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                     + " has failed. The meta data of the Storage Domain might still"
                                     + " indicate that it is attached to a different Storage Pool.",
                                     getParameters().getStorageDomainId(),
-                                    Guid.Empty,
-                                    0);
+                                    Guid.Empty);
                             throw e;
                         }
                     }

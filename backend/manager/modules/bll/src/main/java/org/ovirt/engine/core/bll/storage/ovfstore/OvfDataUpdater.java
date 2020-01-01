@@ -96,7 +96,7 @@ public class OvfDataUpdater implements BackendService {
                     performOvfUpdateForDomain(pool.getId(), id);
                 }
             } else {
-                log.error("Data Center '{}' domains list for OVF update returned as NULL");
+                log.error("Data Center '{}' domains list for OVF update returned as NULL", pool.getName());
             }
         }
     }

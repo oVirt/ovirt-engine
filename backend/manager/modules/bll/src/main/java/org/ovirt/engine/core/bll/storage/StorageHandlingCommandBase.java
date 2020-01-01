@@ -369,7 +369,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 getStoragePool().setSpmVdsId(poolFromDb.getSpmVdsId());
             }
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
-                log.info("Set storage pool '{}' vds Id to null", getStoragePool().getId(), poolFromDb.getSpmVdsId());
+                log.info("Set storage pool '{}' vds Id to null", getStoragePool().getId());
                 getStoragePool().setSpmVdsId(null);
             }
 

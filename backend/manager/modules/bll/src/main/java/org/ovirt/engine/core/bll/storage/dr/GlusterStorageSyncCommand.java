@@ -106,7 +106,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
                         cloneContextAndDetachFromParent());
                 vmIdSnapshotIdMap.put(vm.getId(), future.get().getActionReturnValue());
             } catch (InterruptedException | ExecutionException e) {
-                log.error("Error creating VM snapshot for VM with id '{}', name '{}' for DR sync",
+                log.error("Error creating VM snapshot for VM with id '{}', name '{}' for DR sync, error: '{}'",
                         vm.getId(),
                         vm.getName(),
                         e.getMessage());
