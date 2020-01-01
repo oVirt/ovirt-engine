@@ -1042,12 +1042,11 @@ public class ImagesHandler {
         }
 
         Set<Guid> images = new HashSet<>();
-        DiskImage activeDiskImage = activeImage;
         for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
             Map device = (Map<String, Object>) o;
             if (VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))
                     && !device.get(VdsProperties.ImageId).equals("mapper")
-                    && activeDiskImage.getId().equals(Guid.createGuidFromString(
+                    && activeImage.getId().equals(Guid.createGuidFromString(
                     (String) device.get(VdsProperties.ImageId)))) {
                 Object[] volumeChain = (Object[]) device.get(VdsProperties.VolumeChain);
                 for (Object v : volumeChain) {

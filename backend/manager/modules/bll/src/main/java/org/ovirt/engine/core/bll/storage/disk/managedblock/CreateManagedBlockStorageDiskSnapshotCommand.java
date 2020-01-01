@@ -130,18 +130,17 @@ public class CreateManagedBlockStorageDiskSnapshotCommand<T extends CreateManage
         ManagedBlockStorageDisk snapshotLeaf = (ManagedBlockStorageDisk) imagesHandler.getSnapshotLeaf(disk.getId());
         image.setParentId(snapshotLeaf.getImageId());
 
-        ManagedBlockStorageDisk snapshotDisk = disk;
-        snapshotDisk.setImage(image);
-        snapshotDisk.setVolumeClassification(VolumeClassification.Snapshot);
-        snapshotDisk.setDiskSnapshot(true);
-        snapshotDisk.setDescription(getParameters().getDescription());
-        snapshotDisk.setCreationDate(new Date());
-        snapshotDisk.setLastModifiedDate(new Date());
-        snapshotDisk.setActive(false);
-        snapshotDisk.setImageStatus(ImageStatus.OK);
-        imageDao.save(snapshotDisk.getImage());
+        disk.setImage(image);
+        disk.setVolumeClassification(VolumeClassification.Snapshot);
+        disk.setDiskSnapshot(true);
+        disk.setDescription(getParameters().getDescription());
+        disk.setCreationDate(new Date());
+        disk.setLastModifiedDate(new Date());
+        disk.setActive(false);
+        disk.setImageStatus(ImageStatus.OK);
+        imageDao.save(disk.getImage());
 
-        return snapshotDisk;
+        return disk;
     }
 
     @Override
