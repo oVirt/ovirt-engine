@@ -1004,12 +1004,12 @@ public class ImagesHandler {
                 true));
     }
 
-    public void teardownImage(Guid storagePoolId,
+    public VDSReturnValue teardownImage(Guid storagePoolId,
                                      Guid newStorageDomainID,
                                      Guid newImageGroupId,
                                      Guid newImageId,
                                      Guid vdsId) {
-        resourceManager.runVdsCommand(VDSCommandType.TeardownImage,
+        return resourceManager.runVdsCommand(VDSCommandType.TeardownImage,
                 new ImageActionsVDSCommandParameters(vdsId,
                         storagePoolId,
                         newStorageDomainID,
