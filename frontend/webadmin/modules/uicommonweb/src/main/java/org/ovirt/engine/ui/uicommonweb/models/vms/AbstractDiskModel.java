@@ -1022,6 +1022,10 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     protected void forceCreationWarning(ArrayList<String> usedLunsMessages) {
+        if (getConfirmWindow() != null) {
+            return;
+        }
+
         ConfirmationModel confirmationModel = new ConfirmationModel();
         setConfirmWindow(confirmationModel);
 
