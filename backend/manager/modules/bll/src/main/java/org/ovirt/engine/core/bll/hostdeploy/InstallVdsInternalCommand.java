@@ -163,8 +163,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         Map<String, String> hostedEngineConfiguration = getParameters().getHostedEngineConfiguration();
         if (hostedEngineConfiguration != null && !hostedEngineConfiguration.isEmpty()) {
             hostedEngineAction = hostedEngineConfiguration.get(HostedEngineHelper.HE_ACTION);
-            hostedEngineContent =
-                    String.format("host_id %s\n", hostedEngineConfiguration.get("HOSTED_ENGINE_CONFIG/host_id"));
+            hostedEngineContent = hostedEngineConfiguration.entrySet()
+                    .stream()
+                    .filter(e -> e.getKey().startsWith(HostedEngineHelper.HE_CONF_PREFIX))
+                    .map(e -> String.format("%s=%s",
+                            e.getKey().substring(0, HostedEngineHelper.HE_CONF_PREFIX.length()),
+                            e.getValue()))
+                    .collect(Collectors.joining("\n"));
         }
 
         String kdumpDestinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);

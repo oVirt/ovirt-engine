@@ -25,7 +25,7 @@
 
 - name: Update hosted engine configuration
   set_fact:
-    content: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}\n"
+    content: "ca_cert={{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}\n"
 
 - name: Add confix prefix dict to content
   set_fact:
