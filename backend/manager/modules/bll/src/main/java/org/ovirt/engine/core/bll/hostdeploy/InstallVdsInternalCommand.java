@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -161,7 +162,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         String hostedEngineContent = "";
         Map<String, String> hostedEngineConfiguration = getParameters().getHostedEngineConfiguration();
         if (hostedEngineConfiguration != null && !hostedEngineConfiguration.isEmpty()) {
-            hostedEngineAction = hostedEngineConfiguration.get("HOSTED_ENGINE/action");
+            hostedEngineAction = hostedEngineConfiguration.get(HostedEngineHelper.HE_ACTION);
             hostedEngineContent =
                     String.format("host_id %s\n", hostedEngineConfiguration.get("HOSTED_ENGINE_CONFIG/host_id"));
         }

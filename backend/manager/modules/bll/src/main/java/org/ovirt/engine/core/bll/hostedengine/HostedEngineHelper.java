@@ -31,12 +31,15 @@ import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.ovirt_host_deploy.constants.Const;
-import org.ovirt.ovirt_host_deploy.constants.HostedEngineEnv;
 
 public class HostedEngineHelper {
 
-    private static final String HE_CONF_HOST_ID = "host_id";
+    public static final String HE_CONF_PREFIX = "HOSTED_ENGINE_CONFIG/";
+    public static final String HE_ACTION = "HOSTED_ENGINE/action";
+    public static final String HE_ACTION_DEPLOY = "deploy";
+    public static final String HE_ACTION_REMOVE = "remove";
+    public static final String HE_ACTION_NONE = "none";
+    public static final String HE_CONF_HOST_ID = "host_id";
 
     private VM hostedEngineVm;
     private StorageDomainStatic storageDomainStatic;
@@ -83,7 +86,7 @@ public class HostedEngineHelper {
         }
 
         Map<String, String> params = new HashMap<>();
-        params.put(HostedEngineEnv.ACTION, fromDeployAction(deployAction));
+        params.put(HE_ACTION, fromDeployAction(deployAction));
         if (HostedEngineDeployConfiguration.Action.DEPLOY == deployAction) {
             params.putAll(hostedEngineConfigFetcher.fetch());
             // This installation method will generate the host id for this HE host. This MUST be
@@ -97,11 +100,12 @@ public class HostedEngineHelper {
     protected String fromDeployAction(HostedEngineDeployConfiguration.Action deployAction) {
         switch (deployAction) {
         case DEPLOY:
-            return Const.HOSTED_ENGINE_ACTION_DEPLOY;
+            return HE_ACTION_DEPLOY;
         case UNDEPLOY:
-            return Const.HOSTED_ENGINE_ACTION_REMOVE;
+            return HE_ACTION_REMOVE;
+        default:
+            return HE_ACTION_NONE;
         }
-        return Const.HOSTED_ENGINE_ACTION_NONE;
     }
 
     public boolean isVmManaged() {
