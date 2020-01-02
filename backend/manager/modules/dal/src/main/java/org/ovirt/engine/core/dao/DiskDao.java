@@ -13,11 +13,11 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
     /**
      * Retrieves all disks for the specified virtual machine id.
      *
-     * @param id
+     * @param vmId
      *            the VM id
      * @return the list of disks
      */
-    List<Disk> getAllForVm(Guid id);
+    List<Disk> getAllForVm(Guid vmId);
 
     /**
      * Retrieves all disks for each vm passed
@@ -31,19 +31,19 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
     /**
      * Retrieves all disks for the specified virtual machine id.
      *
-     * @param id
+     * @param vmId
      *            the VM id
      * @param onlyPluggedDisks
      *            whether to returned only the disks plugged to the VM or not
      * @return the list of disks
      */
-    List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks);
+    List<Disk> getAllForVm(Guid vmId, boolean onlyPluggedDisks);
 
     /**
      * Retrieves all disks for the specified virtual machine id,
      * with optional filtering
      *
-     * @param id
+     * @param vmId
      *            the VM id
      * @param userID
      *            the ID of the user requesting the information
@@ -52,12 +52,12 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
 
      * @return the list of disks
      */
-    List<Disk> getAllForVm(Guid id, Guid userID, boolean isFiltered);
+    List<Disk> getAllForVm(Guid vmId, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all disks for the specified virtual machine id, with optional filtering
      *
-     * @param id
+     * @param vmId
      *            the VM id
      * @param onlyPluggedDisks
      *            whether to returned only the disks plugged to the VM or not
@@ -68,7 +68,7 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
      *
      * @return the list of disks
      */
-    List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks, Guid userID, boolean isFiltered);
+    List<Disk> getAllForVm(Guid vmId, boolean onlyPluggedDisks, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves a list of disk IDs with missing/damaged snapshot for a specified virtual machine id.
@@ -126,7 +126,7 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
     /**
      * Returns the Disk with the specified id, with optional filtering.
      *
-     * @param id
+     * @param diskId
      *            the Disk id
      * @param userID
      *            the ID of the user requesting the information
@@ -134,7 +134,7 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
      *            Whether the results should be filtered according to the user's permissions
      * @return the Disk
      */
-    Disk get(Guid id, Guid userID, boolean isFiltered);
+    Disk get(Guid diskId, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all disks for the specified virtual machine id, with optional filtering. Only data for the UI basic
@@ -180,7 +180,7 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
     /**
      * Retrieves all disks for the specified disk id, with optional filtering.
      *
-     * @param id
+     * @param diskId
      *            the disk id
      * @param userID
      *            the ID of the user requesting the information
@@ -189,5 +189,5 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
 
      * @return the list of disks
      */
-    public List<Disk> getAllFromDisksIncludingSnapshotsByDiskId(Guid id, Guid userID, boolean isFiltered);
+    public List<Disk> getAllFromDisksIncludingSnapshotsByDiskId(Guid diskId, Guid userID, boolean isFiltered);
 }

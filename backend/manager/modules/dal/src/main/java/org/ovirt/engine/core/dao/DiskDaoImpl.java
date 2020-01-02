@@ -33,30 +33,30 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     }
 
     @Override
-    public Disk get(Guid id, Guid userID, boolean isFiltered) {
+    public Disk get(Guid diskId, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetDiskByDiskId", diskRowMapper, getCustomMapSqlParameterSource()
-                .addValue("disk_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
+                .addValue("disk_id", diskId).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
-    public List<Disk> getAllForVm(Guid id) {
-        return getAllForVm(id, false);
+    public List<Disk> getAllForVm(Guid vmId) {
+        return getAllForVm(vmId, false);
     }
 
     @Override
-    public List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks) {
-        return getAllForVm(id, onlyPluggedDisks, null, false);
+    public List<Disk> getAllForVm(Guid vmId, boolean onlyPluggedDisks) {
+        return getAllForVm(vmId, onlyPluggedDisks, null, false);
     }
 
     @Override
-    public List<Disk> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
-        return getAllForVm(id, false, userID, isFiltered);
+    public List<Disk> getAllForVm(Guid vmId, Guid userID, boolean isFiltered) {
+        return getAllForVm(vmId, false, userID, isFiltered);
     }
 
     @Override
-    public List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks, Guid userID, boolean isFiltered) {
+    public List<Disk> getAllForVm(Guid vmId, boolean onlyPluggedDisks, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                        .addValue("vm_guid", id)
+                        .addValue("vm_guid", vmId)
                         .addValue("only_plugged", onlyPluggedDisks)
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
@@ -163,9 +163,9 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     }
 
     @Override
-    public List<Disk> getAllFromDisksIncludingSnapshotsByDiskId(Guid id, Guid userID, boolean isFiltered) {
+    public List<Disk> getAllFromDisksIncludingSnapshotsByDiskId(Guid diskId, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("disk_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+                .addValue("disk_id", diskId).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetDiskAndSnapshotsByDiskId", diskRowMapper, parameterSource);
     }
 
