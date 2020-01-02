@@ -2603,21 +2603,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetNetworkAttachmentByNicIdAndNetworkId (
-    v_nic_id UUID,
-    v_network_id UUID
-    )
-RETURNS SETOF network_attachments STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT na.*
-    FROM network_attachments na
-    WHERE na.network_id = v_network_id
-        AND na.nic_id = v_nic_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION RemoveNetworkAttachmentByNetworkId (v_id UUID)
 RETURNS VOID AS $PROCEDURE$
 BEGIN
