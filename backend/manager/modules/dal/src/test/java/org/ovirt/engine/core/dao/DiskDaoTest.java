@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 9;
+    private static final int TOTAL_DISK_IMAGES = 10;
 
     @Override
     protected Guid getExistingEntityId() {
@@ -246,7 +246,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllFromDisksIncludingSnapshots() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(null, false);
-        assertEquals(16, result.size(), "wrong number of returned disks");
+        assertEquals(17, result.size(), "wrong number of returned disks");
     }
 
     @Test
@@ -258,13 +258,13 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForUnprivilegedUserWithoutFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(UNPRIVILEGED_USER_ID, false);
-        assertEquals(16, result.size(), "wrong number of returned disks");
+        assertEquals(17, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithoutFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, false);
-        assertEquals(16, result.size(), "wrong number of returned disks");
+        assertEquals(17, result.size(), "wrong number of returned disks");
     }
 
     @Test
@@ -305,5 +305,19 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         List<Disk> result =
                 dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, UNPRIVILEGED_USER_ID, true);
         assertEquals(0, result.size(), "wrong number of returned disks");
+    }
+
+    @Test
+    public void testGetImagesWithMoreThanOneActiveSnapshotForVm() {
+        List<Guid> result =
+                dao.getImagesWithDamagedSnapshotForVm(FixturesTool.VM_RHEL5_POOL_57);
+        assertEquals(1, result.size(), "wrong number of returned disks");
+    }
+
+    @Test
+    public void testGetImagesWithNotExistsSnapshotForVm() {
+        List<Guid> result =
+                dao.getImagesWithDamagedSnapshotForVm(FixturesTool.VM_RHEL5_POOL_60);
+        assertEquals(1, result.size(), "wrong number of returned disks");
     }
 }

@@ -437,6 +437,17 @@ public class FixturesTool {
     protected static final Guid DISK_ID_2 = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a36");
 
     /**
+     * Predefined disk for testing with non-existing vm_snapshot_id and the following properties:
+     * <ul>
+     * <li>disk_id: 1b26a52b-b60f-44cb-9f46-3ef333b04a49</li>
+     * <li>image_guid: c9a559d9-8666-40d1-9967-759502b19f0e</li>
+     * <li>vm_id: 77296e00-0cad-4e5a-9299-008a7b6f4360</li>
+     * <li>vm_snapshot_id: a7bb24df-9fdf-4bd6-b7a9-f5ce52da8888</li>
+     * </ul>
+     */
+    protected static final Guid DISK_ID_3 = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a49");
+
+    /**
      * Predefined Job with Steps
      */
     protected static final Guid JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
