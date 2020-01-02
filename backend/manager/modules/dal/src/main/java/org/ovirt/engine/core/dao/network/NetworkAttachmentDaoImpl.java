@@ -128,8 +128,8 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
         Objects.requireNonNull(nicId, "nicId cannot be null");
         Objects.requireNonNull(networkId, "networkId cannot be null");
 
-        return getCallsHandler().executeRead("GetNetworkAttachmentByNicIdAndNetworkId",
-                qosDaoAttachmentMapper,
+        return getCallsHandler().executeRead("GetNetworkAttachmentWithQosByNicIdAndNetworkId",
+                attachmentWithQosMapper,
                 getCustomMapSqlParameterSource().addValue("nic_id", nicId).addValue("network_id", networkId));
     }
 
