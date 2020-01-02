@@ -2557,6 +2557,52 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetNetworkAttachmentWithQosByNicIdAndNetworkId (
+    v_nic_id UUID,
+    v_network_id UUID
+    )
+RETURNS SETOF network_attachments_qos_rs STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT
+        s1.id,
+        s1.network_id,
+        s1.nic_id,
+        s1.boot_protocol,
+        s1.address,
+        s1.netmask,
+        s1.gateway,
+        s1.custom_properties,
+        s1._create_date,
+        s1._update_date,
+        s1.ipv6_boot_protocol,
+        s1.ipv6_address,
+        s1.ipv6_prefix,
+        s1.ipv6_gateway,
+        s1.dns_resolver_configuration_id,
+        s2.id AS qos_id,
+        s2.name AS qos_name,
+        s2.qos_type,
+        s2.out_average_linkshare,
+        s2.out_average_upperlimit,
+        s2.out_average_realtime
+    FROM (
+        SELECT na.*
+        FROM network_attachments na
+        WHERE na.network_id = v_network_id
+            AND na.nic_id = v_nic_id
+        ) s1
+    LEFT JOIN (
+            SELECT *
+            FROM qos
+            WHERE qos.qos_type = 4
+        ) s2
+        ON s1.id = s2.id
+    ;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentByNicIdAndNetworkId (
     v_nic_id UUID,
     v_network_id UUID
