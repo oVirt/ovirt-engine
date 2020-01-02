@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class EventsListPopover extends OvirtPopover {
 
     private static final String TEMPLATE = "<div class=\"drawer-pf drawer-pf-notifications-non-clickable\">" //$NON-NLS-1$
-            + "<div class=\"popover-content\" style=\"padding: 0px\"></div>" //$NON-NLS-1$
+            + "<div class=\"popover-content\"></div>" //$NON-NLS-1$
             + "</div>"; //$NON-NLS-1$
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -38,20 +38,19 @@ public class EventsListPopover extends OvirtPopover {
     private static final String EVENT_ACCORDION = "event_notification_accordion"; // $NON-NLS-1$
     private static final String CONTENT = "event_notification_content"; // $NON-NLS-1$
 
-    private AnchorListItem eventListButton = new AnchorListItem();
-    private Span eventListButtonBadge = new Span();
+    private AnchorListItem eventListButton;
+    private Span eventListButtonBadge;
     private boolean expanded = false;
     private WidgetTooltip eventListButtonTooltip;
 
-    private Anchor titleAnchor;
-
-    private PanelGroup contentPanel = new PanelGroup();
+    private PanelGroup contentPanel;
 
     private List<NotificationListWidget> notificationWidgetList = new ArrayList<>();
 
     private int footerHeight = 0;
 
     public EventsListPopover(String title, HasCssName iconType) {
+        eventListButton = new AnchorListItem();
         eventListButton.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER);
         eventListButton.addStyleName(Styles.DROPDOWN);
         eventListButton.addClickHandler(e -> {
@@ -61,27 +60,37 @@ public class EventsListPopover extends OvirtPopover {
                 show();
             }
         });
+
         eventListButtonTooltip = new WidgetTooltip(eventListButton);
         eventListButtonTooltip.setHtml(SafeHtmlUtils.fromSafeConstant(constants.eventsAndAlerts()));
         eventListButtonTooltip.setPlacement(Placement.BOTTOM);
-        Anchor anchor = (Anchor) eventListButton.getWidget(0);
-        anchor.addStyleName(PatternflyConstants.NAV_ITEM_ICONIC);
-        anchor.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER_ICON);
+
         Span iconPanel = new Span();
         iconPanel.addStyleName(Styles.FONT_AWESOME_BASE);
         iconPanel.addStyleName(iconType.getCssName());
-        anchor.add(iconPanel);
-        anchor.setId(EVENT_ANCHOR_ID);
-        setContainer(iconPanel);
+
+        eventListButtonBadge = new Span();
         eventListButtonBadge.setStyleName(Styles.BADGE);
+
+        Anchor anchor = (Anchor) eventListButton.getWidget(0);
+        anchor.setId(EVENT_ANCHOR_ID);
+        anchor.addStyleName(PatternflyConstants.NAV_ITEM_ICONIC);
+        anchor.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER_ICON);
+        anchor.add(iconPanel);
         anchor.add(eventListButtonBadge);
+
+        setContainer(iconPanel);
         setWidget(eventListButton);
+
+        contentPanel = new PanelGroup();
         contentPanel.setId(EVENT_ACCORDION);
         contentPanel.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+
         FlowPanel content = new FlowPanel();
         content.add(createTitleHeader(title));
         content.add(contentPanel);
         addContent(content, CONTENT);
+
         setTrigger(Trigger.MANUAL);
         setPlacement(Placement.BOTTOM);
         setAlternateTemplate(TEMPLATE);
@@ -114,16 +123,19 @@ public class EventsListPopover extends OvirtPopover {
     private IsWidget createTitleHeader(String title) {
         FlowPanel header = new FlowPanel();
         header.addStyleName(PatternflyConstants.PF_DRAWER_TITLE);
-        titleAnchor = new Anchor();
+
+        Anchor titleAnchor = new Anchor();
         titleAnchor.addStyleName(PatternflyConstants.PF_DRAWER_TOGGLE_EXPAND);
         titleAnchor.addClickHandler(e -> toggle());
         header.add(titleAnchor);
+
         Anchor closeAnchor = new Anchor();
         closeAnchor.addStyleName(PatternflyConstants.PF_DRAWER_CLOSE);
         closeAnchor.addStyleName(PatternflyConstants.PFICON);
         closeAnchor.addStyleName(PatternflyConstants.PFICON_CLOSE);
         closeAnchor.addClickHandler(e -> hide());
         header.add(closeAnchor);
+
         Heading titleHeading = new Heading(HeadingSize.H3, title);
         titleHeading.addStyleName(PatternflyConstants.CENTER_TEXT);
         header.add(titleHeading);

@@ -244,3 +244,22 @@ here. Please create new partials when it makes sense.
 .confirmCheckBoxLabel {
     padding-top: 3px;
 }
+
+/*
+  Notification drawer layout overrides (fix for https://gerrit.ovirt.org/106057)
+*/
+.drawer-pf {
+
+  .popover-content {
+      padding: 0;
+  }
+
+  #event_notification_accordion {
+      overflow-y: hidden;
+  }
+
+  .drawer-pf-action .btn-block+.btn-block {
+      margin: 0;
+  }
+
+}
