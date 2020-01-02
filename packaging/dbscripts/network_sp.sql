@@ -2485,22 +2485,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetNetworkAttachmentsByHostId (v_host_id UUID)
-RETURNS SETOF network_attachments STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT *
-    FROM network_attachments
-    WHERE EXISTS (
-            SELECT 1
-            FROM vds_interface
-            WHERE network_attachments.nic_id = vds_interface.id
-                AND vds_interface.vds_id = v_host_id
-            );
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 DROP TYPE IF EXISTS network_attachments_qos_rs CASCADE;
 CREATE TYPE network_attachments_qos_rs AS (
     id UUID,
