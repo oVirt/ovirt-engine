@@ -116,12 +116,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Guid vmBackupId = createVmBackup();
         log.info("Created VmBackup entity '{}'", vmBackupId);
 
-        log.info("Redefine previous VM checkpoints for VM '{}'", vmId);
-        if (!redefineVmCheckpoints()) {
-            setCommandStatus(CommandStatus.FAILED);
-            return;
-        }
-        log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
+        // TODO: currently skip redefining backup checkpoints.
+        // Will allow creating a full backup for a vm.
+        // Redefine checkpoints should be implemented and used when the
+        // API between the engine and vdsm will be re-designed.
+        //
+        // log.info("Redefine previous VM checkpoints for VM '{}'", vmId);
+        // if (!redefineVmCheckpoints()) {
+        //     setCommandStatus(CommandStatus.FAILED);
+        //     return;
+        // }
+        // log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
 
         log.info("Creating VmCheckpoint entity for VM '{}'", vmId);
         Guid vmCheckpointId = createVmCheckpoint();
