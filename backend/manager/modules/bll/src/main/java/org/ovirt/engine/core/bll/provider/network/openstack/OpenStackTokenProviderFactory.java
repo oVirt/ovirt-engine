@@ -22,6 +22,6 @@ public class OpenStackTokenProviderFactory {
 
     public static boolean isApiV3(Provider provider) {
         String authUrl = provider.getAuthUrl();
-        return authUrl.endsWith("/v3") || authUrl.endsWith("/v3/");
+        return authUrl != null && (authUrl.endsWith("/v3") || authUrl.endsWith("/v3/"));
     }
 }
