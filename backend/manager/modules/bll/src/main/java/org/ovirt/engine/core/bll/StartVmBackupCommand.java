@@ -115,9 +115,9 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected void executeCommand() {
-        Guid vmId = getParameters().getVmBackup().getVmId();
+        VmBackup vmBackup = getParameters().getVmBackup();
 
-        log.info("Creating VmBackup entity for VM '{}'", vmId);
+        log.info("Creating VmBackup entity for VM '{}'", vmBackup.getVmId());
         Guid vmBackupId = createVmBackup();
         log.info("Created VmBackup entity '{}'", vmBackupId);
 
@@ -133,10 +133,18 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         // }
         // log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
 
-        log.info("Creating VmCheckpoint entity for VM '{}'", vmId);
+        log.info("Creating VmCheckpoint entity for VM '{}'", vmBackup.getVmId());
         Guid vmCheckpointId = createVmCheckpoint();
         log.info("Created VmCheckpoint entity '{}'", vmCheckpointId);
 
+        // Update the VmBackup to include the checkpoint ID.
+        vmBackup.setToCheckpointId(vmCheckpointId);
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmBackupDao.update(vmBackup);
+            return null;
+        });
+
+        persistCommandIfNeeded();
         setActionReturnValue(vmBackupId);
         setSucceeded(true);
     }
