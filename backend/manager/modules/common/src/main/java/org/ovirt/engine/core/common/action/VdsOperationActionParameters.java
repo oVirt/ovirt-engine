@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         password = passwordVal;
         authMethod = AuthenticationMethod.Password;
         enableSerialConsole = true;
-        affinityLabels = new ArrayList<>();
     }
 
     public VdsOperationActionParameters(VdsStatic vdsStatic) {
@@ -75,7 +73,6 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     public VdsOperationActionParameters() {
         authMethod = AuthenticationMethod.Password;
         enableSerialConsole = true;
-        affinityLabels = new ArrayList<>();
     }
 
     public VdsStatic getVdsStaticData() {
