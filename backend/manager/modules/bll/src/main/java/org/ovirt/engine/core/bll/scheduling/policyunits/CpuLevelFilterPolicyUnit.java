@@ -118,15 +118,16 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
             if (missingFlags.isEmpty()) {
                 hostsToRunOn.add(host);
             } else {
+                String formattedFlags = formatFlags(missingFlags);
                 if (log.isDebugEnabled()) {
                     log.debug("Host {} can't run the VM because its CPU flags are missing VM's required CPU flags."
                                     + " It is missing flags: {}.",
                             host.getName(),
-                            formatFlags(missingFlags)
-                        );
-                    messages.addMessage(host.getId(), String.format("$cpuFlags %1$s", formatFlags(missingFlags)));
-                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__LOW_CPU_LEVEL.toString());
+                            formattedFlags
+                    );
                 }
+                messages.addMessage(host.getId(), String.format("$cpuFlags %1$s", formattedFlags));
+                messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__LOW_CPU_LEVEL.toString());
             }
         }
         return hostsToRunOn;
