@@ -71,6 +71,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
+    private List<DiskImage> disksList;
+
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -116,6 +118,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     @Override
     protected void executeCommand() {
         VmBackup vmBackup = getParameters().getVmBackup();
+
+        // sets the backup disks with the disks from the DB
+        // that contain all disk image data
+        vmBackup.setDisks(getDisks());
 
         log.info("Creating VmBackup entity for VM '{}'", vmBackup.getVmId());
         Guid vmBackupId = createVmBackup();
@@ -228,8 +234,9 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
         TransactionSupport.executeInNewTransaction(() -> {
             vmCheckpointDao.save(vmCheckpoint);
-            getParameters().getVmBackup().getDisks().forEach(
-                    disk -> vmCheckpointDao.addDiskToCheckpoint(vmCheckpoint.getId(), disk.getId()));
+            getParameters().getVmBackup().getDisks().stream()
+                    .filter(DiskImage::isQcowFormat)
+                    .forEach(disk -> vmCheckpointDao.addDiskToCheckpoint(vmCheckpoint.getId(), disk.getId()));
             return null;
         });
         persistCommandIfNeeded();
@@ -398,11 +405,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private List<DiskImage> getDisks() {
-        List<Disk> disks = diskDao.getAllForVm(getVmId());
-        List<DiskImage> diskImages = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE,
-                ONLY_SNAPABLE, ONLY_ACTIVE);
-        diskImages = diskImages.stream().filter(d -> getDiskIds().contains(d.getId())).collect(Collectors.toList());
-        return diskImages;
+        if (disksList == null) {
+            List<Disk> vmDisks = diskDao.getAllForVm(getVmId());
+            List<DiskImage> diskImages = DisksFilter.filterImageDisks(vmDisks, ONLY_NOT_SHAREABLE,
+                    ONLY_SNAPABLE, ONLY_ACTIVE);
+            disksList = diskImages.stream().filter(d -> getDiskIds().contains(d.getId())).collect(Collectors.toList());
+        }
+        return disksList;
     }
 
 }
