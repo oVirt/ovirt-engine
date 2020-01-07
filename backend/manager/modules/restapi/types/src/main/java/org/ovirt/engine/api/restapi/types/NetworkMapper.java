@@ -165,6 +165,10 @@ public class NetworkMapper {
                     DnsResolverConfigurationMapper.map(entity.getDnsResolverConfiguration()));
         }
 
+        if (entity.getVdsmName() != null) {
+            model.setVdsmName(entity.getVdsmName());
+        }
+
         if (entity.isExternal()) {
             OpenStackNetworkProvider externalProvider = new OpenStackNetworkProvider();
             externalProvider.setId(entity.getProvidedBy().getProviderId().toString());
