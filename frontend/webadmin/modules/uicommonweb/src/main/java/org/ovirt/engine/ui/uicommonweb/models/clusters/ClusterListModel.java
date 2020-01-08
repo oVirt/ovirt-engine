@@ -333,6 +333,11 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     }
 
     private void queryHostNamesOutOfSync(Collection<Cluster> clustersCollection) {
+        if (clustersCollection.isEmpty()) {
+            setItems(clustersCollection);
+            return;
+        }
+
         ArrayList<Cluster> clusters = new ArrayList<>(clustersCollection);
         ArrayList<QueryParametersBase> parameters = new ArrayList<>();
         ArrayList<QueryType> queryTypes = new ArrayList<>();
