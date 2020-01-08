@@ -1,4 +1,2 @@
 ---
 hosted_engine_conf: /etc/ovirt-hosted-engine/hosted-engine.conf
-ovirt_vdsm_trust_store: /etc/pki/vdsm
-ovirt_vdsm_spice_ca_file: libvirt-spice/ca-cert.pem

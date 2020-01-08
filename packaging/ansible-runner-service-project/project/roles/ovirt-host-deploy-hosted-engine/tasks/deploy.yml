@@ -23,18 +23,16 @@
   tags:
     - skip_ansible_lint # E403
 
-- name: Update hosted engine configuration
-  set_fact:
-    content: "ca_cert={{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}\n"
-
-- name: Add confix prefix dict to content
-  set_fact:
-    content: "{{ content }}{{ hosted_engine_deploy_content }}"
-
-- name: Copy content to hosted engine conf file
+- name: Store hosted engine configuration
   copy:
+    src: "{{ hosted_engine_tmp_cfg_file }}"
     dest: "{{ hosted_engine_conf }}"
-    content: "{{ content }}"
+
+- name: Update host ID in hosted engine configuration
+  lineinfile:
+    path: "{{ hosted_engine_conf }}"
+    regex: "^host_id="
+    line: "host_id={{ hosted_engine_host_id }}"
 
 - name: Start ovirt-ha-agent service
   service:

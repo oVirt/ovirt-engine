@@ -4,7 +4,9 @@ import static org.ovirt.engine.core.common.businessentities.ExternalNetworkPlugi
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -73,6 +76,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private ClusterDao clusterDao;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     @Inject
     private AnsibleExecutor ansibleExecutor;
@@ -158,112 +163,159 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     private void runAnsibleHostDeployPlaybook() {
         String hostedEngineAction = "";
-        String hostedEngineContent = "";
-        Map<String, String> hostedEngineConfiguration = getParameters().getHostedEngineConfiguration();
-        if (hostedEngineConfiguration != null && !hostedEngineConfiguration.isEmpty()) {
-            hostedEngineAction = hostedEngineConfiguration.get(HostedEngineHelper.HE_ACTION);
-            hostedEngineContent = hostedEngineConfiguration.entrySet()
-                    .stream()
-                    .filter(e -> e.getKey().startsWith(HostedEngineHelper.HE_CONF_PREFIX))
-                    .map(e -> String.format("%s=%s",
-                            e.getKey().substring(0, HostedEngineHelper.HE_CONF_PREFIX.length()),
-                            e.getValue()))
-                    .collect(Collectors.joining("\n"));
+        File hostedEngineTmpCfgFile = null;
+        if (getParameters().getHostedEngineDeployConfiguration() != null) {
+            hostedEngineAction =
+                    getParameters().getHostedEngineDeployConfiguration().getDeployAction().name().toLowerCase();
         }
 
-        String kdumpDestinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);
-        if (StringUtils.isBlank(kdumpDestinationAddress)) {
-            // destination address not entered, use engine FQDN
-            kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
+        try {
+            hostedEngineTmpCfgFile = Files.createTempFile("temp-he-config", "").toFile();
+        } catch (Exception ex) {
+            throw new VdsInstallException(
+                    VDSStatus.InstallFailed,
+                    String.format(
+                            "Failed to create temporary file for hosted engine configuration: %s",
+                            ex.getMessage()));
         }
-        Cluster hostCluster = clusterDao.get(getClusterId());
-        VDS vds = getVds();
-        boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
-        String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
-        Version clusterVersion = hostCluster.getCompatibilityVersion();
+        try {
+            if (HostedEngineDeployConfiguration.Action.DEPLOY.name().equalsIgnoreCase(hostedEngineAction)) {
+                fetchHostedEngineConfigFile(hostedEngineTmpCfgFile.getPath());
+            }
+
+            String kdumpDestinationAddress = Config.getValue(ConfigValues.FenceKdumpDestinationAddress);
+            if (StringUtils.isBlank(kdumpDestinationAddress)) {
+                // destination address not entered, use engine FQDN
+                kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
+            }
+            Cluster hostCluster = clusterDao.get(getClusterId());
+            VDS vds = getVds();
+            boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
+            String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
+            Version clusterVersion = hostCluster.getCompatibilityVersion();
+            AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+                    .hosts(vds)
+                    .variable("host_deploy_cluster_version", clusterVersion)
+                    .variable("host_deploy_cluster_name", hostCluster.getName())
+                    .variable("host_deploy_cluster_switch_type",
+                            hostCluster.getRequiredSwitchTypeForCluster().getOptionValue())
+                    .variable("host_deploy_gluster_enabled", hostCluster.supportsGlusterService())
+                    .variable("host_deploy_virt_enabled", hostCluster.supportsVirtService())
+                    .variable("host_deploy_vdsm_port", vds.getPort())
+                    .variable("host_deploy_override_firewall", getParameters().getOverrideFirewall())
+                    .variable("host_deploy_firewall_type", hostCluster.getFirewallType().name())
+                    .variable("ansible_port", vds.getSshPort())
+                    .variable("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
+                    .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(vds))
+                    .variable("host_deploy_ovn_central", getOvnCentral())
+                    .variable("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
+                    .variable("host_deploy_kdump_integration", vds.isPmEnabled() && vds.isPmKdumpDetection())
+                    .variable("host_deploy_kdump_destination_address", kdumpDestinationAddress)
+                    .variable("host_deploy_kdump_destination_port",
+                            Config.getValue(ConfigValues.FenceKdumpDestinationPort))
+                    .variable("host_deploy_kdump_message_interval",
+                            Config.getValue(ConfigValues.FenceKdumpMessageInterval))
+                    .variable("host_deploy_kernel_cmdline_new", vds.getCurrentKernelCmdline())
+                    .variable("host_deploy_kernel_cmdline_old", vds.getLastStoredKernelCmdline())
+                    .variable("ovirt_pki_dir", config.getPKIDir())
+                    .variable("ovirt_vds_hostname", vds.getHostName())
+                    .variable("ovirt_san", CertificateUtils.getSan(vds.getHostName()))
+                    .variable("ovirt_vdscertificatevalidityinyears",
+                            Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
+                    .variable("ovirt_signcerttimeoutinseconds",
+                            Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
+                    .variable("ovirt_ca_key",
+                            PKIResources.getCaCertificate()
+                                    .toString(PKIResources.Format.OPENSSH_PUBKEY)
+                                    .replace("\n", ""))
+                    .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
+                    .variable("ovirt_qemu_ca_cert", PKIResources.getQemuCaCertificate().toString(PKIResources.Format.X509_PEM))
+                    .variable("ovirt_engine_usr", config.getUsrDir())
+                    .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
+                    .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
+                    .variable("host_deploy_gluster_supported", isGlusterServiceSupported)
+                    .variable("host_deploy_tuned_profile", tunedProfile)
+                    .variable("host_deploy_vdsm_encrypt_host_communication",
+                            Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString())
+                    .variable("host_deploy_vdsm_nmstate_enabled",
+                            Config.getValue(ConfigValues.VdsmUseNmstate, clusterVersion.toString()))
+                    .variable("host_deploy_vdsm_ssl_ciphers", Config.<String> getValue(ConfigValues.VdsmSSLCiphers))
+                    .variable("host_deploy_vdsm_min_version", Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion))
+                    .variable("hosted_engine_deploy_action", hostedEngineAction)
+                    .variable("hosted_engine_tmp_cfg_file", hostedEngineTmpCfgFile)
+                    .variable("hosted_engine_host_id", hostedEngineHelper.offerHostId(vds.getId()))
+                    .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
+                    // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
+                    .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
+                    .logFilePrefix("ovirt-host-deploy-ansible")
+                    .logFileName(vds.getHostName())
+                    .logFileSuffix(getCorrelationId())
+                    .correlationId(getCorrelationId())
+                    .playAction(String.format("Installing Host %s", vds.getName()))
+                    .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
+
+            AuditLogable logable = new AuditLogableImpl();
+            logable.setVdsName(vds.getName());
+            logable.setVdsId(vds.getId());
+            logable.setCorrelationId(getCorrelationId());
+            auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
+
+            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+                    commandConfig,
+                    log,
+                    (eventName, eventUrl) -> setVdsmId(eventName, eventUrl)
+            );
+            if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+                throw new VdsInstallException(
+                    VDSStatus.InstallFailed,
+                    String.format(
+                        "Failed to execute Ansible host-deploy role: %1$s. Please check logs for more details: %2$s",
+                        ansibleReturnValue.getStderr(),
+                        ansibleReturnValue.getLogFile()
+                    )
+                );
+            }
+
+            auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_FINISHED);
+        } finally {
+            if (hostedEngineTmpCfgFile != null) {
+                try {
+                    hostedEngineTmpCfgFile.delete();
+                } catch (Exception ex) {
+                    log.error("Error deleting temporary file '{}': {}",
+                            hostedEngineTmpCfgFile.toString(),
+                            ex.getMessage());
+                }
+            }
+        }
+    }
+
+    private void fetchHostedEngineConfigFile(String tmpHEConfigFileName) {
+        VDS vds = vdsDao.get(hostedEngineHelper.getRunningHostId());
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(vds)
-                .variable("host_deploy_cluster_version", clusterVersion)
-                .variable("host_deploy_cluster_name", hostCluster.getName())
-                .variable("host_deploy_cluster_switch_type",
-                        hostCluster.getRequiredSwitchTypeForCluster().getOptionValue())
-                .variable("host_deploy_gluster_enabled", hostCluster.supportsGlusterService())
-                .variable("host_deploy_virt_enabled", hostCluster.supportsVirtService())
-                .variable("host_deploy_vdsm_port", vds.getPort())
-                .variable("host_deploy_override_firewall", getParameters().getOverrideFirewall())
-                .variable("host_deploy_firewall_type", hostCluster.getFirewallType().name())
-                .variable("ansible_port", vds.getSshPort())
-                .variable("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
-                .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(vds))
-                .variable("host_deploy_ovn_central", getOvnCentral())
-                .variable("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")
-                .variable("host_deploy_kdump_integration", vds.isPmEnabled() && vds.isPmKdumpDetection())
-                .variable("host_deploy_kdump_destination_address", kdumpDestinationAddress)
-                .variable("host_deploy_kdump_destination_port",
-                        Config.getValue(ConfigValues.FenceKdumpDestinationPort))
-                .variable("host_deploy_kdump_message_interval",
-                        Config.getValue(ConfigValues.FenceKdumpMessageInterval))
-                .variable("host_deploy_kernel_cmdline_new", vds.getCurrentKernelCmdline())
-                .variable("host_deploy_kernel_cmdline_old", vds.getLastStoredKernelCmdline())
-                .variable("ovirt_pki_dir", config.getPKIDir())
-                .variable("ovirt_vds_hostname", vds.getHostName())
-                .variable("ovirt_san", CertificateUtils.getSan(vds.getHostName()))
-                .variable("ovirt_vdscertificatevalidityinyears",
-                        Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
-                .variable("ovirt_signcerttimeoutinseconds",
-                        Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
-                .variable("ovirt_ca_key",
-                        PKIResources.getCaCertificate()
-                                .toString(PKIResources.Format.OPENSSH_PUBKEY)
-                                .replace("\n", ""))
-                .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
-                .variable("ovirt_qemu_ca_cert", PKIResources.getQemuCaCertificate().toString(PKIResources.Format.X509_PEM))
-                .variable("ovirt_engine_usr", config.getUsrDir())
-                .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
-                .variable("host_deploy_iptables_rules", getIptablesRules(vds, hostCluster))
-                .variable("host_deploy_gluster_supported", isGlusterServiceSupported)
-                .variable("host_deploy_tuned_profile", tunedProfile)
-                .variable("host_deploy_vdsm_encrypt_host_communication",
-                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString())
-                .variable("host_deploy_vdsm_nmstate_enabled",
-                        Config.getValue(ConfigValues.VdsmUseNmstate, clusterVersion.toString()))
-                .variable("host_deploy_vdsm_ssl_ciphers", Config.<String> getValue(ConfigValues.VdsmSSLCiphers))
-                .variable("host_deploy_vdsm_min_version", Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion))
-                .variable("hosted_engine_deploy_action", hostedEngineAction)
-                .variable("hosted_engine_deploy_content", hostedEngineContent)
-                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
+                .variable("temp_he_config_file", tmpHEConfigFileName)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-deploy-ansible")
                 .logFileName(vds.getHostName())
                 .logFileSuffix(getCorrelationId())
                 .correlationId(getCorrelationId())
-                .playAction(String.format("Installing Host %s", vds.getName()))
-                .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
-
-        AuditLogable logable = new AuditLogableImpl();
-        logable.setVdsName(vds.getName());
-        logable.setVdsId(vds.getId());
-        logable.setCorrelationId(getCorrelationId());
-        auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
+                .playAction(String.format("Fetching HE configuration from %s", vds.getName()))
+                .playbook(AnsibleConstants.FETCH_HE_CONFIG_FILE_PLAYBOOK);
 
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
                 commandConfig,
                 log,
-                (eventName, eventUrl) -> setVdsmId(eventName, eventUrl)
-        );
+                (eventName, eventUrl) -> setVdsmId(eventName, eventUrl));
         if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             throw new VdsInstallException(
-                VDSStatus.InstallFailed,
-                String.format(
-                    "Failed to execute Ansible host-deploy role: %1$s. Please check logs for more details: %2$s",
-                    ansibleReturnValue.getStderr(),
-                    ansibleReturnValue.getLogFile()
-                )
-            );
+                    VDSStatus.InstallFailed,
+                    String.format(
+                            "Failed to fetch hosted engine configuration file. Please check logs for more details: %s",
+                            ansibleReturnValue.getLogFile()));
         }
 
-        auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_FINISHED);
     }
 
     private void setVdsmId(String eventName, String eventUrl) {

@@ -201,11 +201,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             tempVar.setActivateHost(getParameters().getActivateHost());
-            if (getParameters().getHostedEngineDeployConfiguration() != null) {
-                tempVar.setHostedEngineConfiguration(
-                        hostedEngineHelper.createVdsDeployParams(getVdsId(),
-                                getParameters().getHostedEngineDeployConfiguration().getDeployAction()));
-            }
+            tempVar.setHostedEngineDeployConfiguration(getParameters().getHostedEngineDeployConfiguration());
 
             List<ActionReturnValue> resultList = runInternalMultipleActions(
                     actionType,

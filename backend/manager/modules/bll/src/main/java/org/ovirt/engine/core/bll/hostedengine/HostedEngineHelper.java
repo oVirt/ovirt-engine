@@ -1,11 +1,8 @@
 package org.ovirt.engine.core.bll.hostedengine;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
-import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -30,17 +26,8 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class HostedEngineHelper {
-
-    public static final String HE_CONF_PREFIX = "HOSTED_ENGINE_CONFIG/";
-    public static final String HE_ACTION = "HOSTED_ENGINE/action";
-    public static final String HE_ACTION_DEPLOY = "deploy";
-    public static final String HE_ACTION_REMOVE = "remove";
-    public static final String HE_ACTION_NONE = "none";
-    public static final String HE_CONF_HOST_ID = "host_id";
-
     private VM hostedEngineVm;
     private StorageDomainStatic storageDomainStatic;
 
@@ -55,12 +42,6 @@ public class HostedEngineHelper {
 
     @Inject
     private StorageDomainDao storageDomainDao;
-
-    @Inject
-    private ResourceManager resourceManager;
-
-    @Inject
-    private HostedEngineConfigFetcher hostedEngineConfigFetcher;
 
     @Inject
     private VDSBrokerFrontend vdsBroker;
@@ -80,47 +61,18 @@ public class HostedEngineHelper {
         initHostedEngineStorageDomain();
     }
 
-    public Map<String, String> createVdsDeployParams(Guid vdsId, HostedEngineDeployConfiguration.Action deployAction) {
-        if (hostedEngineVm == null) {
-            return Collections.emptyMap();
-        }
-
-        Map<String, String> params = new HashMap<>();
-        params.put(HE_ACTION, fromDeployAction(deployAction));
-        if (HostedEngineDeployConfiguration.Action.DEPLOY == deployAction) {
-            params.putAll(hostedEngineConfigFetcher.fetch());
-            // This installation method will generate the host id for this HE host. This MUST be
-            // set in the configuration other wise the agent won't be able to register itself to
-            // the whiteboard and become a part of the cluster.
-            params.put(HE_CONF_HOST_ID, String.valueOf(offerHostId(vdsId)));
-        }
-        return params;
-    }
-
-    protected String fromDeployAction(HostedEngineDeployConfiguration.Action deployAction) {
-        switch (deployAction) {
-        case DEPLOY:
-            return HE_ACTION_DEPLOY;
-        case UNDEPLOY:
-            return HE_ACTION_REMOVE;
-        default:
-            return HE_ACTION_NONE;
-        }
-    }
-
     public boolean isVmManaged() {
         return hostedEngineVm != null && hostedEngineVm.isManagedVm();
     }
 
     /**
-     * Offer the host id this data center allocated for this host in vds_spm_map. This effectively syncs
-     * between the hosted engine HA identifier and vdsm's host ids that are used when locking storage domain for
-     * monitoring.
+     * Offer the host id this data center allocated for this host in vds_spm_map. This effectively syncs between the
+     * hosted engine HA identifier and vdsm's host ids that are used when locking storage domain for monitoring.
      *
      * @return a numeric host id which identifies this host as part of hosted engine cluster
      */
-    private int offerHostId(Guid vdsId) {
-            return  vdsSpmIdMapDao.get(vdsId).getVdsSpmId();
+    public int offerHostId(Guid vdsId) {
+        return vdsSpmIdMapDao.get(vdsId).getVdsSpmId();
     }
 
     public StorageDomainStatic getStorageDomain() {

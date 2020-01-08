@@ -1372,6 +1372,7 @@ fi
 %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/inventory/hosts
 %{engine_data}/ansible-runner-service-project/project/ansible.cfg
 %{engine_data}/ansible-runner-service-project/project/create-brick.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-fetch-he-config.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-deploy.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-enroll-certificate.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-remove.yml

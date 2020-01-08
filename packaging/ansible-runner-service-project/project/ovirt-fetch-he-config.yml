@@ -1,0 +1,11 @@
+- hosts: all
+  remote_user: root
+  vars:
+      hosted_engine_config_file: "/etc/ovirt-hosted-engine/hosted-engine.conf"
+
+  tasks:
+    - name: Fetch hosted engine configuration file
+      fetch:
+        src: "{{ hosted_engine_config_file }}"
+        dest: "{{ temp_he_config_file }}"
+        flat: yes

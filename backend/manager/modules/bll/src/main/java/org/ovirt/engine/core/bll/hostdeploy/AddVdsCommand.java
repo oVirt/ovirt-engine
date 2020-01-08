@@ -20,7 +20,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -79,8 +78,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Inject
     private AuditLogDirector auditLogDirector;
 
-    @Inject
-    private HostedEngineHelper hostedEngineHelper;
     @Inject
     private ProviderDao providerDao;
     @Inject
@@ -205,12 +202,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setActivateHost(getParameters().getActivateHost());
             installVdsParameters.setNetworkProviderId(getParameters().getVdsStaticData().getOpenstackNetworkProviderId());
-            if (getParameters().getHostedEngineDeployConfiguration() != null) {
-                Map<String, String> vdsDeployParams = hostedEngineHelper.createVdsDeployParams(
-                        getVdsId(),
-                        getParameters().getHostedEngineDeployConfiguration().getDeployAction());
-                installVdsParameters.setHostedEngineConfiguration(vdsDeployParams);
-            }
+            installVdsParameters
+                    .setHostedEngineDeployConfiguration(getParameters().getHostedEngineDeployConfiguration());
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
             Step installStep = executionHandler.addSubStep(getExecutionContext(),
