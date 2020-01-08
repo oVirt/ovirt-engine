@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineMemoryReserv
 import org.ovirt.engine.core.bll.scheduling.policyunits.HugePagesFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.MDevicePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationTscFrequencyPolicyUnit;
@@ -102,6 +103,7 @@ public class InternalPolicyUnits {
         mandatoryUnits.add(HostDeviceFilterPolicyUnit.class);
         mandatoryUnits.add(PinToHostPolicyUnit.class);
         mandatoryUnits.add(VmLeasesReadyFilterPolicyUnit.class);
+        mandatoryUnits.add(MDevicePolicyUnit.class);
     }
 
     public static Collection<Class<? extends PolicyUnitImpl>> getList() {
