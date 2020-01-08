@@ -180,6 +180,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             } else {
                 auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED);
             }
+
+            if (ansibleReturnCode == AnsibleReturnCode.UNREACHABLE) {
+                auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_NO_SUCCESS);
+            }
         } catch (Exception e) {
             auditable.addCustomValue("Message", e.getMessage());
             auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_EXECUTION_FAILED);
