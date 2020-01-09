@@ -667,9 +667,23 @@ public interface CommonApplicationConstants extends Constants {
 
     String pkts();
 
-    String mib();
+    String sizeMiB();
 
-    String gib();
+    String sizeGiB();
+
+    String sizeMB();
+
+    String sizeM();
+
+    String sizeT();
+
+    String sizeTB();
+
+    String sizeG();
+
+    String sizeGB();
+
+    String sizeTiB();
 
     String severityEvent();
 
