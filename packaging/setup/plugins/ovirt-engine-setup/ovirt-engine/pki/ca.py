@@ -558,7 +558,13 @@ class Plugin(plugin.PluginBase):
                         raise RuntimeError('Aborted by user')
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        before=(
+            oengcommcons.Stages.DIALOG_TITLES_E_PKI,
+        ),
+        after=(
+            oengcommcons.Stages.DIALOG_TITLES_S_PKI,
+        ),
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
             not os.path.exists(
