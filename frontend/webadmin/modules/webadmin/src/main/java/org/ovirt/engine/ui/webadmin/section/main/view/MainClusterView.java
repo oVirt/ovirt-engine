@@ -81,8 +81,6 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                     return object.getStoragePoolName();
                 }
             };
-            dataCenterColumn.makeSortable(ClusterConditionFieldAutoCompleter.DATACENTER);
-            getTable().addColumn(dataCenterColumn, constants.dcCluster(), "150px"); //$NON-NLS-1$
         }
 
         AbstractTextColumn<Cluster> versionColumn = new AbstractTextColumn<Cluster>() {

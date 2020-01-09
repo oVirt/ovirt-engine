@@ -8,7 +8,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public static final String COMMENT = "COMMENT";
     public static final String ARCHITECTURE = "ARCHITECTURE";
     public static final String COMPATIBILITY_LEVEL = "COMPATIBILITY_LEVEL";
-    public static final String DATACENTER = "DATACENTER";
     public static final String CPU_TYPE = "CPU_TYPE";
 
     public ClusterConditionFieldAutoCompleter() {
@@ -18,7 +17,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         verbs.add(COMMENT);
         verbs.add(ARCHITECTURE);
         verbs.add(COMPATIBILITY_LEVEL);
-        verbs.add(DATACENTER);
         verbs.add(CPU_TYPE);
 
         // Building the autoCompletion Dict
@@ -29,7 +27,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
         getTypeDictionary().put(COMPATIBILITY_LEVEL, Float.class);
-        getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(CPU_TYPE, String.class);
 
         // building the ColumnName Dict
@@ -38,7 +35,6 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put(COMMENT, "free_text_comment");
         columnNameDict.put(ARCHITECTURE, "architecture");
         columnNameDict.put(COMPATIBILITY_LEVEL, "compatibility_version");
-        columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put(CPU_TYPE, "cpu_name");
 
         // Building the validation dict
