@@ -1375,6 +1375,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String StorageFormatType___V4();
 
+    String StorageFormatType___V5();
+
     String VolumeFormat___COW();
 
     String VolumeFormat___RAW();
