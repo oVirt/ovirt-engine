@@ -237,8 +237,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .variable("host_deploy_tuned_profile", tunedProfile)
                     .variable("host_deploy_vdsm_encrypt_host_communication",
                             Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication).toString())
-                    .variable("host_deploy_vdsm_nmstate_enabled",
-                            Config.getValue(ConfigValues.VdsmUseNmstate, clusterVersion.toString()))
                     .variable("host_deploy_vdsm_ssl_ciphers", Config.<String> getValue(ConfigValues.VdsmSSLCiphers))
                     .variable("host_deploy_vdsm_min_version", Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion))
                     .variable("hosted_engine_deploy_action", hostedEngineAction)

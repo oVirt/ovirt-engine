@@ -321,8 +321,6 @@ select fn_db_add_config_value('LowUtilizationForEvenlyDistribute','0','general')
 select fn_db_add_config_value('LowUtilizationForPowerSave','20','general');
 select fn_db_add_config_value('ManagedDevicesWhiteList','','general');
 select fn_db_add_config_value('DefaultManagementNetwork','ovirtmgmt','general');
-select fn_db_add_config_value_for_versions_up_to('VdsmUseNmstate', 'false', '4.3');
-select fn_db_add_config_value_for_versions_up_to('VdsmUseNmstate', 'true', '4.4');
 select fn_db_add_config_value('MaxAuditLogMessageLength','10000','general');
 select fn_db_add_config_value('MaxBlockDiskSizeInGibiBytes','8192','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');

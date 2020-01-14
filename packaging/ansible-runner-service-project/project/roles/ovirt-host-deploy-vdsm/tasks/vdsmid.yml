@@ -85,11 +85,6 @@
   set_fact:
     vdsm_config_prefix: "[vars]\nssl= {{ host_deploy_vdsm_encrypt_host_communication }} \n"
 
-- name: Add nmstate configuration
-  set_fact:
-    vdsm_config_prefix: "{{ vdsm_config_prefix }}net_nmstate_enabled= {{ host_deploy_vdsm_nmstate_enabled }} \n"
-  when: host_deploy_vdsm_nmstate_enabled|bool
-
 - name: Configure SSL ciphers for EL7
   set_fact:
     vdsm_config_prefix: "{{ vdsm_config_prefix }}ssl_ciphers= {{ host_deploy_vdsm_ssl_ciphers }} \n"
