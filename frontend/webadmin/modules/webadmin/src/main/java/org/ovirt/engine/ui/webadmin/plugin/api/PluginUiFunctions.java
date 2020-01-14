@@ -249,6 +249,11 @@ public class PluginUiFunctions implements HasHandlers {
                 return actionButtonInterface.getIndex();
             }
 
+            @Override
+            public String getUniqueId() {
+                return actionButtonInterface.getId();
+            }
+
         };
     }
 

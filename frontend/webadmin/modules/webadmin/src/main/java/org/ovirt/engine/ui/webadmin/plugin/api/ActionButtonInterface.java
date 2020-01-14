@@ -61,4 +61,14 @@ public final class ActionButtonInterface extends JsInterfaceObject {
         return getValueAsBoolean("moreMenu", false); //$NON-NLS-1$
     }
 
+    /**
+     * Returns the id of the action button.
+     *
+     * <p>
+     * Default return value: {@code null}
+     */
+    public String getId() {
+        return getValueAsString("id", null); //$NON-NLS-1$
+    }
+
 }
