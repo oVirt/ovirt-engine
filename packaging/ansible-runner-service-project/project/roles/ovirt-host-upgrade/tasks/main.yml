@@ -15,12 +15,16 @@
     - updatecheck
     - skip_ansible_lint # E403
 
-- name: Update system
+# Ignoring empty lines and the title "Obsoleting packages"
+- name: Upgrade packages
   yum:
-    name: '*'
+    name: "{{ item }}"
     state: latest
     update_cache: yes
     lock_timeout: 300
+  loop: "{{ yum_result.split('\n') }}"
   tags:
-    - updatecheck
-    - skip_ansible_lint # E403
+  - updatecheck
+  - skip_ansible_lint # E403
+  register: updated_packages
+  when: item and item != "Obsoleting"

@@ -182,10 +182,8 @@ public class AnsibleRunnerHttpClientTest {
                     "\"data\": {",
                     "\"event_data\": {",
                     "\"res\": {",
-                    "\"changed\": true,",
-                    "\"changes\": {",
-                    "\"installed\": [[\"mypackage2\", \"version1\"]],",
-                    "\"updated\": [[\"mypackage1\", \"version1\"]]",
+                    "\"ansible_facts\":{",
+                    "\"yum_result\": \"mypackage1\\nmypackage2\"}",
                     "}",
                     "}",
                     "}",
@@ -195,7 +193,6 @@ public class AnsibleRunnerHttpClientTest {
                 HttpStatus.SC_OK
             )
         );
-
         assertThat(
             client.getYumPackages(any(String.class)),
             containsInAnyOrder("mypackage1", "mypackage2")

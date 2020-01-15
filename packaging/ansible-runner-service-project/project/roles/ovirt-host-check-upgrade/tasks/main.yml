@@ -1,0 +1,29 @@
+---
+- name: Check for system updates (remove empty lines)
+  shell: yum check-update -q | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+  register: yum_updates_res
+  failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
+  tags:
+  - updatecheck
+  - skip_ansible_lint # E305
+
+- name: Remove 'Obsoleting' title from file
+  lineinfile:
+    path: /tmp/yum_updates
+    line: Obsoleting
+    state: absent
+
+- name: Get yum updates file
+  slurp:
+    src: /tmp/yum_updates
+  register: yum_updates
+
+- name: Get yum updates content
+  set_fact:
+    yum_result: "{{ yum_updates['content'] | b64decode }}"
+
+- name: Delete yum_updates file from host
+  file:
+    path: /tmp/yum_updates
+    state: absent
+

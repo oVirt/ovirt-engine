@@ -61,14 +61,15 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         try {
             AnsibleCommandConfig command = new AnsibleCommandConfig()
                 .hosts(host)
-                .checkMode(true)
+
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-check-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible-check")
                 .logFileName(host.getHostName())
                 .logFileSuffix(CorrelationIdTracker.getCorrelationId())
-                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
+                .playbook(AnsibleConstants.HOST_CHECK_UPGRADE_PLAYBOOK)
                 .playAction(String.format("Check for update of host %1$s", host.getName()));
+            setAnsibleCommandConfigVars(command, host);
 
             List<String> availablePackages = new ArrayList<>();
             ansibleReturnValue = ansibleExecutor.runCommand(command,
@@ -131,7 +132,25 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public void update(final VDS host, int timeout) {
-        Cluster cluster = clusterDao.get(host.getClusterId());
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+                .hosts(host)
+                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-mgmt-ansible")
+                .logFileName(host.getHostName())
+                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
+                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
+                .playAction(String.format("Update of host %1$s", host.getName()));
+        setAnsibleCommandConfigVars(commandConfig, host);
+
+        if (ansibleExecutor.runCommand(commandConfig, timeout).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+            String error = String.format("Failed to update host '%1$s'.", host.getHostName());
+            log.error(error);
+            throw new RuntimeException(error);
+        }
+    }
+
+    private void setAnsibleCommandConfigVars(AnsibleCommandConfig command, final VDS host) {
         //The number of days allowed before certificate expiration.
         //(less time left than this requires enrolling for new certificate).
         Integer daysAllowedUntilExpiration = Config.<Integer> getValue(ConfigValues.CertExpirationAlertPeriodInDays);
@@ -140,43 +159,30 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         //variable will contain a seconds-since-1/1/1970 representation 7 days from the current moment.
         long allowedExpirationDateInSeconds = TimeUnit.MILLISECONDS.toSeconds(
                 CertificationValidityChecker.computeFutureExpirationDate(daysAllowedUntilExpiration).getTimeInMillis());
-        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(host)
-                .variable("host_deploy_vnc_restart_services", host.getVdsType() == VDSType.VDS)
-                .variable("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled()))
-                // PKI variables:
-                .variable("ovirt_pki_dir", config.getPKIDir())
-                .variable("ovirt_vds_hostname", host.getHostName())
-                .variable("ovirt_san", CertificateUtils.getSan(host.getHostName()))
-                .variable("ovirt_engine_usr", config.getUsrDir())
-                .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
-                .variable("ovirt_vdscertificatevalidityinyears",
-                        Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
-                .variable("ovirt_signcerttimeoutinseconds",
-                        Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
-                .variable("ovirt_time_to_check", allowedExpirationDateInSeconds)
-                .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
-                .variable("ovirt_ca_key",
-                        PKIResources.getCaCertificate()
-                                .toString(PKIResources.Format.OPENSSH_PUBKEY)
-                                .replace("\n", ""))
-                .variable("ovirt_qemu_ca_cert", PKIResources.getQemuCaCertificate().toString(PKIResources.Format.X509_PEM))
-                .variable("ovirt_qemu_ca_key",
-                        PKIResources.getQemuCaCertificate()
-                                .toString(PKIResources.Format.OPENSSH_PUBKEY)
-                                .replace("\n", ""))
-                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-host-mgmt-ansible")
-                .logFileName(host.getHostName())
-                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
-                .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
-                .playAction(String.format("Update of host %1$s", host.getName()));
-
-        if (ansibleExecutor.runCommand(commandConfig, timeout).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
-            String error = String.format("Failed to update host '%1$s'.", host.getHostName());
-            log.error(error);
-            throw new RuntimeException(error);
-        }
+        Cluster cluster = clusterDao.get(host.getClusterId());
+        command
+            .variable("host_deploy_vnc_restart_services", host.getVdsType() == VDSType.VDS)
+            .variable("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled()))
+            // PKI variables:
+            .variable("ovirt_pki_dir", config.getPKIDir())
+            .variable("ovirt_vds_hostname", host.getHostName())
+            .variable("ovirt_san", CertificateUtils.getSan(host.getHostName()))
+            .variable("ovirt_engine_usr", config.getUsrDir())
+            .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
+            .variable("ovirt_vdscertificatevalidityinyears",
+                    Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
+            .variable("ovirt_signcerttimeoutinseconds",
+                    Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
+            .variable("ovirt_time_to_check", allowedExpirationDateInSeconds)
+            .variable("ovirt_ca_cert", PKIResources.getCaCertificate().toString(PKIResources.Format.X509_PEM))
+            .variable("ovirt_ca_key",
+                    PKIResources.getCaCertificate()
+                            .toString(PKIResources.Format.OPENSSH_PUBKEY)
+                            .replace("\n", ""))
+            .variable("ovirt_qemu_ca_cert", PKIResources.getQemuCaCertificate().toString(PKIResources.Format.X509_PEM))
+            .variable("ovirt_qemu_ca_key",
+                    PKIResources.getQemuCaCertificate()
+                            .toString(PKIResources.Format.OPENSSH_PUBKEY)
+                            .replace("\n", ""));
     }
 }

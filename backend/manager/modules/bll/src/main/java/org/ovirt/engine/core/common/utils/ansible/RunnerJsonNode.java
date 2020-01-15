@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.utils.ansible;
 
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 
@@ -161,32 +164,58 @@ public final class RunnerJsonNode {
      *   'event_data': {
      *     'play_pattern': u'all',
      *     'play': u'all',
-     *     'task': u'Update system',
+     *     'event_loop': null,
      *     'task_args': u'',
      *     'remote_addr': u'1.2.3.4',
      *     'res': {
-     *       u'_ansible_no_log': False,
-     *       u'changed': True,
-     *       u'results': [],
      *       u'invocation': {
      *         u'module_args': {
+     *           u'lock_timeout': 300,
+     *           u'update_cache': true,
+     *           u'conf_file': null,
+     *           u'exclude': [].
+     *           u'allow_downgrade': false,
+     *           u'disable_gpg_check': false,
+     *           u'disable_excludes': null,
+     *           u'validate_certs': true,
+     *           u'state: latest',
+     *           u'disable_repo': [].
+     *           u'releasever': null,
+     *           u'skip_broken': false,
+     *           u'autoremove': false,
+     *           u'download_dir': null,
+     *           u'installroot': "/",
+     *           u'install_weak_deps': true,
      *           u'name': [u'*'],
+     *           u'download_only': false,
+     *           u'bugfix': false,
+     *           u':list': updates
+     *           u'install_repoquery': true,
      *           u'update_only': False,
+     *           u'disable_plugin': [].
+     *           u'enablerepo': [].
+     *           u'security': false,
+     *           u'enable_plugin': [],
      *         }
      *       },
-     *       u'rc': 0,
      *       u'msg': u'',
-     *       u'changes': {
-     *         u'updated': [
-     *           [u'packagename', u'version.el7.noarch from my-repo']
-     *         ],
-     *         u'installed': []
-     *       }
+     *       u'changed': false,
+     *       u'_ansible_no_log': false,
+     *       u'results': [ {
+     *          u'name': u'PackageKit',
+     *          u'nevra': u'0:PackageKit-1.1.12-3.el8.x86_64',
+     *          u'repo': u'AppStream',
+     *          u'epoch': u'0',
+     *          u'version': u'1.1.12',
+     *          u'release': u'3.el8',
+     *          u'yumstate: u'available',
+     *          u'arch: u'x86_64'},
+     *       ].
      *     },
      *     'pid': 22729,
      *     'play_uuid': u'001a4a01-3fc1-6116-1e78-000000000006',
      *     'task_uuid': u'001a4a01-3fc1-6116-1e78-000000000012',
-     *     'event_loop': None,
+     *     'task':'u'Update system',
      *     'playbook_uuid': u'8b80ad75-3a51-4ea5-98b9-bf8785fbac25',
      *     'playbook': u'ovirt-host-upgrade.yml',
      *     'task_action': u'yum',
@@ -220,17 +249,19 @@ public final class RunnerJsonNode {
     }
 
     /**
-     * Returns true if yum task contains changes.
+     * Returns true if yum task contains results.
      */
-    public static boolean hasChanges(JsonNode node) {
-        return node.has("changes");
+    public static boolean hasUpdates(JsonNode node) {
+        return !node.get("ansible_facts").get("yum_result").toString().isEmpty();
     }
 
     /**
-     * Returns installed node of yum task.
+     * Returns node that contains packages that can be updated.
      */
-    public static JsonNode installed(JsonNode node) {
-        return node.get("changes").get("installed");
+    public static Set<String> getPackages(JsonNode node) {
+        Set<String> yumPackages = new HashSet<>(Arrays.asList(node.get("ansible_facts").get("yum_result").asText().split("\n")));
+        yumPackages.remove("");
+        return yumPackages;
     }
 
     /**

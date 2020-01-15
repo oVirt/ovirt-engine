@@ -1332,6 +1332,8 @@ fi
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-enroll-certificate.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-remove.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-host-upgrade.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt-host-check-upgrade.yml
+%{engine_data}/ansible-runner-service-project/project/ovirt_host_upgrade_vars.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-ova-export.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-ova-import.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-ova-query.yml

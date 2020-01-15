@@ -35,6 +35,11 @@ public class AnsibleConstants {
     public static final String FETCH_HE_CONFIG_FILE_PLAYBOOK = "ovirt-fetch-he-config.yml";
 
     /**
+     * This is name of file which executes the host-check-upgrade via Ansible.
+     */
+    public static final String HOST_CHECK_UPGRADE_PLAYBOOK = "ovirt-host-check-upgrade.yml";
+
+    /**
      * This is name of file which executes the host-upgrade via Ansible.
      */
     public static final String HOST_UPGRADE_PLAYBOOK = "ovirt-host-upgrade.yml";

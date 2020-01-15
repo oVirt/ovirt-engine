@@ -8,6 +8,10 @@
     LANG: "C"
 
   pre_tasks:
+    - include_vars: ovirt_host_upgrade_vars.yml
+      tags:
+      - skip_ansible_lint # E502
+
     - block:
       # Check if certificates need re-enrollment:
       - name: Check host certificate validity
@@ -46,6 +50,6 @@
   roles:
     - name: ovirt-host-enroll-certificate
       when: do_host_cert_enrollment is defined and do_host_cert_enrollment
+    - name: ovirt-host-check-upgrade
     - name: ovirt-host-upgrade
     - name: ovirt-host-deploy-vnc-certificates
-      when: not ansible_check_mode

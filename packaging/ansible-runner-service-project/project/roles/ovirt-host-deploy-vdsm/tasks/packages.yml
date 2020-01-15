@@ -6,7 +6,7 @@
   tags:
     - skip_ansible_lint # E403
 
-- name: get packages
+- name: Get packages
   package_facts:
     manager: auto
 

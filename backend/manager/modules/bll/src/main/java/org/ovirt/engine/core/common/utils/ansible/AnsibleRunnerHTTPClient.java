@@ -9,11 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -270,23 +269,15 @@ public class AnsibleRunnerHTTPClient {
         return RunnerJsonNode.content(taskNode);
     }
 
-    public List<String> getYumPackages(String eventUrl) {
+    public Set<String> getYumPackages(String eventUrl) {
         // Fetch the event info:
         JsonNode event = getEvent(eventUrl);
 
         // Parse the output of the events info:
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
-        List<String> packages = new ArrayList<>();
-        if (RunnerJsonNode.changed(taskNode) && RunnerJsonNode.hasChanges(taskNode)) {
-            Iterator<JsonNode> nodes = RunnerJsonNode.installed(taskNode).getElements();
-            while (nodes.hasNext()) {
-                packages.add(nodes.next().getElements().next().asText());
-            }
-
-            nodes = RunnerJsonNode.updated(taskNode).getElements();
-            while (nodes.hasNext()) {
-                packages.add(nodes.next().getElements().next().asText());
-            }
+        Set<String> packages = new HashSet<>();
+        if (RunnerJsonNode.hasUpdates(taskNode)) {
+            packages = RunnerJsonNode.getPackages(taskNode);
         }
 
         if (!packages.isEmpty()) {
