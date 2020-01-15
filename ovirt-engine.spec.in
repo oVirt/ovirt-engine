@@ -267,7 +267,7 @@ BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
 BuildRequires:	make
 
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 BuildRequires:	rh-maven35-maven >= 3.5.0
 BuildRequires:  rh-maven35-maven-enforcer-plugin
 %else
@@ -336,7 +336,7 @@ Requires:	collectd-postgresql
 Requires:	collectd-disk
 Requires:	collectd-write_http
 %if 0%{?rhel}
-# collectd-write_syslog is available only on EL7
+# collectd-write_syslog is available only on EL
 Requires:	collectd-write_syslog
 %endif
 
