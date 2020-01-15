@@ -51,11 +51,12 @@
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global use_python_bytecompile 1
 %global _python_bytecompile_extra 0
+%global with_python2 0
 %else
 %global use_python_bytecompile 0
 %global _python_bytecompile_extra 1
+%global with_python2 1
 %endif
-
 
 # Do not repack .jar files, as it takes a long time and doesn't have a
 # real benefit:
@@ -196,12 +197,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global required_package_manager_versionlock yum-plugin-versionlock
 %endif
 
-%if 0%{?rhel} >= 8
-%global with_python2 0
-%else
-%global with_python2 1
-%endif
-
 %global make_common_opts \\\
 	-j1 \\\
 	BUILD_GWT=%{ovirt_build_gwt} \\\
@@ -275,13 +270,14 @@ BuildRequires:	make
 BuildRequires:	python
 BuildRequires:	rh-maven35-maven >= 3.5.0
 BuildRequires:  rh-maven35-maven-enforcer-plugin
+BuildRequires:	python
+BuildRequires:	python2-devel
 %else
 
 BuildRequires:	maven >= 3.5.0
 BuildRequires:  maven-enforcer-plugin
 %endif
-BuildRequires:	python2
-BuildRequires:	python2-devel
+
 %if 0%{?with_python3}
 BuildRequires:	python3-devel
 %endif
