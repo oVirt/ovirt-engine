@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
+import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
@@ -58,20 +60,19 @@ public class SSHD {
         }
 
         @Override
-        public KeyPair loadKey(String type) {
+        public KeyPair loadKey(SessionContext context, String type) {
             return keyPair;
         }
 
-        /* >=0.10 */
-        // @Override
-        public Iterable<KeyPair> loadKeys() {
+        @Override
+        public Iterable<KeyPair> loadKeys(SessionContext session) throws IOException, GeneralSecurityException {
             List<KeyPair> ret = new LinkedList<>();
             ret.add(keyPair);
             return ret;
         }
 
         @Override
-        public Iterable<String> getKeyTypes() {
+        public Iterable<String> getKeyTypes(SessionContext context) {
             return KEY_TYPES;
         }
     }
