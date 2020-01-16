@@ -39,28 +39,25 @@
     <!-- launch GWT. This takes a while -->
     <script type="text/javascript" src="${requestScope['selectorScript']}"></script>
 
-    <!-- in the meantime... -->
     <div id="host-page-placeholder">
+        <!-- while GWT is launching... skeleton the layout -->
         <style type="text/css">
-            #host-page-placeholder-spinner {
-                margin-top: -100px;
-                margin-right: -50px;
+            .container-pf-nav-pf-vertical {
+                height: calc(100vh - var(--ovirt-masthead-height));
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
-            #host-page-placeholder-loading {
+            #host-page-placeholder-spinner {
+                display: flex;
+                justify-content: center;
+            }
+            #host-page-placeholder-spinner .spinner {
+                margin: 0;
+            }
+            #host-page-placeholder-text {
                 font-size: 18px;
                 margin-left: 20px;
-                margin-top: -100px;
-                float: left;
-            }
-            .vertical-align {
-                display: flex;
-                flex-direction: row;
-                height: 100vh;
-            }
-            .vertical-align > [class^="col-"],
-            .vertical-align > [class*=" col-"] {
-                display: flex;
-                align-items: center;
             }
         </style>
         <nav class="navbar navbar-pf-vertical" role="navigation">
@@ -74,16 +71,17 @@
                     <img class="obrand_mastheadLogo" src="clear.cache.gif">
                 </a>
             </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right navbar-iconic">
+                    <li class="nav-item-iconic-skeleton"></li>
+                </ul>
+            </div>
         </nav>
 
-        <div class="container">
-            <div class="row vertical-align">
-                <div class="col-xs-6">
-                    <div id="host-page-placeholder-spinner" class="spinner spinner-lg"></div>
-                </div>
-                <div class="col-xs-6">
-                    <div id="host-page-placeholder-loading">Loading ...</div>
-                </div>
+        <div class="container-pf-nav-pf-vertical">
+            <div id="host-page-placeholder-spinner">
+                <div class="spinner spinner-lg"></div>
+                <div id="host-page-placeholder-text">Loading ...</div>
             </div>
         </div>
 

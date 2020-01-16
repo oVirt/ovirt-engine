@@ -27,11 +27,15 @@ landing page (welcome), login (sso), docs, 404, etc
 
 /* left nav */
 .nav-pf-vertical, .nav-pf-secondary-nav, .nav-pf-tertiary-nav {
-    top: 60px; // adjust to match masthead height
+    top: var(--ovirt-masthead-height);
 }
 
 /* masthead action icons */
 .navbar-pf-vertical .nav {
+
+    .nav-item-iconic-skeleton {
+        height: 58px; // matches PF ".navbar-pf-vertical .nav .nav-item-iconic { max-height }"
+    }
 
     .drawer-pf-trigger .drawer-pf-trigger-icon {
         border-left: 0;
