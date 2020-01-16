@@ -8,6 +8,7 @@ import org.gwtbootstrap3.client.ui.Navbar;
 import org.gwtbootstrap3.client.ui.NavbarBrand;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -47,7 +48,11 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    Anchor configureLink;
+    @UiField
+    Navbar mainNavBar;
+
+    @UiField
+    public NavbarBrand logoLink;
 
     @UiField
     @WithElementId
@@ -55,42 +60,22 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
 
     @UiField
     @WithElementId
-    AnchorButton help;
+    AnchorListItem tags;
 
     @UiField
     @WithElementId
     AnchorListItem tasks;
-
-    @UiField
-    @WithElementId
-    AnchorListItem tags;
+    private Span tasksBadge;
 
     @UiField (provided=true)
     @WithElementId
     EventsListPopover events;
-
-    @UiField
-    ListGroup mainNavbarNavContainer;
-
-    @UiField
-    Navbar mainNavBar;
-
     private NotificationListWidget eventsWidget;
     private NotificationListWidget alertsWidget;
 
     @UiField
-    @WithElementId("userName")
-    public AnchorButton userName;
-
-    @UiField
-    public WidgetTooltip userNameTooltip;
-
-    @UiField
-    public NavbarBrand logoLink;
-
-    @UiField(provided = true)
     @WithElementId
-    public AnchorListItem logoutLink = null;
+    AnchorButton help;
 
     @UiField(provided = true)
     @WithElementId
@@ -100,17 +85,31 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     @WithElementId
     public AnchorListItem aboutLink = null;
 
+    @UiField
+    @WithElementId("userName")
+    public AnchorButton userName;
+
+    @UiField
+    public WidgetTooltip userNameTooltip;
+
     @UiField(provided = true)
     @WithElementId
     public AnchorListItem optionsLink = null;
 
+    @UiField(provided = true)
+    @WithElementId
+    public AnchorListItem logoutLink = null;
+
+    @UiField
+    ListGroup mainNavbarNavContainer;
+
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {
-        configureLink = new Anchor();
-        this.logoutLink = new AnchorListItem(constants.logoutLinkLabel());
-        this.optionsLink = new AnchorListItem(constants.optionsLinkLabel());
-        this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
-        this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
+        logoutLink = new AnchorListItem(constants.logoutLinkLabel());
+        optionsLink = new AnchorListItem(constants.optionsLinkLabel());
+        aboutLink = new AnchorListItem(constants.aboutLinkLabel());
+        guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
+
         events = new EventsListPopover(constants.notificationDrawer(), IconType.BELL);
         alertsWidget = new NotificationListWidget(constants.alertsEventFooter());
         alertsWidget.setStartCollapse(false);
@@ -118,22 +117,31 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         eventsWidget = new NotificationListWidget(constants.eventsEventFooter());
         eventsWidget.setStartCollapse(true);
         events.addNotificationListWidget(eventsWidget);
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
 
+        logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
         mainNavBar.removeStyleName(PatternflyStyles.NAVBAR_DEFAULT);
 
         AnchorElement.as(help.getElement()).addClassName(NAV_ITEM_ICONIC);
+        AnchorElement.as(userName.getElement()).addClassName(NAV_ITEM_ICONIC);
         tasks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
         tags.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
         bookmarks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
-        setUserIcon();
-    }
 
-    @Override
-    public HasClickHandlers getConfigureLink() {
-        return configureLink;
+        // manage the Tasks badge explicity to allow fine control of the positioning
+        tasksBadge = new Span();
+        tasksBadge.setStyleName(Styles.BADGE);
+        Anchor tasksAnchor = (Anchor)tasks.getWidget(0);
+        tasksAnchor.add(tasksBadge);
+
+        // Put PF user icon on the drop down instead of the FA one.
+        Widget userNameWidget = userName.getWidget(0);
+        userNameWidget.removeStyleName(Styles.FONT_AWESOME_BASE);
+        userNameWidget.removeStyleName(IconType.USER.getCssName());
+        userNameWidget.addStyleName(PatternflyIconType.PF_BASE.getCssName());
+        userNameWidget.addStyleName(PatternflyIconType.PF_USER.getCssName());
     }
 
     @Override
@@ -158,7 +166,7 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
 
     @Override
     public void setRunningTaskCount(int count) {
-        tasks.setBadgeText(String.valueOf(count));
+        tasksBadge.setText(String.valueOf(count));
     }
 
     @Override
@@ -181,18 +189,8 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         events.setBadgeText(String.valueOf(count));
     }
 
-    protected void setUserIcon() {
-        AnchorElement.as(this.userName.getElement()).addClassName(NAV_ITEM_ICONIC);
-    }
-
     public void setUserName(String userName) {
         userNameTooltip.setText(userName);
-        // Put PF user icon on the drop down instead of the FA one.
-        Widget userNameWidget = this.userName.getWidget(0);
-        userNameWidget.removeStyleName(Styles.FONT_AWESOME_BASE);
-        userNameWidget.removeStyleName(IconType.USER.getCssName());
-        userNameWidget.addStyleName(PatternflyIconType.PF_BASE.getCssName());
-        userNameWidget.addStyleName(PatternflyIconType.PF_USER.getCssName());
     }
 
     public HasClickHandlers getLogoutLink() {

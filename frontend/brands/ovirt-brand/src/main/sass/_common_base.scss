@@ -25,23 +25,23 @@ landing page (welcome), login (sso), docs, 404, etc
     white-space: nowrap;
 }
 
+/* left nav */
 .nav-pf-vertical, .nav-pf-secondary-nav, .nav-pf-tertiary-nav {
-    /* 60 is the current PatternFly default */
-    top: 60px;
+    top: 60px; // adjust to match masthead height
 }
 
-.navbar-pf-vertical .nav .drawer-pf-trigger .drawer-pf-trigger-icon {
-    border-left: 0;
-    border-right: 0;
-}
+/* masthead action icons */
+.navbar-pf-vertical .nav {
 
-.navbar-pf-vertical .nav .drawer-pf-trigger .drawer-pf-trigger-icon .badge {
-    margin-left: 0;
-    margin-right: 0;
-}
+    .drawer-pf-trigger .drawer-pf-trigger-icon {
+        border-left: 0;
+        border-right: 0;
+    }
 
-#HeaderView_tasks a, #event_notification_anchor {
-    padding-right: 2px;
+    .nav-item-iconic .badge {
+        margin-left: 5px;
+        margin-right: 0;
+    }
 }
 
 .container-pad {

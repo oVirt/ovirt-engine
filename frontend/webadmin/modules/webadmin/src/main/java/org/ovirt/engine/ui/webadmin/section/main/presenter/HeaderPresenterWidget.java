@@ -41,8 +41,6 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
 
     public interface ViewDef extends View {
 
-        HasClickHandlers getConfigureLink();
-
         HasClickHandlers getAboutLink();
 
         HasData<AuditLog> getEventDropdown();

@@ -17,50 +17,51 @@
     </ui:style>
 
     <g:HTMLPanel>
-    <b:Navbar ui:field="mainNavBar" addStyleNames="navbar-pf-vertical">
-        <b:NavbarHeader addStyleNames="obrand_mastheadBackground obrand_topBorder">
-             <b:NavbarCollapseButton />
-             <b:NavbarBrand addStyleNames="obrand_headerLogoLink" ui:field="logoLink" >
-                 <img class="obrand_mastheadLogo" src="clear.cache.gif" />
-             </b:NavbarBrand>
-        </b:NavbarHeader>
-        <b:NavbarCollapse>
-            <b:NavbarNav addStyleNames="navbar-right navbar-iconic">
-                <t:WidgetTooltip text="{constants.bookmarksMainSection}" placement="BOTTOM">
-                    <b:AnchorListItem ui:field="bookmarks" icon="BOOKMARK" />
-                </t:WidgetTooltip>
-                <t:WidgetTooltip text="{constants.tagsMainSection}" placement="BOTTOM">
-                    <b:AnchorListItem ui:field="tags" icon="TAGS" />
-                </t:WidgetTooltip>
-                <t:WidgetTooltip text="{constants.tasksEventFooter}" placement="BOTTOM">
-                    <b:AnchorListItem ui:field="tasks" icon="TASKS" />
-                </t:WidgetTooltip>
-                <w:EventsListPopover ui:field="events" />
-                <t:WidgetTooltip text="{constants.help}" placement="BOTTOM">
-                    <b:ListDropDown>
-                        <b:AnchorButton ui:field="help" dataToggle="DROPDOWN" icon="QUESTION_CIRCLE" />
-                        <b:DropDownMenu>
-                            <b:AnchorListItem ui:field="guideLink" addStyleNames="{style.topLinks}" />
-                            <b:AnchorListItem ui:field="aboutLink" addStyleNames="{style.topLinks}" />
-                        </b:DropDownMenu>
-                    </b:ListDropDown>
-                </t:WidgetTooltip>
-                <t:WidgetTooltip ui:field="userNameTooltip" placement="BOTTOM">
-                    <b:ListDropDown>
-                        <b:AnchorButton ui:field="userName" dataToggle="DROPDOWN" icon="USER" />
-                        <b:DropDownMenu>
-                            <b:AnchorListItem ui:field="optionsLink" addStyleNames="{style.topLinks}" />
-                            <b:AnchorListItem ui:field="logoutLink" addStyleNames="{style.topLinks}" />
-                        </b:DropDownMenu>
-                    </b:ListDropDown>
-                </t:WidgetTooltip>
-            </b:NavbarNav>
-        </b:NavbarCollapse>
-    </b:Navbar>
-    <g:HTMLPanel>
-        <g:FlowPanel addStyleNames="nav-pf-vertical nav-pf-vertical-with-sub-menus">
-            <b:ListGroup ui:field="mainNavbarNavContainer" />
-        </g:FlowPanel>
-    </g:HTMLPanel>
+        <b:Navbar ui:field="mainNavBar" addStyleNames="navbar-pf-vertical">
+            <b:NavbarHeader addStyleNames="obrand_mastheadBackground obrand_topBorder">
+                <b:NavbarCollapseButton />
+                <b:NavbarBrand addStyleNames="obrand_headerLogoLink" ui:field="logoLink" >
+                    <img class="obrand_mastheadLogo" src="clear.cache.gif" />
+                </b:NavbarBrand>
+            </b:NavbarHeader>
+            <b:NavbarCollapse>
+                <b:NavbarNav addStyleNames="navbar-right navbar-iconic">
+                    <t:WidgetTooltip text="{constants.bookmarksMainSection}" placement="BOTTOM">
+                        <b:AnchorListItem ui:field="bookmarks" icon="BOOKMARK" />
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip text="{constants.tagsMainSection}" placement="BOTTOM">
+                        <b:AnchorListItem ui:field="tags" icon="TAGS" />
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip text="{constants.tasksEventFooter}" placement="BOTTOM">
+                        <b:AnchorListItem ui:field="tasks" icon="TASKS" />
+                    </t:WidgetTooltip>
+                    <w:EventsListPopover ui:field="events" />
+                    <t:WidgetTooltip text="{constants.help}" placement="BOTTOM">
+                        <b:ListDropDown>
+                            <b:AnchorButton ui:field="help" dataToggle="DROPDOWN" icon="QUESTION_CIRCLE" />
+                            <b:DropDownMenu>
+                                <b:AnchorListItem ui:field="guideLink" addStyleNames="{style.topLinks}" />
+                                <b:AnchorListItem ui:field="aboutLink" addStyleNames="{style.topLinks}" />
+                            </b:DropDownMenu>
+                        </b:ListDropDown>
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip ui:field="userNameTooltip" placement="BOTTOM">
+                        <b:ListDropDown>
+                            <b:AnchorButton ui:field="userName" dataToggle="DROPDOWN" icon="USER" />
+                            <b:DropDownMenu>
+                                <b:AnchorListItem ui:field="optionsLink" addStyleNames="{style.topLinks}" />
+                                <b:AnchorListItem ui:field="logoutLink" addStyleNames="{style.topLinks}" />
+                            </b:DropDownMenu>
+                        </b:ListDropDown>
+                    </t:WidgetTooltip>
+                </b:NavbarNav>
+            </b:NavbarCollapse>
+        </b:Navbar>
+
+        <g:HTMLPanel>
+            <g:FlowPanel addStyleNames="nav-pf-vertical nav-pf-vertical-with-sub-menus">
+                <b:ListGroup ui:field="mainNavbarNavContainer" />
+            </g:FlowPanel>
+        </g:HTMLPanel>
     </g:HTMLPanel>
 </ui:UiBinder>
