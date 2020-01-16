@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 public class AnsibleRunnerHTTPClient {
 
     private static final Object inventoryLock = new Object();
+    private static final Object executeLock = new Object();
     private static final String HOST_GROUP = "ovirt";
     private static final String API_VERSION = "/api/v1";
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHTTPClient.class);
@@ -131,14 +132,21 @@ public class AnsibleRunnerHTTPClient {
         HttpPost request = new HttpPost(uri);
         request.setEntity(entity);
 
-        HttpResponse response = execute(request);
-        JsonNode node = readResponse(response);
-        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_ACCEPTED) {
-            throw new AnsibleRunnerCallException(
-                "Failed to execute call to start playbook. %1$s", node.asText()
-            );
+        // We need to lock the call to execute the playbook, because all extravars/cmdline/settings of the playbook
+        // are written to the local disk and in multiple parallel execution of playbooks are executed it may happen
+        // that it execute the first playbook, store its data, and the second playbook is executed with cached data.
+        // The removal of cached data happens at the begging of the playbook execution in runner-service, so we must
+        // be sure to not execute that code in parallel.
+        synchronized (executeLock) {
+            HttpResponse response = execute(request);
+            JsonNode node = readResponse(response);
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_ACCEPTED) {
+                throw new AnsibleRunnerCallException(
+                        "Failed to execute call to start playbook. %1$s", node.asText()
+                );
+            }
+            return RunnerJsonNode.playUuid(node);
         }
-        return RunnerJsonNode.playUuid(node);
     }
 
     public PlaybookStatus getPlaybookStatus(String playUuid) {
