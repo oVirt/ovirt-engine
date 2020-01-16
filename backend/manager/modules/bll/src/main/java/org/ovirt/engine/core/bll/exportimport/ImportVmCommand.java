@@ -97,7 +97,6 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
@@ -274,7 +273,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         DiskVmElementValidator diskVmElementValidator =
                 new DiskVmElementValidator(lunDisk, lunDisk.getDiskVmElementForVm(getVmId()));
-        ValidationResult virtIoScsiResult = isVirtIoScsiValid(getVm(), diskVmElementValidator);
+        ValidationResult virtIoScsiResult = diskVmElementValidator.verifyVirtIoScsi(getVm());
         if (!virtIoScsiResult.isValid()) {
             return virtIoScsiResult.getMessages();
         }
@@ -330,22 +329,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             lun.setPvSize(luns.getPvSize());
         }
         return true;
-    }
-
-    private ValidationResult isVirtIoScsiValid(VM vm, DiskVmElementValidator diskVmElementValidator) {
-        ValidationResult result = diskVmElementValidator.verifyVirtIoScsi(vm);
-        if (!result.isValid()) {
-            return result;
-        }
-
-        if (vm != null) {
-            if (!VmDeviceCommonUtils.isVirtIoScsiDeviceExists(getVm().getManagedVmDeviceMap().values())) {
-                return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
-            } else {
-                return diskVmElementValidator.isDiskInterfaceSupported(vm);
-            }
-        }
-        return ValidationResult.VALID;
     }
 
     protected DiskValidator getDiskValidator(Disk disk) {

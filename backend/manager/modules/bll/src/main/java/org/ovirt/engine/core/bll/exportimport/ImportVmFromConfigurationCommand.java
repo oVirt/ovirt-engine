@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -223,6 +224,16 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                         getParameters().setClusterId(cluster.getId());
                     }
                 }
+
+                setClusterId(getParameters().getClusterId());
+                if (getCluster() != null && getCluster().getBiosType() != null) {
+                    vmFromConfiguration.setClusterBiosType(getCluster().getBiosType());
+                }
+
+                if (vmFromConfiguration.getBiosType() == null) {
+                    vmFromConfiguration.setBiosType(BiosType.CLUSTER_DEFAULT);
+                }
+
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
