@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -78,6 +79,7 @@ public final class CommandsFactory {
     }
 
     private static ConcurrentMap<String, Class<?>> commandsCache = new ConcurrentHashMap<>();
+    private static ConcurrentMap<Pair<Class<?>, Class<?>[]>, Constructor<?>> constructorCache = new ConcurrentHashMap<>();
 
     public static <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return createCommand(action, parameters, null);
@@ -87,7 +89,7 @@ public final class CommandsFactory {
             CommandContext commandContext) {
         try {
             Constructor<?> commandConstructor =
-                    findCommandConstructor(getCommandClass(action.name()), parameters.getClass(), CommandContext.class);
+                    getCommandConstructor(getCommandClass(action.name()), parameters.getClass(), CommandContext.class);
 
             if (commandContext == null) {
                 commandContext = CommandContext.createContext(parameters.getSessionId());
@@ -146,7 +148,7 @@ public final class CommandsFactory {
         try {
             type = getQueryClass(query.name());
             QueriesCommandBase<?> result =
-                    (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass(), EngineContext.class)
+                    (QueriesCommandBase<?>) getCommandConstructor(type, parameters.getClass(), EngineContext.class)
                             .newInstance(parameters, engineContext);
             return Injector.injectMembers(result);
         } catch (Exception e) {
@@ -191,6 +193,12 @@ public final class CommandsFactory {
         } catch (ClassNotFoundException e) {
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Constructor<T> getCommandConstructor(Class<T> type, Class<?>... expectedParams) {
+        return (Constructor<T>) constructorCache.computeIfAbsent(new Pair<>(type, expectedParams),
+                k -> findCommandConstructor(type, expectedParams));
     }
 
     /**
