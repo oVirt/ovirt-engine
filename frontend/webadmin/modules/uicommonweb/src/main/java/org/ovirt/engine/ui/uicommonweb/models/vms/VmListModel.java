@@ -1570,7 +1570,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             _attachCdModel.getIsoImage().setItems(images);
             if (_attachCdModel.getIsoImage().getIsChangable()) {
                 RepoImage selectedIso =
-                        Linq.firstOrNull(images, s -> vm.getCurrentCd() != null && vm.getCurrentCd().equals(s.getRepoImageId()));
+                        Linq.firstOrNull(images, s -> vm.getCurrentCd() != null && vm.getCurrentCd().endsWith(s.getRepoImageId()));
                 _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? eject : selectedIso);
             }
         }), vm.getStoragePoolId());
