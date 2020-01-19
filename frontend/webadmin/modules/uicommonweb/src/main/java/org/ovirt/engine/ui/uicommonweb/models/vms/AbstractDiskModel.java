@@ -1070,8 +1070,10 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     public void onSave() {
-        flush();
-        store(null);
+        if (validate()) {
+            flush();
+            store(null);
+        }
     }
 
     public void flush() {

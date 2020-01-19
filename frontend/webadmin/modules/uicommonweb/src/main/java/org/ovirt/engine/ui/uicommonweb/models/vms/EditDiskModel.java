@@ -130,7 +130,7 @@ public class EditDiskModel extends AbstractDiskModel {
 
     @Override
     public void store(IFrontendActionAsyncCallback callback) {
-        if (getProgress() != null || !validate()) {
+        if (getProgress() != null) {
             return;
         }
 

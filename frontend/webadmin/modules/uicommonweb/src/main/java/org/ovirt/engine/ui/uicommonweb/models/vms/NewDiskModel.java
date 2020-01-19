@@ -132,9 +132,6 @@ public class NewDiskModel extends AbstractDiskModel {
 
     @Override
     public void flush() {
-        if (!validate()) {
-            return;
-        }
         super.flush();
         switch (getDiskStorageType().getEntity()) {
             case LUN:
@@ -166,7 +163,7 @@ public class NewDiskModel extends AbstractDiskModel {
 
     @Override
     public void store(IFrontendActionAsyncCallback callback) {
-        if (getProgress() != null || !validate()) {
+        if (getProgress() != null) {
             return;
         }
 
