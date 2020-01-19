@@ -6,7 +6,7 @@ CREATE TYPE Getsystem_statistics_rs AS (val INT);
 CREATE OR REPLACE FUNCTION Getsystem_statistics (
     v_entity VARCHAR(10), -- /*VM,HOST,USER,SD*/
     v_status VARCHAR(20)
-    ) -- comma seperated list of status values
+    ) -- comma-separated list of status values
 RETURNS Getsystem_statistics_rs STABLE AS $PROCEDURE$
 DECLARE v_i Getsystem_statistics_rs;
 

@@ -28,7 +28,7 @@ public class Base {
         public static final String NAME = "ovirt.engine.extension.name";
         /**
          * Extension services.
-         * Value: Comma seperated strings.
+         * Value: Comma-separated strings.
          * <br>
          * Default: none.
          */
