@@ -798,7 +798,7 @@ select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');
 
 select fn_db_add_config_value('NumOfPciExpressPorts', '16', 'general');
 
-select fn_db_add_config_value('SetupNetworksWaitTimeoutSeconds', '5', 'general');
+select fn_db_add_config_value('SetupNetworksWaitTimeoutSeconds', '20', 'general');
 
 select fn_db_add_config_value('KubevirtProviderSupportEnabled', 'false', 'general');
 ------------------------------------------------------------------------------------
