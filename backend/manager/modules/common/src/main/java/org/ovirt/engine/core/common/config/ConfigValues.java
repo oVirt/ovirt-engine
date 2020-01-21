@@ -1532,6 +1532,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     KubevirtProviderSupportEnabled,
 
+    @TypeConverterAttribute(String.class)
+    SkuToAVLevel,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

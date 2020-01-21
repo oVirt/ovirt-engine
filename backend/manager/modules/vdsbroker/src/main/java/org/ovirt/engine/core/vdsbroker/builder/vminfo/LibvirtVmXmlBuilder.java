@@ -519,53 +519,59 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeSystemInfo() {
+        /*
+         RHEL-8.2.0  AV will now report:
+
+         System Manufacturer: oVirt or Red Hat    RHV needs 'Red Hat' for Windows Update, decided by OriginType
+         System Product Name: OS name
+         System Version: OS version
+         System Family: oVirt or RHV
+         System SKU Number:                       can be set in vdc_options (SkuToAVLevel)
+         Baseboard Manufacturer: Red Hat          hardcoded but added only if SkuToAVLevel options set
+         Baseboard Product Name: RHEL-AV          hardcoded but added only if SkuToAVLevel options set
+        */
+
         if (vm.getClusterArch().getFamily() != ArchitectureType.x86) {
             return;
         }
-        /**
-         <sysinfo type="smbios">
-          <system>
-            <entry name="manufacturer">Fedora</entry>
-            <entry name="product">Virt-Manager</entry>
-            <entry name="version">0.8.2-3.fc14</entry>
-            <entry name="serial">32dfcb37-5af1-552b-357c-be8c3aa38310</entry>
-            <entry name="uuid">c7a5fdbd-edaf-9455-926a-d65c16db1809</entry>
-          </system>
-         </sysinfo>
-         */
+
+        final String product = Config.getValue(ConfigValues.OriginType);
+        final String manufacturer = OriginType.valueOf(product) == OriginType.OVIRT ? "oVirt" : "Red Hat";
+        final String productName = OriginType.valueOf(product) == OriginType.OVIRT ? "oVirt" : "RHV";
+        boolean skuToAVLevelExists = Config.valueExists(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString())
+                && StringUtils.isNotEmpty(Config.getValue(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString()));
+        boolean version4_4orHigher = vm.getClusterCompatibilityVersion().greaterOrEquals(Version.v4_4);
+
         writer.writeStartElement("sysinfo");
         writer.writeAttributeString("type", "smbios");
 
         writer.writeStartElement("system");
+        writeEntryElement("manufacturer", manufacturer);
+        writeEntryElement("product", "OS-NAME:");
+        writeEntryElement("version", "OS-VERSION:");
+        if (version4_4orHigher) {
+            writeEntryElement("family", productName);
+            if (skuToAVLevelExists) {
+                writeEntryElement("sku", Config.getValue(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString()));
+            }
+        }
+        writeEntryElement("serial", "HOST-SERIAL:");
+        writeEntryElement("uuid", vm.getId().toString());
+        writer.writeEndElement(); // system
 
+        if (version4_4orHigher && skuToAVLevelExists) {
+            writer.writeStartElement("baseBoard");
+            writeEntryElement("manufacturer", "Red Hat");
+            writeEntryElement("product", "RHEL-AV");
+            writer.writeEndElement(); // baseBoard
+        }
+        writer.writeEndElement(); // sysinfo
+    }
+
+    private void writeEntryElement(String attributeValue, String rawString) {
         writer.writeStartElement("entry");
-        writer.writeAttributeString("name", "manufacturer");
-        String product = Config.getValue(ConfigValues.OriginType);
-        writer.writeRaw(OriginType.valueOf(product) == OriginType.OVIRT ? "oVirt" : "Red Hat");
-        writer.writeEndElement();
-
-        writer.writeStartElement("entry");
-        writer.writeAttributeString("name", "product");
-        writer.writeRaw("OS-NAME:");
-        writer.writeEndElement();
-
-        writer.writeStartElement("entry");
-        writer.writeAttributeString("name", "version");
-        writer.writeRaw("OS-VERSION:");
-        writer.writeEndElement();
-
-        writer.writeStartElement("entry");
-        writer.writeAttributeString("name", "serial");
-        writer.writeRaw(vmInfoBuildUtils.getVmSerialNumber(vm, "HOST-SERIAL:"));
-        writer.writeEndElement();
-
-        writer.writeStartElement("entry");
-        writer.writeAttributeString("name", "uuid");
-        writer.writeRaw(vm.getId().toString());
-        writer.writeEndElement();
-
-        writer.writeEndElement();
-
+        writer.writeAttributeString("name", attributeValue);
+        writer.writeRaw(rawString);
         writer.writeEndElement();
     }
 

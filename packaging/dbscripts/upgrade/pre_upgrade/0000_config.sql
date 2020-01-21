@@ -798,6 +798,9 @@ select fn_db_add_config_value('NumOfPciExpressPorts', '16', 'general');
 select fn_db_add_config_value('SetupNetworksWaitTimeoutSeconds', '20', 'general');
 
 select fn_db_add_config_value('KubevirtProviderSupportEnabled', 'false', 'general');
+
+-- Sku -> Version mapping for Windows Update
+select fn_db_add_config_value('SkuToAVLevel', '', '4.4');
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
