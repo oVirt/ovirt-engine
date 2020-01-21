@@ -981,17 +981,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             saveOrUpdateVM(model);
         } else if (CMD_CONFIGURE_TEMPLATES_TO_IMPORT.equals(command.getName())) { // $NON-NLS-1$
             onConfigureTemplatesToImport();
-        } else {
-            switch(command.getName()) {
-            case "onClone": //$NON-NLS-1$
-                onClone();
-                break;
-            case "closeClone": //$NON-NLS-1$
-                closeClone();
-                break;
-            default:
-                super.executeCommand(command);
-            }
+        } else if ("onClone".equals(command.getName())){ //$NON-NLS-1$
+            onClone();
+        } else if ("closeClone".equals(command.getName())) { //$NON-NLS-1$
+            closeClone();
         }
     }
 
