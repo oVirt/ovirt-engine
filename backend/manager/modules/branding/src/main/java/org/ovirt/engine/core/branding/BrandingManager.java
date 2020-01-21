@@ -256,7 +256,6 @@ public class BrandingManager {
         StringBuilder templateBuilder = new StringBuilder();
         for (BrandingTheme theme: brandingThemes) {
             String template = theme.getWelcomePageSectionTemplate();
-            template = insertDocsSection(template, locale);
             String replacedTemplate = template;
             Matcher keyMatcher = TEMPLATE_PATTERN.matcher(template);
             while (keyMatcher.find()) {
@@ -276,23 +275,6 @@ public class BrandingManager {
             templateBuilder.append(replacedTemplate);
         }
         return templateBuilder.toString();
-    }
-
-    /**
-     * Welcome templates can have a {{{docs}}} key in them.
-     * Replace that with the docs_&lt;locale&gt;.template contents, usually provided by a documentation package.
-     * @param locale The {@code Locale} to use to look up documentation template.
-     */
-    private String insertDocsSection(String template, Locale locale) {
-        String lastOneWins = "";
-        for (BrandingTheme theme : getBrandingThemes()) {
-            String docsSection = theme.getDocsSectionTemplate(locale);
-            if (!docsSection.isEmpty()) {
-                lastOneWins = docsSection;
-            }
-        }
-
-        return template.replaceAll(DOCS_TEMPLATE_PATTERN, lastOneWins);
     }
 
     /**
