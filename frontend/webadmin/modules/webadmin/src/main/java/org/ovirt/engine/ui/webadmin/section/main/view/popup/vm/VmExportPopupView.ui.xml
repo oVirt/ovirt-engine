@@ -2,17 +2,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder
     xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style>
-        .messagePanel {
-            color: #CD2127;
-        }
-
         .container {
             width: 100%;
         }
@@ -33,7 +29,7 @@
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
-                        <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
+                        <w:AlertWithIcon ui:field="messagePanel" alertType="WARNING" />
                     </b:Column>
                 </b:Row>
             </b:Container>

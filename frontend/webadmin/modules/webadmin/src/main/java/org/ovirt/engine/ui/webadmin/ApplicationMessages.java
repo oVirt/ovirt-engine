@@ -123,5 +123,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String cpuDeprecationWarning(String cpuType);
 
     String clusterCpuTypeInfo(String cpuVerb);
+
+    String exportDomainDeprecationWarning();
 }
 
