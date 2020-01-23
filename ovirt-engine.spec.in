@@ -268,13 +268,15 @@ BuildRequires:	javapackages-tools
 BuildRequires:	make
 
 %if 0%{?rhel} && 0%{?rhel} < 8
+BuildRequires:	python
 BuildRequires:	rh-maven35-maven >= 3.5.0
 BuildRequires:  rh-maven35-maven-enforcer-plugin
 %else
+
 BuildRequires:	maven >= 3.5.0
 BuildRequires:  maven-enforcer-plugin
 %endif
-BuildRequires:	python
+BuildRequires:	python2
 BuildRequires:	python2-devel
 %if 0%{?with_python3}
 BuildRequires:	python3-devel
