@@ -1608,7 +1608,10 @@ public class LibvirtVmXmlBuilder {
 
         writeAlias(device);
         if (SCSI_VIRTIO_BLK_PCI.equals(scsiHostdevProperty)) {
-            writeAddress(StringMapUtils.string2Map(device.getAddress()));
+            var addressMap = StringMapUtils.string2Map(device.getAddress());
+            if ("pci".equals(addressMap.get("type"))) {
+                writeAddress(addressMap);
+            }
         } else {
             writeAddress(buildDriveAddress(hostDevice.getAddress()));
         }
@@ -1653,7 +1656,6 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
 
         writeAlias(device);
-        writeAddress(device);
         // TODO: boot
         writer.writeEndElement();
     }
@@ -2764,6 +2766,10 @@ public class LibvirtVmXmlBuilder {
         if (!addressMap.isEmpty()) {
             writer.writeStartElement("address");
             addressMap.forEach(writer::writeAttributeString);
+            if (!addressMap.containsKey("type")) {
+                // Default type
+                writer.writeAttributeString("type", "drive");
+            }
             writer.writeEndElement();
         }
     }
