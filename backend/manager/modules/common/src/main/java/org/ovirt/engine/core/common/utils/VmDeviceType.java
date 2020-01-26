@@ -34,6 +34,7 @@ public enum VmDeviceType {
     PCI("pci"),
     IDE("ide"),
     SATA("sata"),
+    ICH9("ich9"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 
