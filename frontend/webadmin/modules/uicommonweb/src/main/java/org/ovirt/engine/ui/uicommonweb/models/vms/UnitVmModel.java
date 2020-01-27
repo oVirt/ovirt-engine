@@ -3675,23 +3675,23 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return vmBiosType != BiosType.CLUSTER_DEFAULT ? vmBiosType : cluster.getBiosType();
     }
 
-    public void needsQ35VmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
+    public void needsChipsetDependentVmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
         Cluster cluster = getSelectedCluster();
         BiosType vmBiosType = getBiosType().getSelectedItem();
-        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86
-                || getEffectiveBiosType(vmBiosType, cluster).getChipsetType() == ChipsetType.I440FX) {
+        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
             noChanges.run();
             return;
         }
-
         Guid templateId = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getId();
-        AsyncDataProvider.getInstance().isVmTemplateI440fx(new AsyncQuery<>(isI440fx -> {
-            if (!isI440fx) {
+        ChipsetType chipsetType = getEffectiveBiosType(vmBiosType, cluster).getChipsetType();
+        AsyncQuery<Boolean> query = new AsyncQuery<>(conflicts -> {
+            if (!conflicts) {
                 noChanges.run();
             } else {
                 needsChanges.run();
             }
-        }), templateId);
+        });
+        AsyncDataProvider.getInstance().isVmTemplateConflictsWithChipset(query, templateId, chipsetType);
     }
 
 }

@@ -391,10 +391,10 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
     }
 
-    private void confirmQ35VmDeviceChanges() {
+    private void confirmChipsetDependentVmDeviceChanges() {
         ConfirmationModel confirmModel = new ConfirmationModel();
-        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().q35VmDeviceChangesTitle());
-        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().q35VmDeviceChangesMessage());
+        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().chipsetDependentVmDeviceChangesTitle());
+        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().chipsetDependentVmDeviceChangesMessage());
 
         confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("SaveNewVm", this)); //$NON-NLS-1$
         confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", this)); //$NON-NLS-1$
@@ -403,13 +403,13 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     }
 
     private void newVM(UnitVmModel model) {
-        model.needsQ35VmDeviceChanges(
+        model.needsChipsetDependentVmDeviceChanges(
                 // no changes
                 () -> saveNewVm(model),
                 // needs changes
                 () -> {
                     setCurrentVmModel(model);
-                    confirmQ35VmDeviceChanges();
+                    confirmChipsetDependentVmDeviceChanges();
                 }
         );
     }

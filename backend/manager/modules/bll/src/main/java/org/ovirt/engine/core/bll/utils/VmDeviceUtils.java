@@ -1519,6 +1519,11 @@ public class VmDeviceUtils {
                             if (dstChipsetType == ChipsetType.Q35 && !device.getAddress().contains("bus=0")) {
                                 device.setAddress("");
                             }
+                            if (dstChipsetType == ChipsetType.I440FX
+                                    && !device.getAddress().contains("unit=0")
+                                    && !device.getAddress().contains("unit=1")) {
+                                device.setAddress("");
+                            }
                         } else { // CD already exists
                             continue;
                         }
@@ -1536,6 +1541,12 @@ public class VmDeviceUtils {
                         specParams = device.getSpecParams();
                     } else if (VmDeviceType.PCI.getName().equals(device.getDevice())) {
                         specParams = device.getSpecParams();
+                        if (ChipsetType.I440FX.equals(dstChipsetType)) {
+                            String model = (String) specParams.get(VdsProperties.Model);
+                            if (model != null && model.startsWith("pcie-")) {
+                                continue;
+                            }
+                        }
                     } else if (VmDeviceType.VIRTIOSCSI.getName().equals(device.getDevice())) {
                         hasVirtioScsi = true;
                         if (Boolean.FALSE.equals(isVirtioScsiEnabled)) {
@@ -1544,6 +1555,11 @@ public class VmDeviceUtils {
                     } else if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
                         if (ChipsetType.Q35.equals(dstChipsetType)) {
                             device.setDevice(VmDeviceType.SATA.getName());
+                            device.setAddress("");
+                        }
+                    } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
+                        if (ChipsetType.I440FX.equals(dstChipsetType)) {
+                            device.setDevice(VmDeviceType.IDE.getName());
                             device.setAddress("");
                         }
                     }

@@ -2175,7 +2175,7 @@ public interface UIConstants extends Constants {
 
     String updatingStorageDomainTitle();
 
-    String q35VmDeviceChangesTitle();
+    String chipsetDependentVmDeviceChangesTitle();
 
-    String q35VmDeviceChangesMessage();
+    String chipsetDependentVmDeviceChangesMessage();
 }
