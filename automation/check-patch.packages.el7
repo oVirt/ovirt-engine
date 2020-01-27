@@ -17,4 +17,5 @@ python-pep8
 python-psycopg2
 rh-postgresql10-postgresql-contrib
 rh-postgresql10-postgresql-server
+yum
 yum-utils

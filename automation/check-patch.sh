@@ -1,5 +1,15 @@
 #!/bin/bash -xe
 
+# CI is not updating build root.
+DISTVER="$(rpm --eval "%dist"|cut -c2-4)"
+if [[ "${DISTVER}" == "el7" ]]; then
+    PACKAGER=yum
+else
+    PACKAGER=dnf
+fi
+export PACKAGER
+${PACKAGER} update -y
+
 # Get the MILESTONE from version.mak, so that we know if we build for a
 # non-release milestone, such as master, alpha, beta, etc., or for a
 # release (and then MILESTONE is empty).

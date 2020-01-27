@@ -1,4 +1,5 @@
 autoconf
+dnf
 dnf-utils
 git
 java-11-openjdk-devel
