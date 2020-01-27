@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import java.io.IOException;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -59,7 +60,12 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
         Map<String, String> labels = node.getMetadata().getLabels();
         VdsDynamic dynamic = new VdsDynamic();
         dynamic.setId(vdsManager.getVdsId());
-        dynamic.setStatus("true".equals(labels.get("kubevirt.io/schedulable")) ? VDSStatus.Up : VDSStatus.Error);
+        if ("true".equals(labels.get("kubevirt.io/schedulable"))) {
+            dynamic.setStatus(VDSStatus.Up);
+        } else {
+            dynamic.setStatus(VDSStatus.NonOperational);
+            dynamic.setNonOperationalReason(NonOperationalReason.KUBEVIRT_NOT_SCHEDULABLE);
+        }
         dynamic.setCpuThreads(node.getStatus().getCapacity().getOrDefault("cpu", new Quantity("0")).getNumber().intValue());
         dynamic.setPhysicalMemMb(4809);
         dynamic.setKernelVersion(node.getStatus().getNodeInfo().getKernelVersion());
