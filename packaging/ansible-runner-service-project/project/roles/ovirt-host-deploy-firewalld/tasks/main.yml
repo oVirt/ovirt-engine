@@ -49,5 +49,5 @@
       loop_control:
         loop_var: outer_item
   when:
-    - "host_deploy_override_firewall"
-    - "host_deploy_firewall_type == 'FIREWALLD'"
+    - host_deploy_override_firewall|bool
+    - host_deploy_firewall_type == 'FIREWALLD'

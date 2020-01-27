@@ -24,9 +24,9 @@ Install the following system components:
 - otopi >= 1.1.0
 - ovirt-setup-lib
 - maven-3 >= 3.5
-- ansible >= 2.7.2
+- ansible >= 2.9.0
 - ansible-runner-service-dev >= 1.0.1
-- ovirt-ansible-roles >= 1.1.6
+- ovirt-ansible-roles >= 1.2.0
 - ovirt-engine-metrics
 - python-ovirt-engine-sdk4
 - ansible-lint / python3-ansible-lint

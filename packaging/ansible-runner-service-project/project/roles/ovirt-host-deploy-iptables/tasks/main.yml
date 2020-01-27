@@ -38,5 +38,5 @@
         enabled: true
         state: restarted
   when:
-  - "host_deploy_override_firewall"
-  - "host_deploy_firewall_type == 'IPTABLES'"
+  - host_deploy_override_firewall|bool
+  - host_deploy_firewall_type == 'IPTABLES'
