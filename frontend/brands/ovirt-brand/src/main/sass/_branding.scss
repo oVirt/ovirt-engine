@@ -13,88 +13,142 @@ over) by other installed brands.
     position: absolute;
 }
 
+/*
+  oVirt has 2 background images.  One is in the top right using the default PF4
+  `:before` background image slot.  The other is in the bottom left and is using
+  a new `:after` background image slot.
+
+  To use a single image in a downstream branding, set `content: none;` on either
+  :before or :after and it will be hidden.
+*/
+.obrand_background-image {
+  --pf-c-background-image--Filter: none;
+
+  &::before { // image #1, top right
+      background-color: inherit;
+      background-image: url(images/ovirt_landing_bg_top_right.png);
+      background-repeat: no-repeat;
+      background-size: auto;
+      background-position: top right;
+  }
+
+  &::after { // image #2, bottom left
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      content: "";
+
+      background-color: inherit;
+      background-image: url(images/ovirt_landing_bg_bottom_left.png);
+      background-repeat: no-repeat;
+      background-size: auto;
+      background-position: bottom left;
+  }
+}
+
+//
+// SSO Login Page
+//
 .obrand_loginPageLogo {
-    background-image: url(images/ovirt_logo.png);
-    background-size: 120px 45px;
+    border: 0px;
     width: 120px;
     height: 45px;
-    border: 0px;
     display: block;
+    background-image: url(images/ovirt_logo.png);
+    background-size: 120px 45px;
 }
 
 .obrand_loginPageLogoLink {
     display: block;
-    margin-right: 64px;
-    margin-top: 75px;
-    margin-bottom: 24px;
-    position: relative;
-    text-align: center;
+}
+
+.obrand_loginPageSubtitle {
+    margin-top: 25px;
+}
+
+//
+// Welcome / Landing Page / Error Pages
+//
+.obrand_ssoHeader {
+    background-color: transparent;
+
+    .pf-c-dropdown__toggle:before {
+        border-top: none;
+        border-right: none;
+        border-left: none;
+    }
+
+    .pf-c-dropdown__menu {
+        list-style: none;
+    }
+
+    .pf-c-avatar {
+        background-image: url(bundled/patternfly-next/assets/images/img_avatar.svg);
+    }
+}
+
+.obrand_ssoHeader_rootClose {
+    z-index: calc(var(--pf-c-dropdown__menu--ZIndex) - 1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.obrand_welcomePageLogo {
+  border: 0px;
+  width: 120px;
+  height: 45px;
+  display: block;
+  background-image: url(images/ovirt_logo.png);
+  background-size: 120px 45px;
 }
 
 .obrand_welcomePageLogoLink {
     display: block;
-    float: left;
-    position: relative;
-    text-align: center;
 }
 
-@media (max-width: 768px) {
-    .obrand_loginPageLogo {
-        display: none;
-    }
-    .obrand_loginPageLogoLink {
-        display: none;
-    }
+.obrand_welcomePageVersionText {
+    color: #fff;
+    margin-left: 30px;
 }
 
-.obrand_ssoHeader {
-    height: 41px;
-    top: 4px;
-    background-color: #151515;
+.obrand_errorPageSection {
+    margin-top: 5%;
+    margin-left: calc(-1 * (var(--ovirt-error-section--Margin-left) + var(--pf-c-page__main-section--PaddingLeft)));
+    margin-right: calc(-1 * (var(--ovirt-error-section--Margin-right) + var(--pf-c-page__main-section--PaddingRight)));
+
+    padding: 50px;
+    background-color: var(--pf-global--BackgroundColor--dark-transparent-100);
+
+    --pf-global--FontSize--md: var(--original--pf-global--FontSize--md);
 }
 
-.obrand_ssoHeader .navbar-nav li a {
-    padding-top: 10px;
-    padding-bottom: 10px;
+.obrand_errorPageSectionTitle {
+    color: #fff;
+    font-weight: var(--pf-global--FontWeight--bold);
 }
 
-.obrand_main_tab {
-    height: calc(100vh - 66px);
-    min-height: calc(100vh - 66px);
+.obrand_errorPageSectionAction {
+    color: #fff;
+    font-weight: var(--pf-global--FontWeight--normal);
 }
 
-.obrand_detail_tab {
-    min-height: 465px;
-}
-
-.obrand_landingBgTop {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-image: url(images/ovirt_landing_bg_top_right.png);
-    width: 561px;
-    height: 413px;
-    background-repeat: no-repeat;
-}
-
-.obrand_landingBgBottom {
-    background-image: url(images/ovirt_landing_bg_bottom_left.png);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 789px;
-    height: 969px;
-    background-repeat: no-repeat;
-}
-
+//
+// Application: masthead
+//
 .obrand_mastheadLogo {
-    background-image: url(images/ovirt_masthead_logo.png);
     width: 272px;
     height: 16px;
     position: relative;
-    top: 6px;
+    top: 9px;
     border: 0px;
-    display: inline !important;
+    background-image: url(images/ovirt_masthead_logo.png);
     background-size: contain;
     background-repeat: no-repeat;
 }
@@ -104,6 +158,9 @@ over) by other installed brands.
     background-size: cover;
 }
 
+//
+// Application: About Dialog
+//
 .obrand_aboutBackground {
     width: 565px;
     height: 355px;
@@ -111,14 +168,26 @@ over) by other installed brands.
 }
 
 .obrand_aboutApplicationLogo {
-    background-image: url(images/ovirt_logo.png);
+    display: block;
     width: 80px;
     height: 30px;
     border: 0px;
-    display: block;
-    background-size: contain;
-    background-repeat: no-repeat;
     position: absolute;
     bottom: 25px;
     right: 25px;
+    background-image: url(images/ovirt_logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+//
+// Application: Content panes
+//
+.obrand_main_tab {
+    height: calc(100vh - 66px);
+    min-height: calc(100vh - 66px);
+}
+
+.obrand_detail_tab {
+    min-height: 465px;
 }

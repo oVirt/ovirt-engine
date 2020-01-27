@@ -5,106 +5,106 @@
 <%@ taglib prefix="obrand" uri="obrand" %>
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="sso-messages" var="changepasswordpage" />
+
 <!DOCTYPE html>
-<html class="login-pf">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <obrand:favicon />
-    <title><fmt:message key="product" /> <fmt:message key="changepasswordpage.title" bundle="${changepasswordpage}" /></title>
+    <title>
+        <fmt:message key="product" />
+        <fmt:message key="changepasswordpage.title" bundle="${changepasswordpage}" />
+    </title>
     <obrand:stylesheets />
     <obrand:javascripts />
 </head>
-<body>
+<body class="ovirt-container">
     <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
-    <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="obrand_loginPageLogoLink">
-        <span class="obrand_loginPageLogo"></span>
-    </a>
-    <div class="ovirt-container">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div id="brand">
-                        <div class="obrand_middleLogoName"></div>
-                    </div>
-                </div>
 
-                <c:if test="${ssoSession.clientId == null}">
-                    <c:redirect url="${applicationScope['ovirt-ssoContext'].engineUrl}" />
-                </c:if>
+    <c:if test="${ssoSession.clientId == null}">
+        <c:redirect url="${applicationScope['ovirt-ssoContext'].engineUrl}" />
+    </c:if>
 
-                <c:choose>
-                    <c:when test="${ssoSession.status == 'authenticated'}">
-                        <c:set var="ssoUserName" value="${ssoSession.userId}" />
-                        <c:set var="ssoUserProfile" value="${ssoSession.profile}" />
-                    </c:when>
-                    <c:when test="${ssoSession.changePasswdCredentials != null && ssoSession.changePasswdCredentials.username != null }">
-                        <c:set var="ssoUserName" value="${ssoSession.changePasswdCredentials.username}" />
-                        <c:set var="ssoUserProfile" value="${ssoSession.changePasswdCredentials.profile}" />
-                    </c:when>
-                </c:choose>
+    <c:choose>
+        <c:when test="${ssoSession.status == 'authenticated'}">
+            <c:set var="ssoUserName" value="${ssoSession.userId}" />
+            <c:set var="ssoUserProfile" value="${ssoSession.profile}" />
+        </c:when>
+        <c:when test="${ssoSession.changePasswdCredentials != null && ssoSession.changePasswdCredentials.username != null }">
+            <c:set var="ssoUserName" value="${ssoSession.changePasswdCredentials.username}" />
+            <c:set var="ssoUserProfile" value="${ssoSession.changePasswdCredentials.profile}" />
+        </c:when>
+    </c:choose>
 
-                <div style="height:45px;vertical-align:top;display: table;">
-                    <c:choose>
-                        <c:when test="${ssoSession.changePasswdMessage != null && ssoSession.changePasswdMessage != '' }">
-                            <div class="alert alert-warning alert-dismissable">
-                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                                    <span class="pficon pficon-close"></span>
-                                </button>
-                                <span class="pficon pficon-warning-triangle-o"></span>
+    <obrand:background-image />
+
+    <div class="pf-c-login">
+        <div class="pf-c-login__container">
+            <header class="pf-c-login__header">
+                <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="pf-c-brand obrand_loginPageLogoLink">
+                    <div class="obrand_loginPageLogo"></div>
+                </a>
+            </header>
+
+            <main class="pf-c-login__main">
+                <header class="pf-c-login__main-header">
+                    <h1 class="pf-c-title pf-m-3xl">
+                        <fmt:message key="changepasswordpage.usermessage" bundle="${changepasswordpage}" />
+                        <b>${ssoUserName}@${ssoUserProfile}</b>
+                    </h1>
+                </header>
+
+                <div class="pf-c-login__main-body">
+                    <form
+                        novalidate class="pf-c-form"
+                        method="post"
+                        action="${pageContext.request.contextPath}/interactive-change-passwd"
+                        enctype="application/x-www-form-urlencoded"
+                    >
+                        <p class="pf-c-form__helper-text pf-m-error">
+                            <c:if test="${ssoSession.changePasswdMessage != null && ssoSession.changePasswdMessage != ''}">
+                                <i class="fas fa-exclamation-circle pf-c-form__helper-text-icon"></i>
                                 ${ssoSession.changePasswdMessage}
-                            </div>
-                            <c:set target="${ssoSession}" property="changePasswdMessage" value="" />
-                        </c:when>
-                        <c:otherwise>
-                            <span style="vertical-align:top;display:table-cell;">
-                            <fmt:message key="changepasswordpage.usermessage" bundle="${changepasswordpage}" /> <b> ${ssoUserName}@${ssoUserProfile} </b>
-                            </span>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
+                                <c:set target="${ssoSession}" property="changePasswdMessage" value="" />
+                            </c:if>
+                        </p>
 
+                        <input type="hidden" class="form-control" id="username" placeholder="username" name="username" value="${ssoUserName}">
+                        <input type="hidden" class="form-control" id="profile" placeholder="profile" name="profile" value="${ssoUserProfile}">
 
-
-                <div style="vertical-align:top;display: table;">
-                    <span style="vertical-align:top;display:table-cell;width:540px;">
-                        <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-change-passwd" enctype="application/x-www-form-urlencoded">
-                            <input type="hidden" class="form-control" id="username" placeholder="username" name="username" value="${ssoUserName}">
-                            <input type="hidden" class="form-control" id="profile" placeholder="profile" name="profile" value="${ssoUserProfile}">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="oldPassword">
+                        <div class="pf-form__group">
+                            <label class="pf-c-form__label-text" for="oldPassword">
                                 <fmt:message key="changepasswordpage.oldpassword" bundle="${changepasswordpage}" />
-                                </label>
-                                <div class="col-sm-9">
-                                    <input type="password" class="form-control" id="credentials" placeholder='<fmt:message key="changepasswordpage.oldpasswordplaceholder" bundle="${changepasswordpage}" />' name="credentials" tabIndex="1">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="newPassword1">
+                            </label>
+                            <input type="password" id="credentials" name="credentials" class="pf-c-form-control" autofocus tabIndex="1">
+                        </div>
+                        <div class="pf-form__group">
+                            <label class="pf-c-form__label-text" for="username">
                                 <fmt:message key="changepasswordpage.newpassword" bundle="${changepasswordpage}" />
-                                </label>
-                                <div class="col-sm-9">
-                                    <input type="password" class="form-control" id="credentialsNew1" placeholder='<fmt:message key="changepasswordpage.newpasswordplaceholder" bundle="${changepasswordpage}" />' name="credentialsNew1" tabIndex="2">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="newPassword2">
-                                    <fmt:message key="changepasswordpage.retypepassword" bundle="${changepasswordpage}" />
-                                </label>
-                                <div class="col-sm-9">
-                                    <input type="password" class="form-control" id="credentialsNew2" placeholder='<fmt:message key="changepasswordpage.newpasswordplaceholder" bundle="${changepasswordpage}" />' name="credentialsNew2" tabIndex="3">
-                                </div>
-                            </div>
-                            <div class="pull-right">
-                                <button type="submit" class="btn btn-primary" tabIndex="4">
-                                    <fmt:message key="changepasswordpage.changepassword" bundle="${changepasswordpage}" />
-                                </button>
-                            </div>
-                        </form>
-                    </span>
+                            </label>
+                            <input type="password" id="credentialsNew1" name="credentialsNew1" class="pf-c-form-control" tabIndex="2">
+                        </div>
+                        <div class="pf-form__group">
+                            <label class="pf-c-form__label-text" for="username">
+                                <fmt:message key="changepasswordpage.retypepassword" bundle="${changepasswordpage}" />
+                            </label>
+                            <input type="password" id="credentialsNew2" name="credentialsNew2" class="pf-c-form-control" tabIndex="3">
+                        </div>
+
+                        <div class="pf-c-form__group pf-m-action">
+                            <button class="pf-c-button pf-m-primary pf-m-block" type="submit" tabIndex="4">
+                                <fmt:message key="changepasswordpage.changepassword" bundle="${changepasswordpage}" />
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </div>
+            </main>
+
+            <footer class="pf-c-login__footer">
+                <p class="obrand_loginPageSubtitle"></p>
+            </footer>
         </div>
     </div>
 </body>

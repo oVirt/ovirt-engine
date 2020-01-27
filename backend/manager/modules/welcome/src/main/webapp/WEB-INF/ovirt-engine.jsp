@@ -4,8 +4,9 @@
 <%@ taglib prefix="obrand" uri="obrand" %>
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="languages" var="lang" />
+
 <!DOCTYPE html>
-<html class="pf-c-page">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,54 +17,69 @@
     <obrand:javascripts />
     <script src="welcome-locale-selector.js" type="text/javascript"></script>
 </head>
-<body>
-    <div class="obrand_landingBgTop"></div>
-    <div class="obrand_landingBgBottom"></div>
+<body class="pf-c-page ovirt-container">
+    <obrand:background-image />
 
-    <div class="ovirt-container">
-        <obrand:header />
-        <div class="container">
-            <div id="welcome-section">
-                    <a href="<obrand:messages key=" obrand.common.vendor_url" />" class="obrand_welcomePageLogoLink">
-                    <span class="obrand_loginPageLogo"></span>
+    <obrand:header />
+    <main class="pf-c-page__main">
+        <section class="pf-c-page__main-section welcome-section">
+            <div class="pf-l-split">
+                <div class="pf-l-split__item">
+                    <a href="<obrand:messages key="obrand.common.vendor_url" />" class="obrand_welcomePageLogoLink">
+                        <span class="obrand_welcomePageLogo"></span>
                     </a>
-                <div id="welcome-version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope['version']}" /></fmt:message></div>
+                </div>
+                <div class="pf-l-split__item obrand_welcomePageVersionText">
+                    <fmt:message key="obrand.welcome.version">
+                        <fmt:param value="${requestScope['version']}" />
+                    </fmt:message>
+                </div>
             </div>
 
-            <div class="row">
+            <div class="pf-l-stack">
                 <noscript>
-                    <div class="well col-sm-11 well-sm" id="well-error">
-                        <span class="label label-default" id="well-error-label">
-                            <b><fmt:message key="obrand.welcome.browser.javascript1" /></b>
-                            <fmt:message key="obrand.welcome.browser.javascript2" />
-                        </span>
+                    <div class="pf-l-stack__item noscript-error">
+                        <div class="pf-c-alert pf-m-danger pf-m-inline" aria-label="Inline danger alert">
+                            <div class="pf-c-alert__icon">
+                                <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="pf-c-alert__title">
+                                <span class="pf-screen-reader">Success alert:</span><fmt:message key="obrand.welcome.browser.javascript1" />
+                            </h4>
+                            <div class="pf-c-alert__description">
+                                <p><fmt:message key="obrand.welcome.browser.javascript2" /></p>
+                            </div>
+                        </div>
                     </div>
-                    <div style="clear: both;"></div>
                 </noscript>
 
-                <div class="col-sm-7">
-                    <c:if test="${sessionScope.error_description != null && sessionScope.error_description != '' }">
-                        <div class="alert alert-warning alert-dismissable">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-                                <span class="pf-icon pf-icon-close"></span>
-                            </button>
-                            <span class="pf-icon pf-icon-warning-triangle-o"></span>
-                            ${sessionScope.error_description}
+                <c:if test="${sessionScope.error_description != null && sessionScope.error_description != ''}">
+                    <div class="pf-l-stack__item session-error">
+                        <div class="pf-c-alert pf-m-warning pf-m-inline" aria-label="Inline warning alert">
+                            <div class="pf-c-alert__icon">
+                                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                            </div>
+                            <h4 class="pf-c-alert__title">
+                                <span class="pf-screen-reader">Warning alert:</span>${sessionScope.error_description}
+                            </h4>
+                            <div class="pf-c-alert__action">
+                                <button class="pf-c-button pf-m-plain" type="button" aria-label="Close warning alert">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
-                        <c:remove var="error" scope="session"/>
-                        <c:remove var="error_description" scope="session"/>
-                    </c:if>
-                </div>
+                    </div>
+                    <c:remove var="error" scope="session"/>
+                    <c:remove var="error_description" scope="session"/>
+                </c:if>
 
-                <div style="clear: both;"></div>
-
-                <div id="welcome-band-top" class="col-sm-12">
+                <div class="pf-l-stack__item welcome-template">
+                    <%-- This is where the __welcome__ page template is inserted --%>
                     ${requestScope['sections'].toString()}
                 </div>
 
-                <div style="clear: both;"></div>
-                <div class="col-sm-12 locale-div">
-                    <select class="pf-c-form-control" onchange="localeSelected(this)" id="localeBox">
+                <div class="pf-l-stack__item locale-select">
+                    <select class="pf-c-form-control" onchange="localeSelected(this)">
                         <c:forEach items="${requestScope['localeKeys']}" var="localeKey">
                             <c:choose>
                             <c:when test="${requestScope['locale'].toString() == localeKey}">
@@ -78,7 +94,7 @@
                     </select>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

@@ -1,75 +1,56 @@
 /* welcome page styles */
 
-.label-default {
-    background-color: inherit;
-}
-
-.login-link:hover, login-link:focus {
-    color: #00618a;
-    text-decoration: underline;
-}
-
-.login-link {
-    color: #0099d3;
-}
-
-.login-error {
-    color: #b94a48;
-    background-color: inherit;
-    border-color: #b94a48;
-}
-
-.login-message-error {
-    color: #b94a48;
-    background-color: inherit;
-}
-
+//
+// welcome_page.template styles
+//
 .welcome-section-title {
+    color: #fff;
     padding-bottom: 7px;
     font-weight: 700;
     font-size: 16px;
 }
 
 .welcome-section-title.sub-title {
+    color: #fff;
     padding-top: 5px;
 }
 
 .welcome-link {
+    color: #0066CC;
     font-family: RedHatDisplay;
     line-height: 1.5;
-    color: #0066CC;
     font-weight: 600;
     font-size: 16px;
 }
 
-.locale-div {
-    padding-top: 40px;
-    padding-left: 40px;
-    width: 15%;
-}
-
-#well-error {
-    color: #b94a48;
-    background-color: inherit;
-    border-color: #b94a48;
-}
-
-#well-error-label {
+//
+// welcome / landing page component blocks
+//
+.noscript-error {
+    margin-top: 30px;
     font-size: 14px;
     color: #b94a48;
     background-color: inherit;
+    border-color: #b94a48;
+
+    .pf-c-alert {
+        margin: 0 60px;
+    }
 }
 
-.ovirt-container .container {
-    padding-left: 80px;
-    width: 100%;
-    clear: right;
-    color: #fff;
-    padding-bottom: 40px;
-    position: absolute;
-    top: 30%;
+.session-error {
+    margin-top: 30px;
+    padding: 0 60px;
 }
 
-.ovirt-container select {
-    color: black;
+.welcome-template {
+    margin-top: 30px;
+}
+
+.locale-select {
+    margin-top: 30px;
+
+    select {
+        width: auto;
+    }
 }

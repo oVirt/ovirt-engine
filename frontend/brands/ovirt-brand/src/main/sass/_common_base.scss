@@ -2,27 +2,18 @@
 oVirt base common css file
 landing page (welcome), login (sso), docs, 404, etc
 ****************************************************/
-.pf-c-page body {
+.ovirt-container {
     background-color: #151515;
     background-image: none;
+    font-size: var(--pf-global--FontSize--md);
 }
 
-.pf-c-page .ovirt-container {
-    font-size: 13px;
-}
+.ovirt-container .pf-c-login {
+    z-index: var(--pf-c-page__main--ZIndex);
+    background-image: none;
 
-.pf-c-page .ovirt-container .pf-c-login{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-.pf-c-page .container {
-    width: 100%;
-}
-
-.pf-c-page label.nowrap {
-    white-space: nowrap;
+    // Login page will use the PF4 standard font size
+    --pf-global--FontSize--md: var(--original--pf-global--FontSize--md);
 }
 
 /* left nav */
@@ -32,7 +23,6 @@ landing page (welcome), login (sso), docs, 404, etc
 
 /* masthead action icons */
 .navbar-pf-vertical .nav {
-
     .nav-item-iconic-skeleton {
         height: 58px; // matches PF ".navbar-pf-vertical .nav .nav-item-iconic { max-height }"
     }
@@ -48,60 +38,24 @@ landing page (welcome), login (sso), docs, 404, etc
     }
 }
 
-.container-pad {
-    padding-left: 100px !important;
-    padding-top: 50px !important;
-    padding-bottom: 60px !important
-}
+.welcome-section {
+    background-color: inherit;
+    color: #fff;
 
-#welcome-section {
-    position: absolute;
-    top: -76px;
-    left: 100px;
-}
+    margin-left: var(--ovirt-welcome-section--Margin-left);
+    margin-right: var(--ovirt-welcome-section--Margin-right);
+    margin-top: var(--ovirt-welcome-section--Margin-top);
 
-#welcome-section-login {
-    top: -50px;
-    left: 100px;
-}
-
-#welcome-band-top {
-    margin-top: 15px;
-}
-
-#welcome-title {
-    position: relative;
-    top: -4px;
-    font-size: 14px;
-    font-weight: 400;
-    float: left;
-}
-
-#welcome-version-text {
-    position: relative;
-    top: 20px;
-    margin-left: 30px;
-    float: left;
-}
-
-#welcome-app-title {
-    position: relative;
-    top: -3px;
-    left: 10px;
-    float: left;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-@media (max-width: 768px) {
-    #welcome-app-title {
-        display: none;
+    .pf-l-split {
+        align-items: flex-end;
     }
 }
 
-#welcome-app-title .pipe {
-    color: #bbb;
-    font-size: 18px;
-    font-weight: 100;
-    padding-right: 8px;
+.error-section {
+    background-color: inherit;
+    color: #fff;
+
+    margin-left: var(--ovirt-error-section--Margin-left);
+    margin-right: var(--ovirt-error-section--Margin-right);
+    margin-top: var(--ovirt-error-section--Margin-top);
 }

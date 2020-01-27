@@ -4,8 +4,9 @@
 <%@ taglib prefix="obrand" uri="obrand" %>
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="sso-messages" var="badrequestpage" />
+
 <!DOCTYPE html>
-<html class="login-pf">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,32 +16,33 @@
     <obrand:stylesheets />
     <obrand:javascripts />
 </head>
-<body>
-    <div class="obrand_landingBgTop"></div>
-    <div class="obrand_landingBgBottom"></div>
+<body class="pf-c-page ovirt-container">
+    <obrand:background-image />
 
-    <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoLink">
-        <span class="obrand_loginPageLogo"></span>
-    </a>
+    <header role="banner" class="pf-c-page__header obrand_ssoHeader"><!-- spacer / place holder --></header>
+    <main class="pf-c-page__main">
+        <section class="pf-c-page__main-section error-section">
+            <div class="pf-l-split">
+                <div class="pf-l-split__item">
+                    <a href="${pageContext.request.contextPath}/" class="obrand_welcomePageLogoLink">
+                        <span class="obrand_welcomePageLogo"></span>
+                    </a>
+                </div>
+                <%--
+                  NOTE: WelcomeServlet fetches the version info for ovirt-engine.jsp and
+                        it is not available here in a pure JSP servlet.
+                --%>
+            </div>
 
-    <div class="ovirt-container">
-        <div class="container container-pad">
-            <div class="row" id="welcome-section">
-                <div class="col-sm-12">
-                    <div class="obrand_middleLogoName"></div>
+            <div class="pf-l-stack obrand_errorPageSection">
+                <div class="pf-l-stack__item obrand_errorPageSectionTitle">
+                    ${requestScope['javax.servlet.error.message']}
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <span class="welcome-title">${requestScope['javax.servlet.error.message']}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
+                <div class="pf-l-stack__item obrand_errorPageSectionAction">
                     <a href="${pageContext.request.contextPath}/"><fmt:message key="badrequestpage.link" bundle="${badrequestpage}" /></a>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

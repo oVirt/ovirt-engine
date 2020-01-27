@@ -1,3 +1,14 @@
 :root {
     --ovirt-masthead-height: 60px;
+
+    --ovirt-welcome-section--Margin-top: 5%;
+    --ovirt-welcome-section--Margin-left: 40px;
+    --ovirt-welcome-section--Margin-right: 40px;
+    --ovirt-error-section--Margin-top: var(--ovirt-welcome-section--Margin-top);
+    --ovirt-error-section--Margin-left: var(--ovirt-welcome-section--Margin-left);
+    --ovirt-error-section--Margin-right: var(--ovirt-welcome-section--Margin-left);
+
+    // Override PF4 font sizes to line up with PF3 (and webadmin)
+    --original--pf-global--FontSize--md: 1rem;
+    --pf-global--FontSize--md: 13px;
 }

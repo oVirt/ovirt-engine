@@ -23,4 +23,8 @@
     <name>header</name>
     <path>/META-INF/tags/obrand/header.tag</path>
   </tag-file>
+  <tag-file>
+    <name>background-image</name>
+    <path>/META-INF/tags/obrand/backgroundImage.tag</path>
+  </tag-file>
 </taglib>
