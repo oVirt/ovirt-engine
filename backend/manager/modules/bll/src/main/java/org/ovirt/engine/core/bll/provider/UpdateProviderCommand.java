@@ -63,6 +63,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
                 && (nameKept() || validate(validatorNew.nameAvailable()))
                 && validate(validatorNew.validateAuthUrl())
                 && validate(validatorNew.validatePassword())
+                && validate(validatorNew.validateUpdateProvider())
                 && validate(providerTypeNotChanged(getOldProvider(), getProvider()));
     }
 

@@ -11,10 +11,15 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.kubernetes.client.ApiClient;
+import io.kubernetes.client.ApiException;
 import kubevirt.io.V1VirtualMachine;
+import openshift.io.OpenshiftApi;
+import openshift.io.V1TemplateList;
 
 @Singleton
 public class KubevirtMonitoring {
@@ -45,6 +50,14 @@ public class KubevirtMonitoring {
         if (monitoring != null) {
             monitoring.stop();
         }
+    }
+
+    public boolean checkTemplates(Provider<KubevirtProviderProperties> provider) throws IOException, ApiException {
+        ApiClient client = KubevirtUtils.createApiClient(provider);
+        OpenshiftApi api = new OpenshiftApi(client);
+        String labelSelector = "template.kubevirt.io/type=base";
+        V1TemplateList list = api.listKubevirtTemplateForAllNamespaces(null, null, null, labelSelector, null, null, null, null);
+        return list.getItems().size() > 0;
     }
 
     public void create(Guid clusterId, V1VirtualMachine kvm) {

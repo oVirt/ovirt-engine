@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.provider.cluster;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -40,6 +41,8 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+
+import io.kubernetes.client.ApiException;
 
 public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<KubevirtProviderProperties>> {
     private static final String KUBEVIRT_DC_NAME = "kubevirt";
@@ -92,8 +95,22 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
                 if (!promValidation.isValid()) {
                     return promValidation;
                 }
+                ValidationResult templatesResult = validateTemplates();
+                if (!templatesResult.isValid()) {
+                    return templatesResult;
+                }
 
                 return super.validateAddProvider();
+            }
+
+            @Override
+            public ValidationResult validateUpdateProvider() {
+                ValidationResult templatesResult = validateTemplates();
+                if (!templatesResult.isValid()) {
+                    return templatesResult;
+                }
+
+                return super.validateUpdateProvider();
             }
 
             @Override
@@ -214,6 +231,15 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
                     .when(!matcher.matches());
         }
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateTemplates() {
+        try {
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_TEMPLATES_NOT_FOUND)
+                    .unless(monitoring.get().checkTemplates(provider));
+        } catch (IOException | ApiException e) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_FAILED_FETCH_TEMPLATES);
+        }
     }
 
     private static String getPrometheusUrl(Provider<KubevirtProviderProperties> provider) {

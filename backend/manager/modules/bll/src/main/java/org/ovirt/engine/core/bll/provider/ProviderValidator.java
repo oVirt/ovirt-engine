@@ -110,6 +110,13 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
     }
 
     /**
+     * Specific validation that each sub-class can override and implement
+     */
+    public ValidationResult validateUpdateProvider() {
+        return ValidationResult.VALID;
+    }
+
+    /**
      * Specific validations that each sub-class can override and implement
      */
     public ValidationResult validateRemoveProvider() {
