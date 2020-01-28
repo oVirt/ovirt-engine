@@ -29,7 +29,7 @@ VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
-PYTHON=python2
+PYTHON=$(shell which python2 2> /dev/null)
 PYTHON3=$(shell which python3 2> /dev/null)
 PYFLAKES=$(shell which pyflakes 2> /dev/null)
 PY_VERSION=$(if $(PYTHON3),3,2)
@@ -121,7 +121,9 @@ BUILD_FLAGS:=$(BUILD_FLAGS) -D gwt.jvmArgs="$(BUILD_JAVA_OPTS_GWT)"
 endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
+ifneq ($(PYTHON),)
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
+endif
 ifneq ($(PYTHON3),)
 PYTHON3_SYS_DIR:=$(shell $(PYTHON3) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 endif
@@ -484,7 +486,6 @@ install-packaging-files: \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/doc TARGETDIR="$(DESTDIR)$(PKG_DOC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/man TARGETDIR="$(DESTDIR)$(MAN_DIR)" EXCLUDE_GEN="$(GENERATED)"
-	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/libexec TARGETDIR="$(DESTDIR)$(LIBEXEC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	# `cp` instead of `install` to copy symlinks
 	cp -dRT packaging/icons $(DESTDIR)$(DATA_DIR)/icons
@@ -498,6 +499,9 @@ install-packaging-files: \
 
 ifneq ($(PYTHON3),)
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON3_DIR)" EXCLUDE_GEN="$(GENERATED)"
+endif
+ifneq ($(PYTHON),)
+	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
 endif
 
 	# we should avoid make these directories dirty

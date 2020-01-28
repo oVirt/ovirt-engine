@@ -217,7 +217,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	DATAROOT_DIR=%{_datadir} \\\
 	MAN_DIR=%{_mandir} \\\
 	DOC_DIR=%{_docdir} \\\
-	PYTHON=%{__python2} \\\
+	%{?with_python2: PYTHON=%{__python2}} \\\
 	PYTHON_DIR=%{python2_sitelib} \\\
 	%{?with_python3: PYTHON3=%{__python3}} \\\
 	%{?with_python3: PYTHON3_DIR=%{python3_sitelib}} \\\
