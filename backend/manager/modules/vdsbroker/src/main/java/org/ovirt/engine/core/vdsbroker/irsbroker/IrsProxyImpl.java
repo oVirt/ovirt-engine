@@ -85,7 +85,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportFactory;
@@ -1570,7 +1569,6 @@ public class IrsProxyImpl implements IrsProxy {
         return reportsToHandle;
     }
 
-    @OnTimerMethodAnnotation("hostsStorageConnectionsAndPoolMetadataRefresh")
     public void hostsStorageConnectionsAndPoolMetadataRefresh() {
         Map<Guid, Guid> reportsToHandle = procceedReportsThreatmenet();
 

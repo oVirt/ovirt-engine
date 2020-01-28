@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
@@ -51,7 +50,6 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         super(vdsManager);
     }
 
-    @OnTimerMethodAnnotation("poll")
     public void poll() {
         if (isMonitoringNeeded(vdsManager.getStatus())) {
             long fetchTime = System.nanoTime();
