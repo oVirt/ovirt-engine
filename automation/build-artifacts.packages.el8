@@ -16,3 +16,4 @@ python3-pytest
 python3-devel
 python3-isort
 python3-pyflakes
+python3-pyOpenSSL

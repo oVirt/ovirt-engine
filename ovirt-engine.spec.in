@@ -191,10 +191,12 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global required_python_lib_m2crypto python3-m2crypto >= 0.28, m2crypto
 %global required_package_manager %{required_python_lib_dnf}
 %global required_package_manager_versionlock (yum-plugin-versionlock if yum), %{required_python_lib dnf-plugins-extras-versionlock}
+%global required_python_ssl python3-pyOpenSSL
 %else
 %global required_python_lib_m2crypto m2crypto
 %global required_package_manager yum
 %global required_package_manager_versionlock yum-plugin-versionlock
+%global required_python_ssl pyOpenSSL
 %endif
 
 %global make_common_opts \\\
@@ -422,7 +424,7 @@ Conflicts:	python3-ipaserver
 Obsoletes:	%{name}-userportal
 
 # OVS/OVN stuff
-Requires:	pyOpenSSL
+Requires:	%{required_python_ssl}
 Requires:	ovirt-provider-ovn >= 1.2.1
 
 #JavaScript and CSS libraries are currently bundled
