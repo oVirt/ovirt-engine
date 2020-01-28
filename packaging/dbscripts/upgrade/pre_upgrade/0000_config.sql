@@ -696,9 +696,6 @@ select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','gen
 select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'true', '4.4');
 
--- Monitoring
-select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
-
 -- BIOS Type
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4.4');

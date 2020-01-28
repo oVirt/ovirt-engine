@@ -23,8 +23,6 @@
     <module name="org.jboss.weld.spi"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.slf4j"/>
-    <module name="com.netflix.hystrix"/>
-    <module name="com.netflix.hystrix.contrib"/>
   </dependencies>
 
 </module>

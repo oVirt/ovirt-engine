@@ -87,10 +87,6 @@
     <snmp4j.version>2.5.3</snmp4j.version>
     <kubevirt-client.version>0.2.0</kubevirt-client.version>
     <resteasy.version>3.6.1.Final</resteasy.version>
-    <!-- hystrix -->
-    <hystrix.version>1.4.14</hystrix.version>
-    <archaius.version>0.4.1</archaius.version>
-    <rxjava.version>1.0.8</rxjava.version>
     <!-- OpenStack -->
     <openstack-client.version>3.2.7</openstack-client.version>
     <!-- libsass -->
@@ -364,27 +360,6 @@
         <version>1.0.0.Final</version>
         <type>pom</type>
         <scope>provided</scope>
-      </dependency>
-      <!--hystrix dependencies -->
-      <dependency>
-       <groupId>com.netflix.hystrix</groupId>
-       <artifactId>hystrix-metrics-event-stream</artifactId>
-       <version>${hystrix.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.netflix.hystrix</groupId>
-        <artifactId>hystrix-core</artifactId>
-        <version>${hystrix.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.reactivex</groupId>
-        <artifactId>rxjava</artifactId>
-        <version>${rxjava.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.netflix.archaius</groupId>
-        <artifactId>archaius-core</artifactId>
-        <version>${archaius.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.resteasy</groupId>

@@ -53,12 +53,6 @@
       <artifactId>branding</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>com.netflix.hystrix</groupId>
-      <artifactId>hystrix-metrics-event-stream</artifactId>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build>

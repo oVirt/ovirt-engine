@@ -40,7 +40,6 @@
     </filter>
     <filter-mapping>
         <filter-name>SsoRestApiAuthFilter</filter-name>
-        <url-pattern>/hystrix.stream</url-pattern>
         <url-pattern>/ansible</url-pattern>
     </filter-mapping>
 
@@ -51,7 +50,6 @@
     </filter>
     <filter-mapping>
         <filter-name>SsoRestApiNegotiationFilter</filter-name>
-        <url-pattern>/hystrix.stream</url-pattern>
         <url-pattern>/ansible</url-pattern>
     </filter-mapping>
 
@@ -66,7 +64,6 @@
     </filter>
     <filter-mapping>
         <filter-name>EnforceAuthFilter</filter-name>
-        <url-pattern>/hystrix.stream</url-pattern>
         <url-pattern>/ansible</url-pattern>
     </filter-mapping>
 
@@ -82,16 +79,6 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-
-    <servlet>
-        <display-name>HystrixMetricsStreamServlet</display-name>
-        <servlet-name>HystrixMetricsStreamServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.core.services.HystrixServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>HystrixMetricsStreamServlet</servlet-name>
-        <url-pattern>/hystrix.stream</url-pattern>
-    </servlet-mapping>
 
     <servlet>
         <servlet-name>BrandingServlet</servlet-name>

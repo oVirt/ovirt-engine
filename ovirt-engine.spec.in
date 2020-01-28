@@ -256,15 +256,7 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 
 BuildArch:	noarch
 
-%if 0%{?rhel} >= 8
-# using maven central artifacts for hystrix related artifacts till we'll remove it as planned
-%else
 BuildRequires:	assertj-core >= 2.2.0
-BuildRequires:	archaius-core
-BuildRequires:	hystrix-core
-BuildRequires:	hystrix-metrics-event-stream
-BuildRequires:	rxjava
-%endif
 BuildRequires:	java-1.8.0-openjdk-headless >= 1:1.8.0
 BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
@@ -318,14 +310,6 @@ Requires:	ansible-runner-service >= 1.0.1
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
-%if 0%{?rhel} >= 8
-# using bundled maven central artifacts for hystrix related artifacts till we'll remove it as planned
-%else
-Requires:	archaius-core
-Requires:	hystrix-core
-Requires:	hystrix-metrics-event-stream
-Requires:	rxjava
-%endif
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
 Requires:	objectweb-asm
@@ -974,14 +958,6 @@ common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/ope
 common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
 common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
 common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
-%if 0%{?rhel} >= 8
-# using bundled maven central artifacts for hystrix related artifacts till we'll remove it as planned
-%else
-common/com/netflix/config/main/archaius-core.jar archaius/archaius-core.jar
-common/com/netflix/hystrix/main/hystrix-core.jar hystrix/hystrix-core.jar
-common/com/netflix/hystrix/contrib/main/hystrix-metrics-event-stream.jar hystrix/hystrix-metrics-event-stream.jar
-common/io/reactivex/rxjava/main/rxjava.jar
-%endif
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
