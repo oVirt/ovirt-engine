@@ -694,6 +694,10 @@ public class ProviderModel extends Model {
             }
             provider.setAuthUrl(null);
         }
+
+        if (isTypeKubevirt()) {
+            provider.setAuthUrl(null);
+        }
     }
 
     private OpenStackProviderProperties getOpenStackProviderProperties() {
