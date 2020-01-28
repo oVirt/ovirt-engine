@@ -958,19 +958,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;
-            Version guestTools = null;
-            if (getVm().getHasAgent()) {
-                Version clusterVer = getVm().getPartialVersion();
-                if (new Version("4.4").equals(clusterVer)) {
-                    vmToolsClusterVersion = new Version("2.1");
-                } else {
-                    vmToolsClusterVersion = clusterVer;
-                }
-            } else {
-                guestTools = new Version(vmHandler.currentOvirtGuestAgentVersion(getVm()));
-                if (!guestTools.isNotValid()) {
-                    vmToolsClusterVersion = new Version(guestTools.getMajor(), guestTools.getMinor());
-                }
+            Version guestTools = new Version(vmHandler.currentOvirtGuestAgentVersion(getVm()));
+            if (!guestTools.isNotValid()) {
+                vmToolsClusterVersion = new Version(guestTools.getMajor(), guestTools.getMinor());
             }
 
             // Fetch cached Iso files from active Iso domain.
@@ -1004,10 +994,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (bestClusterVer != null
                 && (vmToolsClusterVersion == null
                     || vmToolsClusterVersion.compareTo(bestClusterVer) < 0
-                    || (vmToolsClusterVersion.equals(bestClusterVer) && getVm().getHasAgent()
-                        && getVm().getGuestAgentVersion().getBuild() < bestToolVer)
-                    || (guestTools != null
-                        && vmToolsClusterVersion.equals(bestClusterVer) && guestTools.getBuild() < bestToolVer))) {
+                    || vmToolsClusterVersion.equals(bestClusterVer) && guestTools.getBuild() < bestToolVer)) {
                 // Vm has no tools or there are new tools
                 attachCd = true;
             }

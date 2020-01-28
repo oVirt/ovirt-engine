@@ -1299,11 +1299,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         privateGuestAgentVersion = value;
     }
 
-    public Version getPartialVersion() {
-        Version initial = getGuestAgentVersion();
-        return initial == null ? null : new Version(initial.getMajor(), initial.getMinor());
-    }
-
     public boolean getHasAgent() {
         return getGuestAgentVersion() != null;
     }
