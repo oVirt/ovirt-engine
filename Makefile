@@ -31,6 +31,14 @@ ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
 PYTHON=$(shell which python2 2> /dev/null)
 PYTHON3=$(shell which python3 2> /dev/null)
+WITH_PYTHON2=0
+WITH_PYTHON3=0
+ifneq ($(PYTHON),)
+WITH_PYTHON2=1
+endif
+ifneq ($(PYTHON3),)
+WITH_PYTHON3=1
+endif
 PYFLAKES=$(shell which pyflakes 2> /dev/null)
 PY_VERSION=$(if $(PYTHON3),3,2)
 PEP8=pep8
@@ -121,10 +129,10 @@ BUILD_FLAGS:=$(BUILD_FLAGS) -D gwt.jvmArgs="$(BUILD_JAVA_OPTS_GWT)"
 endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
-ifneq ($(PYTHON),)
+ifeq ($(WITH_PYTHON2),1)
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 endif
-ifneq ($(PYTHON3),)
+ifeq ($(WITH_PYTHON3),1)
 PYTHON3_SYS_DIR:=$(shell $(PYTHON3) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 endif
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
@@ -497,10 +505,10 @@ install-packaging-files: \
 		EXCLUDE_GEN="$(GENERATED)" \
 		EXCLUDE="$$(echo $$(find packaging/setup/tests)) packaging/setup/plugins/README"
 
-ifneq ($(PYTHON3),)
+ifeq ($(WITH_PYTHON3),1)
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON3_DIR)" EXCLUDE_GEN="$(GENERATED)"
 endif
-ifneq ($(PYTHON),)
+ifeq ($(WITH_PYTHON2),1)
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
 endif
 
