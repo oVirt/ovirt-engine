@@ -189,7 +189,6 @@ public class UpdateClusterCommandTest {
     @Test
     public void illegalCpuUpdate() {
         createCommandWithDifferentCpuName();
-        cpuIsNotUpdatable();
         cpuManufacturersMatch();
         cpuExists();
         clusterHasVMs();
@@ -205,10 +204,6 @@ public class UpdateClusterCommandTest {
         cpuExists();
         architectureIsUpdatable();
         initAndAssertValidation(true);
-    }
-
-    private void cpuIsNotUpdatable() {
-        doReturn(false).when(cmd).isCpuUpdatable(any());
     }
 
     @Test
@@ -510,7 +505,6 @@ public class UpdateClusterCommandTest {
         final Cluster newerCluster = createDefaultCluster();
         newerCluster.setCompatibilityVersion(new Version(1, 2));
         createCommand(newerCluster);
-        cmd.init();
         VmStatic vm1 = new VmStatic();
         vm1.setId(VM_ID1);
         VmStatic vm2 = new VmStatic();
@@ -518,6 +512,7 @@ public class UpdateClusterCommandTest {
         VmStatic vm3 = new VmStatic();
         vm3.setId(VM_ID3);
         when(vmStaticDao.getAllByCluster(any())).thenReturn(Arrays.asList(vm1, vm2, vm3));
+        cmd.init();
         // the VMs ordered by Guids: v2, v3, v1
         assertEquals(Arrays.asList(vm2, vm3, vm1), cmd.filterVmsInClusterNeedUpdate());
     }

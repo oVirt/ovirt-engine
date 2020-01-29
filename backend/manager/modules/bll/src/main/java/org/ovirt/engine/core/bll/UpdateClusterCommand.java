@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -65,7 +67,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
@@ -84,8 +85,6 @@ import org.ovirt.engine.core.vdsbroker.VmManager;
 public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         ClusterOperationCommandBase<T> implements RenamedEntityInfoProvider{
 
-    @Inject
-    private AuditLogDirector auditLogDirector;
     @Inject
     private ClusterFeatureDao clusterFeatureDao;
     @Inject
@@ -120,18 +119,17 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     @Inject
     private VmInitDao vmInitDao;
 
-    private List<VDS> allForCluster;
+    private List<VDS> allHostsForCluster;
 
     private Cluster oldCluster;
 
     private boolean isAddedToStoragePool = false;
 
+    private List<VmStatic> allVmsInCluster;
     private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
     private List<VmTemplate> templatesLockedForUpdate = Collections.emptyList();
 
-    private Map<String, String> failedUpgradeEntities = new HashMap<>();
-    public static final String MESSAGE_REG_EX = "^(?<message>\\$message) (?<error>.*)";
-    public static final Pattern msgRegEx = Pattern.compile(MESSAGE_REG_EX);
+    private static final Pattern MESSAGE_PATTERN = Pattern.compile("^(?<message>\\$message) (?<error>.*)");
 
     @Override
     protected void init() {
@@ -158,12 +156,19 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
      */
     protected List<VmStatic> filterVmsInClusterNeedUpdate() {
         final boolean biosTypeChanged = isBiosTypeChanged();
-        return vmStaticDao.getAllByCluster(getCluster().getId()).stream()
+        return getAllVmsInCluster().stream()
                 .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
                 .filter(vm -> vm.getCustomCompatibilityVersion() == null
                         || biosTypeChanged && vm.getBiosType() == BiosType.CLUSTER_DEFAULT)
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    private List<VmStatic> getAllVmsInCluster() {
+        if (allVmsInCluster == null) {
+            allVmsInCluster = vmStaticDao.getAllByCluster(getCluster().getId());
+        }
+        return allVmsInCluster;
     }
 
     private boolean isBiosTypeChanged() {
@@ -176,13 +181,20 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
     }
 
-    protected void setVmInitToVms() {
+    private void setVmInitToVms() {
+        List<Guid> vmIds = vmsLockedForUpdate.stream()
+                .map(VmBase::getId)
+                .collect(Collectors.toList());
+
+        Map<Guid, VmInit> vmInitMap = vmInitDao.getVmInitByIds(vmIds).stream()
+                .collect(Collectors.toMap(VmInit::getId, init -> init));
+
         for (VmStatic vm : vmsLockedForUpdate) {
-            vm.setVmInit(vmInitDao.get(vm.getId()));
+            vm.setVmInit(vmInitMap.get(vm.getId()));
         }
     }
 
-    protected List<VmTemplate> filterTemplatesInClusterNeedUpdate() {
+    private List<VmTemplate> filterTemplatesInClusterNeedUpdate() {
         return vmTemplateDao.getAllForCluster(getCluster().getId()).stream()
                 .filter(template -> template.getCustomCompatibilityVersion() == null)
                 .sorted()
@@ -222,7 +234,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             oldCpuExisted = !oldCpuManufacturer.isEmpty();
         }
 
-        for (VDS vds : allForCluster) {
+        for (VDS vds : allHostsForCluster) {
             ServerCpu sc = cpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                     getParameters().getCluster().getCompatibilityVersion());
 
@@ -267,7 +279,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 clusterCpuFlagsManager.updateCpuFlags(getCluster());
                 addCustomValue("CPU", scMin.getCpuName());
                 addCustomValue("Cluster", getParameters().getCluster().getName());
-                auditLogDirector.log(this, AuditLogType.CLUSTER_UPDATE_CPU_WHEN_DEPRECATED);
+                auditLog(this, AuditLogType.CLUSTER_UPDATE_CPU_WHEN_DEPRECATED);
             }
         }
     }
@@ -290,14 +302,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
         if (!Objects.equals(oldCluster.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
-            String emulatedMachine = null;
-            // pick an UP host randomly - all should have latest compat version already if we passed validate.
-            for (VDS vds : allForCluster) {
-                if (vds.getStatus() == VDSStatus.Up) {
-                    emulatedMachine = getEmulatedMachineOfHostInCluster(vds);
-                    break;
-                }
-            }
+            String emulatedMachine = getEmulatedMachineFromHost();
             if (emulatedMachine == null) {
                 getParameters().getCluster().setDetectEmulatedMachine(true);
             } else {
@@ -326,17 +331,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         });
 
         if (isAddedToStoragePool) {
-            for (VDS vds : allForCluster) {
-                VdsActionParameters parameters = new VdsActionParameters();
-                parameters.setVdsId(vds.getId());
-                parameters.setCompensationEnabled(true);
-
-                ActionReturnValue addVdsSpmIdReturn = runInternalAction(ActionType.AddVdsSpmId, parameters, cloneContextWithNoCleanupCompensation());
-                if (!addVdsSpmIdReturn.getSucceeded()) {
-                    setSucceeded(false);
-                    getReturnValue().setFault(addVdsSpmIdReturn.getFault());
-                    return;
-                }
+            if (!addVdsSpmIdForAllHosts()) {
+                return;
             }
 
             TransactionSupport.executeInNewTransaction(() -> {
@@ -348,16 +344,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             });
         }
 
-        // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
-        updateVms();
-        updateTemplates();
-
-        if (!failedUpgradeEntities.isEmpty()) {
-            logFailedUpgrades();
-            failValidation(Arrays.asList(EngineMessage.CLUSTER_CANNOT_UPDATE_CLUSTER_FAILED_TO_UPDATE_VMS),
-                    "$VmList " + StringUtils.join(failedUpgradeEntities.keySet(), ", "));
-            getReturnValue().setValid(false);
-            setSucceeded(false);
+        if (!updateVmsAndTemplates()) {
             return;
         }
 
@@ -390,7 +377,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             }
 
             if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
-                vmStaticDao.getAllByCluster(getCluster().getId()).forEach(this::updateClusterVersionInManager);
+                updateClusterVersionInVmManagers();
             }
 
             return null;
@@ -399,12 +386,65 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         setSucceeded(true);
     }
 
+    private String getEmulatedMachineFromHost() {
+        // pick an UP host randomly - all should have latest compat version already if we passed validate.
+        for (VDS vds : allHostsForCluster) {
+            if (vds.getStatus() == VDSStatus.Up) {
+                return getEmulatedMachineOfHostInCluster(vds);
+            }
+        }
+        return null;
+    }
+
+    private boolean addVdsSpmIdForAllHosts() {
+        for (VDS vds : allHostsForCluster) {
+            VdsActionParameters parameters = new VdsActionParameters();
+            parameters.setVdsId(vds.getId());
+            parameters.setCompensationEnabled(true);
+
+            ActionReturnValue addVdsSpmIdReturn = runInternalAction(ActionType.AddVdsSpmId, parameters, cloneContextWithNoCleanupCompensation());
+            if (!addVdsSpmIdReturn.getSucceeded()) {
+                setSucceeded(false);
+                getReturnValue().setFault(addVdsSpmIdReturn.getFault());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean updateVmsAndTemplates() {
+        List<Pair<String, String>> failedUpgradeEntities = new ArrayList<>();
+
+        updateVms(failedUpgradeEntities);
+        updateTemplates(failedUpgradeEntities);
+
+        if (failedUpgradeEntities.isEmpty()) {
+            return true;
+        }
+
+        StringJoiner nameJoiner = new StringJoiner(", ");
+        for (Pair<String, String> pair : failedUpgradeEntities) {
+            String entityName = pair.getFirst();
+            nameJoiner.add(entityName);
+
+            addCustomValue("VmName", entityName);
+            addCustomValue("Message", pair.getSecond());
+            auditLog(this, AuditLogType.CLUSTER_CANNOT_UPDATE_VM_COMPATIBILITY_VERSION);
+        }
+
+        failValidation(List.of(EngineMessage.CLUSTER_CANNOT_UPDATE_CLUSTER_FAILED_TO_UPDATE_VMS),
+                "$VmList " + nameJoiner.toString());
+        getReturnValue().setValid(false);
+        setSucceeded(false);
+        return false;
+    }
+
     private void updateDefaultNetworkProvider() {
         if (getCluster().hasDefaultNetworkProviderId(oldCluster.getDefaultNetworkProviderId())) {
             return;
         }
 
-        allForCluster.stream()
+        allHostsForCluster.stream()
                 .filter(vds -> !Objects.equals(vds.getOpenstackNetworkProviderId(),
                         getCluster().getDefaultNetworkProviderId()))
                 .forEach(vds -> {
@@ -415,20 +455,22 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 });
     }
 
-    private void updateClusterVersionInManager(VmStatic vm) {
-        VmManager vmManager = resourceManager.getVmManager(vm.getId(), false);
-        if (vmManager != null) {
-            vmManager.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+    private void updateClusterVersionInVmManagers() {
+        for (VmStatic vmStatic : getAllVmsInCluster()) {
+            VmManager vmManager = resourceManager.getVmManager(vmStatic.getId(), false);
+            if (vmManager != null) {
+                vmManager.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+            }
         }
     }
 
     private void markHostsForReinstall() {
-        for (VDS vds : allForCluster) {
+        for (VDS vds : allHostsForCluster) {
             vdsStaticDao.updateReinstallRequired(vds.getId(), true);
         }
     }
 
-    private void updateVms() {
+    private void updateVms(List<Pair<String, String>> failedUpgradeEntities) {
         for (VmStatic vm : vmsLockedForUpdate) {
             ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVm,
@@ -442,7 +484,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 params.add(parseErrorMessage(result.getValidationMessages()));
                 List<String> messages = backend.getErrorsTranslator().translateErrorText(params);
 
-                failedUpgradeEntities.put(vm.getName(), getFailedMessage(messages));
+                failedUpgradeEntities.add(new Pair<>(vm.getName(), getFailedMessage(messages)));
             }
         }
     }
@@ -477,14 +519,6 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         return updateParams;
     }
 
-    private void logFailedUpgrades() {
-        for (Map.Entry<String, String> entry : failedUpgradeEntities.entrySet()) {
-            addCustomValue("VmName", entry.getKey());
-            addCustomValue("Message", entry.getValue());
-            auditLogDirector.log(this, AuditLogType.CLUSTER_CANNOT_UPDATE_VM_COMPATIBILITY_VERSION);
-        }
-    }
-
     /**
      * This can be dropped together with support of 4.0 compatibility level.
      */
@@ -506,7 +540,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
     }
 
-    private void updateTemplates() {
+    private void updateTemplates(List<Pair<String, String>> failedUpgradeEntities) {
         for (VmTemplate template : templatesLockedForUpdate) {
             // the object was loaded in before command execution started and thus the value may be outdated
             template.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
@@ -531,7 +565,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 params.add(parseErrorMessage(result.getValidationMessages()));
                 List<String> messages = backend.getErrorsTranslator().translateErrorText(params);
 
-                failedUpgradeEntities.put(template.getName(), getFailedMessage(messages));
+                failedUpgradeEntities.add(new Pair<>(template.getName(), getFailedMessage(messages)));
             }
         }
     }
@@ -547,7 +581,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private String parseErrorMessage(List<String> messages) {
         // method gets command Validation Messages and return the message
         for(String message: messages) {
-            Matcher matcher = msgRegEx.matcher(message);
+            Matcher matcher = MESSAGE_PATTERN.matcher(message);
             if (matcher.matches()) {
                 return matcher.group("error");
             }
@@ -599,7 +633,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     }
 
     private void updateGlusterHosts() {
-        allForCluster.forEach(glusterCommandHelper::initGlusterHost);
+        allHostsForCluster.forEach(glusterCommandHelper::initGlusterHost);
     }
 
     @Override
@@ -616,39 +650,32 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     @Override
     protected boolean validate() {
         ClusterValidator clusterValidator = getClusterValidator(oldCluster, getCluster());
-        boolean returnValue = validate(clusterValidator.oldClusterIsValid());
-        if (returnValue) {
-            returnValue = validate(clusterValidator.newNameUnique())
-                    && validate(clusterValidator.newClusterVersionSupported())
-                    && validate(clusterValidator.decreaseClusterWithHosts())
-                    && validate(clusterValidator.decreaseClusterBeneathDc(getClusterValidator(oldCluster)))
-                    && validate(clusterValidator.canChangeStoragePool())
-                    && validate(clusterValidator.cpuNotFound(checkIfCpusExist()))
-                    && validate(clusterValidator.updateCpuIllegal(checkIfCpusExist(),
-                            checkIfCpusSameManufacture(oldCluster)))
-                    && validate(clusterValidator.architectureIsLegal(isArchitectureUpdatable()))
-                    && validate(clusterValidator.cpuUpdatable())
-                    && validate(clusterValidator.vmInPrev())
-                    && validateManagementNetworkAndAdditionToStoragePool()
-                    && validate(clusterValidator.vdsUp())
-                    && validate(clusterValidator.hostsDown(getParameters().isForceResetEmulatedMachine()))
-                    && canUpdateCompatibilityVersionOrCpu()
-                    && validate(clusterValidator.updateSupportedFeatures())
-                    && hasSuspendedVms()
-                    && validate(clusterValidator.addMoreThanOneHost())
-                    && validate(clusterValidator.defaultClusterOnLocalfs())
-                    && validate(clusterValidator.oneServiceEnabled())
-                    && validate(clusterValidator.mixedClusterServicesSupportedForNewCluster())
-                    && validate(clusterValidator.disableVirt())
-                    && validate(clusterValidator.disableGluster())
-                    && validate(clusterValidator.setTrustedAttestation())
-                    && validate(clusterValidator.migrationOnError(getArchitecture()))
-                    && validate(clusterValidator.invalidBiosType())
-                    && validate(clusterValidator.nonDefaultBiosType())
-                    && validateClusterPolicy(oldCluster)
-                    && validateConfiguration();
-        }
-        return returnValue;
+        return validate(clusterValidator.oldClusterIsValid())
+                && validate(clusterValidator.newNameUnique())
+                && validate(clusterValidator.newClusterVersionSupported())
+                && validate(clusterValidator.decreaseClusterWithHosts())
+                && validate(clusterValidator.decreaseClusterBeneathDc(getClusterValidator(oldCluster)))
+                && validate(clusterValidator.canChangeStoragePool())
+                && validateCpuUpdatable(clusterValidator)
+                && validate(clusterValidator.vmInPrev())
+                && validateManagementNetworkAndAdditionToStoragePool()
+                && validate(clusterValidator.vdsUp())
+                && validate(clusterValidator.hostsDown(getParameters().isForceResetEmulatedMachine()))
+                && canUpdateCompatibilityVersionOrCpu()
+                && validate(clusterValidator.updateSupportedFeatures())
+                && hasSuspendedVms()
+                && validate(clusterValidator.addMoreThanOneHost())
+                && validate(clusterValidator.defaultClusterOnLocalfs())
+                && validate(clusterValidator.oneServiceEnabled())
+                && validate(clusterValidator.mixedClusterServicesSupportedForNewCluster())
+                && validate(clusterValidator.disableVirt())
+                && validate(clusterValidator.disableGluster())
+                && validate(clusterValidator.setTrustedAttestation())
+                && validate(clusterValidator.migrationOnError(getArchitecture()))
+                && validate(clusterValidator.invalidBiosType())
+                && validate(clusterValidator.nonDefaultBiosType())
+                && validateClusterPolicy(oldCluster)
+                && validateConfiguration();
     }
 
     private void addValidationVarAndMessage(String varName, Object varValue, EngineMessage message) {
@@ -656,24 +683,26 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         addValidationMessage(message);
     }
 
+    private boolean validateCpuUpdatable(ClusterValidator clusterValidator) {
+        boolean cpusExist = checkIfCpusExist();
+        return validate(clusterValidator.cpuNotFound(cpusExist))
+                && validate(clusterValidator.updateCpuIllegal(cpusExist, checkIfCpusSameManufacture(oldCluster)))
+                && validate(clusterValidator.architectureIsLegal(isArchitectureUpdatable()))
+                && validate(clusterValidator.cpuUpdatable());
+    }
+
     private boolean validateConfiguration() {
         ClusterValidator newClusterValidator = getClusterValidator(getCluster());
-        if (!validate(newClusterValidator.rngSourcesAllowed())
-                || !validate(newClusterValidator.memoryOptimizationConfiguration())
-                || !validate(moveMacs.canMigrateMacsToAnotherMacPool(oldCluster, getNewMacPoolId()))
-                || !validateDefaultNetworkProvider()) {
-            return false;
-        }
-        return true;
+        return validate(newClusterValidator.rngSourcesAllowed())
+                && validate(newClusterValidator.memoryOptimizationConfiguration())
+                && validate(moveMacs.canMigrateMacsToAnotherMacPool(oldCluster, getNewMacPoolId()))
+                && validateDefaultNetworkProvider();
     }
 
     private boolean validateManagementNetworkAndAdditionToStoragePool() {
         isAddedToStoragePool = oldCluster.getStoragePoolId() == null
                 && getCluster().getStoragePoolId() != null;
-        if (isAddedToStoragePool && !validateManagementNetwork()) {
-            return false;
-        }
-        return true;
+        return !isAddedToStoragePool || validateManagementNetwork();
     }
 
     private boolean hasSuspendedVms() {
@@ -698,8 +727,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             if (notDownVms) {
                 if (compareCpuLevels(oldCluster) > 0) {
                     addCustomValue("Cluster", getParameters().getCluster().getName());
-                    auditLogDirector.log(this,
-                            AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
+                    auditLog(this, AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
                 }
             }
         }
@@ -707,8 +735,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     }
 
     private boolean canUpdateCompatibilityVersionOrCpu() {
-        allForCluster = vdsDao.getAllForCluster(oldCluster.getId());
-        List<VDS> upVdss = allForCluster.stream()
+        allHostsForCluster = vdsDao.getAllForCluster(oldCluster.getId());
+        List<VDS> upVdss = allHostsForCluster.stream()
                 .filter(v -> v.getStatus() == VDSStatus.Up)
                 .collect(Collectors.toList());
         boolean valid = true;
@@ -759,7 +787,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
     }
 
-    protected boolean isCpuDeprecated() {
+    private boolean isCpuDeprecated() {
         // If the version is being upgrading and the previous or current CPU was deprecated,
         // then skip the validation so that we can adjust the cpu type in the executeCommand() function.
         return !oldCluster.getCompatibilityVersion().equals(getParameters().getCluster().getCompatibilityVersion()) &&
@@ -776,8 +804,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             return true;
         }
 
-        return oldCluster.getArchitecture() == ArchitectureType.undefined ? true
-                : getArchitecture() == oldCluster.getArchitecture();
+        return oldCluster.getArchitecture() == ArchitectureType.undefined
+                || getArchitecture() == oldCluster.getArchitecture();
     }
 
     protected boolean checkIfCpusSameManufacture(Cluster group) {
@@ -810,14 +838,10 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 vds.getCpuFlags());
     }
 
-    protected boolean isCpuUpdatable(Cluster cluster) {
-        return cpuFlagsManagerHandler.isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
-    }
-
-    protected int compareCpuLevels(Cluster otherGroup) {
+    private int compareCpuLevels(Cluster otherCluster) {
         return cpuFlagsManagerHandler.compareCpuLevels(getCluster().getCpuName(),
-                otherGroup.getCpuName(),
-                otherGroup.getCompatibilityVersion());
+                otherCluster.getCpuName(),
+                otherCluster.getCompatibilityVersion());
     }
 
     @Override

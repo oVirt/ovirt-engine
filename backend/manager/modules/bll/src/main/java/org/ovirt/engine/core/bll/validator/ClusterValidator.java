@@ -55,8 +55,6 @@ public class ClusterValidator {
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     private Cluster newCluster;
 
-    private boolean hasVmOrHost;
-    private boolean sameCpuNames;
     private int compareCompatibilityVersions;
 
     private final Supplier<List<VDS>> allHostsForCluster;
@@ -275,14 +273,14 @@ public class ClusterValidator {
      * cannot change the processor architecture while there are attached hosts or VMs to the cluster
      */
     public ValidationResult architectureIsLegal(boolean isArchitectureUpdatable) {
-        hasVmOrHost = !allVmsForCluster.get().isEmpty() || !allHostsForCluster.get().isEmpty();
+        boolean hasVmOrHost = !allVmsForCluster.get().isEmpty() || !allHostsForCluster.get().isEmpty();
         return ValidationResult.failWith(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_ARCHITECTURE_ILLEGAL)
                 .when(newCluster.supportsVirtService() && !isArchitectureUpdatable && hasVmOrHost);
     }
 
     public ValidationResult cpuUpdatable() {
-        hasVmOrHost = !allVmsForCluster.get().isEmpty() || !allHostsForCluster.get().isEmpty();
-        sameCpuNames = Objects.equals(cluster.getCpuName(), newCluster.getCpuName());
+        boolean hasVmOrHost = !allVmsForCluster.get().isEmpty() || !allHostsForCluster.get().isEmpty();
+        boolean sameCpuNames = Objects.equals(cluster.getCpuName(), newCluster.getCpuName());
         boolean isCpuUpdatable = cpuFlagsManagerHandler.isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
         boolean isOldCPUEmpty = StringUtils.isEmpty(cluster.getCpuName());
         return ValidationResult.failWith(EngineMessage.CLUSTER_CPU_IS_NOT_UPDATABLE)
