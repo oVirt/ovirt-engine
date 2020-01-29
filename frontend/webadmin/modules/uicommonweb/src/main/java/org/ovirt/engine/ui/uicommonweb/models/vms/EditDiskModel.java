@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -48,6 +49,7 @@ public class EditDiskModel extends AbstractDiskModel {
                 getDiskStorageType().setEntity(DiskStorageType.IMAGE);
                 getSize().setEntity((int) diskImage.getSizeInGigabytes());
                 getVolumeType().setSelectedItem(diskImage.getVolumeType());
+                updateIncrementalBackupChangeability(diskImage);
                 getIsIncrementalBackup().setEntity(diskImage.getBackup() == DiskBackup.Incremental);
                 getSizeExtend().setIsChangeable(isSizeExtendChangeable(diskImage));
                 break;
@@ -76,6 +78,15 @@ public class EditDiskModel extends AbstractDiskModel {
 
     protected boolean isSizeExtendChangeable(DiskImage diskImage) {
         return true;
+    }
+
+    private void updateIncrementalBackupChangeability(DiskImage diskImage) {
+        // Allow editing "enable backup" checkbox only for qcow2 disks.
+        if (diskImage.getVolumeFormat() == VolumeFormat.RAW) {
+            getIsIncrementalBackup().setIsChangeable(false, constants.incrementalBackupNotSupportedForRawDisks());
+        } else {
+            getIsIncrementalBackup().setIsChangeable(true);
+        }
     }
 
     protected void initDiskVmElement() {

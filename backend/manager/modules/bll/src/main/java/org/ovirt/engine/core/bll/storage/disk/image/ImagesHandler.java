@@ -498,6 +498,7 @@ public class ImagesHandler {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
             messages.add(String.format("$%1$s %2$s", "volumeFormat", diskInfo.getVolumeFormat()));
             messages.add(String.format("$%1$s %2$s", "volumeType", diskInfo.getVolumeType()));
+            messages.add(String.format("$%1$s %2$s", "backup", diskInfo.getBackup()));
             return false;
         }
         return true;
@@ -505,6 +506,7 @@ public class ImagesHandler {
 
     private static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
         return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental)
+                || (volumeFormat == VolumeFormat.RAW && diskBackup == DiskBackup.Incremental)
                 || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
                 || volumeFormat == VolumeFormat.Unassigned
                 || volumeType == VolumeType.Unassigned);

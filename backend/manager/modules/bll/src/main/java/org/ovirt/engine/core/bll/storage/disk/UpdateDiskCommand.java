@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -271,6 +272,11 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
         if (isQcowCompatChangedOnRawDisk()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
         }
+
+        if (isIncrementalBackupChangedOnRawDisk()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED_FOR_RAW_DISK);
+        }
+
         return validateCanUpdateShareable() && validateQuota() && setAndValidateDiskProfiles();
     }
 
@@ -315,6 +321,14 @@ public class UpdateDiskCommand<T extends VmDiskOperationParameterBase> extends A
                 List<DiskImage> images = getDiskImages(getOldDisk().getId());
                 return images.stream().noneMatch(DiskImage::isQcowFormat);
             }
+        }
+        return false;
+    }
+
+    private boolean isIncrementalBackupChangedOnRawDisk() {
+        if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage) getNewDisk();
+            return diskImage.getBackup() == DiskBackup.Incremental &&  diskImage.getVolumeFormat() == VolumeFormat.RAW;
         }
         return false;
     }

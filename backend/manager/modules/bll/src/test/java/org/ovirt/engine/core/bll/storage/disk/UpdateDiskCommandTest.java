@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -278,6 +279,19 @@ public class UpdateDiskCommandTest extends BaseCommandTest {
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+    }
+
+    @Test
+    public void validateFailedBackupEnabledForRawDisk() {
+        DiskImage disk = createDiskImage();
+        disk.setBackup(DiskBackup.Incremental);
+        command.getParameters().setDiskInfo(disk);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        initializeCommand();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED_FOR_RAW_DISK);
     }
 
     @Test

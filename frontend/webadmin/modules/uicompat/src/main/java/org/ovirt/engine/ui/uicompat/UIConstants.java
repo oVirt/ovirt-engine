@@ -2107,6 +2107,8 @@ public interface UIConstants extends Constants {
 
     String memoryHotUnplug();
 
+    String incrementalBackupNotSupportedForRawDisks();
+
     String discardIsNotSupportedByUnderlyingStorage();
 
     String theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled();
