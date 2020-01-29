@@ -122,7 +122,7 @@ public class SSHClient implements Closeable {
         try {
             close();
         } catch (IOException e) {
-            log.error("Finalize exception", ExceptionUtils.getRootCauseMessage(e));
+            log.error("Finalize exception {}", ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception", e);
         }
     }
@@ -406,7 +406,7 @@ public class SSHClient implements Closeable {
                 client = null;
             }
         } catch (Exception e) {
-            log.error("Failed to close session", ExceptionUtils.getRootCauseMessage(e));
+            log.error("Failed to close session {}", ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception", e);
             throw new IOException(e);
         }
@@ -538,7 +538,7 @@ public class SSHClient implements Closeable {
             out.flush();
             err.flush();
         } catch (RuntimeException e) {
-            log.error("Execute failed", ExceptionUtils.getRootCauseMessage(e));
+            log.error("Execute failed {}", ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception", e);
             throw e;
         } finally {
@@ -598,7 +598,7 @@ public class SSHClient implements Closeable {
                                 out.write(b, 0, n);
                             }
                         } catch (IOException e) {
-                            log.debug("Exceution during stream processing", e);
+                            log.debug("Execution during stream processing", e);
                         }
                     } ,
                     "SSHClient.compress " + file1);
@@ -669,7 +669,7 @@ public class SSHClient implements Closeable {
                                 out.write(b, 0, n);
                             }
                         } catch (IOException e) {
-                            log.debug("Exceution during stream processing", e);
+                            log.debug("Execution during stream processing", e);
                         }
                     } ,
                     "SSHClient.decompress " + file2);
