@@ -29,7 +29,7 @@ public class IsVmTemplateI440fxQuery<P extends IdQueryParameters> extends Querie
             return;
         }
         var cdDevice = vmDeviceUtils.getFirstDeviceWithType(devices, VmDeviceGeneralType.DISK, VmDeviceType.CDROM);
-        if (!cdDevice.getAddress().contains("bus=0")) {
+        if (cdDevice != null && !cdDevice.getAddress().contains("bus=0")) {
             getQueryReturnValue().setReturnValue(true);
             return;
         }
