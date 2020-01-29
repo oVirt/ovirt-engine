@@ -7,7 +7,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.CloudInitNetworkProtocol;
 import org.ovirt.engine.core.compat.Guid;
@@ -51,7 +50,7 @@ public class VmInitDaoImpl extends BaseDao implements VmInitDao {
     public List<VmInit> getVmInitByIds(List<Guid> ids) {
         return getCallsHandler().executeReadList("GetVmInitByids",
                 vmInitRowMapper,
-                getCustomMapSqlParameterSource().addValue("vm_init_ids", StringUtils.join(ids, ',')));
+                getCustomMapSqlParameterSource().addValue("vm_init_ids", createArrayOfUUIDs(ids)));
     }
 
     private MapSqlParameterSource getIdParamterSource(Guid id) {

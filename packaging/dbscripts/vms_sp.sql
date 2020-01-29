@@ -1980,14 +1980,12 @@ RETURN QUERY SELECT vm_init.*
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVmInitByids(v_vm_init_ids TEXT) RETURNS SETOF vm_init STABLE
+Create or replace FUNCTION GetVmInitByids(v_vm_init_ids UUID[]) RETURNS SETOF vm_init STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
      FROM vm_init
-     WHERE vm_init.vm_id IN (
-         SELECT *
-         FROM fnSplitterUuid(v_vm_init_ids));
+     WHERE vm_init.vm_id = ANY(v_vm_init_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
