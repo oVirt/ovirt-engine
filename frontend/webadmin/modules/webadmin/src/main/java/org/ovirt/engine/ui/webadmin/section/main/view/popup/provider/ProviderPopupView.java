@@ -237,6 +237,8 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         if (model.isEditProviderMode()) {
             setCurrentActiveProviderWidget();
         }
+
+        updatePasswordTitle();
     }
 
     @Override
@@ -301,6 +303,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     }
 
     @Override public void updatePasswordTitle() {
+        if (providerModel.getType() == null || providerModel.getType().getSelectedItem() == null) {
+            return;
+        }
+
         String passwordLabel;
         switch (providerModel.getType().getSelectedItem()) {
         case KUBEVIRT:
