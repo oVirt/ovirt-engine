@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -135,15 +134,12 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     protected void init() {
         updateMigrateOnError();
         oldCluster = clusterDao.get(getCluster().getId());
-        if (oldCluster != null
-                && !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+        if (oldCluster != null && shouldUpdateVmsAndTemplates()) {
             vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
             templatesLockedForUpdate = filterTemplatesInClusterNeedUpdate();
         }
 
-        if (oldCluster == null
-                || !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName())
-                || !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+        if (oldCluster == null || isCpuNameChanged() || isVersionChanged()) {
             clusterCpuFlagsManager.updateCpuFlags(getCluster());
         } else {
             getCluster().setCpuFlags(oldCluster.getCpuFlags());
@@ -151,15 +147,9 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
     }
 
-    /**
-     * Returns list of VMs that requires to be updated provided cluster compatibility version has changed.
-     */
     protected List<VmStatic> filterVmsInClusterNeedUpdate() {
-        final boolean biosTypeChanged = isBiosTypeChanged();
         return getAllVmsInCluster().stream()
-                .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL && !vm.isHostedEngine())
-                .filter(vm -> vm.getCustomCompatibilityVersion() == null
-                        || biosTypeChanged && vm.getBiosType() == BiosType.CLUSTER_DEFAULT)
+                .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL)
                 .sorted()
                 .collect(Collectors.toList());
     }
@@ -169,6 +159,21 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             allVmsInCluster = vmStaticDao.getAllByCluster(getCluster().getId());
         }
         return allVmsInCluster;
+    }
+
+    private boolean shouldUpdateVmsAndTemplates() {
+        return isVersionChanged()
+                || isBiosTypeChanged()
+                || isCpuNameChanged()
+                || !Objects.equals(oldCluster.getArchitecture(), getCluster().getArchitecture());
+    }
+
+    private boolean isVersionChanged() {
+        return !Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion());
+    }
+
+    private boolean isCpuNameChanged() {
+        return !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName());
     }
 
     private boolean isBiosTypeChanged() {
@@ -196,7 +201,6 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private List<VmTemplate> filterTemplatesInClusterNeedUpdate() {
         return vmTemplateDao.getAllForCluster(getCluster().getId()).stream()
-                .filter(template -> template.getCustomCompatibilityVersion() == null)
                 .sorted()
                 .collect(Collectors.toList());
     }
@@ -301,7 +305,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
-        if (!Objects.equals(oldCluster.getCompatibilityVersion(), getParameters().getCluster().getCompatibilityVersion())) {
+        if (isVersionChanged()) {
             String emulatedMachine = getEmulatedMachineFromHost();
             if (emulatedMachine == null) {
                 getParameters().getCluster().setDetectEmulatedMachine(true);
@@ -376,7 +380,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 momPolicyUpdatedEvent.fire(getCluster());
             }
 
-            if (!Objects.equals(oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
+            if (isVersionChanged()) {
                 updateClusterVersionInVmManagers();
             }
 
@@ -710,8 +714,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private boolean hasSuspendedVms() {
         boolean notDownVms = false;
         List<VM> vmList = vmDao.getAllForCluster(oldCluster.getId());
-        boolean sameCpuNames = Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName());
-        if (!sameCpuNames) {
+        if (isCpuNameChanged()) {
             for (VM vm : vmList) {
                 VMStatus vmStatus = vm.getStatus();
                 if (vmStatus == VMStatus.Suspended) {
@@ -792,7 +795,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private boolean isCpuDeprecated() {
         // If the version is being upgrading and the previous or current CPU was deprecated,
         // then skip the validation so that we can adjust the cpu type in the executeCommand() function.
-        return !oldCluster.getCompatibilityVersion().equals(getParameters().getCluster().getCompatibilityVersion()) &&
+        return isVersionChanged() &&
                 ((cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
                         oldCluster.getCompatibilityVersion()) &&
                         !cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
