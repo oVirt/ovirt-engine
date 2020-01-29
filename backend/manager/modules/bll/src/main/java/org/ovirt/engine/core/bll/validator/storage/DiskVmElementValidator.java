@@ -77,7 +77,7 @@ public class DiskVmElementValidator {
                 return new ValidationResult(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
             }
         }
-        if (!VmDeviceCommonUtils.isVirtIoScsiDeviceExists(vm.getManagedVmDeviceMap().values())) {
+        if (vm != null && !VmDeviceCommonUtils.isVirtIoScsiDeviceExists(vm.getManagedVmDeviceMap().values())) {
             return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
         }
 
