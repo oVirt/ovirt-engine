@@ -542,8 +542,10 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private void updateTemplates(List<Pair<String, String>> failedUpgradeEntities) {
         for (VmTemplate template : templatesLockedForUpdate) {
-            // the object was loaded in before command execution started and thus the value may be outdated
-            template.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+            new VmVersionUpdater().updateVmtemplateToVersion(template,
+                    CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster),
+                    getCluster());
+
             UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
             // Locking by UpdateVmTemplate is disabled since templates are already locked in #getExclusiveLocks method.
             parameters.setLockProperties(LockProperties.create(LockProperties.Scope.None));
