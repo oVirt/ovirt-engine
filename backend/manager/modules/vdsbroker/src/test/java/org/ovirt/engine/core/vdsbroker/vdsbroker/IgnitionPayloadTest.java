@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 
@@ -141,5 +142,49 @@ public class IgnitionPayloadTest extends CloudInitHandlerTest {
 
         files = jsonObject.getJsonObject("storage").getJsonArray("files").getJsonObject(1);
         assertEquals("/etc/hostname", files.getJsonString("path").getString());
+    }
+
+    @Test
+    public void testHostNameUIHandlingNullCustomScript() {
+        vmInit.setHostname("test");
+        vmInit.setCustomScript(null);
+
+        Map<String, byte[]> payload = assertDoesNotThrow(() -> new IgnitionHandler(vmInit, new Version("2.2.0")).getFileData());
+
+        String userData =
+                assertDoesNotThrow(() -> new String(payload.get("openstack/latest/user_data")));
+
+        JsonObject jsonObject = Json.createReader(new StringReader(userData)).readObject();
+
+        assertTrue(jsonObject.containsKey("ignition"));
+        assertEquals("2.2.0", jsonObject.getJsonObject("ignition").getJsonString("version").getString());
+        assertTrue(jsonObject.containsKey("storage"));
+
+        JsonObject files = jsonObject.getJsonObject("storage").getJsonArray("files").getJsonObject(0);
+        assertEquals("/etc/hostname", files.getJsonString("path").getString());
+    }
+
+    @Test
+    public void testUserUIHandlingNullCustomScript() {
+        vmInit.setUserName("test");
+        vmInit.setRootPassword("some_pass");
+        vmInit.setCustomScript(null);
+
+        Map<String, byte[]> payload = assertDoesNotThrow(() -> new IgnitionHandler(vmInit, new Version("2.2.0")).getFileData());
+
+        String userData =
+                assertDoesNotThrow(() -> new String(payload.get("openstack/latest/user_data")));
+
+        JsonObject jsonObject = Json.createReader(new StringReader(userData)).readObject();
+
+        assertTrue(jsonObject.containsKey("ignition"));
+        assertEquals("2.2.0", jsonObject.getJsonObject("ignition").getJsonString("version").getString());
+        assertTrue(jsonObject.containsKey("passwd"));
+        assertTrue(jsonObject.getJsonObject("passwd").containsKey("users"));
+        JsonObject users = jsonObject.getJsonObject("passwd").getJsonArray("users").getJsonObject(0);
+
+        assertEquals("test", users.getJsonString("name").getString());
+        assertTrue(users.containsKey("passwordHash"));
+        assertEquals("some_pass", users.getJsonString("passwordHash").getString());
     }
 }

@@ -50,7 +50,7 @@ public class IgnitionHandler {
      * is there to be added (no other fields declared)
      */
     private String handle() {
-        String customScript = this.vmInit.getCustomScript().isEmpty() ? "{}" : vmInit.getCustomScript();
+        String customScript = this.vmInit.getCustomScript() == null || this.vmInit.getCustomScript().isEmpty() ? "{}" : vmInit.getCustomScript();
         customScript = handleIgnitionVersion(customScript);
         customScript = handleHostname(customScript);
         customScript = handleUser(customScript);
@@ -83,7 +83,9 @@ public class IgnitionHandler {
     private JsonObject ignitionSnippet(JsonObject ignitionJson) {
         JsonObject ignition = ignitionJson.getJsonObject("ignition");
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        ignition.forEach(builder::add);
+        if (ignition != null) {
+            ignition.forEach(builder::add);
+        }
         builder.add("version", ignitionVersion == null ? "" : ignitionVersion.toString());
         return Json.createObjectBuilder()
                 .add("ignition", builder).build();
@@ -253,7 +255,7 @@ public class IgnitionHandler {
         JsonObjectBuilder userSnippet = Json.createObjectBuilder()
             .add("name", vmInit.getUserName())
             .add("passwordHash", vmInit.getRootPassword());
-        if (!vmInit.getAuthorizedKeys().isEmpty()) {
+        if (vmInit.getAuthorizedKeys() != null && !vmInit.getAuthorizedKeys().isEmpty()) {
             JsonArrayBuilder keys = Json.createArrayBuilder();
             // adding ssh keys
             for(String key: vmInit.getAuthorizedKeys().split("(\\r?\\n|\\r)+")){
