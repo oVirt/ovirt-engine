@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.utils.cinderlib;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
 
-import org.apache.commons.io.IOUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -50,7 +51,7 @@ public class CinderlibExecutor {
                 .redirectErrorStream(true);
 
         Process process = cinderlibProcessBuilder.start();
-        String output = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+        String output = getOutput(process, params.getCorrelationId());
         if (!process.waitFor(Config.getValue(ConfigValues.CinderlibCommandTimeoutInMinutes), TimeUnit.MINUTES)) {
             throw new Exception("cinderlib call timed out");
         }
@@ -61,6 +62,24 @@ public class CinderlibExecutor {
             log.info("cinderlib output: {}", output);
         }
         return returnValue;
+    }
+
+    private String getOutput(Process process, String correlationId) throws IOException {
+        final String ERROR_PREFIX = "error";
+        String output;
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+        while ((output = br.readLine()) != null) {
+            if (output.startsWith(ERROR_PREFIX)) {
+                return output.substring(ERROR_PREFIX.length() + 1);
+            } else if (output.startsWith(correlationId)) {
+                return output.substring(correlationId.length() + 1);
+            }
+
+            log.debug("ignored cinderlib output: {}", output);
+        }
+
+        return "";
     }
 
     private List<String> generateCommand(CinderlibCommand command, CinderlibCommandParameters params) {
