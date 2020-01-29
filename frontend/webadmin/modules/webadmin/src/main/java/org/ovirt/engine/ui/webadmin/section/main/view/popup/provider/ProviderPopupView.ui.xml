@@ -17,6 +17,7 @@
 
         .headerSeparator {
             border-bottom: 1px solid #D1D1D1;
+            margin-bottom: 5px;
         }
 
         .topElement {
@@ -65,13 +66,12 @@
                                         <ge:EntityModelCheckBoxEditor ui:field="readOnlyEditor" label="{constants.readOnly}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                     </b:Row>
                                 </g:FlowPanel>
-                                <b:Row>
+                                <b:Row addStyleNames="{style.topElement}">
                                     <ge:StringEntityModelTextBoxEditor ui:field="urlEditor" label="{constants.urlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <p:VmwarePropertiesWidget addStyleNames="{style.topElement}" ui:field="vmwarePropertiesWidget" visible="false" />
                                 <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" visible="false" />
                                 <p:XENPropertiesWidget addStyleNames="{style.topElement}" ui:field="xenPropertiesWidget" visible="false" />
-                                <p:KubevirtPropertiesWidget addStyleNames="{style.topElement}" ui:field="kubevirtPropertiesWidget" visible="false" />
                                 <b:Row>
                                     <b:Column size="SM_12">
                                         <pa:AlertPanel ui:field="testResultMessage" visible="false" />
@@ -110,6 +110,7 @@
                                 <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" label="{constants.tenantName}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
+                                <p:KubevirtPropertiesWidget addStyleNames="{style.topElement}" ui:field="kubevirtPropertiesWidget" visible="false" />
                                 <b:Row>
                                     <b:Column size="SM_2" offset="SM_10">
                                         <w:UiCommandButton ui:field="testButton" label="{constants.testProvider}" addStyleNames="{style.testButton}" />

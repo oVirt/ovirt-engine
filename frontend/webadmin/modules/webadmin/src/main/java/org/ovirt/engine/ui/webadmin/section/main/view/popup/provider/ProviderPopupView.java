@@ -338,6 +338,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         projectNameEditor.setTabIndexes(nextTabIndex++);
         projectDomainNameEditor.setTabIndexes(nextTabIndex++);
         tenantNameEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = kubevirtPropertiesWidget.setTabIndexes(nextTabIndex++);
         testButton.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }

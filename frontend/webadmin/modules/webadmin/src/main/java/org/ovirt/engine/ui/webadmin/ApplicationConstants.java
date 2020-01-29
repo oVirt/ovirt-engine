@@ -3555,9 +3555,17 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String kubevirtToken();
 
+    String kubevirtTokenHelpMessage();
+
     String kubevirtCertificateAuthority();
+
+    String kubevirtCertificateAuthorityHelpMessage();
 
     String prometheusUrl();
 
+    String prometheusUrlHelpMessage();
+
     String prometheusCertificateAuthority();
+
+    String prometheusCertificateAuthorityHelpMessage();
 }
