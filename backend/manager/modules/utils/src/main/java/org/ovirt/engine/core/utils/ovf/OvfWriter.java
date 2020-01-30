@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -301,7 +302,11 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
 
         writeCustomEmulatedMachine();
-        _writer.writeElement(BIOS_TYPE, String.valueOf(vmBase.getBiosType().getValue()));
+        if (vmBase.getBiosType() != BiosType.CLUSTER_DEFAULT) {
+            // For compatibility with oVirt 4.3, use values of BiosType constants that existed before
+            // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
+            _writer.writeElement(BIOS_TYPE, String.valueOf(vmBase.getBiosType().getValue() - 1));
+        }
         writeCustomCpuName();
 
         _writer.writeElement(PREDEFINED_PROPERTIES, vmBase.getPredefinedProperties());

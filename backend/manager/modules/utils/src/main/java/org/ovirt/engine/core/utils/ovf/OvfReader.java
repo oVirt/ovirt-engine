@@ -624,7 +624,12 @@ public abstract class OvfReader implements IOvfBuilder {
                 MIGRATION_POLICY_ID,
                 val -> vmBase.setMigrationPolicyId(Guid.createGuidFromString(val)));
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
-        consumeReadProperty(content, BIOS_TYPE, val -> vmBase.setBiosType(BiosType.forValue(Integer.parseInt(val))));
+        // For compatibility with oVirt 4.3, use values of BiosType constants that existed before
+        // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
+        consumeReadProperty(content,
+                BIOS_TYPE,
+                val -> vmBase.setBiosType(BiosType.forValue(Integer.parseInt(val) + 1)),
+                () -> vmBase.setBiosType(BiosType.CLUSTER_DEFAULT));
         consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
         consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> vmBase.setPredefinedProperties(val));
         consumeReadProperty(content, USER_DEFINED_PROPERTIES, val -> vmBase.setUserDefinedProperties(val));
