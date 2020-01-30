@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
@@ -29,6 +28,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturn;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MarshallingTestCase {
 

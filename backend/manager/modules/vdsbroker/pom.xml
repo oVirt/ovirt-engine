@@ -77,16 +77,9 @@
 
     <!--  external dependencies-->
     <dependency>
-       <groupId>org.codehaus.jackson</groupId>
-       <artifactId>jackson-core-asl</artifactId>
-       <version>${jackson.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
