@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.PrometheusClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,7 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
     @Inject
     private VmStaticDao vmStaticDao;
     private KubevirtApi api;
+    private PrometheusClient prometheusClient;
 
     private int refreshIteration;
 
@@ -73,6 +75,14 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
             api = KubevirtUtils.getKubevirtApi(provider);
         }
         return api;
+    }
+
+    private PrometheusClient getPrometheusClient() {
+        if (prometheusClient == null) {
+            Provider provider = providerDao.get(vdsManager.getClusterId());
+            prometheusClient = KubevirtUtils.create(provider);
+        }
+        return prometheusClient;
     }
 
     @Override
@@ -217,7 +227,15 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
             Seconds seconds = Seconds.secondsBetween(creationTimestampDate, now);
             statistics.setElapsedTime((double) seconds.getSeconds());
         }
-        // todo: query prometheus endpoint
+        PrometheusClient promClient = getPrometheusClient();
+        if (promClient != null) {
+            // FIXME: Kubevirt currently have only kubevirt_vmi_vcpu_seconds, which is total CPU time,
+            // so we are setting it here only as system time, which is wrong.
+            statistics.setCpuSys(
+                    promClient.getVmiCpuUsage(vmi.getMetadata().getName(), vmi.getMetadata().getNamespace())
+            );
+        }
+
         return vm.setVmStatistics(statistics)
                 .setDiskStatistics(Collections.emptyList())
                 .setVmJobs(Collections.emptyList());

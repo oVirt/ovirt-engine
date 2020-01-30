@@ -159,6 +159,17 @@ public class PrometheusClient {
 
     // KSM
 
+    //
+    // VM
+    //
+
+    // CPU usage
+    public Double getVmiCpuUsage(String vmiName, String vmiNamespace) {
+        return getMetric(
+                "rate(kubevirt_vmi_vcpu_seconds{name='%1$s', exported_namespace='%2$s'}[1m]) * 100", vmiName, vmiNamespace
+        ).asDouble();
+    }
+
     // Prometheus CA is prio 1. if it's not specified, try to use Openshift CA:
     private static String getPrometheusCa(Provider<KubevirtProviderProperties> provider) {
         String ca = provider.getAdditionalProperties().getPrometheusCertificateAuthority();
