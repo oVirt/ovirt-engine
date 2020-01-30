@@ -6,13 +6,6 @@ classes are designed to be drop-in replaced (cascaded
 over) by other installed brands.
 */
 
-.obrand_topBorder {
-    border-top: 4px solid #00659c !important;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-}
-
 /*
   oVirt has 2 background images.  One is in the top right using the default PF4
   `:before` background image slot.  The other is in the bottom left and is using
@@ -142,6 +135,14 @@ over) by other installed brands.
 //
 // Application: masthead
 //
+.obrand_masthead {
+    border-top: var(--ovirt-masthead-topborder-size) solid #00659c;
+    height: var(--ovirt-masthead-height);
+
+    background-image: url(images/ovirt_masthead_bg.png);
+    background-size: cover;
+}
+
 .obrand_mastheadLogo {
     width: 272px;
     height: 16px;
@@ -151,11 +152,6 @@ over) by other installed brands.
     background-image: url(images/ovirt_masthead_logo.png);
     background-size: contain;
     background-repeat: no-repeat;
-}
-
-.obrand_mastheadBackground {
-    background-image: url(images/ovirt_masthead_bg.png);
-    background-size: cover;
 }
 
 //

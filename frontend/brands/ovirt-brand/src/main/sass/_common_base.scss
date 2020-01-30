@@ -16,6 +16,11 @@ landing page (welcome), login (sso), docs, 404, etc
     --pf-global--FontSize--md: var(--original--pf-global--FontSize--md);
 }
 
+/* adjust PF3 body style to use varialbes so masthead + left nav + content layout correctly */
+.layout-pf.layout-pf-fixed body {
+    padding-top: var(--ovirt-masthead-height);
+}
+
 /* left nav */
 .nav-pf-vertical, .nav-pf-secondary-nav, .nav-pf-tertiary-nav {
     top: var(--ovirt-masthead-height);

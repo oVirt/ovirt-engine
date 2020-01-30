@@ -17,8 +17,8 @@
     </ui:style>
 
     <g:HTMLPanel>
-        <b:Navbar ui:field="mainNavBar" addStyleNames="navbar-pf-vertical">
-            <b:NavbarHeader addStyleNames="obrand_mastheadBackground obrand_topBorder">
+        <b:Navbar ui:field="mainNavBar" addStyleNames="navbar-pf-vertical obrand_masthead">
+            <b:NavbarHeader>
                 <b:NavbarCollapseButton />
                 <b:NavbarBrand addStyleNames="obrand_headerLogoLink" ui:field="logoLink" >
                     <img class="obrand_mastheadLogo" src="clear.cache.gif" />

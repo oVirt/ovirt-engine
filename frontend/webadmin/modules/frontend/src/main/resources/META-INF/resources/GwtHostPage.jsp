@@ -60,8 +60,8 @@
                 margin-left: 20px;
             }
         </style>
-        <nav class="navbar navbar-pf-vertical" role="navigation">
-            <div class="navbar-header obrand_mastheadBackground obrand_topBorder">
+        <nav class="navbar navbar-pf-vertical obrand_masthead" role="navigation">
+            <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
