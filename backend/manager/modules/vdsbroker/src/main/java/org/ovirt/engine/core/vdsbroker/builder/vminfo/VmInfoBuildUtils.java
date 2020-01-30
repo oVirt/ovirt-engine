@@ -1187,28 +1187,29 @@ public class VmInfoBuildUtils {
         int offlineCpus = vcpus - onlineCpus;
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         if (!vmNumaNodes.isEmpty()) {
-            int index = 0;
+            int totalCpusInNodes = 0;
             for (VmNumaNode vmNode : vmNumaNodes) {
-                index += vmNode.getCpuIds().size();
+                totalCpusInNodes += vmNode.getCpuIds().size();
             }
 
-            if (onlineCpus != index) {
-                offlineCpus = vcpus - index;
+            if (onlineCpus != totalCpusInNodes) {
+                offlineCpus = vcpus - totalCpusInNodes;
             }
 
             // When the NUMA Configuration is provided, distribute the remaining
             // offline vCPUs evenly across all nodes
             if (offlineCpus > 0) {
+                Comparator<VmNumaNode> compareBySize =
+                        Comparator.comparingInt(o -> o.getCpuIds().size());
+                Collections.sort(vmNumaNodes, compareBySize);
                 int numaCount = vmNumaNodes.size();
+                int start = totalCpusInNodes-1;
                 for (VmNumaNode vmNode : vmNumaNodes) {
-                    if (numaCount <= 0) {
-                        break;
+                    int index = start = start+1;
+                    while (index < vcpus) {
+                        vmNode.getCpuIds().add(index);
+                        index += numaCount;
                     }
-                    for (int i = vmNode.getCpuIds().size(); i < vcpus / numaCount; i++) {
-                        vmNode.getCpuIds().add(index++);
-                    }
-                    vcpus -= vcpus / numaCount;
-                    --numaCount;
                 }
             }
             return vmNumaNodes;
