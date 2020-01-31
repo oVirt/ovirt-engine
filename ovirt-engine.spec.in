@@ -335,7 +335,6 @@ Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	ovirt-ansible-roles >= 1.1.6
-Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
 Requires:	ovirt-engine-api-explorer
@@ -591,7 +590,6 @@ Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc
-Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
 %if %{ovirt_rh_postgresql}
 Requires:       %{scl_pg_base}-postgresql-server
