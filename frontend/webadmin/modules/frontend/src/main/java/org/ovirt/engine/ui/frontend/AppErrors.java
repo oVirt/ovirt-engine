@@ -2645,6 +2645,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_NUMA_NODE_MEMORY_ERROR();
 
+    String VM_NUMA_NODE_TOTAL_MEMORY_ERROR();
+
     String VM_NUMA_NODE_NOT_MULTIPLE_OF_HUGEPAGE();
 
     String HOST_NUMA_NOT_SUPPORTED();

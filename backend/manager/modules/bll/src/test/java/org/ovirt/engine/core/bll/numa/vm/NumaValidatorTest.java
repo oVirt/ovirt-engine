@@ -253,7 +253,7 @@ public class NumaValidatorTest {
     public void shouldDetectMoreNumaMemoryThanVmMemory() {
         vm.setVmMemSizeMb(1000);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
-                EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
+                EngineMessage.VM_NUMA_NODE_TOTAL_MEMORY_ERROR);
     }
 
     @Test

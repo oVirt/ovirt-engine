@@ -141,7 +141,9 @@ public class NumaValidator {
                 .sum();
 
         if (totalNumaNodeMem > totalVmMemory) {
-            return new ValidationResult(EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
+            return new ValidationResult(EngineMessage.VM_NUMA_NODE_TOTAL_MEMORY_ERROR,
+                    String.format("$vmNodeTotalMemory %d", totalNumaNodeMem),
+                    String.format("$vmTotalMemory %d", totalVmMemory));
         }
 
         return ValidationResult.VALID;
