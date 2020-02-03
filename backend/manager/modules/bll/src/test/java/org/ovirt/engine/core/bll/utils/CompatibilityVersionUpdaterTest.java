@@ -39,7 +39,7 @@ import org.ovirt.engine.core.utils.MockConfigExtension;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class VmVersionUpdaterTest {
+public class CompatibilityVersionUpdaterTest {
     private static final int OS_ID = 30;
     private static final int MAX_MEM = 4194304;
 
@@ -71,7 +71,7 @@ public class VmVersionUpdaterTest {
     private Cluster cluster;
     private VM vm;
 
-    private VmVersionUpdater versionUpdater;
+    private CompatibilityVersionUpdater versionUpdater;
 
     @BeforeEach
     public void setUp() throws InitializationException {
@@ -93,7 +93,7 @@ public class VmVersionUpdaterTest {
         VmPropertiesUtils propertiesUtils = spy(new VmPropertiesUtils());
         propertiesUtils.init();
 
-        versionUpdater = spy(new VmVersionUpdater());
+        versionUpdater = spy(new CompatibilityVersionUpdater());
         doReturn(propertiesUtils).when(versionUpdater).getVmPropertiesUtils();
     }
 
@@ -175,7 +175,7 @@ public class VmVersionUpdaterTest {
     }
 
     private void performUpdate() {
-        versionUpdater.updateVmToVersion(vm, Version.getLast(), cluster);
+        versionUpdater.updateVmCompatibilityVersion(vm, Version.getLast(), cluster);
     }
 
     private VM createVm() {

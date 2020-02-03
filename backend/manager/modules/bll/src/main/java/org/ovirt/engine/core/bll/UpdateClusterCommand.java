@@ -22,11 +22,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
+import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
-import org.ovirt.engine.core.bll.utils.VmVersionUpdater;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -513,7 +513,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         updateParams.setCompensationEnabled(true);
 
         if (updateParams.getVmStaticData().getCustomCompatibilityVersion() == null) {
-            new VmVersionUpdater().updateVmBaseToVersion(
+            new CompatibilityVersionUpdater().updateVmBaseCompatibilityVersion(
                     updateParams.getVmStaticData(),
                     getCluster().getCompatibilityVersion(),
                     getCluster()
@@ -546,7 +546,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private void updateTemplates(List<Pair<String, String>> failedUpgradeEntities) {
         for (VmTemplate template : templatesLockedForUpdate) {
-            new VmVersionUpdater().updateVmtemplateToVersion(template,
+            new CompatibilityVersionUpdater().updateTemplateCompatibilityVersion(template,
                     CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster),
                     getCluster());
 

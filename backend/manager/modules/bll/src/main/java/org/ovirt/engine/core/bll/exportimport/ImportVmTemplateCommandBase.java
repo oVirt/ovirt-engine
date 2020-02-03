@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
-import org.ovirt.engine.core.bll.utils.VmVersionUpdater;
+import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -142,7 +142,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
             }
         }
 
-        new VmVersionUpdater().updateVmtemplateToVersion(getVmTemplate(), newVersion, getCluster());
+        new CompatibilityVersionUpdater().updateTemplateCompatibilityVersion(getVmTemplate(), newVersion, getCluster());
     }
 
     @Override
@@ -156,7 +156,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         if (!isTemplateVersionUpdatePossible()) {
             return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_TOO_OLD,
                     ReplacementUtils.createSetVariableString("lowestVersion",
-                            VmVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
+                            CompatibilityVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
         }
         if (!getCluster().getStoragePoolId().equals(getStoragePoolId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
@@ -235,7 +235,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
 
     // Mocked in unit tests
     protected boolean isTemplateVersionUpdatePossible() {
-        return VmVersionUpdater.isVersionUpdatePossible(getVmTemplate());
+        return CompatibilityVersionUpdater.isCompatibilityUpdatePossible(getVmTemplate());
     }
 
     protected abstract boolean validateSourceStorageDomain();

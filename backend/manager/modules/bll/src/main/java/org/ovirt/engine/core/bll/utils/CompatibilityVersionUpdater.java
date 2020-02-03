@@ -22,75 +22,75 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
 
-public class VmVersionUpdater {
+public class CompatibilityVersionUpdater {
     public static final Version LOWEST_VERSION_FOR_UPDATE = new Version(3, 6);
 
     /**
      * Update VM fields so that it is valid for specified compatibility version.
      */
-    public void updateVmToVersion(VM vm, Version version, Cluster cluster) {
-        updateVmBaseToVersion(vm.getStaticData(), version, cluster);
+    public void updateVmCompatibilityVersion(VM vm, Version newVersion, Cluster cluster) {
+        updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, cluster);
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
     }
 
     /**
      * Update VmTemplate fields so that it is valid for specified compatibility version.
      */
-    public void updateVmtemplateToVersion(VmTemplate template, Version version, Cluster cluster) {
-        updateVmBaseToVersion(template, version, cluster);
+    public void updateTemplateCompatibilityVersion(VmTemplate template, Version newVersion, Cluster cluster) {
+        updateVmBaseCompatibilityVersion(template, newVersion, cluster);
         template.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
     }
 
-    public void updateVmBaseToVersion(VmBase vmBase, Version version, Cluster cluster) {
+    public void updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion, Cluster cluster) {
         Version sourceVersion = getSourceVersion(vmBase);
-        if (!isVersionUpdatePossible(sourceVersion)) {
+        if (!isCompatibilityUpdatePossible(sourceVersion)) {
             return;
         }
 
-        if (version.equals(sourceVersion)) {
+        if (newVersion.equals(sourceVersion)) {
             return;
         }
 
-        updateMemory(vmBase, version);
+        updateMemory(vmBase, newVersion);
 
-        updateCpuTopology(vmBase, version, cluster);
+        updateCpuTopology(vmBase, newVersion, cluster);
 
-        updateProperties(vmBase, version);
+        updateProperties(vmBase, newVersion);
 
-        if (!FeatureSupported.isMigrationSupported(cluster.getArchitecture(), version)) {
+        if (!FeatureSupported.isMigrationSupported(cluster.getArchitecture(), newVersion)) {
             vmBase.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
         }
 
         if (NoMigrationPolicy.ID.equals(vmBase.getMigrationPolicyId()) &&
-                version.greaterOrEquals(Version.v4_3)) {
+                newVersion.greaterOrEquals(Version.v4_3)) {
             vmBase.setMigrationPolicyId(cluster.getMigrationPolicyId());
         }
 
-        if (!FeatureSupported.isBiosTypeSupported(version) &&
+        if (!FeatureSupported.isBiosTypeSupported(newVersion) &&
                 vmBase.getBiosType() != BiosType.CLUSTER_DEFAULT &&
                 vmBase.getBiosType() != BiosType.I440FX_SEA_BIOS) {
             vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
         }
 
         if (vmBase.getDefaultDisplayType() == DisplayType.cirrus &&
-                version.greaterOrEquals(Version.v4_3)) {
+                newVersion.greaterOrEquals(Version.v4_3)) {
             vmBase.setDefaultDisplayType(DisplayType.vga);
         }
 
-        updateRngDevice(vmBase, version);
+        updateRngDevice(vmBase, newVersion);
 
         // Update custom compatibility only if needed
         if (vmBase.getCustomCompatibilityVersion() != null) {
-            vmBase.setCustomCompatibilityVersion(version);
+            vmBase.setCustomCompatibilityVersion(newVersion);
         }
 
         // Setting the Cluster version origin, because the updated VM appears
         // as if it originated in a cluster with that version
-        vmBase.setClusterCompatibilityVersionOrigin(version);
+        vmBase.setClusterCompatibilityVersionOrigin(newVersion);
     }
 
-    private void updateMemory(VmBase vmBase, Version version) {
-        int maxMemoryFromConfig = VmCommonUtils.maxMemorySizeWithHotplugInMb(vmBase.getOsId(), version);
+    private void updateMemory(VmBase vmBase, Version newVersion) {
+        int maxMemoryFromConfig = VmCommonUtils.maxMemorySizeWithHotplugInMb(vmBase.getOsId(), newVersion);
 
         int maxMemorySizeMb = vmBase.getMaxMemorySizeMb() == 0 ?
                 VmCommonUtils.getMaxMemorySizeDefault(vmBase.getMemSizeMb()) :
@@ -101,15 +101,15 @@ public class VmVersionUpdater {
         vmBase.setMinAllocatedMem(Math.min(vmBase.getMinAllocatedMem(), maxMemoryFromConfig));
     }
 
-    private void updateCpuTopology(VmBase vmBase, Version version, Cluster cluster) {
-        int maxCpuSockets = Config.<Integer>getValue(ConfigValues.MaxNumOfVmSockets, version.getValue());
-        int maxCpuCoresPerSocket = Config.<Integer>getValue(ConfigValues.MaxNumOfCpuPerSocket, version.getValue());
-        int maxCpuThreadsPerCore = Config.<Integer>getValue(ConfigValues.MaxNumOfThreadsPerCpu, version.getValue());
+    private void updateCpuTopology(VmBase vmBase, Version newVersion, Cluster cluster) {
+        int maxCpuSockets = Config.<Integer>getValue(ConfigValues.MaxNumOfVmSockets, newVersion.getValue());
+        int maxCpuCoresPerSocket = Config.<Integer>getValue(ConfigValues.MaxNumOfCpuPerSocket, newVersion.getValue());
+        int maxCpuThreadsPerCore = Config.<Integer>getValue(ConfigValues.MaxNumOfThreadsPerCpu, newVersion.getValue());
         vmBase.setNumOfSockets(Math.min(vmBase.getNumOfSockets(), maxCpuSockets));
         vmBase.setCpuPerSocket(Math.min(vmBase.getCpuPerSocket(), maxCpuCoresPerSocket));
         vmBase.setThreadsPerCpu(Math.min(vmBase.getThreadsPerCpu(), maxCpuThreadsPerCore));
 
-        int maxTotalCpus = VmCpuCountHelper.calcMaxVCpu(vmBase, version, cluster.getArchitecture());
+        int maxTotalCpus = VmCpuCountHelper.calcMaxVCpu(vmBase, newVersion, cluster.getArchitecture());
         if (vmBase.getNumOfCpus() <= maxTotalCpus) {
             return;
         }
@@ -143,7 +143,7 @@ public class VmVersionUpdater {
         vmBase.setThreadsPerCpu(Math.max(vmBase.getThreadsPerCpu() - cpusToRemove, 1));
     }
 
-    private void updateProperties(VmBase vmBase, Version version) {
+    private void updateProperties(VmBase vmBase, Version newVersion) {
         var propertiesUtils = getVmPropertiesUtils();
         var properties = vmBase.getCustomProperties();
 
@@ -153,7 +153,7 @@ public class VmVersionUpdater {
 
         Map<String, String> propertiesMap = propertiesUtils.convertProperties(properties);
 
-        var errors = propertiesUtils.validateVmProperties(version, propertiesMap);
+        var errors = propertiesUtils.validateVmProperties(newVersion, propertiesMap);
         for (ValidationError error : errors) {
             propertiesMap.remove(error.getKeyName());
         }
@@ -161,11 +161,11 @@ public class VmVersionUpdater {
         vmBase.setCustomProperties(propertiesUtils.convertProperties(propertiesMap));
     }
 
-    private void updateRngDevice(VmBase vmBase, Version version) {
+    private void updateRngDevice(VmBase vmBase, Version newVersion) {
         for (VmDevice device : vmBase.getManagedDeviceMap().values()) {
             if (device.getType() == VmDeviceGeneralType.RNG) {
                 VmRngDevice rngDevice = new VmRngDevice(device);
-                rngDevice.updateSourceByVersion(version);
+                rngDevice.updateSourceByVersion(newVersion);
                 device.setSpecParams(rngDevice.getSpecParams());
             }
         }
@@ -176,11 +176,11 @@ public class VmVersionUpdater {
         return VmPropertiesUtils.getInstance();
     }
 
-    public static boolean isVersionUpdatePossible(VmBase vmBase) {
-        return isVersionUpdatePossible(getSourceVersion(vmBase));
+    public static boolean isCompatibilityUpdatePossible(VmBase vmBase) {
+        return isCompatibilityUpdatePossible(getSourceVersion(vmBase));
     }
 
-    private static boolean isVersionUpdatePossible(Version sourceVersion) {
+    private static boolean isCompatibilityUpdatePossible(Version sourceVersion) {
         return sourceVersion != null && sourceVersion.greaterOrEquals(LOWEST_VERSION_FOR_UPDATE);
     }
 

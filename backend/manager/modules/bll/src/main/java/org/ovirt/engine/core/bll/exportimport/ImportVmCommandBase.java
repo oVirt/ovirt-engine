@@ -31,8 +31,8 @@ import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.VmVersionUpdater;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -152,7 +152,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (!isVmVersionUpdatePossible()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VERSION_TOO_OLD,
                     ReplacementUtils.createSetVariableString("lowestVersion",
-                            VmVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
+                            CompatibilityVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
         }
 
         if (getParameters().getStoragePoolId() != null
@@ -185,7 +185,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     // Mocked in unit tests
     protected boolean isVmVersionUpdatePossible() {
-        return VmVersionUpdater.isVersionUpdatePossible(getVm().getStaticData());
+        return CompatibilityVersionUpdater.isCompatibilityUpdatePossible(getVm().getStaticData());
     }
 
     private boolean ifaceMacCannotBeAddedToMacPool(VmNetworkInterface iface) {
@@ -417,7 +417,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             }
         }
 
-        new VmVersionUpdater().updateVmToVersion(getVm(), newVersion, getCluster());
+        new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
     }
 
     /**
