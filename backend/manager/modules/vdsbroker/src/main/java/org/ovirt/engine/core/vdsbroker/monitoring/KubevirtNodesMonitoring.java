@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -16,9 +20,14 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.models.V1Node;
+import io.kubernetes.client.models.V1NodeCondition;
 
 public class KubevirtNodesMonitoring implements HostMonitoringInterface {
     private static Logger log = LoggerFactory.getLogger(KubevirtNodesMonitoring.class);
+
+    // list of node conditions as specified in https://kubernetes.io/docs/concepts/architecture/nodes/#condition
+    private static Set<String> NODE_CONDITIONS =
+            Set.of("MemoryPressure", "DiskPressure", "PIDPressure", "NetworkUnavailable");
 
     private ProviderDao providerDao;
 
@@ -65,11 +74,29 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
         } else {
             dynamic.setStatus(VDSStatus.NonOperational);
             dynamic.setNonOperationalReason(NonOperationalReason.KUBEVIRT_NOT_SCHEDULABLE);
+            logUnmetConditions(node);
         }
         dynamic.setCpuThreads(node.getStatus().getCapacity().getOrDefault("cpu", new Quantity("0")).getNumber().intValue());
         dynamic.setPhysicalMemMb(4809);
         dynamic.setKernelVersion(node.getStatus().getNodeInfo().getKernelVersion());
         return dynamic;
+    }
+
+    private void logUnmetConditions(V1Node node) {
+        // check nodes conditions for additional information
+        List<V1NodeCondition> conditions = node.getStatus().getConditions();
+        if (conditions != null) {
+            String unmetConditions = conditions.stream()
+                    .filter(c -> NODE_CONDITIONS.contains(c.getType()))
+                    .filter(c -> Boolean.TRUE.toString().equals(c.getStatus().toLowerCase()))
+                    .map(V1NodeCondition::getMessage)
+                    .collect(Collectors.joining(", "));
+            if (!unmetConditions.isEmpty()) {
+                log.warn("KubeVirt node {} reports the following unmet conditions: {}",
+                        node.getMetadata().getName(),
+                        unmetConditions);
+            }
+        }
     }
 
     @Override
