@@ -15,8 +15,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 /**
  * Base implementation of {@link ActionButtonDefinition} interface.
  *
- * @param <T>
- *            Action panel item type.
+ * @param <T> Action panel item type.
  */
 public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefinition<E, T> {
 
@@ -42,7 +41,7 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        eventBus.fireEvent(event);
+        eventBus.fireEventFromSource(event, this);
     }
 
     /**
@@ -64,7 +63,7 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
 
     @Override
     public HandlerRegistration addInitializeHandler(InitializeHandler handler) {
-        HandlerRegistration reg = eventBus.addHandler(InitializeEvent.getType(), handler);
+        HandlerRegistration reg = eventBus.addHandlerToSource(InitializeEvent.getType(), this, handler);
         registerHandler(reg);
         return reg;
     }
