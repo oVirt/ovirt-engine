@@ -67,6 +67,11 @@ public class BackendClusterResource<P extends BackendClustersResource>
     }
 
     @Override
+    public Response refreshGlusterHealStatus(Action action) {
+        return doAction(ActionType.SyncHealClusterVolumes, new ClusterParametersBase(guid), action);
+    }
+
+    @Override
     public Response upgrade(Action action) {
         if(action.getUpgradeAction() == ClusterUpgradeAction.START) {
             return doAction(ActionType.StartClusterUpgrade, new ClusterParametersBase(guid), action);

@@ -519,6 +519,7 @@ public enum AuditLogType {
     GLUSTER_VOLUME_BRICK_RESETED(4171),
     GLUSTER_VOLUME_CONFIRMED_SPACE_LOW(4172, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.HOUR.getValue() * 12),
+    GLUSTER_VOLUME_HEAL_REFRESH_FAILED(4174, AuditLogSeverity.ERROR),
 
     USER_FORCE_SELECTED_SPM(159),
     USER_VDS_RESTART(41),
