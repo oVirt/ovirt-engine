@@ -151,6 +151,7 @@ select fn_db_add_config_value('GlusterUnSyncedEntriesHistoryLimit', '40', 'gener
 select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('UseNativeIOForGluster', 'false', '4.4');
 select fn_db_add_config_value('GlusterVolumeFreeSpaceThresholdInPercent', '20', 'general');
+select fn_db_add_config_value('StorageDeviceSpaceLimit', '90', 'general');
 
 -- Gluster Geo-replication --
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');

@@ -815,6 +815,7 @@ public enum AuditLogType {
     RUN_VM_FAILED(818, AuditLogSeverity.ERROR),
     MAC_ADDRESSES_POOL_NOT_INITIALIZED(837, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.HOUR.getValue()),
+    HOST_DISK_RUNNING_LOW_SPACE(891, AuditLogSeverity.ERROR),
     // CBC
     VDS_REGISTER_ERROR_UPDATING_HOST(819, AuditLogSeverity.ERROR),
     VDS_REGISTER_ERROR_UPDATING_HOST_ALL_TAKEN(820, AuditLogSeverity.ERROR),

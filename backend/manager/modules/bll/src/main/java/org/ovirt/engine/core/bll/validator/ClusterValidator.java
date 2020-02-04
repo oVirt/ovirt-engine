@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -451,4 +452,22 @@ public class ClusterValidator {
         }
         return dataCenterOfNewCluster;
     }
+
+    public List<String> getLowDeviceSpaceVolumes() {
+        List<String> volumes = new ArrayList<>();
+        if(cluster.supportsGlusterService()) {
+            List<GlusterVolumeEntity> glusterVolumeEntities = glusterVolumeDao.getByClusterId(cluster.getId());
+            if(glusterVolumeEntities != null && !glusterVolumeEntities.isEmpty()) {
+                for(GlusterVolumeEntity glusterVolumeEntity: glusterVolumeEntities) {
+                    if (((glusterVolumeEntity.getAdvancedDetails().getCapacityInfo().getUsedSize().doubleValue()
+                            / glusterVolumeEntity.getAdvancedDetails().getCapacityInfo().getTotalSize().doubleValue())
+                            * 100) > (Integer)Config.getValue(ConfigValues.StorageDeviceSpaceLimit)) {
+                        volumes.add(glusterVolumeEntity.getName());
+                    }
+                }
+            }
+        }
+        return volumes;
+    }
+
 }

@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -10,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -65,6 +70,17 @@ public class StartClusterUpgradeCommand<T extends ClusterParametersBase> extends
     @Override
     protected boolean validate() {
         ClusterValidator clusterValidator = getClusterValidator(cluster, getCluster());
+
+        List<String> volumeNamesWithLowSpace = clusterValidator.getLowDeviceSpaceVolumes();
+        if (volumeNamesWithLowSpace != null && volumeNamesWithLowSpace.size() > 0) {
+            AuditLogable auditLog = new AuditLogableImpl();
+            auditLog.setClusterId(cluster.getId());
+            auditLog.setClusterName(cluster.getName());
+            auditLog.addCustomValue("VolumeNames",
+                    volumeNamesWithLowSpace.stream().map(i -> i.toString()).collect(Collectors.joining(",")));
+            auditLogDirector.log(auditLog, AuditLogType.HOST_DISK_RUNNING_LOW_SPACE);
+            return false;
+        }
         return validate(clusterValidator.oldClusterIsValid());
     }
 

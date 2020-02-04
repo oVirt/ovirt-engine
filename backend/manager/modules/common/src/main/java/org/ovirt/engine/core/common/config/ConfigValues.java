@@ -1535,7 +1535,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     SkuToAVLevel,
 
-    Invalid;
+    Invalid,
+
+    @TypeConverterAttribute(Integer.class)
+    StorageDeviceSpaceLimit;
 
     private ClientAccessLevel accessLevel;
 
