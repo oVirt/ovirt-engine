@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
@@ -315,6 +316,13 @@ public class DiskImagesValidatorTest {
         Map<Guid, Guid> diskToImageIds = Collections.singletonMap(disk2.getId(), disk2.getImageId());
         assertThat(validator.snapshotAlreadyExists(diskToImageIds),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_IMAGE_ALREADY_EXISTS));
+    }
+
+    @Test
+    public void testIncrementalBackupNotEnabledForAllDisks() {
+        disk1.setBackup(DiskBackup.None);
+        assertThat(validator.incrementalBackupEnabled(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_DISABLED_FOR_DISKS));
     }
 
     private VmDevice createVmDeviceForDisk(DiskImage disk) {

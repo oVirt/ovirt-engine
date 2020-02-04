@@ -91,10 +91,15 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (!validate(diskExistenceValidator.disksNotExist())) {
             return false;
         }
-        DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
-        if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
-            return false;
+
+        // validate all disks support incremental backup
+        if (getParameters().getVmBackup().getFromCheckpointId() != null) {
+            DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
+            if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
+                return false;
+            }
         }
+
         if (!getVm().getStatus().isQualifiedForVmBackup()) {
             return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_STATUS);
         }
