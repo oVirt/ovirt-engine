@@ -110,4 +110,14 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
     @Override
     public void afterRefreshTreatment() {
     }
+
+    /**
+     * The lock acquired for kubevirt node refresh should be released at the end of the refresh execution.
+     *
+     * @return true for indicating the host monitoring should release the monitoring lock of the node.
+     */
+    @Override
+    public boolean shouldReleaseMonitoringLockAfterRefresh() {
+        return true;
+    }
 }

@@ -168,7 +168,6 @@ public class VdsManager {
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
     private volatile boolean inServerRebootTimeout;
-    private KubevirtNodesMonitoring kubevirtNodesRefresher;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -291,6 +290,9 @@ public class VdsManager {
                             releaseLock = false;
                             hostMonitoring = createHostMonitoring();
                             hostMonitoring.refresh();
+                            if (hostMonitoring.shouldReleaseMonitoringLockAfterRefresh()) {
+                                releaseLock = true;
+                            }
                         }
                     } catch (VDSNetworkException e) {
                         logNetworkException(e);
