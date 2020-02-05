@@ -9,13 +9,14 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class IntegerEntityModelTextBoxOnlyEditor extends NumberEntityModelTextBoxOnlyEditor<Integer> {
 
     public IntegerEntityModelTextBoxOnlyEditor(VisibilityRenderer visibilityRenderer) {
-        super(new EntityModelTextBox<>(new ToStringEntityModelRenderer<Integer>(), new ToIntEntityModelParser()),
-             visibilityRenderer);
+        super(new EntityModelTextBox<>(new ToStringEntityModelRenderer<Integer>(),
+                ToIntEntityModelParser.newTrimmingParser()),
+                visibilityRenderer);
     }
 
     public IntegerEntityModelTextBoxOnlyEditor() {
         super(new EntityModelTextBox<>(new ToStringEntityModelRenderer<Integer>(),
-                new ToIntEntityModelParser()), new VisibilityRenderer.SimpleVisibilityRenderer());
+                ToIntEntityModelParser.newTrimmingParser()), new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
     @Override

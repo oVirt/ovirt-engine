@@ -130,7 +130,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @WithElementId
     StringEntityModelTextBoxEditor authHostnameEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "authPort.entity")
     @WithElementId
     StringEntityModelTextBoxEditor authPortEditor;
@@ -205,6 +205,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     public ProviderPopupView(EventBus eventBus) {
         super(eventBus);
 
+        authPortEditor = StringEntityModelTextBoxEditor.newTrimmingEditor();
         typeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
         authApiVersionEditor = new ListModelListBoxEditor<>(new NameRenderer());
         autoSyncEditor = new EntityModelCheckBoxEditor(Align.RIGHT);

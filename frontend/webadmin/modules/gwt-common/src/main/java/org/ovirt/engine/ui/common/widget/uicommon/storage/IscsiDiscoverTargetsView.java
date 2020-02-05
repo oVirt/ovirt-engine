@@ -64,7 +64,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     @Path(value = "address.entity")
     StringEntityModelTextBoxEditor addressEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "port.entity")
     StringEntityModelTextBoxEditor portEditor;
 
@@ -98,6 +98,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @Inject
     public IscsiDiscoverTargetsView() {
+        portEditor = StringEntityModelTextBoxEditor.newTrimmingEditor();
         initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();

@@ -57,7 +57,7 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
 
     public MacRangeEditor() {
         macsCount = new EntityModelLabel(new NullableNumberRenderer(NumberFormat.getDecimalFormat()),
-                new ToIntEntityModelParser());
+                ToIntEntityModelParser.newTrimmingParser());
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);

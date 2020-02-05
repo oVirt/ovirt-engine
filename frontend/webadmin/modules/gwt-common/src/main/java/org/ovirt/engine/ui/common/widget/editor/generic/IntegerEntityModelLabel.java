@@ -4,6 +4,6 @@ import org.ovirt.engine.ui.common.widget.parser.generic.ToIntEntityModelParser;
 
 public class IntegerEntityModelLabel extends EntityModelLabel<Integer> {
     public IntegerEntityModelLabel() {
-        super(new ToStringEntityModelRenderer<Integer>(), new ToIntEntityModelParser());
+        super(new ToStringEntityModelRenderer<Integer>(), ToIntEntityModelParser.newTrimmingParser());
     }
 }

@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class LongEntityModelTextBoxEditor extends NumberEntityModelTextBoxEditor<Long> {
 
     public LongEntityModelTextBoxEditor() {
-        super(new ToStringEntityModelRenderer<Long>(), new ToLongEntityParser());
+        super(new ToStringEntityModelRenderer<Long>(), ToLongEntityParser.newTrimmingParser());
     }
 
     @Override

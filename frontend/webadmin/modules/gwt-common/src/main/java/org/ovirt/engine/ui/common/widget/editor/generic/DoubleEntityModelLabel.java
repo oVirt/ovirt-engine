@@ -4,6 +4,6 @@ import org.ovirt.engine.ui.common.widget.parser.generic.ToDoubleEntityModelParse
 
 public class DoubleEntityModelLabel extends EntityModelLabel<Double> {
     public DoubleEntityModelLabel() {
-        super(new ToStringEntityModelRenderer<Double>(), new ToDoubleEntityModelParser());
+        super(new ToStringEntityModelRenderer<Double>(), ToDoubleEntityModelParser.newTrimmingParser());
     }
 }

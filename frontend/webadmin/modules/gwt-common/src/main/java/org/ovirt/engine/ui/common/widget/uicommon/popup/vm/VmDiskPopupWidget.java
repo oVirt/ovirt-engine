@@ -70,7 +70,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @WithElementId("size")
     IntegerEntityModelTextBoxEditor sizeEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("sizeExtend.entity")
     StringEntityModelTextBoxEditor sizeExtendEditor;
 
@@ -235,6 +235,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void initManualWidgets() {
+        sizeExtendEditor = StringEntityModelTextBoxEditor.newTrimmingEditor();
+
         storageDomainEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
         hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());

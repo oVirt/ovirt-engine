@@ -11,4 +11,8 @@ public class ToStringEntityModelParser implements Parser<String> {
         return text == null ? "" : text.toString();
     }
 
+    public static Parser<String> newTrimmingParser() {
+        return TrimmingParser.wrap(new ToStringEntityModelParser());
+    }
+
 }

@@ -1065,7 +1065,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        numOfIoThreadsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        numOfIoThreadsEditor = StringEntityModelTextBoxOnlyEditor.newTrimmingEditor(new ModeSwitchingVisibilityRenderer());
         ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
         ioThreadsInfo.setTooltipMaxWidth(TooltipWidth.W420);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -1202,7 +1202,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         EnableableFormLabel label = new EnableableFormLabel();
         label.setText(constants.numOfVCPUs());
         label.addStyleName("numCPUs_pfly_fix"); //$NON-NLS-1$
-        totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        totalvCPUsEditor = StringEntityModelTextBoxOnlyEditor.newTrimmingEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo(label, totalvCPUsEditor);
         totalvCPUsEditorWithInfoIcon.setExplanation(templates.italicText(messages.hotPlugUnplugCpuWarning()));
     }

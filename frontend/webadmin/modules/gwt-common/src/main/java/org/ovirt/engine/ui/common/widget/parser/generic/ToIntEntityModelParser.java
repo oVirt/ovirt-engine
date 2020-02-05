@@ -6,6 +6,9 @@ import com.google.gwt.text.shared.Parser;
 
 public class ToIntEntityModelParser implements Parser<Integer> {
 
+    private ToIntEntityModelParser() {
+    }
+
     @Override
     public Integer parse(CharSequence text) throws ParseException {
         if (text == null || "".equals(text.toString())) {
@@ -20,6 +23,10 @@ public class ToIntEntityModelParser implements Parser<Integer> {
         }
 
         return ret;
+    }
+
+    public static Parser<Integer> newTrimmingParser() {
+        return TrimmingParser.wrap(new ToIntEntityModelParser());
     }
 
 }

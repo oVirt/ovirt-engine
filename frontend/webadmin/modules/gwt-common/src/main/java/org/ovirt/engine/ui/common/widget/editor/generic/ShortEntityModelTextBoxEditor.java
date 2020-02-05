@@ -17,11 +17,12 @@ public class ShortEntityModelTextBoxEditor extends NumberEntityModelTextBoxEdito
     private Event<ValueEventArgs<Boolean>> validityChangedEvent = new Event<>("ValidityChanged", ShortEntityModelTextBoxEditor.class); //$NON-NLS-1$
 
     public ShortEntityModelTextBoxEditor(VisibilityRenderer visibilityRenderer) {
-        super(new EntityModelTextBox<>(new ToStringEntityModelRenderer<Short>(), new ToShortEntityModelParser()), visibilityRenderer);
+        super(new EntityModelTextBox<>(new ToStringEntityModelRenderer<Short>(),
+                ToShortEntityModelParser.newTrimmingParser()), visibilityRenderer);
     }
 
     public ShortEntityModelTextBoxEditor() {
-        super(new ToStringEntityModelRenderer<Short>(), new ToShortEntityModelParser());
+        super(new ToStringEntityModelRenderer<Short>(), ToShortEntityModelParser.newTrimmingParser());
     }
 
     @Override

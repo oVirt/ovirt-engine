@@ -30,22 +30,26 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
     @Ignore
     EnableableFormLabel qosOutLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value="outAverageLinkshare.entity")
     @WithElementId
     StringEntityModelTextBoxEditor outAverageLinkshare;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value="outAverageUpperlimit.entity")
     @WithElementId
     StringEntityModelTextBoxEditor outAverageUpperlimit;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value="outAverageRealtime.entity")
     @WithElementId
     StringEntityModelTextBoxEditor outAverageRealtime;
 
     public HostNetworkQosWidget() {
+        outAverageLinkshare = StringEntityModelTextBoxEditor.newTrimmingEditor();
+        outAverageUpperlimit = StringEntityModelTextBoxEditor.newTrimmingEditor();
+        outAverageRealtime = StringEntityModelTextBoxEditor.newTrimmingEditor();
+
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
 
