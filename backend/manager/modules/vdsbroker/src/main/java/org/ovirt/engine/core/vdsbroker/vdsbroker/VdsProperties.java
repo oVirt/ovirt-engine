@@ -366,6 +366,7 @@ public final class VdsProperties {
     public static final String Sgio = "sgio";
     public static final String Unit = "unit";
     public static final String Path = "path";
+    public static final String BlockPath = "block_path";
     public static final String Ide = "ide";
     public static final String Fdc = "fdc";
     public static final String Guid = "GUID";

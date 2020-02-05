@@ -2604,6 +2604,9 @@ public class VdsBrokerObjectsBuilder {
             if (params.containsKey(VdsProperties.Address)) {
                 device.setAddress((Map<String, String>) params.get(VdsProperties.Address));
             }
+            if (params.containsKey(VdsProperties.BlockPath)) {
+                device.setBlockPath(params.get(VdsProperties.BlockPath).toString());
+            }
 
             devices.add(device);
         }

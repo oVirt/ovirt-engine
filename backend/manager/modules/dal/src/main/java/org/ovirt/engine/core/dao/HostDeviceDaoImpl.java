@@ -54,7 +54,8 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                 .addValue("net_iface_name", entity.getNetworkInterfaceName())
                 .addValue("driver", entity.getDriver())
                 .addValue("is_assignable", entity.isAssignable())
-                .addValue("address", SerializationFactory.getSerializer().serialize(entity.getAddress()));
+                .addValue("address", SerializationFactory.getSerializer().serialize(entity.getAddress()))
+                .addValue("block_path", entity.getBlockPath());
     }
 
     @Override
@@ -173,6 +174,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                     .deserializeOrCreateNew(rs.getString("address"), HashMap.class));
             device.setVmId(getGuid(rs, "vm_id"));
             device.setDriver(rs.getString("driver"));
+            device.setBlockPath(rs.getString("block_path"));
 
         }
     }

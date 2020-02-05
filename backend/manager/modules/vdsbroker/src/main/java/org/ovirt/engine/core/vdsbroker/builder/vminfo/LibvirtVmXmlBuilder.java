@@ -1577,22 +1577,22 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("driver");
         writer.writeAttributeString("name", "qemu");
         writer.writeAttributeString("type", "raw");
-        writer.writeEndElement();
+        writer.writeEndElement(); // driver
 
         writer.writeStartElement("source");
-        writer.writeAttributeString("dev", "/dev/" + diskName);
+        writer.writeAttributeString("dev", hostDevice.getBlockPath());
         writer.writeStartElement("seclabel");
         writer.writeAttributeString("model", "dac");
         writer.writeAttributeString("type", "none");
         writer.writeAttributeString("relabel", "yes");
-        writer.writeEndElement();
-        writer.writeEndElement();
+        writer.writeEndElement(); // seclabel
+        writer.writeEndElement(); // source
 
         if (SCSI_HD.equals(scsiHostdevProperty)) {
             writer.writeStartElement("blockio");
             writer.writeAttributeString("logical_block_size", "512");
             writer.writeAttributeString("physical_block_size", "4096");
-            writer.writeEndElement();
+            writer.writeEndElement(); // blockio
         }
 
         writer.writeStartElement("target");
@@ -1604,7 +1604,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("dev", diskName);
             writer.writeAttributeString("bus", "scsi");
         }
-        writer.writeEndElement();
+        writer.writeEndElement(); // target
 
         writeAlias(device);
         if (SCSI_VIRTIO_BLK_PCI.equals(scsiHostdevProperty)) {
@@ -1612,7 +1612,8 @@ public class LibvirtVmXmlBuilder {
         } else {
             writeAddress(buildDriveAddress(hostDevice.getAddress()));
         }
-        writer.writeEndElement();
+
+        writer.writeEndElement(); // disk
     }
 
     private Map<String, String> buildDriveAddress(Map<String, String> address) {

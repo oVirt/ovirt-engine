@@ -29,6 +29,7 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
     private boolean assignable;
     private Map<String, String> address;
     private List<MDevType> mdevTypes;
+    private String blockPath;
 
     public HostDevice() {
         address = Collections.emptyMap();
@@ -191,6 +192,14 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
         this.mdevTypes = mdevTypes;
     }
 
+    public void setBlockPath(String blockPath) {
+        this.blockPath = blockPath;
+    }
+
+    public String getBlockPath() {
+        return blockPath;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -215,7 +224,8 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 && Objects.equals(assignable, other.assignable)
                 && Objects.equals(address, other.address)
                 && Objects.equals(vmId, other.vmId)
-                && Objects.equals(mdevTypes, other.mdevTypes);
+                && Objects.equals(mdevTypes, other.mdevTypes)
+                && Objects.equals(blockPath, other.blockPath);
     }
 
     @Override
@@ -236,7 +246,8 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 assignable,
                 vmId,
                 address,
-                mdevTypes
+                mdevTypes,
+                blockPath
         );
     }
 
@@ -260,6 +271,7 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 .append("vmId", vmId)
                 .append("address", address)
                 .append("mdevTypes", mdevTypes)
+                .append("blockPath", blockPath)
                 .build();
     }
 
