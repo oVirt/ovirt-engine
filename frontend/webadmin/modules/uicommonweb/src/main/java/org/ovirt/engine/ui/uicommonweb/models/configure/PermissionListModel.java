@@ -187,23 +187,24 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
             return;
         }
 
-        if (model.getSearchType() != AdSearchType.EVERYONE && model.getSelectedItems() == null) {
-            cancel();
-            return;
-        }
-
         ArrayList<DbUser> items = new ArrayList<>();
         if (model.getSearchType() == AdSearchType.EVERYONE) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
-        } else {
+        } else if (model.getItems() != null) {
             for (Object item : model.getItems()) {
                 EntityModel entityModel = (EntityModel) item;
                 if (entityModel.getIsSelected()) {
                     items.add((DbUser) entityModel.getEntity());
                 }
             }
+        }
+
+        if (items.isEmpty()) {
+            model.setIsValid(false);
+            model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
+            return;
         }
 
         Role role = model.getRole().getSelectedItem();
@@ -234,13 +235,11 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.AddPermission, list,
-                result -> {
-
-                    AdElementListModel localModel = (AdElementListModel) result.getState();
-                    localModel.stopProgress();
-                    cancel();
-
-                }, model);
+            result -> {
+                AdElementListModel localModel = (AdElementListModel) result.getState();
+                localModel.stopProgress();
+                cancel();
+            }, model);
     }
 
     private void cancel() {
