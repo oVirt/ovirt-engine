@@ -189,22 +189,24 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             return;
         }
 
-        if (model.getSelectedItems() == null && model.getSearchType() != AdSearchType.EVERYONE) {
-            cancel();
-            return;
-        }
         ArrayList<DbUser> items = new ArrayList<>();
         if (model.getSearchType() == AdSearchType.EVERYONE) {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
-        } else {
+        } else if (model.getItems() != null) {
             for (Object item : model.getItems()) {
                 EntityModel entityModel = (EntityModel) item;
                 if (entityModel.getIsSelected()) {
                     items.add((DbUser) entityModel.getEntity());
                 }
             }
+        }
+
+        if(items.isEmpty()){
+            model.setIsValid(false);
+            model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
+            return;
         }
 
         model.startProgress();
@@ -233,11 +235,13 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             list.add(permissionParams);
         }
 
-        Frontend.getInstance().runMultipleAction(ActionType.AddPermission, list,
-                result -> {
-                    model.stopProgress();
-                    cancel();
-                });
+        Frontend.getInstance()
+                .runMultipleAction(ActionType.AddPermission,
+                        list,
+                        result -> {
+                            model.stopProgress();
+                            cancel();
+                        });
         cancel();
     }
 
