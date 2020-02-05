@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtHostConnectionRefresher;
 
 @Singleton
 public class RefresherFactory {
@@ -17,7 +18,7 @@ public class RefresherFactory {
             ResourceManager resourceManager) {
         switch(vdsManager.getVdsType()) {
         case KubevirtNode:
-            return Injector.injectMembers(new KubevirtHostConnectionRefresher(vdsManager, resourceManager));
+            return Injector.injectMembers(new KubevirtHostConnectionRefresher(vdsManager));
         default:
             return new HostConnectionRefresher(vdsManager, resourceManager);
         }

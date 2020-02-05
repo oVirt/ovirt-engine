@@ -63,7 +63,8 @@ public class NodesMonitoring {
                     @Override
                     public void onUpdate(V1Node oldNode, V1Node newNode) {
                         /**
-                         * Skip host updates. This functionality is achieved by {@code KubevirtNodesMonitoring}
+                         * Skip host updates. This functionality is achieved by {@code KubevirtNodesMonitoring} and by
+                         * {@code KubevirtHostConnectionRefresher}
                          */
                     }
 

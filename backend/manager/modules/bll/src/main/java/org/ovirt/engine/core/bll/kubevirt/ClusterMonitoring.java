@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
+import org.ovirt.engine.core.vdsbroker.kubevirt.SharedInformerFactoryProducer;
 import org.ovirt.engine.core.vdsbroker.monitoring.KubevirtClusterMigrationMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.KubevirtMigrationMonitoring;
 import org.slf4j.Logger;
