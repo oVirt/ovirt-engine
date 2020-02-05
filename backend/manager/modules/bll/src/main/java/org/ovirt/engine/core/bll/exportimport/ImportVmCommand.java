@@ -273,7 +273,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         DiskVmElementValidator diskVmElementValidator =
                 new DiskVmElementValidator(lunDisk, lunDisk.getDiskVmElementForVm(getVmId()));
-        ValidationResult virtIoScsiResult = diskVmElementValidator.verifyVirtIoScsi(getVm());
+        ValidationResult virtIoScsiResult = diskVmElementValidator.isVirtIoScsiValid(getVm());
         if (!virtIoScsiResult.isValid()) {
             return virtIoScsiResult.getMessages();
         }
