@@ -68,6 +68,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.HostConnectionRefresherInterface;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoringInterface;
 import org.ovirt.engine.core.vdsbroker.monitoring.KubevirtNodesMonitoring;
@@ -166,7 +167,7 @@ public class VdsManager {
     private final ReentrantLock autoStartVmsWithLeasesLock;
     protected final long HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
-    private HostConnectionRefresher hostRefresher;
+    private HostConnectionRefresherInterface hostRefresher;
     private volatile boolean inServerRebootTimeout;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
@@ -223,10 +224,10 @@ public class VdsManager {
                 refreshRate,
                 TimeUnit.MILLISECONDS));
 
-        vmsRefresher = getRefresherFactory().create(this, resourceManager);
+        vmsRefresher = getRefresherFactory().createVmStatsRefresher(this, resourceManager);
         vmsRefresher.startMonitoring();
 
-        hostRefresher = new HostConnectionRefresher(this, resourceManager);
+        hostRefresher = getRefresherFactory().createHostConnectionRefresher(this, resourceManager);
         hostRefresher.start();
     }
 

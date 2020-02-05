@@ -1,11 +1,13 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
 import org.reactivestreams.Subscription;
 
-public class HostConnectionRefresher {
+public class HostConnectionRefresher implements HostConnectionRefresherInterface {
 
     private SubscriberRefreshingHostOnHostConnectionChangeEvent subscriber;
     private ResourceManager resourceManager;
@@ -16,11 +18,13 @@ public class HostConnectionRefresher {
         this.resourceManager = resourceManager;
     }
 
+    @Override
     public void start() {
         subscriber = new SubscriberRefreshingHostOnHostConnectionChangeEvent();
         resourceManager.subscribe(subscriber);
     }
 
+    @Override
     public void stop() {
         if (subscriber != null) {
             subscriber.unsubscribe();

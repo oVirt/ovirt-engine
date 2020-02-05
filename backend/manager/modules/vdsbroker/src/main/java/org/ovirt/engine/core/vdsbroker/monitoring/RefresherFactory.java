@@ -6,15 +6,24 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
-
 @Singleton
 public class RefresherFactory {
 
-    public VmStatsRefresher create(VdsManager vdsManager, ResourceManager resourceManager) {
-        return Injector.injectMembers(getRefresherForVds(vdsManager, resourceManager));
+    public VmStatsRefresher createVmStatsRefresher(VdsManager vdsManager, ResourceManager resourceManager) {
+        return Injector.injectMembers(getVmStatsRefresher(vdsManager, resourceManager));
     }
 
-    private VmStatsRefresher getRefresherForVds(VdsManager vdsManager, ResourceManager resourceManager) {
+    public HostConnectionRefresherInterface createHostConnectionRefresher(VdsManager vdsManager,
+            ResourceManager resourceManager) {
+        switch(vdsManager.getVdsType()) {
+        case KubevirtNode:
+            return Injector.injectMembers(new KubevirtHostConnectionRefresher(vdsManager, resourceManager));
+        default:
+            return new HostConnectionRefresher(vdsManager, resourceManager);
+        }
+    }
+
+    private VmStatsRefresher getVmStatsRefresher(VdsManager vdsManager, ResourceManager resourceManager) {
         switch(vdsManager.getVdsType()) {
         case KubevirtNode:
             return new KubevirtVmStatsRefresher(vdsManager);
