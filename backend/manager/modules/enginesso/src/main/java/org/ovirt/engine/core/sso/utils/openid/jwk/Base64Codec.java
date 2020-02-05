@@ -132,7 +132,7 @@ final class Base64Codec {
 
         final int bit_diff = a ^ b;
         final int msb_iff_zero_diff = (bit_diff - 1) & (~bit_diff);
-        return msb_iff_zero_diff >>> 63;
+        return msb_iff_zero_diff >>> 31;
     }
 
     /**
