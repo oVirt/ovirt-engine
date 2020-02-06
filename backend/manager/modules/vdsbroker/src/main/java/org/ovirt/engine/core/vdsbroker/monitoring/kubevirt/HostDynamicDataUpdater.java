@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.models.V1Node;
 import io.kubernetes.client.models.V1NodeCondition;
+import io.kubernetes.client.models.V1NodeSystemInfo;
 
 public class HostDynamicDataUpdater {
 
@@ -50,8 +51,16 @@ public class HostDynamicDataUpdater {
                 .getOrDefault("cpu", new Quantity("0"))
                 .getNumber()
                 .intValue());
-        dynamic.setPhysicalMemMb(4809);
-        dynamic.setKernelVersion(node.getStatus().getNodeInfo().getKernelVersion());
+
+        Map<String, Quantity> capacity = node.getStatus().getCapacity();
+        dynamic.setCpuThreads(capacity.getOrDefault("cpu", new Quantity("0")).getNumber().intValue());
+        int memoryInKiB = capacity.getOrDefault("memory", new Quantity("0")).getNumber().intValue();
+        dynamic.setPhysicalMemMb(memoryInKiB / 1024);
+        V1NodeSystemInfo nodeInfo = node.getStatus().getNodeInfo();
+        dynamic.setKernelVersion(nodeInfo.getKernelVersion());
+        dynamic.setBootUuid(nodeInfo.getBootID());
+        dynamic.setHostOs(nodeInfo.getOperatingSystem());
+        dynamic.setHardwareUUID(nodeInfo.getSystemUUID());
     }
 
     private void logUnmetConditions(V1Node node) {
