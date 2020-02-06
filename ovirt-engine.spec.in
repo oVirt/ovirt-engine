@@ -173,6 +173,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 
 %global required_python_lib_ovirt_engine_lib %{required_python_lib -l python2- %{name}-lib >= %{version}-%{release}}
 %global required_python_lib_jinja2 %{required_python_lib -l python- jinja2}
+%global required_python_lib_mod_wsgi %{required_python_lib -l python2- mod_wsgi}
 %global required_python_lib_ovirt_setup_lib %{required_python_lib ovirt-setup-lib >= 1.1.1}
 %global required_python_lib_libxml2 %{required_python_lib -r -python libxml2}
 %global required_python_lib_otopi %{required_python_lib -l python2- otopi >= 1.9.0}
@@ -314,7 +315,7 @@ Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.1.0
-Requires:	python-mod_wsgi >= 4.6.4
+Requires:	%{required_python_lib_mod_wsgi} >= 4.6.4
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
