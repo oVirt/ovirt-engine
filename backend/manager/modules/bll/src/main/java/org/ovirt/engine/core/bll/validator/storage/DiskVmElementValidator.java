@@ -51,17 +51,17 @@ public class DiskVmElementValidator {
      * Verifies Virtio-SCSI interface validity.
      */
     public ValidationResult isVirtIoScsiValid(VM vm) {
-        if (DiskInterface.VirtIO_SCSI != diskVmElement.getDiskInterface()) {
+        // VM is null, so there is no reason to validate if VM has virtio-scsi device
+        if (vm == null) {
+            return ValidationResult.VALID;
+        }
+
+        if (diskVmElement != null && DiskInterface.VirtIO_SCSI != diskVmElement.getDiskInterface()) {
             return ValidationResult.VALID;
         }
 
         if (disk.getSgio() != null && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
             return new ValidationResult(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
-        }
-
-        // VM is null, so there is no reason to validate if VM has virtio-scsi device
-        if (vm == null) {
-            return ValidationResult.VALID;
         }
 
         if (!isVirtioScsiControllerAttached(vm)) {
