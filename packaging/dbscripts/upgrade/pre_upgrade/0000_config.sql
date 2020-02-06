@@ -84,7 +84,7 @@ select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel7.6.0,pc-q35-4.1,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.4');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
