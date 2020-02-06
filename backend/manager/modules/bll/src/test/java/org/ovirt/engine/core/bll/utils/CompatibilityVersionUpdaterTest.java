@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -107,23 +108,12 @@ public class CompatibilityVersionUpdaterTest {
         vm.setMaxMemorySizeMb(hugeMaxMem);
         vm.setMinAllocatedMem(minMem);
 
-        performUpdate();
+        var updates = performUpdate();
 
+        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.MEMORY);
         assertThat(vm.getVmMemSizeMb()).isEqualTo(MAX_MEM);
         assertThat(vm.getMaxMemorySizeMb()).isEqualTo(MAX_MEM);
         assertThat(vm.getMinAllocatedMem()).isEqualTo(minMem);
-    }
-
-    @Test
-    public void testUpdateCpuModelPassthrough() {
-        String passthroughVerb = "aaa,bbb,ccc,ddd";
-
-        vm.setUseHostCpuFlags(true);
-        vm.setCpuName(passthroughVerb);
-
-        performUpdate();
-
-        assertThat(vm.getCpuName()).isEqualTo(passthroughVerb);
     }
 
     @Test
@@ -132,8 +122,9 @@ public class CompatibilityVersionUpdaterTest {
         vm.setCpuPerSocket(16);
         vm.setThreadsPerCpu(4);
 
-        performUpdate();
+        var updates = performUpdate();
 
+        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.CPU_TOPOLOGY);
         assertThat(vm.getNumOfSockets()).isEqualTo(3);
         assertThat(vm.getCpuPerSocket()).isEqualTo(16);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(4);
@@ -145,8 +136,9 @@ public class CompatibilityVersionUpdaterTest {
         vm.setCpuPerSocket(512);
         vm.setThreadsPerCpu(512);
 
-        performUpdate();
+        var updates = performUpdate();
 
+        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.CPU_TOPOLOGY);
         assertThat(vm.getNumOfSockets()).isEqualTo(1);
         assertThat(vm.getCpuPerSocket()).isEqualTo(48);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(8);
@@ -155,7 +147,9 @@ public class CompatibilityVersionUpdaterTest {
     @Test
     public void testUpdateProperties() {
         vm.setCustomProperties("prop_1=false;prop_2=incorrect;nonexistent=123");
-        performUpdate();
+        var updates = performUpdate();
+
+        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.PROPERTIES);
         assertThat(vm.getCustomProperties()).isEqualTo("prop_1=false");
     }
 
@@ -163,19 +157,22 @@ public class CompatibilityVersionUpdaterTest {
     public void testUpdateMigration() {
         cluster.setMigrationPolicyId(Guid.newGuid());
         vm.setMigrationPolicyId(NoMigrationPolicy.ID);
-        performUpdate();
+        var updates = performUpdate();
+
+        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.MIGRATION_POLICY);
         assertThat(vm.getMigrationPolicyId()).isEqualTo(cluster.getMigrationPolicyId());
     }
 
     @Test
     public void testUpdateDisplaytype() {
         vm.setDefaultDisplayType(DisplayType.cirrus);
-        performUpdate();
+        var updates = performUpdate();
+        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.DEFAULT_DISPLAY_TYPE);
         assertThat(vm.getDefaultDisplayType()).isEqualTo(DisplayType.vga);
     }
 
-    private void performUpdate() {
-        versionUpdater.updateVmCompatibilityVersion(vm, Version.getLast(), cluster);
+    private Set<CompatibilityVersionUpdater.Update> performUpdate() {
+        return versionUpdater.updateVmCompatibilityVersion(vm, Version.getLast(), cluster);
     }
 
     private VM createVm() {

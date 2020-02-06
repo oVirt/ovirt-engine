@@ -123,7 +123,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private MacPool macPool;
 
-    private Runnable logOnExecuteEnd = () -> {};
+    private Runnable logOnExecuteEndMethod = () -> {};
 
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -367,18 +367,37 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             var dataCenterVersion = getStoragePool().getCompatibilityVersion();
             if (newVersion.less(dataCenterVersion)) {
                 Version originalVersion = newVersion;
-                String vmName = getVmName();
-                logOnExecuteEnd = () -> {
+                logOnExecuteEnd(() -> {
                     addCustomValue("OriginalVersion", originalVersion.toString());
                     addCustomValue("NewVersion", dataCenterVersion.toString());
                     auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_CUSTOM_VERSION_CHANGE);
-                };
+                });
 
                 newVersion = dataCenterVersion;
             }
         }
 
-        new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
+        var updates = new CompatibilityVersionUpdater()
+                .updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
+
+        if (!updates.isEmpty()) {
+            logOnExecuteEnd(() -> {
+                String updatesString = updates.stream()
+                        .map(update -> update.getDisplayName())
+                        .collect(Collectors.joining(", "));
+
+                addCustomValue("Updates", updatesString);
+                auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_UPDATED);
+            });
+        }
+    }
+
+    private void logOnExecuteEnd(Runnable method) {
+        var oldLogMethod = logOnExecuteEndMethod;
+        logOnExecuteEndMethod = () -> {
+            oldLogMethod.run();
+            method.run();
+        };
     }
 
     /**
@@ -501,7 +520,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             throw e;
         }
 
-        logOnExecuteEnd.run();
+        logOnExecuteEndMethod.run();
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getVm());
     }

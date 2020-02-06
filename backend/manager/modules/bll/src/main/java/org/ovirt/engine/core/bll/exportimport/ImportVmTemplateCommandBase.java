@@ -72,7 +72,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
 
     private Guid sourceTemplateId;
 
-    private Runnable logOnExecuteEnd = () -> {};
+    private Runnable logOnExecuteEndMethod = () -> {};
 
     public ImportVmTemplateCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -100,18 +100,37 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
             var dataCenterVersion = getStoragePool().getCompatibilityVersion();
             if (newVersion.less(dataCenterVersion)) {
                 Version originalVersion = newVersion;
-                String templateName = getVmTemplateName();
-                logOnExecuteEnd = () -> {
+                logOnExecuteEnd(() -> {
                     addCustomValue("OriginalVersion", originalVersion.toString());
                     addCustomValue("NewVersion", dataCenterVersion.toString());
                     auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_CUSTOM_VERSION_CHANGE);
-                };
+                });
 
                 newVersion = dataCenterVersion;
             }
         }
 
-        new CompatibilityVersionUpdater().updateTemplateCompatibilityVersion(getVmTemplate(), newVersion, getCluster());
+        var updates = new CompatibilityVersionUpdater()
+                .updateTemplateCompatibilityVersion(getVmTemplate(), newVersion, getCluster());
+
+        if (!updates.isEmpty()) {
+            logOnExecuteEnd(() -> {
+                String updatesString = updates.stream()
+                        .map(update -> update.getDisplayName())
+                        .collect(Collectors.joining(", "));
+
+                addCustomValue("Updates", updatesString);
+                auditLog(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_UPDATED);
+            });
+        }
+    }
+
+    private void logOnExecuteEnd(Runnable method) {
+        var oldLogMethod = logOnExecuteEndMethod;
+        logOnExecuteEndMethod = () -> {
+            oldLogMethod.run();
+            method.run();
+        };
     }
 
     @Override
@@ -331,7 +350,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmTemplateId());
         checkTrustedService();
         incrementDbGeneration();
-        logOnExecuteEnd.run();
+        logOnExecuteEndMethod.run();
         setSucceeded(true);
     }
 
