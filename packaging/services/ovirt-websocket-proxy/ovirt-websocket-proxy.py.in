@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import base64
 import gettext
 import json
 import os
@@ -12,8 +13,9 @@ import socket
 import ssl
 import struct
 import sys
-import urllib
+from six.moves.urllib import parse
 
+import websocket
 import websockify
 
 import config
@@ -215,6 +217,7 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
 
     def __init__(self, retsock, address, proxy, *args, **kwargs):
         self._proxy = proxy
+        self.target_path = None
         websockify.ProxyRequestHandler.__init__(self, retsock, address, proxy,
                                                 *args, **kwargs)
 
@@ -225,10 +228,16 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
         target_host and target_port if successful and sets an ssl_target
         flag.
         """
-        connection_data = json.loads(urllib.unquote(
+        connection_data = json.loads(parse.unquote(
             self._proxy._ticketDecoder.decode(path[1:])))
         target_host = connection_data['host'].encode('utf8')
         target_port = connection_data['port'].encode('utf8')
+        path = connection_data['path']
+        if path is not None:
+            self.target_path = path.encode('utf8')
+        token = connection_data['token']
+        if token is not None:
+            self.target_token = token.encode('utf8')
         self.server.ssl_target = connection_data['ssl_target']
         return (target_host, target_port)
 
@@ -276,6 +285,34 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
         Partially copied from websockify.ProxyRequestHandler to be able to
         take over RFB protocol negotiation.
         """
+        if self.target_path is None:
+            tsock = self._secure_socket()
+        else:
+            tsock = self._kubevirt_socket()
+
+        self.print_traffic(self.traffic_legend)
+
+        # Start proxying
+        try:
+            self.do_proxy(tsock)
+        except:
+            if tsock:
+                tsock.shutdown(socket.SHUT_RDWR)
+                tsock.close()
+                if self.verbose:
+                    self.log_message(
+                        "%s:%s: Closed target",
+                        self.server.target_host, self.server.target_port)
+            raise
+
+    def _kubevirt_socket(self):
+        token = base64.urlsafe_b64encode(self.target_token).rstrip(b'=')
+        url = "wss://%s:%s%s" % (self.server.target_host.decode("utf-8"), self.server.target_port.decode("utf-8"), self.target_path.decode("utf-8"))
+        ws = websocket.create_connection(url, class_=WsSocket, sslopt={"cert_reqs": ssl.CERT_NONE},
+                                         subprotocols=['base64url.bearer.authorization.k8s.io.' + str(token, 'utf-8'), 'plain.kubevirt.io'])
+        return ws
+
+    def _secure_socket(self):
         if not self.server.ssl_target:
             # Non-SSL connections can be handled the old way
             self.log_message(
@@ -303,24 +340,31 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
             msg += " (using SSL)"
         self.log_message(msg)
 
-        tsock = self._veNCrypt_socket(self.server.target_host,
-                                      self.server.target_port,
-                                      use_ssl=self.server.ssl_target)
+        return self._veNCrypt_socket(self.server.target_host,
+                                     self.server.target_port,
+                                     use_ssl=self.server.ssl_target)
 
-        self.print_traffic(self.traffic_legend)
 
-        # Start proxying
-        try:
-            self.do_proxy(tsock)
-        except:
-            if tsock:
-                tsock.shutdown(socket.SHUT_RDWR)
-                tsock.close()
-                if self.verbose:
-                    self.log_message(
-                        "%s:%s: Closed target",
-                        self.server.target_host, self.server.target_port)
-            raise
+class WsSocket(websocket.WebSocket):
+    """
+    Adopts websocket.WebSocket to interface expected by
+    websockify.ProxyRequestHandler#do_proxy.
+    """
+
+    def shutdown(self, now=None):
+        if now is None:
+            super().shutdown()
+        else:
+            self.sock.shutdown(now)
+
+    def recv(self, bufsize):
+        return super().recv()
+
+    def send(self, payload):
+        payload_len = super().send(payload, opcode=websocket.ABNF.OPCODE_BINARY)
+        # websocket#send calculates amount of data sent based on a frame size.
+        # We need to subtract header length so do_proxy works correctly.
+        return payload_len - 6
 
 
 class OvirtWebSocketProxy(websockify.WebSocketProxy):

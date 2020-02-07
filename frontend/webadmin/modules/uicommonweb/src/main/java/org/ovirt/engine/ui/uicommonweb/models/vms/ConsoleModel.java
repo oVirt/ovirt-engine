@@ -102,7 +102,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
     public abstract boolean canBeSelected();
 
     public boolean canConnect() {
-        if (!getEntity().isManaged() || !canBeSelected()) { // cannot be even selected
+        if (!canBeSelected()) { // cannot be even selected
             return false;
         }
 

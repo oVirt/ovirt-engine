@@ -23,7 +23,9 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
                             getOptions().getPort(),
                             getOptions().getTicket(),
                             getOptions().isUseSsl(),
-                            getOptions().getVmName() + NOVNC_TITLE_SUFFIX);
+                            getOptions().getVmName() + NOVNC_TITLE_SUFFIX,
+                            getOptions().getPath(),
+                            getOptions().getToken());
         invoker.invokeClient();
     }
 

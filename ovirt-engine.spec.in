@@ -188,6 +188,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global required_python_lib_six %{required_python_lib -l python- six}
 %global required_python_lib_numpy %{required_python_lib numpy}
 %global required_python_lib_websockify %{required_python_lib -l python- websockify >= 0.6.0}
+%global required_python_lib_websocket %{required_python_lib -l python- websocket-client}
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global required_python_lib_m2crypto python3-m2crypto >= 0.28
 %global required_package_manager %{required_python_lib_dnf}
@@ -684,6 +685,7 @@ Requires:	%{required_python_lib_ovirt_engine_lib}
 Requires:	%{required_python_lib_numpy}
 Requires:	%{required_python_lib_dateutil}
 Requires:	%{required_python_lib_websockify}
+Requires:	%{required_python_lib_websocket}
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 Requires(pre):		shadow-utils
 Requires(post):		systemd

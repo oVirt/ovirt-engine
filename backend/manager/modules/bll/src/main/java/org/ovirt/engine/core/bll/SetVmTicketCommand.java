@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -206,6 +207,11 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
      */
     private void sendTicket() {
         // Send the ticket to the virtual machine:
+        if (getVm().getOrigin() == OriginType.KUBEVIRT) {
+            setActionReturnValue(ticket);
+            setSucceeded(true);
+            return;
+        }
         final DbUser user = getCurrentUser();
         final boolean sent =
                 runVdsCommand(VDSCommandType.SetVmTicket,

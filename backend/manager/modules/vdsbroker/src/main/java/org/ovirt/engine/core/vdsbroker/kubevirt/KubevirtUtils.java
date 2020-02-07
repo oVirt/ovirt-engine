@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.vdsbroker.kubevirt;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,5 +78,18 @@ public class KubevirtUtils {
                 (ArrayList<Object>) config.get("users"));
         kubeConfig.setContext((String) config.get("name"));
         return ClientBuilder.kubeconfig(kubeConfig).build();
+    }
+
+    public static void updateConsoleOptions(ConsoleOptions options, VM vm, Provider<KubevirtProviderProperties> provider) {
+        try {
+            URL url = new URL(provider.getUrl());
+            // XXX: do we need cacert to pass?
+            options.setHost(url.getHost());
+            options.setPort(url.getPort());
+            options.setPath("/apis/subresources.kubevirt.io/v1alpha3/namespaces/" + vm.getNamespace() + "/virtualmachineinstances/" + vm.getName() + "/vnc");
+            options.setToken(provider.getPassword());
+        } catch (MalformedURLException e) {
+            // at this stage url is validated and we know it is correct
+        }
     }
 }

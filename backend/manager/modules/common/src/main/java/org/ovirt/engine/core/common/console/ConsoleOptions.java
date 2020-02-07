@@ -62,6 +62,9 @@ public class ConsoleOptions implements Serializable{
     private String ovirtHost;
     private String ssoToken;
     private boolean useSsl;
+    // kubevirt
+    private String path;
+    private String token;
 
     public static final int TICKET_VALIDITY_SECONDS = 120;
     public static final int SPICE_USB_DEFAULT_PORT = 32023;
@@ -377,6 +380,22 @@ public class ConsoleOptions implements Serializable{
 
     public void setUseSsl(boolean useSsl) {
         this.useSsl = useSsl;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public enum WanColorDepth {
