@@ -289,10 +289,8 @@ public class VdsManager {
                             setStartTime();
                             releaseLock = false;
                             hostMonitoring = createHostMonitoring();
+                            releaseLock = hostMonitoring.shouldReleaseMonitoringLockAfterRefresh();
                             hostMonitoring.refresh();
-                            if (hostMonitoring.shouldReleaseMonitoringLockAfterRefresh()) {
-                                releaseLock = true;
-                            }
                         }
                     } catch (VDSNetworkException e) {
                         logNetworkException(e);
