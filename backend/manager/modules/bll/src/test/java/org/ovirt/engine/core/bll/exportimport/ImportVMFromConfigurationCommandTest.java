@@ -154,7 +154,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(cluster).when(cmd).getCluster();
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(emptyList()).when(cmd).getImages();
-        doReturn(true).when(cmd).isVmVersionUpdatePossible();
         doReturn(emptyList()).when(cloudInitHandler).validate(any());
 
         doReturn(null).when(affinityGroupDao).getByName(any());

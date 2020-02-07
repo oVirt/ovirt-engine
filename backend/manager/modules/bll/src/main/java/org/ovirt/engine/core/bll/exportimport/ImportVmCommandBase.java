@@ -90,7 +90,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private Guid sourceDomainId = Guid.Empty;
     private StorageDomain sourceDomain;
     private ImportValidator importValidator;
-    private Version effectiveCompatibilityVersion;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -149,11 +148,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
-        if (!isVmVersionUpdatePossible()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_IMPORT_VERSION_TOO_OLD,
-                    ReplacementUtils.createSetVariableString("lowestVersion",
-                            CompatibilityVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
-        }
+        updateVmVersion();
 
         if (getParameters().getStoragePoolId() != null
                 && !getParameters().getStoragePoolId().equals(getCluster().getStoragePoolId())) {
@@ -183,11 +178,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return true;
     }
 
-    // Mocked in unit tests
-    protected boolean isVmVersionUpdatePossible() {
-        return CompatibilityVersionUpdater.isCompatibilityUpdatePossible(getVm().getStaticData());
-    }
-
     private boolean ifaceMacCannotBeAddedToMacPool(VmNetworkInterface iface) {
         return !macPool.isDuplicateMacAddressesAllowed()
                 && !shouldReassignMac(iface)
@@ -211,11 +201,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected Version getEffectiveCompatibilityVersion() {
-        return effectiveCompatibilityVersion;
-    }
-
-    protected void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
-        this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
+        return CompatibilityVersionUtils.getEffective(getParameters().getVm(), this::getCluster);
     }
 
     protected ImportValidator getImportValidator() {
@@ -370,34 +356,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (parameters.getVm() != null) {
             setVmId(parameters.getVm().getId());
         }
-
-        updateVmVersion();
-        initEffectiveCompatibilityVersion();
-    }
-
-    protected void initEffectiveCompatibilityVersion() {
-        setEffectiveCompatibilityVersion(
-                CompatibilityVersionUtils.getEffective(getParameters().getVm(), this::getCluster));
     }
 
     protected void updateVmVersion() {
-        // When cluster ID is invalid, this command does not pass validation,
-        // but this method is called before validate(). Invalid cluster would
-        // cause NPE.
-        if (getCluster() == null) {
-            return;
-        }
-
-        // This condition is here for similar reason as the last one.
-        if (getVm() == null) {
-            setEffectiveCompatibilityVersion(getCluster().getCompatibilityVersion());
-            return;
-        }
-
-        if (!isVmVersionUpdatePossible()) {
-            return;
-        }
-
         Version newVersion = CompatibilityVersionUtils.getEffective(getVm(), this::getCluster);
 
         // A VM can have custom compatibility version that is lower than

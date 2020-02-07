@@ -86,6 +86,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private CloudInitHandler cloudInitHandler;
 
+    @Mock
+    private ImportUtils importUtils;
+
     @Spy
     @InjectMocks
     private ImportVmTemplateCommand<ImportVmTemplateParameters> command =
@@ -93,7 +96,6 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @BeforeEach
     public void setUp() {
-        doReturn(true).when(command).isTemplateVersionUpdatePossible();
         doNothing().when(command).updateTemplateVersion();
     }
 

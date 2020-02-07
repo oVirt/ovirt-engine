@@ -46,7 +46,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
@@ -71,7 +70,6 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     protected final Map<Guid, Guid> originalDiskIdMap = new HashMap<>();
     protected final Map<Guid, Guid> originalDiskImageIdMap = new HashMap<>();
 
-    private Version effectiveCompatibilityVersion;
     private Guid sourceTemplateId;
 
     private Runnable logOnExecuteEnd = () -> {};
@@ -85,44 +83,15 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         setStorageDomainId(parameters.getStorageDomainId());
     }
 
-    @Override
-    public void init() {
-        super.init();
-        updateTemplateVersion();
-        setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
-        importUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
-        vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
-    }
-
     public ImportVmTemplateCommandBase(Guid commandId) {
         super(commandId);
     }
 
     public Version getEffectiveCompatibilityVersion() {
-        return effectiveCompatibilityVersion;
-    }
-
-    public void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
-        this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
+        return CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster);
     }
 
     protected void updateTemplateVersion() {
-        // When cluster ID is invalid, this command does not pass validation,
-        // but this method is called before validate(). Invalid cluster would
-        // cause NPE.
-        if (getCluster() == null) {
-            return;
-        }
-
-        // This condition is here for similar reason as the last one.
-        if (getVmTemplate() == null) {
-            return;
-        }
-
-        if (!isTemplateVersionUpdatePossible()) {
-            return;
-        }
-
         Version newVersion = CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster);
 
         // A Template can have custom compatibility version that is lower than
@@ -153,11 +122,12 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
-        if (!isTemplateVersionUpdatePossible()) {
-            return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_TOO_OLD,
-                    ReplacementUtils.createSetVariableString("lowestVersion",
-                            CompatibilityVersionUpdater.LOWEST_VERSION_FOR_UPDATE));
-        }
+
+        // Update VM version, graphic devices and max memory before the rest of the validation
+        updateTemplateVersion();
+        importUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
+        vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
+
         if (!getCluster().getStoragePoolId().equals(getStoragePoolId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
         }
@@ -231,11 +201,6 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         }
 
         return true;
-    }
-
-    // Mocked in unit tests
-    protected boolean isTemplateVersionUpdatePossible() {
-        return CompatibilityVersionUpdater.isCompatibilityUpdatePossible(getVmTemplate());
     }
 
     protected abstract boolean validateSourceStorageDomain();

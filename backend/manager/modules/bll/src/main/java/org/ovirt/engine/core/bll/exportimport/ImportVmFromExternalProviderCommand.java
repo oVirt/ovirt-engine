@@ -108,7 +108,6 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
         adjustKVMDataForBlockSD();
-        vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
 
     @Override
@@ -116,6 +115,8 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         if (!super.validate()) {
             return false;
         }
+
+        vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
         if (getStorageDomain() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);

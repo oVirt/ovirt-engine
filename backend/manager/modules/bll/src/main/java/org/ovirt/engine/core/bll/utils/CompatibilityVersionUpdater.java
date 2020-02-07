@@ -23,8 +23,6 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
 
 public class CompatibilityVersionUpdater {
-    public static final Version LOWEST_VERSION_FOR_UPDATE = new Version(3, 6);
-
     /**
      * Update VM fields so that it is valid for specified compatibility version.
      */
@@ -42,12 +40,7 @@ public class CompatibilityVersionUpdater {
     }
 
     public void updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion, Cluster cluster) {
-        Version sourceVersion = getSourceVersion(vmBase);
-        if (!isCompatibilityUpdatePossible(sourceVersion)) {
-            return;
-        }
-
-        if (newVersion.equals(sourceVersion)) {
+        if (newVersion.equals(getSourceVersion(vmBase))) {
             return;
         }
 
@@ -174,14 +167,6 @@ public class CompatibilityVersionUpdater {
     // Mocked in unit test
     protected VmPropertiesUtils getVmPropertiesUtils() {
         return VmPropertiesUtils.getInstance();
-    }
-
-    public static boolean isCompatibilityUpdatePossible(VmBase vmBase) {
-        return isCompatibilityUpdatePossible(getSourceVersion(vmBase));
-    }
-
-    private static boolean isCompatibilityUpdatePossible(Version sourceVersion) {
-        return sourceVersion != null && sourceVersion.greaterOrEquals(LOWEST_VERSION_FOR_UPDATE);
     }
 
     private static Version getSourceVersion(VmBase vmBase) {
