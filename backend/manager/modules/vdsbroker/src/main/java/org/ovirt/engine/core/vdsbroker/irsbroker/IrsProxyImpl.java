@@ -522,6 +522,7 @@ public class IrsProxyImpl implements IrsProxy {
 
                     if (type != AuditLogType.UNASSIGNED) {
                         AuditLogable logable = new AuditLogableImpl();
+                        logable.setStorageDomainId(domainFromDb.getId());
                         logable.setStorageDomainName(domainFromDb.getStorageName());
                         logable.addCustomValue("DiskSpace", domainFromVdsm.getAvailableDiskSize().toString());
                         domainFromVdsm.setStorageName(domainFromDb.getStorageName());
@@ -534,6 +535,7 @@ public class IrsProxyImpl implements IrsProxy {
                 if (alerts != null && !alerts.isEmpty()) {
 
                     AuditLogable logable = new AuditLogableImpl();
+                    logable.setStorageDomainId(domainFromDb.getId());
                     logable.setStorageDomainName(domainFromDb.getStorageName());
                     domainFromVdsm.setStorageName(domainFromDb.getStorageName());
 
