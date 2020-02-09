@@ -455,7 +455,9 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private List<Guid> dedicatedVmForVdsList;
 
-    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmField(
+            onHostedEngine = true,
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private DisplayType defaultDisplayType;
 
