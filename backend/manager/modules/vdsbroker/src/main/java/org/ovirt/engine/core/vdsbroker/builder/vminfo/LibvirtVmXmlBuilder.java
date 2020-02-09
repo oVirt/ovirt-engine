@@ -776,6 +776,32 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
             }
 
+            if (vm.getCompatibilityVersion().greaterOrEquals(Version.v4_4)) {
+                writer.writeStartElement("reset");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+
+                writer.writeStartElement("vpindex");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+
+                writer.writeStartElement("runtime");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+
+                writer.writeStartElement("frequencies");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+
+                writer.writeStartElement("reenlightenment");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+
+                writer.writeStartElement("tlbflush");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+            }
+
             writer.writeEndElement();
         }
 
