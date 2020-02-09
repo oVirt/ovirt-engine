@@ -455,6 +455,7 @@ public class BackendVmResource
         boolean useCloudInit = cloudInitSet && action.isUseCloudInit();
         boolean ignitionSet = action.isSetUseIgnition();
         boolean useIgnition = ignitionSet && action.isUseIgnition();
+        boolean useInitialization = action.isSetUseInitialization() && action.isUseInitialization();
         if (useSysPrep && useCloudInit || useSysPrep && useIgnition || useCloudInit && useIgnition) {
             Fault fault = new Fault();
             fault.setReason(localize(Messages.CANT_USE_MIXED_INIT_SIMULTANEOUSLY));
@@ -473,6 +474,8 @@ public class BackendVmResource
         } else {
             params.setInitializationType(null); //Engine will decide based on VM properties
         }
+        params.setInitialize(useInitialization);
+
         return doAction(actionType, params, action);
     }
 

@@ -36,6 +36,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private boolean balloonEnabled;
     private boolean runInUnknownStatus;
     private boolean attachWgt;
+    private boolean initialize;
 
     private RunVmFlow cachedFlow;
 
@@ -64,7 +65,8 @@ public class RunVmParams extends VmOperationParameterBase {
                 && initializationType == other.initializationType
                 && Objects.equals(runAsStateless, other.runAsStateless)
                 && balloonEnabled == other.balloonEnabled
-                && attachWgt == other.attachWgt;
+                && attachWgt == other.attachWgt
+                && initialize == other.initialize;
     }
 
     @Override
@@ -77,7 +79,8 @@ public class RunVmParams extends VmOperationParameterBase {
                 initializationType,
                 runAsStateless,
                 balloonEnabled,
-                attachWgt
+                attachWgt,
+                initialize
         );
     }
 
@@ -151,6 +154,14 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setAttachWgt(boolean attachWgt) {
         this.attachWgt = attachWgt;
+    }
+
+    public void setInitialize(boolean initialize) {
+        this.initialize = initialize;
+    }
+
+    public boolean isInitialize() {
+        return initialize;
     }
 
 }

@@ -170,12 +170,12 @@ public interface OsRepository {
     boolean isWindows(int osId);
 
     /**
-     * a convenience method the for vmInit type "ignition"
+     * a convenience method the for vmInit type "cloud init"
      */
     boolean isCloudInit(int osId);
 
     /**
-     * a convenience method the for vmInit type "ignition"
+     * a convenience method the for vmInit type "sys-prep"
      */
     boolean isSysprep(int osId);
 
