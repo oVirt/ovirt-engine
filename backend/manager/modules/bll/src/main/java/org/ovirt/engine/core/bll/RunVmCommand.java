@@ -830,7 +830,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void updateVmInit() {
         if (getParameters().getInitializationType() == null) {
             vmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
-            if (!getVm().isInitialized() && getVm().getVmInit() != null) {
+            if (!getVm().isInitialized() && getVm().getVmInit() != null || getParameters().isInitialize()) {
                 if (osRepository.isWindows(getVm().getVmOsId())) {
                     if (!isPayloadExists(VmDeviceType.FLOPPY)) {
                         initializationType = InitializationType.Sysprep;

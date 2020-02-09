@@ -453,6 +453,7 @@ public class BackendVmResource
         boolean useSysPrep = sysPrepSet && action.isUseSysprep();
         boolean cloudInitSet = action.isSetUseCloudInit();
         boolean useCloudInit = cloudInitSet && action.isUseCloudInit();
+        boolean useInitialization = action.isSetUseInitialization() && action.isUseInitialization();
         if (useSysPrep && useCloudInit) {
             Fault fault = new Fault();
             fault.setReason(localize(Messages.CANT_USE_SYSPREP_AND_CLOUD_INIT_SIMULTANEOUSLY));
@@ -469,6 +470,8 @@ public class BackendVmResource
         } else {
             params.setInitializationType(null); //Engine will decide based on VM properties
         }
+        params.setInitialize(useInitialization);
+
         return doAction(actionType, params, action);
     }
 
