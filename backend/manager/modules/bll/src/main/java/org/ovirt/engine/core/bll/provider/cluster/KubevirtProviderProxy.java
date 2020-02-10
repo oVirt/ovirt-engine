@@ -33,6 +33,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -184,8 +186,13 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
         try {
             String consoleUrl = ClusterMonitoring.fetchConsoleUrl(provider);
             if (!Objects.equals(provider.getAdditionalProperties().getConsoleUrl(), consoleUrl)) {
-                provider.getAdditionalProperties().setConsoleUrl(consoleUrl);
-                providerDao.update(provider);
+                TransactionSupport.executeInNewTransaction(() -> {
+                    getContext().getCompensationContext().snapshotEntityUpdated(provider);
+                    provider.getAdditionalProperties().setConsoleUrl(consoleUrl);
+                    providerDao.update(provider);
+                    getContext().getCompensationContext().stateChanged();
+                    return null;
+                });
             }
         } catch (Exception e) {
             // console url will not be resolved and kept for the provider.
@@ -195,10 +202,24 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
 
     @Override
     public void onModification() {
+        // TODO: invoke the logic below only if a meaningful field was changed (not name / description)
         updateConsoleUrl();
+
+        // first unregister current kubevirt cluster resource from engine
         monitoring.get().unregister(provider.getId());
+
+        // remove all hosts that represents kubevirt nodes and cancel their monitoring resources
         vdsStaticDao.getAllForCluster(provider.getId()).forEach(h -> resourceManager.removeVds(h.getId()));
+
+        // register the cluster based on the updated provider's details
         monitoring.get().register(provider);
+
+        // after the sync, registered hosts that were existed before need to reschedule
+        vdsStaticDao.getAllForCluster(provider.getId())
+                .stream()
+                .filter(h -> resourceManager.getVdsManager(h.getId()) == null)
+                .forEach(h -> resourceManager.runVdsCommand(VDSCommandType.AddVds,
+                        new AddVdsVDSCommandParameters(h.getId())));
     }
 
     private Guid findOrCreateKubevirtDataCenterId() {

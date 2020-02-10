@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.ChildCompensationWrapper;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.OpenStackProviderProperties;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,8 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
     protected StorageDomain storageDomain;
 
     protected V providerValidator;
+
+    private CommandContext context;
 
     protected static final Logger log = LoggerFactory.getLogger(AbstractOpenStackStorageProviderProxy.class);
 
@@ -103,11 +108,24 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
         domainStaticEntry.setStorageDomainType(storageDomainType);
         domainStaticEntry.setWipeAfterDelete(false);
         domainStaticEntry.setDiscardAfterDelete(false);
-        Injector.get(StorageDomainStaticDao.class).save(domainStaticEntry);
+        TransactionSupport.executeInNewTransaction(() -> {
+            Injector.get(StorageDomainStaticDao.class).save(domainStaticEntry);
+            context.getCompensationContext().snapshotNewEntity(domainStaticEntry);
+            context.getCompensationContext().stateChanged();
+            return null;
+        });
+
         // Storage domain dynamic
         StorageDomainDynamic domainDynamicEntry = new StorageDomainDynamic();
         domainDynamicEntry.setId(domainStaticEntry.getId());
-        Injector.get(StorageDomainDynamicDao.class).save(domainDynamicEntry);
+
+        TransactionSupport.executeInNewTransaction(() -> {
+            Injector.get(StorageDomainDynamicDao.class).save(domainDynamicEntry);
+            context.getCompensationContext().snapshotNewEntity(domainDynamicEntry);
+            context.getCompensationContext().stateChanged();
+            return null;
+        });
+
         return domainStaticEntry.getId();
     }
 
@@ -116,9 +134,14 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
         // updating storage domain information
         Guid storageDomainId = getProviderStorageDomain().getId();
         StorageDomainStatic domainStaticEntry = Injector.get(StorageDomainStaticDao.class).get(storageDomainId);
-        domainStaticEntry.setStorageName(provider.getName());
-        domainStaticEntry.setDescription(provider.getDescription());
-        Injector.get(StorageDomainStaticDao.class).update(domainStaticEntry);
+        TransactionSupport.executeInNewTransaction(() -> {
+            context.getCompensationContext().snapshotEntityUpdated(domainStaticEntry);
+            domainStaticEntry.setStorageName(provider.getName());
+            domainStaticEntry.setDescription(provider.getDescription());
+            Injector.get(StorageDomainStaticDao.class).update(domainStaticEntry);
+            context.getCompensationContext().stateChanged();
+            return null;
+        });
     }
 
     @Override
@@ -130,6 +153,14 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
         StorageDomain storageDomainEntry = storageDomains.get(0);
         Injector.get(StorageDomainDynamicDao.class).remove(storageDomainEntry.getId());
         Injector.get(StorageDomainStaticDao.class).remove(storageDomainEntry.getId());
+    }
+
+    @Override
+    public void setCommandContext(CommandContext context) {
+        this.context = context.clone()
+                .withoutExecutionContext()
+                .withoutLock()
+                .withCompensationContext(new ChildCompensationWrapper(context.getCompensationContext()));
     }
 
     protected StorageDomain getProviderStorageDomain() {

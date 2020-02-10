@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,7 +21,9 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateProviderCommand<P extends ProviderParameters> extends CommandBase<P>
         implements RenamedEntityInfoProvider {
 
@@ -82,10 +85,16 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void executeCommand() {
-        providerDao.update(getProvider());
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(getOldProvider());
+            providerDao.update(getProvider());
+            getCompensationContext().stateChanged();
+            return null;
+        });
 
         ProviderProxy providerProxy = providerProxyFactory.create(getProvider());
         if (providerProxy != null) {
+            providerProxy.setCommandContext(getContext());
             providerProxy.onModification();
         }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -17,7 +18,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
 
     @Inject
@@ -76,7 +79,12 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Override
     protected void executeCommand() {
-        providerDao.save(getProvider());
+        TransactionSupport.executeInNewTransaction(() -> {
+            providerDao.save(getProvider());
+            getContext().getCompensationContext().snapshotNewEntity(getProvider());
+            getContext().getCompensationContext().stateChanged();
+            return null;
+        });
         ProviderProxy<?> providerProxy = getProviderProxy();
         providerProxy.setCommandContext(getContext());
         providerProxy.onAddition();
