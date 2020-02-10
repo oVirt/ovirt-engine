@@ -84,7 +84,9 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         String ovf = createOvf(disks);
         log.debug("Exporting OVF: {}", ovf);
         boolean succeeded = runAnsiblePackOvaPlaybook(ovf, disks, diskIdToPath);
-        teardownImages(disks);
+        if (vmDao.get(getParameters().getEntityId()).isDown()) {
+            teardownImages(disks);
+        }
         setSucceeded(succeeded);
     }
 
