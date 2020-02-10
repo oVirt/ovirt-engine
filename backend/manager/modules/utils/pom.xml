@@ -16,9 +16,9 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>ovirt-engine-extensions-api</artifactId>
-      <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
-  </dependency>
-   <dependency>
+      <version>${ovirt-engine-extensions-api.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>extensions-manager</artifactId>
       <version>${engine.version}</version>

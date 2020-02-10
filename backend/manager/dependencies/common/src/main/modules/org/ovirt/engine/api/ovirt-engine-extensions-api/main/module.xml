@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright oVirt Authors
+SPDX-License-Identifier: Apache-2.0
+-->
+
+<module xmlns="urn:jboss:module:1.1" name="org.ovirt.engine.api.ovirt-engine-extensions-api">
+  <resources>
+    <resource-root path="ovirt-engine-extensions-api.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="javax.api"/>
+  </dependencies>
+</module>

@@ -19,7 +19,7 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>ovirt-engine-extensions-api</artifactId>
-      <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
+      <version>${ovirt-engine-extensions-api.version}</version>
     </dependency>
   </dependencies>
 </project>

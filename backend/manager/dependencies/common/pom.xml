@@ -21,6 +21,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>ovirt-engine-extensions-api</artifactId>
+      <version>${ovirt-engine-extensions-api.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.ovirt.java-client-kubevirt</groupId>
       <artifactId>java-client-kubevirt</artifactId>
     </dependency>
@@ -240,6 +246,12 @@
           <configuration>
             <generateIndex>false</generateIndex>
             <modules>
+              <module>
+                <groupId>org.ovirt.engine.api</groupId>
+                <artifactId>ovirt-engine-extensions-api</artifactId>
+                <moduleName>org.ovirt.engine.api.ovirt-engine-extensions-api</moduleName>
+              </module>
+
               <module>
                 <groupId>org.ovirt.java-client-kubevirt</groupId>
                 <artifactId>java-client-kubevirt</artifactId>

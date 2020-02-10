@@ -15,7 +15,6 @@
   <description>parent POM for all oVirt modules</description>
 
   <modules>
-    <module>extensions-api-root</module>
     <module>uutils</module>
     <module>extensions-manager</module>
     <module>enginesso</module>

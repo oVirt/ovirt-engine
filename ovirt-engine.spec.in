@@ -420,22 +420,6 @@ Provides:	bundled(js-patternfly-next) = 2.26.1
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
 
-%package extensions-api-impl
-Summary:	%{ovirt_product_name_short} extensions api
-Group:		%{ovirt_product_group}
-Provides:	ovirt-engine-extensions-api = 0
-
-%description extensions-api-impl
-%{ovirt_product_name_short} extensions api
-
-%package extensions-api-impl-javadoc
-Summary:	%{ovirt_product_name_short} extensions api documentation
-Group:		%{ovirt_product_group}
-Provides:	ovirt-engine-extensions-api-javadoc = 0
-
-%description extensions-api-impl-javadoc
-%{ovirt_product_name_short} extensions api documentation
-
 %if 0%{with_python2}
 %package -n python2-%{name}-lib
 Summary:	%{ovirt_product_name_short} library
@@ -472,7 +456,7 @@ Summary:	Engine core of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 License:	ASL 2.0 and LGPLv3 and GPLv3
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
+Requires:	%{name}-extensions-api >= 1.0.0
 Requires:	aopalliance >= 1.0
 Requires:	curl
 Requires:	ebay-cors-filter
@@ -850,7 +834,6 @@ done << __EOF__
 %{engine_ear}/lib/vdsbroker.jar
 %{engine_ear}/lib/scheduler.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/interface-common-jaxrs/main/interface-common-jaxrs.jar
-%{engine_jboss_modules}/common/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-definition/main/restapi-definition.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-jaxrs/main/restapi-jaxrs.jar
 %{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-types/main/restapi-types.jar
@@ -911,8 +894,6 @@ base %{name}-logutils.pom
 base %{name}-root.pom
 base %{name}-utils.pom
 base %{name}-uutils.pom
-extensions-api %{name}-ovirt-engine-extensions-api-root.pom
-extensions-api %{name}-ovirt-engine-extensions-api.pom
 restapi %{name}-interface-common-jaxrs.pom
 restapi %{name}-restapi-definition.pom
 restapi %{name}-restapi-jaxrs.pom
@@ -961,6 +942,7 @@ common/org/apache/ws/commons/main/ws-commons-util.jar
 common/org/apache/xmlrpc/main/xmlrpc-client.jar
 common/org/apache/xmlrpc/main/xmlrpc-common.jar
 common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-filter.jar
+common/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar ovirt-engine-extensions-api/ovirt-engine-extensions-api.jar
 common/org/ovirt/java-client-kubevirt/java-client-kubevirt.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
@@ -1115,13 +1097,6 @@ fi
 %if "%{name}" != "%{engine_name}"
 %{_javadir}/%{name}
 %endif
-
-%files extensions-api-impl -f .mfiles-extensions-api
-%license LICENSE
-
-%files extensions-api-impl-javadoc
-%{engine_doc}/ovirt-engine-extensions-api/
-%license LICENSE
 
 %if 0%{with_python2}
 %files -n python2-%{name}-lib
