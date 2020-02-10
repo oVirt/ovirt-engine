@@ -306,6 +306,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         editedVM.setId(getVmId());
         editedVM.setVmCreationDate(getVm().getVmCreationDate());
         editedVM.setCreatedByUserId(getVm().getCreatedByUserId());
+        editedVM.setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
 
         VmManagementParametersBase params = new VmManagementParametersBase(getParameters());
         params.setLockProperties(LockProperties.create(LockProperties.Scope.None));
