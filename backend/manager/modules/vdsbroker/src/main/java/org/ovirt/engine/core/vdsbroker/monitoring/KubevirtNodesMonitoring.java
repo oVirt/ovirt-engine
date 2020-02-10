@@ -119,57 +119,52 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
         vdsManager.updateDynamicData(vdsDynamic);
 
         // Update statistics:
-        PrometheusClient promClient = getPrometheusClient();
-        if (vdsManager.isTimeToRefreshStatistics() && promClient != null) {
-            VdsStatistics stat = new VdsStatistics();
-            stat.setId(vdsManager.getVdsId());
+        try {
+            PrometheusClient promClient = getPrometheusClient();
+            if (vdsManager.isTimeToRefreshStatistics() && promClient != null) {
+                VdsStatistics stat = new VdsStatistics();
+                stat.setId(vdsManager.getVdsId());
 
-            // memory
-            stat.setUsageMemPercent(promClient.getNodeMemUsage(name));
-            stat.setMemAvailable(promClient.getNodeMemAvailable(name));
-            stat.setMemFree(promClient.getNodeMemFree(name));
-            stat.setMemShared(promClient.getNodeMemShared(name));
+                // memory
+                stat.setUsageMemPercent(promClient.getNodeMemUsage(name));
+                stat.setMemAvailable(promClient.getNodeMemAvailable(name));
+                stat.setMemFree(promClient.getNodeMemFree(name));
+                stat.setMemShared(promClient.getNodeMemShared(name));
 
-            // swap
-            stat.setSwapTotal(promClient.getNodeSwapTotalMb(name));
-            stat.setSwapFree(promClient.getNodeSwapFreeMb(name));
+                // swap
+                stat.setSwapTotal(promClient.getNodeSwapTotalMb(name));
+                stat.setSwapFree(promClient.getNodeSwapFreeMb(name));
 
-            // huge pages
-            stat.setAnonymousHugePages(promClient.getNodeAnonHugePages(name));
-            stat.setHugePages(
-                promClient.getNodeHugePages(name).stream()
-                    .map(k -> new HugePage(k.getFirst(), k.getSecond()))
-                    .collect(Collectors.toList())
-            );
+                // huge pages
+                stat.setAnonymousHugePages(promClient.getNodeAnonHugePages(name));
+                stat.setHugePages(
+                        promClient.getNodeHugePages(name).stream()
+                                .map(k -> new HugePage(k.getFirst(), k.getSecond()))
+                                .collect(Collectors.toList())
+                );
 
-            // boot time
-            stat.setBootTime(promClient.getNodeBootTime(name));
+                // boot time
+                stat.setBootTime(promClient.getNodeBootTime(name));
 
-            // Cpu
-            stat.setCpuIdle(promClient.getNodeCpuIdle(name));
-            stat.setCpuSys(promClient.getNodeCpuSystem(name));
-            stat.setCpuUser(promClient.getNodeCpuUser(name));
-            stat.setCpuLoad(promClient.getNodeCpuLoad(name));
-            stat.setUsageCpuPercent(promClient.getNodeCpuUsage(name));
+                // Cpu
+                stat.setCpuIdle(promClient.getNodeCpuIdle(name));
+                stat.setCpuSys(promClient.getNodeCpuSystem(name));
+                stat.setCpuUser(promClient.getNodeCpuUser(name));
+                stat.setCpuLoad(promClient.getNodeCpuLoad(name));
+                stat.setUsageCpuPercent(promClient.getNodeCpuUsage(name));
 
-            // TODO: KSM
+                // TODO: KSM
 
-            vdsManager.updateStatisticsData(stat);
+                vdsManager.updateStatisticsData(stat);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
         vdsManager.afterRefreshTreatment(true);
     }
 
     @Override
     public void afterRefreshTreatment() {
-    }
-
-    /**
-     * The lock acquired for kubevirt node refresh should be released at the end of the refresh execution.
-     *
-     * @return true for indicating the host monitoring should release the monitoring lock of the node.
-     */
-    @Override
-    public boolean shouldReleaseMonitoringLockAfterRefresh() {
-        return true;
     }
 }
