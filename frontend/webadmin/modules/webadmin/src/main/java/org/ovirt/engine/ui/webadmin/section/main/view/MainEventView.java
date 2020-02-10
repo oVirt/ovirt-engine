@@ -39,9 +39,9 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "600px"; //$NON-NLS-1$
+    private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "100%"; //$NON-NLS-1$
     private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "175px"; //$NON-NLS-1$
-    private AbstractTextColumn<AuditLog> messageColumn;
+    private AbstractTextColumn<AuditLog> basicMessageColumn;
 
     @Inject
     public MainEventView(MainModelProvider<AuditLog, EventListModel<Void>> modelProvider) {
@@ -65,6 +65,18 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
     }
 
     void handleViewChange(boolean advancedViewEnabled) {
+        if (advancedViewEnabled) {
+            getTable().moveSortHeaderState(basicMessageColumn, advancedMessageColumn);
+        } else {
+            getTable().moveSortHeaderState(advancedMessageColumn, basicMessageColumn);
+        }
+
+        getTable().ensureColumnVisible(basicMessageColumn, constants.messageEvent(),
+                !advancedViewEnabled,
+                BASIC_VIEW_MSG_COLUMN_WIDTH);
+        getTable().ensureColumnVisible(advancedMessageColumn, constants.messageEvent(),
+                advancedViewEnabled,
+                ADV_VIEW_MSG_COLUMN_WIDTH);
         getTable().ensureColumnVisible(logTypeColumn, constants.eventIdEvent(),
                 advancedViewEnabled,
                 "80px"); //$NON-NLS-1$
@@ -101,9 +113,6 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
         getTable().ensureColumnVisible(customEventIdColumn, constants.eventCustomEventId(),
                 advancedViewEnabled,
                 "140px"); //$NON-NLS-1$
-
-        getTable().setColumnWidth(messageColumn,
-                advancedViewEnabled ? ADV_VIEW_MSG_COLUMN_WIDTH : BASIC_VIEW_MSG_COLUMN_WIDTH);
     }
 
     void initTable() {
@@ -122,15 +131,22 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
         getTable().addColumn(logTimeColumn, constants.timeEvent(), "175px"); //$NON-NLS-1$
 
-        messageColumn = new AbstractTextColumn<AuditLog>() {
+        basicMessageColumn = createMessageColumn();
+        getTable().addColumn(basicMessageColumn, constants.messageEvent(), BASIC_VIEW_MSG_COLUMN_WIDTH);
+    }
+
+    private static AbstractTextColumn<AuditLog> createMessageColumn() {
+        AbstractTextColumn<AuditLog> messageColumn = new AbstractTextColumn<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getMessage();
             }
         };
         messageColumn.makeSortable(AuditLogConditionFieldAutoCompleter.MESSAGE);
-        getTable().addColumn(messageColumn, constants.messageEvent(), BASIC_VIEW_MSG_COLUMN_WIDTH);
+        return messageColumn;
     }
+
+    private static final AbstractTextColumn<AuditLog> advancedMessageColumn = createMessageColumn();
 
     private static final AbstractTextColumn<AuditLog> logTypeColumn = new AbstractTextColumn<AuditLog>() {
         @Override
@@ -238,6 +254,7 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.ORIGIN);
         }
+
         @Override
         public String getValue(AuditLog object) {
             return object.getOrigin();
