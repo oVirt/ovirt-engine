@@ -227,14 +227,10 @@ class Plugin(plugin.PluginBase):
         )
         plist = []
         with mpm.transaction():
-            groups = [group['name'] for group in mpm.queryGroups()]
             for entry in self.environment[
                 osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
             ]:
-                if 'group' in entry and entry['group'] in groups:
-                    mpm.updateGroup(group=entry['group'])
-                else:
-                    mpm.installUpdate(packages=entry['packages'])
+                mpm.installUpdate(packages=entry['packages'])
 
             if mpm.buildTransaction():
                 upgradeAvailable = True
@@ -471,14 +467,10 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def packages(self):
-        groups = [group['name'] for group in self.packager.queryGroups()]
         for entry in self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
         ]:
-            if 'group' in entry and entry['group'] in groups:
-                self.packager.updateGroup(group=entry['group'])
-            else:
-                self.packager.installUpdate(packages=entry['packages'])
+            self.packager.installUpdate(packages=entry['packages'])
 
     def _arrangedPackageList(self, plist):
         verbs = {
