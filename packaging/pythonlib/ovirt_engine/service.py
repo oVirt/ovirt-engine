@@ -405,7 +405,7 @@ class Daemon(base.Base):
                 # abstract namespace socket
                 e = '\0%s' % e[1:]
             s.connect(e)
-            s.sendall('READY=1')
+            s.sendall(b'READY=1')
 
     def _daemonReady(self):
         if self._options.systemd == 'notify':
