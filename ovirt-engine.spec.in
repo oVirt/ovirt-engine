@@ -348,7 +348,7 @@ Requires:	libestr
 # On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
 # Unfortunately this package is not available on EL7, so we are going to
 # bundle it within engine until available.
-Requires:	postgresql-jdbc >= 42.2.2
+Requires:	postgresql-jdbc >= 42.2.3
 %endif
 
 %if 0%{?rhel}
