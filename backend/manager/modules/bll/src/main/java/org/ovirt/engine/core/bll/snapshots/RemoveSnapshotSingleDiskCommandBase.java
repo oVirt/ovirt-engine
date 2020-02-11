@@ -23,11 +23,13 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -228,6 +230,11 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                 VolumeClassification.getVolumeClassificationByActiveFlag(oldTopIsActive);
         topImage.getImage().setVolumeClassification(oldTopVolumeClassification);
 
+        // If we remain with a RAW disk after removing a snapshot, backup property must be set back to none.
+        if (oldTopImage.getVolumeFormat() == VolumeFormat.COW && topImage.getVolumeFormat() == VolumeFormat.RAW
+                && topImage.getImage().isActive()) {
+            baseImage.setBackup(DiskBackup.None);
+        }
         topImage.setSize(baseImage.getSize());
         topImage.setActualSizeInBytes(imageFromVdsm.getActualSizeInBytes());
         topImage.setImageStatus(ImageStatus.OK);
