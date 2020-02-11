@@ -1065,7 +1065,6 @@ fi
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
 %dir %{engine_data}/playbooks
-%dir %{engine_data}/selinux
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
@@ -1194,6 +1193,7 @@ fi
 %license LICENSE
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
 %dir %{engine_data}/firewalld
+%dir %{engine_data}/selinux
 %dir %{engine_data}/setup
 %dir %{engine_data}/setup/bin/
 %dir %{engine_data}/setup/ovirt_engine_setup
