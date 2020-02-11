@@ -97,6 +97,16 @@ public abstract class RunOnceModel extends Model {
         privateAttachIso = value;
     }
 
+    private EntityModel<Boolean> privateAttachWgt;
+
+    public EntityModel<Boolean> getAttachWgt() {
+        return privateAttachWgt;
+    }
+
+    private void setAttachWgt(EntityModel<Boolean> value) {
+        privateAttachWgt = value;
+    }
+
     private SortedListModel<RepoImage> privateIsoImage;
 
     public ListModel<RepoImage> getIsoImage() {
@@ -536,6 +546,7 @@ public abstract class RunOnceModel extends Model {
         getAttachIso().getEntityChangedEvent().addListener(this);
         setIsoImage(new SortedListModel(new LexoNumericNameableComparator<Nameable>()));
         getIsoImage().getSelectedItemChangedEvent().addListener(this);
+        setAttachWgt(new EntityModel<Boolean>());
         setAttachSysprep(new EntityModel<Boolean>());
         getAttachSysprep().getEntityChangedEvent().addListener(this);
         setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
@@ -641,6 +652,7 @@ public abstract class RunOnceModel extends Model {
         setIsoImagePath(vm.getIsoPath()); // needs to be called before iso list is updated
         getAttachFloppy().setEntity(false);
         getAttachSysprep().setEntity(false);
+        getAttachWgt().setEntity(false);
         getBootMenuEnabled().setEntity(true);
         getRunAsStateless().setEntity(vm.isStateless());
         getRunAndPause().setEntity(vm.isRunAndPause());
@@ -726,6 +738,7 @@ public abstract class RunOnceModel extends Model {
         params.setBootSequence(getBootSequence().getSequence());
         params.setDiskPath(getIsoImagePath());
         params.setFloppyPath(getFloppyImagePath());
+        params.setAttachWgt(getAttachWgt().getEntity());
         params.setBootMenuEnabled(getBootMenuEnabled().getEntity());
         params.setRunAndPause(getRunAndPause().getEntity());
         params.setRunAsStateless(getRunAsStateless().getEntity());
@@ -1014,7 +1027,7 @@ public abstract class RunOnceModel extends Model {
             } else if (sender == getAttachIso()) {
                 attachIso_EntityChanged();
             } else if (sender == getAttachSysprep()) {
-                    attachSysprep_EntityChanged();
+                attachSysprep_EntityChanged();
             } else if (sender == getIsVmFirstRun()) {
                 isVmFirstRun_EntityChanged();
             } else if (sender == getUseAlternateCredentials()) {
@@ -1104,6 +1117,7 @@ public abstract class RunOnceModel extends Model {
         getIsCloudInitEnabled().setEntity(getInitializationType() == InitializationType.CloudInit
                 || getInitializationType() == InitializationType.Ignition);
         getIsCloudInitEnabled().setIsAvailable(!getIsWindowsOS());
+        getAttachWgt().setIsChangeable(getIsWindowsOS() && getAttachIso().getEntity());
 
         if (getIsSysprepPossible().getEntity() && getIsSysprepEnabled().getEntity()) {
             getVmInitModel().updateSysprepDomain(getVmInitModel().getSysprepDomain().getSelectedItem());

@@ -117,6 +117,11 @@
                             </b:Column>
                         </b:Row>
                         <b:Row>
+                            <b:Column size="SM_5">
+                                <ge:EntityModelCheckBoxEditor ui:field="attachWgtEditor" label="{constants.runOncePopupAttachWgtLabel}" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
+                            </b:Column>
+                        </b:Row>
+                        <b:Row>
                             <b:Column size="SM_12">
                                 <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
                             </b:Column>
