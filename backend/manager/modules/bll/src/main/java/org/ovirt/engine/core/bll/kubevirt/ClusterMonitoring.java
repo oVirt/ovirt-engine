@@ -57,7 +57,7 @@ public class ClusterMonitoring {
     private HostUpdater hostUpdater;
 
     @Inject
-    private ClusterSyncer hostSyncer;
+    private ClusterSyncer clusterSyncer;
 
     @Inject
     private VmUpdater vmUpdater;
@@ -141,7 +141,7 @@ public class ClusterMonitoring {
 
     public ClusterMonitoring start() {
         client.getHttpClient().setReadTimeout(0, TimeUnit.SECONDS);
-        hostSyncer.sync(client, clusterId);
+        clusterSyncer.sync(client, clusterId);
         nodesMonitoring = new NodesMonitoring(client, clusterId, vdsStaticDao, hostUpdater);
         nodesMonitoring.monitor(sharedInformerFactory);
 
