@@ -25,8 +25,10 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,12 +52,15 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     // This constant is intended to be exported to a generic UTILS class later on
     private static final String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
+
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private UICommand newCommand;
 
@@ -289,16 +294,48 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             model.setTitle(ConstantsManager.getInstance().getConstants().deleteSnapshotTitle());
             model.setHelpTag(HelpTag.delete_snapshot);
             model.setHashName("delete_snapshot"); //$NON-NLS-1$
-            model.setMessage(ConstantsManager.getInstance()
-                    .getMessages()
-                    .areYouSureYouWantToDeleteSanpshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
-                            snapshot.getDescription()));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(messages.areYouSureYouWantToDeleteSanpshot(DateTimeFormat.getFormat(DATE_FORMAT)
+                    .format(snapshot.getCreationDate()), snapshot.getDescription()));
+            String backupSupportedRawDisks = getRawFormatDisksWithBackupEnabled();
+            if (!backupSupportedRawDisks.isEmpty()) {
+                stringBuilder.append(messages.incrementalBackupEnableWillRemovedForDisks(backupSupportedRawDisks));
+            }
+            model.setMessage(stringBuilder.toString());
 
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
         }
+    }
+
+    private String getRawFormatDisksWithBackupEnabled() {
+        Snapshot snapshot = getSelectedItem();
+
+        List<Snapshot> snapshots = (List<Snapshot>) getItems();
+        int snapshotIndex = snapshots.indexOf(snapshot);
+        Snapshot parentSnapshot = snapshots.get(snapshotIndex - 1);
+
+        // Get all disks ids that support incremental backup on the parent snapshot
+        List<Guid> backupEnabledDisksIds = snapshotsMap.get(parentSnapshot.getId()).getDisks()
+                .stream()
+                .filter(diskImage -> diskImage.getBackup() == DiskBackup.Incremental)
+                .map(DiskImage::getId)
+                .collect(Collectors.toList());
+
+        if (backupEnabledDisksIds.isEmpty()) {
+            return ConstantsManager.getInstance().getConstants().emptyString();
+        }
+
+        // Get all disks names that support incremental backup and
+        // going to have RAW after the snapshot deletion
+        return snapshotsMap.get(snapshot.getId()).getDisks()
+                .stream()
+                .filter(diskImage -> backupEnabledDisksIds.contains(diskImage.getId()))
+                .filter(diskImage -> diskImage.getVolumeFormat() == VolumeFormat.RAW)
+                .map(DiskImage::getName)
+                .collect(Collectors.joining(", ")); //$NON-NLS-1$
     }
 
     private void onRemove() {

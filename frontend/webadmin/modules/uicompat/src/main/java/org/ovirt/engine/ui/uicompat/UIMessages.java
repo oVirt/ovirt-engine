@@ -131,6 +131,8 @@ public interface UIMessages extends Messages {
 
     String areYouSureYouWantToDeleteSanpshot(String from, Object description);
 
+    String incrementalBackupEnableWillRemovedForDisks(String diskList);
+
     String areYouSureYouWantToCommitSnapshot(String from, Object description);
 
     String editBondInterfaceTitle(String name);
