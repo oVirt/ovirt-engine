@@ -382,7 +382,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         }
 
         if (model.getSelectedItems() == null) {
-            cancel();
+            model.setIsValid(false);
+            model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
             return;
         }
 
@@ -391,6 +392,12 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             if (dbUserEntity.getIsSelected()) {
                 selectedItems.add(dbUserEntity);
             }
+        }
+
+        if(selectedItems.isEmpty()){
+            model.setIsValid(false);
+            model.setMessage(ConstantsManager.getInstance().getConstants().selectUserOrGroup());
+            return;
         }
 
         List<ActionType> actionsList = new ArrayList<>(selectedItems.size());
@@ -427,7 +434,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
 
         Collection<EntityModel<DbUser>> currentItems = model.getItems();
         List<IFrontendActionAsyncCallback> callbacksList = new ArrayList<>(selectedItems.size());
-        for (EntityModel<DbUser> user: selectedItems) {
+        for (EntityModel<DbUser> user : selectedItems) {
             callbacksList.add(nopCallback);
             currentItems.remove(user);
         }
@@ -437,6 +444,14 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         //Refresh display
         model.setItems(null);
         model.setItems(currentItems);
+
+        // this panel  allows adding multiple user/groups one by one without being closed
+        // in order to keep model's state in sync we need to explicitly restore its 'entry' state
+        // Perhaps there is a better way to achieve it ie. hook it at the re-render?
+        model.setSelectedItems(null);
+        model.setIsValid(true);
+        model.setMessage(null);
+
         Frontend.getInstance().runMultipleActions(actionsList, parametersList, callbacksList, lastCallback, model);
     }
 
