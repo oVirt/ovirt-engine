@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -145,9 +147,13 @@ public class VdsCommandsHelper {
     }
 
     public Guid getHostForExecution(Guid poolId, Collection<Guid> hostsToFilter) {
+        return getHostForExecution(poolId, vds -> !hostsToFilter.contains(vds.getId()));
+    }
+
+    public Guid getHostForExecution(Guid poolId, Predicate<VDS> predicate) {
         List<Guid> hostsForExecution = vdsDao
                 .getAllForStoragePoolAndStatus(poolId, VDSStatus.Up).stream()
-                .filter(x -> !hostsToFilter.contains(x.getId()))
+                .filter(predicate)
                 .map(x -> x.getId()).collect(Collectors.toList());
         if (hostsForExecution.isEmpty()) {
             return null;
