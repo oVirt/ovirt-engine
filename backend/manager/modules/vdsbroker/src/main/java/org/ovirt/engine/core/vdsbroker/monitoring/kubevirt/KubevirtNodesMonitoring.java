@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.monitoring;
+package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 
 import java.util.stream.Collectors;
 
@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoringInterface;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrometheusClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

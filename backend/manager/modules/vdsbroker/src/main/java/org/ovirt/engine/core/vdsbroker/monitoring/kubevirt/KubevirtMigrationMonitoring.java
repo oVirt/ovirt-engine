@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.monitoring;
+package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

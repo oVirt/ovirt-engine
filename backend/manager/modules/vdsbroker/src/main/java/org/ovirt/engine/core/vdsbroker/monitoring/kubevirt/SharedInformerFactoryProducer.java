@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.kubevirt;
+package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 
 import java.util.Collection;
 import java.util.List;

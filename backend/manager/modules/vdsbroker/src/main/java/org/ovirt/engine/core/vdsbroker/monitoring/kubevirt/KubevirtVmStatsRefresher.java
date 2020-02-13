@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.monitoring;
+package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -30,6 +30,8 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.PollVmStatsRefresher;
+import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrometheusClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

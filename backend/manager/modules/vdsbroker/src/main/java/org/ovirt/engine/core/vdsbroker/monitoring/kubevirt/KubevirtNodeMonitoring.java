@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.monitoring.KubevirtNodesMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

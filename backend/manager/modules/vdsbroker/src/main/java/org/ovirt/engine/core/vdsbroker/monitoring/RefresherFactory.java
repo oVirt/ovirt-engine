@@ -6,6 +6,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtHostConnectionRefresher;
+import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtVmStatsRefresher;
 
 @Singleton
 public class RefresherFactory {
