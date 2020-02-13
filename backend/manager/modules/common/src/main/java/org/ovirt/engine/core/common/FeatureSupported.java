@@ -207,4 +207,14 @@ public class FeatureSupported {
     public static boolean isSkipCommitNetworkChangesSupported(VDS vds) {
         return vds != null && Version.v4_3.lessOrEquals(vds.getSupportedClusterVersionsSet());
     }
+
+    /**
+     * Do not measure volume size with MeasureVolume if datacenter is < 4.4
+     * The API is exposed only in vdsm >= 4.4
+     * @param vds the host
+     * @return true if measure volume can be used
+     */
+    public static boolean isMeasureVolumeSupported(VDS vds) {
+        return vds != null && Version.v4_4.lessOrEquals(vds.getClusterCompatibilityVersion());
+    }
 }
