@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import codecs
 import datetime
 import gettext
 import socket
@@ -34,7 +35,7 @@ class FenceKdumpListener(base.Base):
     # fence_kdump message version 1
     _MSG_V1_SIZE = 8
     # message contains magic 0x1B302A40 and version 0x1 in BE byte order
-    _MSG_V1_PREFIX = '402a301b01000000'.decode('hex')
+    _MSG_V1_PREFIX = codecs.decode('402a301b01000000', 'hex')
 
     def __init__(
             self,
