@@ -506,6 +506,22 @@ public class VmInfoBuildUtils {
         }
     }
 
+    public VmDevice createCdRomDevice(VM vm) {
+        return new VmDevice(
+                new VmDeviceId(Guid.newGuid(), vm.getId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.CDROM.getName(),
+                "",
+                Collections.singletonMap(VdsProperties.Path, ""),
+                true,
+                true,
+                true,
+                "",
+                null,
+                null,
+                null);
+    }
+
     /**
      * This method returns true if it is the first master model It is used due to the requirement to send this device
      * before the other controllers. There is an open bug on libvirt on that. Until then we make sure it is passed

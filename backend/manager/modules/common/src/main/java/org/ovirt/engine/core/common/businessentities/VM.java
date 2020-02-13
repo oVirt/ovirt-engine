@@ -52,6 +52,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
     // ignores the final fields
     private String cdPath;
+    private String wgtCdPath;
     private String floppyPath;
     private double _actualDiskWithSnapthotsSize;
     private double diskSize;
@@ -73,6 +74,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.setvNumaNodeList(new ArrayList<VmNumaNode>());
         this.setDiskMap(new HashMap<Guid, Disk>());
         this.setCdPath("");
+        this.setWgtCdPath("");
         this.setFloppyPath("");
         this.setDiskSize(0);
         snapshots = new ArrayList<>();
@@ -1198,6 +1200,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         cdPath = value;
     }
 
+    public String getWgtCdPath() {
+        return wgtCdPath;
+    }
+
+    public void setWgtCdPath(String value) {
+        wgtCdPath = value;
+    }
+
     public String getFloppyPath() {
         return floppyPath;
     }
@@ -1267,7 +1277,8 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
                 vmPoolName,
                 vmStatic,
                 vmStatistics,
-                vmtName);
+                vmtName,
+                wgtCdPath);
     }
 
     public String getVmPoolName() {

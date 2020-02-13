@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1189,6 +1190,10 @@ public class LibvirtVmXmlBuilder {
                 devices.stream().noneMatch(dev -> dev.getDevice().equals(VmDeviceType.FLOPPY.getName()))) {
             devices.add(vmInfoBuildUtils.createFloppyDevice(vm));
         }
+        // the user may want a secondary disk for windows guest tools
+        if (vm.getWgtCdPath() != null && !StringUtils.isEmpty(vm.getWgtCdPath())) {
+            devices.add(vmInfoBuildUtils.createCdRomDevice(vm));
+        }
 
         return devices;
     }
@@ -2344,13 +2349,20 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         });
 
-        // add a device that points to vm.getCdPath()
-        String cdPath = vm.getCdPath();
-        VmDevice nonPayload = devices.stream()
-                .filter(d -> !VmPayload.isPayload(d.getSpecParams()))
-                .findAny().orElse(null);
-        if (nonPayload != null || (vm.isRunOnce() && !StringUtils.isEmpty(cdPath))) {
-            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+        // add devices that points to vm.getCdPath() and vm.getWgtCdPath
+        Iterator<String> cdPaths = List.of(
+                vm.getCdPath() != null ? vm.getCdPath() : "", vm.getWgtCdPath() != null ? vm.getWgtCdPath() : "")
+                .iterator();
+        int cdRomCounter = 0;
+        for (VmDevice device : devices) {
+            if (VmPayload.isPayload(device.getSpecParams())) {
+                continue;
+            }
+            if (!cdPaths.hasNext()) {
+                break;
+            }
+            String cdPath = cdPaths.next();
+            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface) + cdRomCounter;
             String dev = vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex);
 
             boolean isoOnBlockDomain = vmInfoBuildUtils.isBlockDomainPath(cdPath);
@@ -2382,19 +2394,17 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeElement("readonly");
 
-            if (nonPayload != null) {
-                writeAlias(nonPayload);
-                if ("scsi".equals(cdInterface)) {
-                    writeAddress(vmInfoBuildUtils.createAddressForScsiDisk(0, cdRomIndex));
-                } else {
-                    writeAddress(nonPayload);
-                }
-                writeBootOrder(nonPayload.getBootOrder());
+            writeAlias(device);
+            if ("scsi".equals(cdInterface)) {
+                writeAddress(vmInfoBuildUtils.createAddressForScsiDisk(0, cdRomIndex));
+            } else {
+                writeAddress(device);
             }
+            writeBootOrder(device.getBootOrder());
 
             writer.writeEndElement();
+            cdRomCounter++;
         }
-
     }
 
     private void writeInterface(VmDevice device, VmNic nic) {

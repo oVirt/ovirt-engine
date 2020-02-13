@@ -502,7 +502,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return getVm().getIsoPath();
         }
 
-        String guestToolPath = guestToolsVersionTreatment();
+        String guestToolPath = guestToolsVersionTreatment(isoDomainListSynchronizer.getRegexToolPattern());
         if (guestToolPath != null) {
             return guestToolPath;
         }
@@ -595,6 +595,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected VMStatus createVm() {
         updateCdPath();
+        // set the path for windows guest tools secondary cd-rom
+        if (getParameters().isAttachWgt()) {
+            getVm().setWgtCdPath(cdPathWindowsToLinux(guestToolsVersionTreatment(getRegexVirtIoPattern())));
+        }
 
         if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
             getVm().setFloppyPath(cdPathWindowsToLinux(getParameters().getFloppyPath()));
@@ -726,6 +730,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // false':
             return AuditLogType.UNASSIGNED;
         }
+    }
+
+    private String getRegexVirtIoPattern() {
+        return String.format("%1$s(?<%2$s>[0-9]{1,}.[0-9])\\.(?<%3$s>[0-9]{1,})[.\\w]*.[i|I][s|S][o|O]$",
+                "virtio-win-",
+                IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL,
+                IsoDomainListSynchronizer.TOOL_VERSION);
     }
 
     protected boolean isVmRunningOnNonDefaultVds() {
@@ -949,7 +960,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * If vds version greater then vm's and vm not running with cd and there is appropriate RhevAgentTools image -
      * add it to vm as cd.
      */
-    private String guestToolsVersionTreatment() {
+    private String guestToolsVersionTreatment(String regex) {
         boolean attachCd = false;
         String selectedCd = "";
         List<RepoImage> repoFilesData = diskImageDao.getIsoDisksForStoragePoolAsRepoImages(getVm().getStoragePoolId());
@@ -973,7 +984,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 String fileName = repo.getRepoImageName() == null ?
                         StringUtils.defaultString(repo.getRepoImageId(), "") : repo.getRepoImageName();
                 Matcher matchToolPattern =
-                        Pattern.compile(isoDomainListSynchronizer.getRegexToolPattern()).matcher(fileName.toLowerCase());
+                        Pattern.compile(regex).matcher(fileName.toLowerCase());
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL));
