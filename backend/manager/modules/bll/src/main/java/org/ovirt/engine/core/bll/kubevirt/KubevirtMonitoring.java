@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

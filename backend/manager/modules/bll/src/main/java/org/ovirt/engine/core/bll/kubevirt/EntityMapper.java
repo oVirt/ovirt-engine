@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.kubevirt.Units;
-import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

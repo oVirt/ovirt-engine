@@ -1,6 +1,4 @@
-package org.ovirt.engine.core.vdsbroker;
-
-import static org.ovirt.engine.core.utils.KubevirtHelper.getConfig;
+package org.ovirt.engine.core.vdsbroker.kubevirt;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +7,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.PrometheusClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +68,7 @@ public class KubevirtUtils {
 
         String token = provider.getPassword();
         String url = provider.getUrl();
-        Map<String, Object> config = getConfig(url, token, certificateAuthority);
+        Map<String, Object> config = KubevirtHelper.getConfig(url, token, certificateAuthority);
         KubeConfig kubeConfig = new KubeConfig((ArrayList<Object>) config.get("contexts"),
                 (ArrayList<Object>) config.get("clusters"),
                 (ArrayList<Object>) config.get("users"));

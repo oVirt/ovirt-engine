@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtClusterMigrationMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtMigrationMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.SharedInformerFactoryProducer;

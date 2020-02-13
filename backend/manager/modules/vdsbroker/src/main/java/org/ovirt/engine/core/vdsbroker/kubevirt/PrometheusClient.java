@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.vdsbroker;
+package org.ovirt.engine.core.vdsbroker.kubevirt;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -34,7 +34,6 @@ import org.codehaus.jackson.node.NumericNode;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.vdsbroker.KubevirtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
