@@ -8,11 +8,13 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.utils.kubevirt.Units;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.kubernetes.client.custom.Quantity;
+import io.kubernetes.client.custom.QuantityFormatter;
 import io.kubernetes.client.models.V1Node;
 import io.kubernetes.client.models.V1NodeCondition;
 import io.kubernetes.client.models.V1NodeSystemInfo;
@@ -54,8 +56,8 @@ public class HostDynamicDataUpdater {
 
         Map<String, Quantity> capacity = node.getStatus().getCapacity();
         dynamic.setCpuThreads(capacity.getOrDefault("cpu", new Quantity("0")).getNumber().intValue());
-        int memoryInKiB = capacity.getOrDefault("memory", new Quantity("0")).getNumber().intValue();
-        dynamic.setPhysicalMemMb(memoryInKiB / 1024);
+        Quantity memory = capacity.getOrDefault("memory", new Quantity("0"));
+        dynamic.setPhysicalMemMb(Units.parse(new QuantityFormatter().format(memory)));
         V1NodeSystemInfo nodeInfo = node.getStatus().getNodeInfo();
         dynamic.setKernelVersion(nodeInfo.getKernelVersion());
         dynamic.setBootUuid(nodeInfo.getBootID());
