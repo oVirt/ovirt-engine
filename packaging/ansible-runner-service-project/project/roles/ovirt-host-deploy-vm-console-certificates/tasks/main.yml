@@ -43,6 +43,7 @@
     command: |
       "{{ ovirt_engine_usr }}/bin/pki-enroll-openssh-cert.sh"
       "--name={{ ovirt_vds_hostname }}-ssh"
+      "--host"
       "--id={{ ovirt_vds_hostname }}"
       "--principals={{ ovirt_vds_hostname }}"
       "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
