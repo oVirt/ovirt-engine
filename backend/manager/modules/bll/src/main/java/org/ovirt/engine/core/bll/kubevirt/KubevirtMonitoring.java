@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
+import kubevirt.io.KubevirtApi;
+import kubevirt.io.V1APIGroupList;
 import kubevirt.io.V1VirtualMachine;
 import openshift.io.OpenshiftApi;
 import openshift.io.V1TemplateList;
@@ -58,6 +60,13 @@ public class KubevirtMonitoring {
         String labelSelector = "template.kubevirt.io/type=base";
         V1TemplateList list = api.listKubevirtTemplateForAllNamespaces(null, null, null, labelSelector, null, null, null, null);
         return list.getItems().size() > 0;
+    }
+
+    public boolean checkDeployment(Provider<KubevirtProviderProperties> provider) throws IOException, ApiException {
+        KubevirtApi client = KubevirtUtils.getKubevirtApi(provider);
+        V1APIGroupList apigroup = client.getAPIGroupList();
+        return apigroup.getGroups().stream().anyMatch(group -> group.getVersions().stream()
+                .anyMatch(version -> version.getGroupVersion().startsWith("kubevirt.io")));
     }
 
     public void create(Guid clusterId, V1VirtualMachine kvm) {

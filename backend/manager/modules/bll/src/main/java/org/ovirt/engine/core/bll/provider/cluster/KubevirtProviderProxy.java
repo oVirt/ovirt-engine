@@ -93,6 +93,11 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
         return new ProviderValidator<KubevirtProviderProperties>(provider) {
             @Override
             public ValidationResult validateAddProvider() {
+                ValidationResult deploymentResult = validateKubevirtDeployed();
+                if (!deploymentResult.isValid()) {
+                    return deploymentResult;
+                }
+
                 ValidationResult promValidation = validatePrometheusUrl();
                 if (!promValidation.isValid()) {
                     return promValidation;
@@ -107,6 +112,11 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
 
             @Override
             public ValidationResult validateUpdateProvider() {
+                ValidationResult deploymentResult = validateKubevirtDeployed();
+                if (!deploymentResult.isValid()) {
+                    return deploymentResult;
+                }
+
                 ValidationResult templatesResult = validateTemplates();
                 if (!templatesResult.isValid()) {
                     return templatesResult;
@@ -260,6 +270,15 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
                     .unless(monitoring.get().checkTemplates(provider));
         } catch (IOException | ApiException e) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_FAILED_FETCH_TEMPLATES);
+        }
+    }
+
+    public ValidationResult validateKubevirtDeployed() {
+        try {
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_KUBEVIRT_NOT_FOUND)
+                    .unless(monitoring.get().checkDeployment(provider));
+        } catch (IOException | ApiException e) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_FAILED_FETCH_VERSIONS);
         }
     }
 
