@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.slf4j.Logger;
@@ -30,12 +31,11 @@ import org.slf4j.LoggerFactory;
  * several things that are important to a theme:
  * <ul>
  *  <li>The path to the theme</li>
- *  <li>The name of the style sheet associated with the theme</li>
+ *  <li>The names of the style sheets associated with the theme</li>
+ *  <li>The names of the static javascript assets associated with the theme</li>
  * </ul>
  */
 public class BrandingTheme {
-
-    private Locale DEFAULT_US_LOCALE = Locale.US;
 
     /**
      * The logger.
@@ -94,9 +94,14 @@ public class BrandingTheme {
     private static final String CSS_POST_FIX = "_css"; //$NON-NLS-1$
 
     /**
-     * Css file reference pattern.
+     * Post fix for denoting javascript files.
      */
-    private static final Pattern CSS_REF_PATTERN = Pattern.compile("^\\{(.*)}$"); //$NON-NLS-1$
+    private static final String JS_POST_FIX = "_js"; //$NON-NLS-1$
+
+    /**
+     * Css and Javascript file reference pattern.
+     */
+    private static final Pattern REF_PATTERN = Pattern.compile("^\\{(.*)}$"); //$NON-NLS-1$
 
     private static final String[] TEMPLATE_REPLACE_VALUES = {"true", "false"}; //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -207,6 +212,42 @@ public class BrandingTheme {
     }
 
     /**
+     * Get the static javascript resources for this theme for this {@code ApplicationType}.
+     * @param applicationName The application name for which to get the javascript resources
+     * @return A {@code List} of filenames
+     */
+    public List<String> getThemeJavascripts(String applicationName) {
+        String inputJsFiles = brandingProperties.getProperty(applicationName + JS_POST_FIX);
+        if (inputJsFiles == null) {
+            log.debug("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
+                    getPath(), applicationName + JS_POST_FIX);
+            return null;
+        }
+
+        // comma-delimited list
+        List<String> inputJsList = Arrays.asList(inputJsFiles.split("\\s*,\\s*")); //$NON-NLS-1$
+
+        // list containing expanded "{applicationName}" references
+        List<String> expandedJsList = new ArrayList<>();
+
+        for (String jsFileOrRef : inputJsList) {
+            if (StringUtils.isBlank(jsFileOrRef)) {
+                continue;
+            }
+
+            Matcher refMatcher = REF_PATTERN.matcher(jsFileOrRef);
+            if (refMatcher.matches()) {
+                List<String> refExpanded = getThemeJavascripts(refMatcher.group(1));
+                expandedJsList.addAll(refExpanded);
+            } else {
+                expandedJsList.add(jsFileOrRef);
+            }
+        }
+
+        return expandedJsList;
+    }
+
+    /**
      * Get the css resources for this theme for this {@code ApplicationType}.
      * @param applicationName The application name for which to get the css resources
      * @return A {@code List} of filenames
@@ -214,7 +255,7 @@ public class BrandingTheme {
     public List<String> getThemeStylesheets(String applicationName) {
         String inputCssFiles = brandingProperties.getProperty(applicationName + CSS_POST_FIX);
         if (inputCssFiles == null) {
-            log.warn("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
+            log.debug("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
                     getPath(), applicationName + CSS_POST_FIX);
             return null;
         }
@@ -226,7 +267,11 @@ public class BrandingTheme {
         List<String> expandedCssList = new ArrayList<>();
 
         for (String cssFileOrRef : inputCssList) {
-            Matcher refMatcher = CSS_REF_PATTERN.matcher(cssFileOrRef);
+          if (StringUtils.isBlank(cssFileOrRef)) {
+              continue;
+          }
+
+          Matcher refMatcher = REF_PATTERN.matcher(cssFileOrRef);
             if (refMatcher.matches()) {
                 List<String> refExpanded = getThemeStylesheets(refMatcher.group(1));
                 expandedCssList.addAll(refExpanded);

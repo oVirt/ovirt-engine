@@ -1,12 +1,25 @@
-<%@ tag language="java" pageEncoding="UTF-8"%>
-<%@ tag body-content="empty" %>
+<%@ tag
+    language="java"
+    pageEncoding="UTF-8"
+    trimDirectiveWhitespaces="true"
+    body-content="empty"
+%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:if test="${requestScope['brandingStyle'] != null}">
-    <c:forEach items="${requestScope['brandingStyle']}" var="theme">
-        <c:if test="${initParam['applicationName'] != null && theme.getThemeStylesheets(initParam['applicationName']) != null}">
-            <c:forEach items="${theme.getThemeStylesheets(initParam['applicationName'])}" var="css">
-                <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}${initParam['obrandThemePath']}${theme.path}/${css}">
-            </c:forEach>
-        </c:if>
+
+<c:set var="themes" value="${requestScope['brandingStyle']}" />
+<c:set var="applicationName" value="${initParam['applicationName']}" />
+<c:set var="obrandPrefix" value="${pageContext.request.contextPath}${initParam['obrandThemePath']}" />
+
+<%--
+
+  Link to all of the style sheets for the current `applicationName` defined by each
+  installed brand's `branding.properties` key `{applicationName}_css`.
+
+--%>
+<c:if test="${not empty themes and not empty applicationName}">
+    <c:forEach var="theme" items="${themes}">
+          <c:forEach  var="css" items="${theme.getThemeStylesheets(applicationName)}">
+              <link rel="stylesheet" type="text/css" href="${obrandPrefix}${theme.path}/${css}">
+          </c:forEach>
     </c:forEach>
 </c:if>

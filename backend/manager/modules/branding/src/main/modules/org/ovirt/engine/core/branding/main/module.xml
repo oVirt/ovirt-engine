@@ -16,6 +16,7 @@ SPDX-License-Identifier: Apache-2.0
     <module name="javax.servlet.api"/>
     <module name="javax.servlet.jsp.api"/>
     <module name="javax.servlet.jstl.api"/>
+    <module name="org.apache.commons.lang"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.ovirt.engine.core.utils"/>

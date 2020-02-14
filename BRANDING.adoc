@@ -13,7 +13,7 @@ The file `branding.properties` is the main properties file that defines
 where the branding resources can be found. Resources are relative to
 `branding.properties`.
 
-web_admin_css::
+webadmin_css::
 Css to inject into web admin (optional).
 
 welcome_css::
@@ -32,7 +32,8 @@ The version of the branding in the package. Only versions that match the
 one defined in the engine will be loaded (required, theme will not load
 without it).
 
-The current branding version as defined by engine is 1.
+The current branding version, as defined by engine in the constant
+`org.ovirt.engine.core.branding.BrandingManager.CURRENT_BRANDING_VERSION`, is 2.
 
 == CSS injection
 
@@ -180,9 +181,6 @@ own directory.
 The branding directory is treated as a standard `conf.d`, in which directories
 are sorted by name, each package is read by order and overrides
 the previous ones.
-
-NOTE: the default ovirt brand requires PatternFly and expects it to be installed
-in `/usr/share/patternfly`.
 
 == Maintenance - CSS
 

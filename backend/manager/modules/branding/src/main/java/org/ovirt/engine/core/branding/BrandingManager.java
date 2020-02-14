@@ -62,8 +62,6 @@ public class BrandingManager {
      */
     private static final Pattern TEMPLATE_PATTERN = Pattern.compile("\\{(\\D[\\w|\\.]*)\\}"); //$NON-NLS-1$
 
-    private static final String DOCS_TEMPLATE_PATTERN = "\\{\\{\\{docs\\}\\}\\}";
-
     /**
      * Only load branding themes for the current branding version. This allows for multiple version of a particular
      * branding theme to exist on the file system without interfering with each other. There is no backwards
