@@ -191,7 +191,8 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
                 .addValue("is_disabled", template.isDisabled())
                 .addValue("template_type", template.getTemplateType().name())
                 .addValue("base_template_id", template.getBaseTemplateId())
-                .addValue("template_version_name", template.getTemplateVersionName());
+                .addValue("template_version_name", template.getTemplateVersionName())
+                .addValue("is_template_sealed", template.isSealed());
     }
 
     @Override
@@ -306,6 +307,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
             entity.setBaseTemplateId(getGuidDefaultEmpty(rs, "base_template_id"));
             entity.setTemplateVersionNumber(rs.getInt("template_version_number"));
             entity.setTemplateVersionName(rs.getString("template_version_name"));
+            entity.setSealed(rs.getBoolean("is_template_sealed"));
             return entity;
         }
     }

@@ -30,6 +30,7 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
         _writer.writeElement(BASE_TEMPLATE_ID, vmTemplate.getBaseTemplateId().toString());
         _writer.writeElement(TEMPLATE_VERSION_NUMBER, String.valueOf(vmTemplate.getTemplateVersionNumber()));
         _writer.writeElement(TEMPLATE_VERSION_NAME, vmTemplate.getTemplateVersionName());
+        _writer.writeElement(TEMPLATE_IS_SEALED, String.valueOf(vmTemplate.isSealed()));
     }
 
     @Override

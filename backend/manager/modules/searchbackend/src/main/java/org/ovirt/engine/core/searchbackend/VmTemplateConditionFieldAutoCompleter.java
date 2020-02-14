@@ -19,6 +19,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     public static final String MEM = "MEM";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String STATUS = "STATUS";
+    public static final String SEALED = "SEALED";
     public static final String CLUSTER = "CLUSTER";
     public static final String DATACENTER = "DATACENTER";
     public static final String QUOTA = "QUOTA";
@@ -35,6 +36,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         verbs.add(MEM);
         verbs.add(DESCRIPTION);
         verbs.add(STATUS);
+        verbs.add(SEALED);
         verbs.add(CLUSTER);
         verbs.add(DATACENTER);
         verbs.add(QUOTA);
@@ -52,6 +54,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put(MEM, Integer.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(STATUS, VmTemplateStatus.class);
+        getTypeDictionary().put(SEALED, Boolean.class);
         getTypeDictionary().put(CLUSTER, String.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(QUOTA, String.class);
@@ -69,6 +72,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put(MEM, "mem_size_mb");
         columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(STATUS, "status");
+        columnNameDict.put(SEALED, "is_template_sealed");
         columnNameDict.put(CLUSTER, "cluster_name");
         columnNameDict.put(DATACENTER, "storage_pool_name");
         columnNameDict.put(QUOTA, "quota_name");

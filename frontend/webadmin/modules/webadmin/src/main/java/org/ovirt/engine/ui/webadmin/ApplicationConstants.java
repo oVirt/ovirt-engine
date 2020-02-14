@@ -1582,6 +1582,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String statusTemplate();
 
+    String sealedTemplate();
+
+    String sealedTemplateTrueValue();
+
     String clusterTemplate();
 
     String dcTemplate();

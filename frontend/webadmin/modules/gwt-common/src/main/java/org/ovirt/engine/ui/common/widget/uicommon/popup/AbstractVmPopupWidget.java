@@ -228,6 +228,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("isDeleteProtected")
     public EntityModelCheckBoxEditor isDeleteProtectedEditor;
 
+    @UiField(provided = true)
+    @Path(value = "isSealed.entity")
+    @WithElementId("isSealed")
+    public EntityModelCheckBoxEditor isSealedEditor;
+
     @UiField
     public Panel logicalNetworksEditorRow;
 
@@ -1041,6 +1046,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isSealedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isHeadlessModeEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
@@ -1974,6 +1980,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
+        isSealedEditor.setTabIndex(nextTabIndex++);
         copyTemplatePermissionsEditor.setTabIndex(nextTabIndex++);
 
         numOfVmsEditor.setTabIndex(nextTabIndex++);
@@ -2244,6 +2251,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 isStatelessEditor,
                 isRunAndPauseEditor,
                 isDeleteProtectedEditor,
+                isSealedEditor,
                 copyTemplatePermissionsEditor,
                 logicalNetworksEditorRow,
 

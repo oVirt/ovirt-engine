@@ -80,7 +80,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_migration_policy_id UUID,
  v_lease_sd_id UUID,
  v_multi_queues_enabled BOOLEAN,
- v_use_tsc_frequency BOOLEAN)
+ v_use_tsc_frequency BOOLEAN,
+ v_is_template_sealed BOOLEAN)
 
 RETURNS VOID
    AS $procedure$
@@ -174,7 +175,8 @@ BEGIN
         migration_policy_id,
         lease_sd_id,
         multi_queues_enabled,
-        use_tsc_frequency)
+        use_tsc_frequency,
+        is_template_sealed)
     VALUES(
         v_child_count,
         v_creation_date,
@@ -250,7 +252,8 @@ BEGIN
         v_migration_policy_id,
         v_lease_sd_id,
         v_multi_queues_enabled,
-        v_use_tsc_frequency);
+        v_use_tsc_frequency,
+        v_is_template_sealed);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
     INSERT INTO vm_ovf_generations(
@@ -346,7 +349,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_migration_policy_id UUID,
  v_lease_sd_id UUID,
  v_multi_queues_enabled BOOLEAN,
- v_use_tsc_frequency BOOLEAN)
+ v_use_tsc_frequency BOOLEAN,
+ v_is_template_sealed BOOLEAN)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -424,7 +428,8 @@ BEGIN
       migration_policy_id = v_migration_policy_id,
       lease_sd_id = v_lease_sd_id,
       multi_queues_enabled = v_multi_queues_enabled,
-      use_tsc_frequency = v_use_tsc_frequency
+      use_tsc_frequency = v_use_tsc_frequency,
+      is_template_sealed = v_is_template_sealed
       WHERE vm_guid = v_vmt_guid
           AND entity_type = v_template_type;
 

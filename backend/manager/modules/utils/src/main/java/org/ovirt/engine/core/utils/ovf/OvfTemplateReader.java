@@ -26,6 +26,7 @@ public class OvfTemplateReader extends OvfOvirtReader {
         consumeReadProperty(content, IS_DISABLED, val -> _vmTemplate.setDisabled(Boolean.parseBoolean(val)));
         consumeReadProperty(content, TRUSTED_SERVICE, val -> _vmTemplate.setTrustedService(Boolean.parseBoolean(val)));
         consumeReadProperty(content, TEMPLATE_TYPE, val -> _vmTemplate.setTemplateType(VmEntityType.valueOf(val)));
+        consumeReadProperty(content, TEMPLATE_IS_SEALED, val -> _vmTemplate.setSealed(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
                 BASE_TEMPLATE_ID,
                 val -> _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(val)),

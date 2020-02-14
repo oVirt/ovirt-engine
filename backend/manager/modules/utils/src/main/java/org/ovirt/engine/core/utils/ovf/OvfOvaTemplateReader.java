@@ -26,6 +26,8 @@ public class OvfOvaTemplateReader extends OvfOvaReader {
         consumeReadProperty(content, IS_DISABLED, val -> template.setDisabled(Boolean.parseBoolean(val)));
         consumeReadProperty(content, TRUSTED_SERVICE, val -> template.setTrustedService(Boolean.parseBoolean(val)));
         consumeReadProperty(content, TEMPLATE_TYPE, val -> template.setTemplateType(VmEntityType.valueOf(val)));
+        consumeReadProperty(content, TEMPLATE_IS_SEALED, val -> template.setSealed(Boolean.parseBoolean(val)));
+
         consumeReadProperty(content,
                 BASE_TEMPLATE_ID,
                 val -> template.setBaseTemplateId(Guid.createGuidFromString(val)),

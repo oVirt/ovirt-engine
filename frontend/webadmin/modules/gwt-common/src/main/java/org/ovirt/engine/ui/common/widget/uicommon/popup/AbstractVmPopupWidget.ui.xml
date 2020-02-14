@@ -167,6 +167,7 @@
                           <ge:EntityModelCheckBoxEditor ui:field="isStatelessEditor" label="{constants.statelessVmPopup}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                           <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" label="{constants.runAndPauseVmPopup}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                           <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" label="{constants.deleteProtectionPopup}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
+                          <ge:EntityModelCheckBoxEditor ui:field="isSealedEditor" label="{constants.sealed}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                           <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" label="{constants.copyTemplatePermissions}" addStyleNames="{style.floatLeft}" usePatternFly="true" />
                           <ii:InstanceImagesEditor ui:field="instanceImagesEditor" usePatternFly="true"/>
                         </b:Column>

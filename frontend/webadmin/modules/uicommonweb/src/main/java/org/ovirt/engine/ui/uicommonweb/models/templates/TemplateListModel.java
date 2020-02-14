@@ -795,6 +795,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         BuilderExecutor.build(model, template,
                 new FullUnitToVmBaseBuilder<VmTemplate>(),
                 new VersionNameUnitToVmBaseBuilder());
+        template.setSealed(model.getIsSealed().getEntity());
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {

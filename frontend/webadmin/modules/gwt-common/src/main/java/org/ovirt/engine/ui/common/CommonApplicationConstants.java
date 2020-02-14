@@ -1335,6 +1335,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String copyVmPermissions();
 
+    String sealed();
+
     String sealTemplate();
 
     String server();

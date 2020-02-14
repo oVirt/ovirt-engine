@@ -483,7 +483,7 @@ public final class Cloner {
         obj.setLargeIconId(instance.getLargeIconId());
         obj.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
         obj.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
-
+        obj.setSealed(instance.isSealed());
         return obj;
     }
 

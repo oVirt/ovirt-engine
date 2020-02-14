@@ -33,6 +33,7 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 update(foremanTab, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(isDeleteProtectedEditor, hiddenField()).
+                putOne(isSealedEditor, hiddenField()).
                 putOne(isStatelessEditor, hiddenField()).
                 putOne(isRunAndPauseEditor, hiddenField()).
                 putOne(commentEditor, hiddenField()).

@@ -103,6 +103,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         setupBaseTemplate(template.getBaseTemplateId());
 
+        getModel().getIsSealed().setIsAvailable(true);
+        getModel().getIsSealed().setEntity(template.isSealed());
     }
 
     protected void setupBaseTemplate(Guid baseTemplateId) {

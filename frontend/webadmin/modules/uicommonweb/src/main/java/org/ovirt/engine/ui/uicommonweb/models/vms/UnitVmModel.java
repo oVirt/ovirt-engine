@@ -919,6 +919,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.copyPermissions = copyPermissions;
     }
 
+    // used in the New template dialog
     private NotChangableForVmInPoolEntityModel<Boolean> sealTemplate;
 
     public EntityModel<Boolean> getSealTemplate() {
@@ -927,6 +928,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void setSealTemplate(NotChangableForVmInPoolEntityModel<Boolean> sealTemplate) {
         this.sealTemplate = sealTemplate;
+    }
+
+    // database value, used only for templates
+    private EntityModel<Boolean> isSealed;
+
+    public EntityModel<Boolean> getIsSealed() {
+        return isSealed;
+    }
+
+    public void setIsSealed(EntityModel<Boolean> isSealed) {
+        this.isSealed = isSealed;
     }
 
     private EntityModel<Boolean> memoryBalloonDeviceEnabled;
@@ -1597,6 +1609,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setCopyPermissions(new NotChangableForVmInPoolEntityModel<Boolean>());
         setSealTemplate(new NotChangableForVmInPoolEntityModel<>(false));
+        setIsSealed(new EntityModel<>(false));
+        getIsSealed().setIsAvailable(false);
 
         //rng
         setIsRngEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());

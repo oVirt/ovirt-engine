@@ -962,7 +962,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.resume_behavior AS resume_behavior,
     vm_templates.custom_compatibility_version as custom_compatibility_version,
     vm_templates.multi_queues_enabled AS multi_queues_enabled,
-    vm_templates.use_tsc_frequency AS use_tsc_frequency
+    vm_templates.use_tsc_frequency AS use_tsc_frequency,
+    vm_templates.is_template_sealed AS is_template_sealed
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id
@@ -1051,7 +1052,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.is_migrate_compressed AS is_migrate_compressed,
     vm_templates.is_migrate_encrypted AS is_migrate_encrypted,
     vm_templates.predefined_properties AS predefined_properties,
-    vm_templates.userdefined_properties AS userdefined_properties
+    vm_templates.userdefined_properties AS userdefined_properties,
+    vm_templates.is_template_sealed AS is_template_sealed
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id
@@ -1133,7 +1135,8 @@ SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.is_migrate_compressed AS is_migrate_compressed,
     vm_templates_1.is_migrate_encrypted AS is_migrate_encrypted,
     vm_templates_1.predefined_properties AS predefined_properties,
-    vm_templates_1.userdefined_properties AS userdefined_properties
+    vm_templates_1.userdefined_properties AS userdefined_properties,
+    vm_templates_1.is_template_sealed AS is_template_sealed
 FROM vm_static AS vm_templates_1
 LEFT JOIN cluster AS cluster_1
     ON vm_templates_1.cluster_id = cluster_1.cluster_id

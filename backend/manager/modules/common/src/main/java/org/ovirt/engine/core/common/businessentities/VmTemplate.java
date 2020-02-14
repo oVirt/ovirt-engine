@@ -32,6 +32,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private VmTemplateStatus status;
 
+    @EditableVmTemplateField
+    private boolean sealed;
+
     private String clusterName;
 
     private Version clusterCompatibilityVersion;
@@ -386,5 +389,13 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     @Override
     public boolean isManaged() {
         return getOrigin() != OriginType.KUBEVIRT;
+    }
+
+    public void setSealed(boolean isSealed) {
+        this.sealed = isSealed;
+    }
+
+    public boolean isSealed() {
+        return sealed;
     }
 }

@@ -24,6 +24,14 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+
+        getModel().getIsSealed().setIsAvailable(true);
+        getModel().getIsSealed().setEntity(template.isSealed());
+    }
+
+    @Override
     protected void postBuild() {
         getModel().getBaseTemplate().setIsAvailable(false);
         getModel().getTemplateVersionName().setIsAvailable(false);

@@ -68,6 +68,7 @@ public interface OvfProperties {
     String BASE_TEMPLATE_ID = "BaseTemplateId";
     String TEMPLATE_VERSION_NUMBER = "TemplateVersionNumber";
     String TEMPLATE_VERSION_NAME = "TemplateVersionName";
+    String TEMPLATE_IS_SEALED = "TemplateSealed";
     String SERIAL_NUMBER_POLICY = "SerialNumberPolicy";
     String CUSTOM_SERIAL_NUMBER = "CustomSerialNumber";
     String IS_BOOT_MENU_ENABLED = "IsBootMenuEnabled";

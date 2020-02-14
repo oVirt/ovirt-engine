@@ -972,6 +972,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getUseTscFrequency()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
         updateVmIcons();
+        getVmTemplate().setSealed(getParameters().isSealTemplate());
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
