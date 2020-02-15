@@ -18,9 +18,9 @@
    <dependencies>
      <module name="javax.ws.rs.api"/>
      <module name="org.jboss.resteasy.resteasy-jaxrs"/>
-     <module name="org.codehaus.jackson.jackson-core-asl"/>
-     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
-     <module name="org.codehaus.jackson.jackson-jaxrs"/>
+     <module name="com.fasterxml.jackson.core.jackson-core"/>
+     <module name="com.fasterxml.jackson.core.jackson-databind"/>
+     <module name="com.fasterxml.jackson.core.jackson-annotations"/>
    </dependencies>
 
 </module>
