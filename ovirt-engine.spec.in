@@ -476,7 +476,7 @@ Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.5.2
 Requires:	java-client-kubevirt >= 0.2.0
 Requires:	openssl
-Requires:	ovirt-engine-extension-aaa-jdbc
+Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	%{required_python_lib_jinja2}
 Requires(pre):	shadow-utils
 Requires(post):		systemd
@@ -556,7 +556,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.2
-Requires:	ovirt-engine-extension-aaa-jdbc
+Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
 %if %{ovirt_rh_postgresql}
 Requires:       %{scl_pg_base}-postgresql-server
