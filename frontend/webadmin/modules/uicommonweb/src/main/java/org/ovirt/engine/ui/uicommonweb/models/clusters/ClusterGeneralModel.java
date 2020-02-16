@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -213,7 +215,9 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         setMemoryOverCommit(cluster.getMaxVdsMemoryOverCommit());
         setCpuThreads(cluster.getCountThreadsAsCores());
         setResiliencePolicy(cluster.getMigrateOnError());
-        setEmulatedMachine(cluster.getEmulatedMachine());
+        ChipsetType chipsetType = cluster.getBiosType() != null ? cluster.getBiosType().getChipsetType() : null;
+        String emulatedMachine = EmulatedMachineCommonUtils.replaceChipset(cluster.getEmulatedMachine(), chipsetType);
+        setEmulatedMachine(emulatedMachine);
         setCompatibilityVersion(cluster.getCompatibilityVersion().getValue());
         generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());
         AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery<>(

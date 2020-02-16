@@ -13,15 +13,13 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmulatedMachineUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EmulatedMachineUtils.class);
-
-    private static final String I440FX_CHIPSET_NAME = ChipsetType.I440FX.getChipsetName();
-    private static final String Q35_CHIPSET_NAME = ChipsetType.Q35.getChipsetName();
 
     /**
      * Get effective emulated machine type.
@@ -66,31 +64,11 @@ public class EmulatedMachineUtils {
                     return index < 0 ? Integer.MAX_VALUE : index;
                 }))
                 .orElse(currentEmulatedMachine);
-        return replaceChipset(bestMatch, chipsetType);
+        return EmulatedMachineCommonUtils.replaceChipset(bestMatch, chipsetType);
     }
 
     private static boolean chipsetMatchesEmulatedMachine(ChipsetType chipsetType, String emulatedMachine) {
         return chipsetType == ChipsetType.I440FX || chipsetType == ChipsetType.fromMachineType(emulatedMachine);
-    }
-
-    private static String replaceChipset(String emulatedMachine, ChipsetType chipsetType) {
-        switch (chipsetType) {
-            case Q35:
-                if (emulatedMachine.contains(I440FX_CHIPSET_NAME)) {
-                    return emulatedMachine.replace(I440FX_CHIPSET_NAME, Q35_CHIPSET_NAME);
-                }
-                if (!emulatedMachine.contains(Q35_CHIPSET_NAME)) {
-                    return emulatedMachine.replace("pc-", "pc-" + Q35_CHIPSET_NAME + '-');
-                }
-                break;
-
-            case I440FX:
-                if (emulatedMachine.contains(Q35_CHIPSET_NAME)) {
-                    return emulatedMachine.replace(Q35_CHIPSET_NAME, I440FX_CHIPSET_NAME);
-                }
-                break;
-        }
-        return emulatedMachine;
     }
 
 }
