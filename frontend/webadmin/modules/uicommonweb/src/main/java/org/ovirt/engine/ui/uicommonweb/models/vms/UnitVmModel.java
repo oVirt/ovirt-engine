@@ -365,6 +365,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             // ==Icon Tab==
             getIcon().setIsChangeable(false);
 
+            // ==High Availability==
+            getIsHighlyAvailable().setIsChangeable(false);
+
             vmAttachedToPool = true;
         }
     }
