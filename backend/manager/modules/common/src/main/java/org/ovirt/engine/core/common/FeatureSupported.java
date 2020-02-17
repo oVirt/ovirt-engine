@@ -69,6 +69,15 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if the asynchronous live snapshot is supported for the given version
+     * @param version Compatibility version to check for.
+     * @return {@code true} if asynchronous live snapshot is supported for this version.
+     */
+    public static boolean isAsyncLiveSnapshotSupported(Version version) {
+        return version.greaterOrEquals(Version.v4_4);
+    }
+
+    /**
      * Checks if SCSI reservations are supported by the cluster version
      *
      * @param version
