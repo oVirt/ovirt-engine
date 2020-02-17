@@ -149,10 +149,8 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(false);
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAdd", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.addCommandOperatingOnSelectedItems(UICommand.createDefaultOkUiCommand("OnAdd", this)); //$NON-NLS-1$
+        model.addCancelCommand(this);
     }
 
     public void remove() {

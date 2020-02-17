@@ -246,10 +246,8 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
         model.setHelpTag(HelpTag.add_system_permission_to_user);
         model.setHashName("add_system_permission_to_user"); //$NON-NLS-1$
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddRoleToUser", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.addCommandOperatingOnSelectedItems(UICommand.createDefaultOkUiCommand("OnAddRoleToUser", this)); //$NON-NLS-1$
+        model.addCancelCommand(this);
     }
 
     @Override

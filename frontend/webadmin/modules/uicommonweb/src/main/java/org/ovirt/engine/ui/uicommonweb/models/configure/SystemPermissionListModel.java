@@ -94,10 +94,8 @@ public class SystemPermissionListModel extends SearchableListModel {
         // model.Role.IsAvailable = true;
         // model.ExcludeItems = Items;
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAttach", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.addCommandOperatingOnSelectedItems(UICommand.createDefaultOkUiCommand("OnAttach", this)); //$NON-NLS-1$
+        model.addCancelCommand(this);
     }
 
     private void onAttach() {

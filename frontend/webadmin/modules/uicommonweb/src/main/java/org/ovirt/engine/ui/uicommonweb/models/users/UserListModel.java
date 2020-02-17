@@ -193,7 +193,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
                     userId);
         }
         for (Guid grpId : grpIds) {
-            AsyncDataProvider.getInstance().getAttachedTagsToUserGroup(new AsyncQuery<>(
+            AsyncDataProvider.getInstance()
+                    .getAttachedTagsToUserGroup(new AsyncQuery<>(
                             returnValue -> {
 
                                 allAttachedTags.addAll(returnValue);
@@ -203,7 +204,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
                                 }
 
                             }),
-                    grpId);
+                            grpId);
         }
     }
 
@@ -295,17 +296,14 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
 
         UICommand addCommand = new UICommand("OnAdd", this); //$NON-NLS-1$
         addCommand.setTitle(ConstantsManager.getInstance().getConstants().add());
-        model.getCommands().add(addCommand);
+        model.addCommandOperatingOnSelectedItems(addCommand);
 
         UICommand addAndCloseCommand = new UICommand("OnAddAndClose", this); //$NON-NLS-1$
         addAndCloseCommand.setTitle(ConstantsManager.getInstance().getConstants().addAndClose());
         addAndCloseCommand.setIsDefault(true);
-        model.getCommands().add(addAndCloseCommand);
+        model.addCommandOperatingOnSelectedItems(addAndCloseCommand);
 
-        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
-        closeCommand.setIsCancel(true);
-        model.getCommands().add(closeCommand);
+        model.addCancelCommand(this);
     }
 
     public UserOrGroup getUserOrGroup() {
@@ -346,7 +344,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getModifiedSearchString()), SearchType.DBUser,
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getModifiedSearchString()),
+                SearchType.DBUser,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(QueryType.Search, tempVar);
@@ -425,7 +424,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         IFrontendActionAsyncCallback lastCallback = result -> {
             AdElementListModel localModel = (AdElementListModel) result.getState();
             localModel.stopProgress();
-            //Refresh user list.
+            // Refresh user list.
             syncSearch();
             if (closeWindow) {
                 cancel();
@@ -441,7 +440,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         callbacksList.remove(callbacksList.size() - 1);
         callbacksList.add(lastCallback);
 
-        //Refresh display
+        // Refresh display
         model.setItems(null);
         model.setItems(currentItems);
 
@@ -469,7 +468,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         }
 
         IFrontendMultipleActionAsyncCallback lastCallback = result -> Scheduler.get().scheduleDeferred(() -> {
-            //Refresh user list.
+            // Refresh user list.
             syncSearch();
             cancel();
         });

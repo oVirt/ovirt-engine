@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -42,6 +43,8 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         EVERYONE,
         MY_GROUPS;
     }
+
+    private Set<UICommand> commandsOperatingOnSelectedItems = new HashSet<>();
 
     private UICommand searchMyGroupsCommand;
 
@@ -172,6 +175,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         if (searchType != value) {
             searchType = value;
             onPropertyChanged(new PropertyChangedEventArgs("AdSearchType")); //$NON-NLS-1$
+            updateActionAvailability();
         }
     }
 
@@ -212,6 +216,42 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         }));
 
         AsyncDataProvider.getInstance().getRoleList(new AsyncQuery<>(this::populateRoles));
+    }
+
+    @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    public void addCommandOperatingOnSelectedItems(UICommand command) {
+        commandsOperatingOnSelectedItems.add(command);
+        addCommand(command);
+        updateActionAvailability();
+    }
+
+    public void addCommand(UICommand command) {
+        getCommands().add(command);
+    }
+
+    public void addCancelCommand(ICommandTarget cancelCommandTarget) {
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", cancelCommandTarget); //$NON-NLS-1$
+        cancelCommand.setIsCancel(true);
+        addCommand(cancelCommand);
+    }
+
+    private void updateActionAvailability() {
+        boolean selectionExists = getSearchType() != null && getSearchType().equals(AdSearchType.EVERYONE)
+                || getSelectedItems() != null && !getSelectedItems().isEmpty();
+        for (UICommand command : commandsOperatingOnSelectedItems) {
+            command.setIsExecutionAllowed(selectionExists);
+        }
     }
 
     @Override
@@ -275,18 +315,18 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         selectDefaultRole = value;
     }
 
-    protected void populateRoles(List<Role> roles){
+    protected void populateRoles(List<Role> roles) {
         Role selectedRole = null;
         List<Role> rolesToPopulate = new ArrayList<>();
 
         for (Role role : roles) {
 
             if (role.getId() != null) {
-             // ignore CONSUME_QUOTA_ROLE in UI
+                // ignore CONSUME_QUOTA_ROLE in UI
                 if (!role.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                     rolesToPopulate.add(role);
                 }
-                //select engine user if it exists
+                // select engine user if it exists
                 if (role.getId().equals(ApplicationGuids.engineUser.asGuid())) {
                     selectedRole = role;
                 }
@@ -299,8 +339,8 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         if (selectDefaultRole) {
             if (selectedRole != null) {
                 getRole().setSelectedItem(selectedRole);
-            } else if (rolesToPopulate.size() > 0){
-                //if engine user does not exist, pick the first on the list
+            } else if (rolesToPopulate.size() > 0) {
+                // if engine user does not exist, pick the first on the list
                 getRole().setSelectedItem(rolesToPopulate.get(0));
             }
         } else {
@@ -396,6 +436,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
             }
         }
     }
+
     protected Set<String> getExcludeUsers() {
         Set<String> excludeUsers = new HashSet<>();
         if (getExcludeItems() != null) {
@@ -497,13 +538,16 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     /**
      * Handle error message in case of a query failure
-     * @param returnValue query return value
+     *
+     * @param returnValue
+     *            query return value
      * @return true if a query failure has occurred
      */
     private boolean handleQueryError(QueryReturnValue returnValue) {
         setMessage(null);
         if (!returnValue.getSucceeded()) {
-            setMessage(Frontend.getInstance().getAppErrorsTranslator()
+            setMessage(Frontend.getInstance()
+                    .getAppErrorsTranslator()
                     .translateErrorTextSingle(returnValue.getExceptionString()));
             getSearchInProgress().setEntity(false);
 

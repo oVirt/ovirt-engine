@@ -127,10 +127,8 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         model.setHelpTag(HelpTag.add_permission_to_user);
         model.setHashName("add_permission_to_user"); //$NON-NLS-1$
 
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAdd", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.addCommandOperatingOnSelectedItems(UICommand.createDefaultOkUiCommand("OnAdd", this)); //$NON-NLS-1$
+        model.addCancelCommand(this);
     }
 
     private void remove() {
