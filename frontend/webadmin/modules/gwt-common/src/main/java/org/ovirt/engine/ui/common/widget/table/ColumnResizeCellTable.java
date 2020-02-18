@@ -321,6 +321,18 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         setColumnWidth(column, width);
     }
 
+    protected int calculateGridHeight(int rowCount) {
+        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : ROW_HEIGHT;
+        if (rowCount > 0) {
+            height = rowCount * ROW_HEIGHT;
+        }
+        return height;
+    }
+
+    public void updateGridSize() {
+        updateGridSize(calculateGridHeight(getRowCount()));
+    }
+
     public void addColumn(Column<T, ?> column, String headerText) {
         Header<?> header = new SafeHtmlHeader(SafeHtmlUtils.fromTrustedString(headerText));
         addColumn(column, header);
@@ -690,6 +702,8 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void onResizeEnd(Column<T, ?> column, Element headerElement) {
+        updateGridSize();
+
         // Redraw the table
         redraw();
 
@@ -976,12 +990,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             removeStyleName(HIDE_ONE_ROW_SCROLL);
         }
         super.setRowData(start, values);
-        int rowCount = values.size();
-        int height = ROW_HEIGHT;
-        if (rowCount > 0) {
-            height = rowCount * ROW_HEIGHT;
-        }
-        updateGridSize(height);
+        updateGridSize(calculateGridHeight(values.size()));
     }
 
 }

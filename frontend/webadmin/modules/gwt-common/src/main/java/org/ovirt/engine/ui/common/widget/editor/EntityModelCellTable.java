@@ -226,12 +226,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     @Override
     public void onLoad() {
         super.onLoad();
-        int rowCount = getRowCount();
-        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : ROW_HEIGHT;
-        if (rowCount > 0) {
-            height = rowCount * ROW_HEIGHT;
-        }
-        updateGridSize(height);
+        updateGridSize();
     }
 
     @Override

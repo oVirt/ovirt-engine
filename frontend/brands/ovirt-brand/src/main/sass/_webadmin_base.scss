@@ -131,7 +131,7 @@ here. Please create new partials when it makes sense.
     padding-left: 5px;
 }
 
-/* GWT-TODO: verify this selector still works for DataGrids when upgrading GWT */
+/* Hides scroll for one-row grid */
 .hide-one-row-scroll > div:nth-child(3) > div > div:nth-child(2) > div {
     position: relative !important;
 }

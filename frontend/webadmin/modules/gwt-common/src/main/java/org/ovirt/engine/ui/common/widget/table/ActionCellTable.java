@@ -44,15 +44,6 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
         isHeightSet = true;
     }
 
-    public void updateGridSize() {
-        int rowCount = getRowCount();
-        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : ROW_HEIGHT;
-        if (rowCount > 0) {
-            height = rowCount * ROW_HEIGHT;
-        }
-        updateGridSize(height);
-    }
-
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
     }
