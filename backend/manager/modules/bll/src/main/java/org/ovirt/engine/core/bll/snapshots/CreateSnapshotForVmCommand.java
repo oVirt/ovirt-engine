@@ -370,7 +370,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     private boolean performLiveSnapshot(final Snapshot snapshot) {
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateLiveSnapshotForVm,
                 createLiveSnapshotParameters(snapshot),
-                getContext());
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
         if (actionReturnValue.getSucceeded()) {
             setSucceeded(true);
             return true;
