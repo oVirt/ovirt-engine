@@ -1,12 +1,13 @@
 <%@ taglib prefix="obrand" uri="obrand" %>
 <!DOCTYPE html>
-<html>
+<html lang="en" class="noVNC_loading">
 <!--
     noVNC client with automatic initialization for oVirt/RHEV-M
 
     Based on a client by Joel Martin.
 
     Copyright (C) 2011 Joel Martin
+    Copyright (C) 2018 The noVNC Authors
     Licensed under LGPL-3 (see LICENSE.txt)
 
     Connect parameters are provided in query string:
@@ -16,175 +17,72 @@
     <title>noVNC</title>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
-    <script>var INCLUDE_URI="files/novnc/include/";</script>
-    <script src="files/novnc/include/util.js"></script>
-    <link rel="stylesheet" href="files/novnc/include/base.css" title="plain">
+    <meta charset="utf-8">
 
-    <obrand:stylesheets />
-    <obrand:javascripts />
+    <style>
 
-    <%@ include file="WEB-INF/warning-template.html"%>
-    <script src="html-console-common.js"></script>
-    <link rel="stylesheet" type="text/css" href="html-console-common.css" />
-</head>
-
-<body style="margin: 0px;">
-    <div id="alert-container"></div>
-    <div id="noVNC_screen">
-        <div id="noVNC_status_bar" class="noVNC_status_bar"
-            style="margin-top: 0px;">
-            <table border=0 width="100%">
-                <tr>
-                        <td>
-                            <div id="noVNC_status">Loading</div>
-                        </td>
-                        <td width="1%">
-                            <div id="noVNC_buttons">
-                                        <input type=button value="Send CtrlAltDel"
-                                                id="sendCtrlAltDelButton">
-                            </div>
-                        </td>
-                </tr>
-            </table>
-        </div>
-        <canvas id="noVNC_canvas" width="640px" height="20px">
-            Canvas not supported.
-        </canvas>
-    </div>
-
-        <script>
-        /*jslint white: false */
-        /*global window, $, Util, RFB, */
-        "use strict";
-
-        var rfb, isOldNoVnc, loadedScripts = false, eventData = null;
-        var alertContainer = $('#alert-container');
-
-        loadNoVnc();
-
-        function loadNoVnc() {
-            if (!Util) {
-                showWarning($('<strong>Page can\'t be loaded</strong>.' +
-                        ' Please make sure that <code>novnc</code> package is installed.'),
-                        alertContainer);
-                return;
-            }
-
-
-            // Load supporting scripts
-            if (Util.load_scripts !== undefined) {
-                // for noVNC 0.5
-
-                isOldNoVnc = false;
-
-                Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
-                    "keysymdef.js", "keyboard.js", "input.js", "display.js",
-                    "jsunzip.js", "rfb.js", "keysym.js"]);
-            } else {
-                // for noVNC 0.4
-
-                isOldNoVnc = true;
-
-                var extra = "", start, end;
-
-                start = "<script src='files/novnc/include/";
-                end = "'><\/script>";
-
-                extra += start + "webutil.js" + end;
-                extra += start + "base64.js" + end;
-                extra += start + "websock.js" + end;
-                extra += start + "des.js" + end;
-                extra += start + "input.js" + end;
-                extra += start + "display.js" + end;
-                extra += start + "rfb.js" + end;
-                extra += start + "jsunzip.js" + end;
-
-                document.write(extra);
-            }
+        body {
+            margin: 0;
+            background-color: dimgrey;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        html {
+            height: 100%;
         }
 
-        function passwordRequired(rfb) {
-            var msg;
-            msg = '<form onsubmit="return setPassword();"';
-            msg += '  style="margin-bottom: 0px">';
-            msg += 'Password Required: ';
-            msg += '<input type=password size=10 id="password_input" class="noVNC_status">';
-            msg += '<\/form>';
-            $D('noVNC_status_bar').setAttribute("class", "noVNC_status_warn");
-            $D('noVNC_status').innerHTML = msg;
+        #top_bar {
+            background-color: #6e84a3;
+            color: white;
+            font: bold 12px Helvetica;
+            padding: 6px 5px 4px 5px;
+            border-bottom: 1px outset;
         }
-        function setPassword() {
-            rfb.sendPassword($D('password_input').value);
-            return false;
+        #status {
+            text-align: center;
         }
-        function sendCtrlAltDel() {
-            rfb.sendCtrlAltDel();
-            return false;
-        }
-        function updateState(rfb, state, oldstate, msg) {
-            var s, sb, cad, level;
-            s = $D('noVNC_status');
-            sb = $D('noVNC_status_bar');
-            cad = $D('sendCtrlAltDelButton');
-            switch (state) {
-                case 'failed':       level = "error";  break;
-                case 'fatal':        level = "error";  break;
-                case 'normal':       level = "normal"; break;
-                case 'disconnected': level = "normal"; break;
-                case 'loaded':       level = "normal"; break;
-                default:             level = "warn";   break;
-            }
-
-            if (state === "normal") { cad.disabled = false; }
-            else                    { cad.disabled = true; }
-
-            if (typeof(msg) !== 'undefined') {
-                sb.setAttribute("class", "noVNC_status_" + level);
-                s.innerHTML = msg;
-            }
+        #sendCtrlAltDelButton {
+            position: fixed;
+            top: 0px;
+            right: 0px;
+            border: 1px outset;
+            padding: 5px 5px 4px 5px;
+            cursor: pointer;
         }
 
-        function getHost() {
-            return WebUtil.getQueryVar('host', window.location.hostname);
+        #screen {
+            flex: 1; /* fill remaining space */
+            overflow: hidden;
         }
 
-        function getPort() {
-            return WebUtil.getQueryVar('port', window.location.port);
-        }
+    </style>
 
-        function connectToConsole () {
-            try {
-                var host = getHost();
-                var port = WebUtil.getQueryVar('port', window.location.port);
-                var password = eventData.password;
-                var path = eventData.connectionTicket;
+    <!-- Promise polyfill for IE11 -->
+    <script src="files/novnc/vendor/promise.js"></script>
 
-                if ((!host) || (!port)) {
-                    updateState('failed',
-                        "Must specify host and port in URL");
-                    return;
-                }
+    <!-- ES2015/ES6 modules polyfill -->
+    <script type="module">
+        window._noVNC_has_module_support = true;
+    </script>
+    <script>
+        window.addEventListener("load", function() {
+            if (window._noVNC_has_module_support) return;
+            const loader = document.createElement("script");
+            loader.src = "files/novnc/vendor/browser-es-module-loader/dist/" +
+                "browser-es-module-loader.js";
+            document.head.appendChild(loader);
+        });
+    </script>
 
-                var rfbParams = {'target':       $D('noVNC_canvas'),
-                           'encrypt':      true,
-                           'true_color':   WebUtil.getQueryVar('true_color', true),
-                           'local_cursor': WebUtil.getQueryVar('cursor', true),
-                           'shared':       WebUtil.getQueryVar('shared', true),
-                           'view_only':    WebUtil.getQueryVar('view_only', false),
-                           'onPasswordRequired':  passwordRequired};
+    <!-- actual script modules -->
+    <script type="module" crossorigin="anonymous">
+        // RFB holds the API to connect and communicate with a VNC server
+        import RFB from './files/novnc/core/rfb.js';
 
-                if (isOldNoVnc) {
-                    rfbParams.updateState = updateState;
-                } else {
-                    rfbParams.onUpdateState = updateState;
-                }
-
-                rfb = new RFB(rfbParams);
-                rfb.connect(host, port, password, path);
-            } catch(e) {
-                alert(e);
-            }
-        }
+        let rfb;
+        let desktopName;
+        let eventData;
 
         function receiveEvtData(evt) {
             if (evt.data === null || evt.data.password === null || evt.data.connectionTicket === null) {
@@ -204,49 +102,126 @@
             window.attachEvent("onmessage", receiveEvtData);
         }
 
-        window.onscriptsload = function () {
-            loadedScripts = true;
+        // When this function is called we have
+        // successfully connected to a server
+        function connectedToServer(e) {
+            status("Connected to " + desktopName);
+        }
 
-            checkAndConnect();
-        };
+        // This function is called when we are disconnected
+        function disconnectedFromServer(e) {
+            if (e.detail.clean) {
+                status("Disconnected");
+            } else {
+                status("Something went wrong, connection is closed");
+            }
+        }
+
+        // When this function is called, the server requires
+        // credentials to authenticate
+        function credentialsAreRequired(e) {
+            const password = prompt("Password Required:");
+            rfb.sendCredentials({ password: password });
+        }
+
+        // When this function is called we have received
+        // a desktop name from the server
+        function updateDesktopName(e) {
+            desktopName = e.detail.name;
+        }
+
+        // Since most operating systems will catch Ctrl+Alt+Del
+        // before they get a chance to be intercepted by the browser,
+        // we provide a way to emulate this key sequence.
+        function sendCtrlAltDel() {
+            rfb.sendCtrlAltDel();
+            return false;
+        }
+
+        // Show a status text in the top bar
+        function status(text) {
+            document.getElementById('status').textContent = text;
+        }
+
+        // This function extracts the value of one variable from the
+        // query string. If the variable isn't defined in the URL
+        // it returns the default value instead.
+        function readQueryVariable(name, defaultValue) {
+            // A URL with a query parameter can look like this:
+            // https://www.example.com?myqueryparam=myvalue
+            //
+            // Note that we use location.href instead of location.search
+            // because Firefox < 53 has a bug w.r.t location.search
+            const re = new RegExp('.*[?&]' + name + '=([^&#]*)'),
+                  match = document.location.href.match(re);
+            if (typeof defaultValue === 'undefined') { defaultValue = null; }
+
+            if (match) {
+                // We have to decode the URL since want the cleartext value
+                return decodeURIComponent(match[1]);
+            }
+
+            return defaultValue;
+        }
+
+        document.getElementById('sendCtrlAltDelButton')
+            .onclick = sendCtrlAltDel;
+
+        document.title = unescape(readQueryVariable('title', 'noVNC'));
 
         function checkAndConnect() {
-            if (!loadedScripts || !eventData) {
-                return;
+            // Read parameters specified in the URL query string
+            // By default, use the host and port of server that served this file
+            const host = readQueryVariable('host', window.location.hostname);
+            let port = readQueryVariable('port', window.location.port);
+            const password = eventData.password
+            const path = eventData.connectionTicket;
+
+            // | | |         | | |
+            // | | | Connect | | |
+            // v v v         v v v
+
+            status("Connecting");
+
+            // Build the websocket URL used to connect
+            let url = 'wss://' + host;
+            if(port) {
+                url += ':' + port;
             }
-            var path = eventData.connectionTicket;
-            var url = new URL('wss://' + getHost() + ':' + getPort() + "/" + path);
-            checkConnection(url.toString(), connectToConsole, reportServerUnreachable.bind(undefined, url.origin));
+            url += '/' + path;
+
+            // Creating a new RFB object will start a new connection
+            rfb = new RFB(document.getElementById('screen'), url,
+                          { credentials: { password: password } });
+
+            // Add listeners to important events from the RFB module
+            rfb.addEventListener("connect",  connectedToServer);
+            rfb.addEventListener("disconnect", disconnectedFromServer);
+            rfb.addEventListener("credentialsrequired", credentialsAreRequired);
+            rfb.addEventListener("desktopname", updateDesktopName);
+
+            // Set parameters that can be changed on an active connection
+            rfb.viewOnly = readQueryVariable('view_only', false);
+            rfb.scaleViewport = readQueryVariable('scale', false);
         }
+    </script>
 
-        function reportServerUnreachable(serverUrl) {
-            var certificateUrl = window.location.origin
-                    + '/ovirt-engine/services/pki-resource?resource=ca-certificate&format=X509-PEM-CA';
+    <obrand:stylesheets />
+    <obrand:javascripts />
 
-            var bullets = [];
-            bullets.push('websocket proxy service is running,');
-            bullets.push('firewalls are properly set,');
-            if (location.hostname != getHost()) {
-                bullets.push('application is accessed using predefined hostname <code>' + getHost() + '</code>');
-            }
-            bullets.push('websocket proxy certificate is trusted by your browser. <a href="' + certificateUrl + '">Default CA certificate</a>.');
-            var warningContent = $($.parseHTML('<strong>Can\'t connect to websocket proxy server</strong> <code>' + serverUrl + '</code>. Please check that:'))
-                    .add(toBulletList(bullets));
-            showWarning(warningContent, alertContainer);
-        }
+    <%@ include file="WEB-INF/warning-template.html"%>
+    <script src="html-console-common.js"></script>
+    <link rel="stylesheet" type="text/css" href="html-console-common.css" />
+</head>
 
-        window.onload = function () {
-            $D('sendCtrlAltDelButton').style.display = "inline";
-            $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
-
-            document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
-
-            if (isOldNoVnc) {
-                window.onscriptsload();
-            }
-        };
-        </script>
-
+<body style="margin: 0px;">
+    <div id="top_bar">
+        <div id="status">Loading</div>
+        <div id="sendCtrlAltDelButton">Send CtrlAltDel</div>
+    </div>
+    <div id="screen">
+        <!-- This is where the remote screen will appear -->
+    </div>
 </body>
 </html>
 
