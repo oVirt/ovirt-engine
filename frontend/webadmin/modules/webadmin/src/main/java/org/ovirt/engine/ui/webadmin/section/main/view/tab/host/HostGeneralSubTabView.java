@@ -76,6 +76,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     NullableNumberValueLabel<Integer> activeVms = new NullableNumberValueLabel<>();
     NullableNumberValueLabel<Integer> logicalCores = new NullableNumberValueLabel<>();
     StringValueLabel onlineCores = new StringValueLabel();
+    StringValueLabel hostName = new StringValueLabel();
     StringValueLabel spmPriority = new StringValueLabel();
     StringValueLabel hostedEngineHa = new StringValueLabel();
     FullDateTimeLabel bootTime = new FullDateTimeLabel();
@@ -260,12 +261,13 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
 
     private void populateGeneralFormPanel(boolean virtSupported) {
         // Build a form using the FormBuilder
-        generalFormBuilder = new FormBuilder(generalFormPanel, 3, 6);
+        generalFormBuilder = new FormBuilder(generalFormPanel, 3, 7);
         generalFormBuilder.setRelativeColumnWidth(0, 3);
         generalFormBuilder.setRelativeColumnWidth(1, 4);
         generalFormBuilder.setRelativeColumnWidth(2, 5);
 
-        generalFormBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 0, virtSupported).withAutoPlacement());
+        generalFormBuilder.addFormItem(new FormItem(constants.ipHost(), hostName,  0, 0).withAutoPlacement());
+        generalFormBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, virtSupported).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, virtSupported).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.logicalCores(), logicalCores, 0).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.onlineCores(), onlineCores, 0).withAutoPlacement());

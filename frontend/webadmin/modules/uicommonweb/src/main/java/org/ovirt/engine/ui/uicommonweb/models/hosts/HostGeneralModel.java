@@ -983,6 +983,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setOvsVersion(vds.getOvsVersion());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
 
+        setHostName(vds.getHostName());
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setActiveVms(vds.getVmActive());
 
@@ -1234,5 +1235,15 @@ public class HostGeneralModel extends EntityModel<VDS> {
             fipsEnabled = value;
             onPropertyChanged(new PropertyChangedEventArgs("fipsEnabled")); //$NON-NLS-1$
         }
+    }
+
+    private String hostName;
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public String getHostName() {
+        return hostName;
     }
 }

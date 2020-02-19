@@ -640,7 +640,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         nameEditor.setLabel(constants.hostPopupNameLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         commentEditor.setLabel(constants.commentLabel());
-        hostAddressLabel.setText(constants.hostPopupHostAddressLabel());
+        hostAddressLabel.setText(constants.ipHost());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         activateHostAfterInstallEditor.setLabel(constants.activateHostAfterInstallLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
