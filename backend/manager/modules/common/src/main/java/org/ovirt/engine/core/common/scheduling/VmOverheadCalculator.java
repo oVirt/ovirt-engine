@@ -16,7 +16,23 @@ public interface VmOverheadCalculator {
      * @throws RuntimeException
      *             thrown in case the cluster architecture cannot be identified
      */
-    int getTotalRequiredMemoryInMb(VM vm);
+    int getTotalRequiredMemMb(VM vm);
+
+    /**
+     * Return the total amount of RAM required to run the given VM, ignoring
+     * memory needed for huge pages.
+     * It includes VM size without huge pages, expected QEMU overhead
+     * and other memory taken from the system by running the VM (such as page tables).
+     *
+     * Please note the return value is just an estimation of the memory
+     * requirements, The actual amount of RAM required may be larger or smaller.
+     *
+     * @param vm the relevant VM
+     * @return required amount of memory in MiB
+     * @throws RuntimeException
+     *             thrown in case the cluster architecture cannot be identified
+     */
+    int getTotalRequiredMemWithoutHugePagesMb(VM vm);
 
     /**
      * Get the total expected memory overhead, including the expected QEMU

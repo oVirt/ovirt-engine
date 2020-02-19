@@ -77,7 +77,7 @@ public class PowerSavingMemoryWeightPolicyUnit extends PolicyUnitImpl {
         for (VDS vds : hosts) {
             int totalVmMemory = vmGroup.stream()
                     .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                    .mapToInt(vm -> vmOverheadCalculator.getTotalRequiredMemoryInMb(vm))
+                    .mapToInt(vm -> vmOverheadCalculator.getTotalRequiredMemMb(vm))
                     .sum();
 
             float hostSchedulingMem = vds.getMaxSchedulingMemory() - totalVmMemory;

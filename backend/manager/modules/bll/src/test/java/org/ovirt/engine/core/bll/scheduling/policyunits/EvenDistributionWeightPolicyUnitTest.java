@@ -59,7 +59,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
 
     @BeforeEach
     public void setUp() {
-        when(vmOverheadCalculator.getTotalRequiredMemoryInMb(any(VM.class))).thenAnswer(invocation -> invocation.<VM>getArgument(0).getMemSizeMb());
+        when(vmOverheadCalculator.getTotalRequiredMemMb(any(VM.class))).thenAnswer(invocation -> invocation.<VM>getArgument(0).getMemSizeMb());
     }
 
     @Test

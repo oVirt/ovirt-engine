@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,7 +10,6 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -60,8 +57,7 @@ public class HugePagesFilterPolicyUnit extends PolicyUnitImpl {
                     .flatMap(m -> m.entrySet().stream())
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum));
 
-            Map<Integer, Integer> availablePages = subtractMaps(prepareHugePageMap(host),
-                    PendingHugePages.collectForHost(getPendingResourceManager(), host.getId()));
+            Map<Integer, Integer> availablePages = freeHugePagesOnHost(host);
 
             if (!requiredPages.entrySet().stream()
                     .allMatch(pg -> availablePages.getOrDefault(pg.getKey(), 0) >= pg.getValue())) {
@@ -81,21 +77,17 @@ public class HugePagesFilterPolicyUnit extends PolicyUnitImpl {
         return newHosts;
     }
 
-    private Map<Integer, Integer> prepareHugePageMap(VDS host) {
-        List<HugePage> reportedHugePages = host.getHugePages();
-        Map<Integer, Integer> hugePages = new HashMap<>(reportedHugePages.size());
-        for (HugePage hp: reportedHugePages) {
-            hugePages.put(hp.getSizeKB(), hp.getAmount());
-        }
-        return Collections.unmodifiableMap(hugePages);
-    }
+    private Map<Integer, Integer> freeHugePagesOnHost(VDS vds) {
+        Map<Integer, Integer> hostFreeHugePages = HugePageUtils.hugePagesToMap(vds.getHugePages());
+        Map<Integer, Integer> hostPendingHugePages = PendingHugePages.collectForHost(getPendingResourceManager(), vds.getId());
 
-    private Map<Integer, Integer> subtractMaps(Map<Integer, Integer> from,
-            Map<Integer, Integer> amount) {
-        Map<Integer, Integer> result = new HashMap<>(from);
-        for (Map.Entry<Integer, Integer> subs: amount.entrySet()) {
-            result.compute(subs.getKey(), (key, val) -> (val == null ? 0 : val) - subs.getValue());
+        for (Map.Entry<Integer, Integer> entry : hostFreeHugePages.entrySet()) {
+            int pendingPageCount = hostPendingHugePages.getOrDefault(entry.getKey(), 0);
+            // Dynamic hugepages can be included in the pending hugepages,
+            // but the resulting values should not be negative
+            entry.setValue(Math.max(entry.getValue() - pendingPageCount, 0));
         }
-        return Collections.unmodifiableMap(result);
+
+        return hostFreeHugePages;
     }
 }

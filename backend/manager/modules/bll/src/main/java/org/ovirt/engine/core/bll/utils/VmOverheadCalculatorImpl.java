@@ -20,6 +20,24 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      * It includes VM size, expected QEMU overhead and other memory taken from
      * the system by running the VM (such as page tables).
      *
+     * Please note the return value is just estimation of the memory
+     * requirements and the real required RAM may differ in both directions.
+     *
+     * @param vm the relevant VM
+     * @return required amount of memory in MiB
+     * @throws RuntimeException
+     *             thrown in case the cluster architecture cannot be identified
+     */
+    @Override
+    public int getTotalRequiredMemMb(VM vm) {
+        return vm.getMemSizeMb() + getOverheadInMb(vm);
+    }
+
+    /**
+     * Return total required RAM for running the given VM.
+     * It includes VM size, expected QEMU overhead and other memory taken from
+     * the system by running the VM (such as page tables).
+     *
      * Hugepages are taken into account here, a VM backed with hugepages
      * only consumes the overhead from the free RAM.
      *
@@ -32,7 +50,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      *             thrown in case the cluster architecture cannot be identified
      */
     @Override
-    public int getTotalRequiredMemoryInMb(VM vm) {
+    public int getTotalRequiredMemWithoutHugePagesMb(VM vm) {
         int vmRam = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData());
         return vmRam + getOverheadInMb(vm);
     }

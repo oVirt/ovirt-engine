@@ -55,7 +55,7 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
     private int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds, List<VM> vmGroup) {
         int totalVmMemory = vmGroup.stream()
                 .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                .mapToInt(vm -> vmOverheadCalculator.getTotalRequiredMemoryInMb(vm))
+                .mapToInt(vm -> vmOverheadCalculator.getTotalRequiredMemMb(vm))
                 .sum();
 
         float hostSchedulingMem = vds.getMaxSchedulingMemory() - totalVmMemory;

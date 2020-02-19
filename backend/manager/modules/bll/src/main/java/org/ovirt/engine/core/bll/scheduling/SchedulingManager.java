@@ -503,7 +503,7 @@ public class SchedulingManager implements BackendService {
     private void addPendingResources(VM vm, Guid hostId, Map<Integer, Long> numaConsumption) {
         getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, vm.getNumOfCpus()));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
-        getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)));
+        getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
 
         int cpuLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null ?
@@ -626,8 +626,12 @@ public class SchedulingManager implements BackendService {
             int pendingMemory = PendingOvercommitMemory.collectForHost(getPendingResourceManager(), vds.getId());
             int pendingCpuCount = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
 
+            int pendingHugePageMemMb = HugePageUtils.totalHugePageMemMb(PendingHugePages.collectForHost(
+                    getPendingResourceManager(),
+                    vds.getId()));
+
             vds.setPendingVcpusCount(pendingCpuCount);
-            vds.setPendingVmemSize(pendingMemory);
+            vds.setPendingVmemSize(pendingMemory + pendingHugePageMemMb);
         }
     }
 

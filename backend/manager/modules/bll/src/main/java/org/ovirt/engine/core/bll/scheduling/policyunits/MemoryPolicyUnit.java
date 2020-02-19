@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,6 +23,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,18 +75,31 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                 canDelay = true;
             }
 
+            // Check static huge pages on the host
+            Map<Integer, Integer> hostFreeHugePages = freeHugePagesOnHost(vds);
+            Map<Integer, Integer> neededHugePages = allHugePagesForVms(vmsNotRunningOnHost);
+
+            // Satisfy requested VM hugepages with free host hugepages
+            hostFreeHugePages.forEach((hostPageSize, hostPageCount) ->
+                    neededHugePages.computeIfPresent(hostPageSize, (vmPageSize, vmPageCount) ->
+                            Math.max(vmPageCount - hostPageCount, 0)));
+
+            // The rest of the required hugepages may be allocated dynamically,
+            // if the host is configured correctly
+            int hugePageMemMb = HugePageUtils.totalHugePageMemMb(neededHugePages);
+
             // Check physical memory needed to start / receive the VM
             // This is probably not needed for all VMs, but QEMU might attempt full
             // allocation without provoked and fail if there is not enough memory
             int pendingRealMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
 
-            if (!slaValidator.hasPhysMemoryToRunVmGroup(vds, vmsNotRunningOnHost, pendingRealMemory)) {
+            if (!slaValidator.hasPhysMemoryToRunVmGroup(vds, vmsNotRunningOnHost, hugePageMemMb, pendingRealMemory)) {
                 logInsufficientPhysicalMemory(vds, messages);
                 continue;
             }
 
             // Check logical memory using overcommit, pending and guaranteed memory rules
-            if (!slaValidator.hasOvercommitMemoryToRunVM(vds, vmsNotRunningOnHost)) {
+            if (!slaValidator.hasOvercommitMemoryToRunVM(vds, vmsNotRunningOnHost, hugePageMemMb)) {
                 logInsufficientOvercommitMemory(vds, messages);
                 continue;
             }
@@ -97,6 +114,29 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         }
 
         return resultList;
+    }
+
+    private Map<Integer, Integer> freeHugePagesOnHost(VDS vds) {
+        Map<Integer, Integer> hostFreeHugePages = HugePageUtils.hugePagesToMap(vds.getHugePages());
+        Map<Integer, Integer> hostPendingHugePages = PendingHugePages.collectForHost(getPendingResourceManager(), vds.getId());
+
+        for (Map.Entry<Integer, Integer> entry : hostFreeHugePages.entrySet()) {
+            int pendingPageCount = hostPendingHugePages.getOrDefault(entry.getValue(), 0);
+            // Dynamic hugepages can be included in the pending hugepages,
+            // but the resulting values should not be negative
+            entry.setValue(Math.max(entry.getValue() - pendingPageCount, 0));
+        }
+
+        return hostFreeHugePages;
+    }
+
+    private Map<Integer, Integer> allHugePagesForVms(List<VM> vms) {
+        Map<Integer, Integer> neededHugepages = new HashMap<>();
+        for (VM vm : vms) {
+            HugePageUtils.getHugePages(vm.getStaticData())
+                    .forEach((size, count) -> neededHugepages.merge(size, count, Integer::sum));
+        }
+        return neededHugepages;
     }
 
     private void logInsufficientPhysicalMemory(VDS vds, PerHostMessages messages) {

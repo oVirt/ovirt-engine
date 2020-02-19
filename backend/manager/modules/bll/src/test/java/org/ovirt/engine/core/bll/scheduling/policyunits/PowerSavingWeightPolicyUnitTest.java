@@ -68,7 +68,7 @@ public class PowerSavingWeightPolicyUnitTest extends AbstractPolicyUnitTest {
 
     @BeforeEach
     public void setUp() {
-        when(vmOverheadCalculator.getTotalRequiredMemoryInMb(any(VM.class))).thenAnswer(invocation -> invocation.<VM>getArgument(0).getMemSizeMb());
+        when(vmOverheadCalculator.getTotalRequiredMemMb(any(VM.class))).thenAnswer(invocation -> invocation.<VM>getArgument(0).getMemSizeMb());
 
         parameters.put(PolicyUnitParameter.HIGH_UTILIZATION.getDbName(), "80");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "600");

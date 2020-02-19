@@ -48,16 +48,18 @@ public class SlaValidatorTest {
     private VDS vds;
     private VM vm;
     private int pendingMemory;
+    private int memoryForDynamicHugepages;
 
     @BeforeEach
     public void prepareTest() {
         vds = basicHost();
         vm = basicVm();
         pendingMemory = 0;
+        memoryForDynamicHugepages = 0;
 
         doReturn(65).when(vmOverheadCalculator).getStaticOverheadInMb(any());
         doReturn(0).when(vmOverheadCalculator).getPossibleOverheadInMb(any());
-        when(vmOverheadCalculator.getTotalRequiredMemoryInMb(vm)).thenCallRealMethod();
+        when(vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm)).thenCallRealMethod();
         when(vmOverheadCalculator.getOverheadInMb(vm)).thenCallRealMethod();
     }
 
@@ -130,6 +132,21 @@ public class SlaValidatorTest {
         assertTrue(hostHasPhysMemToRunVm());
     }
 
+    @Test
+    public void validateVmWithHugepagesCannotFitPhys() {
+        vm.setVmMemSizeMb(9000);
+        setVmUsesHugepages(true);
+        assertFalse(hostHasPhysMemToRunVm());
+    }
+
+    @Test
+    public void validateVmWithHugepagesCannotFitPhysLargeSwap() {
+        vm.setVmMemSizeMb(9000);
+        vds.setSwapFree(1000L);
+        setVmUsesHugepages(true);
+        assertFalse(hostHasPhysMemToRunVm());
+    }
+
     // Test overcommit rules for VM to host assignments
 
 
@@ -173,12 +190,32 @@ public class SlaValidatorTest {
         assertTrue(hostHasOvercommitMemToRunVm());
     }
 
+    @Test
+    public void validateVmWithHugepagesCannotFit() {
+        vm.setVmMemSizeMb(10000);
+        setVmUsesHugepages(true);
+        assertFalse(hostHasPhysMemToRunVm());
+    }
+
     private boolean hostHasPhysMemToRunVm() {
-        return slaValidator.hasPhysMemoryToRunVmGroup(vds, Collections.singletonList(vm), pendingMemory);
+        return slaValidator.hasPhysMemoryToRunVmGroup(vds,
+                Collections.singletonList(vm),
+                memoryForDynamicHugepages,
+                pendingMemory);
     }
 
     private boolean hostHasOvercommitMemToRunVm() {
-        return slaValidator.hasOvercommitMemoryToRunVM(vds, Collections.singletonList(vm));
+        return slaValidator.hasOvercommitMemoryToRunVM(vds, Collections.singletonList(vm), memoryForDynamicHugepages);
+    }
+
+    private void setVmUsesHugepages(boolean value) {
+        if (value) {
+            vm.setCustomProperties("hugepages=2048");
+            memoryForDynamicHugepages = vm.getVmMemSizeMb();
+        } else {
+            vm.setCustomProperties("");
+            memoryForDynamicHugepages = 0;
+        }
     }
 
     private VM basicVm() {

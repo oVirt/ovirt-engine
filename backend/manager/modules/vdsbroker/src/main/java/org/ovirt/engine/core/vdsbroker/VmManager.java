@@ -127,7 +127,7 @@ public class VmManager {
                 .collect(Collectors.toMap(d -> d.getId().getDeviceId(), Function.identity()));
         vmStatic.setManagedDeviceMap(devices);
 
-        return vmOverheadCalculator.getTotalRequiredMemoryInMb(compose);
+        return vmOverheadCalculator.getTotalRequiredMemMb(compose);
     }
 
     public void lock() {

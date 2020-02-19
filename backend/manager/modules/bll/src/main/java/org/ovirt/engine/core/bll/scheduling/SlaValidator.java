@@ -36,7 +36,10 @@ public class SlaValidator {
      * @param vmGroup The currently scheduled VM group
      * @return true when there is enough memory, false otherwise
      */
-    public boolean hasPhysMemoryToRunVmGroup(VDS curVds, List<VM> vmGroup, int pendingMemory) {
+    public boolean hasPhysMemoryToRunVmGroup(VDS curVds,
+            List<VM> vmGroup,
+            int memoryForDynamicHugePages,
+            int pendingMemory) {
         if (curVds.getMemFree() != null) {
             long vmMemRequired = vmGroup.stream()
                     .mapToLong(vm -> HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
@@ -46,27 +49,31 @@ public class SlaValidator {
             double vdsMemLimit = curVds.getMemFree() - pendingMemory;
 
             if (log.isDebugEnabled()) {
-                vmGroup.stream()
-                        .filter(vm -> HugePageUtils.isBackedByHugepages(vm.getStaticData()))
-                        .forEach(vm -> log.debug("VM '{}' uses HugePages - ignore its memory size", vm.getName()));
-
                 long totalStaticOverhead = vmGroup.stream()
                         .mapToLong(vm -> vmOverheadCalculator.getStaticOverheadInMb(vm))
                         .sum();
 
-                log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB, required memory is {} MB; Guest overhead {} MB",
+                log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB; required memory is {} MB; Required dynamic huge-pages memory is {} MB; Guest overhead {} MB",
                         curVds.getName(),
                         vdsMemLimit,
                         pendingMemory,
                         curVds.getSwapFree(),
                         vmMemRequired,
+                        memoryForDynamicHugePages,
                         totalStaticOverhead);
             }
-            if (curVds.getSwapFree() != null) {
-                vdsMemLimit += curVds.getSwapFree();
+
+            // Test if hugepage memory can fit in the host's physical memory without swap
+            vdsMemLimit -= memoryForDynamicHugePages;
+            if (vdsMemLimit < 0) {
+                return false;
             }
 
-            log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
+            // Adding swap after hugepages can fit
+            long swapFree = curVds.getSwapFree() != null ? curVds.getSwapFree() : 0;
+            vdsMemLimit += swapFree;
+
+            // Testing if the rest of VM memory can fit
             return vmMemRequired <= vdsMemLimit;
         } else {
             return false;
@@ -85,31 +92,28 @@ public class SlaValidator {
      * @param vmGroup The currently scheduled VM group
      * @return true when there is enough memory, false otherwise
      */
-    public boolean hasOvercommitMemoryToRunVM(VDS curVds, List<VM> vmGroup) {
+    public boolean hasOvercommitMemoryToRunVM(VDS curVds,
+            List<VM> vmGroup,
+            int memoryForDynamicHugePages) {
         long vmMemRequired = vmGroup.stream()
-                .mapToLong(vm -> vmOverheadCalculator.getTotalRequiredMemoryInMb(vm))
+                .mapToLong(vm -> vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm))
                 .sum();
 
         double vdsMemLimit = curVds.getMaxSchedulingMemory();
 
         if (log.isDebugEnabled()) {
-            vmGroup.stream()
-                    .filter(vm -> HugePageUtils.isBackedByHugepages(vm.getStaticData()))
-                    .forEach(vm -> log.debug("VM '{}' uses HugePages - ignore its memory size", vm.getName()));
-
             long totalOverhead = vmGroup.stream()
                     .mapToLong(vm -> vmOverheadCalculator.getOverheadInMb(vm))
                     .sum();
 
-            log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Guest overhead {} MB",
+            log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Required dynamic hige-pages memory is {} MB; Guest overhead {} MB",
                     curVds.getName(),
                     vdsMemLimit,
                     vmMemRequired,
+                    memoryForDynamicHugePages,
                     totalOverhead);
-
-            log.debug("{} <= ???  {}", vmMemRequired, vdsMemLimit);
         }
-        return vmMemRequired <= vdsMemLimit;
+        return vmMemRequired + memoryForDynamicHugePages <= vdsMemLimit;
     }
 
     public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {

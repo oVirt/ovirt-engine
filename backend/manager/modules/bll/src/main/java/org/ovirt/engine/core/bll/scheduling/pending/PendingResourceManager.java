@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -224,7 +225,11 @@ public class PendingResourceManager {
         int pendingCpus = PendingCpuCores.collectForHost(this, hostId);
         int pendingMemory = PendingOvercommitMemory.collectForHost(this, hostId);
 
-        vdsManager.updatePendingData(pendingMemory, pendingCpus);
+        // Adding pending hugepages to pending memory for the host,
+        // which will decrease the memory available for scheduling.
+        int pendingHugePageMemMb = HugePageUtils.totalHugePageMemMb(PendingHugePages.collectForHost(this, hostId));
+
+        vdsManager.updatePendingData(pendingMemory + pendingHugePageMemMb, pendingCpus);
     }
 
     /**

@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 
@@ -69,5 +72,21 @@ public class HugePageUtils {
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> customProperties = util.convertProperties(vm.getCustomProperties());
         return Boolean.parseBoolean(customProperties.get("hugepages_shared"));
+    }
+
+    public static Map<Integer, Integer> hugePagesToMap(List<HugePage> hugePages) {
+        Map<Integer, Integer> hugePageMap = new HashMap<>(hugePages.size());
+        for (HugePage hp: hugePages) {
+            hugePageMap.put(hp.getSizeKB(), hp.getAmount());
+        }
+        return hugePageMap;
+    }
+
+    public static int totalHugePageMemMb(Map<Integer, Integer> hugepages) {
+        long hugePageMemKb = hugepages.entrySet().stream()
+                .mapToLong(entry -> entry.getKey() * entry.getValue())
+                .sum();
+
+        return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
     }
 }
